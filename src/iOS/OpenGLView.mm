@@ -162,6 +162,7 @@ extern FWContextBase * esMain(FWPlatformBase * platform);
   int drawableWidth, drawableHeight;
   EAGLContext * context;
   bool need_update;
+  CADisplayLink* displayLink;
 }
 // @property (strong, nonatomic) EAGLContext *context;
 
@@ -294,12 +295,7 @@ extern FWContextBase * esMain(FWPlatformBase * platform);
         [self drawView: nil];
         // m_timestamp = CACurrentMediaTime();
         
-        CADisplayLink* displayLink;
-        displayLink = [CADisplayLink displayLinkWithTarget:self
-                                     selector:@selector(drawView:)];
-        
-        [displayLink addToRunLoop:[NSRunLoop currentRunLoop]
-                     forMode:NSDefaultRunLoopMode];
+        displayLink = nil;
     }
     return self;
 }
@@ -447,10 +443,29 @@ extern FWContextBase * esMain(FWPlatformBase * platform);
       _esContext->onResize(logical_width, logical_height, drawableWidth, drawableHeight);
     }
     _esContext->onDraw();
-    // glFlush();
     [context presentRenderbuffer:GL_RENDERBUFFER];
     need_update = false;
   }
+}
+
+- (void) startRenderLoop {
+  if (displayLink == nil) {
+    [CADisplayLink displayLinkWithTarget:self selector:@selector(drawView:)];
+    [displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+    NSLog(@"Started Render Loop");
+  }
+}
+
+- (void)stopRenderLoop
+{
+    if (displayLink != nil) {
+        //if the display link is present, we invalidate it (so the loop stops)
+        [displayLink invalidate];
+        displayLink = nil;
+        NSLog(@"Stopping Render Loop");
+	[EAGLContext setCurrentContext:self->context];
+    	glFlush(); // Flush so that queued commands are not executed when the app is in the background
+    }
 }
 
 @end
