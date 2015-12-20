@@ -3,7 +3,7 @@
 #include "FWContextBase.h"
 #include "FWPlatformBase.h"
 
-#include "../../../canvas/src/ContextQuartz2D.h"
+#include <ContextQuartz2D.h>
 
 #import <Foundation/Foundation.h>
 
@@ -156,7 +156,7 @@ extern FWContextBase * esMain(FWPlatformBase * platform);
 {
   FWiOSPlatform * _platform;
   FWContextBase * _esContext;
-  float _display_scale;
+//  float _display_scale;
   int _opengl_version;
   bool _has_es3;
   int drawableWidth, drawableHeight;
@@ -254,17 +254,16 @@ extern FWContextBase * esMain(FWPlatformBase * platform);
 
 - (id) initWithFrame: (CGRect) frame
 {
-	cerr << "initWithFrame"<< endl;
     if (self = [super initWithFrame:frame])
     {
 	[self setMultipleTouchEnabled:YES];
 
-        _display_scale = [[UIScreen mainScreen] scale];
-        // self.contentScaleFactor = _display_scale;
+        // _display_scale = [[UIScreen mainScreen] scale];
+	float scale = [[UIScreen mainScreen] scale];
 
         CAEAGLLayer* eaglLayer = (CAEAGLLayer*) self.layer;
         eaglLayer.opaque = YES;
-        eaglLayer.contentsScale = _display_scale;
+        eaglLayer.contentsScale = scale;
       
 	self->_opengl_version = 300;
 	self->_has_es3 = true;
@@ -285,17 +284,18 @@ extern FWContextBase * esMain(FWPlatformBase * platform);
             return nil;
         }
       
-        self->drawableWidth = int(CGRectGetWidth(frame) * _display_scale);
-        self->drawableHeight = int(CGRectGetHeight(frame) * _display_scale);
+        self->drawableWidth = int(CGRectGetWidth(frame) * scale);
+        self->drawableHeight = int(CGRectGetHeight(frame) * scale);
         // m_applicationEngine->Initialize(width, height);
 
-        _platform = new FWiOSPlatform(self, _display_scale, 1 ? "#version 100" : "#version 300 es", _has_es3);
+        _platform = new FWiOSPlatform(self, scale, 1 ? "#version 100" : "#version 300 es", _has_es3);
         _esContext = esMain(_platform);
       
         [self drawView: nil];
         // m_timestamp = CACurrentMediaTime();
         
         displayLink = nil;
+	[self startRenderLoop];
     }
     return self;
 }
@@ -432,12 +432,12 @@ extern FWContextBase * esMain(FWPlatformBase * platform);
     need_update = true;
   }
   if (need_update) {
-    // cerr << "content scale = " << self.contentScaleFactor << endl;
+    cerr << "drawing, scale = " << self.contentScaleFactor << endl;
     CGRect adjustedFrame = [self convertRect:self.bounds fromView:nil];
     unsigned int logical_width = int(CGRectGetWidth(adjustedFrame));
     unsigned int logical_height = int(CGRectGetHeight(adjustedFrame));
-    drawableWidth = int(logical_width * _display_scale);
-    drawableHeight = int(logical_height * _display_scale);
+    drawableWidth = int(logical_width * self.contentScaleFactor);
+    drawableHeight = int(logical_height * self.contentScaleFactor);
     if (drawableWidth != _esContext->getActualWidth() || drawableHeight != _esContext->getActualHeight()) {
       cerr << "resize window: " << logical_width << " " << logical_height << endl;
       _esContext->onResize(logical_width, logical_height, drawableWidth, drawableHeight);
@@ -450,9 +450,10 @@ extern FWContextBase * esMain(FWPlatformBase * platform);
 
 - (void) startRenderLoop {
   if (displayLink == nil) {
-    [CADisplayLink displayLinkWithTarget:self selector:@selector(drawView:)];
+    displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(drawView:)];
     [displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
     NSLog(@"Started Render Loop");
+    need_update = true;
   }
 }
 
