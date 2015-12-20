@@ -5,5 +5,7 @@
 
 - (void) drawView: (CADisplayLink*) displayLink;
 - (void) createFBO: (int) flags;
+- (void) startRenderLoop;
+- (void) stopRenderLoop;
 
 @end
