@@ -163,6 +163,7 @@ extern FWContextBase * esMain(FWPlatformBase * platform);
   EAGLContext * context;
   bool need_update;
   CADisplayLink* displayLink;
+  unsigned int current_framebuffer;
 }
 // @property (strong, nonatomic) EAGLContext *context;
 
@@ -197,6 +198,8 @@ extern FWContextBase * esMain(FWPlatformBase * platform);
   GLuint framebuffer, color, depth, stencil;
   glGenFramebuffers(1, &framebuffer);
   glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+
+  current_framebuffer = framebuffer;
   
 #if 0
   glGenRenderbuffers(1, &depth);
@@ -443,6 +446,11 @@ extern FWContextBase * esMain(FWPlatformBase * platform);
       _esContext->onResize(logical_width, logical_height, drawableWidth, drawableHeight);
     }
     _esContext->onDraw();
+
+    const GLenum discards[] = { GL_DEPTH_ATTACHMENT, GL_STENCIL_ATTACHMENT };
+    glBindFramebuffer(GL_FRAMEBUFFER, current_framebuffer);
+    glDiscardFramebufferEXT(GL_FRAMEBUFFER, 2, discards);
+
     [context presentRenderbuffer:GL_RENDERBUFFER];
     need_update = false;
   }
