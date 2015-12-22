@@ -1,8 +1,6 @@
 #ifndef _FWPLATFORMBASE_H_
 #define _FWPLATFORMBASE_H_
 
-#include "FWFlags.h"
-
 #if defined __APPLE__
 #include <OpenGLES/ES3/gl.h>
 #elif defined _WIN32
@@ -37,7 +35,7 @@ class FWPlatformBase {
 
   const std::string & getGLSLVersion() const { return glsl_version; }
   
-  bool createContext(FWContextBase * context, const char * title, int requested_width, int requested_height, unsigned int flags);
+  bool createContext(FWContextBase * context, const char * title, int requested_width, int requested_height);
 
   virtual bool createWindow(FWContextBase * context, const char * title) = 0;
   virtual void showMessageBox(const std::string & message) = 0;

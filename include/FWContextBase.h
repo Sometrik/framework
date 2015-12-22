@@ -9,8 +9,6 @@
 #include <EGL/eglext.h>
 #endif
 
-#include "FWFlags.h"
-
 class FWPlatformBase;
 
 class FWContextBase {
@@ -18,7 +16,7 @@ public:
  FWContextBase(FWPlatformBase * _platform) : platform(_platform) { }
   virtual ~FWContextBase() { }
     
-  bool createWindow(const char * title, int requested_width, int requested_height, unsigned int flags);
+  bool createWindow(const char * title, int requested_width, int requested_height);
   
   virtual bool Init() = 0;
   virtual void onDraw() = 0;
