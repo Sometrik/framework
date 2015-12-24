@@ -49,11 +49,7 @@ public:
   
   FWPlatformBase & getPlatform() { return *platform; }
   const FWPlatformBase & getPlatform() const { return *platform; }
-  
-  void refresh() { refresh_requested = true; }
-  void clearRefresh() { refresh_requested = false; }
-  bool isRefreshRequested() const { return refresh_requested; }
-  
+    
   void setWindowSize(int _logical_width, int _logical_height, int _actual_width, int _actual_height) {
     logical_width = _logical_width;
     logical_height = _logical_height;
@@ -66,7 +62,6 @@ public:
  private:
   int logical_width = 0, logical_height = 0, actual_width = 0, actual_height = 0;
   FWPlatformBase * platform;
-  bool refresh_requested = false;
 };
 
 #endif
