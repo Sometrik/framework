@@ -92,14 +92,16 @@ public:
     NSString *storedKey = [[NSString alloc] initWithUTF8String:key.c_str()];
     [defaults setObject:storedVal forKey:storedKey];
     [defaults synchronize]; // this method is optional
-    // release storedVal and storedKey
+    [storedVal release];
+    [storedKey release];
   }
   std::string loadValue(const std::string & key) {
     NSString *loadedKey = [[NSString alloc] initWithUTF8String:key.c_str()];
     NSString *results = [defaults stringForKey:loadedKey];
-    const char * stringAsChar = [results cStringUsingEncoding:[NSString defaultCStringEncoding]];
-    // release loadedKey and results
-    return stringAsChar;
+    string r = [results cStringUsingEncoding:[NSString defaultCStringEncoding]]; // wrong encoding
+    [loadedKey release];
+    [results release];
+    return r;
   }
   std::shared_ptr<canvas::ContextFactory> createContextFactory() const {
     std::shared_ptr<canvas::FilenameConverter> ptr(new canvas::BundleFilenameConverter);
@@ -109,7 +111,8 @@ public:
     NSString *input_url2 = [[NSString alloc] initWithUTF8String:input_url.c_str()];
     NSURL *url = [NSURL URLWithString:input_url2];
     [[UIApplication sharedApplication] openURL:url];
-    // release input_url2
+    [input_url2 release];
+    [url release];
   }
   bool hasActiveModal() const { return has_active_modal; }
   int showActionSheet(const FWRect & rect, const FWActionSheet & sheet) {
@@ -216,6 +219,13 @@ extern FWContextBase * esMain(FWPlatformBase * platform);
   glGenRenderbuffers(1, &color);
   glBindRenderbuffer(GL_RENDERBUFFER, color);
   CAEAGLLayer* eaglLayer = (CAEAGLLayer*) self.layer;
+#if 0	
+  eaglLayer.drawableProperties = [NSDictionary dictionaryWithObjectsAndKeys:
+                                [NSNumber numberWithBool:NO], kEAGLDrawablePropertyRetainedBacking,
+                                kEAGLColorFormatRGB565, kEAGLDrawablePropertyColorFormat,
+                                nil];
+#endif
+
   [context renderbufferStorage:GL_RENDERBUFFER fromDrawable: eaglLayer];
 
   glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, color);
