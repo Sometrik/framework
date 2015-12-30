@@ -30,6 +30,9 @@
 
 - (void) applicationDidFinishLaunching: (UIApplication*) application
 {
+  NSURLCache *sharedCache = [[NSURLCache alloc] initWithMemoryCapacity:0 diskCapacity:0 diskPath:@"nsurlcache"];
+  [NSURLCache setSharedURLCache:sharedCache];
+
   CGRect screenBounds = [[UIScreen mainScreen] bounds];
 
   window = [[UIWindow alloc] initWithFrame: screenBounds];

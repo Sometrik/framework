@@ -29,7 +29,7 @@ static EGLint GetContextRenderableType( EGLDisplay eglDisplay ) {
 #endif
 
 bool
-FWPlatformBase::createContext(FWContextBase * context, const char * title, int requested_width, int requested_height, unsigned int flags) {
+FWPlatformBase::createContext(FWContextBase * context, const char * title, int requested_width, int requested_height) {
 #ifndef __APPLE__
   EGLConfig config;
   EGLint majorVersion;

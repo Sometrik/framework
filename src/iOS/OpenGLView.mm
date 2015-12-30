@@ -108,6 +108,7 @@ public:
     return std::shared_ptr<canvas::ContextFactory>(new canvas::Quartz2DContextFactory(getDisplayScale(), ptr));
   }
   void launchBrowser(const std::string & input_url) {
+    cerr << "trying to open browser" << endl;
     NSString *input_url2 = [[NSString alloc] initWithUTF8String:input_url.c_str()];
     NSURL *url = [NSURL URLWithString:input_url2];
     [[UIApplication sharedApplication] openURL:url];
@@ -445,7 +446,6 @@ extern FWContextBase * esMain(FWPlatformBase * platform);
     need_update = true;
   }
   if (need_update) {
-    cerr << "drawing, scale = " << self.contentScaleFactor << endl;
     CGRect adjustedFrame = [self convertRect:self.bounds fromView:nil];
     unsigned int logical_width = int(CGRectGetWidth(adjustedFrame));
     unsigned int logical_height = int(CGRectGetHeight(adjustedFrame));
@@ -457,10 +457,12 @@ extern FWContextBase * esMain(FWPlatformBase * platform);
     }
     _esContext->onDraw();
 
+#if 0
     const GLenum discards[] = { GL_DEPTH_ATTACHMENT, GL_STENCIL_ATTACHMENT };
     glBindFramebuffer(GL_FRAMEBUFFER, current_framebuffer);
     glDiscardFramebufferEXT(GL_FRAMEBUFFER, 2, discards);
-
+#endif
+    
     [context presentRenderbuffer:GL_RENDERBUFFER];
     need_update = false;
   }
