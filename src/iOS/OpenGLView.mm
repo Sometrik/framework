@@ -4,6 +4,7 @@
 #include "FWPlatformBase.h"
 
 #include <ContextQuartz2D.h>
+#include <CurlClient.h>
 
 #import <Foundation/Foundation.h>
 
@@ -105,7 +106,10 @@ public:
   }
   std::shared_ptr<canvas::ContextFactory> createContextFactory() const {
     std::shared_ptr<canvas::FilenameConverter> ptr(new canvas::BundleFilenameConverter);
-    return std::shared_ptr<canvas::ContextFactory>(new canvas::Quartz2DContextFactory(getDisplayScale(), ptr));
+    return std::make_shared<canvas::Quartz2DContextFactory>(getDisplayScale(), ptr);
+  }
+  std::shared_ptr<HTTPClientFactory> createHTTPClientFactory() const {
+    return std::make_shared<CurlClientFactory>();
   }
   void launchBrowser(const std::string & input_url) {
     cerr << "trying to open browser" << endl;
@@ -344,12 +348,14 @@ extern FWContextBase * esMain(FWPlatformBase * platform);
 }
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
-  [touches enumerateObjectsUsingBlock:^(id obj, BOOL *stop) {
-    UITouch *touch = obj;
-    long long id = (long long)touch;
-    CGPoint touchPoint = [touch locationInView:self];
-    need_update |= _esContext->touchesEnded(touchPoint.x, touchPoint.y, event.timestamp, id);
-  }];
+  if (touches != nil) {
+    [touches enumerateObjectsUsingBlock:^(id obj, BOOL *stop) {
+      UITouch *touch = obj;
+      long long id = (long long)touch;
+      CGPoint touchPoint = [touch locationInView:self];
+      need_update |= _esContext->touchesEnded(touchPoint.x, touchPoint.y, event.timestamp, id);
+    }];
+  }
   need_update |= _esContext->flushTouches(3, event.timestamp);
 }
 
@@ -440,11 +446,9 @@ extern FWContextBase * esMain(FWPlatformBase * platform);
 - (void) drawView: (CADisplayLink*) displayLink
 {
   [EAGLContext setCurrentContext:self->context];
-  _esContext->loadEvents();
+  need_update |= _esContext->loadEvents();
   double t = [[NSProcessInfo processInfo] systemUptime];
-  if (_esContext->onUpdate(t)) {
-    need_update = true;
-  }
+  need_update |= _esContext->onUpdate(t);
   if (need_update) {
     CGRect adjustedFrame = [self convertRect:self.bounds fromView:nil];
     unsigned int logical_width = int(CGRectGetWidth(adjustedFrame));
