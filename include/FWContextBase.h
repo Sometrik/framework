@@ -40,7 +40,7 @@ public:
   virtual bool flushTouches(int mode, double timestamp) { return false; }
   virtual bool onShake() { return false; }
   
-  virtual void loadEvents() { }
+  virtual bool loadEvents() { return false; }
   
   int getLogicalWidth() const { return logical_width; }
   int getLogicalHeight() const { return logical_height; }
