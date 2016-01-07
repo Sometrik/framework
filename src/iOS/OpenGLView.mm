@@ -99,9 +99,8 @@ public:
       // Build the path to the database file
       NSString * finalPath = [[NSString alloc] initWithString: 
 		      [docsDir stringByAppendingPathComponent: fileNameNS]];
-    NSFileManager *filemgr = [NSFileManager defaultManager];
-    std::string s([finalPath cStringUsingENcoding:1]);
-    return s;
+      const char * ptr = [finalPath cStringUsingEncoding:1];
+     return ptr;
   }
   void storeValue(const std::string & key, const std::string & value) {
     NSString *storedVal = [[NSString alloc] initWithUTF8String:value.c_str()];
