@@ -88,6 +88,21 @@ public:
       // release stuff
       return filename2;
     }
+   std::string getLocalFilename(const char * filename) {
+      NSString* fileNameNS = [NSString stringWithUTF8String:filename];
+      NSString *docsDir;
+      NSArray *dirPaths;    
+      // Get the documents directory
+      dirPaths = NSSearchPathForDirectoriesInDomains
+	(NSDocumentDirectory, NSUserDomainMask, YES);    
+      docsDir = dirPaths[0];
+      // Build the path to the database file
+      NSString * finalPath = [[NSString alloc] initWithString: 
+		      [docsDir stringByAppendingPathComponent: fileNameNS]];
+    NSFileManager *filemgr = [NSFileManager defaultManager];
+    std::string s([finalPath cStringUsingENcoding:1]);
+    return s;
+  }
   void storeValue(const std::string & key, const std::string & value) {
     NSString *storedVal = [[NSString alloc] initWithUTF8String:value.c_str()];
     NSString *storedKey = [[NSString alloc] initWithUTF8String:key.c_str()];
