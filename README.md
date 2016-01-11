@@ -9,3 +9,9 @@ Dependencies
     glm
     OpenGL ES 2.0
 
+
+Credits
+=======
+
+* Mikael Rekola
+* Mikko Suni (for Android support)
