@@ -17,6 +17,8 @@
 #include <android/bitmap.h>
 #include <ContextAndroid.h>
 #include <AndroidClient.h>
+#include <AndroidPlatform.h>
+#include <shader_program.h>
 
 #define TAG "CubeWallpaper1.c"
 
@@ -30,27 +32,18 @@ int screenHeight = 100;
 
 static jclass myClass;
 
+bool
+AndroidPlatform::onTouchesEvent(jobject * _obj, int mode, int fingerIndex, long time, float x, float y) {
+	//Palauttaa vastauksen threadille (debug)
+  messagePoster(11);
+	touchX = x;
+	touchY = y;
 
-class AndroidPlatform {
+	return true;
+}
 
-public:
-	AndroidPlatform(JNIEnv * _env, jobject * _framework) :
-			env(_env), framework(_framework) {
-	}
-	~AndroidPlatform() {
-	}
-
-	bool onTouchesEvent(jobject * _obj, int mode, int fingerIndex, long time, float x, float y) {
-
-		//Palauttaa vastauksen threadille (debug)
-		messagePoster(11);
-		touchX = x;
-		touchY = y;
-
-		return true;
-	}
-
-	void onResize(int width, int height) {
+void
+AndroidPlatform::onResize(int width, int height) {
 
 		__android_log_print(ANDROID_LOG_ERROR, "Sometrik", "resize: %d %d ", width, height);
 
@@ -58,19 +51,20 @@ public:
 		screenHeight = height;
 
 	}
-
-	void menuPressed() {
+void
+AndroidPlatform::menuPressed() {
 
 		createOptions();
 
 	}
-
-	bool update() {
+bool
+AndroidPlatform::update() {
 
 		return false;
 	}
 
-	void onDraw() {
+void
+AndroidPlatform::onDraw() {
 
 		glClearColor(0.98f, 0.0f, 0.98f, 1.0f);
 		glClear (GL_COLOR_BUFFER_BIT);
@@ -106,7 +100,8 @@ public:
 #endif
 	}
 
-	int createMessageDialog(const char * _title, const char * _message, int params) {
+int
+AndroidPlatform::createMessageDialog(const char * _title, const char * _message, int params) {
 		jclass cls = env->FindClass("com/sometrik/framework/FrameWork");
 
 		jmethodID methodRef = env->GetMethodID(cls, "createMessageDialog", "(Ljava/lang/String;Ljava/lang/String;)V");
@@ -115,12 +110,13 @@ public:
 
 		//Call method with void return (env, object, method, parameters...)
 		//String has to be made with jstring name = (*env)->NewStringUTF(env, "What you want");
-		env->CallVoidMethod(*framework, methodRef, title, message);
+		env->CallVoidMethod(framework, methodRef, title, message);
 
 		return 0; // cancel was pressed
 	}
 	//const char *
-	void createInputDialog(const char * _title, const char * _message, int params) {
+void
+AndroidPlatform::createInputDialog(const char * _title, const char * _message, int params) {
 
 		jclass cls = env->FindClass("com/sometrik/framework/FrameWork");
 
@@ -130,45 +126,33 @@ public:
 
 		//Call method with void return (env, object, method, parameters...)
 		//String has to be made with jstring name = (*env)->NewStringUTF(env, "What you want");
-		env->CallVoidMethod(*framework, methodRef, title, message);
+		env->CallVoidMethod(framework, methodRef, title, message);
 
 		//message[0] = 0;
 		//return message;
 	}
 
-	void loadImage(jobject bitmap) {
-
-		AndroidBitmapInfo info;
-		uint32_t *pixels;
-		int ret;
-
-		AndroidBitmap_getInfo(env, bitmap, &info);
-
-		if (info.format != ANDROID_BITMAP_FORMAT_RGBA_8888) {
-		}
-
-		AndroidBitmap_lockPixels(env, bitmap, reinterpret_cast<void **>(&pixels));
-
-		__android_log_print(ANDROID_LOG_ERROR, "Bitmap loaded", "Bitmap loaded");
-
-	}
-
 	static program * test_program;
 
-	void showCanvas(jobject canvasBitmap, jobject surface) {
+ void showCanvas(jobject canvasBitmap, jobject surface) {
 
+//Needs JNIENV
+#if 0
 		jclass cls = env->GetObjectClass(surface);
-		;
+
 		jmethodID methodRef = env->GetMethodID(cls, "setNativeCanvas", "(Landroid/graphics/Bitmap;)V");
 
 		env->CallVoidMethod(surface, methodRef, canvasBitmap);
+#endif
+
 	}
 
-	void onInit(jobject assetManager, jobject surface) {
+void
+AndroidPlatform::onInit(jobject surface) {
 
-		AAssetManager* mgr = AAssetManager_fromJava(env, assetManager);
+		// AAssetManager* manager = AAssetManager_fromJava(env, mgr);
 
-		canvas::AndroidContextFactory factory(env, assetManager);
+		canvas::AndroidContextFactory factory(env, mgr);
 
 		auto context = factory.createContext(400, 400, canvas::InternalFormat::RGB_DXT1);
 		auto yoSurface = context->createSurface("picture.jpg");
@@ -218,7 +202,8 @@ public:
 #endif
 	}
 
-	void createOptions() {
+void
+AndroidPlatform::createOptions() {
 
 		jclass cls = env->FindClass("com/sometrik/framework/MyGLSurfaceView");
 		jmethodID methodRef = env->GetStaticMethodID(cls, "createOptionsFromJNI", "(Lcom/sometrik/framework/MyGLSurfaceView;I[I[Ljava/lang/String;)V");
@@ -285,7 +270,8 @@ public:
 
 	}
 
-	void messagePoster(int message) {
+void
+AndroidPlatform::messagePoster(int message) {
 
 		jclass cls = env->FindClass("com/sometrik/framework/MyGLSurfaceView");
 		jmethodID methodRef = env->GetStaticMethodID(cls, "LeaveMessageToSurface", "(Lcom/sometrik/framework/MyGLSurfaceView;I)V");
@@ -294,7 +280,8 @@ public:
 
 	}
 
-	void settingsCreator(jobject thiz, jint menuId) {
+void
+AndroidPlatform::settingsCreator(jobject thiz, jint menuId) {
 
 		//Tähän jonkinlainen switchi id:n mukaan, minkälainen preferenssivalikko tehdään.
 		// preferenssi on tällä hetkellä mode, id, nimi ja niitä voi luoda settingsin listaan
@@ -337,6 +324,8 @@ public:
 		//SoundEffect* effect = new SoundEffect(env, "test", framework);
 		//effect->play();
 
+		//Needs JNIEnv
+#if 0
 		jclass cls = env->FindClass("com/sometrik/framework/MyGLSurfaceView");
 
 		jmethodID methodRef = env->GetMethodID(cls, "createSoundObject", "(Ljava/lang/String;)Lcom/sometrik/framework/Sound;");
@@ -345,10 +334,12 @@ public:
 		jobject soundObject = env->CallObjectMethod(thiz, methodRef, sound);
 
 		playSound(soundObject);
+#endif
 
 	}
 
-	void playSound(jobject sound) {
+void
+AndroidPlatform::playSound(jobject sound) {
 
 		jclass cls = env->FindClass("com/sometrik/framework/Media");
 		jmethodID methodRef = env->GetMethodID(cls, "play", "()V");
@@ -357,7 +348,8 @@ public:
 
 	}
 
-	void stopSound(jobject sound) {
+void
+AndroidPlatform::stopSound(jobject sound) {
 
 		jclass cls = env->FindClass("com/sometrik/framework/Media");
 		jmethodID methodRef = env->GetMethodID(cls, "stop", "()V");
@@ -402,23 +394,14 @@ public:
 
 	};
 #endif
-private:
-	JNIEnv * env;
-	jobject * framework;
-	char message[256];
-};
-
 
 std::shared_ptr<AndroidPlatform> platform;
-
-program * AndroidPlatform::test_program = 0;
 
 extern "C" {
 void Java_com_sometrik_framework_FrameWork_NativeOnTouch(JNIEnv* env, jobject thiz, jobject obj) {
 #if 1
-	AndroidPlatform platform(env, &obj);
 	//platform.createMessageDialog("Hello Java 2", "This is an error message", 0);
-	platform.createInputDialog("Hello Java 2", "Type your fucking password", 0);
+	platform->createInputDialog("Hello Java 2", "Type your fucking password", 0);
 #else
 
 	//Get class to use
@@ -450,91 +433,57 @@ void Java_com_sometrik_framework_FrameWork_NativeOnTouch(JNIEnv* env, jobject th
 }
 
 void Java_com_sometrik_framework_MyGLSurfaceView_playSound(JNIEnv* env, jobject thiz, jobject sound) {
-
-	AndroidPlatform platform(env, &thiz);
-	platform.playSound(sound);
-
+	platform->playSound(sound);
 }
 
 void Java_com_sometrik_framework_MyGLSurfaceView_stopSound(JNIEnv* env, jobject thiz, jobject sound) {
-
-	AndroidPlatform platform(env, &thiz);
-	platform.stopSound(sound);
-
+	platform->stopSound(sound);
 }
 
 void Java_com_sometrik_framework_MyGLSurfaceView_createSound(JNIEnv* env, jobject thiz) {
-
-	AndroidPlatform platform(env, &thiz);
-	platform.createSound(thiz);
-
-}
-
-void Java_com_sometrik_framework_MyGLSurfaceView_nativeLoadImage(JNIEnv* env, jobject thiz, jobject bitmap) {
-
-	AndroidPlatform platform(env, &thiz);
-	platform.loadImage(bitmap);
-
+	createSound(thiz);
 }
 
 void Java_com_sometrik_framework_MyGLRenderer_onResize(JNIEnv* env, jobject thiz, float x, float y) {
-
-	AndroidPlatform platform(env, &thiz);
-	platform.onResize(x, y);
+	platform->onResize(x, y);
 }
 
 void Java_com_sometrik_framework_MyGLSurfaceView_settingsCreator(JNIEnv* env, jobject thiz, jobject settings, jint id) {
-
-	AndroidPlatform platform(env, &thiz);
-	platform.settingsCreator(settings, id);
-
+	platform->settingsCreator(settings, id);
 }
 
 void Java_com_sometrik_framework_MyGLSurfaceView_menuPressed(JNIEnv* env, jobject thiz) {
-
-	AndroidPlatform platform(env, &thiz);
-	platform.menuPressed();
-
+	platform->menuPressed();
 }
 
 void Java_com_sometrik_framework_MyGLSurfaceView_touchEvent(JNIEnv* env, jobject thiz, int mode, int fingerIndex, long time, float x, float y) {
-
-	AndroidPlatform platform(env, &thiz);
-	platform.onTouchesEvent(&thiz, mode, fingerIndex, time, x, y);
-
+	platform->onTouchesEvent(&thiz, mode, fingerIndex, time, x, y);
 }
 
 jboolean Java_com_sometrik_framework_MyGLSurfaceView_update(JNIEnv* env, jobject thiz) {
-
-	AndroidPlatform platform(env, &thiz);
-
-	if (platform.update()) {
+	if (platform->update()) {
 		return JNI_TRUE;
 	} else {
 		return JNI_FALSE;
 	}
-
 }
 
 void Java_com_sometrik_framework_MyGLSurfaceView_messagePoster(JNIEnv* env, jobject thiz, jobject obj, int message) {
-
-	AndroidPlatform platform(env, &thiz);
-	platform.messagePoster(message);
-
+	platform->messagePoster(message);
 }
 
 void Java_com_sometrik_framework_MyGLRenderer_onInit(JNIEnv* env, jobject thiz, jobject assetManager, jobject surface) {
   if (!platform.get()) {
-  	platform = std::make_shared<AndroidPlatform>(env, &thiz);
+  	float displayScale = 1.0f;
+  	bool hasEs3 = false;
+  	const char* glslVersion = hasEs3 ? "#version es 300" : "#version es 100";
+  	platform = std::make_shared<AndroidPlatform>(env, assetManager, thiz, displayScale, glslVersion, hasEs3);
   }
-	platform->onInit(assetManager, surface);
+	platform->onInit(surface);
 }
 
 void Java_com_sometrik_framework_MyGLRenderer_nativeOnDraw(JNIEnv* env, jobject thiz) {
-
-	AndroidPlatform platform(env, &thiz);
-	platform.onDraw();
-
+	platform->onDraw();
 }
 
 void Java_com_sometrik_framework_FrameWork_okPressed(JNIEnv* env, jobject thiz, jstring text) {

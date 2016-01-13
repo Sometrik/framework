@@ -1,75 +1,67 @@
-#include <string.h>
-#include <android/log.h>
-#include <GLES3/gl3.h>
-#include "Menu.h"
-#include "program.h"
-#include <jni.h>
-#include <android/asset_manager.h>
-#include <android/asset_manager_jni.h>
-#include <iostream>
-#include "VBO.h"
-#include <glm/gtc/matrix_transform.hpp>
-#include <android/bitmap.h>
+#include <FWPlatformBase.h>
 #include <ContextAndroid.h>
 #include <AndroidClient.h>
+class shader_program;
 
-#define TAG "CubeWallpaper1.c"
-
-using namespace gpufw;
-using namespace std;
-
-float touchX = 200.0f;
-float touchY = 200.0f;
-int screenWidth = 100;
-int screenHeight = 100;
-
-static jclass myClass;
-
-std::shared_ptr<AndroidPlatform> platform;
-
-class AndroidPlatform {
+class AndroidPlatform : public FWPlatformBase {
 
 public:
-	AndroidPlatform(JNIEnv * _env, jobject * _framework) :
-			env(_env), framework(_framework) {
+	AndroidPlatform(JNIEnv * _env, jobject _mgr, jobject _framework, float _display_scale, const char * _glsl_version, bool _has_es3) :
+			FWPlatformBase(_display_scale, _glsl_version, _has_es3), env(_env), mgr(_mgr), framework(_framework) {
 	}
 	~AndroidPlatform() {
 	}
 
-	bool onTouchesEvent(jobject * _obj, int mode, int fingerIndex, long time, float x, float y) override
+	bool onTouchesEvent(jobject * _obj, int mode, int fingerIndex, long time, float x, float y);
 
-	void onResize(int width, int height) override
+	void onResize(int width, int height);
 
-	void menuPressed() override
+	void menuPressed();
 
-	bool update() override
+	bool update();
 
-	void onDraw() override
+	void onDraw();
 
-	int createMessageDialog(const char * _title, const char * _message, int params) override
+	int createMessageDialog(const char * _title, const char * _message, int params);
 
-	void createInputDialog(const char * _title, const char * _message, int params) override
+	void createInputDialog(const char * _title, const char * _message, int params);
 
-	void loadImage(jobject bitmap) override
+	void onInit(jobject surface);
 
-	void showCanvas(jobject canvasBitmap, jobject surface) override
+	void createOptions();
 
-	void onInit(jobject assetManager, jobject surface) override
+	void messagePoster(int message);
 
-	void createOptions() override
+	void settingsCreator(jobject thiz, jint menuId);
 
-	void messagePoster(int message) override
+	void playSound(jobject sound);
 
-	void settingsCreator(jobject thiz, jint menuId) override
+	void stopSound(jobject sound);
 
-	void createSound(jobject thiz) override
+   bool createWindow(FWContextBase * context, const char * title){ return false; };
+   void showMessageBox(const std::string & message) {
+  	 createMessageDialog("", message.c_str(), 0);
+   }
+  std::string showTextEntryDialog(const std::string & message) { }
+  void postNotification(const std::string & message) { }
+  std::string getBundleFilename(const char * filename) { return ""; }
+  std::string getLocalFilename(const char * filename) { return ""; }
+  std::shared_ptr<canvas::ContextFactory> createContextFactory() const override { return std::make_shared<canvas::AndroidContextFactory>(env, mgr); }
+  std::shared_ptr<HTTPClientFactory> createHTTPClientFactory() const override { return std::make_shared<AndroidClientFactory>(env); }
+  void launchBrowser(const std::string & input_url) { }
+  void storeValue(const std::string & key, const std::string & value) { }
+  std::string loadValue(const std::string & key) { return ""; }
+  int showActionSheet(const FWRect & rect, const FWActionSheet & sheet) { }
 
-	void playSound(jobject sound) override
-
-	void stopSound(jobject sound) override
+//protected:
+	//void showCanvas(jobject canvasBitmap, jobject surface);
+	//void loadImage(jobject bitmap);
+	//void createSound(jobject thiz);
 
 private:
 	JNIEnv * env;
-	jobject * framework;
+	jobject mgr;
+	jobject framework;
 	char message[256];
+	shader_program * test_program = 0;
 };
