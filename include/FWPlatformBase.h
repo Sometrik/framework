@@ -30,6 +30,11 @@ class HTTPClientFactory;
 
 class FWPlatformBase {
  public:
+  enum FileType {
+    NORMAL = 1,
+    DATABASE
+  };
+  
  FWPlatformBase(float _display_scale, const char * _glsl_version, bool _has_es3)
    : display_scale(_display_scale), glsl_version(_glsl_version), has_es3(_has_es3) { }
   virtual ~FWPlatformBase() { }
@@ -43,7 +48,7 @@ class FWPlatformBase {
   virtual std::string showTextEntryDialog(const std::string & message) = 0;
   virtual void postNotification(const std::string & message) = 0;
   virtual std::string getBundleFilename(const char * filename) = 0;
-  virtual std::string getLocalFilename(const char * filename) = 0;
+  virtual std::string getLocalFilename(const char * filename, FileType type) = 0;
   virtual double getTime() const = 0;
   virtual std::shared_ptr<canvas::ContextFactory> createContextFactory() const = 0;
   virtual std::shared_ptr<HTTPClientFactory> createHTTPClientFactory() const = 0;
