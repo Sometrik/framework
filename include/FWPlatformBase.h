@@ -44,6 +44,7 @@ class FWPlatformBase {
   virtual void postNotification(const std::string & message) = 0;
   virtual std::string getBundleFilename(const char * filename) = 0;
   virtual std::string getLocalFilename(const char * filename) = 0;
+  virtual double getTime() const = 0;
   virtual std::shared_ptr<canvas::ContextFactory> createContextFactory() const = 0;
   virtual std::shared_ptr<HTTPClientFactory> createHTTPClientFactory() const = 0;
   virtual void launchBrowser(const std::string & input_url) = 0;
