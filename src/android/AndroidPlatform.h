@@ -3,11 +3,11 @@
 #include <AndroidClient.h>
 class shader_program;
 
-class AndroidPlatform : public FWPlatformBase {
+class AndroidPlatform : FWPlatformBase {
 
 public:
-	AndroidPlatform(JNIEnv * _env, jobject _mgr, jobject _framework, float _display_scale, const char * _glsl_version, bool _has_es3) :
-			FWPlatformBase(_display_scale, _glsl_version, _has_es3), env(_env), mgr(_mgr), framework(_framework) {
+   AndroidPlatform(JNIEnv * _env, jobject _mgr, jobject _framework, float _display_scale, const char * _glsl_version, bool _has_es3) :
+		FWPlatformBase(_display_scale, _glsl_version, _has_es3), env(_env), mgr(_mgr), framework(_framework) {
 	}
 	~AndroidPlatform() {
 	}
@@ -30,7 +30,7 @@ public:
 
 	void createOptions();
 
-	void messagePoster(int message);
+	void messagePoster(int message, const char *text);
 
 	void settingsCreator(jobject thiz, jint menuId);
 
@@ -38,20 +38,28 @@ public:
 
 	void stopSound(jobject sound);
 
-   bool createWindow(FWContextBase * context, const char * title){ return false; };
-   void showMessageBox(const std::string & message) {
+   bool createWindow(FWContextBase * context, const char * title) override { return false; };
+   void showMessageBox(const std::string & message) override {
   	 createMessageDialog("", message.c_str(), 0);
    }
-  std::string showTextEntryDialog(const std::string & message) { }
-  void postNotification(const std::string & message) { }
-  std::string getBundleFilename(const char * filename) { return ""; }
-  std::string getLocalFilename(const char * filename) { return ""; }
+
+  std::string showTextEntryDialog(const std::string & message) override { }
+  void postNotification(const std::string & message) override { }
+  std::string getBundleFilename(const char * filename) override { return ""; }
+  std::string getLocalFilename(const char * filename, FileType type) override {
+  	switch (type) {
+  	case DATABASE: return "";
+  	case NORMAL: return "";
+  	}
+ }
+  double getTime() const override { return 0; }
   std::shared_ptr<canvas::ContextFactory> createContextFactory() const override { return std::make_shared<canvas::AndroidContextFactory>(env, mgr); }
   std::shared_ptr<HTTPClientFactory> createHTTPClientFactory() const override { return std::make_shared<AndroidClientFactory>(env); }
-  void launchBrowser(const std::string & input_url) { }
-  void storeValue(const std::string & key, const std::string & value) { }
-  std::string loadValue(const std::string & key) { return ""; }
-  int showActionSheet(const FWRect & rect, const FWActionSheet & sheet) { }
+  void launchBrowser(const std::string & input_url) override;
+  void storeValue(const std::string & key, const std::string & value) override { }
+  std::string loadValue(const std::string & key) override { return ""; }
+  int showActionSheet(const FWRect & rect, const FWActionSheet & sheet) override { }
+
 
 //protected:
 	//void showCanvas(jobject canvasBitmap, jobject surface);
