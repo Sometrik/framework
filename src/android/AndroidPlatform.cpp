@@ -35,7 +35,7 @@ static jclass myClass;
 bool
 AndroidPlatform::onTouchesEvent(jobject * _obj, int mode, int fingerIndex, long time, float x, float y) {
 	//Palauttaa vastauksen threadille (debug)
-  messagePoster(11);
+ // messagePoster(11);
 	touchX = x;
 	touchY = y;
 
@@ -134,16 +134,13 @@ AndroidPlatform::createInputDialog(const char * _title, const char * _message, i
 
 	static program * test_program;
 
- void showCanvas(jobject canvasBitmap, jobject surface) {
+ void showCanvas(jobject canvasBitmap, jobject surface, JNIEnv * env) {
 
-//Needs JNIENV
-#if 0
 		jclass cls = env->GetObjectClass(surface);
 
 		jmethodID methodRef = env->GetMethodID(cls, "setNativeCanvas", "(Landroid/graphics/Bitmap;)V");
 
 		env->CallVoidMethod(surface, methodRef, canvasBitmap);
-#endif
 
 	}
 
@@ -152,16 +149,23 @@ AndroidPlatform::onInit(jobject surface) {
 
 		// AAssetManager* manager = AAssetManager_fromJava(env, mgr);
 
-		canvas::AndroidContextFactory factory(env, mgr);
+	messagePoster(3, "http://stackoverflow.com/questions/4121450/activitynotfoundexception");
 
+		canvas::AndroidContextFactory factory(env, mgr);
+#if 0
 		auto context = factory.createContext(400, 400, canvas::InternalFormat::RGB_DXT1);
+		context->globalAlpha = 1.0f;
+		context->font.size = 98;
+		context->textAlign = "right";
 		auto yoSurface = context->createSurface("picture.jpg");
-		context->shadowBlur = context->shadowOffsetX = context->shadowOffsetY = 5.0f;
-		context->drawImage(*yoSurface, 0, 0, 400, 400);
+		//context->shadowBlur = context->shadowOffsetX = context->shadowOffsetY = 5.0f;
+		//context->drawImage(*yoSurface, 120, 120, 400, 400);
+		context->fillText("Olen Mikko osaan lukea ja kirjoittaa", 20, 100);
 
 		//showCanvas((dynamic_cast<canvas::AndroidSurface&>(*yoSurface)).getBitmap(), surface);
-		showCanvas((dynamic_cast<canvas::AndroidSurface&>(context->getDefaultSurface())).getBitmap(), surface);
+		showCanvas((dynamic_cast<canvas::AndroidSurface&>(context->getDefaultSurface())).getBitmap(), surface, env);
 		//auto context = factory.createContext("picture.jpg");
+#endif
 #if 0
 		float x = 10;
 				float y = 100;
@@ -185,21 +189,18 @@ AndroidPlatform::onInit(jobject surface) {
 				context->stroke();
 #endif
 				//showCanvas((dynamic_cast<canvas::AndroidSurface&>(context->getDefaultSurface())).getBitmap(), surface);
-
 		AndroidClientFactory clientFactory(env);
 		auto android = clientFactory.createClient("yo", false, false);
 
-		HTTPRequest requ = HTTPRequest(HTTPRequest::GET, "http://blogivirta.fi/go.php?id=2973145");
+		HTTPRequest requ = HTTPRequest(HTTPRequest::GET, "https://www.99analytics.com/test");
 		requ.setFollowLocation(false);
 		Authorization autor = Authorization();
-		auto resp = android->request(requ, autor);
-#if 0
-		auto res = android->Get("http://i.imgur.com/0rxRc6i.jpg");
-		if (res.isSuccess()) {
-			auto surfaceee = factory.createSurface((unsigned char*)res.getContent().c_str(), res.getContent().size());
-			context->drawImage(*surfaceee, 0, 0, 300, 300);
-		}
-#endif
+		//auto resp = android->request(requ, autor);
+		//auto res = android->Get("http://i.imgur.com/0rxRc6i.jpg");
+		//if (res.isSuccess()) {
+			//auto surfaceee = factory.createSurface((unsigned char*)res.getContent().c_str(), res.getContent().size());
+			//context->drawImage(*surfaceee, 0, 0, 300, 300);
+		//}
 	}
 
 void
@@ -271,12 +272,12 @@ AndroidPlatform::createOptions() {
 	}
 
 void
-AndroidPlatform::messagePoster(int message) {
+AndroidPlatform::messagePoster(int message, const char *text) {
 
 		jclass cls = env->FindClass("com/sometrik/framework/MyGLSurfaceView");
-		jmethodID methodRef = env->GetStaticMethodID(cls, "LeaveMessageToSurface", "(Lcom/sometrik/framework/MyGLSurfaceView;I)V");
+		jmethodID methodRef = env->GetStaticMethodID(cls, "LeaveMessageToSurface", "(Lcom/sometrik/framework/MyGLSurfaceView;ILjava/lang/String;)V");
 
-		env->CallStaticVoidMethod(cls, methodRef, *framework, message);
+		env->CallStaticVoidMethod(cls, methodRef, framework, message, env->NewStringUTF(text));
 
 	}
 
@@ -357,6 +358,11 @@ AndroidPlatform::stopSound(jobject sound) {
 		env->CallVoidMethod(sound, methodRef);
 
 	}
+
+void
+AndroidPlatform::launchBrowser(const std::string & input_url){
+	messagePoster(3, "http://stackoverflow.com/questions/4121450/activitynotfoundexception");
+}
 
 #if 0
 	class SoundEffect {
@@ -468,16 +474,13 @@ jboolean Java_com_sometrik_framework_MyGLSurfaceView_update(JNIEnv* env, jobject
 	}
 }
 
-void Java_com_sometrik_framework_MyGLSurfaceView_messagePoster(JNIEnv* env, jobject thiz, jobject obj, int message) {
-	platform->messagePoster(message);
-}
-
 void Java_com_sometrik_framework_MyGLRenderer_onInit(JNIEnv* env, jobject thiz, jobject assetManager, jobject surface) {
   if (!platform.get()) {
   	float displayScale = 1.0f;
   	bool hasEs3 = false;
   	const char* glslVersion = hasEs3 ? "#version es 300" : "#version es 100";
-  	platform = std::make_shared<AndroidPlatform>(env, assetManager, thiz, displayScale, glslVersion, hasEs3);
+  	platform = std::make_shared<AndroidPlatform>(env, assetManager, surface, displayScale, glslVersion, hasEs3);
+  	//AndroidPlatform(env, assetManager, &thiz, displayScale, glslVersion, hasEs3)->onInit();
   }
 	platform->onInit(surface);
 }
@@ -497,4 +500,3 @@ void Java_com_sometrik_framework_FrameWork_okPressed(JNIEnv* env, jobject thiz, 
 
 }
 }
-
