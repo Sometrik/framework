@@ -149,7 +149,7 @@ AndroidPlatform::onInit(jobject surface) {
 
 		// AAssetManager* manager = AAssetManager_fromJava(env, mgr);
 
-	messagePoster(3, "http://stackoverflow.com/questions/4121450/activitynotfoundexception");
+	messagePoster(4, "this is the bread text. It's about bread");
 
 		canvas::AndroidContextFactory factory(env, mgr);
 #if 0
@@ -272,12 +272,12 @@ AndroidPlatform::createOptions() {
 	}
 
 void
-AndroidPlatform::messagePoster(int message, const char *text) {
+AndroidPlatform::messagePoster(int message, const std::string text) {
 
 		jclass cls = env->FindClass("com/sometrik/framework/MyGLSurfaceView");
 		jmethodID methodRef = env->GetStaticMethodID(cls, "LeaveMessageToSurface", "(Lcom/sometrik/framework/MyGLSurfaceView;ILjava/lang/String;)V");
 
-		env->CallStaticVoidMethod(cls, methodRef, framework, message, env->NewStringUTF(text));
+		env->CallStaticVoidMethod(cls, methodRef, framework, message, env->NewStringUTF(text.c_str()));
 
 	}
 
@@ -318,6 +318,11 @@ AndroidPlatform::settingsCreator(jobject thiz, jint menuId) {
 		env->CallVoidMethod(thiz, methodRef2, media3, id2, name3);
 
 	}
+
+void
+AndroidPlatform::postNotification(const std::string & message){
+	messagePoster(4, message);
+ }
 
 	//Mahdollisesti vain debuggia varten
 	void createSound(jobject thiz) {
