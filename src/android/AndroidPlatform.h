@@ -22,8 +22,6 @@ public:
 
 	void onDraw();
 
-	int createMessageDialog(const char * _title, const char * _message, int params);
-
 	void createInputDialog(const char * _title, const char * _message, int params);
 
 	void onInit(jobject surface);
