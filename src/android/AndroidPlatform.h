@@ -52,7 +52,7 @@ public:
   	case NORMAL: return "";
   	}
  }
-  double getTime() const override { return 0; }
+  double getTime() const override;
   std::shared_ptr<canvas::ContextFactory> createContextFactory() const override { return std::make_shared<canvas::AndroidContextFactory>(env, mgr); }
   std::shared_ptr<HTTPClientFactory> createHTTPClientFactory() const override { return std::make_shared<AndroidClientFactory>(env); }
   void launchBrowser(const std::string & input_url) override;
