@@ -100,6 +100,11 @@ AndroidPlatform::onDraw() {
 #endif
 	}
 
+std::string
+AndroidPlatform::showTextEntryDialog(const std::string & message){
+
+}
+
 void
 AndroidPlatform::showMessageBox(const std::string & message){
 	messagePoster(5, message);
