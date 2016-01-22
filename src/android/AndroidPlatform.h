@@ -44,7 +44,7 @@ public:
    }
 
   std::string showTextEntryDialog(const std::string & message) override { }
-  void postNotification(const std::string & message) override { }
+  void postNotification(const std::string & message) override;
   std::string getBundleFilename(const char * filename) override { return ""; }
   std::string getLocalFilename(const char * filename, FileType type) override {
   	switch (type) {
