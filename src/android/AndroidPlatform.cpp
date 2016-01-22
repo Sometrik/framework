@@ -88,7 +88,7 @@ AndroidPlatform::onDraw() {
 		glActiveTexture(GL_TEXTURE0);
 		//glBindTexture(GL_TEXTURE_2D, texture.getTextureId());
 
-		VBO vbo;
+		VBO vbo;get
 		vbo.quad2d(touchX + 10.0f, touchY + 10.0f, touchX + 100.0f,
 				touchY + 10.0f, touchX + 100.0f, touchY + 100.0f,
 				touchX + 10.0f, touchY + 100.0f);
@@ -99,6 +99,11 @@ AndroidPlatform::onDraw() {
 		test_program->unuse();
 #endif
 	}
+
+void
+AndroidPlatform::showMessageBox(const std::string & message){
+	messagePoster(5, message);
+}
 
 int
 AndroidPlatform::createMessageDialog(const char * _title, const char * _message, int params) {
@@ -149,7 +154,7 @@ AndroidPlatform::onInit(jobject surface) {
 
 		// AAssetManager* manager = AAssetManager_fromJava(env, mgr);
 
-	getTime();
+	showMessageBox("Don't even trip dawg");
 
 		canvas::AndroidContextFactory factory(env, mgr);
 #if 0
