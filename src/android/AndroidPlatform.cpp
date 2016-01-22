@@ -105,21 +105,6 @@ AndroidPlatform::showMessageBox(const std::string & message){
 	messagePoster(5, message);
 }
 
-int
-AndroidPlatform::createMessageDialog(const char * _title, const char * _message, int params) {
-		jclass cls = env->FindClass("com/sometrik/framework/FrameWork");
-
-		jmethodID methodRef = env->GetMethodID(cls, "createMessageDialog", "(Ljava/lang/String;Ljava/lang/String;)V");
-		jstring title = env->NewStringUTF(_title);
-		jstring message = env->NewStringUTF(_message);
-
-		//Call method with void return (env, object, method, parameters...)
-		//String has to be made with jstring name = (*env)->NewStringUTF(env, "What you want");
-		env->CallVoidMethod(framework, methodRef, title, message);
-
-		return 0; // cancel was pressed
-	}
-	//const char *
 void
 AndroidPlatform::createInputDialog(const char * _title, const char * _message, int params) {
 
