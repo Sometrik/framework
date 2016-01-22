@@ -149,7 +149,7 @@ AndroidPlatform::onInit(jobject surface) {
 
 		// AAssetManager* manager = AAssetManager_fromJava(env, mgr);
 
-	messagePoster(4, "this is the bread text. It's about bread");
+	getTime();
 
 		canvas::AndroidContextFactory factory(env, mgr);
 #if 0
@@ -323,6 +323,17 @@ void
 AndroidPlatform::postNotification(const std::string & message){
 	messagePoster(4, message);
  }
+
+double
+AndroidPlatform::getTime() const{
+	__android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "getTime called");
+
+	jclass frameClass = env->GetObjectClass(framework);
+	double currentTime = env->CallStaticDoubleMethod(frameClass, env->GetStaticMethodID(frameClass, "getTime", "()D"));
+	__android_log_print(ANDROID_LOG_INFO, "Sometrik", "dubbeli = %d", currentTime);
+
+	return currentTime;
+}
 
 	//Mahdollisesti vain debuggia varten
 	void createSound(jobject thiz) {
