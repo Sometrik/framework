@@ -39,9 +39,7 @@ public:
 	void stopSound(jobject sound);
 
    bool createWindow(FWContextBase * context, const char * title) override { return false; };
-   void showMessageBox(const std::string & message) override {
-  	 createMessageDialog("", message.c_str(), 0);
-   }
+   void showMessageBox(const std::string & message) override;
 
   std::string showTextEntryDialog(const std::string & message) override { }
   void postNotification(const std::string & message) override;
