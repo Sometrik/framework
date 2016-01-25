@@ -146,7 +146,7 @@ AndroidPlatform::onInit(jobject surface) {
 
 		// AAssetManager* manager = AAssetManager_fromJava(env, mgr);
 
-	showMessageBox("Morty", "Don't even trip dawg");
+	postNotification("Morty", "Don't even trip dawg");
 
 		canvas::AndroidContextFactory factory(env, mgr);
 		auto context = factory.createContext(400, 400, canvas::InternalFormat::RGB_DXT1);
@@ -326,7 +326,7 @@ AndroidPlatform::settingsCreator(jobject thiz, jint menuId) {
 
 void
 AndroidPlatform::postNotification(const std::string & title, const std::string & message){
-	messagePoster(4, message);
+	messagePoster(4, title, message);
  }
 
 double
