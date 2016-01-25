@@ -29,6 +29,7 @@ public:
 	void createOptions();
 
 	void messagePoster(int message, const std::string text);
+	void messagePoster(int message, const std::string title, const std::string text);
 
 	void settingsCreator(jobject thiz, jint menuId);
 
