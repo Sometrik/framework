@@ -106,9 +106,11 @@ AndroidPlatform::showTextEntryDialog(const std::string & message){
 }
 
 void
-AndroidPlatform::showMessageBox(const std::string & message){
-	messagePoster(5, message);
+AndroidPlatform::showMessageBox(const std::string & title, const std::string & message){
+
+	messagePoster(5, title, message);
 }
+
 
 void
 AndroidPlatform::createInputDialog(const char * _title, const char * _message, int params) {
@@ -144,14 +146,14 @@ AndroidPlatform::onInit(jobject surface) {
 
 		// AAssetManager* manager = AAssetManager_fromJava(env, mgr);
 
-	showMessageBox("Don't even trip dawg");
+	showMessageBox("Morty", "Don't even trip dawg");
 
 		canvas::AndroidContextFactory factory(env, mgr);
-#if 0
 		auto context = factory.createContext(400, 400, canvas::InternalFormat::RGB_DXT1);
 		context->globalAlpha = 1.0f;
-		context->font.size = 98;
-		context->textAlign = "right";
+		context->font.size = 50;
+		context->textBaseline = "top";
+		context->textAlign = "left";
 		auto yoSurface = context->createSurface("picture.jpg");
 		//context->shadowBlur = context->shadowOffsetX = context->shadowOffsetY = 5.0f;
 		//context->drawImage(*yoSurface, 120, 120, 400, 400);
@@ -160,7 +162,7 @@ AndroidPlatform::onInit(jobject surface) {
 		//showCanvas((dynamic_cast<canvas::AndroidSurface&>(*yoSurface)).getBitmap(), surface);
 		showCanvas((dynamic_cast<canvas::AndroidSurface&>(context->getDefaultSurface())).getBitmap(), surface, env);
 		//auto context = factory.createContext("picture.jpg");
-#endif
+
 #if 0
 		float x = 10;
 				float y = 100;
@@ -273,7 +275,15 @@ AndroidPlatform::messagePoster(int message, const std::string text) {
 		jmethodID methodRef = env->GetStaticMethodID(cls, "LeaveMessageToSurface", "(Lcom/sometrik/framework/MyGLSurfaceView;ILjava/lang/String;)V");
 
 		env->CallStaticVoidMethod(cls, methodRef, framework, message, env->NewStringUTF(text.c_str()));
+	}
 
+void
+AndroidPlatform::messagePoster(int message, const std::string title, const std::string text) {
+
+		jclass cls = env->FindClass("com/sometrik/framework/MyGLSurfaceView");
+		jmethodID methodRef = env->GetStaticMethodID(cls, "LeaveMessageToSurface", "(Lcom/sometrik/framework/MyGLSurfaceView;ILjava/lang/String;)V");
+
+		env->CallStaticVoidMethod(cls, methodRef, framework, message, env->NewStringUTF(text.c_str()), env->NewStringUTF(text.c_str()));
 	}
 
 void
@@ -315,7 +325,7 @@ AndroidPlatform::settingsCreator(jobject thiz, jint menuId) {
 	}
 
 void
-AndroidPlatform::postNotification(const std::string & message){
+AndroidPlatform::postNotification(const std::string & title, const std::string & message){
 	messagePoster(4, message);
  }
 
