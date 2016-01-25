@@ -281,9 +281,9 @@ void
 AndroidPlatform::messagePoster(int message, const std::string title, const std::string text) {
 
 		jclass cls = env->FindClass("com/sometrik/framework/MyGLSurfaceView");
-		jmethodID methodRef = env->GetStaticMethodID(cls, "LeaveMessageToSurface", "(Lcom/sometrik/framework/MyGLSurfaceView;ILjava/lang/String;)V");
+		jmethodID methodRef = env->GetStaticMethodID(cls, "LeaveMessageToSurface", "(Lcom/sometrik/framework/MyGLSurfaceView;ILjava/lang/String;Ljava/lang/String;)V");
 
-		env->CallStaticVoidMethod(cls, methodRef, framework, message, env->NewStringUTF(text.c_str()), env->NewStringUTF(text.c_str()));
+		env->CallStaticVoidMethod(cls, methodRef, framework, message, env->NewStringUTF(title.c_str()), env->NewStringUTF(text.c_str()));
 	}
 
 void
