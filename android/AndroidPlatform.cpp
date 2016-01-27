@@ -146,10 +146,10 @@ AndroidPlatform::onInit(jobject surface) {
 
 		// AAssetManager* manager = AAssetManager_fromJava(env, mgr);
 
-	postNotification("Morty", "Don't even trip dawg");
+	//menuPressed();
 
 		canvas::AndroidContextFactory factory(env, mgr);
-		auto context = factory.createContext(400, 400, canvas::InternalFormat::RGB_DXT1);
+		auto context = factory.createContext(800, 800, canvas::InternalFormat::RGBA8);
 		context->globalAlpha = 1.0f;
 		context->font.size = 50;
 		context->textBaseline = "top";
@@ -160,7 +160,6 @@ AndroidPlatform::onInit(jobject surface) {
 		context->fillText("Olen Mikko osaan lukea ja kirjoittaa", 20, 100);
 
 		//showCanvas((dynamic_cast<canvas::AndroidSurface&>(*yoSurface)).getBitmap(), surface);
-		showCanvas((dynamic_cast<canvas::AndroidSurface&>(context->getDefaultSurface())).getBitmap(), surface, env);
 		//auto context = factory.createContext("picture.jpg");
 
 #if 0
@@ -189,22 +188,23 @@ AndroidPlatform::onInit(jobject surface) {
 		AndroidClientFactory clientFactory(env);
 		auto android = clientFactory.createClient("yo", false, false);
 
-		HTTPRequest requ = HTTPRequest(HTTPRequest::GET, "https://www.99analytics.com/test");
+		HTTPRequest requ = HTTPRequest(HTTPRequest::GET, "http://i.imgur.com/x37PajU.jpg");
 		requ.setFollowLocation(false);
 		Authorization autor = Authorization();
 		//auto resp = android->request(requ, autor);
-		//auto res = android->Get("http://i.imgur.com/0rxRc6i.jpg");
-		//if (res.isSuccess()) {
-			//auto surfaceee = factory.createSurface((unsigned char*)res.getContent().c_str(), res.getContent().size());
+		auto res = android->Get("http://i.imgur.com/2tfe9LS.jpg");
+		if (res.isSuccess()) {
+			auto surfaceee = factory.createSurface((unsigned char*)res.getContent().c_str(), res.getContent().size());
+			auto imigi = *surfaceee->createImage();
 			//context->drawImage(*surfaceee, 0, 0, 300, 300);
-		//}
+			context->drawImage(imigi, 0, 0, 300, 300);
+		}
+		showCanvas((dynamic_cast<canvas::AndroidSurface&>(context->getDefaultSurface())).getBitmap(), surface, env);
 	}
 
 void
 AndroidPlatform::createOptions() {
 
-		jclass cls = env->FindClass("com/sometrik/framework/MyGLSurfaceView");
-		jmethodID methodRef = env->GetStaticMethodID(cls, "createOptionsFromJNI", "(Lcom/sometrik/framework/MyGLSurfaceView;I[I[Ljava/lang/String;)V");
 
 		//Making an int array
 		jintArray intArray;
@@ -264,7 +264,15 @@ AndroidPlatform::createOptions() {
 			env->SetObjectArrayElement(stringArray, i, env->NewStringUTF(strings[i]));
 		}
 
-		env->CallStaticVoidMethod(cls, methodRef, *framework, 22, intArray, stringArray);
+		jclass cls = env->FindClass("com/sometrik/framework/MyGLSurfaceView");
+		jmethodID methodRef = env->GetStaticMethodID(cls, "createOptionsFromJNI", "(Lcom/sometrik/framework/MyGLSurfaceView;)V");
+
+		__android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "PIIIIP");
+		//showMessageBox("and this", "eyyy");
+
+		__android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "PIIIIP");
+		env->CallStaticVoidMethod(cls, methodRef, framework);
+		__android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "PIIIIP");
 
 	}
 
@@ -480,7 +488,7 @@ void Java_com_sometrik_framework_MyGLSurfaceView_settingsCreator(JNIEnv* env, jo
 }
 
 void Java_com_sometrik_framework_MyGLSurfaceView_menuPressed(JNIEnv* env, jobject thiz) {
-	platform->menuPressed();
+	platform->onInit(thiz);
 }
 
 void Java_com_sometrik_framework_MyGLSurfaceView_touchEvent(JNIEnv* env, jobject thiz, int mode, int fingerIndex, long time, float x, float y) {
@@ -501,7 +509,6 @@ void Java_com_sometrik_framework_MyGLRenderer_onInit(JNIEnv* env, jobject thiz, 
   	bool hasEs3 = false;
   	const char* glslVersion = hasEs3 ? "#version es 300" : "#version es 100";
   	platform = std::make_shared<AndroidPlatform>(env, assetManager, surface, displayScale, glslVersion, hasEs3);
-  	//AndroidPlatform(env, assetManager, &thiz, displayScale, glslVersion, hasEs3)->onInit();
   }
 	platform->onInit(surface);
 }
@@ -514,8 +521,6 @@ void Java_com_sometrik_framework_FrameWork_okPressed(JNIEnv* env, jobject thiz, 
 
 	jclass cls = env->FindClass("com/sometrik/framework/FrameWork");
 	jmethodID methodRef = env->GetMethodID(cls, "printText", "(Ljava/lang/String;)V");
-
-	//jstring name = (*env)->NewStringUTF(env, "Hello java");
 
 	env->CallVoidMethod(thiz, methodRef, text);
 
