@@ -7,8 +7,9 @@ class AndroidPlatform : FWPlatformBase {
 
 public:
    AndroidPlatform(JNIEnv * _env, jobject _mgr, jobject _framework, float _display_scale, const char * _glsl_version, bool _has_es3) :
-		FWPlatformBase(_display_scale, _glsl_version, _has_es3), env(_env), mgr(_mgr) {
+		FWPlatformBase(_display_scale, _glsl_version, _has_es3), env(_env) {
   	framework = env->NewGlobalRef(_framework);
+  	mgr = env->NewGlobalRef(_mgr);
 	}
 	~AndroidPlatform() {
 	}
