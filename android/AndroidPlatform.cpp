@@ -134,15 +134,13 @@ AndroidPlatform::createInputDialog(const char * _title, const char * _message, i
  void showCanvas(jobject canvasBitmap, jobject surface, JNIEnv * env) {
 
 		jclass cls = env->GetObjectClass(surface);
-
 		jmethodID methodRef = env->GetMethodID(cls, "setNativeCanvas", "(Landroid/graphics/Bitmap;)V");
-
 		env->CallVoidMethod(surface, methodRef, canvasBitmap);
 
 	}
 
 void
-AndroidPlatform::onInit(jobject surface) {
+AndroidPlatform::onInit() {
 
 		// AAssetManager* manager = AAssetManager_fromJava(env, mgr);
 
@@ -154,7 +152,8 @@ AndroidPlatform::onInit(jobject surface) {
 		context->font.size = 50;
 		context->textBaseline = "top";
 		context->textAlign = "left";
-		auto yoSurface = context->createSurface("picture.jpg");
+		//auto yoSurface = context->createSurface("picture.jpg");
+		auto yoSurface = context->createSurface(500,500, canvas::InternalFormat::RGBA8);
 		//context->shadowBlur = context->shadowOffsetX = context->shadowOffsetY = 5.0f;
 		//context->drawImage(*yoSurface, 120, 120, 400, 400);
 		context->fillText("Olen Mikko osaan lukea ja kirjoittaa", 20, 100);
@@ -185,6 +184,7 @@ AndroidPlatform::onInit(jobject surface) {
 				context->stroke();
 #endif
 				//showCanvas((dynamic_cast<canvas::AndroidSurface&>(context->getDefaultSurface())).getBitmap(), surface);
+#if 0
 		AndroidClientFactory clientFactory(env);
 		auto android = clientFactory.createClient("yo", false, false);
 
@@ -199,7 +199,8 @@ AndroidPlatform::onInit(jobject surface) {
 			//context->drawImage(*surfaceee, 0, 0, 300, 300);
 			context->drawImage(imigi, 0, 0, 300, 300);
 		}
-		showCanvas((dynamic_cast<canvas::AndroidSurface&>(context->getDefaultSurface())).getBitmap(), surface, env);
+#endif
+		showCanvas((dynamic_cast<canvas::AndroidSurface&>(context->getDefaultSurface())).getBitmap(), framework, env);
 	}
 
 void
@@ -265,14 +266,11 @@ AndroidPlatform::createOptions() {
 		}
 
 		jclass cls = env->FindClass("com/sometrik/framework/MyGLSurfaceView");
-		jmethodID methodRef = env->GetStaticMethodID(cls, "createOptionsFromJNI", "(Lcom/sometrik/framework/MyGLSurfaceView;)V");
+		jmethodID methodRef = env->GetStaticMethodID(cls, "createOptionsFromJNI", "(Lcom/sometrik/framework/MyGLSurfaceView;I[I[Ljava/lang/String;)V");
 
-		__android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "PIIIIP");
 		//showMessageBox("and this", "eyyy");
 
-		__android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "PIIIIP");
-		env->CallStaticVoidMethod(cls, methodRef, framework);
-		__android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "PIIIIP");
+		env->CallStaticVoidMethod(cls, methodRef, framework, 22, intArray, stringArray);
 
 	}
 
@@ -488,7 +486,7 @@ void Java_com_sometrik_framework_MyGLSurfaceView_settingsCreator(JNIEnv* env, jo
 }
 
 void Java_com_sometrik_framework_MyGLSurfaceView_menuPressed(JNIEnv* env, jobject thiz) {
-	platform->onInit(thiz);
+	platform->menuPressed();
 }
 
 void Java_com_sometrik_framework_MyGLSurfaceView_touchEvent(JNIEnv* env, jobject thiz, int mode, int fingerIndex, long time, float x, float y) {
@@ -510,7 +508,7 @@ void Java_com_sometrik_framework_MyGLRenderer_onInit(JNIEnv* env, jobject thiz, 
   	const char* glslVersion = hasEs3 ? "#version es 300" : "#version es 100";
   	platform = std::make_shared<AndroidPlatform>(env, assetManager, surface, displayScale, glslVersion, hasEs3);
   }
-	platform->onInit(surface);
+	platform->onInit();
 }
 
 void Java_com_sometrik_framework_MyGLRenderer_nativeOnDraw(JNIEnv* env, jobject thiz) {
