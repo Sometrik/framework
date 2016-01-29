@@ -54,7 +54,17 @@ AndroidPlatform::onResize(int width, int height) {
 void
 AndroidPlatform::menuPressed() {
 
-		createOptions();
+	jclass cls = env->FindClass("com/sometrik/framework/MyGLSurfaceView");
+	jmethodID methodRef = env->GetStaticMethodID(cls, "createOptionsFromJNI", "(Lcom/sometrik/framework/MyGLSurfaceView;I[Ljava/lang/String;)V");
+
+	char *strings[4] = { "first", "second", "third", "fourth" };
+
+	jobjectArray stringArray = (jobjectArray) env->NewObjectArray(4, env->FindClass("java/lang/String"), env->NewStringUTF(""));
+	for (int i = 0; i < 4; i++) {
+		env->SetObjectArrayElement(stringArray, i, env->NewStringUTF(strings[i]));
+	}
+
+		env->CallStaticVoidMethod(cls, methodRef, framework, 22, stringArray);
 
 	}
 bool
@@ -206,18 +216,6 @@ AndroidPlatform::onInit() {
 void
 AndroidPlatform::createOptions() {
 
-
-		//Making an int array
-		jintArray intArray;
-		intArray = env->NewIntArray(4);
-
-		jint fill[4];
-		fill[0] = 1;
-		fill[1] = 2;
-		fill[2] = 3;
-		fill[3] = 4;
-		env->SetIntArrayRegion(intArray, 0, 3, fill);
-
 #if 0
 		SettingsTree tree;
 		auto subtree1 = tree.createFolder("Eka alivalikko");
@@ -255,22 +253,6 @@ AndroidPlatform::createOptions() {
 		}
 #endif
 
-		//Making a string Array
-		jobjectArray stringArray;
-
-		const char *strings[4] = { "first", "second", "Social Accounts", "fourth" };
-		stringArray = (jobjectArray) env->NewObjectArray(4, env->FindClass("java/lang/String"), env->NewStringUTF(""));
-
-		for (int i = 0; i < 4; i++) {
-			env->SetObjectArrayElement(stringArray, i, env->NewStringUTF(strings[i]));
-		}
-
-		jclass cls = env->FindClass("com/sometrik/framework/MyGLSurfaceView");
-		jmethodID methodRef = env->GetStaticMethodID(cls, "createOptionsFromJNI", "(Lcom/sometrik/framework/MyGLSurfaceView;I[I[Ljava/lang/String;)V");
-
-		//showMessageBox("and this", "eyyy");
-
-		env->CallStaticVoidMethod(cls, methodRef, framework, 22, intArray, stringArray);
 
 	}
 
