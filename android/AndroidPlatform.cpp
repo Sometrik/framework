@@ -275,16 +275,20 @@ AndroidPlatform::messagePoster(int message, const std::string title, const std::
 	}
 
 void
-AndroidPlatform::settingsCreator(jobject thiz, jint menuId) {
+AndroidPlatform::settingsCreator(jobject settings, jint menuId) {
 
 		//Tähän jonkinlainen switchi id:n mukaan, minkälainen preferenssivalikko tehdään.
 		// preferenssi on tällä hetkellä mode, id, nimi ja niitä voi luoda settingsin listaan
 		//kutsumalla createMenuItem. Tällä hetkellä sitä kutsutaan, joka kerta kun asettaa uuden
 
+	jclass checkCls = env->FindClass("com/sometrik/framework/MyGLSurfaceView");
+	jmethodID methodReff = env->GetMethodID(checkCls , "checkSettings", "(Lcom/sometrik/framework/Settings;)V");
+
+	env->CallVoidMethod(framework, methodReff, settings);
+
 		jclass cls = env->FindClass("com/sometrik/framework/Settings");
 
 		jmethodID methodRef = env->GetMethodID(cls, "createMenuItem", "(IILjava/lang/String;)V");
-
 		jmethodID methodRef2 = env->GetMethodID(cls, "createMenuItem", "(Ljava/lang/String;ILjava/lang/String;)V");
 
 		jstring name = env->NewStringUTF("Hello java");
@@ -298,18 +302,20 @@ AndroidPlatform::settingsCreator(jobject thiz, jint menuId) {
 		jint mode = 0;
 		jint mode2 = 1;
 
-		env->CallVoidMethod(thiz, methodRef, mode, id, name);
-		env->CallVoidMethod(thiz, methodRef, mode2, id2, name2);
-		env->CallVoidMethod(thiz, methodRef2, media1, id2, name3);
-		env->CallVoidMethod(thiz, methodRef2, media2, id2, name3);
-		env->CallVoidMethod(thiz, methodRef2, media2, id2, name3);
-		env->CallVoidMethod(thiz, methodRef2, media3, id2, name3);
-		env->CallVoidMethod(thiz, methodRef2, media3, id2, name3);
-		env->CallVoidMethod(thiz, methodRef2, media3, id2, name3);
-		env->CallVoidMethod(thiz, methodRef2, media3, id2, name3);
-		env->CallVoidMethod(thiz, methodRef2, media3, id2, name3);
-		env->CallVoidMethod(thiz, methodRef2, media3, id2, name3);
-
+		//env->CallVoidMethod(framework, env->GetMethodID(env->GetObjectClass(framework), "settingsSkip", "(Lcom/sometrik/framework/Settings;)V"), settings);
+		env->CallVoidMethod(settings, methodRef, mode, id, name);
+		env->CallVoidMethod(settings, methodRef, mode2, id2, name2);
+	//	env->CallVoidMethod(settings, methodRef2, media1, id2, name3);
+#if 0
+		env->CallVoidMethod(settings, methodRef2, media2, id2, name3);
+		env->CallVoidMethod(settings, methodRef2, media2, id2, name3);
+		env->CallVoidMethod(settings, methodRef2, media3, id2, name3);
+		env->CallVoidMethod(settings, methodRef2, media3, id2, name3);
+		env->CallVoidMethod(settings, methodRef2, media3, id2, name3);
+		env->CallVoidMethod(settings, methodRef2, media3, id2, name3);
+		env->CallVoidMethod(settings, methodRef2, media3, id2, name3);
+		env->CallVoidMethod(settings, methodRef2, media3, id2, name3);
+#endif
 	}
 
 void
@@ -464,7 +470,8 @@ void Java_com_sometrik_framework_MyGLRenderer_onResize(JNIEnv* env, jobject thiz
 }
 
 void Java_com_sometrik_framework_MyGLSurfaceView_settingsCreator(JNIEnv* env, jobject thiz, jobject settings, jint id) {
-	platform->settingsCreator(settings, id);
+	jobject javaSettings = env->NewGlobalRef(settings);
+	platform->settingsCreator(javaSettings, id);
 }
 
 void Java_com_sometrik_framework_MyGLSurfaceView_menuPressed(JNIEnv* env, jobject thiz) {
