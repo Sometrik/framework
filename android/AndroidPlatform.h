@@ -26,7 +26,7 @@ public:
 
 	void createInputDialog(const char * _title, const char * _message, int params);
 
-	void onInit(jobject surface);
+	void onInit();
 
 	void createOptions();
 
