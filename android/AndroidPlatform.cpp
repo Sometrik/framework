@@ -156,6 +156,8 @@ AndroidPlatform::onInit() {
 
 	//menuPressed();
 
+	getLocalFilename("dbb", FWPlatformBase::FileType::NORMAL);
+
 		canvas::AndroidContextFactory factory(env, mgr);
 		auto context = factory.createContext(800, 800, canvas::InternalFormat::RGBA8);
 		context->globalAlpha = 1.0f;
@@ -216,6 +218,8 @@ AndroidPlatform::onInit() {
 void
 AndroidPlatform::createOptions() {
 
+
+
 #if 0
 		SettingsTree tree;
 		auto subtree1 = tree.createFolder("Eka alivalikko");
@@ -255,6 +259,22 @@ AndroidPlatform::createOptions() {
 
 
 	}
+
+std::string
+AndroidPlatform::getLocalFilename(const char * filename, FileType type) {
+
+	jstring path;
+	std::string result;
+	switch (type) {
+	case DATABASE:
+	case CACHE_DATABASE:
+		path = (jstring)env->CallObjectMethod(framework,
+				env->GetMethodID(env->GetObjectClass(framework), "getDBPath", "(Ljava/lang/String;)Ljava/lang/String;"), env->NewStringUTF(filename));
+		result = env->GetStringUTFChars(path, JNI_FALSE);
+		return result;
+	case NORMAL: return "";
+	}
+}
 
 void
 AndroidPlatform::messagePoster(int message, const std::string text) {
@@ -305,7 +325,11 @@ AndroidPlatform::settingsCreator(jobject settings, jint menuId) {
 		//env->CallVoidMethod(framework, env->GetMethodID(env->GetObjectClass(framework), "settingsSkip", "(Lcom/sometrik/framework/Settings;)V"), settings);
 		env->CallVoidMethod(settings, methodRef, mode, id, name);
 		env->CallVoidMethod(settings, methodRef, mode2, id2, name2);
-	//	env->CallVoidMethod(settings, methodRef2, media1, id2, name3);
+		env->CallVoidMethod(settings, methodRef, mode2, id2, name2);
+		env->CallVoidMethod(settings, methodRef, mode2, id2, name2);
+		env->CallVoidMethod(settings, methodRef, mode2, id2, name2);
+		env->CallVoidMethod(settings, methodRef, mode2, id2, name2);
+		env->CallVoidMethod(settings, methodRef, mode2, id2, name2);
 #if 0
 		env->CallVoidMethod(settings, methodRef2, media2, id2, name3);
 		env->CallVoidMethod(settings, methodRef2, media2, id2, name3);
