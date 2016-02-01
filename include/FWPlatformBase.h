@@ -32,7 +32,8 @@ class FWPlatformBase {
  public:
   enum FileType {
     NORMAL = 1,
-    DATABASE
+    DATABASE,
+		CACHE_DATABASE
   };
   
  FWPlatformBase(float _display_scale, const char * _glsl_version, bool _has_es3)
