@@ -156,8 +156,6 @@ AndroidPlatform::onInit() {
 
 	//menuPressed();
 
-	getLocalFilename("dbb", FWPlatformBase::FileType::NORMAL);
-
 		canvas::AndroidContextFactory factory(env, mgr);
 		auto context = factory.createContext(800, 800, canvas::InternalFormat::RGBA8);
 		context->globalAlpha = 1.0f;
@@ -275,6 +273,13 @@ AndroidPlatform::getLocalFilename(const char * filename, FileType type) {
 	case NORMAL: return "";
 	}
 }
+
+void
+AndroidPlatform::storeValue(const std::string & key, const std::string & value) {
+	env->CallVoidMethod(framework, env->GetMethodID(env->GetObjectClass(framework),
+			"addToPrefs", "(Ljava/lang/String;Ljava/lang/String;)V"), env->NewStringUTF(key.c_str()), env->NewStringUTF(value.c_str()));
+}
+
 
 void
 AndroidPlatform::messagePoster(int message, const std::string text) {
