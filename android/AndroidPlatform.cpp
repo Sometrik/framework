@@ -274,6 +274,15 @@ AndroidPlatform::getLocalFilename(const char * filename, FileType type) {
 	}
 }
 
+std::string
+AndroidPlatform::loadValue(const std::string & key){
+	jstring value = (jstring)env->CallObjectMethod(framework,
+			env->GetMethodID(env->GetObjectClass(framework), "getFromPrefs", "(Ljava/lang/String;)Ljava/lang/String;"), env->NewStringUTF(key.c_str()));
+	std::string result = env->GetStringUTFChars(value, JNI_FALSE);
+
+	return result;
+}
+
 void
 AndroidPlatform::storeValue(const std::string & key, const std::string & value) {
 	env->CallVoidMethod(framework, env->GetMethodID(env->GetObjectClass(framework),
