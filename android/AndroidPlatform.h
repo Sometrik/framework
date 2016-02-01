@@ -51,7 +51,7 @@ public:
   std::shared_ptr<HTTPClientFactory> createHTTPClientFactory() const override { return std::make_shared<AndroidClientFactory>(env); }
   void launchBrowser(const std::string & input_url) override;
   void storeValue(const std::string & key, const std::string & value) override;
-  std::string loadValue(const std::string & key) override { return ""; }
+  std::string loadValue(const std::string & key) override;
   int showActionSheet(const FWRect & rect, const FWActionSheet & sheet) override { }
 
 
