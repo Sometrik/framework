@@ -47,7 +47,8 @@ public:
   std::string getBundleFilename(const char * filename) override { return ""; }
   std::string getLocalFilename(const char * filename, FileType type) override {
   	switch (type) {
-  	case DATABASE: return "";
+  	case DATABASE:
+  	case CACHE_DATABASE: return "";
   	case NORMAL: return "";
   	}
  }
