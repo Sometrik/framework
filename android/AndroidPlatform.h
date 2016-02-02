@@ -7,8 +7,9 @@ class AndroidPlatform : FWPlatformBase {
 
 public:
    AndroidPlatform(JNIEnv * _env, jobject _mgr, jobject _framework, float _display_scale, const char * _glsl_version, bool _has_es3) :
-		FWPlatformBase(_display_scale, _glsl_version, _has_es3), env(_env), mgr(_mgr) {
+		FWPlatformBase(_display_scale, _glsl_version, _has_es3), env(_env) {
   	framework = env->NewGlobalRef(_framework);
+  	mgr = env->NewGlobalRef(_mgr);
 	}
 	~AndroidPlatform() {
 	}
@@ -25,14 +26,14 @@ public:
 
 	void createInputDialog(const char * _title, const char * _message, int params);
 
-	void onInit(jobject surface);
+	void onInit();
 
 	void createOptions();
 
 	void messagePoster(int message, const std::string text);
 	void messagePoster(int message, const std::string title, const std::string text);
 
-	void settingsCreator(jobject thiz, jint menuId);
+	void settingsCreator(jobject settings, jint menuId);
 
 	void playSound(jobject sound);
 
@@ -43,20 +44,15 @@ public:
 
   std::string showTextEntryDialog(const std::string & message) override;
   void postNotification(const std::string & title, const std::string & message) override;
-  std::string getBundleFilename(const char * filename) override { return ""; }
-  std::string getLocalFilename(const char * filename, FileType type) override {
-  	switch (type) {
-  	case DATABASE: return "";
-  	case NORMAL: return "";
-  	}
- }
+  std::string getBundleFilename(const char * filename) override;
+  std::string getLocalFilename(const char * filename, FileType type) override;
   double getTime() const override;
   std::shared_ptr<canvas::ContextFactory> createContextFactory() const override { return std::make_shared<canvas::AndroidContextFactory>(env, mgr); }
   std::shared_ptr<HTTPClientFactory> createHTTPClientFactory() const override { return std::make_shared<AndroidClientFactory>(env); }
   void launchBrowser(const std::string & input_url) override;
-  void storeValue(const std::string & key, const std::string & value) override { }
-  std::string loadValue(const std::string & key) override { return ""; }
-  int showActionSheet(const FWRect & rect, const FWActionSheet & sheet) override { }
+  void storeValue(const std::string & key, const std::string & value) override;
+  std::string loadValue(const std::string & key) override;
+  int showActionSheet(const FWRect & rect, const FWActionSheet & sheet) override;
 
 
 //protected:

@@ -54,14 +54,46 @@ AndroidPlatform::onResize(int width, int height) {
 void
 AndroidPlatform::menuPressed() {
 
-		createOptions();
+	//--------- creating actionSheet for debug
+	FWActionSheet debugSheet = FWActionSheet("This is title");
+	debugSheet.addOption(1, "Social Media");
+	debugSheet.addOption(2, "Application Settings");
+	debugSheet.addOption(3, "Login Settings");
+	//------------------------
 
+		showActionSheet(FWRect(), debugSheet);
+}
+
+int
+AndroidPlatform::showActionSheet(const FWRect & rect, const FWActionSheet & sheet){
+
+	//Initialize java int and string arrays
+	std::vector<FWOption> optionsVector = sheet.getOptions();
+	jobjectArray stringArray = (jobjectArray)env->NewObjectArray(optionsVector.size(), env->FindClass("java/lang/String"), env->NewStringUTF(""));
+	jintArray intArray = env->NewIntArray(optionsVector.size());
+	jint fill[optionsVector.size()];
+
+	//Set values to java arrays
+	for (int i = 0; i < optionsVector.size(); i++){
+		env->SetObjectArrayElement(stringArray, i, env->NewStringUTF(optionsVector[i].getText().c_str()));
+		fill[i] = optionsVector[i].getId();
 	}
+	env->SetIntArrayRegion(intArray, 0, optionsVector.size(), fill);
+
+	//Send values to java to create the action sheet
+	jclass cls = env->FindClass("com/sometrik/framework/MyGLSurfaceView");
+	jmethodID methodRef = env->GetStaticMethodID(cls, "createOptionsFromJNI", "(Lcom/sometrik/framework/MyGLSurfaceView;I[I[Ljava/lang/String;)V");
+	env->CallStaticVoidMethod(cls, methodRef, framework, 22, intArray, stringArray);
+
+	//Not returning anything
+	return 0;
+}
+
 bool
 AndroidPlatform::update() {
 
 		return false;
-	}
+}
 
 void
 AndroidPlatform::onDraw() {
@@ -134,33 +166,31 @@ AndroidPlatform::createInputDialog(const char * _title, const char * _message, i
  void showCanvas(jobject canvasBitmap, jobject surface, JNIEnv * env) {
 
 		jclass cls = env->GetObjectClass(surface);
-
 		jmethodID methodRef = env->GetMethodID(cls, "setNativeCanvas", "(Landroid/graphics/Bitmap;)V");
-
 		env->CallVoidMethod(surface, methodRef, canvasBitmap);
 
 	}
 
 void
-AndroidPlatform::onInit(jobject surface) {
+AndroidPlatform::onInit() {
 
 		// AAssetManager* manager = AAssetManager_fromJava(env, mgr);
 
-	postNotification("Morty", "Don't even trip dawg");
+	//menuPressed();
 
 		canvas::AndroidContextFactory factory(env, mgr);
-		auto context = factory.createContext(400, 400, canvas::InternalFormat::RGB_DXT1);
+		auto context = factory.createContext(800, 800, canvas::InternalFormat::RGBA8);
 		context->globalAlpha = 1.0f;
 		context->font.size = 50;
 		context->textBaseline = "top";
 		context->textAlign = "left";
-		auto yoSurface = context->createSurface("picture.jpg");
+		//auto yoSurface = context->createSurface("picture.jpg");
+		auto yoSurface = context->createSurface(500,500, canvas::InternalFormat::RGBA8);
 		//context->shadowBlur = context->shadowOffsetX = context->shadowOffsetY = 5.0f;
 		//context->drawImage(*yoSurface, 120, 120, 400, 400);
 		context->fillText("Olen Mikko osaan lukea ja kirjoittaa", 20, 100);
 
 		//showCanvas((dynamic_cast<canvas::AndroidSurface&>(*yoSurface)).getBitmap(), surface);
-		showCanvas((dynamic_cast<canvas::AndroidSurface&>(context->getDefaultSurface())).getBitmap(), surface, env);
 		//auto context = factory.createContext("picture.jpg");
 
 #if 0
@@ -186,36 +216,27 @@ AndroidPlatform::onInit(jobject surface) {
 				context->stroke();
 #endif
 				//showCanvas((dynamic_cast<canvas::AndroidSurface&>(context->getDefaultSurface())).getBitmap(), surface);
+#if 0
 		AndroidClientFactory clientFactory(env);
 		auto android = clientFactory.createClient("yo", false, false);
 
-		HTTPRequest requ = HTTPRequest(HTTPRequest::GET, "https://www.99analytics.com/test");
+		HTTPRequest requ = HTTPRequest(HTTPRequest::GET, "http://i.imgur.com/x37PajU.jpg");
 		requ.setFollowLocation(false);
 		Authorization autor = Authorization();
 		//auto resp = android->request(requ, autor);
-		//auto res = android->Get("http://i.imgur.com/0rxRc6i.jpg");
-		//if (res.isSuccess()) {
-			//auto surfaceee = factory.createSurface((unsigned char*)res.getContent().c_str(), res.getContent().size());
+		auto res = android->Get("http://i.imgur.com/2tfe9LS.jpg");
+		if (res.isSuccess()) {
+			auto surfaceee = factory.createSurface((unsigned char*)res.getContent().c_str(), res.getContent().size());
+			auto imigi = *surfaceee->createImage();
 			//context->drawImage(*surfaceee, 0, 0, 300, 300);
-		//}
+			context->drawImage(imigi, 0, 0, 300, 300);
+		}
+#endif
+		showCanvas((dynamic_cast<canvas::AndroidSurface&>(context->getDefaultSurface())).getBitmap(), framework, env);
 	}
 
 void
 AndroidPlatform::createOptions() {
-
-		jclass cls = env->FindClass("com/sometrik/framework/MyGLSurfaceView");
-		jmethodID methodRef = env->GetStaticMethodID(cls, "createOptionsFromJNI", "(Lcom/sometrik/framework/MyGLSurfaceView;I[I[Ljava/lang/String;)V");
-
-		//Making an int array
-		jintArray intArray;
-		intArray = env->NewIntArray(4);
-
-		jint fill[4];
-		fill[0] = 1;
-		fill[1] = 2;
-		fill[2] = 3;
-		fill[3] = 4;
-		env->SetIntArrayRegion(intArray, 0, 3, fill);
 
 #if 0
 		SettingsTree tree;
@@ -254,19 +275,50 @@ AndroidPlatform::createOptions() {
 		}
 #endif
 
-		//Making a string Array
-		jobjectArray stringArray;
-
-		const char *strings[4] = { "first", "second", "Social Accounts", "fourth" };
-		stringArray = (jobjectArray) env->NewObjectArray(4, env->FindClass("java/lang/String"), env->NewStringUTF(""));
-
-		for (int i = 0; i < 4; i++) {
-			env->SetObjectArrayElement(stringArray, i, env->NewStringUTF(strings[i]));
-		}
-
-		env->CallStaticVoidMethod(cls, methodRef, *framework, 22, intArray, stringArray);
 
 	}
+
+std::string
+AndroidPlatform::getBundleFilename(const char * filename){
+
+	jstring path = (jstring)env->CallObjectMethod(framework,
+			env->GetMethodID(env->GetObjectClass(framework), "getResourcePath", "(Ljava/lang/String;)Ljava/lang/String;"), env->NewStringUTF(filename));
+	std::string result = env->GetStringUTFChars(path, JNI_FALSE);
+
+	return result;
+}
+
+std::string
+AndroidPlatform::getLocalFilename(const char * filename, FileType type) {
+
+	jstring path;
+	std::string result;
+	switch (type) {
+	case DATABASE:
+	case CACHE_DATABASE:
+		path = (jstring)env->CallObjectMethod(framework,
+				env->GetMethodID(env->GetObjectClass(framework), "getDBPath", "(Ljava/lang/String;)Ljava/lang/String;"), env->NewStringUTF(filename));
+		result = env->GetStringUTFChars(path, JNI_FALSE);
+		return result;
+	case NORMAL: return "";
+	}
+}
+
+std::string
+AndroidPlatform::loadValue(const std::string & key){
+	jstring value = (jstring)env->CallObjectMethod(framework,
+			env->GetMethodID(env->GetObjectClass(framework), "getFromPrefs", "(Ljava/lang/String;)Ljava/lang/String;"), env->NewStringUTF(key.c_str()));
+	std::string result = env->GetStringUTFChars(value, JNI_FALSE);
+
+	return result;
+}
+
+void
+AndroidPlatform::storeValue(const std::string & key, const std::string & value) {
+	env->CallVoidMethod(framework, env->GetMethodID(env->GetObjectClass(framework),
+			"addToPrefs", "(Ljava/lang/String;Ljava/lang/String;)V"), env->NewStringUTF(key.c_str()), env->NewStringUTF(value.c_str()));
+}
+
 
 void
 AndroidPlatform::messagePoster(int message, const std::string text) {
@@ -287,16 +339,20 @@ AndroidPlatform::messagePoster(int message, const std::string title, const std::
 	}
 
 void
-AndroidPlatform::settingsCreator(jobject thiz, jint menuId) {
+AndroidPlatform::settingsCreator(jobject settings, jint menuId) {
 
 		//Tähän jonkinlainen switchi id:n mukaan, minkälainen preferenssivalikko tehdään.
 		// preferenssi on tällä hetkellä mode, id, nimi ja niitä voi luoda settingsin listaan
 		//kutsumalla createMenuItem. Tällä hetkellä sitä kutsutaan, joka kerta kun asettaa uuden
 
+	jclass checkCls = env->FindClass("com/sometrik/framework/MyGLSurfaceView");
+	jmethodID methodReff = env->GetMethodID(checkCls , "checkSettings", "(Lcom/sometrik/framework/Settings;)V");
+
+	env->CallVoidMethod(framework, methodReff, settings);
+
 		jclass cls = env->FindClass("com/sometrik/framework/Settings");
 
 		jmethodID methodRef = env->GetMethodID(cls, "createMenuItem", "(IILjava/lang/String;)V");
-
 		jmethodID methodRef2 = env->GetMethodID(cls, "createMenuItem", "(Ljava/lang/String;ILjava/lang/String;)V");
 
 		jstring name = env->NewStringUTF("Hello java");
@@ -310,18 +366,24 @@ AndroidPlatform::settingsCreator(jobject thiz, jint menuId) {
 		jint mode = 0;
 		jint mode2 = 1;
 
-		env->CallVoidMethod(thiz, methodRef, mode, id, name);
-		env->CallVoidMethod(thiz, methodRef, mode2, id2, name2);
-		env->CallVoidMethod(thiz, methodRef2, media1, id2, name3);
-		env->CallVoidMethod(thiz, methodRef2, media2, id2, name3);
-		env->CallVoidMethod(thiz, methodRef2, media2, id2, name3);
-		env->CallVoidMethod(thiz, methodRef2, media3, id2, name3);
-		env->CallVoidMethod(thiz, methodRef2, media3, id2, name3);
-		env->CallVoidMethod(thiz, methodRef2, media3, id2, name3);
-		env->CallVoidMethod(thiz, methodRef2, media3, id2, name3);
-		env->CallVoidMethod(thiz, methodRef2, media3, id2, name3);
-		env->CallVoidMethod(thiz, methodRef2, media3, id2, name3);
-
+		//env->CallVoidMethod(framework, env->GetMethodID(env->GetObjectClass(framework), "settingsSkip", "(Lcom/sometrik/framework/Settings;)V"), settings);
+		env->CallVoidMethod(settings, methodRef, mode, id, name);
+		env->CallVoidMethod(settings, methodRef, mode2, id2, name2);
+		env->CallVoidMethod(settings, methodRef, mode2, id2, name2);
+		env->CallVoidMethod(settings, methodRef, mode2, id2, name2);
+		env->CallVoidMethod(settings, methodRef, mode2, id2, name2);
+		env->CallVoidMethod(settings, methodRef, mode2, id2, name2);
+		env->CallVoidMethod(settings, methodRef, mode2, id2, name2);
+#if 0
+		env->CallVoidMethod(settings, methodRef2, media2, id2, name3);
+		env->CallVoidMethod(settings, methodRef2, media2, id2, name3);
+		env->CallVoidMethod(settings, methodRef2, media3, id2, name3);
+		env->CallVoidMethod(settings, methodRef2, media3, id2, name3);
+		env->CallVoidMethod(settings, methodRef2, media3, id2, name3);
+		env->CallVoidMethod(settings, methodRef2, media3, id2, name3);
+		env->CallVoidMethod(settings, methodRef2, media3, id2, name3);
+		env->CallVoidMethod(settings, methodRef2, media3, id2, name3);
+#endif
 	}
 
 void
@@ -335,7 +397,7 @@ AndroidPlatform::getTime() const{
 
 	jclass frameClass = env->GetObjectClass(framework);
 	double currentTime = env->CallStaticDoubleMethod(frameClass, env->GetStaticMethodID(frameClass, "getTime", "()D"));
-	__android_log_print(ANDROID_LOG_INFO, "Sometrik", "dubbeli = %d", currentTime);
+	__android_log_print(ANDROID_LOG_INFO, "Sometrik", "currentTime = %d", currentTime);
 
 	return currentTime;
 }
@@ -476,7 +538,8 @@ void Java_com_sometrik_framework_MyGLRenderer_onResize(JNIEnv* env, jobject thiz
 }
 
 void Java_com_sometrik_framework_MyGLSurfaceView_settingsCreator(JNIEnv* env, jobject thiz, jobject settings, jint id) {
-	platform->settingsCreator(settings, id);
+	jobject javaSettings = env->NewGlobalRef(settings);
+	platform->settingsCreator(javaSettings, id);
 }
 
 void Java_com_sometrik_framework_MyGLSurfaceView_menuPressed(JNIEnv* env, jobject thiz) {
@@ -501,9 +564,8 @@ void Java_com_sometrik_framework_MyGLRenderer_onInit(JNIEnv* env, jobject thiz, 
   	bool hasEs3 = false;
   	const char* glslVersion = hasEs3 ? "#version es 300" : "#version es 100";
   	platform = std::make_shared<AndroidPlatform>(env, assetManager, surface, displayScale, glslVersion, hasEs3);
-  	//AndroidPlatform(env, assetManager, &thiz, displayScale, glslVersion, hasEs3)->onInit();
   }
-	platform->onInit(surface);
+	platform->onInit();
 }
 
 void Java_com_sometrik_framework_MyGLRenderer_nativeOnDraw(JNIEnv* env, jobject thiz) {
@@ -514,8 +576,6 @@ void Java_com_sometrik_framework_FrameWork_okPressed(JNIEnv* env, jobject thiz, 
 
 	jclass cls = env->FindClass("com/sometrik/framework/FrameWork");
 	jmethodID methodRef = env->GetMethodID(cls, "printText", "(Ljava/lang/String;)V");
-
-	//jstring name = (*env)->NewStringUTF(env, "Hello java");
 
 	env->CallVoidMethod(thiz, methodRef, text);
 
