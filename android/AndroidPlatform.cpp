@@ -154,7 +154,7 @@ AndroidPlatform::onInit() {
 
 		// AAssetManager* manager = AAssetManager_fromJava(env, mgr);
 
-	//menuPressed();
+	getBundleFilename("picture");
 
 		canvas::AndroidContextFactory factory(env, mgr);
 		auto context = factory.createContext(800, 800, canvas::InternalFormat::RGBA8);
@@ -257,6 +257,16 @@ AndroidPlatform::createOptions() {
 
 
 	}
+
+std::string
+AndroidPlatform::getBundleFilename(const char * filename){
+
+	jstring path = (jstring)env->CallObjectMethod(framework,
+			env->GetMethodID(env->GetObjectClass(framework), "getResourcePath", "(Ljava/lang/String;)Ljava/lang/String;"), env->NewStringUTF(filename));
+	std::string result = env->GetStringUTFChars(path, JNI_FALSE);
+
+	return result;
+}
 
 std::string
 AndroidPlatform::getLocalFilename(const char * filename, FileType type) {
