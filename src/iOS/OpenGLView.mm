@@ -88,7 +88,7 @@ public:
       // release stuff
       return filename2;
     }
-   std::string getLocalFilename(const char * filename) {
+   std::string getLocalFilename(const char * filename, FileType type) {
       NSString* fileNameNS = [NSString stringWithUTF8String:filename];
       NSString *docsDir;
       NSArray *dirPaths;    
