@@ -54,24 +54,46 @@ AndroidPlatform::onResize(int width, int height) {
 void
 AndroidPlatform::menuPressed() {
 
+	//--------- creating actionSheet for debug
+	FWActionSheet debugSheet = FWActionSheet("This is title");
+	debugSheet.addOption(1, "Social Media");
+	debugSheet.addOption(2, "Application Settings");
+	debugSheet.addOption(3, "Login Settings");
+	//------------------------
+
+		showActionSheet(FWRect(), debugSheet);
+}
+
+int
+AndroidPlatform::showActionSheet(const FWRect & rect, const FWActionSheet & sheet){
+
+	//Initialize java int and string arrays
+	std::vector<FWOption> optionsVector = sheet.getOptions();
+	jobjectArray stringArray = (jobjectArray)env->NewObjectArray(optionsVector.size(), env->FindClass("java/lang/String"), env->NewStringUTF(""));
+	jintArray intArray = env->NewIntArray(optionsVector.size());
+	jint fill[optionsVector.size()];
+
+	//Set values to java arrays
+	for (int i = 0; i < optionsVector.size(); i++){
+		env->SetObjectArrayElement(stringArray, i, env->NewStringUTF(optionsVector[i].getText().c_str()));
+		fill[i] = optionsVector[i].getId();
+	}
+	env->SetIntArrayRegion(intArray, 0, optionsVector.size(), fill);
+
+	//Send values to java to create the action sheet
 	jclass cls = env->FindClass("com/sometrik/framework/MyGLSurfaceView");
-	jmethodID methodRef = env->GetStaticMethodID(cls, "createOptionsFromJNI", "(Lcom/sometrik/framework/MyGLSurfaceView;I[Ljava/lang/String;)V");
+	jmethodID methodRef = env->GetStaticMethodID(cls, "createOptionsFromJNI", "(Lcom/sometrik/framework/MyGLSurfaceView;I[I[Ljava/lang/String;)V");
+	env->CallStaticVoidMethod(cls, methodRef, framework, 22, intArray, stringArray);
 
-	char *strings[4] = { "first", "second", "third", "fourth" };
+	//Not returning anything
+	return 0;
+}
 
-	jobjectArray stringArray = (jobjectArray) env->NewObjectArray(4, env->FindClass("java/lang/String"), env->NewStringUTF(""));
-	for (int i = 0; i < 4; i++) {
-		env->SetObjectArrayElement(stringArray, i, env->NewStringUTF(strings[i]));
-	}
-
-		env->CallStaticVoidMethod(cls, methodRef, framework, 22, stringArray);
-
-	}
 bool
 AndroidPlatform::update() {
 
 		return false;
-	}
+}
 
 void
 AndroidPlatform::onDraw() {
@@ -154,7 +176,7 @@ AndroidPlatform::onInit() {
 
 		// AAssetManager* manager = AAssetManager_fromJava(env, mgr);
 
-	getBundleFilename("picture");
+	//menuPressed();
 
 		canvas::AndroidContextFactory factory(env, mgr);
 		auto context = factory.createContext(800, 800, canvas::InternalFormat::RGBA8);
@@ -215,8 +237,6 @@ AndroidPlatform::onInit() {
 
 void
 AndroidPlatform::createOptions() {
-
-
 
 #if 0
 		SettingsTree tree;
@@ -377,7 +397,7 @@ AndroidPlatform::getTime() const{
 
 	jclass frameClass = env->GetObjectClass(framework);
 	double currentTime = env->CallStaticDoubleMethod(frameClass, env->GetStaticMethodID(frameClass, "getTime", "()D"));
-	__android_log_print(ANDROID_LOG_INFO, "Sometrik", "dubbeli = %d", currentTime);
+	__android_log_print(ANDROID_LOG_INFO, "Sometrik", "currentTime = %d", currentTime);
 
 	return currentTime;
 }
