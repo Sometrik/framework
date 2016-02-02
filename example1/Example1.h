@@ -14,19 +14,13 @@
 #include <AndroidPlatform.h>
 #include <FWContextBase.h>
 
-class Example1 : FWContextBase {
-
+class Example1 : public FWContextBase {
 public:
-	Example1(JNIEnv * _env, jobject _mgr, jobject _framework, float _display_scale, const char * _glsl_version, bool _has_es3) :
-		FWContextBase(AndroidPlatform(_env, _mgr, _framework, _display_scale, _glsl_version, _has_es3)){ }
+ Example1(AndroidPlatform * _platform) : FWContextBase(_platform) { }
 
-
-   bool Init() { }
-   void onDraw() { }
-   void onShutdown() { }
-
-
-private:
-   int logical_width = 0, logical_height = 0, actual_width = 0, actual_height = 0;
-
+  bool Init() { }
+  void onDraw() { }
+  void onShutdown() { }
+  
+ private:
 };
