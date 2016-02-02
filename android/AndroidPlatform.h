@@ -44,7 +44,7 @@ public:
 
   std::string showTextEntryDialog(const std::string & message) override;
   void postNotification(const std::string & title, const std::string & message) override;
-  std::string getBundleFilename(const char * filename) override { return ""; }
+  std::string getBundleFilename(const char * filename) override;
   std::string getLocalFilename(const char * filename, FileType type) override;
   double getTime() const override;
   std::shared_ptr<canvas::ContextFactory> createContextFactory() const override { return std::make_shared<canvas::AndroidContextFactory>(env, mgr); }
