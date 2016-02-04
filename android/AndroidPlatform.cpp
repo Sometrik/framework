@@ -17,8 +17,8 @@
 #include <android/bitmap.h>
 #include <ContextAndroid.h>
 #include <AndroidClient.h>
-#include <AndroidPlatform.h>
 #include <shader_program.h>
+#include <example1.h>
 
 #define TAG "CubeWallpaper1.c"
 
@@ -564,6 +564,7 @@ void Java_com_sometrik_framework_MyGLRenderer_onInit(JNIEnv* env, jobject thiz, 
   	bool hasEs3 = false;
   	const char* glslVersion = hasEs3 ? "#version es 300" : "#version es 100";
   	platform = std::make_shared<AndroidPlatform>(env, assetManager, surface, displayScale, glslVersion, hasEs3);
+  	std::shared_ptr<Example1> app = std::make_shared<Example1>(platform.get());
   }
 	platform->onInit();
 }
