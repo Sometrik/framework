@@ -4,6 +4,7 @@
  */
 
 #include <FWContextBase.h>
+#include <AndroidPlatform.h>
 
 class Example1 : public FWContextBase {
 public:
