@@ -8,11 +8,12 @@
 
 class Example1 : public FWContextBase {
 public:
- Example1(AndroidPlatform * _platform) : FWContextBase(_platform) { }
-  
+	Example1(AndroidPlatform * _platform) : FWContextBase(_platform), platform(_platform) { }
+
   bool Init();
   void onDraw();
   void onShutdown();
   
  private:
+  AndroidPlatform * platform;
 };
