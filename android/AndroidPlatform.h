@@ -3,7 +3,7 @@
 #include <AndroidClient.h>
 class shader_program;
 
-class AndroidPlatform : FWPlatformBase {
+class AndroidPlatform : public FWPlatformBase {
 
 public:
    AndroidPlatform(JNIEnv * _env, jobject _mgr, jobject _framework, float _display_scale, const char * _glsl_version, bool _has_es3) :
