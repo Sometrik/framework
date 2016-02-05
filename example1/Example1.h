@@ -4,16 +4,16 @@
  */
 
 #include <FWContextBase.h>
-#include <AndroidPlatform.h>
+#include <FWPlatformBase.h>
 
 class Example1 : public FWContextBase {
 public:
-	Example1(AndroidPlatform * _platform) : FWContextBase(_platform), platform(_platform) { }
+	Example1(FWPlatformBase * _platform) : FWContextBase(_platform), platform(_platform) { }
 
   bool Init();
   void onDraw();
   void onShutdown();
   
  private:
-  AndroidPlatform * platform;
+  FWPlatformBase * platform;
 };
