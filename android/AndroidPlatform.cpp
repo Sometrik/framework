@@ -233,6 +233,7 @@ AndroidPlatform::onInit() {
 		}
 #endif
 		showCanvas((dynamic_cast<canvas::AndroidSurface&>(context->getDefaultSurface())).getBitmap(), framework, env);
+		application->Init();
 	}
 
 void
