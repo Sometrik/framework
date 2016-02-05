@@ -564,7 +564,8 @@ void Java_com_sometrik_framework_MyGLRenderer_onInit(JNIEnv* env, jobject thiz, 
   	bool hasEs3 = false;
   	const char* glslVersion = hasEs3 ? "#version es 300" : "#version es 100";
   	platform = std::make_shared<AndroidPlatform>(env, assetManager, surface, displayScale, glslVersion, hasEs3);
-  	std::shared_ptr<Example1> app = std::make_shared<Example1>(platform.get());
+  	std::shared_ptr<Example1> application = std::make_shared<Example1>(platform.get());
+  	platform->setApplication(application.get());
   }
 	platform->onInit();
 }
