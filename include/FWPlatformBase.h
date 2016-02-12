@@ -17,6 +17,9 @@
 #include <string>
 #include <memory>
 
+//#include <FWContextBase.h>
+//#include <context.h>
+
 class FWContextBase;
 
 namespace canvas {
@@ -60,6 +63,9 @@ class FWPlatformBase {
   virtual void createFBO(int flags) { }
   
   std::string getBundleFilename(const std::string & filename) { return getBundleFilename(filename.c_str()); }
+
+  void setApplication(FWContextBase * _application) {application = _application;}
+  FWContextBase& getApplication() { return *application; }
   
   float getDisplayScale() const { return display_scale; }
   bool hasES3() const { return has_es3; }
@@ -69,6 +75,7 @@ class FWPlatformBase {
   float display_scale;
   std::string glsl_version;
   bool has_es3 = false;
+  FWContextBase * application;
     
 #if !defined __APPLE__ && !defined _WIN32
   // Display handle
