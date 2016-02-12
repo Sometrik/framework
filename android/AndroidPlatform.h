@@ -54,7 +54,6 @@ public:
   std::string loadValue(const std::string & key) override;
   int showActionSheet(const FWRect & rect, const FWActionSheet & sheet) override;
 
-  void setApplication(FWContextBase * _application) {application = _application;}
 
 //protected:
 	//void showCanvas(jobject canvasBitmap, jobject surface);
