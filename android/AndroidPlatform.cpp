@@ -17,8 +17,9 @@
 #include <android/bitmap.h>
 #include <ContextAndroid.h>
 #include <AndroidClient.h>
+#include <AndroidPlatform.h>
 #include <shader_program.h>
-#include <example1.h>
+#include <FWContextBase.h>
 
 #define TAG "CubeWallpaper1.c"
 
@@ -30,7 +31,7 @@ float touchY = 200.0f;
 int screenWidth = 100;
 int screenHeight = 100;
 
-static jclass myClass;
+extern void applicationMain(FWPlatformBase * platform);
 
 bool
 AndroidPlatform::onTouchesEvent(jobject * _obj, int mode, int fingerIndex, long time, float x, float y) {
@@ -190,6 +191,9 @@ AndroidPlatform::onInit() {
 		//context->drawImage(*yoSurface, 120, 120, 400, 400);
 		context->fillText("Olen Mikko osaan lukea ja kirjoittaa", 20, 100);
 
+		if (env->ExceptionCheck()) {
+			__android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "ERROR FINDER PuioP");
+		}
 		//showCanvas((dynamic_cast<canvas::AndroidSurface&>(*yoSurface)).getBitmap(), surface);
 		//auto context = factory.createContext("picture.jpg");
 
@@ -233,7 +237,8 @@ AndroidPlatform::onInit() {
 		}
 #endif
 		showCanvas((dynamic_cast<canvas::AndroidSurface&>(context->getDefaultSurface())).getBitmap(), framework, env);
-		application->Init();
+		//application->Init();
+		getApplication().Init();
 	}
 
 void
@@ -544,6 +549,7 @@ void Java_com_sometrik_framework_MyGLSurfaceView_settingsCreator(JNIEnv* env, jo
 }
 
 void Java_com_sometrik_framework_MyGLSurfaceView_menuPressed(JNIEnv* env, jobject thiz) {
+	__android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "menu pressed: env = %p", env);
 	platform->menuPressed();
 }
 
@@ -560,14 +566,14 @@ jboolean Java_com_sometrik_framework_MyGLSurfaceView_update(JNIEnv* env, jobject
 }
 
 void Java_com_sometrik_framework_MyGLRenderer_onInit(JNIEnv* env, jobject thiz, jobject assetManager, jobject surface) {
-  if (!platform.get()) {
+	if (!platform.get()) {
+  	__android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Creating Platform");
   	float displayScale = 1.0f;
   	bool hasEs3 = false;
   	const char* glslVersion = hasEs3 ? "#version es 300" : "#version es 100";
   	platform = std::make_shared<AndroidPlatform>(env, assetManager, surface, displayScale, glslVersion, hasEs3);
-  	std::shared_ptr<Example1> application = std::make_shared<Example1>(platform.get());
-  	platform->setApplication(application.get());
   }
+	applicationMain(platform.get());
 	platform->onInit();
 }
 
