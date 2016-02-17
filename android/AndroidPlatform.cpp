@@ -164,11 +164,12 @@ AndroidPlatform::createInputDialog(const char * _title, const char * _message, i
 
 	static program * test_program;
 
- void showCanvas(jobject canvasBitmap, jobject surface, JNIEnv * env) {
+void
+AndroidPlatform::showCanvas(canvas::ContextAndroid & context) {
 
-		jclass cls = env->GetObjectClass(surface);
+		jclass cls = env->GetObjectClass(framework);
 		jmethodID methodRef = env->GetMethodID(cls, "setNativeCanvas", "(Landroid/graphics/Bitmap;)V");
-		env->CallVoidMethod(surface, methodRef, canvasBitmap);
+		env->CallVoidMethod(framework, methodRef, dynamic_cast<canvas::AndroidSurface&>(context.getDefaultSurface()).getBitmap());
 
 	}
 
@@ -239,7 +240,7 @@ AndroidPlatform::onInit() {
 //			context->drawImage(imigi, 0, 0, 300, 300);
 //		}
 
-		showCanvas((dynamic_cast<canvas::AndroidSurface&>(context->getDefaultSurface())).getBitmap(), framework, env);
+//		showCanvas((dynamic_cast<canvas::AndroidSurface&>(context->getDefaultSurface())).getBitmap(), framework, env);
 		//application->Init();
 		getApplication().Init();
 	}
