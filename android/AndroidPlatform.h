@@ -53,10 +53,7 @@ public:
   void storeValue(const std::string & key, const std::string & value) override;
   std::string loadValue(const std::string & key) override;
   int showActionSheet(const FWRect & rect, const FWActionSheet & sheet) override;
-
-
-//protected:
-	//void showCanvas(jobject canvasBitmap, jobject surface);
+	void showCanvas(canvas::ContextAndroid & context);
 
 private:
 	FWContextBase * application;
