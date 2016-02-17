@@ -167,6 +167,7 @@ AndroidPlatform::createInputDialog(const char * _title, const char * _message, i
 void
 AndroidPlatform::showCanvas(canvas::ContextAndroid & context) {
 
+	__android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "showCanvas called");
 		jclass cls = env->GetObjectClass(framework);
 		jmethodID methodRef = env->GetMethodID(cls, "setNativeCanvas", "(Landroid/graphics/Bitmap;)V");
 		env->CallVoidMethod(framework, methodRef, dynamic_cast<canvas::AndroidSurface&>(context.getDefaultSurface()).getBitmap());
