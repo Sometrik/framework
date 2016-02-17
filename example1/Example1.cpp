@@ -6,6 +6,9 @@
 #include <iostream>
 #include <glm/gtc/matrix_transform.hpp>
 #include <shader_program.h>
+#include <Context.h>
+#include <AndroidPlatform.h>
+#include <ContextAndroid.h>
 
 using namespace std;
 
