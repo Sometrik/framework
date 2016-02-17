@@ -14,6 +14,20 @@ using namespace std;
 
 bool
 Example1::Init() {
+
+	auto contextF = platform->createContextFactory();
+	auto context = contextF->createContext(800, 800, canvas::InternalFormat::RGBA8, true);
+
+
+		context->globalAlpha = 1.0f;
+		context->font.size = 50;
+		context->textBaseline = "top";
+	context->strokeText("Olen Mikko osaan lukea ja kirjoittaa", 20, 100);
+
+	auto yoSurface = context->createSurface("picture.jpg");
+	context->drawImage(*yoSurface, 120, 120, 400, 400);
+
+	dynamic_cast<AndroidPlatform*>(platform)->showCanvas(dynamic_cast<canvas::ContextAndroid&>(*context));
 }
 
 void
