@@ -15,7 +15,7 @@ using namespace std;
 bool
 Example1::Init() {
 
-	auto contextF = platform->createContextFactory();
+  auto contextF = getPlatform().createContextFactory();
 	auto context = contextF->createContext(800, 800, canvas::InternalFormat::RGBA8, true);
 
 
@@ -27,7 +27,7 @@ Example1::Init() {
 	auto yoSurface = context->createSurface("picture.jpg");
 	context->drawImage(*yoSurface, 120, 120, 400, 400);
 
-	dynamic_cast<AndroidPlatform*>(platform)->showCanvas(dynamic_cast<canvas::ContextAndroid&>(*context));
+	dynamic_cast<AndroidPlatform&>(getPlatform()).showCanvas(dynamic_cast<canvas::ContextAndroid&>(*context));
 }
 
 void

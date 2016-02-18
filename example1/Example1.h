@@ -8,12 +8,9 @@
 
 class Example1 : public FWContextBase {
 public:
-	Example1(FWPlatformBase * _platform) : FWContextBase(_platform), platform(_platform) { }
+	Example1(FWPlatformBase * _platform) : FWContextBase(_platform) { }
 
   bool Init();
   void onDraw();
-  void onShutdown();
-  
- private:
-  FWPlatformBase * platform;
+  void onShutdown();  
 };
