@@ -37,8 +37,6 @@ public class FrameWork extends Activity {
   // action Sheet näkymä tiettyyn kohtaan
   // Setting objektit (ESActionSheet) C - puolella, muista, että menee myös ios
 
-  // Blogitekstien louhinta rss.feed
-
   MyGLSurfaceView mGLView;
   RelativeLayout mainView;
   SharedPreferences prefs;
