@@ -1,6 +1,8 @@
 #ifndef _SHADER_PROGRAM_H_
 #define _SHADER_PROGRAM_H_
 
+#include "GL.h"
+
 #include <glm/glm.hpp>
 #include <string>
 #include <set>
