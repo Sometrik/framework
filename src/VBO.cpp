@@ -73,6 +73,11 @@ VBO::bind() {
       glVertexAttribPointer(0, 4, GL_UNSIGNED_BYTE, GL_TRUE, getStride(), (void *)(0 * sizeof(float)));
       glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, getStride(), (void *)(1 * sizeof(float)));
       break;
+    case ARCS_3D:
+      glVertexAttribPointer(0, 4, GL_UNSIGNED_BYTE, GL_TRUE, getStride(), (void *)(0 * sizeof(float)));
+      glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, getStride(), (void *)(1 * sizeof(float)));
+      glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, getStride(), (void *)(4 * sizeof(float)));
+      break;
     }  
   }
 
@@ -108,6 +113,7 @@ VBO::upload(DataType type, const void * ptr, size_t size) {
   case VBO::BILLBOARDS: stride = 5 * sizeof(float); break;
   case VBO::EDGES: stride = sizeof(line_data_s); break;
   case VBO::ARCS_2D: stride = sizeof(arc_data_2d_s); break;
+  case VBO::ARCS_3D: stride = sizeof(arc_data_3d_s); break;
   }
   assert(sizeof(line_data_s) == 6 * 4);
   

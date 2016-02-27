@@ -46,6 +46,11 @@ struct arc_data_2d_s {
   glm::vec2 position;
 };
 
+struct arc_data_3d_s {
+  unsigned char r, g, b, a;
+  glm::vec3 position, normal;
+};
+
 struct node_vbo_s {
   unsigned char r, g, b, a; // 0
   glm::uint32 normal; // 4
@@ -56,7 +61,7 @@ struct node_vbo_s {
 
 class VBO {
  public:
-  enum DataType { C4F_N3F_V3F, T2F_N3F_V3F, T2F_C4F_N3F_V3F, NODES, BILLBOARDS, EDGES, ARCS_2D };
+  enum DataType { C4F_N3F_V3F, T2F_N3F_V3F, T2F_C4F_N3F_V3F, NODES, BILLBOARDS, EDGES, ARCS_2D, ARCS_3D };
   enum DrawType { NONE = 0, POINTS, LINES, TRIANGLES, TRIANGLE_STRIP, TRIANGLE_FAN };
 
   VBO() { }
