@@ -1,5 +1,7 @@
 #import "AppDelegate.h"
 
+#include "ViewController.h"
+
 @implementation AppDelegate
 
 #if 0
@@ -37,7 +39,7 @@
 
   window = [[UIWindow alloc] initWithFrame: screenBounds];
   view = [[OpenGLView alloc] initWithFrame: screenBounds];
-  controller = [[UIViewController alloc] init];
+  controller = [[ViewController alloc] init];
   controller.view = view;
   //  [window addSubview: view];
   [window setRootViewController:controller];
