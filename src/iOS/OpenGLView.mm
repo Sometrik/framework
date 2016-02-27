@@ -48,21 +48,21 @@ public:
       defaults = [NSUserDefaults standardUserDefaults];
     }
     
-    bool createWindow(FWContextBase * context, const char * title) {
+    bool createWindow(FWContextBase * context, const char * title) override {
         return true;
     }
-    void createFBO(int flags) { 
+    void createFBO(int flags) override {
       [controller createFBO: flags];
     }
-    void showMessageBox(const std::string & message) {
+    void showMessageBox(const std::string & title, const std::string & message) override {
       has_active_modal = true;
       has_active_modal = false;
     }
-    void postNotification(const std::string & message) {
+    void postNotification(const std::string & title, const std::string & message) override {
       NSString* message2 = [NSString stringWithUTF8String:message.c_str()];
 //      [[NSNotificationCenter defaultCenter] postNotificationName:message2 object:self];
     }
-    std::string showTextEntryDialog(const std::string & message) {
+    std::string showTextEntryDialog(const std::string & message) override {
       // NSString* message2 = [NSString stringWithUTF8String:message];
       InputDialog * dlg = [InputDialog dialog];
       has_active_modal = true;
@@ -72,7 +72,7 @@ public:
       const char * stringAsChar = [input cStringUsingEncoding:NSUTF8StringEncoding];
       return stringAsChar;
     }
-    std::string getBundleFilename(const char * filename) {
+    std::string getBundleFilename(const char * filename) override {
       int n = int(strlen(filename));
       for (int i = n - 1; i >= 0; i--)  {
         if (filename[i] == '/')  {
@@ -86,9 +86,10 @@ public:
       NSString *path = [[NSBundle mainBundle] pathForResource: baseName ofType: extension ];
       const char * filename2 = [path cStringUsingEncoding:1];
       // release stuff
-      return filename2;
+      if (!filename2) cerr << "could not find file " << filename << " in bundle" << endl;
+      return filename2 ? filename2 : "";
     }
-   std::string getLocalFilename(const char * filename, FileType type) {
+   std::string getLocalFilename(const char * filename, FileType type) override {
       NSString* fileNameNS = [NSString stringWithUTF8String:filename];
       NSString *docsDir;
       NSArray *dirPaths;    
@@ -102,7 +103,7 @@ public:
       const char * ptr = [finalPath cStringUsingEncoding:1];
      return ptr;
   }
-  void storeValue(const std::string & key, const std::string & value) {
+  void storeValue(const std::string & key, const std::string & value) override {
     NSString *storedVal = [[NSString alloc] initWithUTF8String:value.c_str()];
     NSString *storedKey = [[NSString alloc] initWithUTF8String:key.c_str()];
     [defaults setObject:storedVal forKey:storedKey];
@@ -110,7 +111,7 @@ public:
     [storedVal release];
     [storedKey release];
   }
-  std::string loadValue(const std::string & key) {
+  std::string loadValue(const std::string & key) override {
     NSString *loadedKey = [[NSString alloc] initWithUTF8String:key.c_str()];
     NSString *results = [defaults stringForKey:loadedKey];
     string r = [results cStringUsingEncoding:[NSString defaultCStringEncoding]]; // wrong encoding
@@ -118,14 +119,14 @@ public:
     [results release];
     return r;
   }
-  std::shared_ptr<canvas::ContextFactory> createContextFactory() const {
+  std::shared_ptr<canvas::ContextFactory> createContextFactory() const override {
     std::shared_ptr<canvas::FilenameConverter> ptr(new canvas::BundleFilenameConverter);
     return std::make_shared<canvas::Quartz2DContextFactory>(getDisplayScale(), ptr);
   }
-  std::shared_ptr<HTTPClientFactory> createHTTPClientFactory() const {
+  std::shared_ptr<HTTPClientFactory> createHTTPClientFactory() const override {
     return std::make_shared<CurlClientFactory>();
   }
-  void launchBrowser(const std::string & input_url) {
+  void launchBrowser(const std::string & input_url) override {
     cerr << "trying to open browser" << endl;
     NSString *input_url2 = [[NSString alloc] initWithUTF8String:input_url.c_str()];
     NSURL *url = [NSURL URLWithString:input_url2];
@@ -133,8 +134,12 @@ public:
     [input_url2 release];
     [url release];
   }
+  double getTime() const override {
+    double t = [[NSProcessInfo processInfo] systemUptime];
+    return t;
+  }
   bool hasActiveModal() const { return has_active_modal; }
-  int showActionSheet(const FWRect & rect, const FWActionSheet & sheet) {
+  int showActionSheet(const FWRect & rect, const FWActionSheet & sheet) override {
     NSString *title = [[NSString alloc] initWithUTF8String:sheet.getTitle().c_str()];
     UIAlertController * view = [UIAlertController
                                  alertControllerWithTitle:title
@@ -186,6 +191,7 @@ extern FWContextBase * esMain(FWPlatformBase * platform);
   bool need_update;
   CADisplayLink* displayLink;
   unsigned int current_framebuffer;
+  GLuint framebuffer, color, depth, stencil;
 }
 // @property (strong, nonatomic) EAGLContext *context;
 
@@ -217,7 +223,11 @@ extern FWContextBase * esMain(FWPlatformBase * platform);
  #ifdef __APPLE__
   cerr << "creating renderbuffers and framebuffers (" << drawableWidth << " " << drawableHeight << ")" << endl;
 
-  GLuint framebuffer, color, depth, stencil;
+  if (framebuffer) glDeleteFramebuffers(1, &framebuffer);
+  if (depth) glDeleteRenderbuffers(1, &depth);
+  if (stencil) glDeleteRenderbuffers(1, &stencil);
+  if (color) glDeleteRenderbuffers(1, &color);
+
   glGenFramebuffers(1, &framebuffer);
   glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 
@@ -300,6 +310,11 @@ extern FWContextBase * esMain(FWPlatformBase * platform);
 	self->_opengl_version = 300;
 	self->_has_es3 = true;
         self->need_update = true;
+	
+	self->framebuffer = 0;
+	self->color = 0;
+	self->depth = 0;
+	self->stencil = 0;
 
         EAGLRenderingAPI api = kEAGLRenderingAPIOpenGLES3;
         self->context = [[EAGLContext alloc] initWithAPI:api];
@@ -328,6 +343,16 @@ extern FWContextBase * esMain(FWPlatformBase * platform);
         
         displayLink = nil;
 	[self startRenderLoop];
+
+#if 0
+	[[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
+
+	[[NSNotificationCenter defaultCenter]
+		addObserver: self
+		selector: @selector(didRotate:)
+		name: UIDeviceOrientationDidChangeNotification
+		object: nil];
+#endif
     }
     return self;
 }
@@ -464,26 +489,43 @@ extern FWContextBase * esMain(FWPlatformBase * platform);
   double t = [[NSProcessInfo processInfo] systemUptime];
   need_update |= _esContext->onUpdate(t);
   if (need_update) {
-    CGRect adjustedFrame = [self convertRect:self.bounds fromView:nil];
-    unsigned int logical_width = int(CGRectGetWidth(adjustedFrame));
-    unsigned int logical_height = int(CGRectGetHeight(adjustedFrame));
-    drawableWidth = int(logical_width * self.contentScaleFactor);
-    drawableHeight = int(logical_height * self.contentScaleFactor);
-    if (drawableWidth != _esContext->getActualWidth() || drawableHeight != _esContext->getActualHeight()) {
-      cerr << "resize window: " << logical_width << " " << logical_height << endl;
-      _esContext->onResize(logical_width, logical_height, drawableWidth, drawableHeight);
-    }
-    _esContext->onDraw();
+    [self drawView2];
+  }
+}
+
+- (void) drawView2 {
+  // CGRect adjustedFrame = [self convertRect:self.bounds fromView:nil];
+  unsigned int logical_width = int(CGRectGetWidth(self.bounds));
+  unsigned int logical_height = int(CGRectGetHeight(self.bounds));
+  
+#if 0
+  UIDeviceOrientation orientation = [[UIDevice currentDevice] orientation];
+  cerr << "orientation = " << int(orientation) << endl;
+  if (orientation == UIDeviceOrientationPortrait || orientation == UIDeviceOrientationPortraitUpsideDown) {
+    cerr << "flipping view" << endl;
+    unsigned int tmp = logical_width;
+    logical_width = logical_height;
+    logical_height = tmp;
+  }
+#endif
+  
+  drawableWidth = int(logical_width * self.contentScaleFactor);
+  drawableHeight = int(logical_height * self.contentScaleFactor);
+  
+  if (drawableWidth != _esContext->getActualWidth() || drawableHeight != _esContext->getActualHeight()) {
+    cerr << "resize window: " << logical_width << " " << logical_height << endl;
+    _esContext->onResize(logical_width, logical_height, drawableWidth, drawableHeight);
+  }
+  _esContext->onDraw();
 
 #if 0
-    const GLenum discards[] = { GL_DEPTH_ATTACHMENT, GL_STENCIL_ATTACHMENT };
-    glBindFramebuffer(GL_FRAMEBUFFER, current_framebuffer);
-    glDiscardFramebufferEXT(GL_FRAMEBUFFER, 2, discards);
+  const GLenum discards[] = { GL_DEPTH_ATTACHMENT, GL_STENCIL_ATTACHMENT };
+  glBindFramebuffer(GL_FRAMEBUFFER, current_framebuffer);
+  glDiscardFramebufferEXT(GL_FRAMEBUFFER, 2, discards);
 #endif
     
-    [context presentRenderbuffer:GL_RENDERBUFFER];
-    need_update = false;
-  }
+  [context presentRenderbuffer:GL_RENDERBUFFER];
+  need_update = false;
 }
 
 - (void) startRenderLoop {
@@ -506,5 +548,15 @@ extern FWContextBase * esMain(FWPlatformBase * platform);
     	glFlush(); // Flush so that queued commands are not executed when the app is in the background
     }
 }
+
+#if 0
+- (void)didRotate: (NSNotification*) notification
+{
+    UIDeviceOrientation orientation = [[UIDevice currentDevice] orientation];
+    int o = (int)orientation;
+    cerr << "didRotate: o = " << o << endl;
+    // [self drawView2];
+}
+#endif
 
 @end
