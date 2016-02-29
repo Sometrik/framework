@@ -57,9 +57,9 @@ AndroidPlatform::menuPressed() {
 
 	__android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Platform menupressed called");
 
-	jclass handlerClass = env->GetObjectClass(handler);
-	jmethodID emptyMessageMethod = env->GetMethodID(handlerClass, "sendEmptyMessage", "(I)Z");
-	env->CallVoidMethod(handler, emptyMessageMethod, 1);
+//	jclass handlerClass = env->GetObjectClass(handler);
+//	jmethodID emptyMessageMethod = env->GetMethodID(handlerClass, "sendEmptyMessage", "(I)Z");
+//	env->CallVoidMethod(handler, emptyMessageMethod, 1);
 
 	//--------- creating actionSheet for debug
 //	FWActionSheet debugSheet = FWActionSheet("This is title");
@@ -610,7 +610,6 @@ void Java_com_sometrik_framework_MyGLRenderer_onInit(JNIEnv* env, jobject thiz, 
   }
 	applicationMain(platform.get());
 	platform->onInit();
-	platform->setupLooper();
   	__android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Init end");
 }
 
