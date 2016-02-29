@@ -55,11 +55,14 @@ public:
   int showActionSheet(const FWRect & rect, const FWActionSheet & sheet) override;
 	void showCanvas(canvas::ContextAndroid & context);
 
+	void setupLooper();
+
 private:
 	FWContextBase * application;
 	JNIEnv * env;
 	jobject mgr;
 	jobject framework;
+	jobject handler;
 	char message[256];
 	shader_program * test_program = 0;
 };
