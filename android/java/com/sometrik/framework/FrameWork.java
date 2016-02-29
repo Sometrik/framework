@@ -102,7 +102,7 @@ public class FrameWork extends Activity {
     };
 
     // Init for screen settings
-    init();
+    getDisplayMetrics();
 
     // Set up classes
     settings = new Settings(this);
@@ -122,11 +122,12 @@ public class FrameWork extends Activity {
   }
 
   // Get screen settings
-  public void init() {
+  public DisplayMetrics getDisplayMetrics() {
     DisplayMetrics displaymetrics = new DisplayMetrics();
     getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
     screenHeight = displaymetrics.heightPixels;
     screenWidth = displaymetrics.widthPixels;
+    return displaymetrics;
   }
 
   public MyGLSurfaceView getSurfaceView() {
