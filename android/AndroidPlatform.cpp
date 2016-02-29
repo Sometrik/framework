@@ -46,23 +46,29 @@ AndroidPlatform::onTouchesEvent(jobject * _obj, int mode, int fingerIndex, long 
 void
 AndroidPlatform::onResize(int width, int height) {
 
-		__android_log_print(ANDROID_LOG_ERROR, "Sometrik", "resize: %d %d ", width, height);
+  __android_log_print(ANDROID_LOG_ERROR, "Sometrik", "resize: %d %d ", width, height);
 
-		screenWidth = width;
-		screenHeight = height;
+  screenWidth = width;
+  screenHeight = height;
 
-	}
+}
 void
 AndroidPlatform::menuPressed() {
 
+	__android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Platform menupressed called");
+
+	jclass handlerClass = env->GetObjectClass(handler);
+	jmethodID emptyMessageMethod = env->GetMethodID(handlerClass, "sendEmptyMessage", "(I)Z");
+	env->CallVoidMethod(handler, emptyMessageMethod, 1);
+
 	//--------- creating actionSheet for debug
-	FWActionSheet debugSheet = FWActionSheet("This is title");
-	debugSheet.addOption(1, "Social Media");
-	debugSheet.addOption(2, "Application Settings");
-	debugSheet.addOption(3, "Login Settings");
+//	FWActionSheet debugSheet = FWActionSheet("This is title");
+//	debugSheet.addOption(1, "Social Media");
+//	debugSheet.addOption(2, "Application Settings");
+//	debugSheet.addOption(3, "Login Settings");
 	//------------------------
 
-		showActionSheet(FWRect(), debugSheet);
+//		showActionSheet(FWRect(), debugSheet);
 }
 
 int
@@ -233,13 +239,13 @@ AndroidPlatform::onInit() {
 		requ.addHeader("HelloTest2", "YO");
 		Authorization autor = Authorization();
 		auto resp = android->request(requ, autor);
-//		auto res = android->Get("http://i.imgur.com/2tfe9LS.jpg");
-//		if (res.isSuccess()) {
-//			auto surfaceee = factory.createSurface((unsigned char*)res.getContent().c_str(), res.getContent().size());
-//			auto imigi = *surfaceee->createImage();
-//			//context->drawImage(*surfaceee, 0, 0, 300, 300);
-//			context->drawImage(imigi, 0, 0, 300, 300);
-//		}
+		auto res = android->Get("http://i.imgur.com/2tfe9LS.jpg");
+		if (res.isSuccess()) {
+			auto surfaceee = factory.createSurface((unsigned char*)res.getContent().c_str(), res.getContent().size());
+			auto imigi = *surfaceee->createImage();
+			//context->drawImage(*surfaceee, 0, 0, 300, 300);
+			context->drawImage(imigi, 0, 0, 300, 300);
+		}
 
 //		showCanvas((dynamic_cast<canvas::AndroidSurface&>(context->getDefaultSurface())).getBitmap(), framework, env);
 		//application->Init();
@@ -348,6 +354,30 @@ AndroidPlatform::messagePoster(int message, const std::string title, const std::
 
 		env->CallStaticVoidMethod(cls, methodRef, framework, message, env->NewStringUTF(title.c_str()), env->NewStringUTF(text.c_str()));
 	}
+
+void
+AndroidPlatform::setupLooper(){
+	__android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "setupLooper called");
+
+	jclass nativeLooperClass = env->FindClass("com/sometrik/framework/NativeLooper");
+	jmethodID createLooper = env->GetMethodID(nativeLooperClass, "<init>", "()V");
+
+	jobject nativeLooper = env->NewObject(nativeLooperClass, createLooper);
+
+	jclass looperClass = env->FindClass("android/os/Looper");
+	jmethodID looperPrepareMethod = env->GetStaticMethodID(looperClass, "prepare", "()V");
+	jmethodID runMethod = env->GetMethodID(nativeLooperClass, "run", "()V");
+	jmethodID printMethod = env->GetMethodID(nativeLooperClass, "print", "()V");
+	jmethodID loopMethod = env->GetMethodID(nativeLooperClass, "loop", "()V");
+	jmethodID getHandlerMethod = env->GetMethodID(nativeLooperClass, "getHandler", "()Landroid/os/Handler;");
+
+	env->CallVoidMethod(nativeLooper, printMethod);
+	env->CallVoidMethod(nativeLooper, runMethod);
+	handler = env->CallObjectMethod(nativeLooper, getHandlerMethod);
+	env->CallVoidMethod(nativeLooper, loopMethod);
+	env->CallVoidMethod(nativeLooper, printMethod);
+
+}
 
 void
 AndroidPlatform::settingsCreator(jobject settings, jint menuId) {
@@ -580,6 +610,13 @@ void Java_com_sometrik_framework_MyGLRenderer_onInit(JNIEnv* env, jobject thiz, 
   }
 	applicationMain(platform.get());
 	platform->onInit();
+	platform->setupLooper();
+  	__android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Init end");
+}
+
+void Java_com_sometrik_framework_NativeLooper_test(JNIEnv* env, jobject thiz){
+	__android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Test");
+      platform->onInit();
 }
 
 void Java_com_sometrik_framework_MyGLRenderer_nativeOnDraw(JNIEnv* env, jobject thiz) {
