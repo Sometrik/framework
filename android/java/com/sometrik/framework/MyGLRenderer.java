@@ -19,8 +19,8 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
   MyGLSurfaceView GLView;
   FrameWork frame;
   Context context;
-  float x;
-  float y;
+  float xSize;
+  float ySize;
   long endTime;
   long startTime;
 
@@ -30,7 +30,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
   public native void Draw();
 
-  public native void onResize(float x, float y);
+  public native void onResize(float xSize, float ySize);
 
   public native void onTouchesBegin(int fingerIndex);
 
@@ -43,8 +43,8 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     frame = (FrameWork) context;
     startTime = System.currentTimeMillis();
     assetManager = context.getAssets();
-    this.x = x;
-    this.y = y;
+    this.xSize = x;
+    this.ySize = y;
   }
 
   public void onDrawFrame(GL10 unused) {
@@ -77,11 +77,11 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
     renderer = this;
     System.out.println("surface check: " + frame.getSurfaceView());
-    
+
     //Calls onInit in AndroidPlatform
     onInit(assetManager, frame.getSurfaceView());
-    onResize(x, y);
-
+    onResize(xSize, ySize);
+    
   }
 
   // Wanhaa
