@@ -16,23 +16,15 @@ struct vbo_data_s {
   glm::vec3 position;
 };
 
-struct vbo_data2_s {
-  glm::vec2 tex;
-  glm::vec4 color;
-  glm::vec3 normal;
-  glm::vec3 position;
-};
-
-struct vbo_data3_s {
-  glm::vec4 color;
-  glm::vec3 normal;
-  glm::vec3 position;
+struct vbo_color_s {
+  unsigned char r, g, b, a;
 };
 
 struct billboard_data_s {
   glm::vec3 center_pos;
   glm::uint32 corner_pos;  
   glm::uint32 tex;
+  vbo_color_s color1, color2;
 };
 
 struct line_data_s {
@@ -53,15 +45,21 @@ struct arc_data_3d_s {
 
 struct node_vbo_s {
   unsigned char r, g, b, a; // 0
-  glm::uint32 normal; // 4
-  glm::vec3 position; // 8
-  float age, size; // 20
-  short texture, flags; // 28
+  glm::vec3 position; // 4
+  float age, size; // 16
+  short texture, flags; // 24
+};
+
+struct node_billboard_vbo_s {
+  unsigned char r, g, b, a; // 0
+  glm::vec3 center_pos; // 4
+  float age, size, scaling; // 16
+  short texture, flags; // 24
 };
 
 class VBO {
  public:
-  enum DataType { C4F_N3F_V3F, T2F_N3F_V3F, T2F_C4F_N3F_V3F, NODES, BILLBOARDS, EDGES, ARCS_2D, ARCS_3D };
+  enum DataType { T2F_N3F_V3F = 1, NODES, NODE_BILLBOARDS, BILLBOARDS, EDGES, ARCS_2D, ARCS_3D };
   enum DrawType { NONE = 0, POINTS, LINES, TRIANGLES, TRIANGLE_STRIP, TRIANGLE_FAN };
 
   VBO() { }
@@ -111,7 +109,7 @@ class VBO {
 
  private:
   DrawType default_draw_type = NONE;
-  DataType data_type = C4F_N3F_V3F;
+  DataType data_type = T2F_N3F_V3F;
   int stride = 0;
   unsigned int num_indices = 0, num_elements = 0;  
 };
