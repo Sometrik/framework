@@ -68,6 +68,7 @@ class VBO {
   bool isDefined() const { return vbo != 0; }
   void upload(DataType type, const void * ptr, size_t size);
   void uploadIndices(const void * ptr, size_t size);
+  void clear();
   
   void setDrawType(DrawType type) { default_draw_type = type; }
 

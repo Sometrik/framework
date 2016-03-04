@@ -20,12 +20,20 @@ static GLenum getGLDrawType(VBO::DrawType type) {
 }
 
 VBO::~VBO() {
+  clear();
+}
+
+void
+VBO::clear() {
   if (vbo) {
     glDeleteBuffers(1, &vbo);
+    vbo = 0;
   }
   if (indexVbo) {
     glDeleteBuffers(1, &indexVbo);
+    indexVbo = 0;    
   }
+  num_indices = num_elements = 0;
 }
 
 void
