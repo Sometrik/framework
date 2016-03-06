@@ -74,8 +74,10 @@ VBO::bind() {
     case EDGES:
       glVertexAttribPointer(0, 4, GL_UNSIGNED_BYTE, GL_TRUE, getStride(), (void *)(0 * sizeof(float)));
       glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, getStride(), (void *)(1 * sizeof(float)));
-      glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, getStride(), (void *)(4 * sizeof(float)));
-      glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, getStride(), (void *)(5 * sizeof(float)));
+      glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, getStride(), (void *)(4 * sizeof(float)));
+      glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, getStride(), (void *)(7 * sizeof(float)));
+      glVertexAttribPointer(4, 1, GL_FLOAT, GL_FALSE, getStride(), (void *)(8 * sizeof(float)));
+      glVertexAttribPointer(5, 1, GL_FLOAT, GL_FALSE, getStride(), (void *)(9 * sizeof(float)));
       break;
     case ARCS_2D:
       glVertexAttribPointer(0, 4, GL_UNSIGNED_BYTE, GL_TRUE, getStride(), (void *)(0 * sizeof(float)));
@@ -126,7 +128,6 @@ VBO::upload(DataType type, const void * ptr, size_t size) {
   case VBO::ARCS_2D: stride = sizeof(arc_data_2d_s); break;
   case VBO::ARCS_3D: stride = sizeof(arc_data_3d_s); break;
   }
-  assert(sizeof(line_data_s) == 6 * 4);
   assert(sizeof(node_vbo_s) == 7 * 4);
   
   num_elements = size / stride;

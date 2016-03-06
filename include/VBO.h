@@ -29,8 +29,8 @@ struct billboard_data_s {
 
 struct line_data_s {
   unsigned char r, g, b, a;
-  glm::vec3 position;
-  float node_age, node_radius;
+  glm::vec3 position, other_position;
+  float node_age, node_radius, node_scaling;
 };
 
 struct arc_data_2d_s {
