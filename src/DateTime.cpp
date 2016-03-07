@@ -404,7 +404,7 @@ DateTime::normalize() {
 }
 
 static double
-DateTime::getCurrentTime() const {
+DateTime::getCurrentTime() {
   struct timeval tv;
   struct timezone tz;
   int r = gettimeofday(&tv, &tz);
