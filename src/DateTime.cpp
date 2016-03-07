@@ -6,6 +6,8 @@
 #include <cstring>
 #include <iostream>
 
+#include <sys/time.h>
+
 #include "StringUtils.h"
 
 #ifdef WIN32
@@ -403,7 +405,7 @@ DateTime::normalize() {
   return *this;
 }
 
-static double
+double
 DateTime::getCurrentTime() {
   struct timeval tv;
   struct timezone tz;
