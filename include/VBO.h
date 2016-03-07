@@ -47,14 +47,16 @@ struct node_vbo_s {
   unsigned char r, g, b, a; // 0
   glm::vec3 position; // 4
   float age, size; // 16
-  short texture, flags; // 24
+  short texture; // 24
+  unsigned short flags;
 };
 
 struct node_billboard_vbo_s {
   unsigned char r, g, b, a; // 0
   glm::vec3 center_pos; // 4
   float age, size, scaling; // 16
-  short texture, flags; // 24
+  short texture; // 24
+  unsigned short flags;
 };
 
 class VBO {
