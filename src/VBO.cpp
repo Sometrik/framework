@@ -68,8 +68,9 @@ VBO::bind() {
       glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, getStride(), (void *)(0 * sizeof(float)));
       glVertexAttribPointer(1, 2, GL_HALF_FLOAT, GL_FALSE, getStride(), (void *)(3 * sizeof(float)));
       glVertexAttribPointer(2, 2, GL_HALF_FLOAT, GL_FALSE, getStride(), (void *)(4 * sizeof(float)));
-      glVertexAttribPointer(3, 4, GL_UNSIGNED_BYTE, GL_TRUE, getStride(), (void *)(5 * sizeof(float)));
+      glVertexAttribPointer(3, 2, GL_HALF_FLOAT, GL_FALSE, getStride(), (void *)(5 * sizeof(float)));
       glVertexAttribPointer(4, 4, GL_UNSIGNED_BYTE, GL_TRUE, getStride(), (void *)(6 * sizeof(float)));
+      glVertexAttribPointer(5, 4, GL_UNSIGNED_BYTE, GL_TRUE, getStride(), (void *)(7 * sizeof(float)));
       break;
     case EDGES:
       glVertexAttribPointer(0, 4, GL_UNSIGNED_BYTE, GL_TRUE, getStride(), (void *)(0 * sizeof(float)));
