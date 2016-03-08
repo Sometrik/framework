@@ -128,11 +128,10 @@ public:
   }
   void launchBrowser(const std::string & input_url) override {
     cerr << "trying to open browser" << endl;
-    NSString *input_url2 = [[NSString alloc] initWithUTF8String:input_url.c_str()];
+    NSString *input_url2 = [NSString stringWithUTF8String:input_url.c_str()];
     NSURL *url = [NSURL URLWithString:input_url2];
     [[UIApplication sharedApplication] openURL:url];
-    [input_url2 release];
-    [url release];
+    // no need to release anything
   }
   double getTime() const override {
     double t = [[NSProcessInfo processInfo] systemUptime];
@@ -387,14 +386,12 @@ extern FWContextBase * esMain(FWPlatformBase * platform);
 }
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
-  if (touches != nil) {
-    [touches enumerateObjectsUsingBlock:^(id obj, BOOL *stop) {
-      UITouch *touch = obj;
-      long long id = (long long)touch;
-      CGPoint touchPoint = [touch locationInView:self];
-      need_update |= _esContext->touchesEnded(touchPoint.x, touchPoint.y, event.timestamp, id);
-    }];
-  }
+  [touches enumerateObjectsUsingBlock:^(id obj, BOOL *stop) {
+    UITouch *touch = obj;
+    long long id = (long long)touch;
+    CGPoint touchPoint = [touch locationInView:self];
+    need_update |= _esContext->touchesEnded(touchPoint.x, touchPoint.y, event.timestamp, id);
+  }];
   need_update |= _esContext->flushTouches(3, event.timestamp);
 }
 
