@@ -218,7 +218,6 @@ extern FWContextBase * esMain(FWPlatformBase * platform);
 
 - (void) createFBO: (int) flags
 {
- #ifdef __APPLE__
   cerr << "creating renderbuffers and framebuffers (" << drawableWidth << " " << drawableHeight << ")" << endl;
 
   if (framebuffer) glDeleteFramebuffers(1, &framebuffer);
@@ -238,17 +237,20 @@ extern FWContextBase * esMain(FWPlatformBase * platform);
   current_framebuffer = framebuffer;
   
   if (flags & FBO_DEPTH) {
+    cerr << "creating depth buffer" << endl;
     glGenRenderbuffers(1, &depth);
     glBindRenderbuffer(GL_RENDERBUFFER, depth);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, drawableWidth, drawableHeight);
   }
   
   if (flags & FBO_STENCIL) {
+    cerr << "creating stencil buffer" << endl;
     glGenRenderbuffers(1, &stencil);
     glBindRenderbuffer(GL_RENDERBUFFER, stencil);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_STENCIL_INDEX8, drawableWidth, drawableHeight);
   }
   
+  cerr << "creating color buffer" << endl;
   glGenRenderbuffers(1, &color);
   glBindRenderbuffer(GL_RENDERBUFFER, color);
   CAEAGLLayer* eaglLayer = (CAEAGLLayer*) self.layer;
@@ -296,8 +298,6 @@ extern FWContextBase * esMain(FWPlatformBase * platform);
   glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, scenecolor);
   glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, scenedepth);
 #endif
-#endif
-
 }
 
 - (id) initWithFrame: (CGRect) frame
