@@ -44,14 +44,6 @@ struct arc_data_3d_s {
   glm::vec3 position, normal;
 };
 
-struct node_vbo_s {
-  unsigned char r, g, b, a; // 0
-  glm::vec3 position; // 4
-  float age, size; // 16
-  short texture; // 24
-  unsigned short flags;
-};
-
 struct node_billboard_vbo_s {
   unsigned char r, g, b, a; // 0
   glm::vec3 center_pos; // 4
@@ -62,7 +54,7 @@ struct node_billboard_vbo_s {
 
 class VBO {
  public:
-  enum DataType { T2F_N3F_V3F = 1, NODES, NODE_BILLBOARDS, BILLBOARDS, EDGES, ARCS_2D, ARCS_3D };
+  enum DataType { T2F_N3F_V3F = 1, NODE_BILLBOARDS, BILLBOARDS, EDGES, ARCS_2D, ARCS_3D };
   enum DrawType { NONE = 0, POINTS, LINES, TRIANGLES, TRIANGLE_STRIP, TRIANGLE_FAN };
 
   VBO() { }

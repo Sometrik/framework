@@ -49,13 +49,6 @@ VBO::bind() {
       glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, getStride(), (void *)(0 * sizeof(float)));
       glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, getStride(), (void *)(5 * sizeof(float)));
       break;
-    case NODES:
-      glVertexAttribPointer(0, 4, GL_UNSIGNED_BYTE, GL_TRUE, getStride(), (void *)(0)); // color
-      glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, getStride(), (void *)(4)); // position
-      glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, getStride(), (void *)(16)); // age
-      glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, getStride(), (void *)(20)); // size
-      glVertexAttribPointer(4, 2, GL_UNSIGNED_SHORT, GL_FALSE, getStride(), (void *)(24)); // texture / flags
-      break;
     case NODE_BILLBOARDS:
       glVertexAttribPointer(0, 4, GL_UNSIGNED_BYTE, GL_TRUE, getStride(), (void *)(0)); // color
       glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, getStride(), (void *)(4)); // center position
@@ -122,7 +115,6 @@ VBO::upload(DataType type, const void * ptr, size_t size) {
   case VBO::T2F_C4F_N3F_V3F: stride = 12 * sizeof(float); break;
 #endif
   case VBO::T2F_N3F_V3F: stride = 8 * sizeof(float); break;
-  case VBO::NODES: stride = sizeof(node_vbo_s); break;
   case VBO::NODE_BILLBOARDS: stride = sizeof(node_billboard_vbo_s); break; // ?
   case VBO::BILLBOARDS: stride = sizeof(billboard_data_s); break;
   case VBO::EDGES: stride = sizeof(line_data_s); break;
