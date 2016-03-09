@@ -194,7 +194,6 @@ extern FWContextBase * esMain(FWPlatformBase * platform);
 }
 // @property (strong, nonatomic) EAGLContext *context;
 
-//- (void)setupGL;
 - (void)tearDownGL;
 @end
 
@@ -223,8 +222,14 @@ extern FWContextBase * esMain(FWPlatformBase * platform);
   cerr << "creating renderbuffers and framebuffers (" << drawableWidth << " " << drawableHeight << ")" << endl;
 
   if (framebuffer) glDeleteFramebuffers(1, &framebuffer);
-  if (depth) glDeleteRenderbuffers(1, &depth);
-  if (stencil) glDeleteRenderbuffers(1, &stencil);
+  if (depth) {
+    glDeleteRenderbuffers(1, &depth);
+    depth = 0;
+  }
+  if (stencil) {
+    glDeleteRenderbuffers(1, &stencil);
+    stencil = 0;
+  }
   if (color) glDeleteRenderbuffers(1, &color);
 
   glGenFramebuffers(1, &framebuffer);
@@ -232,17 +237,17 @@ extern FWContextBase * esMain(FWPlatformBase * platform);
 
   current_framebuffer = framebuffer;
   
-#if 0
-  glGenRenderbuffers(1, &depth);
-  glBindRenderbuffer(GL_RENDERBUFFER, depth);
-  glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, drawableWidth, drawableHeight);
-#endif
+  if (flags & FBO_DEPTH) {
+    glGenRenderbuffers(1, &depth);
+    glBindRenderbuffer(GL_RENDERBUFFER, depth);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, drawableWidth, drawableHeight);
+  }
   
-#if 1
-  glGenRenderbuffers(1, &stencil);
-  glBindRenderbuffer(GL_RENDERBUFFER, stencil);
-  glRenderbufferStorage(GL_RENDERBUFFER, GL_STENCIL_INDEX8, drawableWidth, drawableHeight);
-#endif
+  if (flags & FBO_STENCIL) {
+    glGenRenderbuffers(1, &stencil);
+    glBindRenderbuffer(GL_RENDERBUFFER, stencil);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_STENCIL_INDEX8, drawableWidth, drawableHeight);
+  }
   
   glGenRenderbuffers(1, &color);
   glBindRenderbuffer(GL_RENDERBUFFER, color);
@@ -257,10 +262,12 @@ extern FWContextBase * esMain(FWPlatformBase * platform);
   [context renderbufferStorage:GL_RENDERBUFFER fromDrawable: eaglLayer];
 
   glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, color);
-#if 0
-  glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depth);
-#endif
-  glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, stencil);
+  if (flags & FBO_DEPTH) {
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depth);
+  }
+  if (flags & FBO_STENCIL) {
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, stencil);
+  }
   
   // Check the Framebuffer status
   GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
@@ -360,19 +367,6 @@ extern FWContextBase * esMain(FWPlatformBase * platform);
 {
   cerr << "viewDidLoad" << endl;
   // [super viewDidLoad];
-
-  // self.preferredFramesPerSecond = 60;
-    
-  // GLKView *view = (GLKView *)self.view;
-  // view.drawableDepthFormat = GLKViewDrawableDepthFormat24; // GLKViewDrawableDepthFormatNone;
-  // view.drawableMultisample = GLKViewDrawableMultisample4X;
-  if (!self->_has_es3) {
-    // view.drawableColorFormat = GLKViewDrawableColorFormatRGB565;
-  }
-  // view.drawableStencilFormat = GLKViewDrawableStencilFormat8;
-  // view.enableSetNeedsDisplay = YES;
-    
-//  [self setupGL];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
