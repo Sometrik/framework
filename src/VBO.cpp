@@ -55,51 +55,54 @@ VBO::upload(DataType type, const void * ptr, size_t size) {
   }
   
   num_elements = size / stride;
-  if (!vao) glGenVertexArrays(1, &vao);
+  if (!vao) {
+    glGenVertexArrays(1, &vao);
+    glBindVertexArray(vao);
+  } else {
+    glBindVertexArray(vao);
+  }
   if (!vbo) glGenBuffers(1, &vbo);
-  glBindVertexArray(vao);
   glBindBuffer(GL_ARRAY_BUFFER, vbo);
-  glBufferData(GL_ARRAY_BUFFER, size, ptr, GL_DYNAMIC_DRAW);
-  
-  switch (getDataType()) {
-  case T2F_N3F_V3F:
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, getStride(), (void *)(0 * sizeof(float)));
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, getStride(), (void *)(5 * sizeof(float)));
-    break;
-  case NODE_BILLBOARDS:
-    glVertexAttribPointer(0, 4, GL_UNSIGNED_BYTE, GL_TRUE, getStride(), (void *)(0)); // color
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, getStride(), (void *)(4)); // center position
-    glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, getStride(), (void *)(16)); // age
-    glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, getStride(), (void *)(20)); // size
-    glVertexAttribPointer(4, 1, GL_FLOAT, GL_FALSE, getStride(), (void *)(24)); // scaling
-    glVertexAttribPointer(5, 2, GL_UNSIGNED_SHORT, GL_FALSE, getStride(), (void *)(28)); // texture / flags
-    break;
-  case BILLBOARDS:
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, getStride(), (void *)(0 * sizeof(float)));
-    glVertexAttribPointer(1, 2, GL_HALF_FLOAT, GL_FALSE, getStride(), (void *)(3 * sizeof(float)));
-    glVertexAttribPointer(2, 2, GL_HALF_FLOAT, GL_FALSE, getStride(), (void *)(4 * sizeof(float)));
-    glVertexAttribPointer(3, 2, GL_HALF_FLOAT, GL_FALSE, getStride(), (void *)(5 * sizeof(float)));
-    glVertexAttribPointer(4, 4, GL_UNSIGNED_BYTE, GL_TRUE, getStride(), (void *)(6 * sizeof(float)));
-    glVertexAttribPointer(5, 4, GL_UNSIGNED_BYTE, GL_TRUE, getStride(), (void *)(7 * sizeof(float)));
-    break;
-  case EDGES:
-    glVertexAttribPointer(0, 4, GL_UNSIGNED_BYTE, GL_TRUE, getStride(), (void *)(0 * sizeof(float)));
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, getStride(), (void *)(1 * sizeof(float)));
-    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, getStride(), (void *)(4 * sizeof(float)));
-    glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, getStride(), (void *)(7 * sizeof(float)));
-    glVertexAttribPointer(4, 1, GL_FLOAT, GL_FALSE, getStride(), (void *)(8 * sizeof(float)));
-    glVertexAttribPointer(5, 1, GL_FLOAT, GL_FALSE, getStride(), (void *)(9 * sizeof(float)));
-    break;
-  case ARCS_2D:
-    glVertexAttribPointer(0, 4, GL_UNSIGNED_BYTE, GL_TRUE, getStride(), (void *)(0 * sizeof(float)));
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, getStride(), (void *)(1 * sizeof(float)));
-    break;
-  case ARCS_3D:
-    glVertexAttribPointer(0, 4, GL_UNSIGNED_BYTE, GL_TRUE, getStride(), (void *)(0 * sizeof(float)));
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, getStride(), (void *)(1 * sizeof(float)));
-    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, getStride(), (void *)(4 * sizeof(float)));
-    break;
-  }  
+  glBufferData(GL_ARRAY_BUFFER, size, ptr, is_dynamic ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);  
+    switch (getDataType()) {
+    case T2F_N3F_V3F:
+      glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, getStride(), (void *)(0 * sizeof(float)));
+      glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, getStride(), (void *)(5 * sizeof(float)));
+      break;
+    case NODE_BILLBOARDS:
+      glVertexAttribPointer(0, 4, GL_UNSIGNED_BYTE, GL_TRUE, getStride(), (void *)(0)); // color
+      glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, getStride(), (void *)(4)); // center position
+      glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, getStride(), (void *)(16)); // age
+      glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, getStride(), (void *)(20)); // size
+      glVertexAttribPointer(4, 1, GL_FLOAT, GL_FALSE, getStride(), (void *)(24)); // scaling
+      glVertexAttribPointer(5, 2, GL_UNSIGNED_SHORT, GL_FALSE, getStride(), (void *)(28)); // texture / flags
+      break;
+    case BILLBOARDS:
+      glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, getStride(), (void *)(0 * sizeof(float)));
+      glVertexAttribPointer(1, 2, GL_HALF_FLOAT, GL_FALSE, getStride(), (void *)(3 * sizeof(float)));
+      glVertexAttribPointer(2, 2, GL_HALF_FLOAT, GL_FALSE, getStride(), (void *)(4 * sizeof(float)));
+      glVertexAttribPointer(3, 2, GL_HALF_FLOAT, GL_FALSE, getStride(), (void *)(5 * sizeof(float)));
+      glVertexAttribPointer(4, 4, GL_UNSIGNED_BYTE, GL_TRUE, getStride(), (void *)(6 * sizeof(float)));
+      glVertexAttribPointer(5, 4, GL_UNSIGNED_BYTE, GL_TRUE, getStride(), (void *)(7 * sizeof(float)));
+      break;
+    case EDGES:
+      glVertexAttribPointer(0, 4, GL_UNSIGNED_BYTE, GL_TRUE, getStride(), (void *)(0 * sizeof(float)));
+      glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, getStride(), (void *)(1 * sizeof(float)));
+      glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, getStride(), (void *)(4 * sizeof(float)));
+      glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, getStride(), (void *)(7 * sizeof(float)));
+      glVertexAttribPointer(4, 1, GL_FLOAT, GL_FALSE, getStride(), (void *)(8 * sizeof(float)));
+      glVertexAttribPointer(5, 1, GL_FLOAT, GL_FALSE, getStride(), (void *)(9 * sizeof(float)));
+      break;
+    case ARCS_2D:
+      glVertexAttribPointer(0, 4, GL_UNSIGNED_BYTE, GL_TRUE, getStride(), (void *)(0 * sizeof(float)));
+      glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, getStride(), (void *)(1 * sizeof(float)));
+      break;
+    case ARCS_3D:
+      glVertexAttribPointer(0, 4, GL_UNSIGNED_BYTE, GL_TRUE, getStride(), (void *)(0 * sizeof(float)));
+      glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, getStride(), (void *)(1 * sizeof(float)));
+      glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, getStride(), (void *)(4 * sizeof(float)));
+      break;
+    }
   // glBindVertexArray(0);
 }
 
@@ -112,32 +115,28 @@ VBO::uploadIndices(const void * ptr, size_t size) {
   num_indices = size / 4;
   glBindVertexArray(vao);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexVbo);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, ptr, GL_DYNAMIC_DRAW);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, ptr, is_dynamic ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
   // glBindVertexArray(0);
 }
 
 void
 VBO::draw(DrawType type, const vector<int> & _indices) {
-  if (vao) {
-    glBindVertexArray(vao);
-    const int & first_index = _indices.front();
-    glDrawElements(getGLDrawType(type), _indices.size(), GL_UNSIGNED_INT, &first_index);
-    // glBindVertexArray(0);
-  }
+  const int & first_index = _indices.front();
+  glDrawElements(getGLDrawType(type), (GLsizei)_indices.size(), GL_UNSIGNED_INT, &first_index);
+  // glBindVertexArray(0);
 }
 
 void
 VBO::draw(DrawType type) {
-  if (vao) {
-    glBindVertexArray(vao);
-    if (!type) type = default_draw_type;
-    if (!num_indices) {
-      glDrawArrays(getGLDrawType(type), 0, num_elements);
-    } else {
-      glDrawElements(getGLDrawType(type), num_indices, GL_UNSIGNED_INT, 0);
-    }
-    // glBindVertexArray(0);
+  if (!type) type = default_draw_type;
+  if (!num_indices) {
+    // cerr << "drawing A: " << num_elements << endl;
+    glDrawArrays(getGLDrawType(type), 0, num_elements);
+  } else {
+    // cerr << "drawing B: " << num_indices << endl;
+    glDrawElements(getGLDrawType(type), num_indices, GL_UNSIGNED_INT, 0);
   }
+  // glBindVertexArray(0);  
 }
 
 void
