@@ -110,10 +110,6 @@ VBO::upload(DataType type, const void * ptr, size_t size) {
   
   data_type = type;
   switch (type) {
-#if 0
-  case VBO::C4F_N3F_V3F: stride = 10 * sizeof(float); break;
-  case VBO::T2F_C4F_N3F_V3F: stride = 12 * sizeof(float); break;
-#endif
   case VBO::T2F_N3F_V3F: stride = 8 * sizeof(float); break;
   case VBO::NODE_BILLBOARDS: stride = sizeof(node_billboard_vbo_s); break; // ?
   case VBO::BILLBOARDS: stride = sizeof(billboard_data_s); break;
@@ -121,7 +117,6 @@ VBO::upload(DataType type, const void * ptr, size_t size) {
   case VBO::ARCS_2D: stride = sizeof(arc_data_2d_s); break;
   case VBO::ARCS_3D: stride = sizeof(arc_data_3d_s); break;
   }
-  assert(sizeof(node_vbo_s) == 7 * 4);
   
   num_elements = size / stride;
   if (!vao) {
