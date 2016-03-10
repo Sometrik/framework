@@ -57,10 +57,14 @@ class VBO {
   enum DataType { T2F_N3F_V3F = 1, NODE_BILLBOARDS, BILLBOARDS, EDGES, ARCS_2D, ARCS_3D };
   enum DrawType { NONE = 0, POINTS, LINES, TRIANGLES, TRIANGLE_STRIP, TRIANGLE_FAN };
 
-  VBO() { }
+  VBO(bool _is_dynamic = true) : is_dynamic(_is_dynamic) { }
   virtual ~VBO();
 
-  bool isDefined() const { return vbo != 0; }
+  bool isDefined() const { return vao != 0; }
+  unsigned int getVertexArrayId() const { return vao; }
+  unsigned int getVertexBufferId() const { return vbo; }
+  unsigned int getIndexBufferId() const { return indexVbo; }
+
   void upload(DataType type, const void * ptr, size_t size);
   void uploadIndices(const void * ptr, size_t size);
   void clear();
@@ -105,6 +109,7 @@ class VBO {
   DataType data_type = T2F_N3F_V3F;
   int stride = 0;
   unsigned int num_indices = 0, num_elements = 0;  
+  bool is_dynamic;
 };
 
 #endif
