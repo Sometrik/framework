@@ -92,9 +92,6 @@ class VBO {
 #endif
 
  protected:
-  void bind();
-  void unbind();
-
   DataType getDataType() const { return data_type; }
   int getStride() const { return stride; }
 
