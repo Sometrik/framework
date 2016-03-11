@@ -20,4 +20,13 @@ using namespace std;
   }];
 }
 
+- (void)didReceiveMemoryWarning {
+  cerr << "didReceiveMemoryWarning called" << endl;
+
+  OpenGLView * v = (OpenGLView *)self.view;
+  [v sendMemoryWarning];
+  
+  [super didReceiveMemoryWarning];
+}
+
 @end

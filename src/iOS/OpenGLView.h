@@ -8,5 +8,6 @@
 - (void) createFBO: (int) flags;
 - (void) startRenderLoop;
 - (void) stopRenderLoop;
+- (void) sendMemoryWarning;
 
 @end

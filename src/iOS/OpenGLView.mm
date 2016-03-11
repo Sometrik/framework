@@ -180,8 +180,8 @@ extern FWContextBase * esMain(FWPlatformBase * platform);
 
 @interface OpenGLView ()
 {
-  FWiOSPlatform * _platform;
   FWContextBase * _esContext;
+  FWiOSPlatform * _platform;
 //  float _display_scale;
   int _opengl_version;
   bool _has_es3;
@@ -447,26 +447,6 @@ extern FWContextBase * esMain(FWPlatformBase * platform);
   [super dealloc];
 }
 
-- (void)didReceiveMemoryWarning {
-    cerr << "didReceiveMemoryWarning called" << endl;
-
-#if 0
-  if ([self isViewLoaded] && ([[self view] window] == nil)) {
-    self.view = nil;
-    [self tearDownGL];
-        
-    if ([EAGLContext currentContext] == self.context) {
-      EAGLContext setCurrentContext:nil];
-    }
-    self.context = nil;
-  }
-#endif
-
-  _esContext->onMemoryWarning();
-
-  [super didReceiveMemoryWarning];
-}
-
 - (void)tearDownGL {
   [EAGLContext setCurrentContext:self->context];
   _esContext->onShutdown();
@@ -540,6 +520,11 @@ extern FWContextBase * esMain(FWPlatformBase * platform);
     }
 }
 
+- (void)sendMemoryWarning
+{
+     _esContext->onMemoryWarning();
+}
+
 #if 0
 - (void)didRotate: (NSNotification*) notification
 {
@@ -549,5 +534,6 @@ extern FWContextBase * esMain(FWPlatformBase * platform);
     // [self drawView2];
 }
 #endif
+
 
 @end
