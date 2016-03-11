@@ -152,27 +152,9 @@ shader_program::link() {
 }
 
 void
-shader_program::use() {
-  assert(programObject > 0);
-  glUseProgram(programObject);
-  for (auto i : bound_attribs) {
-    glEnableVertexAttribArray(i);
-  }
-}
-
-void
-shader_program::unuse() {
-  for (auto i : bound_attribs) {
-    glDisableVertexAttribArray(i);
-  }
-  glUseProgram(0);
-}
-
-void
 shader_program::bindAttribLocation(unsigned int index, const char * name) {
   if (!programObject) programObject = glCreateProgram();  
   glBindAttribLocation(programObject, index, name);
-  bound_attribs.insert(index);
 }
 
 int

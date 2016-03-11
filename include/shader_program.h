@@ -21,11 +21,8 @@ namespace gpufw {
     bool loadShader(GLenum type, const char * glsl_version, const char * shaderSrc, const char * filename = 0);
     
     bool link();
-    void use();
-    void unuse();
     
     void bindAttribLocation(unsigned int index, const char * name);
-    int getUniformLocation(const std::string & name);
     bool isValid() const { return programObject != 0; }
     
     void setUniform(const std::string & name, const glm::mat4 & mat);
@@ -36,12 +33,16 @@ namespace gpufw {
     void setUniform(const std::string & name, float f);
     
     void define(const char * s) { defines.insert(s); }
+
+    unsigned int getProgramObjectId() const { return programObject; }
     
+  protected:
+    int getUniformLocation(const std::string & name);
+
   private:
     unsigned int programObject = 0;
     unsigned int vertexShader = 0;
-    unsigned int fragmentShader = 0;
-    std::set<unsigned int> bound_attribs;
+    unsigned int fragmentShader = 0;   
     std::unordered_map<std::string, int> uniform_locations;
     std::set<std::string> defines;
   };
