@@ -1,0 +1,71 @@
+#ifndef _PRIMITIVERENDERER_H_
+#define _PRIMITIVERENDERER_H_
+
+#include <glm/glm.hpp>
+
+#include <VBO.h>
+#include <TextureRef.h>
+
+#include <shader_program.h>
+
+class FWPlatformBase;
+
+class PrimitiveRenderer {
+ public:
+  enum CompositionMode {
+    COPY = 0,
+    NORMAL,
+    MULTIPLY
+  };
+  
+  PrimitiveRenderer();
+
+  const glm::ivec2 & getDisplaySize() const { return current_display_size; }
+
+  void clear();
+  void colorMask(bool r, bool g, bool b, bool a);
+  void viewport(unsigned int x, unsigned int y, unsigned int w, unsigned int h);
+  void setDisplayScale(float s) { display_scale = s; }
+  
+  unsigned int getMaxTextureSize() const { return max_texture_size; } 
+  bool hasETC1() const { return has_etc1; }
+  bool hasDXT1() const { return has_dxt1; }
+  bool hasRGTC() const { return has_rgtc; }
+  bool hasRGB565() const { return has_rgb565; }
+
+  float getDisplayScale() const { return display_scale; }
+
+ protected:
+  void initializeBase();
+  
+  void blend(bool t);
+  void stencilTest(bool t);
+  void stencilMask(int m);
+  void depthTest(bool t);
+  void depthMask(bool m);
+  void cullFace(bool t);
+  void setLineWidth(float w);
+  void setCompositionMode(CompositionMode mode);
+  void bind(const canvas::TextureRef & texture);
+  void bind(const VBO & vbo);
+  void use(const gpufw::shader_program & program);
+
+ private:
+  unsigned int max_texture_size = 0;
+  bool has_etc1 = false, has_dxt1 = false, has_rgtc = false, has_rgb565 = false;
+
+  bool blend_enabled = false;
+  bool depth_test_enabled = false;
+  bool current_depth_mask = true;
+  bool stencil_test_enabled = false;
+  int current_stencil_mask = 0xff;
+  bool cull_face_enabled = false;
+  float current_line_width = 1.0f;
+  bool current_red_mask = true, current_green_mask = true, current_blue_mask = true, current_alpha_mask = true;
+  CompositionMode current_composition_mode = COPY;
+  glm::ivec2 current_display_size;
+  float display_scale = 1.0f;
+  int current_texture_2d = 0, current_vertex_array = 0, current_program = 0;
+};
+
+#endif
