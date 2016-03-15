@@ -305,6 +305,7 @@ extern FWContextBase * esMain(FWPlatformBase * platform);
     if (self = [super initWithFrame:frame])
     {
 	[self setMultipleTouchEnabled:YES];
+	[UIView setAnimationsEnabled:NO];
 
         // _display_scale = [[UIScreen mainScreen] scale];
 	float scale = [[UIScreen mainScreen] scale];
@@ -460,43 +461,37 @@ extern FWContextBase * esMain(FWPlatformBase * platform);
   double t = [[NSProcessInfo processInfo] systemUptime];
   need_update |= _esContext->onUpdate(t);
   if (need_update) {
-    [self drawView2];
+    // CGRect adjustedFrame = [self convertRect:self.bounds fromView:nil];
+    unsigned int logical_width = int(CGRectGetWidth(self.bounds));
+    unsigned int logical_height = int(CGRectGetHeight(self.bounds));
+  
+#if 0
+    UIDeviceOrientation orientation = [[UIDevice currentDevice] orientation];
+    cerr << "orientation = " << int(orientation) << endl;
+    if (orientation == UIDeviceOrientationPortrait || orientation == UIDeviceOrientationPortraitUpsideDown) {
+      cerr << "flipping view" << endl;
+      unsigned int tmp = logical_width;
+      logical_width = logical_height;
+      logical_height = tmp;
+    }
+#endif
+  
+    drawableWidth = int(logical_width * self.contentScaleFactor);
+    drawableHeight = int(logical_height * self.contentScaleFactor);
+  
+    if (drawableWidth != _esContext->getActualWidth() || drawableHeight != _esContext->getActualHeight()) {
+      cerr << "resize window: " << logical_width << " " << logical_height << endl;
+      _esContext->onResize(logical_width, logical_height, drawableWidth, drawableHeight);
+    }
+    _esContext->onDraw();
+    
+    [context presentRenderbuffer:GL_RENDERBUFFER];
+    need_update = false;
   }
 }
 
-- (void) drawView2 {
-  // CGRect adjustedFrame = [self convertRect:self.bounds fromView:nil];
-  unsigned int logical_width = int(CGRectGetWidth(self.bounds));
-  unsigned int logical_height = int(CGRectGetHeight(self.bounds));
-  
-#if 0
-  UIDeviceOrientation orientation = [[UIDevice currentDevice] orientation];
-  cerr << "orientation = " << int(orientation) << endl;
-  if (orientation == UIDeviceOrientationPortrait || orientation == UIDeviceOrientationPortraitUpsideDown) {
-    cerr << "flipping view" << endl;
-    unsigned int tmp = logical_width;
-    logical_width = logical_height;
-    logical_height = tmp;
-  }
-#endif
-  
-  drawableWidth = int(logical_width * self.contentScaleFactor);
-  drawableHeight = int(logical_height * self.contentScaleFactor);
-  
-  if (drawableWidth != _esContext->getActualWidth() || drawableHeight != _esContext->getActualHeight()) {
-    cerr << "resize window: " << logical_width << " " << logical_height << endl;
-    _esContext->onResize(logical_width, logical_height, drawableWidth, drawableHeight);
-  }
-  _esContext->onDraw();
-
-#if 0
-  const GLenum discards[] = { GL_DEPTH_ATTACHMENT, GL_STENCIL_ATTACHMENT };
-  glBindFramebuffer(GL_FRAMEBUFFER, current_framebuffer);
-  glDiscardFramebufferEXT(GL_FRAMEBUFFER, 2, discards);
-#endif
-    
-  [context presentRenderbuffer:GL_RENDERBUFFER];
-  need_update = false;
+- (void) requestUpdate {
+  need_update = true;
 }
 
 - (void) startRenderLoop {
@@ -534,6 +529,5 @@ extern FWContextBase * esMain(FWPlatformBase * platform);
     // [self drawView2];
 }
 #endif
-
 
 @end

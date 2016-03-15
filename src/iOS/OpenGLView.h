@@ -4,7 +4,7 @@
 @interface OpenGLView : UIView
 
 - (void) drawView: (CADisplayLink*) displayLink;
-- (void) drawView2;
+- (void) requestUpdate;
 - (void) createFBO: (int) flags;
 - (void) startRenderLoop;
 - (void) stopRenderLoop;
