@@ -233,10 +233,23 @@ PrimitiveRenderer::use(const gpufw::shader_program & program) {
 }
 
 void
-PrimitiveRenderer::clear() {
-  colorMask(true, true, true, true);
-  depthMask(true);
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+PrimitiveRenderer::clear(int clear_bits) {
+  int gl_bits = 0;
+  if (clear_bits & COLOR_BUFFER_BIT) {
+    colorMask(true, true, true, true);
+    gl_bits |= GL_COLOR_BUFFER_BIT;
+  }
+  if (clear_bits & DEPTH_BUFFER_BIT || clear_bits & DEPTH_STENCIL_BUFFER_BIT) {
+    depthMask(true);
+    gl_bits |= GL_DEPTH_BUFFER_BIT;
+  }
+  if (clear_bits & STENCIL_BUFFER_BIT || clear_bits & DEPTH_STENCIL_BUFFER_BIT) {
+    stencilMask(0xff);
+    gl_bits |= GL_STENCIL_BUFFER_BIT;
+  }
+  if (gl_bits) {
+    glClear(gl_bits);
+  }
 }
 
 void
@@ -297,4 +310,22 @@ PrimitiveRenderer::popGroupMarker() {
 #ifdef GL_ES
   glPopGroupMarkerEXT();
 #endif
+}
+
+void
+PrimitiveRenderer::invalidateFramebuffer(int bits) {
+#if 0
+  const GLenum discards[] = { GL_DEPTH_ATTACHMENT, GL_STENCIL_ATTACHMENT };
+  glBindFramebuffer(GL_FRAMEBUFFER, current_framebuffer);
+  glDiscardFramebufferEXT(GL_FRAMEBUFFER, 2, discards);
+#endif
+
+  int n = 0;
+  GLenum v[4];
+  if (bits & STENCIL_BUFFER_BIT) {
+    v[n++] = GL_STENCIL_ATTACHMENT;
+  }
+  if (n) {
+    glInvalidateFramebuffer(GL_FRAMEBUFFER, n, &v[0]);
+  }
 }
