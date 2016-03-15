@@ -16,7 +16,7 @@ using namespace std;
   [super viewWillTransitionToSize: size withTransitionCoordinator:coordinator];
   [coordinator animateAlongsideTransition: nil completion: ^(id _Nonnull context) {
     OpenGLView * v = (OpenGLView *)self.view;
-    [v drawView2];
+    [v requestUpdate];
   }];
 }
 
