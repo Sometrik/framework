@@ -284,3 +284,17 @@ PrimitiveRenderer::viewport(unsigned int x, unsigned int y, unsigned int w, unsi
     glViewport(0, 0, (unsigned int)(w * display_scale), (unsigned int)(h * display_scale));
   }
 }
+
+void
+PrimitiveRenderer::pushGroupMarker(const char * name) { 
+#ifdef GL_ES
+  glPushGroupMarkerEXT(0, name);
+#endif
+}
+
+void
+PrimitiveRenderer::popGroupMarker() {
+#ifdef GL_ES
+  glPopGroupMarkerEXT();
+#endif
+}

@@ -37,6 +37,9 @@ class PrimitiveRenderer {
 
  protected:
   void initializeBase();
+
+  void pushGroupMarker(const char * name);
+  void popGroupMarker();
   
   void blend(bool t);
   void stencilTest(bool t);
