@@ -117,6 +117,7 @@ PrimitiveRenderer::initializeBase() {
       if (es_version == "3.0") {
 	cerr << "has etc1" << endl;
 	has_etc1 = true;
+	is_es3 = true;
       }
       has_rgb565 = true;
     } else if (parts.size() >= 2 && parts[1] == "Mesa") {
@@ -314,18 +315,22 @@ PrimitiveRenderer::popGroupMarker() {
 
 void
 PrimitiveRenderer::invalidateFramebuffer(int bits) {
-#if 0
-  const GLenum discards[] = { GL_DEPTH_ATTACHMENT, GL_STENCIL_ATTACHMENT };
-  glBindFramebuffer(GL_FRAMEBUFFER, current_framebuffer);
-  glDiscardFramebufferEXT(GL_FRAMEBUFFER, 2, discards);
-#endif
-
   int n = 0;
   GLenum v[4];
   if (bits & STENCIL_BUFFER_BIT) {
     v[n++] = GL_STENCIL_ATTACHMENT;
   }
+  if (bits & DEPTH_BUFFER_BIT) {
+    v[n++] = GL_DEPTH_ATTACHMENT;
+  }
   if (n) {
-    glInvalidateFramebuffer(GL_FRAMEBUFFER, n, &v[0]);
+    if (is_es3) {
+      glInvalidateFramebuffer(GL_FRAMEBUFFER, n, &v[0]);
+    } else {
+#ifdef GL_ES
+      // glBindFramebuffer(GL_FRAMEBUFFER, current_framebuffer);
+      glDiscardFramebufferEXT(GL_FRAMEBUFFER, n, &v[0]);
+#endif
+    }
   }
 }
