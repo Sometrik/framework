@@ -254,12 +254,6 @@ extern FWContextBase * esMain(FWPlatformBase * platform);
   glGenRenderbuffers(1, &color);
   glBindRenderbuffer(GL_RENDERBUFFER, color);
   CAEAGLLayer* eaglLayer = (CAEAGLLayer*) self.layer;
-#if 0	
-  eaglLayer.drawableProperties = [NSDictionary dictionaryWithObjectsAndKeys:
-                                [NSNumber numberWithBool:NO], kEAGLDrawablePropertyRetainedBacking,
-                                kEAGLColorFormatRGB565, kEAGLDrawablePropertyColorFormat,
-                                nil];
-#endif
 
   [context renderbufferStorage:GL_RENDERBUFFER fromDrawable: eaglLayer];
 
@@ -313,6 +307,13 @@ extern FWContextBase * esMain(FWPlatformBase * platform);
         CAEAGLLayer* eaglLayer = (CAEAGLLayer*) self.layer;
         eaglLayer.opaque = YES;
         eaglLayer.contentsScale = scale;
+#if 0	
+  eaglLayer.drawableProperties = [NSDictionary dictionaryWithObjectsAndKeys:
+                                [NSNumber numberWithBool:NO], kEAGLDrawablePropertyRetainedBacking,
+                                kEAGLColorFormatRGB565, kEAGLDrawablePropertyColorFormat,
+                                nil];
+#endif
+
       
 	self->_opengl_version = 300;
 	self->_has_es3 = true;
