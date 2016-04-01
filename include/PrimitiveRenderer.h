@@ -75,6 +75,7 @@ class PrimitiveRenderer {
   glm::ivec2 current_display_size;
   float display_scale = 1.0f;
   int current_texture_2d = 0, current_vertex_array = 0, current_program = 0;
+  bool is_es3 = false;
 };
 
 #endif
