@@ -329,7 +329,7 @@ PrimitiveRenderer::invalidateFramebuffer(int bits) {
     } else {
 #ifdef GL_ES
       // glBindFramebuffer(GL_FRAMEBUFFER, current_framebuffer);
-      glDiscardFramebufferEXT(GL_FRAMEBUFFER, n, &v[0]);
+      // glDiscardFramebufferEXT(GL_FRAMEBUFFER, n, &v[0]);
 #endif
     }
   }
