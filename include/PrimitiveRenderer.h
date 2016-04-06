@@ -28,6 +28,8 @@ class PrimitiveRenderer {
   const glm::ivec2 & getDisplaySize() const { return current_display_size; }
 
   void clear(int clear_bits);
+  void invalidateFramebuffer(int bits);
+
   void colorMask(bool r, bool g, bool b, bool a);
   void viewport(unsigned int x, unsigned int y, unsigned int w, unsigned int h);
   void setDisplayScale(float s) { display_scale = s; }
@@ -45,7 +47,6 @@ class PrimitiveRenderer {
 
   void pushGroupMarker(const char * name);
   void popGroupMarker();
-  void invalidateFramebuffer(int bits);
   
   void blend(bool t);
   void stencilTest(bool t);
