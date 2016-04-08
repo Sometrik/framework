@@ -38,6 +38,7 @@ VBO::clear() {
     indexVbo = 0;    
   }
   num_indices = num_elements = 0;
+  data_uploaded = indices_uploaded = false;
 }
 
 void
@@ -132,6 +133,8 @@ VBO::upload(DataType type, const void * ptr, size_t size) {
   glBufferData(GL_ARRAY_BUFFER, size, ptr, is_dynamic ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
   setPointers();
   // glBindVertexArray(0);
+
+  data_uploaded = true;
 }
 
 void
@@ -147,10 +150,13 @@ VBO::uploadIndices(const void * ptr, size_t size) {
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexVbo);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, ptr, is_dynamic ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
   // glBindVertexArray(0);
+
+  indices_uploaded = true;
 }
 
 void
 VBO::draw(DrawType type, const vector<int> & _indices) {
+  assert(0);
   const int & first_index = _indices.front();
   glDrawElements(getGLDrawType(type), (GLsizei)_indices.size(), GL_UNSIGNED_INT, &first_index);
   // glBindVertexArray(0);
@@ -159,10 +165,14 @@ VBO::draw(DrawType type, const vector<int> & _indices) {
 void
 VBO::draw(DrawType type) {
   if (!type) type = default_draw_type;
+  assert(type);
+  assert(vbo);
+  assert(data_uploaded);
   if (!num_indices) {
     // cerr << "drawing A: " << num_elements << endl;
     glDrawArrays(getGLDrawType(type), 0, num_elements);
   } else {
+    assert(indices_uploaded);
     // cerr << "drawing B: " << num_indices << endl;
     glDrawElements(getGLDrawType(type), num_indices, GL_UNSIGNED_INT, 0);
   }

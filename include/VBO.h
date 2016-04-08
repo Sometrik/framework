@@ -111,6 +111,7 @@ class VBO {
   int stride = 0;
   unsigned int num_indices = 0, num_elements = 0;  
   bool is_dynamic;
+  bool data_uploaded = false, indices_uploaded = false;
 };
 
 #endif
