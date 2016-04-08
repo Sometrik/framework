@@ -428,7 +428,7 @@ extern FWContextBase * esMain(FWPlatformBase * platform);
     if (motion == UIEventSubtypeMotionShake ) {
         // User was shaking the device. Post a notification named "shake".
         // [[NSNotificationCenter defaultCenter] postNotificationName:@"shake" object:self];
-	need_update |= _esContext->onShake();
+	need_update |= _esContext->onShake(event.timestamp);
     }
 }
 

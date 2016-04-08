@@ -38,7 +38,7 @@ public:
   virtual bool touchesEnded(int x, int y, double timestamp, long long identifier) { return false; }
   virtual bool touchesMoved(int x, int y, double timestamp, long long identifier) { return false; }
   virtual bool flushTouches(int mode, double timestamp) { return false; }
-  virtual bool onShake() { return false; }
+  virtual bool onShake(double timestamp) { return false; }
   
   virtual bool loadEvents() { return false; }
   
