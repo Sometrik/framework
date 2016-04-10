@@ -4,7 +4,14 @@
 #include "FWPlatformBase.h"
 
 #include <ContextQuartz2D.h>
+
+#define USE_CURL
+
+#ifdef USE_CURL
 #include <CurlClient.h>
+#else
+#include <iOSClient.h>
+#endif
 
 #import <Foundation/Foundation.h>
 
@@ -104,19 +111,15 @@ public:
      return ptr;
   }
   void storeValue(const std::string & key, const std::string & value) override {
-    NSString *storedVal = [[NSString alloc] initWithUTF8String:value.c_str()];
-    NSString *storedKey = [[NSString alloc] initWithUTF8String:key.c_str()];
+    NSString *storedVal = [NSString stringWithUTF8String:value.c_str()];
+    NSString *storedKey = [NSString stringWithUTF8String:key.c_str()];
     [defaults setObject:storedVal forKey:storedKey];
     [defaults synchronize]; // this method is optional
-    [storedVal release];
-    [storedKey release];
   }
   std::string loadValue(const std::string & key) override {
-    NSString *loadedKey = [[NSString alloc] initWithUTF8String:key.c_str()];
+    NSString *loadedKey = [NSString stringWithUTF8String:key.c_str()];
     NSString *results = [defaults stringForKey:loadedKey];
     string r = [results cStringUsingEncoding:[NSString defaultCStringEncoding]]; // wrong encoding
-    [loadedKey release];
-    [results release];
     return r;
   }
   std::shared_ptr<canvas::ContextFactory> createContextFactory() const override {
@@ -124,7 +127,11 @@ public:
     return std::make_shared<canvas::Quartz2DContextFactory>(getDisplayScale(), ptr);
   }
   std::shared_ptr<HTTPClientFactory> createHTTPClientFactory() const override {
+#ifdef USE_CURL
     return std::make_shared<CurlClientFactory>();
+#else
+    return std::make_shared<iOSClientFactory>();
+#endif
   }
   void launchBrowser(const std::string & input_url) override {
     cerr << "trying to open browser" << endl;
@@ -151,8 +158,10 @@ public:
                         style:UIAlertActionStyleDefault
                         handler:^(UIAlertAction * action)
                         {
-                            //Do some thing here
-                            [view dismissOpenGLViewAnimated:YES completion:nil];                          
+                             //Do some thing here
+#if 0
+                            [view dismissOpenGLViewAnimated:YES completion:nil];
+#endif
                         }];
       [view addAction:action];
     }
@@ -335,7 +344,7 @@ extern FWContextBase * esMain(FWPlatformBase * platform);
         
         if (!self->context || ![EAGLContext setCurrentContext:context]) {
             NSLog(@"Sorry, an iPhone 3GS or higher is required for this sample.");
-            [self release];
+            // [self release];
             return nil;
         }
       
@@ -376,10 +385,12 @@ extern FWContextBase * esMain(FWPlatformBase * platform);
   [self becomeFirstResponder];
 }
 
+#if 0
 - (void)viewWillDisappear:(BOOL)animated {
   [self resignFirstResponder];
   [super viewWillDisappear:animated];
 }
+#endif
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
   [touches enumerateObjectsUsingBlock:^(id obj, BOOL *stop) {
@@ -446,7 +457,7 @@ extern FWContextBase * esMain(FWPlatformBase * platform);
   if ([EAGLContext currentContext] == self->context) {
     [EAGLContext setCurrentContext:nil];
   }
-  [super dealloc];
+  // [super dealloc];
 }
 
 - (void)tearDownGL {
