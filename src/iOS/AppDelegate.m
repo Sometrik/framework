@@ -66,10 +66,12 @@
 
 - (void) dealloc
 {
+#if 0
   [view release];
   [window release];
   [controller release];
   [super dealloc];
+#endif
 }
 
 @end
