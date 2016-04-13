@@ -42,6 +42,16 @@ class PrimitiveRenderer {
 
   float getDisplayScale() const { return display_scale; }
 
+  void setScreenSize(unsigned int _width, unsigned int _height, unsigned int _actual_width, unsigned int _actual_height) {
+    screen_width = _width; screen_height = _height;
+    actual_screen_width = _actual_width; actual_screen_height = _actual_height;
+  }
+
+  unsigned int getScreenWidth() const { return screen_width; }
+  unsigned int getScreenHeight() const { return screen_height; }
+  unsigned int getActualScreenWidth() const { return actual_screen_width; }
+  unsigned int getActualScreenHeight() const { return actual_screen_height; }
+
  protected:
   void initializeBase();
 
@@ -77,6 +87,7 @@ class PrimitiveRenderer {
   float display_scale = 1.0f;
   int current_texture_2d = 0, current_vertex_array = 0, current_program = 0;
   bool is_es3 = false;
+  unsigned int screen_width = 0, screen_height = 0, actual_screen_width = 0, actual_screen_height = 0;
 };
 
 #endif
