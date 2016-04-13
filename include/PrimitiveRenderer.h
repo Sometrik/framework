@@ -43,8 +43,10 @@ class PrimitiveRenderer {
   float getDisplayScale() const { return display_scale; }
 
   void setScreenSize(unsigned int _width, unsigned int _height, unsigned int _actual_width, unsigned int _actual_height) {
-    screen_width = _width; screen_height = _height;
-    actual_screen_width = _actual_width; actual_screen_height = _actual_height;
+    screen_width = _width;
+    screen_height = _height;
+    actual_screen_width = _actual_width;
+    actual_screen_height = _actual_height;
   }
 
   unsigned int getScreenWidth() const { return screen_width; }
