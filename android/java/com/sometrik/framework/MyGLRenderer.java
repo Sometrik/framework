@@ -71,6 +71,8 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
   public void onSurfaceChanged(GL10 unused, int width, int height) {
     System.out.println("(Renderer) onSurfaceChanged called");
     GLES20.glViewport(0, 0, width, height);
+
+    onResize(width, height);
   }
 
   @Override
@@ -86,11 +88,6 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     DisplayMetrics displayMetrics = frame.getDisplayMetrics();
     xSize = displayMetrics.widthPixels;
     ySize = displayMetrics.heightPixels;
-
-    System.out.println("xSize is " + xSize);
-    System.out.println("ySize is " + ySize);
-
-//    onResize(xSize, ySize);
 
   }
 
