@@ -11,6 +11,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.PointF;
 import android.net.Uri;
@@ -487,6 +488,18 @@ public class FrameWork extends Activity {
       // showUserSettings();
       break;
 
+    }
+  }
+  
+  @Override
+  public void onConfigurationChanged(Configuration newConfig) {
+
+    super.onConfigurationChanged(newConfig);
+
+    if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+      System.out.println("Orientation conf portrait");
+    } else if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+      System.out.println("Orientation conf landscape");
     }
   }
 
