@@ -121,11 +121,13 @@ PrimitiveRenderer::initializeBase() {
       }
       has_rgb565 = true;
     } else if (parts.size() >= 2 && parts[1] == "Mesa") {
-
+      has_rgb565 = true;
     } else {
       assert(0);
     }
   }
+
+  assert(has_rgb565);
 
   int ii;
   glGetIntegerv(GL_MAX_TEXTURE_SIZE, &ii);
