@@ -42,7 +42,7 @@ public class MyGLSurfaceView extends GLSurfaceView {
   Path mPath;
   SharedPreferences prefs;
   SharedPreferences.Editor editor;
-
+  
   public MyGLSurfaceView(Context context, MyGLRenderer renderer) {
     super(context);
     this.context = context;
@@ -73,7 +73,7 @@ public class MyGLSurfaceView extends GLSurfaceView {
     mPaint.setStrokeJoin(Paint.Join.ROUND);
     mPaint.setStrokeWidth(3f);
     mPaint.setTextSize(40f);
-
+    
     sHandler = new Handler() {
       @Override
       public void handleMessage(Message msg) {
@@ -107,6 +107,7 @@ public class MyGLSurfaceView extends GLSurfaceView {
 	case 2:
 	  System.out.println("shandler case 2");
 	  menuPressed();
+	  System.out.println("shandler case 2");
 	  break;
 	// 22 - Menu Button Pressed jni return
 	case 22:
@@ -145,11 +146,13 @@ public class MyGLSurfaceView extends GLSurfaceView {
 
     };
 
+
+
     sHandler.postDelayed(onDrawRunnable, 500);
     System.out.println("SurfaceCreated end");
 
   }
-  
+
 
   Runnable onDrawRunnable = new Runnable() {
     @Override
@@ -350,6 +353,7 @@ public class MyGLSurfaceView extends GLSurfaceView {
     return String.valueOf(frame.getDatabasePath(dbName));
   }
   
+  //returns android resource file path
   public String getResourcePath(String fileName){
     System.out.println("getting fileName path _ file name: " + fileName + " Path: " + "android.resource://com.sometrik.framework/test/" + fileName);
       Uri resourcePath = Uri.parse("android.resource://com.sometrik.framework/test/ " + fileName);

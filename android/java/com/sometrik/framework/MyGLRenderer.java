@@ -10,6 +10,7 @@ import android.opengl.GLSurfaceView;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.util.DisplayMetrics;
 
 public class MyGLRenderer implements GLSurfaceView.Renderer {
 
@@ -61,14 +62,17 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
       // System.out.println("onDrawFrame called");
       startTime = System.currentTimeMillis();
 
-      //Calls onDraw in AndroidPlatform
+      // Calls onDraw in AndroidPlatform
       nativeOnDraw();
     }
 
   }
 
   public void onSurfaceChanged(GL10 unused, int width, int height) {
+    System.out.println("(Renderer) onSurfaceChanged called");
     GLES20.glViewport(0, 0, width, height);
+
+    onResize(width, height);
   }
 
   @Override
@@ -78,10 +82,13 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     renderer = this;
     System.out.println("surface check: " + frame.getSurfaceView());
 
-    //Calls onInit in AndroidPlatform
+    // Calls onInit in AndroidPlatform
     onInit(assetManager, frame.getSurfaceView());
-    onResize(xSize, ySize);
-    
+
+    DisplayMetrics displayMetrics = frame.getDisplayMetrics();
+    xSize = displayMetrics.widthPixels;
+    ySize = displayMetrics.heightPixels;
+
   }
 
   // Wanhaa
