@@ -6,7 +6,7 @@
 #include <FWContextBase.h>
 #include <FWPlatformBase.h>
 
-class Example1 : public FWContextBase {
+class BombDefender : public FWContextBase {
 public:
 	Example1(FWPlatformBase * _platform) : FWContextBase(_platform) { }
 

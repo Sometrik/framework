@@ -13,16 +13,16 @@
 using namespace std;
 
 bool
-Example1::Init() {
+BombDefender::Init() {
 
 }
 
 void
-Example1::onDraw() {
+BombDefender::onDraw() {
 }
 
 void
-Example1::onShutdown() {
+BombDefender::onShutdown() {
 }
 
 std::shared_ptr<Example1> application;
