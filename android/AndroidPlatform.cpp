@@ -107,6 +107,7 @@ AndroidPlatform::onDraw() {
 
 		glClearColor(0.98f, 0.0f, 0.98f, 1.0f);
 		glClear (GL_COLOR_BUFFER_BIT);
+		getApplication().onDraw();
 #if 0
 		glm::mat4 projMat = glm::ortho(0.0f, float(screenWidth), 0.0f,
 				float(screenHeight), -1000.0f, +1000.0f);
@@ -229,23 +230,23 @@ AndroidPlatform::onInit() {
 #endif
 				//showCanvas((dynamic_cast<canvas::AndroidSurface&>(context->getDefaultSurface())).getBitmap(), surface);
 
-		AndroidClientFactory clientFactory(env);
-		auto android = clientFactory.createClient("yo", false, false);
-
-		HTTPRequest requ = HTTPRequest(HTTPRequest::GET, "http://i.imgur.com/x37PajU.jpg");
-		requ.setFollowLocation(false);
-		requ.addHeader("HelloTest", "YO");
-		requ.addHeader("HelloTest2", "YO");
-		requ.addHeader("HelloTest2", "YO");
-		Authorization autor = Authorization();
-		auto resp = android->request(requ, autor);
-		auto res = android->Get("http://i.imgur.com/2tfe9LS.jpg");
-		if (res.isSuccess()) {
-			auto surfaceee = factory.createSurface((unsigned char*)res.getContent().c_str(), res.getContent().size());
-			auto imigi = *surfaceee->createImage();
-			//context->drawImage(*surfaceee, 0, 0, 300, 300);
-			context->drawImage(imigi, 0, 0, 300, 300);
-		}
+//		AndroidClientFactory clientFactory(env);
+//		auto android = clientFactory.createClient("yo", false, false);
+//
+//		HTTPRequest requ = HTTPRequest(HTTPRequest::GET, "http://i.imgur.com/x37PajU.jpg");
+//		requ.setFollowLocation(false);
+//		requ.addHeader("HelloTest", "YO");
+//		requ.addHeader("HelloTest2", "YO");
+//		requ.addHeader("HelloTest2", "YO");
+//		Authorization autor = Authorization();
+//		auto resp = android->request(requ, autor);
+//		auto res = android->Get("http://i.imgur.com/2tfe9LS.jpg");
+//		if (res.isSuccess()) {
+//			auto surfaceee = factory.createSurface((unsigned char*)res.getContent().c_str(), res.getContent().size());
+//			auto imigi = *surfaceee->createImage();
+//			//context->drawImage(*surfaceee, 0, 0, 300, 300);
+//			context->drawImage(imigi, 0, 0, 300, 300);
+//		}
 
 //		showCanvas((dynamic_cast<canvas::AndroidSurface&>(context->getDefaultSurface())).getBitmap(), framework, env);
 		//application->Init();
