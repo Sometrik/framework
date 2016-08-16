@@ -9,6 +9,10 @@
 
 #include <glm/gtc/type_ptr.hpp>
 
+#ifdef ANDROID
+#include "android_fopen.h"
+#endif
+
 using namespace std;
 using namespace gpufw;
 
@@ -16,14 +20,25 @@ shader_program::shader_program() { }
 
 bool
 shader_program::loadShaders(const char * glsl_version, const char * filename) {
+  string shader_text;
+#ifdef ANDROID
+  FILE * in = android_fopen(filename, "r");
+  while (!feof(in)) {
+    unsigned char b[256];
+    size_t n = fread(b, 256, 1, in);
+    shader_text += string(b, n);
+  }
+#else
   std::ifstream t(filename);
   std::stringstream buffer;
   buffer << t.rdbuf();
+  shader_text = buffer.str();
+#endif
   
   bool r = true;
-  r = loadShader(GL_VERTEX_SHADER, glsl_version, buffer.str().c_str(), filename);
+  r = loadShader(GL_VERTEX_SHADER, glsl_version, shader_text.c_str(), filename);
   if (r) {
-    r = loadShader(GL_FRAGMENT_SHADER, glsl_version, buffer.str().c_str(), filename);
+    r = loadShader(GL_FRAGMENT_SHADER, glsl_version, shader_text.c_str(), filename);
   }
   return r;
 }
