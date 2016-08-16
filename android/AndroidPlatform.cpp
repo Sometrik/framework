@@ -7,7 +7,6 @@
 #include <android/log.h>
 #include <GLES3/gl3.h>
 #include "Menu.h"
-#include "program.h"
 #include <jni.h>
 #include <android/asset_manager.h>
 #include <android/asset_manager_jni.h>
@@ -169,7 +168,7 @@ AndroidPlatform::createInputDialog(const char * _title, const char * _message, i
 		//return message;
 	}
 
-	static program * test_program;
+//	static program * test_program;
 
 void
 AndroidPlatform::showCanvas(canvas::ContextAndroid & context) {
