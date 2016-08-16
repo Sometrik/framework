@@ -20,6 +20,8 @@
 #include <shader_program.h>
 #include <FWContextBase.h>
 
+#include <android_fopen.h>
+
 #define TAG "CubeWallpaper1.c"
 
 using namespace gpufw;
@@ -182,9 +184,6 @@ AndroidPlatform::showCanvas(canvas::ContextAndroid & context) {
 
 void
 AndroidPlatform::onInit() {
-
-		// AAssetManager* manager = AAssetManager_fromJava(env, mgr);
-
 	//menuPressed();
 
 		canvas::AndroidContextFactory factory(env, mgr);
@@ -606,6 +605,10 @@ void Java_com_sometrik_framework_MyGLRenderer_onInit(JNIEnv* env, jobject thiz, 
   	float displayScale = 1.0f;
   	bool hasEs3 = false;
   	const char* glslVersion = hasEs3 ? "#version es 300" : "#version es 100";
+
+	AAssetManager* manager = AAssetManager_fromJava(env, assertManager);
+	android_fopen_set_asset_manager(manager);
+
   	platform = std::make_shared<AndroidPlatform>(env, assetManager, surface, displayScale, glslVersion, hasEs3);
   }
 	applicationMain(platform.get());
