@@ -95,6 +95,8 @@ class VBO {
   bool hasTexture() const { return texture.get() != 0; }
 #endif
 
+  static bool hasVertexArrayObjects() const { return has_vertex_array_objects; }
+
  protected:
   DataType getDataType() const { return data_type; }
   int getStride() const { return stride; }
@@ -112,6 +114,8 @@ class VBO {
   unsigned int num_indices = 0, num_elements = 0;  
   bool is_dynamic;
   bool data_uploaded = false, indices_uploaded = false;
+
+  static bool has_vertex_array_objects = false;
 };
 
 #endif

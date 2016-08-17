@@ -4,10 +4,6 @@
 #include <cassert>
 #include <iostream>
 
-
-
-//#define USE_VERTEX_ARRAYS
-
 using namespace std;
 
 static GLenum getGLDrawType(VBO::DrawType type) {
@@ -29,12 +25,10 @@ VBO::~VBO() {
 
 void
 VBO::clear() {
-#ifdef USE_VERTEX_ARRAYS
   if (vao) {
     glDeleteVertexArrays(1, &vao);
     vao = 0;
   }
-#endif
   if (vbo) {
     glDeleteBuffers(1, &vbo);
     vbo = 0;
@@ -49,12 +43,12 @@ VBO::clear() {
 
 void
 VBO::setPointers() {
+  int n_arrays = 0;
   switch (getDataType()) {
   case T2F_N3F_V3F:
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, getStride(), (void *)(0 * sizeof(float)));
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, getStride(), (void *)(5 * sizeof(float)));
-    glEnableVertexAttribArray(0);
-    glEnableVertexAttribArray(1);
+    n_arrays = 2;
     break;
   case NODE_BILLBOARDS:
     glVertexAttribPointer(0, 4, GL_UNSIGNED_BYTE, GL_TRUE, getStride(), (void *)(0)); // color
@@ -63,12 +57,7 @@ VBO::setPointers() {
     glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, getStride(), (void *)(20)); // size
     glVertexAttribPointer(4, 1, GL_FLOAT, GL_FALSE, getStride(), (void *)(24)); // scaling
     glVertexAttribPointer(5, 2, GL_UNSIGNED_SHORT, GL_FALSE, getStride(), (void *)(28)); // texture / flags
-    glEnableVertexAttribArray(0);
-    glEnableVertexAttribArray(1);
-    glEnableVertexAttribArray(2);
-    glEnableVertexAttribArray(3);
-    glEnableVertexAttribArray(4);
-    glEnableVertexAttribArray(5);
+    n_arrays = 6;
     break;
   case BILLBOARDS:
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, getStride(), (void *)(0 * sizeof(float)));
@@ -77,12 +66,7 @@ VBO::setPointers() {
     glVertexAttribPointer(3, 2, GL_HALF_FLOAT, GL_FALSE, getStride(), (void *)(5 * sizeof(float)));
     glVertexAttribPointer(4, 4, GL_UNSIGNED_BYTE, GL_TRUE, getStride(), (void *)(6 * sizeof(float)));
     glVertexAttribPointer(5, 4, GL_UNSIGNED_BYTE, GL_TRUE, getStride(), (void *)(7 * sizeof(float)));
-    glEnableVertexAttribArray(0);
-    glEnableVertexAttribArray(1);
-    glEnableVertexAttribArray(2);
-    glEnableVertexAttribArray(3);
-    glEnableVertexAttribArray(4);
-    glEnableVertexAttribArray(5);
+    n_arrays = 6;
     break;
   case EDGES:
     glVertexAttribPointer(0, 4, GL_UNSIGNED_BYTE, GL_TRUE, getStride(), (void *)(0 * sizeof(float)));
@@ -91,27 +75,26 @@ VBO::setPointers() {
     glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, getStride(), (void *)(7 * sizeof(float)));
     glVertexAttribPointer(4, 1, GL_FLOAT, GL_FALSE, getStride(), (void *)(8 * sizeof(float)));
     glVertexAttribPointer(5, 1, GL_FLOAT, GL_FALSE, getStride(), (void *)(9 * sizeof(float)));
-    glEnableVertexAttribArray(0);
-    glEnableVertexAttribArray(1);
-    glEnableVertexAttribArray(2);
-    glEnableVertexAttribArray(3);
-    glEnableVertexAttribArray(4);
-    glEnableVertexAttribArray(5);
+    n_arrays = 6;
     break;
   case ARCS_2D:
     glVertexAttribPointer(0, 4, GL_UNSIGNED_BYTE, GL_TRUE, getStride(), (void *)(0 * sizeof(float)));
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, getStride(), (void *)(1 * sizeof(float)));
-    glEnableVertexAttribArray(0);
-    glEnableVertexAttribArray(1);
+    n_arrays = 2;
     break;
   case ARCS_3D:
     glVertexAttribPointer(0, 4, GL_UNSIGNED_BYTE, GL_TRUE, getStride(), (void *)(0 * sizeof(float)));
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, getStride(), (void *)(1 * sizeof(float)));
     glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, getStride(), (void *)(4 * sizeof(float)));
-    glEnableVertexAttribArray(0);
-    glEnableVertexAttribArray(1);
-    glEnableVertexAttribArray(2);
+    n_arrays = 3;
     break;
+  }
+  for (int i = 0; i < 6; i++) {
+    if (i < n_arrays) {
+      glEnableVertexAttribArray(i);
+    } else if (!hasVertexArrayObjects()) {
+      glDisableVertexAttribArray(i);
+    }
   }
 }
 
@@ -130,17 +113,14 @@ VBO::upload(DataType type, const void * ptr, size_t size) {
   }
   
   num_elements = size / stride;
-#ifdef USE_VERTEX_ARRAYS
-  if (!vao) {
-    glGenVertexArrays(1, &vao);
+  if (hasVertexArrayObjects()) {
+    if (!vao) glGenVertexArrays(1, &vao);
+    glBindVertexArray(vao);
   }
-  glBindVertexArray(vao);
-#endif
   if (!vbo) glGenBuffers(1, &vbo);
   glBindBuffer(GL_ARRAY_BUFFER, vbo);
   glBufferData(GL_ARRAY_BUFFER, size, ptr, is_dynamic ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
   setPointers();
-  // glBindVertexArray(0);
 
   data_uploaded = true;
 }
@@ -149,18 +129,15 @@ void
 VBO::uploadIndices(const void * ptr, size_t size) {
   assert(size > 0);
 
-#ifdef USE_VERTEX_ARRAYS
-  if (!vao) {
-    glGenVertexArrays(1, &vao);
+  if (hasVertexArrayObjects()) {
+    if (!vao) glGenVertexArrays(1, &vao);
+    glBindVertexArray(vao);
   }
-  glBindVertexArray(vao);
-#endif
   if (!indexVbo) glGenBuffers(1, &indexVbo);
   num_indices = size / 4;
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexVbo);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, ptr, is_dynamic ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
-  // glBindVertexArray(0);
-
+  
   indices_uploaded = true;
 }
 
@@ -178,6 +155,9 @@ VBO::draw(DrawType type) {
   assert(type);
   assert(vbo);
   assert(data_uploaded);
+  if (!hasVertexArrayObjects()) {
+    setPointers();
+  }
   if (!num_indices) {
     // cerr << "drawing A: " << num_elements << endl;
     glDrawArrays(getGLDrawType(type), 0, num_elements);
