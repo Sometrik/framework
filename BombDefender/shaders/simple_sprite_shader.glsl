@@ -23,7 +23,8 @@ varying vec2 v_texCoord;
 // out vec4 o_fragColor;
 
 void main() {
-  gl_FragColor = alpha * texture2D( s_texture, v_texCoord );
+//  gl_FragColor = alpha * texture2D( s_texture, v_texCoord );
+  gl_FragColor = vec4(sin(10.0 * v_texCoord.x), 20.0 * v_texCoord.y, 50.0, 1.0);
 }
 
 #endif
