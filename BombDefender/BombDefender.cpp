@@ -86,9 +86,8 @@ void BombDefender::drawSprite(const Sprite & sprite){
   	   500.0f, 500.0f,
   	   10.0f, 500.0f);
 
-  if (vbo.getVertexBufferId()) glBindBuffer(GL_ARRAY_BUFFER, vbo.getVertexBufferId());                  
-  if (vbo.getIndexBufferId()) glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo.getIndexBufferId());   
-
+  bind(vbo);
+  
 //	__android_log_print(ANDROID_LOG_INFO, "Sometrik", "BomdDefender vertexBufferId id: %d", vbo.getVertexBufferId());
 //	__android_log_print(ANDROID_LOG_INFO, "Sometrik", "BomdDefender IndexBufferId id: %d", vbo.getIndexBufferId());
   
@@ -108,6 +107,18 @@ BombDefender::use(const gpufw::shader_program & program) {
     assert(0);
   }
     glUseProgram(id);
+}
+
+void
+BombDefender::bind(const VBO & vbo) {
+  if (vbo.hasVertexArrayObjects()) {
+    assert(vbo.getVertexArrayId());
+    glBindVertexArray(vbo.getVertexArrayId());
+  } else {
+    assert(vbo.getVertexBufferId() && vbo.getIndexBufferId());
+    glBindBuffer(GL_ARRAY_BUFFER, vbo.getVertexBufferId());
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo.getIndexBufferId());
+  }
 }
 
 std::shared_ptr<BombDefender> application;
