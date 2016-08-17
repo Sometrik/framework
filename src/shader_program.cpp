@@ -118,7 +118,11 @@ shader_program::loadShader(GLenum type, const char * glsl_version, const char * 
     msg += "):\n";
     msg += infoLog;
 
+#ifdef __ANDROID__
+    __android_log_print(ANDROID_LOG_INFO, "Sometrik", "ERROR SHADER COMPILE. COMPILE MESSAGE: %s", msg.c_str());
+#else
     cerr << msg << endl;
+#endif
       
     glDeleteShader ( shader );
     return false;
