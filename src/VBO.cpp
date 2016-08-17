@@ -6,6 +6,8 @@
 
 using namespace std;
 
+bool VBO::has_vertex_array_objects = false;
+
 static GLenum getGLDrawType(VBO::DrawType type) {
   switch (type) {
   case VBO::NONE: break;
