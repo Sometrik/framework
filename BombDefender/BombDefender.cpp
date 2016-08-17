@@ -64,8 +64,7 @@ void BombDefender::drawSprite(const Sprite & sprite){
   glm::mat4 mat(1.0f);
 
   use(*test_program);
-  test_program->setUniform("proj_matrix", projMat);
-  test_program->setUniform("mv_matrix", mat);
+  test_program->setUniform("proj_mv_matrix", projMat * mat);
   test_program->setUniform("s_texture", 0);
 
   glDisable(GL_DEPTH_TEST);
