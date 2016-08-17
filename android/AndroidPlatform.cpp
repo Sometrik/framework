@@ -106,7 +106,7 @@ AndroidPlatform::update() {
 void
 AndroidPlatform::onDraw() {
 
-		glClearColor(0.98f, 0.0f, 0.98f, 1.0f);
+		glClearColor(0.3f, 0.0f, 0.3f, 0.3f);
 		glClear (GL_COLOR_BUFFER_BIT);
 		getApplication().onDraw();
 #if 0
