@@ -11,6 +11,7 @@
 
 #ifdef __ANDROID__
 #include "android_fopen.h"
+#include <android/log.h>
 #endif
 
 using namespace std;
@@ -21,11 +22,11 @@ shader_program::shader_program() { }
 bool
 shader_program::loadShaders(const char * glsl_version, const char * filename) {
   string shader_text;
-#ifdef ANDROID
+#ifdef __ANDROID__
   FILE * in = android_fopen(filename, "r");
   while (!feof(in)) {
     char b[256];
-    size_t n = fread(b, 256, 1, in);
+    size_t n = fread(b, 1, 256, in);
     shader_text += string(b, n);
   }
 #else
@@ -40,6 +41,14 @@ shader_program::loadShaders(const char * glsl_version, const char * filename) {
   if (r) {
     r = loadShader(GL_FRAGMENT_SHADER, glsl_version, shader_text.c_str(), filename);
   }
+
+#ifdef __ANDROID__
+  if (r){
+  __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Shader code compiled succesfully");
+  } else {
+    __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Shader code compile failed");
+  }
+#endif
   return r;
 }
 

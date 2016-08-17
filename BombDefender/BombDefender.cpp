@@ -9,6 +9,7 @@
 #include <AndroidPlatform.h>
 #include <ContextAndroid.h>
 #include <VBO.h>
+#include <OpenGLTexture.h>
 
 using namespace std;
 using namespace gpufw;
@@ -17,28 +18,43 @@ std::shared_ptr<canvas::Context> context;
 int positionX = 120;
 int positionY = 120;
 std::shared_ptr<canvas::Surface> yoSurface;
+std::shared_ptr<canvas::OpenGLTexture> texture;
 
 bool BombDefender::Init() {
 
   test_program = std::shared_ptr<gpufw::shader_program>(new gpufw::shader_program);
 
+  test_program->loadShaders(getPlatform().getGLSLVersion(), "simple_sprite_shader.glsl");
+
+  auto contextF = getPlatform().createContextFactory();
+   context = contextF->createContext(256, 256, canvas::InternalFormat::RGBA8, true);
+
+   context->globalAlpha = 1.0f;
+   context->font.size = 50;
+   context->textBaseline = "top";
+   yoSurface = context->createSurface("picture.jpg");
+   context->drawImage(*yoSurface, 0, 0, 256, 256);
+
+   texture = std::shared_ptr<canvas::OpenGLTexture>(new canvas::OpenGLTexture(context->getDefaultSurface()));
 }
 
 void BombDefender::onDraw() {
-  auto contextF = getPlatform().createContextFactory();
-  context = contextF->createContext(800, 800, canvas::InternalFormat::RGBA8, true);
 
-  context->globalAlpha = 1.0f;
-  context->font.size = 50;
-  context->textBaseline = "top";
-  context->strokeText("Tämä on Pommipeli", 20, 100);
-
-  yoSurface = context->createSurface("picture.jpg");
-  context->drawImage(*yoSurface, positionX, positionY, 400, 400);
-  positionX--;
-  positionY--;
-//	__android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Application ondraw");
-  dynamic_cast<AndroidPlatform&>(getPlatform()).showCanvas(dynamic_cast<canvas::ContextAndroid&>(*context));
+  Sprite sprite;
+  drawSprite(sprite);
+//  auto contextF = getPlatform().createContextFactory();
+//  context = contextF->createContext(500, 500, canvas::InternalFormat::RGBA8, true);
+//
+//  context->globalAlpha = 1.0f;
+//  context->font.size = 50;
+//  context->textBaseline = "top";
+//  yoSurface = context->createSurface("picture.jpg");
+//
+//  context->drawImage(*yoSurface, positionX, positionY, 200, 200);
+//  positionX--;
+//  positionY--;
+////	__android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Application ondraw");
+//  dynamic_cast<AndroidPlatform&>(getPlatform()).showCanvas(dynamic_cast<canvas::ContextAndroid&>(*context));
 
 }
 
@@ -60,7 +76,7 @@ void BombDefender::drawSprite(const Sprite & sprite){
   glDepthMask(GL_FALSE);
 
   glActiveTexture(GL_TEXTURE0);
-//  glBindTexture(GL_TEXTURE_2D, texture.getTextureId());
+  glBindTexture(GL_TEXTURE_2D, texture->getTextureId());
 
   VBO vbo;
   vbo.quad2d(10.0f, 10.0f,
