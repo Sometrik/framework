@@ -158,9 +158,9 @@ public class MyGLSurfaceView extends GLSurfaceView {
     @Override
     public void run() {
 
-      // draw(canvas);
-
-      // requestRender();
+//       draw(canvas);
+      System.out.println("OnDraw Runnable");
+       requestRender();
       // onInit(assetManager);
       // if (update()){
       // requestRender();
@@ -187,7 +187,7 @@ public class MyGLSurfaceView extends GLSurfaceView {
     //debug for androidplatform
     if (nativeCanvasBitmap != null) {
       System.out.println("nativeCanvas being drawn " + nativeCanvasBitmap);
-      canvas.drawBitmap(nativeCanvasBitmap, 100, 100, mPaint);
+      canvas.drawBitmap(nativeCanvasBitmap, 0, 0, mPaint);
     }
 
   }
