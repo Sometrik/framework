@@ -101,12 +101,13 @@ class VBO {
   bool hasTexture() const { return texture.get() != 0; }
 #endif
 
+  void setPointers();
+    
   static bool hasVertexArrayObjects() { return has_vertex_array_objects; }
 
  protected:
   DataType getDataType() const { return data_type; }
   int getStride() const { return stride; }
-  void setPointers();
 
   unsigned int vao = 0, vbo = 0, indexVbo = 0;
 #if 1
