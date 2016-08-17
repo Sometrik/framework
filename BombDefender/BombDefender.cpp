@@ -118,6 +118,7 @@ BombDefender::bind(const VBO & vbo) {
     assert(vbo.getVertexBufferId() && vbo.getIndexBufferId());
     glBindBuffer(GL_ARRAY_BUFFER, vbo.getVertexBufferId());
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo.getIndexBufferId());
+    vbo.setPointers();
   }
 }
 
