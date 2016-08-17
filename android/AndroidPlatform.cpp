@@ -606,7 +606,7 @@ void Java_com_sometrik_framework_MyGLRenderer_onInit(JNIEnv* env, jobject thiz, 
   	bool hasEs3 = false;
   	const char* glslVersion = hasEs3 ? "#version es 300" : "#version es 100";
 
-	AAssetManager* manager = AAssetManager_fromJava(env, assertManager);
+	AAssetManager* manager = AAssetManager_fromJava(env, assetManager);
 	android_fopen_set_asset_manager(manager);
 
   	platform = std::make_shared<AndroidPlatform>(env, assetManager, surface, displayScale, glslVersion, hasEs3);
