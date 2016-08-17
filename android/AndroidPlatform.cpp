@@ -186,21 +186,21 @@ void
 AndroidPlatform::onInit() {
 	//menuPressed();
 
-		canvas::AndroidContextFactory factory(env, mgr);
-		auto context = factory.createContext(800, 800, canvas::InternalFormat::RGBA8);
-		context->globalAlpha = 1.0f;
-		context->font.size = 50;
-		context->textBaseline = "top";
-		context->textAlign = "left";
+//		canvas::AndroidContextFactory factory(env, mgr);
+//		auto context = factory.createContext(800, 800, canvas::InternalFormat::RGBA8);
+//		context->globalAlpha = 1.0f;
+//		context->font.size = 50;
+//		context->textBaseline = "top";
+//		context->textAlign = "left";
 		//auto yoSurface = context->createSurface("picture.jpg");
-		auto yoSurface = context->createSurface(500,500, canvas::InternalFormat::RGBA8);
+//		auto yoSurface = context->createSurface(500,500, canvas::InternalFormat::RGBA8);
 		//context->shadowBlur = context->shadowOffsetX = context->shadowOffsetY = 5.0f;
 		//context->drawImage(*yoSurface, 120, 120, 400, 400);
-		context->fillText("Olen Mikko osaan lukea ja kirjoittaa", 20, 100);
+//		context->fillText("Olen Mikko osaan lukea ja kirjoittaa", 20, 100);
 
-		if (env->ExceptionCheck()) {
-			__android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "ERROR FINDER PuioP");
-		}
+//		if (env->ExceptionCheck()) {
+//			__android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "ERROR FINDER PuioP");
+//		}
 		//showCanvas((dynamic_cast<canvas::AndroidSurface&>(*yoSurface)).getBitmap(), surface);
 		//auto context = factory.createContext("picture.jpg");
 
