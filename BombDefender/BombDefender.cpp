@@ -77,12 +77,16 @@ void BombDefender::drawSprite(const Sprite & sprite){
 
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, texture->getTextureId());
-
+  
   VBO vbo;
   vbo.quad2d(10.0f, 10.0f,
   	   500.0f, 10.0f,
   	   500.0f, 500.0f,
   	   10.0f, 500.0f);
+
+  if (vbo.getVertexBufferId()) glBindBuffer(GL_ARRAY_BUFFER, vbo.getVertexBufferId());                  
+  if (vbo.getIndexBufferId()) glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo.getIndexBufferId());   
+  
   vbo.draw();
 
   glBindTexture(GL_TEXTURE_2D, 0);
