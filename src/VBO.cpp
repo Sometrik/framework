@@ -4,6 +4,10 @@
 #include <cassert>
 #include <iostream>
 
+
+
+//#define USE_VERTEX_ARRAYS
+
 using namespace std;
 
 static GLenum getGLDrawType(VBO::DrawType type) {
@@ -25,10 +29,12 @@ VBO::~VBO() {
 
 void
 VBO::clear() {
+#ifdef USE_VERTEX_ARRAYS
   if (vao) {
     glDeleteVertexArrays(1, &vao);
     vao = 0;
   }
+#endif
   if (vbo) {
     glDeleteBuffers(1, &vbo);
     vbo = 0;
@@ -124,10 +130,12 @@ VBO::upload(DataType type, const void * ptr, size_t size) {
   }
   
   num_elements = size / stride;
+#ifdef USE_VERTEX_ARRAYS
   if (!vao) {
     glGenVertexArrays(1, &vao);
   }
   glBindVertexArray(vao);
+#endif
   if (!vbo) glGenBuffers(1, &vbo);
   glBindBuffer(GL_ARRAY_BUFFER, vbo);
   glBufferData(GL_ARRAY_BUFFER, size, ptr, is_dynamic ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
@@ -141,10 +149,12 @@ void
 VBO::uploadIndices(const void * ptr, size_t size) {
   assert(size > 0);
 
+#ifdef USE_VERTEX_ARRAYS
   if (!vao) {
     glGenVertexArrays(1, &vao);
   }
   glBindVertexArray(vao);
+#endif
   if (!indexVbo) glGenBuffers(1, &indexVbo);
   num_indices = size / 4;
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexVbo);
