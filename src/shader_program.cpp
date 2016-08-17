@@ -167,8 +167,13 @@ shader_program::link() {
       delete[] tmp;
     }
 
-    cerr << "Error linking program:\n" << infoLog << endl;
     
+#ifdef __ANDROID__
+    __android_log_print(ANDROID_LOG_INFO, "Sometrik", "SHADER PROGRAM LINK ERROR. ERROR MESSAGE: %s", infoLog.c_str());
+#else
+    cerr << "Error linking program:\n" << infoLog << endl;
+#endif
+
     glDeleteProgram ( programObject );
     return false;
   }
