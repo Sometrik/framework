@@ -211,16 +211,19 @@ PrimitiveRenderer::bind(const canvas::TextureRef & texture) {
 
 void
 PrimitiveRenderer::bind(const VBO & vbo) {
-  int a = vbo.getVertexArrayId();
-  if (!a) {
-    cerr << "trying to bind zero vao" << endl;
-    assert(0);
-  } else if (a != current_vertex_array) {
-    current_vertex_array = a;
-    glBindVertexArray(a);
-
-    // glBindBuffer(GL_ARRAY_BUFFER, vbo.getVertexBufferId());
-    // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo.getIndexBufferId());
+  if (vbo.hasVertexArrayObjects()) {
+    int a = vbo.getVertexArrayId();
+    if (!a) {
+      cerr << "trying to bind zero vao" << endl;
+      assert(0);
+    } else if (a != current_vertex_array) {
+      current_vertex_array = a;
+      glBindVertexArray(a);
+    }
+  } else {
+    glBindBuffer(GL_ARRAY_BUFFER, vbo.getVertexBufferId());
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo.getIndexBufferId());
+    vbo.setPointers();
   }
 }
 
