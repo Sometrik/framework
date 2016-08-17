@@ -25,6 +25,9 @@ bool BombDefender::Init() {
   test_program = std::shared_ptr<gpufw::shader_program>(new gpufw::shader_program);
 
   test_program->loadShaders(getPlatform().getGLSLVersion(), "simple_sprite_shader.glsl");
+  test_program->bindAttribLocation(0, "a_texCoord");
+  test_program->bindAttribLocation(1, "a_position");
+  test_program->link();
 
   auto contextF = getPlatform().createContextFactory();
    context = contextF->createContext(256, 256, canvas::InternalFormat::RGBA8, true);
@@ -53,7 +56,7 @@ void BombDefender::onDraw() {
 //  context->drawImage(*yoSurface, positionX, positionY, 200, 200);
 //  positionX--;
 //  positionY--;
-////	__android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Application ondraw");
+//	__android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Application ondraw");
 //  dynamic_cast<AndroidPlatform&>(getPlatform()).showCanvas(dynamic_cast<canvas::ContextAndroid&>(*context));
 
 }
@@ -85,6 +88,9 @@ void BombDefender::drawSprite(const Sprite & sprite){
 
   if (vbo.getVertexBufferId()) glBindBuffer(GL_ARRAY_BUFFER, vbo.getVertexBufferId());                  
   if (vbo.getIndexBufferId()) glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo.getIndexBufferId());   
+
+//	__android_log_print(ANDROID_LOG_INFO, "Sometrik", "BomdDefender vertexBufferId id: %d", vbo.getVertexBufferId());
+//	__android_log_print(ANDROID_LOG_INFO, "Sometrik", "BomdDefender IndexBufferId id: %d", vbo.getIndexBufferId());
   
   vbo.draw();
 
@@ -97,6 +103,7 @@ void BombDefender::onShutdown() {
 void
 BombDefender::use(const gpufw::shader_program & program) {
   int id = program.getProgramObjectId();
+//  	__android_log_print(ANDROID_LOG_INFO, "Sometrik", "BomdDefender use id: %d", id);
   if (!id) {
     assert(0);
   }
