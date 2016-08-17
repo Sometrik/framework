@@ -63,7 +63,7 @@ public class MyGLSurfaceView extends GLSurfaceView {
 
     // Set the Renderer for drawing on the GLSurfaceView
     setRenderer(renderer);
-    setRenderMode(RENDERMODE_WHEN_DIRTY);
+    setRenderMode(RENDERMODE_CONTINUOUSLY);
 
     // Piirtoa jni debuggia varten
     mPaint = new Paint();
@@ -159,8 +159,8 @@ public class MyGLSurfaceView extends GLSurfaceView {
     public void run() {
 
 //       draw(canvas);
-      System.out.println("OnDraw Runnable");
        requestRender();
+       invalidate();
       // onInit(assetManager);
       // if (update()){
       // requestRender();
@@ -183,7 +183,7 @@ public class MyGLSurfaceView extends GLSurfaceView {
   @Override
   protected void onDraw(Canvas canvas) {
     super.onDraw(canvas);
-    
+
     //debug for androidplatform
     if (nativeCanvasBitmap != null) {
       System.out.println("nativeCanvas being drawn " + nativeCanvasBitmap);

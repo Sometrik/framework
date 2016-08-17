@@ -51,20 +51,20 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
   public void onDrawFrame(GL10 unused) {
 
     // FPS cap kokeiluja
-    endTime = System.currentTimeMillis();
-    if (endTime > startTime + 33) {
-      try {
-	Thread.sleep(33);
-      } catch (InterruptedException e) {
-	e.printStackTrace();
-      }
+//    endTime = System.currentTimeMillis();
+//    if (endTime > startTime + 33) {
+//      try {
+//	Thread.sleep(33);
+//      } catch (InterruptedException e) {
+//	e.printStackTrace();
+//      }
 
       // System.out.println("onDrawFrame called");
-      startTime = System.currentTimeMillis();
+//      startTime = System.currentTimeMillis();
 
       // Calls onDraw in AndroidPlatform
       nativeOnDraw();
-    }
+//    }
 
   }
 
