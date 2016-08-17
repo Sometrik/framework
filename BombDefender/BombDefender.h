@@ -14,12 +14,13 @@ public:
 
   bool Init();
   void onDraw();
-  void onShutdown();  
+  void onShutdown();
+
+ private:
   void drawSprite(const Sprite & sprite);
   void use(const gpufw::shader_program & program);
   void bind(const VBO & vbo);
 
-private:
- std::shared_ptr<gpufw::shader_program> test_program;
+  std::shared_ptr<gpufw::shader_program> test_program;
 };
 
