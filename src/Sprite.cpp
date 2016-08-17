@@ -9,4 +9,8 @@ Sprite::draw() {
   
 }
 
+Sprite::~Sprite(){
+
+}
+
 
