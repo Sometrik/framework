@@ -60,7 +60,13 @@ class VBO {
   VBO(bool _is_dynamic = true) : is_dynamic(_is_dynamic) { }
   virtual ~VBO();
 
-  bool isDefined() const { return vao != 0; }
+  bool isDefined() const {
+    if (hasVertexArrayObjects()) {
+      return vao != 0;
+    } else {
+      return vbo != 0;
+    }
+  }
   unsigned int getVertexArrayId() const { return vao; }
   unsigned int getVertexBufferId() const { return vbo; }
   unsigned int getIndexBufferId() const { return indexVbo; }
