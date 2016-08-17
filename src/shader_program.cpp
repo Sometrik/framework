@@ -9,7 +9,7 @@
 
 #include <glm/gtc/type_ptr.hpp>
 
-#ifdef ANDROID
+#ifdef __ANDROID__
 #include "android_fopen.h"
 #endif
 
@@ -24,7 +24,7 @@ shader_program::loadShaders(const char * glsl_version, const char * filename) {
 #ifdef ANDROID
   FILE * in = android_fopen(filename, "r");
   while (!feof(in)) {
-    unsigned char b[256];
+    char b[256];
     size_t n = fread(b, 256, 1, in);
     shader_text += string(b, n);
   }
