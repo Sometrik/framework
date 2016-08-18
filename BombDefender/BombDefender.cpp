@@ -18,7 +18,7 @@ std::shared_ptr<canvas::Context> context;
 int positionX = 120;
 int positionY = 120;
 std::shared_ptr<canvas::Surface> yoSurface;
-std::shared_ptr<canvas::OpenGLTexture> texture;
+TextureRef texture;
 
 bool BombDefender::Init() {
 
@@ -28,23 +28,22 @@ bool BombDefender::Init() {
   test_program->bindAttribLocation(0, "a_texCoord");
   test_program->bindAttribLocation(1, "a_position");
   test_program->link();
-
-  auto contextF = getPlatform().createContextFactory();
-   context = contextF->createContext(256, 256, canvas::InternalFormat::RGBA8, true);
-
-   context->globalAlpha = 1.0f;
-   context->font.size = 50;
-   context->textBaseline = "top";
-   yoSurface = context->createSurface("picture.jpg");
-   context->drawImage(*yoSurface, 0, 0, 256, 256);
-
-   texture = std::shared_ptr<canvas::OpenGLTexture>(new canvas::OpenGLTexture(context->getDefaultSurface()));
 }
 
 void BombDefender::onDraw() {
 
-  if (texture.get() == NULL){
-    	__android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Texture is null");
+  if (texture.getTextureId()) {
+    __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Texture is null");
+    auto contextF = getPlatform().createContextFactory();
+    context = contextF->createContext(256, 256, canvas::InternalFormat::RGBA8, true);
+
+    context->globalAlpha = 1.0f;
+    context->font.size = 50;
+    context->textBaseline = "top";
+    yoSurface = context->createSurface("picture.jpg");
+    context->drawImage(*yoSurface, 0, 0, 256, 256);
+    
+    texture = canvas::OpenGLTexture::createTexture(context->getDefaultSurface());
   }
 
   Sprite sprite;
