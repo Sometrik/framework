@@ -7,6 +7,7 @@
 #include <FWPlatformBase.h>
 #include <Sprite.h>
 #include <shader_program.h>
+#include <VBO.h>
 
 class BombDefender : public FWContextBase {
 public:
