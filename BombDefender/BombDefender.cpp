@@ -21,8 +21,29 @@ int positionY = 120;
 std::shared_ptr<canvas::Surface> yoSurface;
 canvas::TextureRef texture;
 
-bool BombDefender::Init() {
+static void checkGLError() {
+  GLenum errLast = GL_NO_ERROR;
+  for ( ;; ) {
+    GLenum err = glGetError();
+    if ( err == GL_NO_ERROR ) {
+      return;
+    }
+    
+    // normally the error is reset by the call to glGetError() but if
+    // glGetError() itself returns an error, we risk looping forever here
+    // so check that we get a different error than the last time
+    if ( err == errLast ) {
+      cerr << "OpenGL error state couldn't be reset.\n";
+      return;
+    }
+    
+    errLast = err;
+    
+    cerr << "got OpenGL error " << err << "\n";
+  }
+}
 
+bool BombDefender::Init() {
   test_program = std::shared_ptr<gpufw::shader_program>(new gpufw::shader_program);
 
   test_program->loadShaders(getPlatform().getGLSLVersion(), "simple_sprite_shader.glsl");
@@ -63,6 +84,7 @@ void BombDefender::onDraw() {
 //	__android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Application ondraw");
 //  dynamic_cast<AndroidPlatform&>(getPlatform()).showCanvas(dynamic_cast<canvas::ContextAndroid&>(*context));
 
+  checkGLError();
 }
 
 void BombDefender::drawSprite(const Sprite & sprite){
