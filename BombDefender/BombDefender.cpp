@@ -10,6 +10,7 @@
 #include <ContextAndroid.h>
 #include <VBO.h>
 #include <OpenGLTexture.h>
+#include <TextureRef.h>
 
 using namespace std;
 using namespace gpufw;
@@ -18,7 +19,7 @@ std::shared_ptr<canvas::Context> context;
 int positionX = 120;
 int positionY = 120;
 std::shared_ptr<canvas::Surface> yoSurface;
-TextureRef texture;
+canvas::TextureRef texture;
 
 bool BombDefender::Init() {
 
@@ -32,8 +33,8 @@ bool BombDefender::Init() {
 
 void BombDefender::onDraw() {
 
-  if (texture.getTextureId()) {
-    __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Texture is null");
+  if (!texture.getTextureId()) {
+//    __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Texture is null");
     auto contextF = getPlatform().createContextFactory();
     context = contextF->createContext(256, 256, canvas::InternalFormat::RGBA8, true);
 
@@ -81,7 +82,7 @@ void BombDefender::drawSprite(const Sprite & sprite){
   glDepthMask(GL_FALSE);
 
   glActiveTexture(GL_TEXTURE0);
-  glBindTexture(GL_TEXTURE_2D, texture->getTextureId());
+  glBindTexture(GL_TEXTURE_2D, texture.getTextureId());
   
   VBO vbo;
   vbo.quad2d(10.0f, 10.0f,
