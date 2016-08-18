@@ -43,6 +43,10 @@ bool BombDefender::Init() {
 
 void BombDefender::onDraw() {
 
+  if (texture.get() == NULL){
+    	__android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Texture is null");
+  }
+
   Sprite sprite;
   drawSprite(sprite);
 //  auto contextF = getPlatform().createContextFactory();
@@ -88,7 +92,7 @@ void BombDefender::drawSprite(const Sprite & sprite){
 
   bind(vbo);
   
-//	__android_log_print(ANDROID_LOG_INFO, "Sometrik", "BomdDefender vertexBufferId id: %d", vbo.getVertexBufferId());
+//	__android_log_print(ANDROID_LOG_INFO, "Sometrik", "BomdDefender texture id: %d", texture->getTextureId());
 //	__android_log_print(ANDROID_LOG_INFO, "Sometrik", "BomdDefender IndexBufferId id: %d", vbo.getIndexBufferId());
   
   vbo.draw();
