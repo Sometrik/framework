@@ -44,7 +44,7 @@ VBO::clear() {
 }
 
 void
-VBO::setPointers() {
+VBO::setPointers() const {
   int n_arrays = 0;
   switch (getDataType()) {
   case T2F_N3F_V3F:

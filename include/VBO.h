@@ -101,7 +101,7 @@ class VBO {
   bool hasTexture() const { return texture.get() != 0; }
 #endif
 
-  void setPointers();
+  void setPointers() const;
     
   static bool hasVertexArrayObjects() { return has_vertex_array_objects; }
 
