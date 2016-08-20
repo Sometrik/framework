@@ -104,6 +104,7 @@ class VBO {
   void setPointers() const;
     
   static bool hasVertexArrayObjects() { return has_vertex_array_objects; }
+  void setHasVertexArrayObjects(bool t) { has_vertex_array_objects = t; }
 
  protected:
   DataType getDataType() const { return data_type; }
