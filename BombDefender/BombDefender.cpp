@@ -33,7 +33,11 @@ static void checkGLError() {
     // glGetError() itself returns an error, we risk looping forever here
     // so check that we get a different error than the last time
     if ( err == errLast ) {
+#ifdef __ANDROID__
+      __android_log_print(ANDROID_LOG_INFO, "Sometrik", "OPEN_GL ERROR: %d", err);
+#else
       cerr << "OpenGL error state couldn't be reset.\n";
+#endif
       return;
     }
     
