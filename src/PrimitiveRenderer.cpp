@@ -1,6 +1,7 @@
 #include "GL.h"
 #include "PrimitiveRenderer.h"
 #include <VBO.h>
+#include <OpenGLTexture.h>
 
 #include "../system/StringUtils.h"
 
@@ -105,28 +106,42 @@ PrimitiveRenderer::initializeBase() {
 
   // EXT_texture_rg : RED and RG modes
 
+  bool is_modern = false;
+
   const char * version_str = (const char *)glGetString(GL_VERSION);
   if (version_str) { 
     // OpenGL ES 3.0 Apple A7 GPU - 75.9.3
     // 3.0 Mesa 11.0.2
     cerr << "got version: " << version_str << endl;
     vector<string> parts = StringUtils::split(version_str);
-    if (parts.size() >= 3 && parts[0] == "OpenGL" && parts[1] == "ES") {
-      const string & es_version = parts[2];
-      cerr << "got OpenGL ES: " << es_version << endl;
-      if (es_version == "3.0") {
-	cerr << "has etc1" << endl;
-	has_etc1 = true;
-	is_es3 = true;
+    if (parts.size() >= 2 && parts[0] == "OpenGL") {
+      if (parts.size() >= 3 && parts[1] == "ES") {
+	float es_version = stof(parts[2]);
+	cerr << "got OpenGL ES: " << es_version << endl;
+	if (es_version >= 3.0) {
+	  cerr << "has etc1" << endl;
+	  has_etc1 = is_es3 = is_modern = true;
+	}
+	has_rgb565 = true;
+      } else {
+	float gl_version = stof(parts[1]);
+	cerr << "got OpenGL: " << gl_version << endl;
+	if (gl_version >= 4.0) {
+	  has_rgb565 = is_modern = true;	
+	}
       }
-      has_rgb565 = true;
     } else if (parts.size() >= 2 && parts[1] == "Mesa") {
-      has_rgb565 = true;
+      has_rgb565 = is_modern = true;
     } else {
       assert(0);
     }
   }
 
+  if (is_modern) {
+    VBO::setHasVertexArrayObjects(true);
+    canvas::OpenGLTexture::setHasTexStorage(true);
+  }
+  
   assert(has_rgb565);
 
   int ii;
