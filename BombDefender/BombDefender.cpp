@@ -50,6 +50,8 @@ bool BombDefender::Init() {
   test_program->bindAttribLocation(0, "a_texCoord");
   test_program->bindAttribLocation(1, "a_position");
   test_program->link();
+
+  glActiveTexture(GL_TEXTURE0);
 }
 
 void BombDefender::onDraw() {
