@@ -1,5 +1,5 @@
 /*
- * Copyright (C) Sometrik oy 2015
+ * Copyright (C) Sometrik Oy 2015
  *
  */
 
@@ -13,7 +13,7 @@
 
 class BombDefender : public FWContextBase {
 public:
-	BombDefender(FWPlatformBase * _platform) : FWContextBase(_platform) { }
+  BombDefender(FWPlatformBase * _platform) : FWContextBase(_platform) { }
 
   bool Init();
   void onDraw();
@@ -21,5 +21,6 @@ public:
 
  private:
   GameRenderer renderer;
+  Sprite sprite;
 };
 

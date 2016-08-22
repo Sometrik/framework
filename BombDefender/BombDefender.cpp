@@ -2,25 +2,15 @@
 
 #include <string.h>
 #include <GLES3/gl3.h>
-#include <jni.h>
 #include <iostream>
 #include <glm/gtc/matrix_transform.hpp>
 #include <Context.h>
-#include <AndroidPlatform.h>
-#include <ContextAndroid.h>
 #include <VBO.h>
 #include <OpenGLTexture.h>
 #include <TextureRef.h>
 
 using namespace std;
 using namespace gpufw;
-
-std::shared_ptr<canvas::Context> context;
-int positionX = 120;
-int positionY = 120;
-std::shared_ptr<canvas::Surface> yoSurface;
-Sprite sprite;
-canvas::TextureRef texture;
 
 static void checkGLError() {
   GLenum errLast = GL_NO_ERROR;
@@ -56,32 +46,28 @@ bool BombDefender::Init() {
   context->globalAlpha = 1.0f;
   context->font.size = 50;
   context->textBaseline = "top";
-  yoSurface = context->createSurface("picture.jpg");
+  auto yoSurface = context->createSurface("picture.jpg");
   context->drawImage(*yoSurface, 0, 0, 256, 256);
 
-  texture = canvas::OpenGLTexture::createTexture(context->getDefaultSurface());
-
+  auto texture = canvas::OpenGLTexture::createTexture(context->getDefaultSurface());
   sprite.setTexture(texture);
 
   renderer.initialize(getPlatform());
 }
 
-
 void BombDefender::onDraw() {
   glm::mat4 projMat = glm::ortho(0.0f, 640.0f, 0.0f, 480.0f, -1000.0f, +1000.0f);
   glm::mat4 mat(1.0f);
   renderer.drawSprite(sprite, projMat, mat);
-
-checkGLError();
+  
+  checkGLError();
 }
 
-void BombDefender::onShutdown() {
-}
+void BombDefender::onShutdown() { }
 
 std::shared_ptr<BombDefender> application;
 
 void applicationMain(FWPlatformBase * platform) {
-application = std::make_shared<BombDefender>(platform);
-platform->setApplication(application.get());
-
+  application = std::make_shared<BombDefender>(platform);
+  platform->setApplication(application.get());
 }
