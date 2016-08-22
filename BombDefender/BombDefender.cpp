@@ -19,20 +19,21 @@ std::shared_ptr<canvas::Context> context;
 int positionX = 120;
 int positionY = 120;
 std::shared_ptr<canvas::Surface> yoSurface;
+Sprite sprite;
 canvas::TextureRef texture;
 
 static void checkGLError() {
   GLenum errLast = GL_NO_ERROR;
-  for ( ;; ) {
+  for (;;) {
     GLenum err = glGetError();
-    if ( err == GL_NO_ERROR ) {
+    if (err == GL_NO_ERROR) {
       return;
     }
-    
+
     // normally the error is reset by the call to glGetError() but if
     // glGetError() itself returns an error, we risk looping forever here
     // so check that we get a different error than the last time
-    if ( err == errLast ) {
+    if (err == errLast) {
 #ifdef __ANDROID__
       __android_log_print(ANDROID_LOG_INFO, "Sometrik", "OPEN_GL ERROR: %d", err);
 #else
@@ -40,9 +41,9 @@ static void checkGLError() {
 #endif
       return;
     }
-    
+
     errLast = err;
-    
+
     cerr << "got OpenGL error " << err << "\n";
   }
 }
@@ -56,108 +57,90 @@ bool BombDefender::Init() {
   test_program->link();
 
   glActiveTexture(GL_TEXTURE0);
+
+  //    __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Texture is null");
+  auto contextF = getPlatform().createContextFactory();
+  context = contextF->createContext(256, 256, canvas::InternalFormat::RGBA8, true);
+
+  context->globalAlpha = 1.0f;
+  context->font.size = 50;
+  context->textBaseline = "top";
+  yoSurface = context->createSurface("picture.jpg");
+  context->drawImage(*yoSurface, 0, 0, 256, 256);
+
+  texture = canvas::OpenGLTexture::createTexture(context->getDefaultSurface());
+
+  sprite.setTexture(texture);
 }
+
 
 void BombDefender::onDraw() {
 
-  if (!texture.getTextureId()) {
-//    __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Texture is null");
-    auto contextF = getPlatform().createContextFactory();
-    context = contextF->createContext(256, 256, canvas::InternalFormat::RGBA8, true);
+drawSprite(sprite);
 
-    context->globalAlpha = 1.0f;
-    context->font.size = 50;
-    context->textBaseline = "top";
-    yoSurface = context->createSurface("picture.jpg");
-    context->drawImage(*yoSurface, 0, 0, 256, 256);
-    
-    texture = canvas::OpenGLTexture::createTexture(context->getDefaultSurface());
-  }
-
-  Sprite sprite;
-  drawSprite(sprite);
-//  auto contextF = getPlatform().createContextFactory();
-//  context = contextF->createContext(500, 500, canvas::InternalFormat::RGBA8, true);
-//
-//  context->globalAlpha = 1.0f;
-//  context->font.size = 50;
-//  context->textBaseline = "top";
-//  yoSurface = context->createSurface("picture.jpg");
-//
-//  context->drawImage(*yoSurface, positionX, positionY, 200, 200);
-//  positionX--;
-//  positionY--;
-//	__android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Application ondraw");
-//  dynamic_cast<AndroidPlatform&>(getPlatform()).showCanvas(dynamic_cast<canvas::ContextAndroid&>(*context));
-
-  checkGLError();
+checkGLError();
 }
 
-void BombDefender::drawSprite(const Sprite & sprite){
+void BombDefender::drawSprite(const Sprite & sprite) {
 
-  glm::mat4 projMat = glm::ortho(0.0f, 640.0f, 0.0f, 480.0f, -1000.0f, +1000.0f);
-  glm::mat4 mat(1.0f);
+glm::mat4 projMat = glm::ortho(0.0f, 640.0f, 0.0f, 480.0f, -1000.0f, +1000.0f);
+glm::mat4 mat(1.0f);
 
-  use(*test_program);
-  test_program->setUniform("proj_mv_matrix", projMat * mat);
-  test_program->setUniform("s_texture", 0);
+use(*test_program);
+test_program->setUniform("proj_mv_matrix", projMat * mat);
+test_program->setUniform("s_texture", 0);
 
-  glDisable(GL_DEPTH_TEST);
-  glDisable(GL_STENCIL_TEST);
-  glDisable(GL_CULL_FACE);
-  glEnable(GL_BLEND);
-  glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-  glDepthMask(GL_FALSE);
+glDisable(GL_DEPTH_TEST);
+glDisable(GL_STENCIL_TEST);
+glDisable(GL_CULL_FACE);
+glEnable(GL_BLEND);
+glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+glDepthMask(GL_FALSE);
 
-  glActiveTexture(GL_TEXTURE0);
-  glBindTexture(GL_TEXTURE_2D, texture.getTextureId());
-  
-  VBO vbo;
-  vbo.quad2d(10.0f, 10.0f,
-  	   500.0f, 10.0f,
-  	   500.0f, 500.0f,
-  	   10.0f, 500.0f);
+glActiveTexture(GL_TEXTURE0);
+glBindTexture(GL_TEXTURE_2D, sprite.getTexture().getTextureId());
 
-  bind(vbo);
-  
+VBO vbo;
+vbo.quad2d(10.0f, 10.0f, 500.0f, 10.0f, 500.0f, 500.0f, 10.0f, 500.0f);
+
+bind(vbo);
+
 //	__android_log_print(ANDROID_LOG_INFO, "Sometrik", "BomdDefender texture id: %d", texture->getTextureId());
 //	__android_log_print(ANDROID_LOG_INFO, "Sometrik", "BomdDefender IndexBufferId id: %d", vbo.getIndexBufferId());
-  
-  vbo.draw();
 
-  glBindTexture(GL_TEXTURE_2D, 0);
+vbo.draw();
+
+glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 void BombDefender::onShutdown() {
 }
 
-void
-BombDefender::use(const gpufw::shader_program & program) {
-  int id = program.getProgramObjectId();
+void BombDefender::use(const gpufw::shader_program & program) {
+int id = program.getProgramObjectId();
 //  	__android_log_print(ANDROID_LOG_INFO, "Sometrik", "BomdDefender use id: %d", id);
-  if (!id) {
-    assert(0);
-  }
-    glUseProgram(id);
+if (!id) {
+  assert(0);
+}
+glUseProgram(id);
 }
 
-void
-BombDefender::bind(const VBO & vbo) {
-  if (vbo.hasVertexArrayObjects()) {
-    assert(vbo.getVertexArrayId());
-    glBindVertexArray(vbo.getVertexArrayId());
-  } else {
-    assert(vbo.getVertexBufferId() && vbo.getIndexBufferId());
-    glBindBuffer(GL_ARRAY_BUFFER, vbo.getVertexBufferId());
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo.getIndexBufferId());
-    vbo.setPointers();
-  }
+void BombDefender::bind(const VBO & vbo) {
+if (vbo.hasVertexArrayObjects()) {
+  assert(vbo.getVertexArrayId());
+  glBindVertexArray(vbo.getVertexArrayId());
+} else {
+  assert(vbo.getVertexBufferId() && vbo.getIndexBufferId());
+  glBindBuffer(GL_ARRAY_BUFFER, vbo.getVertexBufferId());
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo.getIndexBufferId());
+  vbo.setPointers();
+}
 }
 
 std::shared_ptr<BombDefender> application;
 
 void applicationMain(FWPlatformBase * platform) {
-  application = std::make_shared<BombDefender>(platform);
-  platform->setApplication(application.get());
+application = std::make_shared<BombDefender>(platform);
+platform->setApplication(application.get());
 
 }
