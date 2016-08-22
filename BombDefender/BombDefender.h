@@ -9,6 +9,8 @@
 #include <shader_program.h>
 #include <VBO.h>
 
+#include "GameRenderer.h"
+
 class BombDefender : public FWContextBase {
 public:
 	BombDefender(FWPlatformBase * _platform) : FWContextBase(_platform) { }
@@ -18,10 +20,6 @@ public:
   void onShutdown();
 
  private:
-  void drawSprite(const Sprite & sprite);
-  void use(const gpufw::shader_program & program);
-  void bind(const VBO & vbo);
-
-  std::shared_ptr<gpufw::shader_program> test_program;
+  GameRenderer renderer;
 };
 

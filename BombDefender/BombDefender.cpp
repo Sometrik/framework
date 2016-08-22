@@ -49,15 +49,6 @@ static void checkGLError() {
 }
 
 bool BombDefender::Init() {
-  test_program = std::shared_ptr<gpufw::shader_program>(new gpufw::shader_program);
-
-  test_program->loadShaders(getPlatform().getGLSLVersion(), "simple_sprite_shader.glsl");
-  test_program->bindAttribLocation(0, "a_texCoord");
-  test_program->bindAttribLocation(1, "a_position");
-  test_program->link();
-
-  glActiveTexture(GL_TEXTURE0);
-
   //    __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Texture is null");
   auto contextF = getPlatform().createContextFactory();
   context = contextF->createContext(256, 256, canvas::InternalFormat::RGBA8, true);
@@ -71,70 +62,20 @@ bool BombDefender::Init() {
   texture = canvas::OpenGLTexture::createTexture(context->getDefaultSurface());
 
   sprite.setTexture(texture);
+
+  renderer.initialize(getPlatform());
 }
 
 
 void BombDefender::onDraw() {
-
-drawSprite(sprite);
+  glm::mat4 projMat = glm::ortho(0.0f, 640.0f, 0.0f, 480.0f, -1000.0f, +1000.0f);
+  glm::mat4 mat(1.0f);
+  renderer.drawSprite(sprite, projMat, mat);
 
 checkGLError();
 }
 
-void BombDefender::drawSprite(const Sprite & sprite) {
-
-glm::mat4 projMat = glm::ortho(0.0f, 640.0f, 0.0f, 480.0f, -1000.0f, +1000.0f);
-glm::mat4 mat(1.0f);
-
-use(*test_program);
-test_program->setUniform("proj_mv_matrix", projMat * mat);
-test_program->setUniform("s_texture", 0);
-
-glDisable(GL_DEPTH_TEST);
-glDisable(GL_STENCIL_TEST);
-glDisable(GL_CULL_FACE);
-glEnable(GL_BLEND);
-glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-glDepthMask(GL_FALSE);
-
-glActiveTexture(GL_TEXTURE0);
-glBindTexture(GL_TEXTURE_2D, sprite.getTexture().getTextureId());
-
-VBO vbo;
-vbo.quad2d(10.0f, 10.0f, 500.0f, 10.0f, 500.0f, 500.0f, 10.0f, 500.0f);
-
-bind(vbo);
-
-//	__android_log_print(ANDROID_LOG_INFO, "Sometrik", "BomdDefender texture id: %d", texture->getTextureId());
-//	__android_log_print(ANDROID_LOG_INFO, "Sometrik", "BomdDefender IndexBufferId id: %d", vbo.getIndexBufferId());
-
-vbo.draw();
-
-glBindTexture(GL_TEXTURE_2D, 0);
-}
-
 void BombDefender::onShutdown() {
-}
-
-void BombDefender::use(const gpufw::shader_program & program) {
-int id = program.getProgramObjectId();
-//  	__android_log_print(ANDROID_LOG_INFO, "Sometrik", "BomdDefender use id: %d", id);
-if (!id) {
-  assert(0);
-}
-glUseProgram(id);
-}
-
-void BombDefender::bind(const VBO & vbo) {
-if (vbo.hasVertexArrayObjects()) {
-  assert(vbo.getVertexArrayId());
-  glBindVertexArray(vbo.getVertexArrayId());
-} else {
-  assert(vbo.getVertexBufferId() && vbo.getIndexBufferId());
-  glBindBuffer(GL_ARRAY_BUFFER, vbo.getVertexBufferId());
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo.getIndexBufferId());
-  vbo.setPointers();
-}
 }
 
 std::shared_ptr<BombDefender> application;
