@@ -41,7 +41,7 @@ static void checkGLError() {
 bool BombDefender::Init() {
   //    __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Texture is null");
   auto contextF = getPlatform().createContextFactory();
-  context = contextF->createContext(256, 256, canvas::InternalFormat::RGBA8, true);
+  auto context = contextF->createContext(256, 256, canvas::InternalFormat::RGBA8, true);
 
   context->globalAlpha = 1.0f;
   context->font.size = 50;
