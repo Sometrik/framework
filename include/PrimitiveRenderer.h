@@ -7,6 +7,7 @@
 #include <TextureRef.h>
 
 #include <shader_program.h>
+#include <FWPlatformBase.h>
 
 #define COLOR_BUFFER_BIT		1
 #define DEPTH_BUFFER_BIT		2
