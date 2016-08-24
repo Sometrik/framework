@@ -3,7 +3,7 @@
 #include <VBO.h>
 #include <OpenGLTexture.h>
 
-#include "../system/StringUtils.h"
+#include <StringUtils.h>
 
 #include <iostream>
 
