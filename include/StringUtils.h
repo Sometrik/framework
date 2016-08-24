@@ -5,6 +5,7 @@
 #include <list>
 #include <map>
 #include <set>
+#include <string>
 
 #include <stdint.h>
 
@@ -30,7 +31,7 @@ class StringUtils {
   static void strip(std::string & s, char c);
 
   static std::string hexencode(const unsigned char * ptr, size_t len);
-  static std::string hexencode(const basic_string<unsigned char> & data) { return hexencode(data.data(), data.size()); }
+  static std::string hexencode(const std::basic_string<unsigned char> & data) { return hexencode(data.data(), data.size()); }
 
   static std::string quote(const std::string & str);
   static unsigned int chomp(char * str);

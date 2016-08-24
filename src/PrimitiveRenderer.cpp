@@ -4,6 +4,7 @@
 #include <OpenGLTexture.h>
 
 #include <StringUtils.h>
+#include <cstdlib>
 
 #include <iostream>
 
@@ -116,7 +117,7 @@ PrimitiveRenderer::initializeBase() {
     vector<string> parts = StringUtils::split(version_str);
     if (parts.size() >= 2 && parts[0] == "OpenGL") {
       if (parts.size() >= 3 && parts[1] == "ES") {
-	float es_version = stof(parts[2]);
+	float es_version = atof(parts[2].c_str());
 	cerr << "got OpenGL ES: " << es_version << endl;
 	if (es_version >= 3.0) {
 	  cerr << "has etc1" << endl;
@@ -124,7 +125,7 @@ PrimitiveRenderer::initializeBase() {
 	}
 	has_rgb565 = true;
       } else {
-	float gl_version = stof(parts[1]);
+	float gl_version = atof(parts[1].c_str());
 	cerr << "got OpenGL: " << gl_version << endl;
 	if (gl_version >= 4.0) {
 	  has_rgb565 = is_modern = true;	
