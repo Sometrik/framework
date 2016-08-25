@@ -6,11 +6,6 @@ Sprite::Sprite() {
   
 }
 
-void
-Sprite::draw() {
-  
-}
-
 Sprite::~Sprite(){
 
 }
