@@ -1,6 +1,7 @@
 #include "BombDefender.h"
 
-#include <string.h>
+#include <string>
+#include <cstdlib>
 #include <GLES3/gl3.h>
 #include <iostream>
 #include <glm/gtc/matrix_transform.hpp>
@@ -24,11 +25,7 @@ static void checkGLError() {
     // glGetError() itself returns an error, we risk looping forever here
     // so check that we get a different error than the last time
     if (err == errLast) {
-#ifdef __ANDROID__
-      __android_log_print(ANDROID_LOG_INFO, "Sometrik", "OPEN_GL ERROR: %d", err);
-#else
       cerr << "OpenGL error state couldn't be reset.\n";
-#endif
       return;
     }
 
@@ -39,6 +36,8 @@ static void checkGLError() {
 }
 
 bool BombDefender::Init() {
+  renderer.initialize(getPlatform());
+
   //    __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Texture is null");
   auto contextF = getPlatform().createContextFactory();
   auto context = contextF->createContext(256, 256, canvas::InternalFormat::RGBA8, true);
@@ -50,17 +49,43 @@ bool BombDefender::Init() {
   context->drawImage(*yoSurface, 0, 0, 256, 256);
 
   auto texture = canvas::OpenGLTexture::createTexture(context->getDefaultSurface());
-  sprite.setTexture(texture);
 
-  renderer.initialize(getPlatform());
+  for (unsigned int i = 0; i < 1000; i++) {
+    auto sprite = std::make_shared<GameObject>();
+    sprite->setPosition(glm::vec2((float)rand() / RAND_MAX * getLogicalWidth(),
+				  (float)rand() / RAND_MAX * getLogicalHeight()
+				  ));
+    sprite->setVelocity(glm::vec2((float)rand() / RAND_MAX * 10.0f - 5,
+				  (float)rand() / RAND_MAX * 10.0f - 5
+				  ));
+    sprite->setWidth(64);
+    sprite->setHeight(64);
+    sprite->setTexture(texture);
+    sprites.push_back(sprite);
+  }
 }
 
 void BombDefender::onDraw() {
-  glm::mat4 projMat = glm::ortho(0.0f, 640.0f, 0.0f, 480.0f, -1000.0f, +1000.0f);
+  glm::mat4 projMat = glm::ortho(0.0f, (float)getLogicalWidth(), 0.0f, (float)getLogicalHeight(), -1000.0f, +1000.0f);
   glm::mat4 mat(1.0f);
-  renderer.drawSprite(sprite, projMat, mat);
+
+  for (auto & sprite : sprites) {
+    renderer.drawSprite(*sprite, projMat, mat);
+  }
   
   checkGLError();
+}
+
+bool
+BombDefender::onUpdate(double timestamp) {
+  float dt = prev_update_time > 0 ? timestamp - prev_update_time : 0;
+  prev_update_time = timestamp;
+
+  for (auto & sprite : sprites) {
+    sprite->update(dt);
+  }
+
+  return true;
 }
 
 void BombDefender::onShutdown() { }
