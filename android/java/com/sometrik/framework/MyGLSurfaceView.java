@@ -216,7 +216,7 @@ public class MyGLSurfaceView extends GLSurfaceView {
   private void optionSelected(int id) {
 
     settings = new Settings(context);
-    // Settings t‰ytyy tehd‰ uusiksi t‰ss‰, jotta lista ei pysy samana
+    // Settings t√§ytyy tehd√§ uusiksi t√§ss√§, jotta lista ei pysy samana
     settingsCreator(settings, id);
 
     // Animaatio kokeiluja
@@ -310,7 +310,7 @@ public class MyGLSurfaceView extends GLSurfaceView {
     // formatDateTime -- FormatTimeStamp
     // formatDate Palauttaa lokaalin mukaisen pvm ja kellonajat
     // Ottaa ajan unix aikana, eli sekuntteina (laskettuna 1.1.1970 GMT
-    // ajasta l‰htien)
+    // ajasta l√§htien)
     System.out.println("formatDateTime: " + time);
 
     SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
@@ -360,8 +360,8 @@ public class MyGLSurfaceView extends GLSurfaceView {
       return resourcePath.toString();
   }
 
-  // Ehk‰ myˆs formatValue, joka ottaa desimaaliluvun ja esitt‰‰ sen joko
-  // desimaalipisteell‰ tai pilkulla.
+  // Ehk√§ my√∂s formatValue, joka ottaa desimaaliluvun ja esitt√§√§ sen joko
+  // desimaalipisteell√§ tai pilkulla.
   private String formatValue(double value) {
     NumberFormat formatter = new DecimalFormat("#0.00");
     return formatter.format(value);

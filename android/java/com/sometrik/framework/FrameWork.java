@@ -1,5 +1,6 @@
 package com.sometrik.framework;
 
+import com.example.framework.R;
 import com.sometrik.framework.Settings.MyPreferenceFragment;
 
 import android.app.Activity;
@@ -33,10 +34,10 @@ import android.widget.TextView;
 
 public class FrameWork extends Activity {
 
-  // BUG ontouchesevent UP_action tulee myˆh‰ss‰, kun moveja spammataan //ehk‰
+  // BUG ontouchesevent UP_action tulee my√∂h√§ss√§, kun moveja spammataan //ehk√§
 
-  // action Sheet n‰kym‰ tiettyyn kohtaan
-  // Setting objektit (ESActionSheet) C - puolella, muista, ett‰ menee myˆs ios
+  // action Sheet n√§kym√§ tiettyyn kohtaan
+  // Setting objektit (ESActionSheet) C - puolella, muista, ett√§ menee my√∂s ios
 
   MyGLSurfaceView mGLView;
   RelativeLayout mainView;
@@ -140,7 +141,7 @@ public class FrameWork extends Activity {
     startActivity(browserIntent);
   }
 
-  // Lis‰‰ kuvan antaminen // Aika // ƒ‰ni
+  // Lis√§√§ kuvan antaminen // Aika // √Ñ√§ni
   public void createNotification(String title, String text) {
 
     System.out.println("Creating notification");
@@ -391,7 +392,7 @@ public class FrameWork extends Activity {
 	  }
 
 	}
-	// System.out.println("Liikett‰: " + event.getX() + " " +
+	// System.out.println("Liikett√§: " + event.getX() + " " +
 	// event.getY() + " - id: " + event.getActionIndex());
 
 	break;

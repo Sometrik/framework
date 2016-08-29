@@ -3,6 +3,8 @@ package com.sometrik.framework;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
+import com.example.framework.R;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -144,15 +146,15 @@ public class Settings extends PreferenceFragment {
     }
 
     if (facebookCategory.getPreferenceCount() == 0) {
-      System.out.println("facebook tyhj‰");
+      System.out.println("facebook tyhj√§");
       screen.removePreference(facebookCategory);
     }
     if (twitterCategory.getPreferenceCount() == 0) {
-      System.out.println("twitter tyhj‰");
+      System.out.println("twitter tyhj√§");
       screen.removePreference(twitterCategory);
     }
     if (instagramCategory.getPreferenceCount() == 0) {
-      System.out.println("instagram tyhj‰");
+      System.out.println("instagram tyhj√§");
       screen.removePreference(instagramCategory);
     }
 

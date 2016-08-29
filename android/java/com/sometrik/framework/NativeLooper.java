@@ -36,4 +36,3 @@ public class NativeLooper extends Thread {
     return nHandler;
   }
 }
-
