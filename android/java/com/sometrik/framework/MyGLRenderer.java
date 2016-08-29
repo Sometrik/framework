@@ -27,7 +27,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
   public native void nativeOnDraw();
 
-  public native void onInit(AssetManager assetManager, MyGLSurfaceView view);
+  public native void onInit(AssetManager assetManager, MyGLSurfaceView view, float xSize, float ySize);
 
   public native void Draw();
 
@@ -83,7 +83,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     System.out.println("surface check: " + frame.getSurfaceView());
 
     // Calls onInit in AndroidPlatform
-    onInit(assetManager, frame.getSurfaceView());
+    onInit(assetManager, frame.getSurfaceView(), xSize, ySize);
 
     DisplayMetrics displayMetrics = frame.getDisplayMetrics();
     xSize = displayMetrics.widthPixels;
