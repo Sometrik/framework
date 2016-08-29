@@ -149,9 +149,18 @@ public class MyGLSurfaceView extends GLSurfaceView {
 
 
     sHandler.postDelayed(onDrawRunnable, 500);
+    sHandler.postDelayed(onUpdateRunnable, 100);
     System.out.println("SurfaceCreated end");
 
   }
+  
+  Runnable onUpdateRunnable = new Runnable() {
+    @Override
+    public void run() {
+      onUpdate((double)System.currentTimeMillis());
+      sHandler.postDelayed(onUpdateRunnable, 100);
+    }
+  };
 
 
   Runnable onDrawRunnable = new Runnable() {
@@ -376,7 +385,7 @@ public class MyGLSurfaceView extends GLSurfaceView {
 
   public native void nativeOnDraw();
 
-  public native boolean update();
+  public native boolean onUpdate(double timestamp);
 
   public native void touchEvent(int mode, int fingerIndex, long time, float x, float y);
 
