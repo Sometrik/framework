@@ -20,7 +20,7 @@ public:
 
 	void menuPressed();
 
-	bool update();
+	bool onUpdate(double timestamp);
 
 	void onDraw();
 
