@@ -49,30 +49,16 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
   }
 
   public void onDrawFrame(GL10 unused) {
-
-    // FPS cap kokeiluja
-//    endTime = System.currentTimeMillis();
-//    if (endTime > startTime + 33) {
-//      try {
-//	Thread.sleep(33);
-//      } catch (InterruptedException e) {
-//	e.printStackTrace();
-//      }
-
-      // System.out.println("onDrawFrame called");
-//      startTime = System.currentTimeMillis();
-
       // Calls onDraw in AndroidPlatform
       nativeOnDraw();
-//    }
-
   }
 
   public void onSurfaceChanged(GL10 unused, int width, int height) {
     System.out.println("(Renderer) onSurfaceChanged called");
     GLES20.glViewport(0, 0, width, height);
 
-    onResize(width, height);
+    DisplayMetrics displayMetrics = frame.getDisplayMetrics();
+    onResize(width / displayMetrics.scaledDensity, height / displayMetrics.scaledDensity);
   }
 
   @Override
@@ -86,8 +72,8 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     onInit(assetManager, frame.getSurfaceView(), xSize, ySize);
 
     DisplayMetrics displayMetrics = frame.getDisplayMetrics();
-    xSize = displayMetrics.widthPixels;
-    ySize = displayMetrics.heightPixels;
+    xSize = displayMetrics.widthPixels / displayMetrics.scaledDensity;
+    ySize = displayMetrics.heightPixels / displayMetrics.scaledDensity;
 
   }
 
