@@ -185,26 +185,6 @@ AndroidPlatform::showCanvas(canvas::ContextAndroid & context) {
 
 void
 AndroidPlatform::onInit() {
-	//menuPressed();
-
-//		canvas::AndroidContextFactory factory(env, mgr);
-//		auto context = factory.createContext(800, 800, canvas::InternalFormat::RGBA8);
-//		context->globalAlpha = 1.0f;
-//		context->font.size = 50;
-//		context->textBaseline = "top";
-//		context->textAlign = "left";
-		//auto yoSurface = context->createSurface("picture.jpg");
-//		auto yoSurface = context->createSurface(500,500, canvas::InternalFormat::RGBA8);
-		//context->shadowBlur = context->shadowOffsetX = context->shadowOffsetY = 5.0f;
-		//context->drawImage(*yoSurface, 120, 120, 400, 400);
-//		context->fillText("Olen Mikko osaan lukea ja kirjoittaa", 20, 100);
-
-//		if (env->ExceptionCheck()) {
-//			__android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "ERROR FINDER PuioP");
-//		}
-		//showCanvas((dynamic_cast<canvas::AndroidSurface&>(*yoSurface)).getBitmap(), surface);
-		//auto context = factory.createContext("picture.jpg");
-
 #if 0
 		float x = 10;
 				float y = 100;
@@ -227,28 +207,6 @@ AndroidPlatform::onInit() {
 				context->shadowBlur = context->shadowOffsetX = context->shadowOffsetY = 0.0f;
 				context->stroke();
 #endif
-				//showCanvas((dynamic_cast<canvas::AndroidSurface&>(context->getDefaultSurface())).getBitmap(), surface);
-
-//		AndroidClientFactory clientFactory(env);
-//		auto android = clientFactory.createClient("yo", false, false);
-//
-//		HTTPRequest requ = HTTPRequest(HTTPRequest::GET, "http://i.imgur.com/x37PajU.jpg");
-//		requ.setFollowLocation(false);
-//		requ.addHeader("HelloTest", "YO");
-//		requ.addHeader("HelloTest2", "YO");
-//		requ.addHeader("HelloTest2", "YO");
-//		Authorization autor = Authorization();
-//		auto resp = android->request(requ, autor);
-//		auto res = android->Get("http://i.imgur.com/2tfe9LS.jpg");
-//		if (res.isSuccess()) {
-//			auto surfaceee = factory.createSurface((unsigned char*)res.getContent().c_str(), res.getContent().size());
-//			auto imigi = *surfaceee->createImage();
-//			//context->drawImage(*surfaceee, 0, 0, 300, 300);
-//			context->drawImage(imigi, 0, 0, 300, 300);
-//		}
-
-//		showCanvas((dynamic_cast<canvas::AndroidSurface&>(context->getDefaultSurface())).getBitmap(), framework, env);
-		//application->Init();
 		getApplication().Init();
 	}
 
@@ -600,7 +558,7 @@ jboolean Java_com_sometrik_framework_MyGLSurfaceView_update(JNIEnv* env, jobject
 	}
 }
 
-void Java_com_sometrik_framework_MyGLRenderer_onInit(JNIEnv* env, jobject thiz, jobject assetManager, jobject surface) {
+void Java_com_sometrik_framework_MyGLRenderer_onInit(JNIEnv* env, jobject thiz, jobject assetManager, jobject surface, float screenWidth, float screenHeight) {
 	if (!platform.get()) {
   	__android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Creating Platform");
   	float displayScale = 1.0f;
@@ -613,6 +571,7 @@ void Java_com_sometrik_framework_MyGLRenderer_onInit(JNIEnv* env, jobject thiz, 
   	platform = std::make_shared<AndroidPlatform>(env, assetManager, surface, displayScale, glslVersion, hasEs3);
   }
 	applicationMain(platform.get());
+	platform->onResize(screenWidth, screenHeight);
 	platform->onInit();
   	__android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Init end");
 }
