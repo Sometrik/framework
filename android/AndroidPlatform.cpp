@@ -37,8 +37,7 @@ extern void applicationMain(FWPlatformBase * platform);
 bool AndroidPlatform::onTouchesEvent(jobject * _obj, int mode, int fingerIndex, long time, float x, float y) {
   //Palauttaa vastauksen threadille (debug)
   // messagePoster(11);
-  touchX = x;
-  touchY = y;
+  getApplication().onKeyPress(NULL, (double)time, x, y);
 
   return true;
 }
