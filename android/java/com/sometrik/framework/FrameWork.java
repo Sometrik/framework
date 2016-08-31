@@ -1,6 +1,5 @@
 package com.sometrik.framework;
 
-import com.example.framework.R;
 import com.sometrik.framework.Settings.MyPreferenceFragment;
 
 import android.app.Activity;
