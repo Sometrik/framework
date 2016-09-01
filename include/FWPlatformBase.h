@@ -72,10 +72,10 @@ class FWPlatformBase {
   
  protected:
   int display_width = 0, display_height = 0;
-  float display_scale;
+  float display_scale = 1.0f;
   std::string glsl_version;
   bool has_es3 = false;
-  FWContextBase * application;
+  FWContextBase * application = 0;
     
 #if !defined __APPLE__ && !defined _WIN32
   // Display handle
