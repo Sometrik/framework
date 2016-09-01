@@ -37,7 +37,17 @@ extern void applicationMain(FWPlatformBase * platform);
 bool AndroidPlatform::onTouchesEvent(jobject * _obj, int mode, int fingerIndex, long time, float x, float y) {
   //Palauttaa vastauksen threadille (debug)
   // messagePoster(11);
-  getApplication().onKeyPress(NULL, (double)time, x, y);
+	switch (mode){
+	case 1:
+	  getApplication().touchesBegin(x,y, (double)time, fingerIndex);
+		break;
+	case 2:
+	  getApplication().touchesEnded(x,y, (double)time, fingerIndex);
+		break;
+	case 3:
+	  getApplication().touchesMoved(x,y, (double)time, fingerIndex);
+		break;
+	}
 
   return true;
 }
@@ -172,28 +182,28 @@ void AndroidPlatform::showCanvas(canvas::ContextAndroid & context) {
 }
 
 void AndroidPlatform::onInit() {
-#if 0
-  float x = 10;
-  float y = 100;
-  float w = 200;
-  float h = 200;
-  float ra = 10.0;
-
-  context->beginPath();
-  context->moveTo(x+ra, y);
-  context->arcTo(x+w, y, x+w, y+h, ra);
-  context->arcTo(x+w, y+h, x, y+h, ra);
-  context->arcTo(x, y+h, x, y, ra);
-  context->arcTo(x, y, x+w, y, ra);
-
-  context->fillStyle = "#ffffff";
-  context->shadowBlur = context->shadowOffsetX = context->shadowOffsetY = 5.0f;
-  context->fill();
-  context->strokeStyle = "#ff0000";
-  context->lineWidth = 5.0f;
-  context->shadowBlur = context->shadowOffsetX = context->shadowOffsetY = 0.0f;
-  context->stroke();
-#endif
+//#if 0
+//  float x = 10;
+//  float y = 100;
+//  float w = 200;
+//  float h = 200;
+//  float ra = 10.0;
+//
+//  context->beginPath();
+//  context->moveTo(x+ra, y);
+//  context->arcTo(x+w, y, x+w, y+h, ra);
+//  context->arcTo(x+w, y+h, x, y+h, ra);
+//  context->arcTo(x, y+h, x, y, ra);
+//  context->arcTo(x, y, x+w, y, ra);
+//
+//  context->fillStyle = "#ffffff";
+//  context->shadowBlur = context->shadowOffsetX = context->shadowOffsetY = 5.0f;
+//  context->fill();
+//  context->strokeStyle = "#ff0000";
+//  context->lineWidth = 5.0f;
+//  context->shadowBlur = context->shadowOffsetX = context->shadowOffsetY = 0.0f;
+//  context->stroke();
+//#endif
   getApplication().Init();
 }
 
