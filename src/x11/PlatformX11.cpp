@@ -50,7 +50,7 @@ class PlatformX11 : public FWPlatformBase {
 public:
   PlatformX11() : FWPlatformBase(1.0f,
 				 // "#version 300 es",
-				 "#version 100"
+				 "#version 100",
 				 true) { }
 
   double getTime() const override {
