@@ -17,9 +17,6 @@
 #include <string>
 #include <memory>
 
-//#include <FWContextBase.h>
-//#include <context.h>
-
 class FWContextBase;
 
 namespace canvas {
