@@ -1,6 +1,10 @@
 #include "FWPlatformBase.h"
 #include "FWContextBase.h"
 
+#ifndef __ANDROID__
+#include <EGL/egl.h>
+#endif
+
 #include <cstring>
 #include <iostream>
 
@@ -66,6 +70,8 @@ FWPlatformBase::createContext(FWContextBase * context, const char * title, int r
   if ( !eglInitialize ( eglDisplay, &majorVersion, &minorVersion ) ) {
     return false;
   }
+
+  unsigned int flags = 0; // fix
   
   {
     EGLint numConfigs = 0;
@@ -74,10 +80,10 @@ FWPlatformBase::createContext(FWContextBase * context, const char * title, int r
 	EGL_RED_SIZE,       5,
 	EGL_GREEN_SIZE,     6,
 	EGL_BLUE_SIZE,      5,
-	EGL_ALPHA_SIZE,     ( flags & ES_WINDOW_ALPHA ) ? 8 : EGL_DONT_CARE,
-	EGL_DEPTH_SIZE,     ( flags & ES_WINDOW_DEPTH ) ? 8 : EGL_DONT_CARE,
-	EGL_STENCIL_SIZE,   ( flags & ES_WINDOW_STENCIL ) ? 8 : EGL_DONT_CARE,
-	EGL_SAMPLE_BUFFERS, ( flags & ES_WINDOW_MULTISAMPLE ) ? 1 : 0,
+	EGL_ALPHA_SIZE,     EGL_DONT_CARE,
+	EGL_DEPTH_SIZE,     ( flags & FBO_DEPTH ) ? 24 : EGL_DONT_CARE,
+	EGL_STENCIL_SIZE,   ( flags & FBO_STENCIL ) ? 8 : EGL_DONT_CARE,
+	// EGL_SAMPLE_BUFFERS, ( flags & ES_WINDOW_MULTISAMPLE ) ? 1 : 0,
 	// if EGL_KHR_create_context extension is supported, then we will use
 	// EGL_OPENGL_ES3_BIT_KHR instead of EGL_OPENGL_ES2_BIT in the attribute list
 	EGL_RENDERABLE_TYPE, GetContextRenderableType ( eglDisplay ),
