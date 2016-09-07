@@ -22,8 +22,6 @@
 
 #include <android_fopen.h>
 
-#define TAG "CubeWallpaper1.c"
-
 using namespace gpufw;
 using namespace std;
 
@@ -99,41 +97,9 @@ bool AndroidPlatform::onUpdate(double timestamp) {
   return false;
 }
 
-void AndroidPlatform::onDraw() {
-
-  glClearColor(0.3f, 0.0f, 0.3f, 0.3f);
-  glClear(GL_COLOR_BUFFER_BIT);
+void
+AndroidPlatform::onDraw() {
   getApplication().onDraw();
-#if 0
-  glm::mat4 projMat = glm::ortho(0.0f, float(screenWidth), 0.0f,
-      float(screenHeight), -1000.0f, +1000.0f);
-  glm::mat4 mat(1.0f);
-
-  test_program->use();
-  test_program->setUniform("proj_matrix", projMat);
-  test_program->setUniform("mv_matrix", mat);
-  test_program->setUniform("s_texture", 0);
-
-  glDisable(GL_DEPTH_TEST);
-  glDisable(GL_STENCIL_TEST);
-  glDisable(GL_CULL_FACE);
-  glEnable(GL_BLEND);
-  glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-  glDepthMask(GL_FALSE);
-
-  glActiveTexture(GL_TEXTURE0);
-  //glBindTexture(GL_TEXTURE_2D, texture.getTextureId());
-
-  VBO vbo;get
-  vbo.quad2d(touchX + 10.0f, touchY + 10.0f, touchX + 100.0f,
-      touchY + 10.0f, touchX + 100.0f, touchY + 100.0f,
-      touchX + 10.0f, touchY + 100.0f);
-  vbo.draw();
-
-  glBindTexture(GL_TEXTURE_2D, 0);
-
-  test_program->unuse();
-#endif
 }
 
 std::string AndroidPlatform::showTextEntryDialog(const std::string & message) {
@@ -161,8 +127,6 @@ void AndroidPlatform::createInputDialog(const char * _title, const char * _messa
   //return message;
 }
 
-//	static program * test_program;
-
 void AndroidPlatform::showCanvas(canvas::ContextAndroid & context) {
 
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "showCanvas called");
@@ -172,29 +136,8 @@ void AndroidPlatform::showCanvas(canvas::ContextAndroid & context) {
 
 }
 
-void AndroidPlatform::onInit() {
-#if 0
-  float x = 10;
-  float y = 100;
-  float w = 200;
-  float h = 200;
-  float ra = 10.0;
-
-  context->beginPath();
-  context->moveTo(x+ra, y);
-  context->arcTo(x+w, y, x+w, y+h, ra);
-  context->arcTo(x+w, y+h, x, y+h, ra);
-  context->arcTo(x, y+h, x, y, ra);
-  context->arcTo(x, y, x+w, y, ra);
-
-  context->fillStyle = "#ffffff";
-  context->shadowBlur = context->shadowOffsetX = context->shadowOffsetY = 5.0f;
-  context->fill();
-  context->strokeStyle = "#ff0000";
-  context->lineWidth = 5.0f;
-  context->shadowBlur = context->shadowOffsetX = context->shadowOffsetY = 0.0f;
-  context->stroke();
-#endif
+void
+AndroidPlatform::onInit() {
   getApplication().Init();
 }
 
