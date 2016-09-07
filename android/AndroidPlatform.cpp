@@ -35,8 +35,17 @@ extern void applicationMain(FWPlatformBase * platform);
 bool AndroidPlatform::onTouchesEvent(jobject * _obj, int mode, int fingerIndex, long time, float x, float y) {
   //Palauttaa vastauksen threadille (debug)
   // messagePoster(11);
-  touchX = x;
-  touchY = y;
+	switch (mode){
+	case 1:
+	  getApplication().touchesBegin(x,y, (double)time, fingerIndex);
+		break;
+	case 2:
+	  getApplication().touchesEnded(x,y, (double)time, fingerIndex);
+		break;
+	case 3:
+	  getApplication().touchesMoved(x,y, (double)time, fingerIndex);
+		break;
+	}
 
   return true;
 }
