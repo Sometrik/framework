@@ -365,7 +365,7 @@ public class MyGLSurfaceView extends GLSurfaceView {
   //returns android resource file path
   public String getResourcePath(String fileName){
     System.out.println("getting fileName path _ file name: " + fileName + " Path: " + "android.resource://com.sometrik.framework/test/" + fileName);
-      Uri resourcePath = Uri.parse("android.resource://com.sometrik.framework/test/ " + fileName);
+      Uri resourcePath = Uri.parse("android.resource://com.sometrik.framework/test/" + fileName);
       return resourcePath.toString();
   }
 
