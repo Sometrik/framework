@@ -316,11 +316,9 @@ void AndroidPlatform::postNotification(const std::string & title, const std::str
 }
 
 double AndroidPlatform::getTime() const {
-  __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "getTime called");
 
   jclass frameClass = env->GetObjectClass(framework);
   double currentTime = env->CallStaticDoubleMethod(frameClass, env->GetStaticMethodID(frameClass, "getTime", "()D"));
-  __android_log_print(ANDROID_LOG_INFO, "Sometrik", "currentTime = %d", currentTime);
 
   return currentTime;
 }

@@ -56,7 +56,7 @@ public class MyGLSurfaceView extends GLSurfaceView {
     System.out.println("assetmanager: " + String.valueOf(assetManager));
 
     // FormatDateDebug
-    formatDateTime(Calendar.getInstance().getTimeInMillis());
+//    formatDateTime(Calendar.getInstance().getTimeInMillis());
 
     // Create an OpenGL ES 2.0 context
     setEGLContextClientVersion(2);
@@ -297,8 +297,8 @@ public class MyGLSurfaceView extends GLSurfaceView {
     java.text.DateFormat dateFormat = android.text.format.DateFormat.getDateFormat(context);
     java.text.DateFormat timeFormat = android.text.format.DateFormat.getTimeFormat(context);
 
-    System.out.println("unformat: " + date);
-    System.out.println("format: " + dateFormat.format(date) + " " + timeFormat.format(date));
+//    System.out.println("unformat: " + date);
+//    System.out.println("format: " + dateFormat.format(date) + " " + timeFormat.format(date));
 
     return dateFormat.format(date) + timeFormat.format(date);
   }
@@ -306,9 +306,9 @@ public class MyGLSurfaceView extends GLSurfaceView {
   public static double getTime(){
     Time t = new Time();
     t.setToNow();
-    System.out.println("time time time = " + t);
-    System.out.println("time time time = " + t.toMillis(false));
-    System.out.println("time time time = " + (double)t.toMillis(false));
+//    System.out.println("time time time = " + t);
+//    System.out.println("time time time = " + t.toMillis(false));
+//    System.out.println("time time time = " + (double)t.toMillis(false));
     
     return (double)t.toMillis(false);
   }
