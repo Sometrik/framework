@@ -268,7 +268,8 @@ public:
   }
 
   std::string getBundleFilename(const char * filename) {
-    return filename;
+    string s = "android_project/assets/";
+    return s + filename;
   }
 
   void storeValue(const std::string & key, const std::string & value) {
