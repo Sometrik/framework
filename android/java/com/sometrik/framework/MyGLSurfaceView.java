@@ -11,6 +11,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -303,14 +304,14 @@ public class MyGLSurfaceView extends GLSurfaceView {
     return dateFormat.format(date) + timeFormat.format(date);
   }
   
-  public static double getTime(){
+  public static long getTime(){
     Time t = new Time();
     t.setToNow();
 //    System.out.println("time time time = " + t);
 //    System.out.println("time time time = " + t.toMillis(false));
 //    System.out.println("time time time = " + (double)t.toMillis(false));
-    
-    return (double)t.toMillis(false);
+    long timeSeconds = TimeUnit.MILLISECONDS.toSeconds(t.toMillis(false));
+    return timeSeconds;
   }
 
   private String formatDate(long time) {
