@@ -80,6 +80,7 @@ void AndroidPlatform::menuPressed() {
 int AndroidPlatform::showActionSheet(const FWRect & rect, const FWActionSheet & sheet) {
 
   //Initialize java int and string arrays
+  auto env = getJNIEnv();
   std::vector<FWOption> optionsVector = sheet.getOptions();
   jobjectArray stringArray = (jobjectArray) env->NewObjectArray(optionsVector.size(), env->FindClass("java/lang/String"), env->NewStringUTF(""));
   jintArray intArray = env->NewIntArray(optionsVector.size());
@@ -122,6 +123,7 @@ void AndroidPlatform::showMessageBox(const std::string & title, const std::strin
 
 void AndroidPlatform::createInputDialog(const char * _title, const char * _message, int params) {
 
+  auto env = getJNIEnv();
   jclass cls = env->FindClass("com/sometrik/framework/FrameWork");
 
   jmethodID methodRef = env->GetMethodID(cls, "createInputDialog", "(Ljava/lang/String;Ljava/lang/String;)V");
@@ -139,6 +141,7 @@ void AndroidPlatform::createInputDialog(const char * _title, const char * _messa
 void AndroidPlatform::showCanvas(canvas::ContextAndroid & context) {
 
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "showCanvas called");
+  auto env = getJNIEnv();
   jclass cls = env->GetObjectClass(framework);
   jmethodID methodRef = env->GetMethodID(cls, "setNativeCanvas", "(Landroid/graphics/Bitmap;)V");
   env->CallVoidMethod(framework, methodRef, dynamic_cast<canvas::AndroidSurface&>(context.getDefaultSurface()).getBitmap());
@@ -146,8 +149,8 @@ void AndroidPlatform::showCanvas(canvas::ContextAndroid & context) {
 }
 
 void
-AndroidPlatform::onInit(JavaVM * _gJavaVM) {
-  gJavaVM = _gJavaVM;
+AndroidPlatform::onInit(JNIEnv * env) {
+  env->GetJavaVM(&gJavaVM);
   getApplication().Init();
 }
 
@@ -194,6 +197,7 @@ void AndroidPlatform::createOptions() {
 
 std::string AndroidPlatform::getBundleFilename(const char * filename) {
 
+  auto env = getJNIEnv();
   jstring path = (jstring) env->CallObjectMethod(framework, env->GetMethodID(env->GetObjectClass(framework), "getResourcePath", "(Ljava/lang/String;)Ljava/lang/String;"), env->NewStringUTF(filename));
   std::string result = env->GetStringUTFChars(path, JNI_FALSE);
 
@@ -202,6 +206,7 @@ std::string AndroidPlatform::getBundleFilename(const char * filename) {
 
 std::string AndroidPlatform::getLocalFilename(const char * filename, FileType type) {
 
+  auto env = getJNIEnv();
   jstring path;
   std::string result;
   switch (type) {
@@ -216,6 +221,7 @@ std::string AndroidPlatform::getLocalFilename(const char * filename, FileType ty
 }
 
 std::string AndroidPlatform::loadValue(const std::string & key) {
+  auto env = getJNIEnv();
   jstring value = (jstring) env->CallObjectMethod(framework, env->GetMethodID(env->GetObjectClass(framework), "getFromPrefs", "(Ljava/lang/String;)Ljava/lang/String;"), env->NewStringUTF(key.c_str()));
   std::string result = env->GetStringUTFChars(value, JNI_FALSE);
 
@@ -223,11 +229,13 @@ std::string AndroidPlatform::loadValue(const std::string & key) {
 }
 
 void AndroidPlatform::storeValue(const std::string & key, const std::string & value) {
+  auto env = getJNIEnv();
   env->CallVoidMethod(framework, env->GetMethodID(env->GetObjectClass(framework), "addToPrefs", "(Ljava/lang/String;Ljava/lang/String;)V"), env->NewStringUTF(key.c_str()), env->NewStringUTF(value.c_str()));
 }
 
 void AndroidPlatform::messagePoster(int message, const std::string text) {
 
+  auto env = getJNIEnv();
   jclass cls = env->FindClass("com/sometrik/framework/MyGLSurfaceView");
   jmethodID methodRef = env->GetStaticMethodID(cls, "LeaveMessageToSurface", "(Lcom/sometrik/framework/MyGLSurfaceView;ILjava/lang/String;)V");
 
@@ -236,10 +244,7 @@ void AndroidPlatform::messagePoster(int message, const std::string text) {
 
 void AndroidPlatform::messagePoster(int message, const std::string title, const std::string text) {
 
-  if (env == NULL){
-  __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "ENv is Null");
-  }
-  env = getJNIEnv();
+  auto env = getJNIEnv();
   jclass cls = env->FindClass("com/sometrik/framework/MyGLSurfaceView");
   jmethodID methodRef = env->GetStaticMethodID(cls, "LeaveMessageToSurface", "(Lcom/sometrik/framework/MyGLSurfaceView;ILjava/lang/String;Ljava/lang/String;)V");
 
@@ -249,6 +254,7 @@ void AndroidPlatform::messagePoster(int message, const std::string title, const 
 void AndroidPlatform::setupLooper() {
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "setupLooper called");
 
+  auto env = getJNIEnv();
   jclass nativeLooperClass = env->FindClass("com/sometrik/framework/NativeLooper");
   jmethodID createLooper = env->GetMethodID(nativeLooperClass, "<init>", "()V");
 
@@ -275,6 +281,7 @@ void AndroidPlatform::settingsCreator(jobject settings, jint menuId) {
   // preferenssi on tällä hetkellä mode, id, nimi ja niitä voi luoda settingsin listaan
   //kutsumalla createMenuItem. Tällä hetkellä sitä kutsutaan, joka kerta kun asettaa uuden
 
+  auto env = getJNIEnv();
   jclass checkCls = env->FindClass("com/sometrik/framework/MyGLSurfaceView");
   jmethodID methodReff = env->GetMethodID(checkCls, "checkSettings", "(Lcom/sometrik/framework/Settings;)V");
 
@@ -322,25 +329,23 @@ void AndroidPlatform::postNotification(const std::string & title, const std::str
 
 double AndroidPlatform::getTime() const {
 
+  auto env = getJNIEnv();
   jclass frameClass = env->GetObjectClass(framework);
-  double currentTime = env->CallStaticDoubleMethod(frameClass, env->GetStaticMethodID(frameClass, "getTime", "()D"));
+  double currentTime = env->CallStaticDoubleMethod(frameClass, env->GetStaticMethodID(frameClass, "getTime", "()L"));
 
   return currentTime;
 }
 
-
-JavaVM* AndroidPlatform::gJavaVM;
-
-JNIEnv* AndroidPlatform::getJNIEnv(){
+JNIEnv* AndroidPlatform::getJNIEnv() const {
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Getting JNIEnv");
   if (gJavaVM == NULL) {
     __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "JavaVM is null");
     return NULL;
   }
 
-  JNIEnv *env = NULL;
-  gJavaVM->GetEnv((void**)&env, JNI_VERSION_1_6);
-  return env;
+  JNIEnv *Myenv = NULL;
+  gJavaVM->GetEnv((void**)&Myenv, JNI_VERSION_1_6);
+  return Myenv;
 }
 
 //Mahdollisesti vain debuggia varten
@@ -365,6 +370,7 @@ void createSound(jobject thiz) {
 
 void AndroidPlatform::playSound(jobject sound) {
 
+  auto env = getJNIEnv();
   jclass cls = env->FindClass("com/sometrik/framework/Media");
   jmethodID methodRef = env->GetMethodID(cls, "play", "()V");
 
@@ -374,6 +380,7 @@ void AndroidPlatform::playSound(jobject sound) {
 
 void AndroidPlatform::stopSound(jobject sound) {
 
+  auto env = getJNIEnv();
   jclass cls = env->FindClass("com/sometrik/framework/Media");
   jmethodID methodRef = env->GetMethodID(cls, "stop", "()V");
 
@@ -512,7 +519,7 @@ void Java_com_sometrik_framework_MyGLRenderer_onInit(JNIEnv* env, jobject thiz, 
   }
   applicationMain(platform.get());
   platform->onResize(screenWidth, screenHeight);
-  platform->onInit(gJavaVM);
+  platform->onInit(env);
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Init end");
 }
 

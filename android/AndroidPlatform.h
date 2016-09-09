@@ -5,10 +5,11 @@ class shader_program;
 
 class AndroidPlatform: public FWPlatformBase {
 
-  static JavaVM * gJavaVM;
+
 public:
   AndroidPlatform(JNIEnv * _env, jobject _mgr, jobject _framework, float _display_scale, const char * _glsl_version, bool _has_es3) :
-      FWPlatformBase(_display_scale, _glsl_version, _has_es3), env(_env) {
+      FWPlatformBase(_display_scale, _glsl_version, _has_es3) {
+    auto env = getJNIEnv();
     framework = env->NewGlobalRef(_framework);
     mgr = env->NewGlobalRef(_mgr);
   }
@@ -27,7 +28,7 @@ public:
 
   void createInputDialog(const char * _title, const char * _message, int params);
 
-  void onInit(JavaVM * gJavaVM);
+  void onInit(JNIEnv * env);
 
   void createOptions();
 
@@ -52,9 +53,10 @@ public:
   std::string getLocalFilename(const char * filename, FileType type) override;
   double getTime() const override;
   std::shared_ptr<canvas::ContextFactory> createContextFactory() const override {
-    return std::make_shared<canvas::AndroidContextFactory>(env, mgr);
+    return std::make_shared<canvas::AndroidContextFactory>(getJNIEnv(), mgr);
   }
   std::shared_ptr<HTTPClientFactory> createHTTPClientFactory() const override {
+    auto env = getJNIEnv();
     return std::make_shared<AndroidClientFactory>(env);
   }
   void launchBrowser(const std::string & input_url) override;
@@ -63,12 +65,12 @@ public:
   int showActionSheet(const FWRect & rect, const FWActionSheet & sheet) override;
   void showCanvas(canvas::ContextAndroid & context);
 
-  JNIEnv* getJNIEnv();
+  JNIEnv* getJNIEnv() const;
   void setupLooper();
 
 private:
+  JavaVM * gJavaVM;
   FWContextBase * application;
-  JNIEnv * env;
   jobject mgr;
   jobject framework;
   jobject handler;
