@@ -146,7 +146,8 @@ void AndroidPlatform::showCanvas(canvas::ContextAndroid & context) {
 }
 
 void
-AndroidPlatform::onInit() {
+AndroidPlatform::onInit(JavaVM * _gJavaVM) {
+  gJavaVM = _gJavaVM;
   getApplication().Init();
 }
 
@@ -235,6 +236,10 @@ void AndroidPlatform::messagePoster(int message, const std::string text) {
 
 void AndroidPlatform::messagePoster(int message, const std::string title, const std::string text) {
 
+  if (env == NULL){
+  __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "ENv is Null");
+  }
+  env = getJNIEnv();
   jclass cls = env->FindClass("com/sometrik/framework/MyGLSurfaceView");
   jmethodID methodRef = env->GetStaticMethodID(cls, "LeaveMessageToSurface", "(Lcom/sometrik/framework/MyGLSurfaceView;ILjava/lang/String;Ljava/lang/String;)V");
 
@@ -321,6 +326,21 @@ double AndroidPlatform::getTime() const {
   double currentTime = env->CallStaticDoubleMethod(frameClass, env->GetStaticMethodID(frameClass, "getTime", "()D"));
 
   return currentTime;
+}
+
+
+JavaVM* AndroidPlatform::gJavaVM;
+
+JNIEnv* AndroidPlatform::getJNIEnv(){
+  __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Getting JNIEnv");
+  if (gJavaVM == NULL) {
+    __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "JavaVM is null");
+    return NULL;
+  }
+
+  JNIEnv *env = NULL;
+  gJavaVM->GetEnv((void**)&env, JNI_VERSION_1_6);
+  return env;
 }
 
 //Mahdollisesti vain debuggia varten
@@ -477,6 +497,7 @@ jboolean Java_com_sometrik_framework_MyGLSurfaceView_onUpdate(JNIEnv* env, jobje
   }
 }
 
+static JavaVM * gJavaVM;
 void Java_com_sometrik_framework_MyGLRenderer_onInit(JNIEnv* env, jobject thiz, jobject assetManager, jobject surface, float screenWidth, float screenHeight) {
   if (!platform.get()) {
     __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Creating Platform");
@@ -491,13 +512,13 @@ void Java_com_sometrik_framework_MyGLRenderer_onInit(JNIEnv* env, jobject thiz, 
   }
   applicationMain(platform.get());
   platform->onResize(screenWidth, screenHeight);
-  platform->onInit();
+  platform->onInit(gJavaVM);
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Init end");
 }
 
 void Java_com_sometrik_framework_NativeLooper_test(JNIEnv* env, jobject thiz) {
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Test");
-  platform->onInit();
+//  platform->onInit();
 }
 
 void Java_com_sometrik_framework_MyGLRenderer_nativeOnDraw(JNIEnv* env, jobject thiz) {
@@ -511,5 +532,12 @@ void Java_com_sometrik_framework_FrameWork_okPressed(JNIEnv* env, jobject thiz, 
 
   env->CallVoidMethod(thiz, methodRef, text);
 
+}
+
+jint JNI_OnLoad(JavaVM *vm, void *reserved) {
+  __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "JNI_Onload on AndroidPlatform");
+  gJavaVM = vm;
+
+  return JNI_VERSION_1_6;
 }
 }

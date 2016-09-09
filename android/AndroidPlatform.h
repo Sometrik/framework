@@ -5,6 +5,7 @@ class shader_program;
 
 class AndroidPlatform: public FWPlatformBase {
 
+  static JavaVM * gJavaVM;
 public:
   AndroidPlatform(JNIEnv * _env, jobject _mgr, jobject _framework, float _display_scale, const char * _glsl_version, bool _has_es3) :
       FWPlatformBase(_display_scale, _glsl_version, _has_es3), env(_env) {
@@ -26,7 +27,7 @@ public:
 
   void createInputDialog(const char * _title, const char * _message, int params);
 
-  void onInit();
+  void onInit(JavaVM * gJavaVM);
 
   void createOptions();
 
@@ -62,6 +63,7 @@ public:
   int showActionSheet(const FWRect & rect, const FWActionSheet & sheet) override;
   void showCanvas(canvas::ContextAndroid & context);
 
+  JNIEnv* getJNIEnv();
   void setupLooper();
 
 private:
