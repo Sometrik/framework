@@ -3,6 +3,8 @@ package com.sometrik.framework;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
+import com.example.bombdefender.R;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;

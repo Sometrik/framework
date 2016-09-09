@@ -1,5 +1,6 @@
 package com.sometrik.framework;
 
+import com.example.bombdefender.R;
 import com.sometrik.framework.Settings.MyPreferenceFragment;
 
 import android.app.Activity;
@@ -238,6 +239,8 @@ public class FrameWork extends Activity {
     // Create and show the alert
     alert = builder.create();
     alert.show();
+
+    System.out.println("message dialog created");
 
   }
 
