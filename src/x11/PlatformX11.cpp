@@ -11,6 +11,7 @@
 
 #include <FWContextBase.h>
 #include <FWPlatformBase.h>
+#include <EventLoop.h>
 #include <CurlClient.h>
 
 #include <ContextCairo.h>
@@ -58,7 +59,7 @@ bool XNextEventTimed(Display * dsp, XEvent * event_return, struct timeval * tv) 
     return true;
   }
 }
-
+  
 class PlatformX11 : public FWPlatformBase {
 public:
   PlatformX11() : FWPlatformBase(1.0f,
@@ -76,56 +77,7 @@ public:
     }
     return t;
   }
-  
-  void handleEvent(XEvent & xev) {
-    // cerr << "received event " << int(xev.type) << endl;
-    KeySym key;
-    char text;
-  
-    switch (xev.type) {
-    case KeyPress:
-      if (XLookupString(&xev.xkey, &text, 1, &key, 0) == 1) {
-	getApplication().onKeyPress(text, getTime(), 0, 0);
-      }
-      break;
-    case DestroyNotify:
-      userInterrupt = true;
-      break;
-    case MotionNotify:
-      // getApplication().onMouseMove(xev.xmotion.x, xev.xmotion.y);
-      if (button_pressed) {
-	getApplication().touchesMoved(xev.xmotion.x, xev.xmotion.y, getTime(), 0);
-      }
-      mouse_x = xev.xmotion.x;
-      mouse_y = xev.xmotion.y;
-      break;
-    case ButtonPress:
-      // getApplication().onMouseDown(xev.xbutton.button, 0, 0);
-      getApplication().touchesBegin(mouse_x, mouse_y, getTime(), 0);
-      button_pressed = true;
-      break;
-    case ButtonRelease:
-      // getApplication().onMouseUp(xev.xbutton.button, 0, 0);
-      getApplication().touchesEnded(mouse_x, mouse_y, getTime(), 0);
-      button_pressed = false;
-      break;
-    case ConfigureNotify:
-      {
-	XConfigureEvent xce = xev.xconfigure;
-	display_width = xce.width;
-	display_height = xce.height;	
-      }
-      break;
-    }
-  }
-
-  void sendEvents() {
-    if (display_width != getApplication().getActualWidth() ||
-	display_height != getApplication().getActualHeight()) {
-      getApplication().onResize(display_width, display_height, display_width, display_height);
-    }
-  }
-  
+    
   void showMessageBox(const string&, const string&) {
 
   }
@@ -143,32 +95,6 @@ public:
   
   int showActionSheet(const FWRect&, const FWActionSheet&) {
     return 0;
-  }
-
-  bool readEvents() {
-    XEvent xev;
-
-    cerr << "read pending\n";
-    
-    while ( XPending(x_display) ) {
-      XNextEvent(x_display, &xev);
-      handleEvent(xev);
-    }
-    if (!userInterrupt) {
-      sendEvents();
-    }
-
-    if (!userInterrupt) {
-      cerr << "read all\n";
-    
-      timeval tv = { 1, 0 }; // 1000000 / 50 };
-      if (XNextEventTimed(x_display, &xev, &tv)) {
-	handleEvent(xev);
-	sendEvents();
-      }
-    }
-
-    return userInterrupt;
   }
 
   bool createWindow(FWContextBase * context, const char* title) override {
@@ -252,27 +178,8 @@ public:
     return std::shared_ptr<canvas::ContextFactory>(new canvas::CairoContextFactory);
   }
 
-  void startEventLoop() {
-    struct timeval t1, t2;
-    struct timezone tz;
-    float deltatime;
-    
-    gettimeofday ( &t1 , &tz );
-    
-    while (readEvents() == false) {
-      getApplication().loadEvents();
-
-      gettimeofday(&t2, &tz);
-      deltatime = (float)(t2.tv_sec - t1.tv_sec + (t2.tv_usec - t1.tv_usec) * 1e-6);
-      t1 = t2;
-      
-      if (getApplication().onUpdate(deltatime)) {
-	getApplication().onDraw();
-	eglSwapBuffers(eglDisplay, eglSurface);
-      }
-    }
-  }
-
+  std::shared_ptr<EventLoop> createEventLoop() override;
+  
   void showMessageBox(const std::string & message) {
     
   }
@@ -302,13 +209,136 @@ public:
     return "";
   }
 
+  void swapBuffers() {
+    eglSwapBuffers(eglDisplay, eglSurface);
+  }
+
 private:
   // X11 related local variables
   Display * x_display = NULL;
-  bool userInterrupt = false;
-  int mouse_x = 0, mouse_y = 0;
-  bool button_pressed = false;
 };
+
+
+class PlatformX11;
+
+class EventLoopX11 : public EventLoop {
+public:
+  EventLoopX11( Display * _x_display,
+		PlatformX11 * _platform,
+		FWContextBase * _application
+		)
+    : EventLoop(_application), x_display(_x_display), platform(_platform) { }
+
+  void readEvents() {
+    XEvent xev;
+
+    cerr << "read pending\n";
+    
+    while ( XPending(x_display) ) {
+      XNextEvent(x_display, &xev);
+      handleEvent(xev);
+    }
+    if (doKeepRunning()) {
+      sendEvents();
+    }
+
+    if (doKeepRunning()) {
+      cerr << "read all\n";
+    
+      timeval tv = { 1, 0 }; // 1000000 / 50 };
+      if (XNextEventTimed(x_display, &xev, &tv)) {
+	handleEvent(xev);
+	sendEvents();
+      }
+    }
+  }
+
+  void run() override {
+    struct timeval t1, t2;
+    struct timezone tz;
+    float deltatime;
+    
+    gettimeofday ( &t1 , &tz );
+    
+    while (doKeepRunning()) {
+      readEvents();
+      getApplication()->loadEvents();
+
+      gettimeofday(&t2, &tz);
+      deltatime = (float)(t2.tv_sec - t1.tv_sec + (t2.tv_usec - t1.tv_usec) * 1e-6);
+      t1 = t2;
+      
+      if (getApplication()->onUpdate(deltatime)) {
+	getApplication()->onDraw();
+	platform->swapBuffers();
+      }
+    }
+  }
+
+protected:
+  void sendEvents() {
+    if (display_width && display_height &&
+	(display_width != getApplication()->getActualWidth() ||
+	 display_height != getApplication()->getActualHeight())) {
+      getApplication()->onResize(display_width, display_height, display_width, display_height);
+    }
+  }
+
+  void handleEvent(XEvent & xev) {
+    KeySym key;
+    char text;
+  
+    switch (xev.type) {
+    case KeyPress:
+      if (XLookupString(&xev.xkey, &text, 1, &key, 0) == 1) {
+	getApplication()->onKeyPress(text, getPlatform()->getTime(), 0, 0);
+      }
+      break;
+    case DestroyNotify:
+      stop();
+      break;
+    case MotionNotify:
+      // getApplication().onMouseMove(xev.xmotion.x, xev.xmotion.y);
+      if (button_pressed) {
+	getApplication()->touchesMoved(xev.xmotion.x, xev.xmotion.y, getPlatform()->getTime(), 0);
+      }
+      mouse_x = xev.xmotion.x;
+      mouse_y = xev.xmotion.y;
+      break;
+    case ButtonPress:
+      // getApplication().onMouseDown(xev.xbutton.button, 0, 0);
+      getApplication()->touchesBegin(mouse_x, mouse_y, getPlatform()->getTime(), 0);
+      button_pressed = true;
+      break;
+    case ButtonRelease:
+      // getApplication().onMouseUp(xev.xbutton.button, 0, 0);
+      getApplication()->touchesEnded(mouse_x, mouse_y, getPlatform()->getTime(), 0);
+      button_pressed = false;
+      break;
+    case ConfigureNotify:
+      {
+	XConfigureEvent xce = xev.xconfigure;
+	display_width = xce.width;
+	display_height = xce.height;	
+      }
+      break;
+    }
+  }
+
+  PlatformX11 * getPlatform() { return platform; }
+  
+private:
+  Display * x_display;
+  PlatformX11 * platform;
+  int display_width = 0, display_height = 0;
+  bool button_pressed = false;
+  int mouse_x = 0, mouse_y = 0;
+};
+
+std::shared_ptr<EventLoop>
+PlatformX11::createEventLoop() {
+  return std::make_shared<EventLoopX11>(x_display, this, &(getApplication()));
+}
 
 ///
 //  Global extern.  The application must declare this function
@@ -329,7 +359,10 @@ int main(int argc, char *argv[]) {
   platform.createContext(&(platform.getApplication()), "App", 800, 600);
   platform.getApplication().onCmdLine(argc, argv);
   platform.getApplication().Init();
-  platform.startEventLoop();
+
+  auto eventloop = platform.createEventLoop();
+  eventloop->run();
+  
   platform.getApplication().onShutdown();
   return 0;
 }
