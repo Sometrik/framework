@@ -520,11 +520,9 @@ jboolean Java_com_sometrik_framework_MyGLSurfaceView_onUpdate(JNIEnv* env, jobje
 }
 
 static JavaVM * gJavaVM = 0;
-void Java_com_sometrik_framework_MyGLRenderer_onInit(JNIEnv* env, jobject thiz, jobject assetManager, jobject surface, float screenWidth, float screenHeight) {
+void Java_com_sometrik_framework_MyGLRenderer_onInit(JNIEnv* env, jobject thiz, jobject assetManager, jobject surface, float screenWidth, float screenHeight, float displayScale, bool hasEs3) {
   if (!platform.get()) {
     __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Creating Platform");
-    float displayScale = 1.0f;
-    bool hasEs3 = false;
     const char* glslVersion = "#version 100"; // "#version es 300"
 
     AAssetManager* manager = AAssetManager_fromJava(env, assetManager);
