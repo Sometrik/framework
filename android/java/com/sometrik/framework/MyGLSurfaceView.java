@@ -158,7 +158,7 @@ public class MyGLSurfaceView extends GLSurfaceView {
   Runnable onUpdateRunnable = new Runnable() {
     @Override
     public void run() {
-      onUpdate((double)System.currentTimeMillis());
+      onUpdate((double)System.currentTimeMillis() / 1000.0);
       sHandler.postDelayed(onUpdateRunnable, 100);
     }
   };
