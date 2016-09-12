@@ -304,13 +304,13 @@ public class MyGLSurfaceView extends GLSurfaceView {
     return dateFormat.format(date) + timeFormat.format(date);
   }
   
-  public static long getTime(){
+  public static double getTime(){
     Time t = new Time();
     t.setToNow();
 //    System.out.println("time time time = " + t);
 //    System.out.println("time time time = " + t.toMillis(false));
 //    System.out.println("time time time = " + (double)t.toMillis(false));
-    long timeSeconds = TimeUnit.MILLISECONDS.toSeconds(t.toMillis(false));
+    double timeSeconds = (double)TimeUnit.MILLISECONDS.toSeconds(t.toMillis(false));
     return timeSeconds;
   }
 
