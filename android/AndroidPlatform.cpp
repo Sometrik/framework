@@ -517,7 +517,7 @@ jboolean Java_com_sometrik_framework_MyGLSurfaceView_onUpdate(JNIEnv* env, jobje
   }
 }
 
-static JavaVM * gJavaVM;
+static JavaVM * gJavaVM = 0;
 void Java_com_sometrik_framework_MyGLRenderer_onInit(JNIEnv* env, jobject thiz, jobject assetManager, jobject surface, float screenWidth, float screenHeight) {
   if (!platform.get()) {
     __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Creating Platform");
