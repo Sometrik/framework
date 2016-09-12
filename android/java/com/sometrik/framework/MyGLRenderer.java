@@ -27,7 +27,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
   public native void nativeOnDraw();
 
-  public native void onInit(AssetManager assetManager, MyGLSurfaceView view, float xSize, float ySize);
+  public native void onInit(AssetManager assetManager, MyGLSurfaceView view, float xSize, float ySize, float displayScale, Boolean hasEs3);
 
   public native void Draw();
 
@@ -57,8 +57,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     System.out.println("(Renderer) onSurfaceChanged called");
     GLES20.glViewport(0, 0, width, height);
 
-    DisplayMetrics displayMetrics = frame.getDisplayMetrics();
-    onResize(width / displayMetrics.scaledDensity, height / displayMetrics.scaledDensity);
+    onResize(width, height);
   }
 
   @Override
@@ -68,10 +67,11 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     renderer = this;
     System.out.println("surface check: " + frame.getSurfaceView());
 
-    // Calls onInit in AndroidPlatform
-    onInit(assetManager, frame.getSurfaceView(), xSize, ySize);
-
     DisplayMetrics displayMetrics = frame.getDisplayMetrics();
+    System.out.println("Display scale: " + displayMetrics.scaledDensity);
+    // Calls onInit in AndroidPlatform
+    onInit(assetManager, frame.getSurfaceView(), xSize, ySize, displayMetrics.scaledDensity, false);
+
     xSize = displayMetrics.widthPixels / displayMetrics.scaledDensity;
     ySize = displayMetrics.heightPixels / displayMetrics.scaledDensity;
 
