@@ -342,13 +342,12 @@ double AndroidPlatform::getTime() const {
 
   auto env = getJNIEnv();
   jclass frameClass = env->GetObjectClass(framework);
-  double currentTime = env->CallStaticDoubleMethod(frameClass, env->GetStaticMethodID(frameClass, "getTime", "()L"));
+  double currentTime = env->CallStaticDoubleMethod(frameClass, env->GetStaticMethodID(frameClass, "getTime", "()D"));
 
   return currentTime;
 }
 
 JNIEnv* AndroidPlatform::getJNIEnv() const {
-  __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Getting JNIEnv");
   if (gJavaVM == NULL) {
     __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "JavaVM is null");
     return NULL;
