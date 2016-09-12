@@ -32,20 +32,20 @@ int screenHeight = 100;
 
 extern void applicationMain(FWPlatformBase * platform);
 
-bool AndroidPlatform::onTouchesEvent(jobject * _obj, int mode, int fingerIndex, long time, float x, float y) {
+bool AndroidPlatform::onTouchesEvent(jobject * _obj, int mode, int fingerIndex, double time, float x, float y) {
   //Palauttaa vastauksen threadille (debug)
   // messagePoster(11);
   x /= getDisplayScale();
   y /= getDisplayScale();
   switch (mode) {
   case 1:
-    getApplication().touchesBegin(x, y, (double) time, fingerIndex);
+    getApplication().touchesBegin(x, y, time, fingerIndex);
     break;
   case 2:
-    getApplication().touchesEnded(x, y, (double) time, fingerIndex);
+    getApplication().touchesEnded(x, y, time, fingerIndex);
     break;
   case 3:
-    getApplication().touchesMoved(x, y, (double) time, fingerIndex);
+    getApplication().touchesMoved(x, y, time, fingerIndex);
     break;
   }
 
@@ -508,7 +508,7 @@ void Java_com_sometrik_framework_MyGLSurfaceView_menuPressed(JNIEnv* env, jobjec
 }
 
 void Java_com_sometrik_framework_MyGLSurfaceView_touchEvent(JNIEnv* env, jobject thiz, int mode, int fingerIndex, long time, float x, float y) {
-  platform->onTouchesEvent(&thiz, mode, fingerIndex, time, x, y);
+  platform->onTouchesEvent(&thiz, mode, fingerIndex, time / 1000.0, x, y);
 }
 
 jboolean Java_com_sometrik_framework_MyGLSurfaceView_onUpdate(JNIEnv* env, jobject thiz, double timestamp) {
