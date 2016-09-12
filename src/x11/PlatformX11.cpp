@@ -29,18 +29,31 @@ bool XNextEventTimed(Display * dsp, XEvent * event_return, struct timeval * tv) 
 
   // the real deal
 
-  if (XPending(dsp) == 0) {
+  if (XPending(dsp) == 0) {    
     int fd = ConnectionNumber(dsp);
+    cerr << "nothing pending, fd = " << fd << "\n";
     fd_set readset;
     FD_ZERO(&readset);
     FD_SET(fd, &readset);
-    if (select(fd+1, &readset, NULL, NULL, tv) == 0) {
+    int r = select(fd+1, &readset, NULL, NULL, tv);
+    if (r == -1) {
+      cerr << "select failed\n";
+      return false;
+    } else if (r == 0) {
+      cerr << "nothing to select\n";    
       return false;
     } else {
-      XNextEvent(dsp, event_return);
-      return true;
+      cerr << "getting event (r = " << r << ")\n";
+      if (XPending(dsp)) {
+	XNextEvent(dsp, event_return);
+	return true;
+      } else {
+	return false;
+      }
     }
   } else {
+    cerr << "pending\n";
+    
     XNextEvent(dsp, event_return);
     return true;
   }
@@ -135,6 +148,8 @@ public:
   bool readEvents() {
     XEvent xev;
 
+    cerr << "read pending\n";
+    
     while ( XPending(x_display) ) {
       XNextEvent(x_display, &xev);
       handleEvent(xev);
@@ -144,7 +159,9 @@ public:
     }
 
     if (!userInterrupt) {
-      timeval tv = { 0, 1000000 / 50 };
+      cerr << "read all\n";
+    
+      timeval tv = { 1, 0 }; // 1000000 / 50 };
       if (XNextEventTimed(x_display, &xev, &tv)) {
 	handleEvent(xev);
 	sendEvents();
@@ -191,7 +208,10 @@ public:
     xattr.override_redirect = 0;
     XChangeWindowAttributes ( x_display, win, CWOverrideRedirect, &xattr );
 
-    // XSelectInput?
+    XSelectInput(x_display, win, 
+		 ExposureMask | KeyPressMask | KeyReleaseMask | PointerMotionMask |
+		 ButtonPressMask | ButtonReleaseMask  | StructureNotifyMask 
+		 );
     
     hints.input = 1;
     hints.flags = InputHint;
@@ -222,7 +242,9 @@ public:
     eglNativeDisplay = (EGLNativeDisplayType) x_display;
 
     cerr << "native display = " << x_display << endl;
-    
+
+    XFlush(x_display);
+
     return true;
   }
 
