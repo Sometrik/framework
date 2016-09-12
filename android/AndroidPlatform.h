@@ -9,9 +9,9 @@ class AndroidPlatform: public FWPlatformBase {
 public:
   AndroidPlatform(JNIEnv * _env, jobject _mgr, jobject _framework, float _display_scale, const char * _glsl_version, bool _has_es3) :
       FWPlatformBase(_display_scale, _glsl_version, _has_es3) {
-    auto env = getJNIEnv();
-    framework = env->NewGlobalRef(_framework);
-    mgr = env->NewGlobalRef(_mgr);
+//    auto env = getJNIEnv();
+    framework = _env->NewGlobalRef(_framework);
+    mgr = _env->NewGlobalRef(_mgr);
   }
   ~AndroidPlatform() {
   }
@@ -28,7 +28,7 @@ public:
 
   void createInputDialog(const char * _title, const char * _message, int params);
 
-  void onInit(JNIEnv * env);
+  void onInit(JNIEnv * env, JavaVM * _gJavaVM);
 
   void createOptions();
 

@@ -149,9 +149,20 @@ void AndroidPlatform::showCanvas(canvas::ContextAndroid & context) {
 }
 
 void
-AndroidPlatform::onInit(JNIEnv * env) {
-  env->GetJavaVM(&gJavaVM);
+AndroidPlatform::onInit(JNIEnv * env, JavaVM * _gJavaVM) {
+//  gJavaVM = NULL;
+//  env->GetJavaVM(&gJavaVM);
+  gJavaVM = _gJavaVM;
+  gJavaVM->AttachCurrentThread(&env, NULL);
+  __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "checking gjavavm");
+  if (gJavaVM == NULL){
+    __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "1");
+  }
+  if (_gJavaVM == NULL){
+      __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "2");
+    }
   getApplication().Init();
+
 }
 
 void AndroidPlatform::createOptions() {
@@ -345,6 +356,9 @@ JNIEnv* AndroidPlatform::getJNIEnv() const {
 
   JNIEnv *Myenv = NULL;
   gJavaVM->GetEnv((void**)&Myenv, JNI_VERSION_1_6);
+  if (Myenv == NULL){
+    __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Env is null");
+  }
   return Myenv;
 }
 
@@ -519,7 +533,7 @@ void Java_com_sometrik_framework_MyGLRenderer_onInit(JNIEnv* env, jobject thiz, 
   }
   applicationMain(platform.get());
   platform->onResize(screenWidth, screenHeight);
-  platform->onInit(env);
+  platform->onInit(env, gJavaVM);
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Init end");
 }
 
