@@ -310,7 +310,7 @@ public class MyGLSurfaceView extends GLSurfaceView {
 //    System.out.println("time time time = " + t);
 //    System.out.println("time time time = " + t.toMillis(false));
 //    System.out.println("time time time = " + (double)t.toMillis(false));
-    double timeSeconds = (double)TimeUnit.MILLISECONDS.toSeconds(t.toMillis(false));
+    double timeSeconds = (double)t.toMillis(false) / 1000.0;
     return timeSeconds;
   }
 
