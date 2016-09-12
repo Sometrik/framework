@@ -16,7 +16,7 @@ public:
   ~AndroidPlatform() {
   }
 
-  bool onTouchesEvent(jobject * _obj, int mode, int fingerIndex, long time, float x, float y);
+  bool onTouchesEvent(jobject * _obj, int mode, int fingerIndex, double time, float x, float y);
 
   void onResize(int width, int height);
 
