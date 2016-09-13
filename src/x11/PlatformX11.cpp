@@ -1,3 +1,4 @@
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -32,7 +33,7 @@ bool XNextEventTimed(Display * dsp, XEvent * event_return, struct timeval * tv) 
 
   if (XPending(dsp) == 0) {    
     int fd = ConnectionNumber(dsp);
-    cerr << "nothing pending, fd = " << fd << "\n";
+    // cerr << "nothing pending, fd = " << fd << "\n";
     fd_set readset;
     FD_ZERO(&readset);
     FD_SET(fd, &readset);
@@ -44,7 +45,7 @@ bool XNextEventTimed(Display * dsp, XEvent * event_return, struct timeval * tv) 
       cerr << "nothing to select\n";    
       return false;
     } else {
-      cerr << "getting event (r = " << r << ")\n";
+      // cerr << "getting event (r = " << r << ")\n";
       if (XPending(dsp)) {
 	XNextEvent(dsp, event_return);
 	return true;
@@ -53,7 +54,7 @@ bool XNextEventTimed(Display * dsp, XEvent * event_return, struct timeval * tv) 
       }
     }
   } else {
-    cerr << "pending\n";
+    // cerr << "pending\n";
     
     XNextEvent(dsp, event_return);
     return true;
@@ -197,7 +198,7 @@ public:
   }
 
   std::string getBundleFilename(const char * filename) {
-    string s = "android_project/assets/";
+    string s = "assets/";
     return s + filename;
   }
 
@@ -232,7 +233,7 @@ public:
   void readEvents() {
     XEvent xev;
 
-    cerr << "read pending\n";
+    // cerr << "read pending\n";
     
     while ( XPending(x_display) ) {
       XNextEvent(x_display, &xev);
@@ -243,7 +244,7 @@ public:
     }
 
     if (doKeepRunning()) {
-      cerr << "read all\n";
+      // cerr << "read all\n";
     
       timeval tv = { 1, 0 }; // 1000000 / 50 };
       if (XNextEventTimed(x_display, &xev, &tv)) {
@@ -264,11 +265,13 @@ public:
       readEvents();
       getApplication()->loadEvents();
 
+#if 0
       gettimeofday(&t2, &tz);
       deltatime = (float)(t2.tv_sec - t1.tv_sec + (t2.tv_usec - t1.tv_usec) * 1e-6);
       t1 = t2;
+#endif
       
-      if (getApplication()->onUpdate(deltatime)) {
+      if (getApplication()->onUpdate(getPlatform()->getTime() * 1000)) {
 	getApplication()->onDraw();
 	platform->swapBuffers();
       }
