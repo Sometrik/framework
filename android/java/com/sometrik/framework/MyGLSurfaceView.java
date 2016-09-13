@@ -297,21 +297,19 @@ public class MyGLSurfaceView extends GLSurfaceView {
 
     java.text.DateFormat dateFormat = android.text.format.DateFormat.getDateFormat(context);
     java.text.DateFormat timeFormat = android.text.format.DateFormat.getTimeFormat(context);
-
 //    System.out.println("unformat: " + date);
 //    System.out.println("format: " + dateFormat.format(date) + " " + timeFormat.format(date));
 
     return dateFormat.format(date) + timeFormat.format(date);
   }
-  
-  public static double getTime(){
-    Time t = new Time();
-    t.setToNow();
-//    System.out.println("time time time = " + t);
-//    System.out.println("time time time = " + t.toMillis(false));
-//    System.out.println("time time time = " + (double)t.toMillis(false));
-    double timeSeconds = (double)t.toMillis(false) / 1000.0;
-    return timeSeconds;
+
+  /**
+   * 
+   * @return Seconds as double
+   */
+  public static double getTime() {
+    double millis = (double) Calendar.getInstance().getTimeInMillis();
+    return millis / 1000.0;
   }
 
   private String formatDate(long time) {
