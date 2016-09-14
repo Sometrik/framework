@@ -25,11 +25,6 @@
 using namespace gpufw;
 using namespace std;
 
-float touchX = 200.0f;
-float touchY = 200.0f;
-int screenWidth = 100;
-int screenHeight = 100;
-
 extern void applicationMain(FWPlatformBase * platform);
 
 bool AndroidPlatform::onTouchesEvent(jobject * _obj, int mode, int fingerIndex, double time, float x, float y) {
@@ -55,11 +50,8 @@ void AndroidPlatform::onResize(int width, int height) {
 
   __android_log_print(ANDROID_LOG_ERROR, "Sometrik", "resize: %d %d ", width, height);
   getApplication().onResize(width / getDisplayScale(), height / getDisplayScale(), width, height);
-
-  screenWidth = width;
-  screenHeight = height;
-
 }
+
 void AndroidPlatform::menuPressed() {
 
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Platform menupressed called");
