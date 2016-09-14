@@ -33,8 +33,7 @@ int screenHeight = 100;
 extern void applicationMain(FWPlatformBase * platform);
 
 bool AndroidPlatform::onTouchesEvent(jobject * _obj, int mode, int fingerIndex, double time, float x, float y) {
-  //Palauttaa vastauksen threadille (debug)
-  // messagePoster(11);
+
   x /= getDisplayScale();
   y /= getDisplayScale();
   switch (mode) {
@@ -55,7 +54,7 @@ bool AndroidPlatform::onTouchesEvent(jobject * _obj, int mode, int fingerIndex, 
 void AndroidPlatform::onResize(int width, int height) {
 
   __android_log_print(ANDROID_LOG_ERROR, "Sometrik", "resize: %d %d ", width, height);
-  getApplication().onResize(width, height, width, height);
+  getApplication().onResize(width / getDisplayScale(), height / getDisplayScale(), width, height);
 
   screenWidth = width;
   screenHeight = height;
@@ -508,7 +507,7 @@ void Java_com_sometrik_framework_MyGLSurfaceView_menuPressed(JNIEnv* env, jobjec
 }
 
 void Java_com_sometrik_framework_MyGLSurfaceView_touchEvent(JNIEnv* env, jobject thiz, int mode, int fingerIndex, long time, float x, float y) {
-  platform->onTouchesEvent(&thiz, mode, fingerIndex, time / 1000.0, x, y);
+  platform->onTouchesEvent(&thiz, mode, fingerIndex, time, x, y);
 }
 
 jboolean Java_com_sometrik_framework_MyGLSurfaceView_onUpdate(JNIEnv* env, jobject thiz, double timestamp) {
