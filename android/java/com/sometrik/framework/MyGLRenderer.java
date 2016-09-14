@@ -2,7 +2,9 @@ package com.sometrik.framework;
 
 import javax.microedition.khronos.opengles.GL10;
 
+import android.app.ActivityManager;
 import android.content.Context;
+import android.content.pm.ConfigurationInfo;
 import android.content.res.AssetManager;
 import android.opengl.EGLConfig;
 import android.opengl.GLES20;
@@ -69,8 +71,19 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
     DisplayMetrics displayMetrics = frame.getDisplayMetrics();
     System.out.println("Display scale: " + displayMetrics.scaledDensity);
+    final ActivityManager activityManager = (ActivityManager) frame.getSystemService(Context.ACTIVITY_SERVICE);
+    final ConfigurationInfo configurationInfo = activityManager.getDeviceConfigurationInfo();
+    Boolean hasEs3;
+    if (configurationInfo.reqGlEsVersion >= 0x30000){
+      hasEs3 = true;
+    } else if (configurationInfo.reqGlEsVersion >= 0x20000) {
+      hasEs3 = false;
+    } else {
+      hasEs3 = false;
+      System.out.println("openGLES 2 isn't supported");
+    }
     // Calls onInit in AndroidPlatform
-    onInit(assetManager, frame.getSurfaceView(), xSize, ySize, displayMetrics.scaledDensity, false);
+    onInit(assetManager, frame.getSurfaceView(), xSize, ySize, displayMetrics.scaledDensity, hasEs3);
 
     xSize = displayMetrics.widthPixels / displayMetrics.scaledDensity;
     ySize = displayMetrics.heightPixels / displayMetrics.scaledDensity;
