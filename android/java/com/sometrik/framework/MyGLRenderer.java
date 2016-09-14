@@ -77,6 +77,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     if (configurationInfo.reqGlEsVersion >= 0x30000){
       hasEs3 = true;
     } else if (configurationInfo.reqGlEsVersion >= 0x20000) {
+      System.out.println("openGLES 3 isn't supported");
       hasEs3 = false;
     } else {
       hasEs3 = false;
