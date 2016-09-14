@@ -200,12 +200,7 @@ void AndroidPlatform::createOptions() {
 }
 
 std::string AndroidPlatform::getBundleFilename(const char * filename) {
-
-  auto env = getJNIEnv();
-  jstring path = (jstring) env->CallObjectMethod(framework, env->GetMethodID(env->GetObjectClass(framework), "getResourcePath", "(Ljava/lang/String;)Ljava/lang/String;"), env->NewStringUTF(filename));
-  std::string result = env->GetStringUTFChars(path, JNI_FALSE);
-
-  return result;
+  return filename;
 }
 
 std::string AndroidPlatform::getLocalFilename(const char * filename, FileType type) {
