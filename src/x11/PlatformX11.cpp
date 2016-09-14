@@ -135,10 +135,12 @@ public:
     xattr.override_redirect = 0;
     XChangeWindowAttributes ( x_display, win, CWOverrideRedirect, &xattr );
 
+#if 0
     XSelectInput(x_display, win, 
 		 ExposureMask | KeyPressMask | KeyReleaseMask | PointerMotionMask |
 		 ButtonPressMask | ButtonReleaseMask  | StructureNotifyMask 
 		 );
+#endif
     
     hints.input = 1;
     hints.flags = InputHint;
@@ -271,7 +273,7 @@ public:
       t1 = t2;
 #endif
       
-      if (getApplication()->onUpdate(getPlatform()->getTime() * 1000)) {
+      if (getApplication()->onUpdate(getPlatform()->getTime())) {
 	getApplication()->onDraw();
 	platform->swapBuffers();
       }
