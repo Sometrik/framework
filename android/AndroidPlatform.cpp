@@ -96,8 +96,8 @@ int AndroidPlatform::showActionSheet(const FWRect & rect, const FWActionSheet & 
 }
 
 bool AndroidPlatform::onUpdate(double timestamp) {
-  getApplication().onUpdate(timestamp);
-  return false;
+  bool shouldUpdate =  getApplication().onUpdate(timestamp);
+  return shouldUpdate;
 }
 
 void
@@ -497,7 +497,7 @@ void Java_com_sometrik_framework_MyGLSurfaceView_touchEvent(JNIEnv* env, jobject
   platform->onTouchesEvent(&thiz, mode, fingerIndex, time, x, y);
 }
 
-jboolean Java_com_sometrik_framework_MyGLSurfaceView_onUpdate(JNIEnv* env, jobject thiz, double timestamp) {
+jboolean Java_com_sometrik_framework_MyGLRenderer_onUpdate(JNIEnv* env, jobject thiz, double timestamp) {
   if (platform->onUpdate(timestamp)) {
     return JNI_TRUE;
   } else {
