@@ -35,6 +35,8 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
   public native void onResize(float xSize, float ySize);
 
+  public native boolean onUpdate(double timestamp);
+
   public native void onTouchesBegin(int fingerIndex);
 
   public native void onTouchesEnded(int fingerIndex);
@@ -52,7 +54,8 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
   public void onDrawFrame(GL10 unused) {
       // Calls onDraw in AndroidPlatform
-      nativeOnDraw();
+    onUpdate((double) System.currentTimeMillis() / 1000.0);
+    nativeOnDraw();
   }
 
   public void onSurfaceChanged(GL10 unused, int width, int height) {
