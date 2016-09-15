@@ -147,10 +147,7 @@ public class MyGLSurfaceView extends GLSurfaceView {
 
     };
 
-
-
-    sHandler.postDelayed(onDrawRunnable, 500);
-    sHandler.postDelayed(onUpdateRunnable, 100);
+//    sHandler.postDelayed(onUpdateRunnable, 100);
     System.out.println("SurfaceCreated end");
 
   }
@@ -158,28 +155,10 @@ public class MyGLSurfaceView extends GLSurfaceView {
   Runnable onUpdateRunnable = new Runnable() {
     @Override
     public void run() {
-      onUpdate((double)System.currentTimeMillis() / 1000.0);
+      if (onUpdate((double) System.currentTimeMillis() / 1000.0)) {
+	requestRender();
+      }
       sHandler.postDelayed(onUpdateRunnable, 100);
-    }
-  };
-
-
-  Runnable onDrawRunnable = new Runnable() {
-    @Override
-    public void run() {
-
-//       draw(canvas);
-       requestRender();
-       invalidate();
-      // onInit(assetManager);
-      // if (update()){
-      // requestRender();
-      // System.out.println("Update True");
-      // }else{
-      // System.out.println("Update False");
-      // }
-
-      sHandler.postDelayed(onDrawRunnable, 50);
     }
   };
 
@@ -193,13 +172,6 @@ public class MyGLSurfaceView extends GLSurfaceView {
   @Override
   protected void onDraw(Canvas canvas) {
     super.onDraw(canvas);
-
-    //debug for androidplatform
-    if (nativeCanvasBitmap != null) {
-      System.out.println("nativeCanvas being drawn " + nativeCanvasBitmap);
-      canvas.drawBitmap(nativeCanvasBitmap, 0, 0, mPaint);
-    }
-
   }
 
   private void createOptionsDialog(final int[] idArray, String[] names) {
@@ -385,7 +357,7 @@ public class MyGLSurfaceView extends GLSurfaceView {
   public native void nativeOnDraw();
 
   public native boolean onUpdate(double timestamp);
-
+  
   public native void touchEvent(int mode, int fingerIndex, long time, float x, float y);
 
   public native void onTouchesBegin(int fingerIndex);
