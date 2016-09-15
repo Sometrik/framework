@@ -315,7 +315,6 @@ void
 PrimitiveRenderer::viewport(unsigned int x, unsigned int y, unsigned int w, unsigned int h) {
   if (w != current_display_size.x || h != current_display_size.y) {
     current_display_size = glm::ivec2(w, h);
-    cerr << "updating viewport\n";
     glViewport(0, 0, (unsigned int)(w * display_scale), (unsigned int)(h * display_scale));
   }
 }
