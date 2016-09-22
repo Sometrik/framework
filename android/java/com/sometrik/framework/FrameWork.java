@@ -28,6 +28,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
+import android.view.Window;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -55,6 +56,7 @@ public class FrameWork extends Activity {
   Bitmap picture;
   AlertDialog.Builder builder;
   AlertDialog alert;
+  float windowYcoords;
 
   private MyGLRenderer renderer;
 
@@ -72,6 +74,9 @@ public class FrameWork extends Activity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
+    // You can disable status bar with this
+//    this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+    
     // create message handler for framework. Messages come from MyGLSurfaceView
     mainHandler = new Handler() {
       @Override
@@ -120,6 +125,11 @@ public class FrameWork extends Activity {
     mGLView.setOnTouchListener(new MyOnTouchListener(this));
     mGLView.setWillNotDraw(false);
     setContentView(mGLView);
+    
+
+    int[] coords = new int[2];
+    mGLView.getLocationInWindow(coords);
+    windowYcoords = coords[0];
 
   }
 
@@ -288,14 +298,14 @@ public class FrameWork extends Activity {
 
       //Touch event of screen touch-down for the first finger
       case MotionEvent.ACTION_DOWN:
-
+	
 	System.out.println("Liike alkoi: " + event.getX() + " " + event.getY() + " - id: " + event.getActionIndex() + " time: " + System.currentTimeMillis());
 	intArray = new int[5];
 	intArray[0] = 1;
 	intArray[1] = event.getActionIndex();
 	intArray[2] = (int) System.currentTimeMillis();
 	intArray[3] = (int) event.getX();
-	intArray[4] = (int) (screenHeight - event.getY());
+	intArray[4] = (int) (screenHeight - event.getRawY() - windowYcoords);
 
 	msg = Message.obtain(null, 1, intArray);
 	mGLView.sHandler.sendMessage(msg);
@@ -310,7 +320,7 @@ public class FrameWork extends Activity {
 	intArray[1] = event.getActionIndex();
 	intArray[2] = (int) System.currentTimeMillis();
 	intArray[3] = (int) event.getX();
-	intArray[4] = (int) (screenHeight - event.getY());
+	intArray[4] = (int) (screenHeight - event.getRawY() - windowYcoords);
 	msg = Message.obtain(null, 1, intArray);
 	mGLView.sHandler.sendMessage(msg);
 	break;
@@ -333,7 +343,7 @@ public class FrameWork extends Activity {
 	    intArray[1] = 0;
 	    intArray[2] = (int) System.currentTimeMillis();
 	    intArray[3] = (int) event.getX();
-	    intArray[4] = (int) (screenHeight - event.getY());
+	    intArray[4] = (int) (screenHeight - event.getRawY() - windowYcoords);
 	    msg = Message.obtain(null, 1, intArray);
 	    mGLView.sHandler.sendMessage(msg);
 	    // mGLView.sHandler.sendMessage(msg);
@@ -348,7 +358,7 @@ public class FrameWork extends Activity {
 	    intArray[1] = 1;
 	    intArray[2] = (int) System.currentTimeMillis();
 	    intArray[3] = (int) event.getX();
-	    intArray[4] = (int) (screenHeight - event.getY());
+	    intArray[4] = (int) (screenHeight - event.getRawY() - windowYcoords);
 	    msg = Message.obtain(null, 1, intArray);
 	    mGLView.sHandler.sendMessage(msg);
 	  }
@@ -362,7 +372,7 @@ public class FrameWork extends Activity {
 	    intArray[1] = 2;
 	    intArray[2] = (int) System.currentTimeMillis();
 	    intArray[3] = (int) event.getX();
-	    intArray[4] = (int) (screenHeight - event.getY());
+	    intArray[4] = (int) (screenHeight - event.getRawY() - windowYcoords);
 	    msg = Message.obtain(null, 1, intArray);
 	    mGLView.sHandler.sendMessage(msg);
 	  }
@@ -375,7 +385,7 @@ public class FrameWork extends Activity {
 	    intArray[1] = 3;
 	    intArray[2] = (int) System.currentTimeMillis();
 	    intArray[3] = (int) event.getX();
-	    intArray[4] = (int) (screenHeight - event.getY());
+	    intArray[4] = (int) (screenHeight - event.getRawY() - windowYcoords);
 	    msg = Message.obtain(null, 1, intArray);
 	    mGLView.sHandler.sendMessage(msg);
 	  }
@@ -388,7 +398,7 @@ public class FrameWork extends Activity {
 	    intArray[1] = 4;
 	    intArray[2] = (int) System.currentTimeMillis();
 	    intArray[3] = (int) event.getX();
-	    intArray[4] = (int) (screenHeight - event.getY());
+	    intArray[4] = (int) (screenHeight - event.getRawY() - windowYcoords);
 	    msg = Message.obtain(null, 1, intArray);
 	    mGLView.sHandler.sendMessage(msg);
 	  }
@@ -407,7 +417,7 @@ public class FrameWork extends Activity {
 	intArray[1] = event.getActionIndex();
 	intArray[2] = (int) System.currentTimeMillis();
 	intArray[3] = (int) event.getX();
-	intArray[4] = (int) (screenHeight - event.getY());
+	intArray[4] = (int) (screenHeight - event.getRawY() - windowYcoords);
 	msg = Message.obtain(null, 1, intArray);
 	mGLView.sHandler.sendMessage(msg);
 
@@ -425,7 +435,7 @@ public class FrameWork extends Activity {
 	intArray[1] = event.getActionIndex();
 	intArray[2] = (int) System.currentTimeMillis();
 	intArray[3] = (int) event.getX();
-	intArray[4] = (int) (screenHeight - event.getY());
+	intArray[4] = (int) (screenHeight - event.getRawY() - windowYcoords);
 	msg = Message.obtain(null, 1, intArray);
 	mGLView.sHandler.sendMessage(msg);
 
