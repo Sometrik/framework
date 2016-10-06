@@ -75,7 +75,8 @@ public class FrameWork extends Activity {
     super.onCreate(savedInstanceState);
 
     // You can disable status bar with this
-//    this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+    this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+    
     
     // create message handler for framework. Messages come from MyGLSurfaceView
     mainHandler = new Handler() {
