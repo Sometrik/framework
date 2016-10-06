@@ -106,7 +106,7 @@ AndroidPlatform::onDraw() {
 }
 
 std::string AndroidPlatform::showTextEntryDialog(const std::string & message) {
-
+  return "";
 }
 
 void AndroidPlatform::showMessageBox(const std::string & title, const std::string & message) {
@@ -217,6 +217,7 @@ std::string AndroidPlatform::getLocalFilename(const char * filename, FileType ty
   case NORMAL:
     return "";
   }
+  return "";
 }
 
 std::string AndroidPlatform::loadValue(const std::string & key) {
