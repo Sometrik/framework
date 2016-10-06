@@ -1,6 +1,7 @@
 #include <FWPlatformBase.h>
 #include <ContextAndroid.h>
 #include <AndroidClient.h>
+#include <AndroidSoundCanvas.h>
 class shader_program;
 
 class AndroidPlatform: public FWPlatformBase {
