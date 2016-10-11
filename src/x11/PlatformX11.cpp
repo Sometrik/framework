@@ -312,12 +312,12 @@ protected:
       break;
     case ButtonPress:
       // getApplication().onMouseDown(xev.xbutton.button, 0, 0);
-      getApplication()->touchesBegin(mouse_x, mouse_y, getPlatform()->getTime(), 0);
+      getApplication()->touchesBegin(mouse_x, display_height - 1 - mouse_y, getPlatform()->getTime(), 0);
       button_pressed = true;
       break;
     case ButtonRelease:
       // getApplication().onMouseUp(xev.xbutton.button, 0, 0);
-      getApplication()->touchesEnded(mouse_x, mouse_y, getPlatform()->getTime(), 0);
+      getApplication()->touchesEnded(mouse_x, display_height - 1 - mouse_y, getPlatform()->getTime(), 0);
       button_pressed = false;
       break;
     case ConfigureNotify:
