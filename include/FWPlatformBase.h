@@ -25,6 +25,7 @@ namespace canvas {
   class ContextFactory;
 };
 class HTTPClientFactory;
+class SoundCanvas;
 
 #define FBO_COLOR	1
 #define FBO_DEPTH	2
@@ -56,6 +57,7 @@ class FWPlatformBase {
   virtual double getTime() const = 0;
   virtual std::shared_ptr<canvas::ContextFactory> createContextFactory() const = 0;
   virtual std::shared_ptr<HTTPClientFactory> createHTTPClientFactory() const = 0;
+  virtual std::shared_ptr<SoundCanvas> getSoundCanvas() const = 0;
   virtual void launchBrowser(const std::string & input_url) = 0;
   virtual void storeValue(const std::string & key, const std::string & value) = 0;
   virtual std::string loadValue(const std::string & key) = 0;
