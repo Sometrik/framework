@@ -9,7 +9,8 @@ class AndroidLogger : public Logger {
   AndroidLogger() { }
 
   void println(const char * s) override {
-    __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", s);
+    std::string r = std::string(s);
+    __android_log_print(ANDROID_LOG_INFO, "Sometrik %s", s, 0);
   }
 };
 
