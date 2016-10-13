@@ -10,7 +10,7 @@ class AndroidLogger : public Logger {
 
   void println(const char * s) override {
     std::string r = std::string(s);
-    __android_log_print(ANDROID_LOG_INFO, "Sometrik %s", s, 0);
+    __android_log_print(ANDROID_LOG_INFO, "Sometrik", s, 0);
   }
 };
 
