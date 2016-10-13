@@ -237,8 +237,9 @@ void AndroidPlatform::postNotification(const std::string & title, const std::str
 double AndroidPlatform::getTime() const {
 
   auto env = getJNIEnv();
-  jclass frameClass = env->GetObjectClass(framework);
-  double currentTime = env->CallStaticDoubleMethod(frameClass, env->GetStaticMethodID(frameClass, "getTime", "()D"));
+  jclass systemClass = env->FindClass("Ljava/lang/System");
+  double currentTime = (double)env->CallStaticLongMethod(systemClass, env->GetStaticMethodID(systemClass, "currentTimeMillis", "()L"));
+  env->DeleteLocalRef(systemClass);
 
   return currentTime;
 }

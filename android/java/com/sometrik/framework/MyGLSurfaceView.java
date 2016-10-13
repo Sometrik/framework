@@ -275,15 +275,6 @@ public class MyGLSurfaceView extends GLSurfaceView {
     return dateFormat.format(date) + timeFormat.format(date);
   }
 
-  /**
-   * 
-   * @return Seconds as double
-   */
-  public static double getTime() {
-    double millis = (double) Calendar.getInstance().getTimeInMillis();
-    return millis / 1000.0;
-  }
-
   private String formatDate(long time) {
 
     // 13.10
