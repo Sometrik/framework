@@ -75,14 +75,17 @@ int AndroidPlatform::showActionSheet(const FWRect & rect, const FWActionSheet & 
   //Initialize java int and string arrays
   auto env = getJNIEnv();
   std::vector<FWOption> optionsVector = sheet.getOptions();
-  jobjectArray stringArray = (jobjectArray) env->NewObjectArray(optionsVector.size(), env->FindClass("java/lang/String"), env->NewStringUTF(""));
+  jobjectArray stringArray = (jobjectArray) env->NewObjectArray(optionsVector.size(), env->FindClass("java/lang/String"), 0);
   jintArray intArray = env->NewIntArray(optionsVector.size());
   jint fill[optionsVector.size()];
 
   //Set values to java arrays
   for (int i = 0; i < optionsVector.size(); i++) {
-    env->SetObjectArrayElement(stringArray, i, env->NewStringUTF(optionsVector[i].getText().c_str()));
+    const char * text = optionsVector[i].getText().c_str();
+    jstring jtext = env->NewStringUTF(text);
+    env->SetObjectArrayElement(stringArray, i, jtext);
     fill[i] = optionsVector[i].getId();
+    env->ReleaseStringUTFChars(jtext, text);
   }
   env->SetIntArrayRegion(intArray, 0, optionsVector.size(), fill);
 
@@ -126,9 +129,8 @@ void AndroidPlatform::createInputDialog(const char * _title, const char * _messa
   //Call method with void return (env, object, method, parameters...)
   //String has to be made with jstring name = (*env)->NewStringUTF(env, "What you want");
   env->CallVoidMethod(framework, methodRef, title, message);
-
-  //message[0] = 0;
-  //return message;
+  env->ReleaseStringUTFChars(title, _title);
+  env->ReleaseStringUTFChars(message, _message);
 }
 
 void AndroidPlatform::showCanvas(canvas::ContextAndroid & context) {
@@ -158,47 +160,6 @@ AndroidPlatform::onInit(JNIEnv * env, JavaVM * _gJavaVM) {
 
 }
 
-void AndroidPlatform::createOptions() {
-
-#if 0
-  SettingsTree tree;
-  auto subtree1 = tree.createFolder("Eka alivalikko");
-  auto subtree2 = tree.createFolder("Toka alivalikko");
-  tree.addInt("int1", "Asetus1", 10);
-  subtree1->addBool("bool1", "Asetus2", false);
-  auto group1 = tree.addGroup("Social media accounts");
-  auto subtree3 = group->createFolder("account1", "Facebook tunnus 1", 1);
-  subtree3->addLongLong("int2", "Käyttäjä ID", 314123523526)
-  group->createFolder("account2", "Twitter tunnus 1", 2);
-
-  // [My application]
-  // int1 = 10
-  // [account1]
-  // int2 = 314123523526
-  // [account2]
-
-  ESActionSheet sheet("Otsikko");
-  sheet.addOption(1, "Eka vaihtoehto");
-  sheet.addOption(2, "Toka vaihtoehto");
-  sheet.addOption(3, "Kolmas vaihtoehto");
-  ESRect rect(10, 10, 10, 10);
-  showActionSheet(rect, sheet);
-
-  void showActionSheet(const ESRect & rect, const ESActionSheet & sheet) {
-    const char * title = sheet.getTitle().c_str();
-    auto & options = sheet.getOptions();
-    jobjectArray stringArray = (jobjectArray) env->NewObjectArray(options.size(), env->FindClass("java/lang/String"), env->NewStringUTF(""));
-    for (int i = 0; i < options.size(); i++) {
-      int id = options[i].getId();
-      const char * option_text = options[i].getText().c_str();
-      env->SetObjectArrayElement(stringArray, i, env->NewStringUTF(option_text));
-    }
-
-  }
-#endif
-
-}
-
 std::string AndroidPlatform::getBundleFilename(const char * filename) {
   return filename;
 }
@@ -207,12 +168,16 @@ std::string AndroidPlatform::getLocalFilename(const char * filename, FileType ty
 
   auto env = getJNIEnv();
   jstring path;
+  jstring jfilename;
   std::string result;
   switch (type) {
   case DATABASE:
   case CACHE_DATABASE:
-    path = (jstring) env->CallObjectMethod(framework, env->GetMethodID(env->GetObjectClass(framework), "getDBPath", "(Ljava/lang/String;)Ljava/lang/String;"), env->NewStringUTF(filename));
+    jfilename = env->NewStringUTF(filename);
+    path = (jstring) env->CallObjectMethod(framework, env->GetMethodID(env->GetObjectClass(framework), "getDBPath", "(Ljava/lang/String;)Ljava/lang/String;"), jfilename);
     result = env->GetStringUTFChars(path, JNI_FALSE);
+    env->ReleaseStringUTFChars(jfilename, filename);
+    env->ReleaseStringUTFChars(path, result.c_str());
     return result;
   case NORMAL:
     return "";
@@ -222,15 +187,22 @@ std::string AndroidPlatform::getLocalFilename(const char * filename, FileType ty
 
 std::string AndroidPlatform::loadValue(const std::string & key) {
   auto env = getJNIEnv();
-  jstring value = (jstring) env->CallObjectMethod(framework, env->GetMethodID(env->GetObjectClass(framework), "getFromPrefs", "(Ljava/lang/String;)Ljava/lang/String;"), env->NewStringUTF(key.c_str()));
+  jstring jkey = env->NewStringUTF(key.c_str());
+  jstring value = (jstring) env->CallObjectMethod(framework, env->GetMethodID(env->GetObjectClass(framework), "getFromPrefs", "(Ljava/lang/String;)Ljava/lang/String;"), jkey);
   std::string result = env->GetStringUTFChars(value, JNI_FALSE);
+  env->ReleaseStringUTFChars(jkey, key.c_str());
+  env->ReleaseStringUTFChars(value, result.c_str());
 
   return result;
 }
 
 void AndroidPlatform::storeValue(const std::string & key, const std::string & value) {
   auto env = getJNIEnv();
-  env->CallVoidMethod(framework, env->GetMethodID(env->GetObjectClass(framework), "addToPrefs", "(Ljava/lang/String;Ljava/lang/String;)V"), env->NewStringUTF(key.c_str()), env->NewStringUTF(value.c_str()));
+  jstring jkey = env->NewStringUTF(key.c_str());
+  jstring jvalue = env->NewStringUTF(value.c_str());
+  env->CallVoidMethod(framework, env->GetMethodID(env->GetObjectClass(framework), "addToPrefs", "(Ljava/lang/String;Ljava/lang/String;)V"), jkey, jvalue);
+  env->ReleaseStringUTFChars(jkey, key.c_str());
+  env->ReleaseStringUTFChars(jvalue, value.c_str());
 }
 
 void AndroidPlatform::messagePoster(int message, const std::string text) {
@@ -239,7 +211,10 @@ void AndroidPlatform::messagePoster(int message, const std::string text) {
   jclass cls = env->FindClass("com/sometrik/framework/MyGLSurfaceView");
   jmethodID methodRef = env->GetStaticMethodID(cls, "LeaveMessageToSurface", "(Lcom/sometrik/framework/MyGLSurfaceView;ILjava/lang/String;)V");
 
-  env->CallStaticVoidMethod(cls, methodRef, framework, message, env->NewStringUTF(text.c_str()));
+  jstring jtext = env->NewStringUTF(text.c_str());
+  env->CallStaticVoidMethod(cls, methodRef, framework, message, jtext);
+  env->ReleaseStringUTFChars(jtext, text.c_str());
+
 }
 
 void AndroidPlatform::messagePoster(int message, const std::string title, const std::string text) {
@@ -248,7 +223,11 @@ void AndroidPlatform::messagePoster(int message, const std::string title, const 
   jclass cls = env->FindClass("com/sometrik/framework/MyGLSurfaceView");
   jmethodID methodRef = env->GetStaticMethodID(cls, "LeaveMessageToSurface", "(Lcom/sometrik/framework/MyGLSurfaceView;ILjava/lang/String;Ljava/lang/String;)V");
 
-  env->CallStaticVoidMethod(cls, methodRef, framework, message, env->NewStringUTF(title.c_str()), env->NewStringUTF(text.c_str()));
+  jstring jtitle = env->NewStringUTF(title.c_str());
+  jstring jtext = env->NewStringUTF(text.c_str());
+  env->CallStaticVoidMethod(cls, methodRef, framework, message, jtitle, jtext);
+  env->ReleaseStringUTFChars(jtitle, title.c_str());
+  env->ReleaseStringUTFChars(jtext, text.c_str());
 }
 
 void AndroidPlatform::setupLooper() {
@@ -273,54 +252,6 @@ void AndroidPlatform::setupLooper() {
   env->CallVoidMethod(nativeLooper, loopMethod);
   env->CallVoidMethod(nativeLooper, printMethod);
 
-}
-
-void AndroidPlatform::settingsCreator(jobject settings, jint menuId) {
-
-  //Tähän jonkinlainen switchi id:n mukaan, minkälainen preferenssivalikko tehdään.
-  // preferenssi on tällä hetkellä mode, id, nimi ja niitä voi luoda settingsin listaan
-  //kutsumalla createMenuItem. Tällä hetkellä sitä kutsutaan, joka kerta kun asettaa uuden
-
-  auto env = getJNIEnv();
-  jclass checkCls = env->FindClass("com/sometrik/framework/MyGLSurfaceView");
-  jmethodID methodReff = env->GetMethodID(checkCls, "checkSettings", "(Lcom/sometrik/framework/Settings;)V");
-
-  env->CallVoidMethod(framework, methodReff, settings);
-
-  jclass cls = env->FindClass("com/sometrik/framework/Settings");
-
-  jmethodID methodRef = env->GetMethodID(cls, "createMenuItem", "(IILjava/lang/String;)V");
-  jmethodID methodRef2 = env->GetMethodID(cls, "createMenuItem", "(Ljava/lang/String;ILjava/lang/String;)V");
-
-  jstring name = env->NewStringUTF("Hello java");
-  jstring name2 = env->NewStringUTF("Hello java again");
-  jstring name3 = env->NewStringUTF("Etunimi Sukunimi");
-  jstring media1 = env->NewStringUTF("facebook");
-  jstring media2 = env->NewStringUTF("twitter");
-  jstring media3 = env->NewStringUTF("instagram");
-  jint id = 1;
-  jint id2 = 2;
-  jint mode = 0;
-  jint mode2 = 1;
-
-  //env->CallVoidMethod(framework, env->GetMethodID(env->GetObjectClass(framework), "settingsSkip", "(Lcom/sometrik/framework/Settings;)V"), settings);
-  env->CallVoidMethod(settings, methodRef, mode, id, name);
-  env->CallVoidMethod(settings, methodRef, mode2, id2, name2);
-  env->CallVoidMethod(settings, methodRef, mode2, id2, name2);
-  env->CallVoidMethod(settings, methodRef, mode2, id2, name2);
-  env->CallVoidMethod(settings, methodRef, mode2, id2, name2);
-  env->CallVoidMethod(settings, methodRef, mode2, id2, name2);
-  env->CallVoidMethod(settings, methodRef, mode2, id2, name2);
-#if 0
-  env->CallVoidMethod(settings, methodRef2, media2, id2, name3);
-  env->CallVoidMethod(settings, methodRef2, media2, id2, name3);
-  env->CallVoidMethod(settings, methodRef2, media3, id2, name3);
-  env->CallVoidMethod(settings, methodRef2, media3, id2, name3);
-  env->CallVoidMethod(settings, methodRef2, media3, id2, name3);
-  env->CallVoidMethod(settings, methodRef2, media3, id2, name3);
-  env->CallVoidMethod(settings, methodRef2, media3, id2, name3);
-  env->CallVoidMethod(settings, methodRef2, media3, id2, name3);
-#endif
 }
 
 void AndroidPlatform::postNotification(const std::string & title, const std::string & message) {
@@ -350,143 +281,17 @@ JNIEnv* AndroidPlatform::getJNIEnv() const {
   return Myenv;
 }
 
-//Mahdollisesti vain debuggia varten
-void createSound(jobject thiz) {
-
-  //SoundEffect* effect = new SoundEffect(env, "test", framework);
-  //effect->play();
-
-  //Needs JNIEnv
-#if 0
-  jclass cls = env->FindClass("com/sometrik/framework/MyGLSurfaceView");
-
-  jmethodID methodRef = env->GetMethodID(cls, "createSoundObject", "(Ljava/lang/String;)Lcom/sometrik/framework/Sound;");
-  jstring sound = env->NewStringUTF("papertrail");
-
-  jobject soundObject = env->CallObjectMethod(thiz, methodRef, sound);
-
-  playSound(soundObject);
-#endif
-
-}
-
-void AndroidPlatform::playSound(jobject sound) {
-
-  auto env = getJNIEnv();
-  jclass cls = env->FindClass("com/sometrik/framework/Media");
-  jmethodID methodRef = env->GetMethodID(cls, "play", "()V");
-
-  env->CallVoidMethod(sound, methodRef);
-
-}
-
-void AndroidPlatform::stopSound(jobject sound) {
-
-  auto env = getJNIEnv();
-  jclass cls = env->FindClass("com/sometrik/framework/Media");
-  jmethodID methodRef = env->GetMethodID(cls, "stop", "()V");
-
-  env->CallVoidMethod(sound, methodRef);
-
-}
 
 void AndroidPlatform::launchBrowser(const std::string & input_url) {
   messagePoster(3, "http://stackoverflow.com/questions/4121450/activitynotfoundexception");
 }
 
-#if 0
-class SoundEffect {
-
-private:
-  JNIEnv * env;
-  char * name;
-  jclass cls;
-  jobject * thiz;
-
-public:
-  SoundEffect(JNIEnv * _env, char * _name, jobject * _thiz) :
-  env(_env), name(_name), thiz(_thiz) {
-
-    cls = env->FindClass("com/sometrik/framework/MyGLSurfaceView");
-
-    //jmethodID methodRef = env->GetMethodID(cls, "createSoundObject",
-    //		"(Ljava/lang/String;)V");
-  }
-
-  void play() {
-
-    jmethodID methodRef = env->GetMethodID(cls, "playSound",
-	"(Ljava/lang/String;)V");
-    jstring sound = env->NewStringUTF(name);
-    env->CallVoidMethod(*thiz, methodRef, sound);
-
-  }
-
-  void stop() {
-    jmethodID methodRef = env->GetMethodID(cls, "playSound",
-	"(Ljava/lang/String;)V");
-
-  }
-
-};
-#endif
-
 std::shared_ptr<AndroidPlatform> platform;
 
 extern "C" {
-void Java_com_sometrik_framework_FrameWork_NativeOnTouch(JNIEnv* env, jobject thiz, jobject obj) {
-#if 1
-  //platform.createMessageDialog("Hello Java 2", "This is an error message", 0);
-  platform->createInputDialog("Hello Java 2", "Type your fucking password", 0);
-#else
-
-  //Get class to use
-  jclass cls = (*env)->FindClass(env, "com/sometrik/framework/FrameWork");
-
-  // int button_pressed = createTextDialog("Error", "An error occured", OK_BUTTON | CANCEL_BUTTON);
-
-  //Get method id, so you can call it. (env, class, method name, Signature
-  //Singature for string is Ljava/lang/String;
-  jmethodID methodRef = (*env)->GetMethodID(env, cls, "createTextDialog",
-      "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V");
-  jstring name = (*env)->NewStringUTF(env, "Hello java");
-  jstring message = (*env)->NewStringUTF(env, "Type your password");
-  jstring button1 = (*env)->NewStringUTF(env, "Cancel");
-  jstring button2 = (*env)->NewStringUTF(env, "OK");
-
-  //Call method with void return (env, object, method, parameters...)
-  //String has to be made with jstring name = (*env)->NewStringUTF(env, "What you want");
-  (*env)->CallVoidMethod(env, obj, methodRef, name, message, button1,
-      button2);
-
-  //(*env)->CallObjectMethod(env, thiz, methodRef);
-
-  //possible future need
-  //jobject objectRef = (*env)->NewObject(env, cls, methodRef);
-  //	jobject result = (*env)->CallObjectMethod(env, thiz, textDialog, "heyyy");
-  //jclass cls = (*env)->GetObjectClass(env, thiz);
-#endif
-}
-
-void Java_com_sometrik_framework_MyGLSurfaceView_playSound(JNIEnv* env, jobject thiz, jobject sound) {
-  platform->playSound(sound);
-}
-
-void Java_com_sometrik_framework_MyGLSurfaceView_stopSound(JNIEnv* env, jobject thiz, jobject sound) {
-  platform->stopSound(sound);
-}
-
-void Java_com_sometrik_framework_MyGLSurfaceView_createSound(JNIEnv* env, jobject thiz) {
-  createSound(thiz);
-}
 
 void Java_com_sometrik_framework_MyGLRenderer_onResize(JNIEnv* env, jobject thiz, float x, float y) {
   platform->onResize(x, y);
-}
-
-void Java_com_sometrik_framework_MyGLSurfaceView_settingsCreator(JNIEnv* env, jobject thiz, jobject settings, jint id) {
-  jobject javaSettings = env->NewGlobalRef(settings);
-  platform->settingsCreator(javaSettings, id);
 }
 
 void Java_com_sometrik_framework_MyGLSurfaceView_menuPressed(JNIEnv* env, jobject thiz) {

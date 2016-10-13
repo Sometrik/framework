@@ -30,16 +30,8 @@ public:
 
   void onInit(JNIEnv * env, JavaVM * _gJavaVM);
 
-  void createOptions();
-
   void messagePoster(int message, const std::string text);
   void messagePoster(int message, const std::string title, const std::string text);
-
-  void settingsCreator(jobject settings, jint menuId);
-
-  void playSound(jobject sound);
-
-  void stopSound(jobject sound);
 
   bool createWindow(FWContextBase * context, const char * title) override {
     return false;
