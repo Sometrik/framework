@@ -58,7 +58,6 @@ public:
   void showCanvas(canvas::ContextAndroid & context);
 
   JNIEnv* getJNIEnv() const;
-  void setupLooper();
 
 private:
   JavaVM * gJavaVM;

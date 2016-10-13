@@ -230,30 +230,6 @@ void AndroidPlatform::messagePoster(int message, const std::string title, const 
   env->ReleaseStringUTFChars(jtext, text.c_str());
 }
 
-void AndroidPlatform::setupLooper() {
-  __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "setupLooper called");
-
-  auto env = getJNIEnv();
-  jclass nativeLooperClass = env->FindClass("com/sometrik/framework/NativeLooper");
-  jmethodID createLooper = env->GetMethodID(nativeLooperClass, "<init>", "()V");
-
-  jobject nativeLooper = env->NewObject(nativeLooperClass, createLooper);
-
-  jclass looperClass = env->FindClass("android/os/Looper");
-  jmethodID looperPrepareMethod = env->GetStaticMethodID(looperClass, "prepare", "()V");
-  jmethodID runMethod = env->GetMethodID(nativeLooperClass, "run", "()V");
-  jmethodID printMethod = env->GetMethodID(nativeLooperClass, "print", "()V");
-  jmethodID loopMethod = env->GetMethodID(nativeLooperClass, "loop", "()V");
-  jmethodID getHandlerMethod = env->GetMethodID(nativeLooperClass, "getHandler", "()Landroid/os/Handler;");
-
-  env->CallVoidMethod(nativeLooper, printMethod);
-  env->CallVoidMethod(nativeLooper, runMethod);
-  handler = env->CallObjectMethod(nativeLooper, getHandlerMethod);
-  env->CallVoidMethod(nativeLooper, loopMethod);
-  env->CallVoidMethod(nativeLooper, printMethod);
-
-}
-
 void AndroidPlatform::postNotification(const std::string & title, const std::string & message) {
   messagePoster(4, title, message);
 }
