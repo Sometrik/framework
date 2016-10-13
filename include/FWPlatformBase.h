@@ -16,6 +16,7 @@
 
 #include <string>
 #include <memory>
+#include <Logger.h>
 
 class FWContextBase;
 class EventLoop;
@@ -60,6 +61,7 @@ class FWPlatformBase {
   virtual std::string loadValue(const std::string & key) = 0;
   virtual int showActionSheet(const FWRect & rect, const FWActionSheet & sheet) = 0;
   virtual void createFBO(int flags) { }
+  virtual std::shared_ptr<Logger> createLogger() = 0;
   
   std::string getBundleFilename(const std::string & filename) { return getBundleFilename(filename.c_str()); }
 
