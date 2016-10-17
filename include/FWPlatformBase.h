@@ -17,6 +17,7 @@
 #include <string>
 #include <memory>
 #include <Logger.h>
+#include <SoundCanvas.h>
 
 class FWContextBase;
 class EventLoop;
@@ -25,8 +26,6 @@ namespace canvas {
   class ContextFactory;
 };
 class HTTPClientFactory;
-class SoundCanvas;
-
 #define FBO_COLOR	1
 #define FBO_DEPTH	2
 #define FBO_STENCIL	4
