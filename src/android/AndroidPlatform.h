@@ -54,7 +54,7 @@ public:
   }
   std::shared_ptr<SoundCanvas> getSoundCanvas() const override {
      auto env = getJNIEnv();
-     return std::make_shared<AndroidSoundCanvas>(env);
+     return std::make_shared<AndroidSoundCanvas>(env, mgr);
    }
   void launchBrowser(const std::string & input_url) override;
   void storeValue(const std::string & key, const std::string & value) override;
