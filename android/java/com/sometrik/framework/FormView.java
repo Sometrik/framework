@@ -15,9 +15,7 @@ public class FormView {
   private LinearLayout baseLayout;
   private Context context;
   private ArrayList<ViewGroup> elementList;
-  private ArrayList<Button> buttonList;
-  private ArrayList<EditText> editTextList;
-  private ArrayList<TextView> textViewList;
+  private ArrayList<TextView> TextElementList;
   
   public FormView(Context context) {
     this.context = context;
@@ -35,7 +33,7 @@ public class FormView {
   public void createButton(int id){
     Button button = new Button(context);
     button.setId(id);
-    buttonList.add(button);
+    TextElementList.add(button);
   }
   
   public void createLayout(int id, int targetId, int orientation){
@@ -48,35 +46,19 @@ public class FormView {
   public void createEditText(int id, int targetId){
     EditText editText = new EditText(context);
     editText.setId(id);
-    editTextList.add(editText);
+    TextElementList.add(editText);
     getElementById(targetId).addView(editText);
   }
   
   public void createTextView(int id, int targetId){
     TextView textView = new TextView(context);
     textView.setId(id);
-    textViewList.add(textView);
+    TextElementList.add(textView);
     getElementById(targetId).addView(textView);
   }
   
-  public void setButtonText(int id, String text){
-    for (Button button : buttonList){
-      if (button.getId() == id){
-	button.setText(text);
-      }
-    }
-  }
-  
-  public void setEditTextText(int id, String text){
-    for (EditText editText : editTextList){
-      if (editText.getId() == id){
-	editText.setText(text);
-      }
-    }
-  }
-  
-  public void setTextViewText(int id, String text){
-    for (TextView textView : textViewList){
+  public void setTextElementText(int id, String text){
+    for (TextView textView : TextElementList){
       if (textView.getId() == id){
 	textView.setText(text);
       }
