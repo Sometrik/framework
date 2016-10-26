@@ -15,6 +15,7 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.PointF;
+import android.media.SoundPool;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -23,14 +24,18 @@ import android.preference.PreferenceManager;
 import android.text.InputType;
 import android.util.DisplayMetrics;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 
 public class FrameWork extends Activity {
@@ -67,8 +72,19 @@ public class FrameWork extends Activity {
   public native String getText();
 
   public native void okPressed(String text);
+  
+  public native void settingsCreator(Settings settings, int id);
 
-  public native void nativeOnDraw();
+  public native void menuPressed();
+  
+  public native void touchEvent(int mode, int fingerIndex, long time, float x, float y);
+
+  public native void onTouchesBegin(int fingerIndex);
+
+  public native void onTouchesEnded(int fingerIndex);
+
+  public native void onTouchesMoved(int fingerIndex);
+
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -85,12 +101,48 @@ public class FrameWork extends Activity {
 
 	System.out.println("main message received: " + String.valueOf(msg.what));
 
+	System.out.println("Surface message received: " + String.valueOf(msg));
+	int mode = 0;
+	float x = 0;
+	float y = 0;
+	int fingerIndex = 0;
+	long time = 0;
+	OptionsItem[] optionsList = null;
+
 	switch (msg.what) {
 	case 1:
-	  // createMessageDialog("1", "1");
+
+	  int[] intArray = (int[]) msg.obj;
+	  mode = intArray[0];
+	  fingerIndex = intArray[1];
+	  time = intArray[2];
+	  x = (float) intArray[3];
+	  y = (float) intArray[4];
+	  System.out.println("MESSAGE RECEIVED " + String.valueOf(mode) + " " + String.valueOf(fingerIndex) + " " + String.valueOf(x) + " " + String.valueOf(y));
+
+	  touchEvent(mode, fingerIndex, time, x, y);
+	  System.out.println("shandler case 1");
+
 	  break;
+	// 2- Menu Button Pressed
 	case 2:
-	  // createMessageDialog("2", "2");
+	  System.out.println("shandler case 2");
+	  menuPressed();
+	  System.out.println("shandler case 2");
+	  break;
+	case 22:
+	  System.out.println("shandler case 22");
+	  optionsList = (OptionsItem[]) msg.obj;
+	  String[] names = new String[optionsList.length];
+	  int[] idArray = new int[optionsList.length];
+
+	  for (int i = 0; i < optionsList.length; i++) {
+	    names[i] = optionsList[i].getName();
+	    idArray[i] = optionsList[i].getId();
+	  }
+	  System.out.println("MenuPressed() called in jni");
+
+	  createOptionsDialog(idArray, names);
 	  break;
 	case 3:
 	  launchBrowser((String) msg.obj);
@@ -127,7 +179,6 @@ public class FrameWork extends Activity {
     mGLView.setWillNotDraw(false);
     setContentView(mGLView);
     
-
     int[] coords = new int[2];
     mGLView.getLocationInWindow(coords);
     windowYcoords = coords[0];
@@ -309,7 +360,7 @@ public class FrameWork extends Activity {
 	intArray[4] = (int) (screenHeight - event.getRawY() - windowYcoords);
 
 	msg = Message.obtain(null, 1, intArray);
-	mGLView.sHandler.sendMessage(msg);
+	mainHandler.sendMessage(msg);
 
 	break;
 	//Touch event of screen touch-down after the first touch
@@ -323,7 +374,8 @@ public class FrameWork extends Activity {
 	intArray[3] = (int) event.getX();
 	intArray[4] = (int) (screenHeight - event.getRawY() - windowYcoords);
 	msg = Message.obtain(null, 1, intArray);
-	mGLView.sHandler.sendMessage(msg);
+	mainHandler.sendMessage(msg);
+
 	break;
 
 	//Touch event of finger moving
@@ -346,8 +398,7 @@ public class FrameWork extends Activity {
 	    intArray[3] = (int) event.getX();
 	    intArray[4] = (int) (screenHeight - event.getRawY() - windowYcoords);
 	    msg = Message.obtain(null, 1, intArray);
-	    mGLView.sHandler.sendMessage(msg);
-	    // mGLView.sHandler.sendMessage(msg);
+	    mainHandler.sendMessage(msg);
 
 	  }
 	  if (pointerId == 1) {
@@ -361,7 +412,7 @@ public class FrameWork extends Activity {
 	    intArray[3] = (int) event.getX();
 	    intArray[4] = (int) (screenHeight - event.getRawY() - windowYcoords);
 	    msg = Message.obtain(null, 1, intArray);
-	    mGLView.sHandler.sendMessage(msg);
+	    mainHandler.sendMessage(msg);
 	  }
 	  if (pointerId == 2) {
 	    // System.out.println("fingerThree move: " +
@@ -375,7 +426,7 @@ public class FrameWork extends Activity {
 	    intArray[3] = (int) event.getX();
 	    intArray[4] = (int) (screenHeight - event.getRawY() - windowYcoords);
 	    msg = Message.obtain(null, 1, intArray);
-	    mGLView.sHandler.sendMessage(msg);
+	    mainHandler.sendMessage(msg);
 	  }
 	  if (pointerId == 3) {
 	    // System.out.println("fingerFour move: " +
@@ -388,7 +439,7 @@ public class FrameWork extends Activity {
 	    intArray[3] = (int) event.getX();
 	    intArray[4] = (int) (screenHeight - event.getRawY() - windowYcoords);
 	    msg = Message.obtain(null, 1, intArray);
-	    mGLView.sHandler.sendMessage(msg);
+	    mainHandler.sendMessage(msg);
 	  }
 	  if (pointerId == 4) {
 	    // System.out.println("fingerFive move: " +
@@ -401,7 +452,7 @@ public class FrameWork extends Activity {
 	    intArray[3] = (int) event.getX();
 	    intArray[4] = (int) (screenHeight - event.getRawY() - windowYcoords);
 	    msg = Message.obtain(null, 1, intArray);
-	    mGLView.sHandler.sendMessage(msg);
+	    mainHandler.sendMessage(msg);
 	  }
 
 	}
@@ -420,12 +471,7 @@ public class FrameWork extends Activity {
 	intArray[3] = (int) event.getX();
 	intArray[4] = (int) (screenHeight - event.getRawY() - windowYcoords);
 	msg = Message.obtain(null, 1, intArray);
-	mGLView.sHandler.sendMessage(msg);
-
-	// print (debug)
-	// System.out.println( "Liike loppui: " + event.getX() + " " +
-	// event.getY() + " - id: " +
-	// event.getPointerId(event.getActionIndex()));
+	mainHandler.sendMessage(msg);
 	break;
 
 	//touch event of fingers other than the first leaving the screen
@@ -438,12 +484,7 @@ public class FrameWork extends Activity {
 	intArray[3] = (int) event.getX();
 	intArray[4] = (int) (screenHeight - event.getRawY() - windowYcoords);
 	msg = Message.obtain(null, 1, intArray);
-	mGLView.sHandler.sendMessage(msg);
-
-	// print (debug)
-	// System.out.println("Liike loppui: " + event.getX() + " " +
-	// event.getY() + " - id: " +
-	// event.getPointerId(event.getActionIndex()));
+	mainHandler.sendMessage(msg);
 	break;
 
       }
@@ -472,6 +513,38 @@ public class FrameWork extends Activity {
 
     return super.onKeyDown(keycode, e);
   }
+  
+
+  private void createOptionsDialog(final int[] idArray, String[] names) {
+
+    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    builder.setTitle("Options Menu");
+
+    builder.setItems(names, new DialogInterface.OnClickListener() {
+      public void onClick(DialogInterface dialog, int item) {
+
+	System.out.println("item selected: " + item);
+	System.out.println("item id: " + idArray[item]);
+
+	optionSelected(idArray[item]);
+
+      }
+    });
+
+    AlertDialog alert = builder.create();
+    alert.show();
+  }
+  
+  //Called after option was selected from ActionSheet. Currently creates settings view
+  private void optionSelected(int id) {
+
+    settings = new Settings(this);
+    // Settings täytyy tehdä uusiksi tässä, jotta lista ei pysy samana
+    settingsCreator(settings, id);
+    
+
+    getFragmentManager().beginTransaction().replace(android.R.id.content, settings).addToBackStack("main").commit();
+  }
 
   //Listener for built in menu options. Propably removable
   @Override
@@ -492,6 +565,44 @@ public class FrameWork extends Activity {
 
     return true;
   }
+  
+  
+  //Creates ActionSheet. Called from JNI message
+  public static void createOptionsFromJNI(MyGLSurfaceView view, int message, int[] idArray, String[] nameArray) {
+
+    OptionsItem[] optionsList = new OptionsItem[nameArray.length];
+    for (int i = 0; i < optionsList.length; i++) {
+      System.out.println("createOptionsFromJni " + "i: " + i + "  intarray length: " + nameArray.length);
+      optionsList[i] = new OptionsItem(idArray[i], nameArray[i]);
+    }
+
+    System.out.println("messageposter array: " + view);
+    System.out.println("messageposter array: " + nameArray);
+    Message msg = Message.obtain(null, message, optionsList);
+    view.sHandler.sendMessage(msg);
+
+  }
+
+  // returns database path
+  public String getDBPath(String dbName) {
+    System.out.println("getting DBPath _ db: " + dbName + " Path: " + String.valueOf(getDatabasePath(dbName)));
+    return String.valueOf(getDatabasePath(dbName));
+  }
+
+  //Creates message that is sent to MyGLSurface handler. Called from JNI
+  public static void LeaveMessageToSurface(MyGLSurfaceView view, int messageCode) {
+    view.sHandler.sendEmptyMessage(messageCode);
+  }
+  public static void LeaveMessageToSurface(MyGLSurfaceView view, int messageCode, String text) {
+    Message msg = Message.obtain(null, messageCode, text);
+    view.sHandler.sendMessage(msg);
+  }
+  public static void LeaveMessageToSurface(MyGLSurfaceView view, int messageCode, String title, String text) {
+    String[] stringArray = {title, text};
+    Message msg = Message.obtain(null, messageCode, stringArray);
+    view.sHandler.sendMessage(msg);
+  }
+ 
 
   @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -516,7 +627,7 @@ public class FrameWork extends Activity {
       System.out.println("Orientation conf landscape");
     }
   }
-
+  
   @Override
   public void onSaveInstanceState(Bundle savedInstanceState) {
     // Save the user's current game state

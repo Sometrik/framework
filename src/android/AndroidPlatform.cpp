@@ -90,8 +90,8 @@ int AndroidPlatform::showActionSheet(const FWRect & rect, const FWActionSheet & 
   env->SetIntArrayRegion(intArray, 0, optionsVector.size(), fill);
 
   //Send values to java to create the action sheet
-  jclass cls = env->FindClass("com/sometrik/framework/MyGLSurfaceView");
-  jmethodID methodRef = env->GetStaticMethodID(cls, "createOptionsFromJNI", "(Lcom/sometrik/framework/MyGLSurfaceView;I[I[Ljava/lang/String;)V");
+  jclass cls = env->FindClass("com/sometrik/framework/FrameWork");
+  jmethodID methodRef = env->GetStaticMethodID(cls, "createOptionsFromJNI", "(Lcom/sometrik/framework/FrameWork;I[I[Ljava/lang/String;)V");
   env->CallStaticVoidMethod(cls, methodRef, framework, 22, intArray, stringArray);
 
   //Not returning anything
@@ -208,8 +208,8 @@ void AndroidPlatform::storeValue(const std::string & key, const std::string & va
 void AndroidPlatform::messagePoster(int message, const std::string text) {
 
   auto env = getJNIEnv();
-  jclass cls = env->FindClass("com/sometrik/framework/MyGLSurfaceView");
-  jmethodID methodRef = env->GetStaticMethodID(cls, "LeaveMessageToSurface", "(Lcom/sometrik/framework/MyGLSurfaceView;ILjava/lang/String;)V");
+  jclass cls = env->FindClass("com/sometrik/framework/FrameWork");
+  jmethodID methodRef = env->GetStaticMethodID(cls, "LeaveMessageToSurface", "(Lcom/sometrik/framework/FrameWork;ILjava/lang/String;)V");
 
   jstring jtext = env->NewStringUTF(text.c_str());
   env->CallStaticVoidMethod(cls, methodRef, framework, message, jtext);
@@ -220,8 +220,8 @@ void AndroidPlatform::messagePoster(int message, const std::string text) {
 void AndroidPlatform::messagePoster(int message, const std::string title, const std::string text) {
 
   auto env = getJNIEnv();
-  jclass cls = env->FindClass("com/sometrik/framework/MyGLSurfaceView");
-  jmethodID methodRef = env->GetStaticMethodID(cls, "LeaveMessageToSurface", "(Lcom/sometrik/framework/MyGLSurfaceView;ILjava/lang/String;Ljava/lang/String;)V");
+  jclass cls = env->FindClass("com/sometrik/framework/FrameWork");
+  jmethodID methodRef = env->GetStaticMethodID(cls, "LeaveMessageToSurface", "(Lcom/sometrik/framework/FrameWork;ILjava/lang/String;Ljava/lang/String;)V");
 
   jstring jtitle = env->NewStringUTF(title.c_str());
   jstring jtext = env->NewStringUTF(text.c_str());
@@ -271,12 +271,12 @@ void Java_com_sometrik_framework_MyGLRenderer_onResize(JNIEnv* env, jobject thiz
   platform->onResize(x, y);
 }
 
-void Java_com_sometrik_framework_MyGLSurfaceView_menuPressed(JNIEnv* env, jobject thiz) {
+void Java_com_sometrik_framework_FrameWork_menuPressed(JNIEnv* env, jobject thiz) {
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "menu pressed: env = %p", env);
   platform->menuPressed();
 }
 
-void Java_com_sometrik_framework_MyGLSurfaceView_touchEvent(JNIEnv* env, jobject thiz, int mode, int fingerIndex, long time, float x, float y) {
+void Java_com_sometrik_framework_FrameWork_touchEvent(JNIEnv* env, jobject thiz, int mode, int fingerIndex, long time, float x, float y) {
   platform->onTouchesEvent(&thiz, mode, fingerIndex, time, x, y);
 }
 

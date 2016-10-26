@@ -29,7 +29,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
   public native void nativeOnDraw();
 
-  public native void onInit(AssetManager assetManager, MyGLSurfaceView view, float xSize, float ySize, float displayScale, Boolean hasEs3);
+  public native void onInit(AssetManager assetManager, FrameWork frame, float xSize, float ySize, float displayScale, Boolean hasEs3);
 
   public native void Draw();
 
@@ -87,7 +87,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
       System.out.println("openGLES 2 isn't supported");
     }
     // Calls onInit in AndroidPlatform
-    onInit(assetManager, frame.getSurfaceView(), xSize, ySize, displayMetrics.scaledDensity, hasEs3);
+    onInit(assetManager, frame, xSize, ySize, displayMetrics.scaledDensity, hasEs3);
 
     xSize = displayMetrics.widthPixels / displayMetrics.scaledDensity;
     ySize = displayMetrics.heightPixels / displayMetrics.scaledDensity;
