@@ -1,5 +1,7 @@
 package com.sometrik.framework;
 
+import java.util.ArrayList;
+
 import com.example.bombdefender.R;
 import com.sometrik.framework.Settings.MyPreferenceFragment;
 
@@ -62,6 +64,7 @@ public class FrameWork extends Activity {
   AlertDialog.Builder builder;
   AlertDialog alert;
   float windowYcoords;
+  ArrayList<FormView> viewList;
 
   private MyGLRenderer renderer;
 
@@ -93,6 +96,28 @@ public class FrameWork extends Activity {
     // You can disable status bar with this
     this.requestWindowFeature(Window.FEATURE_NO_TITLE);
     
+
+    // Init for screen settings
+    getDisplayMetrics();
+
+    // Set up classes
+    settings = new Settings(this);
+    renderer = new MyGLRenderer(this, screenWidth, screenHeight);
+    mGLView = new MyGLSurfaceView(this, renderer);
+
+    // Get preferences (simple key-value database)
+    prefs = this.getSharedPreferences("com.example.Work", Context.MODE_PRIVATE);
+    editor = prefs.edit();
+
+    // Create listener for screen touches and make MyGlSurfaceView the active
+    // view
+    mGLView.setOnTouchListener(new MyOnTouchListener(this));
+    mGLView.setWillNotDraw(false);
+    setContentView(mGLView);
+    
+    int[] coords = new int[2];
+    mGLView.getLocationInWindow(coords);
+    windowYcoords = coords[0];
     
     // create message handler for framework. Messages come from MyGLSurfaceView
     mainHandler = new Handler() {
@@ -156,33 +181,18 @@ public class FrameWork extends Activity {
 	  String[] dialogArray = (String[]) msg.obj;
 	  showMessageDialog(dialogArray[0], dialogArray[1]);
 	  break;
+	//Show OpenGLView
+	case 6:
+	  setContentView(mGLView);
+	case 7:
+	 //Show formView
+	  showFormView(msg.what);
+	case 8:
+	  //create formView
+	  createFormView(msg.what);
 	}
-
       }
     };
-
-    // Init for screen settings
-    getDisplayMetrics();
-
-    // Set up classes
-    settings = new Settings(this);
-    renderer = new MyGLRenderer(this, screenWidth, screenHeight);
-    mGLView = new MyGLSurfaceView(this, renderer);
-
-    // Get preferences (simple key-value database)
-    prefs = this.getSharedPreferences("com.example.Work", Context.MODE_PRIVATE);
-    editor = prefs.edit();
-
-    // Create listener for screen touches and make MyGlSurfaceView the active
-    // view
-    mGLView.setOnTouchListener(new MyOnTouchListener(this));
-    mGLView.setWillNotDraw(false);
-    setContentView(mGLView);
-    
-    int[] coords = new int[2];
-    mGLView.getLocationInWindow(coords);
-    windowYcoords = coords[0];
-
   }
 
   // Get screen settings
@@ -201,6 +211,18 @@ public class FrameWork extends Activity {
   public void launchBrowser(String url) {
     Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
     startActivity(browserIntent);
+  }
+  
+  private void createFormView(int id){
+    viewList.add(new FormView(id, this));
+  }
+  
+  private void showFormView(int id){
+    for (FormView view : viewList){
+      if (view.getViewId() == id){
+	view.showView();
+      }
+    }
   }
 
   // Lisää kuvan antaminen // Aika // Ääni
