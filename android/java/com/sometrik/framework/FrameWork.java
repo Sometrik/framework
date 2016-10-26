@@ -135,6 +135,7 @@ public class FrameWork extends Activity {
 	OptionsItem[] optionsList = null;
 
 	switch (msg.what) {
+	// Touchevents
 	case 1:
 
 	  int[] intArray = (int[]) msg.obj;
@@ -169,9 +170,11 @@ public class FrameWork extends Activity {
 
 	  createOptionsDialog(idArray, names);
 	  break;
+	// Launch browser
 	case 3:
 	  launchBrowser((String) msg.obj);
 	  break;
+	// Create notification
 	case 4:
 	  String[] notificationArray = (String[]) msg.obj;
 	  createNotification(notificationArray[0], notificationArray[1]);
@@ -181,15 +184,22 @@ public class FrameWork extends Activity {
 	  String[] dialogArray = (String[]) msg.obj;
 	  showMessageDialog(dialogArray[0], dialogArray[1]);
 	  break;
-	//Show OpenGLView
+	// Show OpenGLView
 	case 6:
 	  setContentView(mGLView);
+	  break;
+	  // Show formView
 	case 7:
-	 //Show formView
-	  showFormView(msg.what);
+	  showFormView((int)msg.obj);
+	  break;
+	  // create formView
 	case 8:
-	  //create formView
-	  createFormView(msg.what);
+	  createFormView((int)msg.obj);
+	  break;
+	  // FormView button was clicked
+	case 9:
+	  int buttonId = (int)msg.obj;
+	  //Call native function for this here
 	}
       }
     };
