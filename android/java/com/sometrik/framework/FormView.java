@@ -16,12 +16,14 @@ public class FormView {
   private Context context;
   private ArrayList<ViewGroup> elementList;
   private ArrayList<TextView> TextElementList;
+  private int viewId;
   
-  public FormView(Context context) {
+  public FormView(int id, Context context) {
     this.context = context;
     baseLayout = new LinearLayout(context);
     baseLayout.setOrientation(0);
     baseLayout.setId(0);
+    viewId = id;
   }
   
   //1 = vertical, 0 = horizontal
@@ -77,5 +79,9 @@ public class FormView {
       }
     }
     return baseLayout;
+  }
+  
+  public int getViewId(){
+    return viewId;
   }
 }
