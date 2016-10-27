@@ -1,3 +1,6 @@
+#ifndef _TOUCHEVENT_H_
+#define _TOUCHEVENT_H_
+
 class TouchEvent {
 public:
   enum Type{
@@ -23,3 +26,5 @@ public:
   double time;
   int id;
 };
+
+#endif
