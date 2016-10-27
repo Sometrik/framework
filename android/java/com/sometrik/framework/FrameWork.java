@@ -47,24 +47,24 @@ public class FrameWork extends Activity {
   // action Sheet näkymä tiettyyn kohtaan
   // Setting objektit (ESActionSheet) C - puolella, muista, että menee myös ios
 
-  MyGLSurfaceView mGLView;
-  RelativeLayout mainView;
-  SharedPreferences prefs;
-  SharedPreferences.Editor editor;
+  private MyGLSurfaceView mGLView;
+  private RelativeLayout mainView;
+  private SharedPreferences prefs;
+  private SharedPreferences.Editor editor;
 
   private static final int RESULT_SETTINGS = 1;
 
-  Settings settings;
+  private Settings settings;
 
-  float screenHeight;
-  float screenWidth;
+  private float screenHeight;
+  private float screenWidth;
   public Handler mainHandler;
-  Intent dialogIntent;
-  Bitmap picture;
-  AlertDialog.Builder builder;
-  AlertDialog alert;
-  float windowYcoords;
-  ArrayList<FormView> viewList;
+  private Intent dialogIntent;
+  private Bitmap picture;
+  private AlertDialog.Builder builder;
+  private AlertDialog alert;
+  private float windowYcoords;
+  private ArrayList<FormView> viewList;
 
   private MyGLRenderer renderer;
 
@@ -223,7 +223,7 @@ public class FrameWork extends Activity {
     startActivity(browserIntent);
   }
   
-  private void createFormView(int id){
+  public void createFormView(int id){
     viewList.add(new FormView(id, this));
   }
   
@@ -258,7 +258,7 @@ public class FrameWork extends Activity {
   }
 
   // Create dialog with user text input
-  public void createInputDialog(String title, String message) {
+  private void createInputDialog(String title, String message) {
 
     System.out.println("Creating input dialog");
 
@@ -302,7 +302,7 @@ public class FrameWork extends Activity {
   }
 
   // create Message dialog
-  public void showMessageDialog(String title, String message) {
+  private void showMessageDialog(String title, String message) {
 
     System.out.println("creating message dialog");
 
@@ -354,7 +354,7 @@ public class FrameWork extends Activity {
   private static PointF touchScreenStartPtArr[] = new PointF[10];
 
   //Screen touchevent listener. Will send information to MyGLSurfaceView messagehandler
-  public class MyOnTouchListener implements OnTouchListener {
+  private class MyOnTouchListener implements OnTouchListener {
 
     FrameWork frameWork;
 
