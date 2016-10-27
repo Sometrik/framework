@@ -18,6 +18,8 @@
 #include <memory>
 #include <Logger.h>
 #include <SoundCanvas.h>
+#include <OpenGlView.h>
+#include <TouchEvent.h>
 
 class FWContextBase;
 class EventLoop;

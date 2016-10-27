@@ -9,6 +9,8 @@
 #include <EGL/eglext.h>
 #endif
 
+#include <TouchEvent.h>
+
 class FWPlatformBase;
 
 class FWContextBase {
@@ -17,7 +19,7 @@ public:
   virtual ~FWContextBase() { }
     
   bool createWindow(const char * title, int requested_width, int requested_height);
-  
+
   virtual bool Init() = 0;
   virtual void onDraw() = 0;
   virtual void onShutdown() = 0;
@@ -33,23 +35,21 @@ public:
     actual_height = _actual_height;
     return false;
   }
-  
-  virtual bool touchesBegin(int x, int y, double timestamp, long long identifier) { return false; }
-  virtual bool touchesEnded(int x, int y, double timestamp, long long identifier) { return false; }
-  virtual bool touchesMoved(int x, int y, double timestamp, long long identifier) { return false; }
+
+  virtual bool onTouchEvent(TouchEvent touchEvent) { return false; }
   virtual bool flushTouches(int mode, double timestamp) { return false; }
   virtual bool onShake(double timestamp) { return false; }
-  
+
   virtual bool loadEvents() { return false; }
-  
+
   int getLogicalWidth() const { return logical_width; }
   int getLogicalHeight() const { return logical_height; }
   int getActualWidth() const { return actual_width; }
   int getActualHeight() const { return actual_height; }
-  
+
   FWPlatformBase & getPlatform() { return *platform; }
   const FWPlatformBase & getPlatform() const { return *platform; }
-    
+
   void setWindowSize(int _logical_width, int _logical_height, int _actual_width, int _actual_height) {
     logical_width = _logical_width;
     logical_height = _logical_height;
