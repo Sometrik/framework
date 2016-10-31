@@ -61,7 +61,7 @@ public:
   std::string loadValue(const std::string & key) override;
   int showActionSheet(const FWRect & rect, const FWActionSheet & sheet) override;
   void showCanvas(canvas::ContextAndroid & context);
-  virtual std::shared_ptr<Logger> createLogger(){
+  std::shared_ptr<Logger> createLogger(){
     return std::make_shared<AndroidLogger>();
   }
 
