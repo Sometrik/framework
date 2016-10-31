@@ -10,6 +10,7 @@
 #endif
 
 #include <TouchEvent.h>
+#include <FWViewBase.h>
 
 class FWPlatformBase;
 

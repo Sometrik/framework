@@ -3,6 +3,7 @@
 #include <AndroidClient.h>
 #include <AndroidSoundCanvas.h>
 #include <AndroidLogger.h>
+#include <AndroidFormView.h>
 class shader_program;
 
 class AndroidPlatform: public FWPlatformBase {
@@ -63,6 +64,9 @@ public:
   void showCanvas(canvas::ContextAndroid & context);
   std::shared_ptr<Logger> createLogger(){
     return std::make_shared<AndroidLogger>();
+  }
+  std::shared_ptr<FormView> createFormView(){
+    return std::make_shared<AndroidFormView>(this);
   }
 
 

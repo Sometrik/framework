@@ -20,6 +20,7 @@
 #include <SoundCanvas.h>
 #include <OpenGlView.h>
 #include <TouchEvent.h>
+#include <FormView.h>
 
 class FWContextBase;
 class EventLoop;

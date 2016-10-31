@@ -6,12 +6,12 @@
 class OpenGLView : public FWViewBase {
  public:
   
-
-
-  OpenGLView() : FWViewBase(){
+  OpenGLView(FWPlatformBase * platform) : FWViewBase(platform){
 
   }
+  ~OpenGLView(){
 
+  }
 
 
 

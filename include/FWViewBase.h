@@ -1,10 +1,14 @@
 #ifndef _FWVIEW_H_
 #define _FWVIEW_H_
+#include <element.h>
+#include <widget.h>
+
+class FWPlatformBase;
 
 class FWViewBase {
  public:
   
-  FWViewBase(){
+  FWViewBase(FWPlatformBase * _platform) : platform(_platform) {
 
   }
   virtual ~FWViewBase() { }
@@ -44,10 +48,13 @@ class FWViewBase {
       actual_height = _actual_height;
     }
 
+    FWPlatformBase & getPlatform() { return *platform; }
+
     virtual void showView() = 0;
 
 protected:
   int logical_width = 0, logical_height = 0, actual_width = 0, actual_height = 0;
+  FWPlatformBase * platform;
 };
 
 #endif
