@@ -76,7 +76,7 @@ class FWPlatformBase {
   }
   std::shared_ptr<Logger> getLogger() {
     if (logger == 0) {
-      logger = createSoundCanvas();
+      logger = createLogger();
     }
     return logger;
   }
