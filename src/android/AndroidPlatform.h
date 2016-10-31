@@ -52,9 +52,13 @@ public:
     auto env = getJNIEnv();
     return std::make_shared<AndroidClientFactory>(env);
   }
-  std::shared_ptr<SoundCanvas> getSoundCanvas() const override {
-     auto env = getJNIEnv();
-     return std::make_shared<AndroidSoundCanvas>(env, mgr);
+  std::shared_ptr<SoundCanvas> createSoundCanvas() const override {
+    if (soundCanvas != NULL){
+      return soundCanvas;
+    } else {
+      auto env = getJNIEnv();
+      return std::make_shared<AndroidSoundCanvas>(env, mgr);
+    }
    }
   void launchBrowser(const std::string & input_url) override;
   void storeValue(const std::string & key, const std::string & value) override;

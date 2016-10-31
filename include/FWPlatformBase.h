@@ -58,18 +58,25 @@ class FWPlatformBase {
   virtual double getTime() const = 0;
   virtual std::shared_ptr<canvas::ContextFactory> createContextFactory() const = 0;
   virtual std::shared_ptr<HTTPClientFactory> createHTTPClientFactory() const = 0;
-  virtual std::shared_ptr<SoundCanvas> getSoundCanvas() const = 0;
   virtual void launchBrowser(const std::string & input_url) = 0;
   virtual void storeValue(const std::string & key, const std::string & value) = 0;
   virtual std::string loadValue(const std::string & key) = 0;
   virtual int showActionSheet(const FWRect & rect, const FWActionSheet & sheet) = 0;
   virtual void createFBO(int flags) { }
   virtual std::shared_ptr<Logger> createLogger() = 0;
+  virtual std::shared_ptr<SoundCanvas> createSoundCanvas() const = 0;
   
   std::string getBundleFilename(const std::string & filename) { return getBundleFilename(filename.c_str()); }
 
   void setApplication(FWContextBase * _application) {application = _application;}
   FWContextBase& getApplication() { return *application; }
+  std::shared_ptr<SoundCanvas> getSoundCanvas() {
+    if (soundCanvas != NULL){
+      return soundCanvas;
+    } else {
+      return createSoundCanvas();
+    }
+  }
   
   float getDisplayScale() const { return display_scale; }
   bool hasES3() const { return has_es3; }
@@ -80,6 +87,7 @@ class FWPlatformBase {
   std::string glsl_version;
   bool has_es3 = false;
   FWContextBase * application = 0;
+  std::shared_ptr<SoundCanvas> soundCanvas;
     
 #if !defined __APPLE__ && !defined _WIN32
   // Display handle
