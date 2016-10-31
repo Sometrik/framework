@@ -64,30 +64,28 @@ class FWPlatformBase {
   virtual int showActionSheet(const FWRect & rect, const FWActionSheet & sheet) = 0;
   virtual void createFBO(int flags) { }
   virtual std::shared_ptr<Logger> createLogger() = 0;
-  virtual std::shared_ptr<SoundCanvas> createSoundCanvas() const = 0;
   
   std::string getBundleFilename(const std::string & filename) { return getBundleFilename(filename.c_str()); }
 
   void setApplication(FWContextBase * _application) {application = _application;}
   FWContextBase& getApplication() { return *application; }
   std::shared_ptr<SoundCanvas> getSoundCanvas() {
-    if (soundCanvas != NULL){
-      return soundCanvas;
-    } else {
-      return createSoundCanvas();
+    if (soundCanvas == 0){
+      soundCanvas = createSoundCanvas();
     }
+      return soundCanvas;
   }
   
   float getDisplayScale() const { return display_scale; }
   bool hasES3() const { return has_es3; }
   
  protected:
+  virtual std::shared_ptr<SoundCanvas> createSoundCanvas() const = 0;
   int display_width = 0, display_height = 0;
   float display_scale = 1.0f;
   std::string glsl_version;
   bool has_es3 = false;
   FWContextBase * application = 0;
-  std::shared_ptr<SoundCanvas> soundCanvas;
     
 #if !defined __APPLE__ && !defined _WIN32
   // Display handle
@@ -105,6 +103,10 @@ class FWPlatformBase {
   // EGL surface
   EGLSurface  eglSurface;
 #endif
+
+ private:
+  std::shared_ptr<SoundCanvas> soundCanvas;
+
 };
 
 #endif
