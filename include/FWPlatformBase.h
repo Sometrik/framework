@@ -69,17 +69,17 @@ class FWPlatformBase {
 
   void setApplication(FWContextBase * _application) {application = _application;}
   FWContextBase& getApplication() { return *application; }
-  std::shared_ptr<SoundCanvas> getSoundCanvas() {
+  SoundCanvas & getSoundCanvas() {
     if (soundCanvas == 0){
       soundCanvas = createSoundCanvas();
     }
-      return soundCanvas;
+    return *soundCanvas;
   }
-  std::shared_ptr<Logger> getLogger() {
+  Logger & getLogger() {
     if (logger == 0) {
       logger = createLogger();
     }
-    return logger;
+    return *logger;
   }
   
   float getDisplayScale() const { return display_scale; }
