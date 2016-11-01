@@ -17,7 +17,10 @@ class Element {
 
 
   virtual void initialize(FWPlatformBase * _platform);
-      virtual void onDraw() { }
+  virtual void onDraw() { }
+  virtual void onShutdown() { }
+  virtual void onMemoryWarning() { }
+
       virtual void onCmdLine(int argc, char *argv[]) { }
 
       virtual bool onKeyPress(char c, double timestamp, int x, int y) { return false; }
