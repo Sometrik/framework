@@ -5,7 +5,6 @@ class Message {
  public:
 
   enum MessageType {
-
     CREATE_FORMVIEW,
     SHOW_VIEW,
     CREATE_BUTTON,
@@ -21,8 +20,8 @@ class Message {
     CREATE_NOTIFICATION,
     SET_VALUE, //Sets value of textfields.
     SET_LABEL, //this sets label for buttons and labels.
-    SET_ATTRIBUTE
-
+    SET_ATTRIBUTE,
+    SET_CAPTION
   };
 
   Message(MessageType _message, int _elementId = 0) : messageType(_message), elementId(_elementId){ }
