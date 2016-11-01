@@ -276,6 +276,8 @@ std::shared_ptr<AndroidPlatform> platform;
 extern "C" {
 
 void Java_com_sometrik_framework_MyGLRenderer_onResize(JNIEnv* env, jobject thiz, float x, float y) {
+  platform->setDisplayWidth(x);
+  platform->setDisplayHeight(y);
   platform->onResize(x, y);
 }
 
@@ -311,6 +313,8 @@ void Java_com_sometrik_framework_MyGLRenderer_onInit(JNIEnv* env, jobject thiz, 
   platform->setApplication(application);
   platform->onInit(env, gJavaVM);
   application->initialize(this);
+  platform->setDisplayWidth(screenWidth);
+  platform->setDisplayHeight(screenHeight);
   platform->onResize(screenWidth, screenHeight);
   application->initializeContent();
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Init end");
