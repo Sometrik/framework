@@ -85,6 +85,11 @@ class FWPlatformBase {
   int getNextElementId(){
     return nextElementId++;
   }
+  void setDisplayWidth(int w) { display_width = w; }
+  void setDisplayHeight(int h) { display_height = h; }
+
+  int getDisplayWidth() const { return display_width; }
+  int getDisplayHeight() const { return display_height; }
   float getDisplayScale() const { return display_scale; }
   bool hasES3() const { return has_es3; }
   
