@@ -1,7 +1,9 @@
 #ifndef _TOUCHEVENT_H_
 #define _TOUCHEVENT_H_
 
-class TouchEvent {
+#include <EventBase.h>
+
+class TouchEvent : public EventBase {
 public:
   enum Type{
       ACTION_DOWN, ACTION_MOVE, ACTION_UP
