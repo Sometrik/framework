@@ -49,6 +49,9 @@ FWPlatformBase::createContext(FWContextBase * context, const char * title, int r
   unsigned int width = requested_width;
   unsigned int height = requested_height;
 #endif
+#endif
+
+#if 0
   unsigned int actual_width = (unsigned int)(width * getDisplayScale());
   unsigned int actual_height = (unsigned int)(height * getDisplayScale());
   context->setWindowSize(width, height, actual_width, actual_height);
