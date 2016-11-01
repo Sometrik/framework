@@ -14,7 +14,7 @@
 
 class FWPlatformBase;
 
-class FWContextBase {
+class FWContextBase : public Element {
 public:
  FWContextBase(FWPlatformBase * _platform) : platform(_platform) { }
   virtual ~FWContextBase() { }
@@ -37,7 +37,6 @@ public:
     return false;
   }
 
-  virtual bool onTouchEvent(TouchEvent touchEvent) { return false; }
   virtual bool flushTouches(int mode, double timestamp) { return false; }
   virtual bool onShake(double timestamp) { return false; }
 
