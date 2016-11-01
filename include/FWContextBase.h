@@ -8,7 +8,6 @@ class FWContextBase : public Element {
 public:
   FWContextBase() { }
     
-  bool createWindow(const char * title, int requested_width, int requested_height);
   virtual bool loadEvents() { return false; }
   
   void setCaption(const std::string & s) {
