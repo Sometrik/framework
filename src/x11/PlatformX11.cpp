@@ -365,7 +365,7 @@ PlatformX11::createEventLoop() {
 //  Global extern.  The application must declare this function
 //  that runs the application.
 //
-extern void applicationMain(FWPlatformBase * platform);
+extern FWContextBase * applicationMain();
 
 ///
 //  main()
@@ -375,11 +375,12 @@ extern void applicationMain(FWPlatformBase * platform);
 int main(int argc, char *argv[]) {
   PlatformX11 platform;
   cerr << "starting\n";
-  applicationMain(&platform);
+  FWContextBase * application = applicationMain();
+  platform.setApplication(application);
   // platform.createWindow(&(platform.getApplication()), "App");
   platform.createContext(&(platform.getApplication()), "App", 800, 600);
+  platform.getApplication().initialize(&platform);
   platform.getApplication().onCmdLine(argc, argv);
-  platform.getApplication().Init();
 
   auto eventloop = platform.createEventLoop();
   eventloop->run();
