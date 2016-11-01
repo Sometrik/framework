@@ -81,6 +81,7 @@ class FWPlatformBase {
     }
     return *logger;
   }
+  virtual void createFormView(int id) = 0;
   
   float getDisplayScale() const { return display_scale; }
   bool hasES3() const { return has_es3; }

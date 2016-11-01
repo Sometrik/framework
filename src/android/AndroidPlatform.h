@@ -65,6 +65,9 @@ public:
   std::shared_ptr<Logger> createLogger(){
     return std::make_shared<AndroidLogger>();
   }
+  void createFormView(int id){
+    messagePoster(10, id);
+  }
 
 
   JNIEnv* getJNIEnv() const;
