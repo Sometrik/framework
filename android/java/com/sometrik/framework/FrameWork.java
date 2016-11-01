@@ -622,17 +622,20 @@ public class FrameWork extends Activity {
   }
 
   //Creates message that is sent to MyGLSurface handler. Called from JNI
-  public static void LeaveMessageToSurface(MyGLSurfaceView view, int messageCode) {
-    view.sHandler.sendEmptyMessage(messageCode);
+  public static void LeaveMessageToSurface(FrameWork frameWork, int messageCode, int content) {
+    frameWork.mainHandler.sendEmptyMessage(messageCode);
   }
-  public static void LeaveMessageToSurface(MyGLSurfaceView view, int messageCode, String text) {
+  public static void LeaveMessageToSurface(FrameWork frameWork, int messageCode) {
+    frameWork.mainHandler.sendEmptyMessage(messageCode);
+  }
+  public static void LeaveMessageToSurface(FrameWork frameWork, int messageCode, String text) {
     Message msg = Message.obtain(null, messageCode, text);
-    view.sHandler.sendMessage(msg);
+    frameWork.mainHandler.sendMessage(msg);
   }
-  public static void LeaveMessageToSurface(MyGLSurfaceView view, int messageCode, String title, String text) {
+  public static void LeaveMessageToSurface(FrameWork frameWork, int messageCode, String title, String text) {
     String[] stringArray = {title, text};
     Message msg = Message.obtain(null, messageCode, stringArray);
-    view.sHandler.sendMessage(msg);
+    frameWork.mainHandler.sendMessage(msg);
   }
  
 
