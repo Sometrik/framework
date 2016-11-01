@@ -33,9 +33,10 @@ class Element {
       virtual bool onShake(double timestamp) { return false; }
 
       virtual bool loadEvents() { return false; }
-      void addChild(const std::shared_ptr<Element> & element){
+      void addChild(const std::shared_ptr<Element> & element) {
         element->initialize(platform);
         children.push_back(element);
+	element->initializeContent();
       }
 
       int getId(){ return id; }
