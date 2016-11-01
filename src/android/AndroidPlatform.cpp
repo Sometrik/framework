@@ -25,7 +25,7 @@
 using namespace gpufw;
 using namespace std;
 
-extern void applicationMain(FWPlatformBase * platform);
+extern FWContextBase * applicationMain();
 
 bool AndroidPlatform::onTouchesEvent(jobject * _obj, int mode, int fingerIndex, double time, float x, float y) {
 
@@ -156,8 +156,7 @@ AndroidPlatform::onInit(JNIEnv * env, JavaVM * _gJavaVM) {
   if (_gJavaVM == NULL){
       __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "2");
     }
-  getApplication().Init();
-
+  getApplication().initialize(this);
 }
 
 std::string AndroidPlatform::getBundleFilename(const char * filename) {
@@ -309,7 +308,8 @@ void Java_com_sometrik_framework_MyGLRenderer_onInit(JNIEnv* env, jobject thiz, 
 
     platform = std::make_shared<AndroidPlatform>(env, assetManager, surface, displayScale, glslVersion, hasEs3);
   }
-  applicationMain(platform.get());
+  FWContextBase * application = applicationMain();
+  platform->setApplication(application);
   platform->onResize(screenWidth, screenHeight);
   platform->onInit(env, gJavaVM);
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Init end");
