@@ -33,6 +33,7 @@ public:
 
   void messagePoster(int message, const std::string text);
   void messagePoster(int message, const std::string title, const std::string text);
+  void messagePoster(int message, int content);
 
   bool createWindow(FWContextBase * context, const char * title) override {
     return false;

@@ -217,6 +217,16 @@ void AndroidPlatform::messagePoster(int message, const std::string text) {
 
 }
 
+void AndroidPlatform::messagePoster(int message, int content) {
+
+  auto env = getJNIEnv();
+  jclass cls = env->FindClass("com/sometrik/framework/FrameWork");
+  jmethodID methodRef = env->GetStaticMethodID(cls, "LeaveMessageToSurface", "(Lcom/sometrik/framework/FrameWork;II)V");
+
+  env->CallStaticVoidMethod(cls, methodRef, framework, message, content);
+
+}
+
 void AndroidPlatform::messagePoster(int message, const std::string title, const std::string text) {
 
   auto env = getJNIEnv();
