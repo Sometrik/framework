@@ -4,7 +4,7 @@
 
 class FormView : public FWViewBase {
  public:
-  FormView(FWPlatformBase * platform) : FWViewBase(platform) {
+  FormView() {
   }
 
   ~FormView(){
