@@ -12,9 +12,9 @@ class Logger {
   void println(const std::string & s) { println(s.c_str()); }  
 };
 
-class BasicLogger : Logger{
+class BasicLogger : public Logger {
  public:
-  BasicLogger() : Logger() { }
+  BasicLogger() { }
   
   void println(const char * s) override {
     std::cerr << s << std::endl;
