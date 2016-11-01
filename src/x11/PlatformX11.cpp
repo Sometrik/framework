@@ -285,8 +285,8 @@ public:
       t1 = t2;
 #endif
       
-      if (getApplication()->onUpdate(getPlatform()->getTime())) {
-	getApplication()->onDraw();
+      if (getApplication()->getFirstChild()->onUpdate(getPlatform()->getTime())) {
+	getApplication()->getFirstChild()->onDraw();
 	platform->swapBuffers();
       }
     }
@@ -294,10 +294,11 @@ public:
 
 protected:
   void sendEvents() {
-    if (display_width && display_height &&
-	(display_width != getApplication()->getActualWidth() ||
-	 display_height != getApplication()->getActualHeight())) {
-      getApplication()->onResize(display_width, display_height, display_width, display_height);
+    if (display_width && display_height) {
+      OpenGLView * view = dynamic_cast<OpenGLView *>(getApplication()->getFirstChild().get());
+      if (view && (display_width != view->getActualWidth() || display_height != view->getActualHeight())) {
+	view->onResize(display_width, display_height, display_width, display_height);
+      }
     }
   }
 
@@ -308,7 +309,7 @@ protected:
     switch (xev.type) {
     case KeyPress:
       if (XLookupString(&xev.xkey, &text, 1, &key, 0) == 1) {
-	getApplication()->onKeyPress(text, getPlatform()->getTime(), 0, 0);
+	getApplication()->getFirstChild()->onKeyPress(text, getPlatform()->getTime(), 0, 0);
       }
       break;
     case DestroyNotify:
@@ -317,7 +318,7 @@ protected:
     case MotionNotify:
       if (button_pressed) {
 	TouchEvent ev(TouchEvent::ACTION_MOVE, xev.xmotion.x, display_height - 1 - xev.xmotion.y, getPlatform()->getTime(), 0);
-	getApplication()->onTouchEvent(ev);
+	getApplication()->getFirstChild()->onTouchEvent(ev);
       }
       mouse_x = xev.xmotion.x;
       mouse_y = xev.xmotion.y;
@@ -325,14 +326,14 @@ protected:
     case ButtonPress:
       {
 	TouchEvent ev(TouchEvent::ACTION_DOWN, mouse_x, display_height - 1 - mouse_y, getPlatform()->getTime(), 0);
-	getApplication()->onTouchEvent(ev);
+	getApplication()->getFirstChild()->onTouchEvent(ev);
 	button_pressed = true;
       }
       break;
     case ButtonRelease:
       {
 	TouchEvent ev(TouchEvent::ACTION_UP, mouse_x, display_height - 1 - mouse_y, getPlatform()->getTime(), 0);
-	getApplication()->onTouchEvent(ev);
+	getApplication()->getFirstChild()->onTouchEvent(ev);
 	button_pressed = false;
       }
       break;
@@ -381,6 +382,7 @@ int main(int argc, char *argv[]) {
   platform.createContext(&(platform.getApplication()), "App", 800, 600);
   platform.getApplication().initialize(&platform);
   platform.getApplication().onCmdLine(argc, argv);
+  platform.getApplication().initializeContent();
 
   auto eventloop = platform.createEventLoop();
   eventloop->run();
