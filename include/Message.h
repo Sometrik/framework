@@ -27,18 +27,16 @@ class Message {
   Message(MessageType _message, int _elementId = 0) : messageType(_message), elementId(_elementId){ }
   ~Message(){ }
 
-  MessageType getType(){
-    return messageType;
-  }
-  int getValue (){
-    return value;
-  }
-  const std::string & getTextValue() {
-    return textValue;
-  }
+  MessageType getType() { return messageType; }
+  
+  int getValue() { return value; }
+  void setValue(int v) { value = v; }
+  
+  const std::string & getTextValue() { return textValue; }
+  void setTextValue(const std::string & s) { textValue = s; }
+  
   const std::string & getKey() { return key; }
-  void setKey(const std::string & _key){ key = _key; }
-
+  void setKey(const std::string & _key) { key = _key; }
 
  private:
   MessageType messageType;
