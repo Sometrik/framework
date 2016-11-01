@@ -1,16 +1,6 @@
 #ifndef _FWPLATFORMBASE_H_
 #define _FWPLATFORMBASE_H_
 
-#if defined __APPLE__
-#include <OpenGLES/ES3/gl.h>
-#elif defined _WIN32
-
-#else
-#include <GLES3/gl3.h>
-#include <EGL/egl.h>
-#include <EGL/eglext.h>
-#endif
-
 #include "FWRect.h"
 #include "FWActionSheet.h"
 
@@ -18,7 +8,6 @@
 #include <memory>
 #include <Logger.h>
 #include <SoundCanvas.h>
-#include <OpenGLView.h>
 #include <TouchEvent.h>
 #include <FormView.h>
 
@@ -29,9 +18,6 @@ namespace canvas {
   class ContextFactory;
 };
 class HTTPClientFactory;
-#define FBO_COLOR	1
-#define FBO_DEPTH	2
-#define FBO_STENCIL	4
 
 class FWPlatformBase {
  public:
@@ -47,8 +33,6 @@ class FWPlatformBase {
 
   const std::string & getGLSLVersion() const { return glsl_version; }
   
-  bool createContext(FWContextBase * context, const char * title, int requested_width, int requested_height);
-
   virtual std::shared_ptr<EventLoop> createEventLoop() { return std::shared_ptr<EventLoop>(0); }
   virtual void showMessageBox(const std::string & title, const std::string & message) = 0;
   virtual std::string showTextEntryDialog(const std::string & message) = 0;
@@ -62,7 +46,6 @@ class FWPlatformBase {
   virtual void storeValue(const std::string & key, const std::string & value) = 0;
   virtual std::string loadValue(const std::string & key) = 0;
   virtual int showActionSheet(const FWRect & rect, const FWActionSheet & sheet) = 0;
-  virtual void createFBO(int flags) { }
   
   std::string getBundleFilename(const std::string & filename) { return getBundleFilename(filename.c_str()); }
 
@@ -101,23 +84,6 @@ class FWPlatformBase {
   bool has_es3 = false;
   FWContextBase * application = 0;
     
-#if !defined __APPLE__ && !defined _WIN32
-  // Display handle
-  EGLNativeDisplayType eglNativeDisplay;
-  
-  // Window handle
-  EGLNativeWindowType eglNativeWindow;
-  
-  // EGL display
-  EGLDisplay  eglDisplay;
-  
-  // EGL context
-  EGLContext  eglContext;
-  
-  // EGL surface
-  EGLSurface  eglSurface;
-#endif
-
  private:
   std::shared_ptr<SoundCanvas> soundCanvas;
   std::shared_ptr<Logger> logger;
