@@ -35,10 +35,6 @@ public:
   void messagePoster(int message, const std::string title, const std::string text);
   void messagePoster(int message, int content);
 
-  bool createWindow(FWContextBase * context, const char * title) override {
-    return false;
-  }
-  ;
   void showMessageBox(const std::string & title, const std::string & message) override;
 
   std::string showTextEntryDialog(const std::string & message) override;
@@ -80,10 +76,8 @@ public:
 
 private:
   JavaVM * gJavaVM;
-  FWContextBase * application;
   jobject mgr;
   jobject framework;
   jobject handler;
   char message[256];
-  shader_program * test_program = 0;
 };
