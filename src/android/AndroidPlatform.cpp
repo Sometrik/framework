@@ -33,13 +33,13 @@ bool AndroidPlatform::onTouchesEvent(jobject * _obj, int mode, int fingerIndex, 
   y /= getDisplayScale();
   switch (mode) {
   case 1:
-    getApplication().onTouchEvent(TouchEvent(TouchEvent::Type::ACTION_DOWN, x, y, time, fingerIndex));
+//    getApplication().onTouchEvent(TouchEvent(TouchEvent::Type::ACTION_DOWN, x, y, time, fingerIndex));
     break;
   case 2:
-    getApplication().onTouchEvent(TouchEvent(TouchEvent::Type::ACTION_MOVE, x, y, time, fingerIndex));
+//    getApplication().onTouchEvent(TouchEvent(TouchEvent::Type::ACTION_MOVE, x, y, time, fingerIndex));
     break;
   case 3:
-    getApplication().onTouchEvent(TouchEvent(TouchEvent::Type::ACTION_UP, x, y, time, fingerIndex));
+//    getApplication().onTouchEvent(TouchEvent(TouchEvent::Type::ACTION_UP, x, y, time, fingerIndex));
     break;
   }
 
