@@ -50,7 +50,6 @@ class FWPlatformBase {
   bool createContext(FWContextBase * context, const char * title, int requested_width, int requested_height);
 
   virtual std::shared_ptr<EventLoop> createEventLoop() { return std::shared_ptr<EventLoop>(0); }
-  virtual bool createWindow(FWContextBase * context, const char * title) = 0;
   virtual void showMessageBox(const std::string & title, const std::string & message) = 0;
   virtual std::string showTextEntryDialog(const std::string & message) = 0;
   virtual void postNotification(const std::string & title, const std::string & message) = 0;
