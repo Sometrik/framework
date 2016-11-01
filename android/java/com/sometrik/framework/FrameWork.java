@@ -65,6 +65,7 @@ public class FrameWork extends Activity {
   private AlertDialog alert;
   private float windowYcoords;
   private ArrayList<FormView> viewList = new ArrayList<FormView>();
+  private ArrayList<MyGLSurfaceView> GLViewList = new ArrayList<MyGLSurfaceView>();
 
   private MyGLRenderer renderer;
 
@@ -196,10 +197,15 @@ public class FrameWork extends Activity {
 	case 8:
 	  createFormView((int)msg.obj);
 	  break;
-	  // FormView button was clicked
+	  // create OpenGLView
 	case 9:
+	  createOpenGLView((int)msg.obj);
+	  break;
+	  // FormView button was clicked
+	case 10:
 	  int buttonId = (int)msg.obj;
-	  //Call native function for this here
+	  //Call native function for this here¨
+	  break;
 	}
       }
     };
@@ -223,14 +229,29 @@ public class FrameWork extends Activity {
     startActivity(browserIntent);
   }
   
-  public void createFormView(int id){
+  private void createFormView(int id){
     viewList.add(new FormView(id, this));
+  }
+  private void createOpenGLView(int id){
+    MyGLRenderer renderer = new MyGLRenderer(this, screenWidth, screenHeight);
+    MyGLSurfaceView mGLView = new MyGLSurfaceView(this, renderer);
+    mGLView.setOnTouchListener(new MyOnTouchListener(this));
+    mGLView.setWillNotDraw(false);
+    GLViewList.add(mGLView);
   }
   
   private void showFormView(int id){
     for (FormView view : viewList){
       if (view.getViewId() == id){
 	view.showView();
+      }
+    }
+  }
+  
+  private void showOpenGLView(int id){
+    for (MyGLSurfaceView view : GLViewList){
+      if (view.getViewId() == id){
+	setContentView(view);
       }
     }
   }
