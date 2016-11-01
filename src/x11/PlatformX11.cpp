@@ -269,21 +269,9 @@ public:
   }
 
   void run() override {
-    struct timeval t1, t2;
-    struct timezone tz;
-    float deltatime;
-    
-    gettimeofday ( &t1 , &tz );
-    
     while (doKeepRunning()) {
       readEvents();
       getApplication()->loadEvents();
-
-#if 0
-      gettimeofday(&t2, &tz);
-      deltatime = (float)(t2.tv_sec - t1.tv_sec + (t2.tv_usec - t1.tv_usec) * 1e-6);
-      t1 = t2;
-#endif
       
       if (getApplication()->getFirstChild()->onUpdate(getPlatform()->getTime())) {
 	getApplication()->getFirstChild()->onDraw();
