@@ -30,6 +30,18 @@ public class FormView {
     viewId = id;
     FrameWork frame = (FrameWork)context;
     mainHandler = frame.mainHandler;
+    
+    EditText usernameEdit = new EditText(context);
+    usernameEdit.setText("Username");
+    baseLayout.addView(usernameEdit);
+    EditText passwordEdit = new EditText(context);
+    passwordEdit.setText("Password");
+    baseLayout.addView(passwordEdit);
+    
+    Button submitButton = new Button(context);
+    submitButton.setText("Submit");
+    baseLayout.addView(submitButton);
+    
   }
   
   //1 = vertical, 0 = horizontal
