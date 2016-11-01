@@ -68,6 +68,9 @@ public:
   void createFormView(int id){
     messagePoster(8, id);
   }
+  void showFormView(int id){
+    messagePoster(7, id);
+  }
 
 
   JNIEnv* getJNIEnv() const;
