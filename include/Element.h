@@ -1,6 +1,9 @@
 #ifndef _ELEMENT_H_
 #define _ELEMENT_H_
 
+#include <memory>
+#include <vector>
+
 class TouchEvent;
 class FWPlatformBase;
 class Message;
