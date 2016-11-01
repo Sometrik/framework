@@ -32,14 +32,13 @@ class Element {
       virtual bool flushTouches(int mode, double timestamp) { return false; }
       virtual bool onShake(double timestamp) { return false; }
 
-      virtual bool loadEvents() { return false; }
       void addChild(const std::shared_ptr<Element> & element) {
         element->initialize(platform);
         children.push_back(element);
 	element->initializeContent();
       }
 
-      int getId(){ return id; }
+      int getId() { return id; }
 
       void sendMessage(const Message & message);
 
@@ -56,7 +55,7 @@ class Element {
 
 protected:
   FWPlatformBase * platform = 0;
-  int id;
+  int id = 0;
   std::vector<std::shared_ptr<Element> > children;
 };
 
