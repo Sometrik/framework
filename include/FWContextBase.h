@@ -13,7 +13,7 @@ public:
   void setCaption(const std::string & s) {
     Message m(Message::SET_CAPTION);
     m.setTextValue(s);
-    sendMessage(ev);
+    sendMessage(m);
   }
 };
 
