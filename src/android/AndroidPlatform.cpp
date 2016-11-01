@@ -156,7 +156,6 @@ AndroidPlatform::onInit(JNIEnv * env, JavaVM * _gJavaVM) {
   if (_gJavaVM == NULL){
       __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "2");
     }
-  getApplication().initialize(this);
 }
 
 std::string AndroidPlatform::getBundleFilename(const char * filename) {
@@ -311,7 +310,9 @@ void Java_com_sometrik_framework_MyGLRenderer_onInit(JNIEnv* env, jobject thiz, 
   FWContextBase * application = applicationMain();
   platform->setApplication(application);
   platform->onInit(env, gJavaVM);
+  application->initialize(this);
   platform->onResize(screenWidth, screenHeight);
+  application->initializeContent();
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Init end");
 }
 
