@@ -316,7 +316,7 @@ protected:
       break;
     case MotionNotify:
       if (button_pressed) {
-	TouchEvent ev(TouchEvent::ACTION_MOVE, xev.xmotion.x, xev.xmotion.y, getPlatform()->getTime(), 0);
+	TouchEvent ev(TouchEvent::ACTION_MOVE, xev.xmotion.x, display_height - 1 - xev.xmotion.y, getPlatform()->getTime(), 0);
 	getApplication()->onTouchEvent(ev);
       }
       mouse_x = xev.xmotion.x;
