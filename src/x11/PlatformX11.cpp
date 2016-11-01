@@ -294,11 +294,11 @@ public:
 
 protected:
   void sendEvents() {
-    if (display_width && display_height) {
-      OpenGLView * view = dynamic_cast<OpenGLView *>(getApplication()->getFirstChild().get());
-      if (view && (display_width != view->getActualWidth() || display_height != view->getActualHeight())) {
-	view->onResize(display_width, display_height, display_width, display_height);
-      }
+    if (display_size_changed) {
+      platform->setDisplayWidth(display_width);
+      platform->setDisplayHeight(display_height);
+      getApplication()->getFirstChild()->onResize(display_width, display_height, display_width, display_height);
+      display_size_changed = false;
     }
   }
 
@@ -340,8 +340,16 @@ protected:
     case ConfigureNotify:
       {
 	XConfigureEvent xce = xev.xconfigure;
-	display_width = xce.width;
-	display_height = xce.height;	
+	if (!is_initialized) {
+	  platform->setDisplayWidth(xce.width);
+	  platform->setDisplayHeight(xce.height);
+	  getApplication()->initializeContent();	   
+	  is_initialized = true;
+	} else if (display_width != xce.width || display_height != xce.height) {
+	  display_width = xce.width;
+	  display_height = xce.height;
+	  display_size_changed = true;
+	}
       }
       break;
     }
@@ -355,6 +363,8 @@ private:
   int display_width = 0, display_height = 0;
   bool button_pressed = false;
   int mouse_x = 0, mouse_y = 0;
+  bool display_size_changed = false;
+  bool is_initialized = false;
 };
 
 std::shared_ptr<EventLoop>
@@ -378,11 +388,9 @@ int main(int argc, char *argv[]) {
   cerr << "starting\n";
   FWContextBase * application = applicationMain();
   platform.setApplication(application);
-  // platform.createWindow(&(platform.getApplication()), "App");
   platform.createContext(&(platform.getApplication()), "App", 800, 600);
   platform.getApplication().initialize(&platform);
   platform.getApplication().onCmdLine(argc, argv);
-  platform.getApplication().initializeContent();
 
   auto eventloop = platform.createEventLoop();
   eventloop->run();
