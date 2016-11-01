@@ -55,9 +55,6 @@ public:
       defaults = [NSUserDefaults standardUserDefaults];
     }
     
-    bool createWindow(FWContextBase * context, const char * title) override {
-        return true;
-    }
     void createFBO(int flags) override {
       [controller createFBO: flags];
     }
