@@ -81,11 +81,7 @@ class FWPlatformBase {
     }
     return *logger;
   }
-  virtual void createFormView(int id) = 0;
-  virtual void createOpenGLView(int id) = 0;
-  virtual void showView(int id) = 0;
-  void sendMessage(const Message & message){
-  }
+  virtual void sendMessage(const Message & message) = 0;
   int getNextElementId(){
     return nextElementId++;
   }
@@ -94,7 +90,7 @@ class FWPlatformBase {
   
  protected:
   virtual std::shared_ptr<SoundCanvas> createSoundCanvas() const = 0;
-  virtual std::shared_ptr<Logger> createLogger() = 0;
+  virtual std::shared_ptr<Logger> createLogger() const = 0;
   int display_width = 0, display_height = 0;
   float display_scale = 1.0f;
   std::string glsl_version;
