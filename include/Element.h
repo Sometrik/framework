@@ -44,6 +44,14 @@ class Element {
       FWPlatformBase & getPlatform() { return *platform; }
       const FWPlatformBase & getPlatform() const { return *platform; }
 
+      std::shared_ptr<Element> getFirstChild() const {
+	if (!children.empty()) {
+	  return children.front();
+	} else {
+	  return std::shared_ptr<Element>(0);
+	}
+      }
+
 protected:
   FWPlatformBase * platform = 0;
   int id;
