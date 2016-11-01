@@ -82,6 +82,7 @@ class FWPlatformBase {
     return *logger;
   }
   virtual void createFormView(int id) = 0;
+  virtual void createOpenGLView(int id) = 0;
   virtual void showFormView(int id) = 0;
   
   float getDisplayScale() const { return display_scale; }
