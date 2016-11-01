@@ -66,7 +66,7 @@ public:
     return std::make_shared<AndroidLogger>();
   }
   void createFormView(int id){
-    messagePoster(10, id);
+    messagePoster(8, id);
   }
 
 
