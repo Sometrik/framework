@@ -4,15 +4,17 @@
 #include <FWViewBase.h>
 #include <Message.h>
 
+#ifdef __APPLE__
+#include <OpenGLES/ES3/gl.h>
+#else
+#include <GLES3/gl3.h>
+#include <EGL/egl.h>
+#include <EGL/eglext.h>
+#endif
+
 class OpenGLView : public FWViewBase {
  public:
-  
-  OpenGLView(){
-
-  }
-  ~OpenGLView(){
-
-  }
+  OpenGLView() { }
 
   void initialize(FWPlatformBase * _platform) override {
     FWViewBase::initialize(_platform);
@@ -35,7 +37,6 @@ class OpenGLView : public FWViewBase {
     actual_width = _actual_width;
     actual_height = _actual_height;
   }
-
 
  protected:
   int logical_width = 0, logical_height = 0, actual_width = 0, actual_height = 0;
