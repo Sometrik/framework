@@ -71,7 +71,7 @@ public:
   void createOpenGLView(int id){
     messagePoster(9, id);
   }
-  void showFormView(int id){
+  void showView(int id){
     messagePoster(7, id);
   }
 
