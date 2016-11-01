@@ -18,7 +18,7 @@
 #include <memory>
 #include <Logger.h>
 #include <SoundCanvas.h>
-#include <OpenGlView.h>
+#include <OpenGLView.h>
 #include <TouchEvent.h>
 #include <FormView.h>
 
@@ -84,7 +84,11 @@ class FWPlatformBase {
   virtual void createFormView(int id) = 0;
   virtual void createOpenGLView(int id) = 0;
   virtual void showView(int id) = 0;
-  
+  void sendMessage(const Message & message){
+  }
+  int getNextElementId(){
+    return nextElementId++;
+  }
   float getDisplayScale() const { return display_scale; }
   bool hasES3() const { return has_es3; }
   
@@ -117,6 +121,7 @@ class FWPlatformBase {
  private:
   std::shared_ptr<SoundCanvas> soundCanvas;
   std::shared_ptr<Logger> logger;
+  int nextElementId = 1;
 
 };
 
