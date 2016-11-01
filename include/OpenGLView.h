@@ -2,16 +2,6 @@
 #define _OPENGLVIEW_H_
 
 #include <FWViewBase.h>
-#include <Message.h>
-#include <FWPlatformBase.h>
-
-#ifdef __APPLE__
-#include <OpenGLES/ES3/gl.h>
-#else
-#include <GLES3/gl3.h>
-#include <EGL/egl.h>
-#include <EGL/eglext.h>
-#endif
 
 class OpenGLView : public FWViewBase {
  public:
