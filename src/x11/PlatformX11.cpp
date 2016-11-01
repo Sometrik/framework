@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -14,8 +13,9 @@
 #include <FWPlatformBase.h>
 #include <EventLoop.h>
 #include <CurlClient.h>
-
+#include <Logger.h>
 #include <ContextCairo.h>
+#include <TouchEvent.h>
 
 #include <iostream>
 
@@ -181,6 +181,18 @@ public:
     return std::shared_ptr<canvas::ContextFactory>(new canvas::CairoContextFactory);
   }
 
+  void sendMessage(const Message & message) override {
+
+  }
+
+  std::shared_ptr<SoundCanvas> createSoundCanvas() const override {
+    return std::make_shared<DummySoundCanvas>();
+  }
+  
+  std::shared_ptr<Logger> createLogger() const override {
+    return std::make_shared<BasicLogger>();
+  }
+
   std::shared_ptr<EventLoop> createEventLoop() override;
   
   void showMessageBox(const std::string & message) {
@@ -303,22 +315,26 @@ protected:
       stop();
       break;
     case MotionNotify:
-      // getApplication().onMouseMove(xev.xmotion.x, xev.xmotion.y);
       if (button_pressed) {
-	getApplication()->touchesMoved(xev.xmotion.x, xev.xmotion.y, getPlatform()->getTime(), 0);
+	TouchEvent ev(TouchEvent::ACTION_MOVE, xev.xmotion.x, xev.xmotion.y, getPlatform()->getTime(), 0);
+	getApplication()->onTouchEvent(ev);
       }
       mouse_x = xev.xmotion.x;
       mouse_y = xev.xmotion.y;
       break;
     case ButtonPress:
-      // getApplication().onMouseDown(xev.xbutton.button, 0, 0);
-      getApplication()->touchesBegin(mouse_x, display_height - 1 - mouse_y, getPlatform()->getTime(), 0);
-      button_pressed = true;
+      {
+	TouchEvent ev(TouchEvent::ACTION_DOWN, mouse_x, display_height - 1 - mouse_y, getPlatform()->getTime(), 0);
+	getApplication()->onTouchEvent(ev);
+	button_pressed = true;
+      }
       break;
     case ButtonRelease:
-      // getApplication().onMouseUp(xev.xbutton.button, 0, 0);
-      getApplication()->touchesEnded(mouse_x, display_height - 1 - mouse_y, getPlatform()->getTime(), 0);
-      button_pressed = false;
+      {
+	TouchEvent ev(TouchEvent::ACTION_UP, mouse_x, display_height - 1 - mouse_y, getPlatform()->getTime(), 0);
+	getApplication()->onTouchEvent(ev);
+	button_pressed = false;
+      }
       break;
     case ConfigureNotify:
       {
