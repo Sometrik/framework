@@ -3,6 +3,10 @@
 
 #include <FWViewBase.h>
 
+#define FBO_COLOR	1
+#define FBO_DEPTH	2
+#define FBO_STENCIL	4
+
 class OpenGLView : public FWViewBase {
  public:
   OpenGLView() { }
@@ -21,6 +25,8 @@ class OpenGLView : public FWViewBase {
   int getLogicalHeight() const { return logical_height; }
   int getActualWidth() const { return actual_width; }
   int getActualHeight() const { return actual_height; }
+
+  void createFBO(int flags) { }
 
  private:
   int logical_width = 0, logical_height = 0, actual_width = 0, actual_height = 0;
