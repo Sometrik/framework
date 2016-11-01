@@ -42,6 +42,7 @@ class Element {
       void sendMessage(const Message & message);
 
       FWPlatformBase & getPlatform() { return *platform; }
+      const FWPlatformBase & getPlatform() const { return *platform; }
 
 protected:
   FWPlatformBase * platform = 0;
