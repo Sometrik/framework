@@ -310,8 +310,8 @@ void Java_com_sometrik_framework_MyGLRenderer_onInit(JNIEnv* env, jobject thiz, 
   }
   FWContextBase * application = applicationMain();
   platform->setApplication(application);
-  platform->onResize(screenWidth, screenHeight);
   platform->onInit(env, gJavaVM);
+  platform->onResize(screenWidth, screenHeight);
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Init end");
 }
 
