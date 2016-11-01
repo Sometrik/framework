@@ -64,7 +64,7 @@ public class FrameWork extends Activity {
   private AlertDialog.Builder builder;
   private AlertDialog alert;
   private float windowYcoords;
-  private ArrayList<FormView> viewList;
+  private ArrayList<FormView> viewList = new ArrayList<FormView>();
 
   private MyGLRenderer renderer;
 
@@ -623,7 +623,8 @@ public class FrameWork extends Activity {
 
   //Creates message that is sent to MyGLSurface handler. Called from JNI
   public static void LeaveMessageToSurface(FrameWork frameWork, int messageCode, int content) {
-    frameWork.mainHandler.sendEmptyMessage(messageCode);
+    Message msg = Message.obtain(null, messageCode, content);
+    frameWork.mainHandler.sendMessage(msg);
   }
   public static void LeaveMessageToSurface(FrameWork frameWork, int messageCode) {
     frameWork.mainHandler.sendEmptyMessage(messageCode);
