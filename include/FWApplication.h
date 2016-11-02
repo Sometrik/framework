@@ -11,7 +11,7 @@ public:
   virtual bool loadEvents() { return false; }
   
   void setCaption(const std::string & s) {
-    Message m(Message::SET_CAPTION);
+    Message m(Message::SET_CAPTION, getId());
     m.setTextValue(s);
     sendMessage(m);
   }
