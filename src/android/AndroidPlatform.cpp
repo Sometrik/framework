@@ -18,7 +18,9 @@
 #include <AndroidClient.h>
 #include <AndroidPlatform.h>
 #include <shader_program.h>
-#include <FWContextBase.h>
+#include <FWApplication.h>
+#include <TouchEvent.h>
+#include <CommandEvent.h>
 
 #include <android_fopen.h>
 
@@ -52,8 +54,8 @@ void AndroidPlatform::onResize(int width, int height) {
   getApplication().onResize(width / getDisplayScale(), height / getDisplayScale(), width, height);
 }
 
-void AndroidPlatform::menuPressed() {
-
+void
+AndroidPlatform::menuPressed() {
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Platform menupressed called");
 
 //	jclass handlerClass = env->GetObjectClass(handler);
