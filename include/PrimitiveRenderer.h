@@ -1,20 +1,16 @@
 #ifndef _PRIMITIVERENDERER_H_
 #define _PRIMITIVERENDERER_H_
 
-#include <glm/glm.hpp>
-
 #include <VBO.h>
 #include <TextureRef.h>
-
 #include <shader_program.h>
-#include <FWPlatformBase.h>
+
+#include <glm/glm.hpp>
 
 #define COLOR_BUFFER_BIT		1
 #define DEPTH_BUFFER_BIT		2
 #define STENCIL_BUFFER_BIT		4
 #define DEPTH_STENCIL_BUFFER_BIT	8
-
-class FWPlatformBase;
 
 class PrimitiveRenderer {
  public:
