@@ -7,6 +7,8 @@ class CommandEvent : public EventBase {
 public:
   CommandEvent(int _originating_id, int _value = 0) : EventBase(_originating_id), value(_value) { }
 
+  void dispatch(Element & element) override;
+
  private:
   int value;
 };

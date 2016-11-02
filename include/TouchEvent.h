@@ -11,6 +11,8 @@ public:
   TouchEvent(Type _type, int _x, int _y, double _timestamp, int _identifier)
     : EventBase(0), type(_type), x(_x), y(_y), time(_timestamp), identifier(_identifier) { }
 
+  void dispatch(Element & element) override;
+  
   Type getType() { return type; }
   int getX() { return x; }
   int getY() { return y; }
