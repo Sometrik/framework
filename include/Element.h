@@ -5,6 +5,7 @@
 #include <vector>
 
 class TouchEvent;
+class CommandEvent;
 class FWPlatformBase;
 class Message;
 
@@ -21,6 +22,7 @@ class Element {
   virtual void onDraw() { }
   virtual void onShutdown() { }
   virtual void onMemoryWarning() { }
+  virtual void onCommandEvent(CommandEvent & ev) { }
 
       virtual void onCmdLine(int argc, char *argv[]) { }
 
