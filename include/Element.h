@@ -6,18 +6,15 @@
 
 class TouchEvent;
 class CommandEvent;
-class FWPlatformBase;
+class FWPlatform;
 class Message;
 
 class Element {
  public:
-  Element() {
-  }
-
+  Element() { }
   virtual ~Element() { }
 
-
-  virtual void initialize(FWPlatformBase * _platform);
+  virtual void initialize(FWPlatform * _platform);
   virtual void initializeContent() { }
   virtual void onDraw() { }
   virtual void onShutdown() { }
@@ -47,8 +44,8 @@ class Element {
 
       void sendMessage(const Message & message);
 
-      FWPlatformBase & getPlatform() { return *platform; }
-      const FWPlatformBase & getPlatform() const { return *platform; }
+      FWPlatform & getPlatform() { return *platform; }
+      const FWPlatform & getPlatform() const { return *platform; }
 
       std::shared_ptr<Element> getFirstChild() const {
 	if (!children.empty()) {
@@ -59,7 +56,7 @@ class Element {
       }
 
 protected:
-  FWPlatformBase * platform = 0;
+  FWPlatform * platform = 0;
   Element * parent = 0;
   int id = 0;
   std::string name;

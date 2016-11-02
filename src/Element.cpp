@@ -1,8 +1,8 @@
 #include <Element.h>
-#include <FWPlatformBase.h>
+#include <FWPlatform.h>
 
 void
-Element::initialize(FWPlatformBase * _platform) {
+Element::initialize(FWPlatform * _platform) {
   platform = _platform;
   id = platform->getNextElementId();
 }

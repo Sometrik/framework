@@ -1,5 +1,5 @@
-#ifndef _FWPLATFORMBASE_H_
-#define _FWPLATFORMBASE_H_
+#ifndef _FWPLATFORM_H_
+#define _FWPLATFORM_H_
 
 #include "FWRect.h"
 #include "FWActionSheet.h"
@@ -20,7 +20,7 @@ namespace canvas {
 };
 class HTTPClientFactory;
 
-class FWPlatformBase {
+class FWPlatform {
  public:
   enum FileType {
     NORMAL = 1,
@@ -28,9 +28,9 @@ class FWPlatformBase {
 		CACHE_DATABASE
   };
   
- FWPlatformBase(float _display_scale, const char * _glsl_version, bool _has_es3)
+ FWPlatform(float _display_scale, const char * _glsl_version, bool _has_es3)
    : display_scale(_display_scale), glsl_version(_glsl_version), has_es3(_has_es3) { }
-  virtual ~FWPlatformBase() { }
+  virtual ~FWPlatform() { }
 
   const std::string & getGLSLVersion() const { return glsl_version; }
   

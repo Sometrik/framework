@@ -8,7 +8,7 @@ class Button : public Element {
  public:
   Button(const std::string & _label) : label(_label) { }
 
-  void initialize(FWPlatformBase * _platform) override {
+  void initialize(FWPlatform * _platform) override {
     Element::initialize(_platform);
     Message m(Message::CREATE_BUTTON, getId(), getParentId());
     m.setTextValue(label);

@@ -8,7 +8,7 @@ class FormView : public FWViewBase {
  public:
   FormView() { }
 
-  void initialize(FWPlatformBase * _platform) override {
+  void initialize(FWPlatform * _platform) override {
     FWViewBase::initialize(_platform);
     sendMessage(Message(Message::CREATE_FORMVIEW, getId(), getParentId()));
   }

@@ -1,22 +1,16 @@
 #include <OpenGLView.h>
-#include <FWPlatformBase.h>
+#include <FWPlatform.h>
 #include <Message.h>
 #include <Logger.h>
 
 #include <sstream>
 
-#ifdef __APPLE__
-#include <OpenGLES/ES3/gl.h>
-#else
-#include <GLES3/gl3.h>
-#include <EGL/egl.h>
-#include <EGL/eglext.h>
-#endif
+#include <GL.h>
 
 using namespace std;
 
 void
-OpenGLView::initialize(FWPlatformBase * _platform) {
+OpenGLView::initialize(FWPlatform * _platform) {
   FWViewBase::initialize(_platform);
   sendMessage(Message(Message::CREATE_OPENGL_VIEW, getId(), getParentId()));
   logical_width = int(_platform->getDisplayWidth() / _platform->getDisplayScale());

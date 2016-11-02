@@ -1,4 +1,4 @@
-#include <FWPlatformBase.h>
+#include <FWPlatform.h>
 #include <EventLoop.h>
 #include <CurlClient.h>
 #include <Logger.h>
@@ -19,12 +19,12 @@
 
 using namespace std;
 
-class PlatformSDL : public FWPlatformBase {
+class PlatformSDL : public FWPlatform {
 public:
-  PlatformSDL() : FWPlatformBase(1.0f,
-				 // "#version 300 es",
-				 "#version 100",
-				 true) { }
+  PlatformSDL() : FWPlatform(1.0f,
+			     // "#version 300 es",
+			     "#version 100",
+			     true) { }
 
   double getTime() const override {
     struct timeval tv;

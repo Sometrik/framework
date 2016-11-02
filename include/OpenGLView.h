@@ -11,7 +11,7 @@ class OpenGLView : public FWViewBase {
  public:
   OpenGLView() { }
 
-  void initialize(FWPlatformBase * _platform) override;
+  void initialize(FWPlatform * _platform) override;
 
   bool onResize(int _logical_width, int _logical_height, int _actual_width, int _actual_height) {
     logical_width = _logical_width;

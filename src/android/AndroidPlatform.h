@@ -1,16 +1,13 @@
-#include <FWPlatformBase.h>
+#include <FWPlatform.h>
 #include <ContextAndroid.h>
 #include <AndroidClient.h>
 #include <AndroidSoundCanvas.h>
 #include <AndroidLogger.h>
-class shader_program;
 
-class AndroidPlatform: public FWPlatformBase {
-
-
+class AndroidPlatform: public FWPlatform {
 public:
   AndroidPlatform(JNIEnv * _env, jobject _mgr, jobject _framework, float _display_scale, const char * _glsl_version, bool _has_es3) :
-      FWPlatformBase(_display_scale, _glsl_version, _has_es3) {
+      FWPlatform(_display_scale, _glsl_version, _has_es3) {
     framework = _env->NewGlobalRef(_framework);
     mgr = _env->NewGlobalRef(_mgr);
   }
