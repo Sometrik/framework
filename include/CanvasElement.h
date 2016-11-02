@@ -3,6 +3,7 @@
 
 class CanvasElement : public Element {
  public:
+  CanvasElement() { }
   
 };
 
