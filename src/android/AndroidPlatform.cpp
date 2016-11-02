@@ -27,7 +27,7 @@
 using namespace gpufw;
 using namespace std;
 
-extern FWContextBase * applicationMain();
+extern FWApplication * applicationMain();
 
 bool AndroidPlatform::onTouchesEvent(jobject * _obj, int mode, int fingerIndex, double time, float x, float y) {
 
@@ -294,7 +294,7 @@ void Java_com_sometrik_framework_MyGLRenderer_onInit(JNIEnv* env, jobject thiz, 
 
     platform = std::make_shared<AndroidPlatform>(env, assetManager, surface, displayScale, glslVersion, hasEs3);
   }
-  FWContextBase * application = applicationMain();
+  FWApplication * application = applicationMain();
   platform->setApplication(application);
   platform->onInit(env, gJavaVM);
   application->initialize(this);
