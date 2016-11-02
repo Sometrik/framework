@@ -36,14 +36,19 @@ public:
     return t;
   }
     
-  void showMessageBox(const string&, const string&) {
-
+  void showMessageBox(const string & title, const string & message) override {
+#if 0
+    SDL_ShowSimpleMessageBox( SDL_MESSAGEBOX_INFORMATION,
+			      title.c_str(),
+			      message.c_str(),
+			      NULL);
+#endif
   }
   void postNotification(const string&, const string&) {
     
   }
   string getLocalFilename(const char * fn, FileType type) {
-    string s = "android_projects/assets/";
+    string s = "assets/";
     return s + fn;
   }
   
@@ -73,10 +78,6 @@ public:
 
   // std::shared_ptr<EventLoop> createEventLoop() override;
   
-  void showMessageBox(const std::string & message) {
-    
-  }
-
   std::string showTextEntryDialog(const std::string & message) {
     return "";
   }
