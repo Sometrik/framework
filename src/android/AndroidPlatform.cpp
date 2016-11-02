@@ -238,10 +238,6 @@ void AndroidPlatform::messagePoster(int message, const std::string title, const 
   env->ReleaseStringUTFChars(jtext, text.c_str());
 }
 
-void AndroidPlatform::postNotification(const std::string & title, const std::string & message) {
-  messagePoster(4, title, message);
-}
-
 double AndroidPlatform::getTime() const {
 
   auto env = getJNIEnv();
@@ -264,11 +260,6 @@ JNIEnv* AndroidPlatform::getJNIEnv() const {
     __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Env is null");
   }
   return Myenv;
-}
-
-
-void AndroidPlatform::launchBrowser(const std::string & input_url) {
-  messagePoster(3, "http://stackoverflow.com/questions/4121450/activitynotfoundexception");
 }
 
 std::shared_ptr<AndroidPlatform> platform;

@@ -35,7 +35,6 @@ public:
   void showMessageBox(const std::string & title, const std::string & message) override;
 
   std::string showTextEntryDialog(const std::string & message) override;
-  void postNotification(const std::string & title, const std::string & message) override;
   std::string getBundleFilename(const char * filename) override;
   std::string getLocalFilename(const char * filename, FileType type) override;
   double getTime() const override;
@@ -50,7 +49,6 @@ public:
     auto env = getJNIEnv();
     return std::make_shared<AndroidSoundCanvas>(env, mgr);
   }
-  void launchBrowser(const std::string & input_url) override;
   void storeValue(const std::string & key, const std::string & value) override;
   std::string loadValue(const std::string & key) override;
   int showActionSheet(const FWRect & rect, const FWActionSheet & sheet) override;
