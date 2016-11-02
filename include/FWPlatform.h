@@ -1,25 +1,25 @@
 #ifndef _FWPLATFORM_H_
 #define _FWPLATFORM_H_
 
-#include "FWRect.h"
-#include "FWActionSheet.h"
-
+#include <FWRect.h>
+#include <FWActionSheet.h>
+#include <FWApplication.h>
+#include <EventBase.h>
+#include <Message.h>
 #include <Logger.h>
 #include <SoundCanvas.h>
+#include <FWDefs.h>
 
 #include <string>
 #include <memory>
 
 class FWApplication;
 class EventLoop;
-class Message;
 
 namespace canvas {
   class ContextFactory;
 };
 class HTTPClientFactory;
-
-#define FW_ID_MENU	-1
 
 class FWPlatform {
  public:
@@ -73,7 +73,7 @@ class FWPlatform {
   }
   virtual void sendMessage(const Message & message) = 0;
 
-  void postEvent(const Event & ev) {
+  void postEvent(EventBase & ev) {
     auto e = getApplication().getFirstChild();
     ev.dispatch(*e);
   }
