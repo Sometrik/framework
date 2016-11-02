@@ -1,4 +1,3 @@
-#include <FWContextBase.h>
 #include <FWPlatformBase.h>
 #include <EventLoop.h>
 #include <CurlClient.h>
@@ -6,6 +5,8 @@
 #include <ContextCairo.h>
 #include <TouchEvent.h>
 #include <SDLSoundCanvas.h>
+#include <Message.h>
+#include <FWApplication.h>
 
 #include <SDL/SDL.h>
 #include <GL/gl.h>
@@ -65,7 +66,14 @@ public:
   }
 
   void sendMessage(const Message & message) override {
-
+    switch (message.getType()) {
+    case Message::SET_CAPTION:
+      SDL_WM_SetCaption(message.getTextValue().c_str(),
+			message.getTextValue().c_str());
+      break;
+    default:
+      break;
+    }
   }
 
   std::shared_ptr<SoundCanvas> createSoundCanvas() const override {
@@ -195,7 +203,7 @@ static void handle_key_down(SDL_keysym* keysym) {
 }
 #endif
 
-extern FWContextBase * applicationMain();
+extern FWApplication * applicationMain();
 
 int main(int argc, char *argv[]) {
   if( SDL_Init( SDL_INIT_VIDEO | SDL_INIT_AUDIO ) < 0 ) {
@@ -233,7 +241,7 @@ int main(int argc, char *argv[]) {
     exit(1);
   }
 
-  FWContextBase * application = applicationMain();
+  FWApplication * application = applicationMain();
 
   cerr << "starting, app = " << application << "\n";
 
