@@ -45,9 +45,6 @@ public:
 			      NULL);
 #endif
   }
-  void postNotification(const string&, const string&) {
-    
-  }
   string getLocalFilename(const char * fn, FileType type) {
     string s = "assets/";
     return s + fn;
@@ -90,14 +87,6 @@ public:
     return "";
   }
 
-  void postNotification(const std::string & message) {
-
-  }
-
-  void launchBrowser(const std::string & input_url) {
-
-  }
-
   std::string getBundleFilename(const char * filename) {
     string s = "assets/";
     return s + filename;
@@ -131,21 +120,21 @@ public:
 	case SDL_MOUSEBUTTONDOWN:
 	  {
 	    TouchEvent ev(TouchEvent::ACTION_DOWN, mouse_x, display_height - 1 - mouse_y, getTime(), 0);
-	    getApplication().getFirstChild()->onTouchEvent(ev);
+	    postEvent(ev);
 	    button_pressed = true;
 	  }
 	  break;
 	case SDL_MOUSEBUTTONUP:
 	  {
 	    TouchEvent ev(TouchEvent::ACTION_UP, mouse_x, display_height - 1 - mouse_y, getTime(), 0);
-	    getApplication().getFirstChild()->onTouchEvent(ev);
+	    postEvent(ev);
 	    button_pressed = false;
 	  }
 	  break;
 	case SDL_MOUSEMOTION:
 	  if (button_pressed) {
 	    TouchEvent ev(TouchEvent::ACTION_MOVE, event.motion.x, display_height - 1 - event.motion.y, getTime(), 0);
-	    getApplication().getFirstChild()->onTouchEvent(ev);
+	    postEvent(ev);
 	  }
 	  mouse_x = event.motion.x;
 	  mouse_y = event.motion.y;
