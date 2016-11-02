@@ -1,16 +1,16 @@
-#ifndef _LABEL_H_
-#define _LABEL_H_
+#ifndef _TEXTLABEL_H_
+#define _TEXTLABEL_H_
 
 #include <Element.h>
 #include <Message.h>
 
-class Label : public Element {
+class TextLabel : public Element {
  public:
-  Label(const std::string & _text) : text(_text) { }
+  TextLabel(const std::string & _text) : text(_text) { }
 
   void initialize(FWPlatform * _platform) override {
     Element::initialize(_platform);
-    Message m(Message::CREATE_LABEL, getId(), getParentId());
+    Message m(Message::CREATE_TEXTLABEL, getId(), getParentId());
     m.setTextValue(text);
     sendMessage(m);
   }
