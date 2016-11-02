@@ -17,7 +17,7 @@ class Message {
     SHOW_MESSAGE_DIALOG,
     SHOW_INPUT_DIALOG,
     LAUNCH_BROWSER,
-    CREATE_NOTIFICATION,
+    POST_NOTIFICATION,
     SET_VALUE, //Sets value of textfields.
     SET_LABEL, //this sets label for buttons and labels.
     SET_ATTRIBUTE,
@@ -26,7 +26,9 @@ class Message {
   };
 
  Message(MessageType _message, int _elementId = 0, int _parentElementId = 0) : messageType(_message), elementId(_elementId), parentElementId(_parentElementId) { }
-  ~Message(){ }
+ Message(MessageType _message, const std::string & _textValue) : messageType(_message), elementId(0), parentElementId(0), textValue(_textValue) { }
+ Message(MessageType _message, const std::string & _textValue, const std::string & _textValue2) : messageType(_message), elementId(0), parentElementId(0), textValue(_textValue), textValue2(_textValue2) { }
+  ~Message() { }
   
   MessageType getType() const { return messageType; }
   int getElementId() const { return elementId; }
@@ -46,7 +48,7 @@ class Message {
   int elementId, parentElementId;
   int value;
   std::string key;
-  std::string textValue;
+  std::string textValue, textValue2;
 };
 
 #endif
