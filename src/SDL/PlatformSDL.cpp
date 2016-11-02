@@ -142,6 +142,15 @@ public:
 	  mouse_x = event.motion.x;
 	  mouse_y = event.motion.y;
 	  break;
+	case SDL_VIDEORESIZE:
+	  {
+	    int w = event.resize.w, h = event.resize.h;
+	    cerr << "resized (" << w << " " << h << ")\n";
+	    setDisplayWidth(w);
+	    setDisplayHeight(h);
+	    getApplication().getFirstChild()->onResize(w, h, w, h);
+	  }
+	  break;
 	case SDL_QUIT:
 	  return;
 	}
@@ -206,7 +215,7 @@ int main(int argc, char *argv[]) {
     exit(1);
   }
 
-  int width = 640, height = 480;
+  int width = 800, height = 600;
   int bpp = info->vfmt->BitsPerPixel;
 
   SDL_GL_SetAttribute( SDL_GL_RED_SIZE, 5 );
