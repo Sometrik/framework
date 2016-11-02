@@ -5,26 +5,21 @@
 
 #include <string.h>
 #include <android/log.h>
-#include <GLES3/gl3.h>
 #include "Menu.h"
 #include <jni.h>
 #include <android/asset_manager.h>
 #include <android/asset_manager_jni.h>
 #include <iostream>
-#include "VBO.h"
-#include <glm/gtc/matrix_transform.hpp>
 #include <android/bitmap.h>
 #include <ContextAndroid.h>
 #include <AndroidClient.h>
 #include <AndroidPlatform.h>
-#include <shader_program.h>
 #include <FWApplication.h>
 #include <TouchEvent.h>
 #include <CommandEvent.h>
 
 #include <android_fopen.h>
 
-using namespace gpufw;
 using namespace std;
 
 extern FWApplication * applicationMain();
