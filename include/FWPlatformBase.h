@@ -4,15 +4,16 @@
 #include "FWRect.h"
 #include "FWActionSheet.h"
 
-#include <string>
-#include <memory>
 #include <Logger.h>
 #include <SoundCanvas.h>
 #include <TouchEvent.h>
-#include <FormView.h>
 
-class FWContextBase;
+#include <string>
+#include <memory>
+
+class FWApplication;
 class EventLoop;
+class Message;
 
 namespace canvas {
   class ContextFactory;
@@ -49,8 +50,8 @@ class FWPlatformBase {
   
   std::string getBundleFilename(const std::string & filename) { return getBundleFilename(filename.c_str()); }
 
-  void setApplication(FWContextBase * _application) {application = _application;}
-  FWContextBase& getApplication() { return *application; }
+  void setApplication(FWApplication * _application) {application = _application;}
+  FWApplication & getApplication() { return *application; }
   SoundCanvas & getSoundCanvas() {
     if (soundCanvas == 0){
       soundCanvas = createSoundCanvas();
@@ -82,7 +83,7 @@ class FWPlatformBase {
   float display_scale = 1.0f;
   std::string glsl_version;
   bool has_es3 = false;
-  FWContextBase * application = 0;
+  FWApplication * application = 0;
     
  private:
   std::shared_ptr<SoundCanvas> soundCanvas;
