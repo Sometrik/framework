@@ -57,6 +57,7 @@ void AndroidPlatform::onResize(int width, int height) {
 void
 AndroidPlatform::menuPressed() {
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Platform menupressed called");
+  postEvent(CommandEvent(FW_ID_MENU));
 
 //	jclass handlerClass = env->GetObjectClass(handler);
 //	jmethodID emptyMessageMethod = env->GetMethodID(handlerClass, "sendEmptyMessage", "(I)Z");
