@@ -8,7 +8,8 @@ Element::initialize(FWPlatformBase * _platform) {
 }
 
 
-void Element::sendMessage(const Message & message){
+void
+Element::sendMessage(const Message & message){
   platform->sendMessage(message);
 }
 
