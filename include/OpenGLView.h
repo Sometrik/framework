@@ -28,6 +28,9 @@ class OpenGLView : public FWViewBase {
 
   void createFBO(int flags) { }
 
+ protected:
+  void checkGLError();
+
  private:
   int logical_width = 0, logical_height = 0, actual_width = 0, actual_height = 0;
 };
