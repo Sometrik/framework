@@ -62,15 +62,6 @@ AndroidPlatform::menuPressed() {
 //	jclass handlerClass = env->GetObjectClass(handler);
 //	jmethodID emptyMessageMethod = env->GetMethodID(handlerClass, "sendEmptyMessage", "(I)Z");
 //	env->CallVoidMethod(handler, emptyMessageMethod, 1);
-
-  //--------- creating actionSheet for debug
-//	FWActionSheet debugSheet = FWActionSheet("This is title");
-//	debugSheet.addOption(1, "Social Media");
-//	debugSheet.addOption(2, "Application Settings");
-//	debugSheet.addOption(3, "Login Settings");
-  //------------------------
-
-//		showActionSheet(FWRect(), debugSheet);
 }
 
 int AndroidPlatform::showActionSheet(const FWRect & rect, const FWActionSheet & sheet) {
