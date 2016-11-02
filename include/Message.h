@@ -24,10 +24,12 @@ class Message {
     SET_CAPTION
   };
 
-  Message(MessageType _message, int _elementId = 0) : messageType(_message), elementId(_elementId){ }
+ Message(MessageType _message, int _elementId = 0, int _parentElementId = 0) : messageType(_message), elementId(_elementId), parentElementId(_parentElementId) { }
   ~Message(){ }
-
+  
   MessageType getType() const { return messageType; }
+  int getElementId() const { return elementId; }
+  int getParentElementId() const { return parentElementId; }
   
   int getValue() const { return value; }
   void setValue(int v) { value = v; }
@@ -40,7 +42,7 @@ class Message {
 
  private:
   MessageType messageType;
-  int elementId;
+  int elementId, parentElementId;
   int value;
   std::string key;
   std::string textValue;

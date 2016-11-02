@@ -1,23 +1,17 @@
 #ifndef _FORMVIEW_H_
 #define _FORMVIEW_H_
+
 #include <FWViewBase.h>
+#include <Message.h>
 
 class FormView : public FWViewBase {
  public:
-  FormView() {
+  FormView() { }
+
+  void initialize(FWPlatformBase * _platform) override {
+    FWViewBase::initialize(_platform);
+    sendMessage(Message(Message::CREATE_FORMVIEW, getId(), getParentId()));
   }
-
-  ~FormView(){
-
-  }
-
-  virtual void setTitle(const char * title);
-  virtual const char * getUsername();
-  virtual const char * getPassword();
-  virtual void submitButtonClicked();
-
-
- private:
 };
 
 #endif
