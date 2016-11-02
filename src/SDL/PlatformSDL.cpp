@@ -5,6 +5,7 @@
 #include <Logger.h>
 #include <ContextCairo.h>
 #include <TouchEvent.h>
+#include <SDLSoundCanvas.h>
 
 #include <SDL/SDL.h>
 #include <GL/gl.h>
@@ -63,7 +64,7 @@ public:
   }
 
   std::shared_ptr<SoundCanvas> createSoundCanvas() const override {
-    return std::make_shared<DummySoundCanvas>();
+    return std::make_shared<SDLSoundCanvas>();
   }
   
   std::shared_ptr<Logger> createLogger() const override {
@@ -187,7 +188,7 @@ static void handle_key_down(SDL_keysym* keysym) {
 extern FWContextBase * applicationMain();
 
 int main(int argc, char *argv[]) {
-  if( SDL_Init( SDL_INIT_VIDEO ) < 0 ) {
+  if( SDL_Init( SDL_INIT_VIDEO | SDL_INIT_AUDIO ) < 0 ) {
     /* Failed, exit. */
     fprintf( stderr, "Video initialization failed: %s\n",
              SDL_GetError( ) );
