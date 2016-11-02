@@ -6,7 +6,6 @@
 
 #include <Logger.h>
 #include <SoundCanvas.h>
-#include <TouchEvent.h>
 
 #include <string>
 #include <memory>
@@ -20,12 +19,14 @@ namespace canvas {
 };
 class HTTPClientFactory;
 
+#define FW_ID_MENU	-1
+
 class FWPlatform {
  public:
   enum FileType {
     NORMAL = 1,
     DATABASE,
-		CACHE_DATABASE
+    CACHE_DATABASE
   };
   
  FWPlatform(float _display_scale, const char * _glsl_version, bool _has_es3)
@@ -37,18 +38,24 @@ class FWPlatform {
   virtual std::shared_ptr<EventLoop> createEventLoop() { return std::shared_ptr<EventLoop>(0); }
   virtual void showMessageBox(const std::string & title, const std::string & message) = 0;
   virtual std::string showTextEntryDialog(const std::string & message) = 0;
-  virtual void postNotification(const std::string & title, const std::string & message) = 0;
   virtual std::string getBundleFilename(const char * filename) = 0;
   virtual std::string getLocalFilename(const char * filename, FileType type) = 0;
   virtual double getTime() const = 0;
   virtual std::shared_ptr<canvas::ContextFactory> createContextFactory() const = 0;
   virtual std::shared_ptr<HTTPClientFactory> createHTTPClientFactory() const = 0;
-  virtual void launchBrowser(const std::string & input_url) = 0;
   virtual void storeValue(const std::string & key, const std::string & value) = 0;
   virtual std::string loadValue(const std::string & key) = 0;
   virtual int showActionSheet(const FWRect & rect, const FWActionSheet & sheet) = 0;
   
   std::string getBundleFilename(const std::string & filename) { return getBundleFilename(filename.c_str()); }
+  
+  void launchBrowser(const std::string & input_url) {
+    sendMessage(Message(Message::LAUNCH_BROWSER, input_url));
+  }
+
+  void postNotification(const std::string & title, const std::string & message) {
+    sendMessage(Message(Message::POST_NOTIFICATION, title, message));
+}
 
   void setApplication(FWApplication * _application) {application = _application;}
   FWApplication & getApplication() { return *application; }
@@ -65,6 +72,12 @@ class FWPlatform {
     return *logger;
   }
   virtual void sendMessage(const Message & message) = 0;
+
+  void postEvent(const Event & ev) {
+    auto e = getApplication().getFirstChild();
+    ev.dispatch(*e);
+  }
+  
   int getNextElementId(){
     return nextElementId++;
   }
