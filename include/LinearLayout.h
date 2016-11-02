@@ -12,7 +12,7 @@ class LinearLayout : public Element {
   LinearLayout(int _direction) : direction(_direction) { }
 
   void initialize(FWPlatformBase * _platform) override {
-    FWViewBase::initialize(_platform);
+    Element::initialize(_platform);
     Message m(Message::CREATE_LINEAR_LAYOUT, getId(), getParentId());
     m.setValue(direction);
     sendMessage(m);

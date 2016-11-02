@@ -9,7 +9,7 @@ class TextField : public Element {
  TextField() { }
 
   void initialize(FWPlatformBase * _platform) override {
-    FWViewBase::initialize(_platform);
+    Element::initialize(_platform);
     sendMessage(Message(Message::CREATE_TEXTFIELD, getId(), getParentId()));
   }
 

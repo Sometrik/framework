@@ -9,7 +9,7 @@ class Label : public Element {
   Label(const std::string & _text) : text(_text) { }
 
   void initialize(FWPlatformBase * _platform) override {
-    FWViewBase::initialize(_platform);
+    Element::initialize(_platform);
     Message m(Message::CREATE_LABEL, getId(), getParentId());
     m.setTextValue(text);
     sendMessage(m);
