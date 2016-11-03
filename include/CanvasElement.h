@@ -12,6 +12,14 @@ class CanvasElement : public Element {
   void setY(float _y) { y = _y; }
   void setWidth(float _width) { width = _width; }
   void setHeight(float _height) { height = _height; }
+
+  void onDrawEvent(DrawEvent & ev) {
+    if (!texture.get()) {
+
+    }
+  }
+
+  virtual void draw() = 0;
   
  private:
   float x = 0, y = 0, width = 0, height = 0;
