@@ -7,6 +7,8 @@
 class TouchEvent;
 class CommandEvent;
 class DrawEvent;
+class PurchaseEvent;
+class SysEvent;
 
 class FWPlatform;
 class Message;
@@ -22,9 +24,9 @@ class Element {
   virtual void onDrawEvent(DrawEvent & ev) { }
   virtual void onCommandEvent(CommandEvent & ev) { }
   virtual bool onTouchEvent(TouchEvent & ev) { return false; }
+  virtual void onPurchaseEvent(PurchaseEvent & ev) { }
+  virtual void onSysEvent(SysEvent & ev) { }
   
-  virtual void onShutdown() { }
-  virtual void onMemoryWarning() { }
   virtual void onCmdLine(int argc, char *argv[]) { }
   virtual bool onKeyPress(char c, double timestamp, int x, int y) { return false; }
   virtual bool onUpdate(double timestamp) { return false; }
@@ -39,6 +41,7 @@ class Element {
     element->initializeContent();
     return *element;
   }
+  Element & addChild(const std::string & text);
 
   int getId() const { return id; }
   int getParentId() const { return parent ? parent->getId() : 0; }
