@@ -5,7 +5,7 @@ class Message {
  public:
 
   enum MessageType {
-    SHOW,
+    SHOW_VIEW,
     CREATE_FORMVIEW,
     CREATE_BUTTON,
     CREATE_LINEAR_LAYOUT,
