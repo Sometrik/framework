@@ -15,8 +15,10 @@
 #include <AndroidClient.h>
 #include <AndroidPlatform.h>
 #include <FWApplication.h>
+
 #include <TouchEvent.h>
 #include <CommandEvent.h>
+#include <DrawEvent.h>
 
 #include <android_fopen.h>
 
@@ -30,13 +32,22 @@ bool AndroidPlatform::onTouchesEvent(jobject * _obj, int mode, int fingerIndex, 
   y /= getDisplayScale();
   switch (mode) {
   case 1:
-    postEvent(TouchEvent(TouchEvent::Type::ACTION_DOWN, x, y, time, fingerIndex));
+    {
+      TouchEvent ev(getActiveViewId(), TouchEvent::ACTION_DOWN, x, y, time, fingerIndex);
+      postEvent(ev);
+    }
     break;
   case 2:
-    postEvent(TouchEvent(TouchEvent::Type::ACTION_MOVE, x, y, time, fingerIndex));
+    {
+      TouchEvent ev(getActiveViewId(), TouchEvent::ACTION_MOVE, x, y, time, fingerIndex);
+      postEvent(ev);
+    }
     break;
   case 3:
-    postEvent(TouchEvent(TouchEvent::Type::ACTION_UP, x, y, time, fingerIndex));
+    {
+      TouchEvent ev(getActiveViewId(), TouchEvent::ACTION_UP, x, y, time, fingerIndex);
+      postEvent(ev);
+    }
     break;
   }
 
