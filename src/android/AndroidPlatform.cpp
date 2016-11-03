@@ -94,7 +94,8 @@ bool AndroidPlatform::onUpdate(double timestamp) {
 
 void
 AndroidPlatform::onDraw() {
-  getApplication().onDraw();
+  DrawEvent ev(0);
+  postEvent(ev);
 }
 
 std::string AndroidPlatform::showTextEntryDialog(const std::string & message) {
