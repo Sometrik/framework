@@ -22,12 +22,13 @@ class Message {
     SET_LABEL, //this sets label for buttons and labels.
     SET_ATTRIBUTE,
     SET_CAPTION,
-    QUIT_APP
+    QUIT_APP,
 
     // In-app purchases
     LIST_PRODUCTS,
     BUY_PRODUCT,
     LIST_PURCHASES,
+    CONSUME_PURCHASE
   };
 
  Message(MessageType _message, int _elementId = 0, int _parentElementId = 0) : messageType(_message), elementId(_elementId), parentElementId(_parentElementId) { }
