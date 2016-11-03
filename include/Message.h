@@ -23,6 +23,11 @@ class Message {
     SET_ATTRIBUTE,
     SET_CAPTION,
     QUIT_APP
+
+    // In-app purchases
+    LIST_PRODUCTS,
+    BUY_PRODUCT,
+    LIST_PURCHASES,
   };
 
  Message(MessageType _message, int _elementId = 0, int _parentElementId = 0) : messageType(_message), elementId(_elementId), parentElementId(_parentElementId) { }
