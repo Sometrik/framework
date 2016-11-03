@@ -63,7 +63,8 @@ class Element {
   
 protected:
   bool isInitialized() const { return parent != 0; }
-  
+
+ private:
   FWPlatform * platform = 0;
   Element * parent = 0;
   int id = 0;
