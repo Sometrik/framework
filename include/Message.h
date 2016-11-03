@@ -8,6 +8,7 @@ class Message {
     SHOW_VIEW,
     CREATE_FORMVIEW,
     CREATE_BUTTON,
+    CREATE_PICKER, // called Spinner in Android
     CREATE_LINEAR_LAYOUT,
     CREATE_OPENGL_VIEW,
     CREATE_TEXTFIELD,
@@ -22,6 +23,7 @@ class Message {
     SET_LABEL, //this sets label for buttons and labels.
     SET_ATTRIBUTE,
     SET_CAPTION,
+    ADD_OPTION,
     QUIT_APP,
 
     // In-app purchases
