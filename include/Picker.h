@@ -6,13 +6,11 @@
 
 class Picker : public Element {
  public:
-  Picker(const std::string & _label) : label(_label) { }
+  Picker() { }
   
   void initialize(FWPlatform * _platform) override {
     Element::initialize(_platform);
-    Message m(Message::CREATE_PICKER, getId(), getParentId());
-    m.setTextValue(label);
-    sendMessage(m);
+    sendMessage(Message(Message::CREATE_PICKER, getId(), getParentId()));
     for (auto & o : options) {
       initializeOption(o);
     }
