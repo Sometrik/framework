@@ -62,6 +62,8 @@ class Element {
   std::vector<std::shared_ptr<Element> > & getChildren() { return children; }
   
 protected:
+  bool isInitialized() const { return parent != 0; }
+  
   FWPlatform * platform = 0;
   Element * parent = 0;
   int id = 0;
