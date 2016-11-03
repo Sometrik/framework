@@ -6,6 +6,8 @@
 
 class TouchEvent;
 class CommandEvent;
+class DrawEvent;
+
 class FWPlatform;
 class Message;
 
@@ -16,7 +18,7 @@ class Element {
 
   virtual void initialize(FWPlatform * _platform);
   virtual void initializeContent() { }
-  virtual void onDraw() { }
+  virtual void onDraw(DrawEvent & ev) { }
   virtual void onShutdown() { }
   virtual void onMemoryWarning() { }
   virtual void onCommandEvent(CommandEvent & ev) { }
@@ -27,7 +29,7 @@ class Element {
       virtual bool onUpdate(double timestamp) { return false; }
       virtual bool onResize(int _logical_width, int _logical_height, int _actual_width, int _actual_height) { return false; }
 
-      virtual bool onTouchEvent(TouchEvent & touchEvent) { return false; }
+      virtual bool onTouchEvent(TouchEvent & ev) { return false; }
       virtual bool flushTouches(int mode, double timestamp) { return false; }
       virtual bool onShake(double timestamp) { return false; }
 
@@ -55,6 +57,8 @@ class Element {
 	}
       }
 
+  std::vector<std::shared_ptr<Element> > & getChildren() { return children; }
+  
 protected:
   FWPlatform * platform = 0;
   Element * parent = 0;
