@@ -3,11 +3,13 @@
 #include <CurlClient.h>
 #include <Logger.h>
 #include <ContextCairo.h>
-#include <TouchEvent.h>
-#include <DrawEvent.h>
 #include <SDLSoundCanvas.h>
 #include <Message.h>
 #include <FWApplication.h>
+
+#include <TouchEvent.h>
+#include <DrawEvent.h>
+#include <SysEvent.h>
 
 #include <SDL/SDL.h>
 #include <GL/gl.h>
@@ -252,7 +254,8 @@ int main(int argc, char *argv[]) {
   eventloop->run();
 #endif
   
-  platform.getApplication().onShutdown();
+  SysEvent ev(0, SysEvent::SHUTDOWN);
+  ev.dispatch(platform.getApplication());
   SDL_Quit();
   return 0;
 }
