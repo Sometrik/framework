@@ -4,6 +4,7 @@
 #include <Logger.h>
 #include <ContextCairo.h>
 #include <TouchEvent.h>
+#include <DrawEvent.h>
 #include <SDLSoundCanvas.h>
 #include <Message.h>
 #include <FWApplication.h>
@@ -119,21 +120,21 @@ public:
 	  break;
 	case SDL_MOUSEBUTTONDOWN:
 	  {
-	    TouchEvent ev(TouchEvent::ACTION_DOWN, mouse_x, display_height - 1 - mouse_y, getTime(), 0);
+	    TouchEvent ev(getActiveViewId(), TouchEvent::ACTION_DOWN, mouse_x, display_height - 1 - mouse_y, getTime(), 0);
 	    postEvent(ev);
 	    button_pressed = true;
 	  }
 	  break;
 	case SDL_MOUSEBUTTONUP:
 	  {
-	    TouchEvent ev(TouchEvent::ACTION_UP, mouse_x, display_height - 1 - mouse_y, getTime(), 0);
+	    TouchEvent ev(getActiveViewId(), TouchEvent::ACTION_UP, mouse_x, display_height - 1 - mouse_y, getTime(), 0);
 	    postEvent(ev);
 	    button_pressed = false;
 	  }
 	  break;
 	case SDL_MOUSEMOTION:
 	  if (button_pressed) {
-	    TouchEvent ev(TouchEvent::ACTION_MOVE, event.motion.x, display_height - 1 - event.motion.y, getTime(), 0);
+	    TouchEvent ev(getActiveViewId(), TouchEvent::ACTION_MOVE, event.motion.x, display_height - 1 - event.motion.y, getTime(), 0);
 	    postEvent(ev);
 	  }
 	  mouse_x = event.motion.x;
@@ -156,7 +157,8 @@ public:
       getApplication().loadEvents();
 
       if (getApplication().getFirstChild()->onUpdate(getTime())) {
-	getApplication().getFirstChild()->onDraw();
+	DrawEvent ev(getActiveViewId());
+	postEvent(ev);
 	swapBuffers();
       }
     }
