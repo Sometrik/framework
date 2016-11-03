@@ -17,7 +17,7 @@ public:
   }
 
   void showView(int id) {
-    sendMessage(Message(Message::SHOW, id));
+    sendMessage(Message(Message::SHOW_VIEW, id));
   }
 
  private:
