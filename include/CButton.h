@@ -2,6 +2,7 @@
 #define _CBUTTON_H_
 
 #include <CanvasElement.h>
+#include <PrimitiveRenderer.h>
 
 class CButton : public CanvasElement {
  public:
@@ -9,6 +10,7 @@ class CButton : public CanvasElement {
 
  private:
   std::string label;
+  float highlight = 0.0f;
 };
 
 #endif
