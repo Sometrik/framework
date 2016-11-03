@@ -8,6 +8,7 @@
 #include <Message.h>
 #include <Logger.h>
 #include <SoundCanvas.h>
+#include <PrimitiveRenderer.h>
 #include <FWDefs.h>
 
 #include <string>
@@ -71,8 +72,16 @@ class FWPlatform {
     }
     return *logger;
   }
-  virtual void sendMessage(const Message & message) = 0;
+  virtual void sendMessage(const Message & message) {
+    if (message.getType() == Message::SHOW_VIEW ||
+	(!activeViewId && (message.getType() == Message::CREATE_FORMVIEW || message.getType() == Message::CREATE_OPENGL_VIEW))) {
+      activeViewId = message.getValue();
+    }
+  }
 
+  const std::shared_ptr<PrimitiveRenderer> & getRenderer() { return renderer; }
+  void setRenderer(const std::shared_ptr<PrimitiveRenderer> & _renderer) { renderer = _renderer; }
+  
   void postEvent(EventBase & ev) {
     auto e = getApplication().getFirstChild();
     ev.dispatch(*e);
@@ -88,6 +97,7 @@ class FWPlatform {
   int getDisplayHeight() const { return display_height; }
   float getDisplayScale() const { return display_scale; }
   bool hasES3() const { return has_es3; }
+  int getActiveViewId() const { return activeViewId; }
   
  protected:
   virtual std::shared_ptr<SoundCanvas> createSoundCanvas() const = 0;
@@ -101,8 +111,9 @@ class FWPlatform {
  private:
   std::shared_ptr<SoundCanvas> soundCanvas;
   std::shared_ptr<Logger> logger;
+  std::shared_ptr<PrimitiveRenderer> renderer;
   int nextElementId = 1;
-
+  int activeViewId = 0;
 };
 
 #endif
