@@ -8,8 +8,8 @@ public:
   enum Type {
     ACTION_DOWN, ACTION_MOVE, ACTION_UP
   };
-  TouchEvent(Type _type, int _x, int _y, double _timestamp, int _identifier)
-    : EventBase(0), type(_type), x(_x), y(_y), time(_timestamp), identifier(_identifier) { }
+ TouchEvent(int _originating_id, Type _type, int _x, int _y, double _timestamp, int _identifier)
+   : EventBase(_originating_id), type(_type), x(_x), y(_y), time(_timestamp), identifier(_identifier) { }
 
   void dispatch(Element & element) override;
   
