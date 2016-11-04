@@ -75,7 +75,7 @@ class FWPlatform {
   virtual void sendMessage(const Message & message) {
     if (message.getType() == Message::SHOW_VIEW ||
 	(!activeViewId && (message.getType() == Message::CREATE_FORMVIEW || message.getType() == Message::CREATE_OPENGL_VIEW))) {
-      activeViewId = message.getValue();
+      activeViewId = message.getInternalId();
     }
   }
 
