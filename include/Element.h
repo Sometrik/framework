@@ -98,7 +98,7 @@ class Element {
       return this;
     } else {
       for (auto & c : children) {
-	const Element * e = c->getElementById(_internal_id);
+	const Element * e = c->getElementById(_id);
 	if (e) return e;
       }
       return 0;
@@ -110,7 +110,7 @@ class Element {
       return this;
     } else {
       for (auto & c : children) {
-	Element * e = c->getElementById(_internal_id);
+	Element * e = c->getElementById(_id);
 	if (e) return e;
       }
       return 0;
