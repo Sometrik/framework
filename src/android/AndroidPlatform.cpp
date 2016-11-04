@@ -165,8 +165,8 @@ void AndroidPlatform::storeValue(const std::string & key, const std::string & va
 void AndroidPlatform::sendMessage(const Message & message) {
   auto env = getJNIEnv();
    jclass frameworkCls = env->FindClass("com/sometrik/framework/FrameWork");
-   jclass messageCls = env->FindClass("com/sometrik/framework/Message");
-   jmethodID sendMessageMethod = env->GetStaticMethodID(frameworkCls, "sendMessage", "(Lcom/sometrik/framework/FrameWork;Lcom/sometrik/framework/Message)V");
+   jclass messageCls = env->FindClass("com/sometrik/framework/NativeMessage");
+   jmethodID sendMessageMethod = env->GetStaticMethodID(frameworkCls, "sendMessage", "(Lcom/sometrik/framework/FrameWork;Lcom/sometrik/framework/NativeMessage)V");
    jmethodID messageConstructor = env->GetMethodID(messageCls, "<init>", "(IIILjava/lang/String;Ljava/lang/String;)V");
 
    int messageTypeId = int(message.getType());
