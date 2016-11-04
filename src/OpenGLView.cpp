@@ -12,7 +12,7 @@ using namespace std;
 void
 OpenGLView::initialize(FWPlatform * _platform) {
   FWViewBase::initialize(_platform);
-  sendMessage(Message(Message::CREATE_OPENGL_VIEW, getInternalId(), getParentInternalId()));
+  sendMessage(Message(Message::CREATE_OPENGL_VIEW, getParentInternalId(), getInternalId()));
   logical_width = int(_platform->getDisplayWidth() / _platform->getDisplayScale());
   logical_height = int(_platform->getDisplayHeight() / _platform->getDisplayScale());
   actual_width = _platform->getDisplayWidth();

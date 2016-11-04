@@ -10,7 +10,7 @@ class FormView : public FWViewBase {
 
   void initialize(FWPlatform * _platform) override {
     FWViewBase::initialize(_platform);
-    sendMessage(Message(Message::CREATE_FORMVIEW, getInternalId(), getParentInternalId()));
+    sendMessage(Message(Message::CREATE_FORMVIEW, getParentInternalId(), getInternalId()));
   }
 };
 
