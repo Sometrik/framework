@@ -35,6 +35,8 @@ class Element {
   virtual bool flushTouches(int mode, double timestamp) { return false; }
   virtual bool onShake(double timestamp) { return false; }
 
+  virtual void show() { }
+    
   Element & addChild(const std::shared_ptr<Element> & element) {
     element->parent = this;
     element->initialize(platform);
