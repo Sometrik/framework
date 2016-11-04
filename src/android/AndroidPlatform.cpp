@@ -162,7 +162,10 @@ void AndroidPlatform::storeValue(const std::string & key, const std::string & va
 }
 
 
-void AndroidPlatform::sendMessage(const Message & message) {
+void
+AndroidPlatform::sendMessage(const Message & message) {
+  FWPlatform::sendMessage(message);
+  
   auto env = getJNIEnv();
    jclass frameworkCls = env->FindClass("com/sometrik/framework/FrameWork");
    jclass messageCls = env->FindClass("com/sometrik/framework/NativeMessage");
