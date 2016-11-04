@@ -2,14 +2,15 @@ package com.sometrik.framework;
 
 public class NativeMessage {
 
-  private int elementId = 0;
-  private int parentElementId = 0;
+  private int internalId = 0;
+  private int childInternalId = 0;
   private String textValue = "";
   private String textValue2 = "";
   private MessageType message;
   private String key;
   
   public enum MessageType{
+    CREATE_APPLICATION,
     SHOW_VIEW,
     CREATE_FORMVIEW,
     CREATE_BUTTON,
@@ -38,17 +39,17 @@ public class NativeMessage {
     CONSUME_PURCHASE
   }
   
-  NativeMessage(MessageType message, int elementId, int parentElementId, String textValue, String textValue2){
+  NativeMessage(MessageType message, int internalId, int childInternalId, String textValue, String textValue2){
     this.message = message;
-    this.elementId = elementId;
-    this.parentElementId = parentElementId;
+    this.internalId = internalId;
+    this.childElementId = childInternalId;
     this.textValue = textValue;
     this.textValue2 = textValue2;
   }
-  NativeMessage(int messageTypeId, int elementId, int parentElementId, String textValue, String textValue2){
+  NativeMessage(int messageTypeId, int internalId, int childInternalId, String textValue, String textValue2){
     message = MessageType.values()[messageTypeId];
-    this.elementId = elementId;
-    this.parentElementId = parentElementId;
+    this.internalId = internalId;
+    this.childInternalId = childInternalId;
     this.textValue = textValue;
     this.textValue2 = textValue2;
   }
@@ -59,11 +60,11 @@ public class NativeMessage {
   public void setKey(String key) {
     this.key = key;
   }
-  public int getElementId() {
-    return elementId;
+  public int getInternalId() {
+    return internalId;
   }
-  public int getParentElementId() {
-    return parentElementId;
+  public int getChildInternalId() {
+    return childInternalId;
   }
   public String getTextValue() {
     return textValue;
