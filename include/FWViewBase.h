@@ -5,7 +5,7 @@
 
 class FWViewBase : public Element {
  public:
-  FWViewBase() { }
+  FWViewBase(int _id) : Element(_id) { }
 
   void show() override {
     sendMessage(Message(Message::SHOW_VIEW, getInternalId()));

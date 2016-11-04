@@ -9,7 +9,7 @@
 
 class OpenGLView : public FWViewBase {
  public:
-  OpenGLView() { }
+  OpenGLView(int _id) : FWViewBase(_id) { }
 
   void initialize(FWPlatform * _platform) override;
 
