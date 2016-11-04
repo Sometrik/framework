@@ -122,22 +122,22 @@ public:
 	  break;
 	case SDL_MOUSEBUTTONDOWN:
 	  {
-	    TouchEvent ev(getActiveViewId(), TouchEvent::ACTION_DOWN, mouse_x, display_height - 1 - mouse_y, getTime(), 0);
-	    postEvent(ev);
+	    TouchEvent ev(TouchEvent::ACTION_DOWN, mouse_x, display_height - 1 - mouse_y, getTime(), 0);
+	    postEvent(getActiveViewId(), ev);
 	    button_pressed = true;
 	  }
 	  break;
 	case SDL_MOUSEBUTTONUP:
 	  {
-	    TouchEvent ev(getActiveViewId(), TouchEvent::ACTION_UP, mouse_x, display_height - 1 - mouse_y, getTime(), 0);
-	    postEvent(ev);
+	    TouchEvent ev(TouchEvent::ACTION_UP, mouse_x, display_height - 1 - mouse_y, getTime(), 0);
+	    postEvent(getActiveViewId(), ev);
 	    button_pressed = false;
 	  }
 	  break;
 	case SDL_MOUSEMOTION:
 	  if (button_pressed) {
-	    TouchEvent ev(getActiveViewId(), TouchEvent::ACTION_MOVE, event.motion.x, display_height - 1 - event.motion.y, getTime(), 0);
-	    postEvent(ev);
+	    TouchEvent ev(TouchEvent::ACTION_MOVE, event.motion.x, display_height - 1 - event.motion.y, getTime(), 0);
+	    postEvent(getActiveViewId(), ev);
 	  }
 	  mouse_x = event.motion.x;
 	  mouse_y = event.motion.y;
@@ -159,8 +159,8 @@ public:
       getApplication().loadEvents();
 
       if (getApplication().getFirstChild()->onUpdate(getTime())) {
-	DrawEvent ev(getActiveViewId());
-	postEvent(ev);
+	DrawEvent ev;
+	postEvent(getActiveViewId(), ev);
 	swapBuffers();
       }
     }
