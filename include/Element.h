@@ -66,6 +66,18 @@ class Element {
   }
 
   std::vector<std::shared_ptr<Element> > & getChildren() { return children; }
+
+  const Element * getElementByInternalId(int _internal_id) const {
+    if (_internal_id == internal_id) {
+      return this;
+    } else {
+      for (auto & c : children) {
+	const Element * e = c->getElementByInternalId(_internal_id);
+	if (e) return e;
+      }
+      return 0;
+    }
+  }
   
 protected:
   bool isInitialized() const { return parent != 0; }
