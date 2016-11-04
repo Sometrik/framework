@@ -6,6 +6,10 @@
 class FWViewBase : public Element {
  public:
   FWViewBase() { }
+
+  void show() override {
+    sendMessage(Message(Message::SHOW_VIEW, getInternalId()));
+  }
 };
 
 #endif
