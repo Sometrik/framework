@@ -34,9 +34,9 @@ class Message {
     CONSUME_PURCHASE
   };
 
- Message(MessageType _message, int _internalId = 0, int _childInternalId = 0) : messageType(_message), internalId(_internalId), childInternalId(_childInternalId) { }
- Message(MessageType _message, const std::string & _textValue) : messageType(_message), internalId(0), childInternalId(0), textValue(_textValue) { }
- Message(MessageType _message, const std::string & _textValue, const std::string & _textValue2) : messageType(_message), internalId(0), childInternalId(0), textValue(_textValue), textValue2(_textValue2) { }
+ Message(MessageType _message, int _internalId, int _childInternalId = 0) : messageType(_message), internalId(_internalId), childInternalId(_childInternalId) { }
+ Message(MessageType _message, int _internalId, const std::string & _textValue) : messageType(_message), internalId(_internalId), childInternalId(0), textValue(_textValue) { }
+ Message(MessageType _message, int _internalId, const std::string & _textValue, const std::string & _textValue2) : messageType(_message), internalId(_internalId), childInternalId(0), textValue(_textValue), textValue2(_textValue2) { }
   ~Message() { }
   
   MessageType getType() const { return messageType; }
