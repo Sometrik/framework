@@ -5,7 +5,7 @@ class Message {
  public:
 
   enum MessageType {
-    SHOW_VIEW,
+    SHOW_VIEW = 1,
     CREATE_FORMVIEW,
     CREATE_BUTTON,
     CREATE_PICKER, // called Spinner in Android
