@@ -26,27 +26,27 @@ using namespace std;
 
 extern FWApplication * applicationMain();
 
-bool AndroidPlatform::onTouchesEvent(jobject * _obj, int mode, int fingerIndex, double time, float x, float y) {
-
+bool
+AndroidPlatform::onTouchesEvent(jobject * _obj, int mode, int fingerIndex, double time, float x, float y) {
   x /= getDisplayScale();
   y /= getDisplayScale();
   switch (mode) {
   case 1:
     {
-      TouchEvent ev(getActiveViewId(), TouchEvent::ACTION_DOWN, x, y, time, fingerIndex);
-      postEvent(ev);
+      TouchEvent ev(TouchEvent::ACTION_DOWN, x, y, time, fingerIndex);
+      postEvent(getActiveViewId(), ev);
     }
     break;
   case 2:
     {
-      TouchEvent ev(getActiveViewId(), TouchEvent::ACTION_MOVE, x, y, time, fingerIndex);
-      postEvent(ev);
+      TouchEvent ev(TouchEvent::ACTION_MOVE, x, y, time, fingerIndex);
+      postEvent(getActiveViewId(), ev);
     }
     break;
   case 3:
     {
-      TouchEvent ev(getActiveViewId(), TouchEvent::ACTION_UP, x, y, time, fingerIndex);
-      postEvent(ev);
+      TouchEvent ev(TouchEvent::ACTION_UP, x, y, time, fingerIndex);
+      postEvent(getActiveViewId(), ev);
     }
     break;
   }
@@ -64,7 +64,7 @@ void
 AndroidPlatform::menuPressed() {
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Platform menupressed called");
   CommandEvent ce(FW_ID_MENU);
-  postEvent(ce);
+  postEvent(getActiveViewId(), ce);
 
 //	jclass handlerClass = env->GetObjectClass(handler);
 //	jmethodID emptyMessageMethod = env->GetMethodID(handlerClass, "sendEmptyMessage", "(I)Z");
@@ -78,8 +78,8 @@ bool AndroidPlatform::onUpdate(double timestamp) {
 
 void
 AndroidPlatform::onDraw() {
-  DrawEvent ev(0);
-  postEvent(ev);
+  DrawEvent ev;
+  postEvent(getActiveViewId(), ev);
 }
 
 void AndroidPlatform::showCanvas(canvas::ContextAndroid & context) {
