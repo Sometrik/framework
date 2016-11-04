@@ -5,7 +5,7 @@
 
 class DrawEvent : public EventBase {
 public:
-  DrawEvent(int _originating_id) : EventBase(_originating_id) { }
+  DrawEvent() { }
 
   void dispatch(Element & element) override;
     

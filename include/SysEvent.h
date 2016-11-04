@@ -10,8 +10,7 @@ public:
     MEMORY_WARNING,
     THREAD_TERMINATED
   };
-  SysEvent(int _originating_id, Type _type)
-    : EventBase(_originating_id), type(_type) { }
+  SysEvent(Type _type) : type(_type) { }
 
   void dispatch(Element & element) override;
   
