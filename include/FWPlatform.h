@@ -50,14 +50,6 @@ class FWPlatform {
   
   std::string getBundleFilename(const std::string & filename) { return getBundleFilename(filename.c_str()); }
   
-  void launchBrowser(const std::string & input_url) {
-    sendMessage(Message(Message::LAUNCH_BROWSER, input_url));
-  }
-
-  void postNotification(const std::string & title, const std::string & message) {
-    sendMessage(Message(Message::POST_NOTIFICATION, title, message));
-}
-
   void setApplication(FWApplication * _application) {application = _application;}
   FWApplication & getApplication() { return *application; }
   SoundCanvas & getSoundCanvas() {
@@ -73,9 +65,10 @@ class FWPlatform {
     return *logger;
   }
   virtual void sendMessage(const Message & message) {
-    if (message.getType() == Message::SHOW_VIEW ||
-	(!activeViewId && (message.getType() == Message::CREATE_FORMVIEW || message.getType() == Message::CREATE_OPENGL_VIEW))) {
+    if (message.getType() == Message::SHOW_VIEW) {
       activeViewId = message.getInternalId();
+    } else if (!activeViewId && (message.getType() == Message::CREATE_FORMVIEW || message.getType() == Message::CREATE_OPENGL_VIEW)) {
+      activeViewId = message.getChildInternalId();
     }
   }
 
