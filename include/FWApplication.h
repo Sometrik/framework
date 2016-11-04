@@ -16,10 +16,6 @@ public:
     sendMessage(m);
   }
 
-  void showView(int id) {
-    sendMessage(Message(Message::SHOW_VIEW, id));
-  }
-
  private:
   bool full_screen;
 };
