@@ -86,7 +86,31 @@ class Element {
       return this;
     } else {
       for (auto & c : children) {
-	const Element * e = c->getElementByInternalId(_internal_id);
+	Element * e = c->getElementByInternalId(_internal_id);
+	if (e) return e;
+      }
+      return 0;
+    }
+  }
+  
+  Element * getElementById(int _id) const {
+    if (_id == id) {
+      return this;
+    } else {
+      for (auto & c : children) {
+	const Element * e = c->getElementById(_internal_id);
+	if (e) return e;
+      }
+      return 0;
+    }
+  }
+
+  Element * getElementById(int _id) {
+    if (_id == id) {
+      return this;
+    } else {
+      for (auto & c : children) {
+	Element * e = c->getElementById(_internal_id);
 	if (e) return e;
       }
       return 0;
