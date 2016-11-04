@@ -97,6 +97,8 @@ public class FrameWork extends Activity {
     // You can disable status bar with this
     this.requestWindowFeature(Window.FEATURE_NO_TITLE);
     
+    LinearLayout linear = new LinearLayout(this);
+    linear.setId(-1);
 
     // Init for screen settings
     getDisplayMetrics();
@@ -125,55 +127,36 @@ public class FrameWork extends Activity {
       @Override
       public void handleMessage(Message msg) {
 
-	System.out.println("main message received: " + String.valueOf(msg.what));
-
-	System.out.println("Surface message received: " + String.valueOf(msg));
-	int mode = 0;
-	float x = 0;
-	float y = 0;
-	int fingerIndex = 0;
-	long time = 0;
-	OptionsItem[] optionsList = null;
+	System.out.println("main message received: " + msg.what);
+	NativeMessage message = (NativeMessage)msg.obj;
 
 	switch (msg.what) {
-	// Touchevents
+	//ShowView
 	case 1:
-
-	  int[] intArray = (int[]) msg.obj;
-	  mode = intArray[0];
-	  fingerIndex = intArray[1];
-	  time = intArray[2];
-	  x = (float) intArray[3];
-	  y = (float) intArray[4];
-	  System.out.println("MESSAGE RECEIVED " + String.valueOf(mode) + " " + String.valueOf(fingerIndex) + " " + String.valueOf(x) + " " + String.valueOf(y));
-
-	  touchEvent(mode, fingerIndex, time, x, y);
-	  System.out.println("shandler case 1");
-
-	  break;
-	// 2- Menu Button Pressed
+	  showFormView(message.getElementId());
+	  
+//	// Touchevents
+//	case 1:
+//
+//	  int[] intArray = (int[]) msg.obj;
+//	  mode = intArray[0];
+//	  fingerIndex = intArray[1];
+//	  time = intArray[2];
+//	  x = (float) intArray[3];
+//	  y = (float) intArray[4];
+//	  System.out.println("MESSAGE RECEIVED " + String.valueOf(mode) + " " + String.valueOf(fingerIndex) + " " + String.valueOf(x) + " " + String.valueOf(y));
+//
+//	  touchEvent(mode, fingerIndex, time, x, y);
+//	  System.out.println("shandler case 1");
+//	  break;
+	
+	// 2-CREATE_FORMVIEW,
 	case 2:
-	  System.out.println("shandler case 2");
-	  menuPressed();
-	  System.out.println("shandler case 2");
+	  createFormView(message.getElementId());
 	  break;
-	case 22:
-	  System.out.println("shandler case 22");
-	  optionsList = (OptionsItem[]) msg.obj;
-	  String[] names = new String[optionsList.length];
-	  int[] idArray = new int[optionsList.length];
-
-	  for (int i = 0; i < optionsList.length; i++) {
-	    names[i] = optionsList[i].getName();
-	    idArray[i] = optionsList[i].getId();
-	  }
-	  System.out.println("MenuPressed() called in jni");
-
-	  createOptionsDialog(idArray, names);
-	  break;
-	// Launch browser
+	//  CREATE_BUTTON
 	case 3:
-	  launchBrowser((String) msg.obj);
+//	  getFormView(message
 	  break;
 	// Create notification
 	case 4:
@@ -205,6 +188,9 @@ public class FrameWork extends Activity {
 	case 10:
 	  int buttonId = (int)msg.obj;
 	  //Call native function for this here¨
+	  break;
+	case 999:
+	  
 	  break;
 	}
       }
@@ -240,12 +226,17 @@ public class FrameWork extends Activity {
     GLViewList.add(mGLView);
   }
   
-  private void showFormView(int id){
+  private FormView getFormView(int id){
     for (FormView view : viewList){
       if (view.getViewId() == id){
-	view.showView();
+	return view;
       }
     }
+    return null;
+  }
+  
+  private void showFormView(int id){
+    getFormView(id).showView();
   }
   
   private void showOpenGLView(int id){
@@ -642,25 +633,11 @@ public class FrameWork extends Activity {
     return String.valueOf(getDatabasePath(dbName));
   }
 
-  //Creates message that is sent to MyGLSurface handler. Called from JNI
-  public static void LeaveMessageToSurface(FrameWork frameWork, int messageCode, int content) {
-    Message msg = Message.obtain(null, messageCode, content);
+  public static void SendMessage(FrameWork frameWork, Message message) {
+    Message msg = Message.obtain(null, 999, message);
     frameWork.mainHandler.sendMessage(msg);
   }
-  public static void LeaveMessageToSurface(FrameWork frameWork, int messageCode) {
-    frameWork.mainHandler.sendEmptyMessage(messageCode);
-  }
-  public static void LeaveMessageToSurface(FrameWork frameWork, int messageCode, String text) {
-    Message msg = Message.obtain(null, messageCode, text);
-    frameWork.mainHandler.sendMessage(msg);
-  }
-  public static void LeaveMessageToSurface(FrameWork frameWork, int messageCode, String title, String text) {
-    String[] stringArray = {title, text};
-    Message msg = Message.obtain(null, messageCode, stringArray);
-    frameWork.mainHandler.sendMessage(msg);
-  }
- 
-
+    
   @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     super.onActivityResult(requestCode, resultCode, data);
