@@ -10,7 +10,7 @@ class TextField : public Element {
 
   void initialize(FWPlatform * _platform) override {
     Element::initialize(_platform);
-    sendMessage(Message(Message::CREATE_TEXTFIELD, getId(), getParentId()));
+    sendMessage(Message(Message::CREATE_TEXTFIELD, getInternalId(), getParentInternalId()));
   }
 
   const std::string & getValue() { return value; }

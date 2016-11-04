@@ -10,7 +10,7 @@ class Button : public Element {
 
   void initialize(FWPlatform * _platform) override {
     Element::initialize(_platform);
-    Message m(Message::CREATE_BUTTON, getId(), getParentId());
+    Message m(Message::CREATE_BUTTON, getInternalId(), getParentInternalId());
     m.setTextValue(label);
     sendMessage(m);
   }

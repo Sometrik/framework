@@ -12,7 +12,7 @@ class EventBase {
   virtual void dispatch(Element & element) = 0;
   
  private:
-  int originating_id;
+  int originating_id; // internal element id
 };
 
 #endif

@@ -10,7 +10,7 @@ class Picker : public Element {
   
   void initialize(FWPlatform * _platform) override {
     Element::initialize(_platform);
-    sendMessage(Message(Message::CREATE_PICKER, getId(), getParentId()));
+    sendMessage(Message(Message::CREATE_PICKER, getInternalId(), getParentInternalId()));
     for (auto & o : options) {
       initializeOption(o);
     }
@@ -25,7 +25,7 @@ class Picker : public Element {
 
  protected:
   void initializeOption(const std::pair<int, std::string> & o) {
-    Message m(Message::ADD_OPTION, getId(), getParentId());
+    Message m(Message::ADD_OPTION, getInternalId(), getParentInternalId());
     m.setValue(o.first);
     m.setTextValue(o.second);
     sendMessage(m);

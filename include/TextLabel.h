@@ -10,7 +10,7 @@ class TextLabel : public Element {
 
   void initialize(FWPlatform * _platform) override {
     Element::initialize(_platform);
-    Message m(Message::CREATE_TEXTLABEL, getId(), getParentId());
+    Message m(Message::CREATE_TEXTLABEL, getInternalId(), getParentInternalId());
     m.setTextValue(text);
     sendMessage(m);
   }

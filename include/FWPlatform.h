@@ -87,9 +87,8 @@ class FWPlatform {
     ev.dispatch(*e);
   }
   
-  int getNextElementId(){
-    return nextElementId++;
-  }
+  int getNextInternalId() { return nextInternalId++; }
+  
   void setDisplayWidth(int w) { display_width = w; }
   void setDisplayHeight(int h) { display_height = h; }
 
@@ -112,7 +111,7 @@ class FWPlatform {
   std::shared_ptr<SoundCanvas> soundCanvas;
   std::shared_ptr<Logger> logger;
   std::shared_ptr<PrimitiveRenderer> renderer;
-  int nextElementId = 1;
+  int nextInternalId = 1;
   int activeViewId = 0;
 };
 
