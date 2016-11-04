@@ -47,6 +47,8 @@ class Message {
   
   const std::string & getTextValue() const { return textValue; }
   void setTextValue(const std::string & s) { textValue = s; }
+  const std::string & getTextValue2() const { return textValue2; }
+  void setTextValue2(const std::string & s) { textValue2 = s; }
   
   const std::string & getKey() const { return key; }
   void setKey(const std::string & _key) { key = _key; }
