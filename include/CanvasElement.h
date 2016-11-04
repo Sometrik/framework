@@ -3,6 +3,7 @@
 
 #include <Element.h>
 #include <TextureRef.h>
+#include <Context.h>
  
 class CanvasElement : public Element {
  public:
@@ -14,16 +15,21 @@ class CanvasElement : public Element {
   void setHeight(float _height) { height = _height; }
 
   void onDrawEvent(DrawEvent & ev) {
+#if 0
     if (!texture.get()) {
-
+      texture = drawContent();
     }
+#endif
   }
 
-  virtual void draw() = 0;
+ protected:
+  // virtual canvas::TextureRef drawContent() = 0;
+
+  float x = 0, y = 0, width = 0, height = 0;
   
  private:
-  float x = 0, y = 0, width = 0, height = 0;
   canvas::TextureRef texture;
+  // canvas::ContextFactory factory;
 };
 
 #endif
