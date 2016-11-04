@@ -305,7 +305,7 @@ void Java_com_sometrik_framework_MyGLRenderer_onInit(JNIEnv* env, jobject thiz, 
   FWApplication * application = applicationMain();
   platform->setApplication(application);
   platform->onInit(env, gJavaVM);
-  application->initialize(this);
+  application->initialize(platform.get());
   platform->setDisplayWidth(screenWidth);
   platform->setDisplayHeight(screenHeight);
   platform->onResize(screenWidth, screenHeight);
