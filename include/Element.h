@@ -9,6 +9,7 @@ class CommandEvent;
 class DrawEvent;
 class PurchaseEvent;
 class SysEvent;
+class LinearLayout;
 
 class FWPlatform;
 class Message;
@@ -42,6 +43,8 @@ class Element {
     return *element;
   }
   Element & addChild(const std::string & text);
+  LinearLayout & addHorizontalLayout();
+  LinearLayout & addVerticalLayout();
 
   int getId() const { return id; }
   int getParentId() const { return parent ? parent->getId() : 0; }
