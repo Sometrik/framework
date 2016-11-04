@@ -82,9 +82,10 @@ class FWPlatform {
   const std::shared_ptr<PrimitiveRenderer> & getRenderer() { return renderer; }
   void setRenderer(const std::shared_ptr<PrimitiveRenderer> & _renderer) { renderer = _renderer; }
   
-  void postEvent(EventBase & ev) {
-    auto e = getApplication().getFirstChild();
-    ev.dispatch(*e);
+  void postEvent(int internal_id, EventBase & ev) {
+    Element * e = getApplication().getElementByInternalId();
+    if (e) ev.dispatch(*e);
+    else getLogger().println("Failed to dispatch event");
   }
   
   int getNextInternalId() { return nextInternalId++; }
