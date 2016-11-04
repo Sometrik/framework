@@ -47,7 +47,10 @@ class Element {
   LinearLayout & addVerticalLayout();
 
   int getId() const { return id; }
-  int getParentId() const { return parent ? parent->getId() : 0; }
+  int setId(int _id) const { id = _id; }
+
+  int getInternalId() const { return id; }
+  int getParentInternalId() const { return parent ? parent->getInternalId() : 0; }
   
   void sendMessage(const Message & message);
   
@@ -70,7 +73,7 @@ protected:
  private:
   FWPlatform * platform = 0;
   Element * parent = 0;
-  int id = 0;
+  int internal_id = 0, id = 0;
   std::string name;
   std::vector<std::shared_ptr<Element> > children;
 };

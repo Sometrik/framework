@@ -8,7 +8,7 @@ using namespace std;
 void
 Element::initialize(FWPlatform * _platform) {
   platform = _platform;
-  id = platform->getNextElementId();
+  internal_id = platform->getNextInternalId();
 }
 
 void
