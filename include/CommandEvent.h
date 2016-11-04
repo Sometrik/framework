@@ -5,12 +5,12 @@
 
 class CommandEvent : public EventBase {
 public:
-  CommandEvent(int _value = 0) : value(_value) { }
+  CommandEvent(int _element_id, int _value = 0) : element_id(_element_id), value(_value) { }
 
   void dispatch(Element & element) override;
     
  private:
-  int value;
+  int element_id, value;
 };
 
 #endif
