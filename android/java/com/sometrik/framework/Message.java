@@ -38,17 +38,17 @@ public class Message {
     CONSUME_PURCHASE
   }
   
-  Message(MessageType message, String textValue){
-    this.message = message;
-    this.textValue = textValue;
-  }
-  Message(MessageType message, int elementId, int parentElementId){
+  Message(MessageType message, int elementId, int parentElementId, String textValue, String textValue2){
     this.message = message;
     this.elementId = elementId;
     this.parentElementId = parentElementId;
+    this.textValue = textValue;
+    this.textValue2 = textValue2;
   }
-  Message(MessageType message, String textValue, String textValue2){
-    this.message = message;
+  Message(int messageTypeId, int elementId, int parentElementId, String textValue, String textValue2){
+    message = MessageType.values()[messageTypeId];
+    this.elementId = elementId;
+    this.parentElementId = parentElementId;
     this.textValue = textValue;
     this.textValue2 = textValue2;
   }
