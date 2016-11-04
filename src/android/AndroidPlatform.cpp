@@ -240,6 +240,24 @@ void AndroidPlatform::messagePoster(int message, const std::string title, const 
   env->ReleaseStringUTFChars(jtext, text.c_str());
 }
 
+void AndroidPlatform::sendMessage(const Message & message) {
+  auto env = getJNIEnv();
+   jclass cls = env->FindClass("com/sometrik/framework/FrameWork");
+   jclass messageCls = env->FindClass("com/sometrik/framework/Message");
+   jmethodID methodRef = env->GetStaticMethodID(cls, "LeaveMessageToSurface", "(Lcom/sometrik/framework/FrameWork;Lcom/sometrik/framework/Message)V");
+   jmethodID messageConstructor = env->GetMethodID(messageCls, "<init>", "(IIILjava/lang/String;Ljava/lang/String;)V");
+
+   int messageTypeId = int(message.getType());
+   const char * textValue = message.getTextValue().c_str();
+   const char * textValue2 = message.getTextValue2().c_str();
+   jstring jtextValue = env->NewStringUTF(textValue);
+   jstring jtextValue2 = env->NewStringUTF(textValue2);
+
+   jobject jmessage = env->NewObject(messageCls, messageConstructor, messageTypeId, message.getElementId(), message.getParentElementId(), jtextValue, jtextValue2);
+   env->ReleaseStringUTFChars(jtextValue, textValue);
+   env->ReleaseStringUTFChars(jtextValue2, textValue2);
+}
+
 double AndroidPlatform::getTime() const {
 
   auto env = getJNIEnv();

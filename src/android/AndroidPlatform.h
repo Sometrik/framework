@@ -66,10 +66,7 @@ public:
     messagePoster(7, id);
   }
 
-  void sendMessage(const Message & message) override {
-    FWPlatform::sendMessage(message);
-    // messagePoster(message);
-  }
+  void sendMessage(const Message & message) override;
 
   JNIEnv* getJNIEnv() const;
 
