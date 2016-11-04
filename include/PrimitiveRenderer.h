@@ -21,6 +21,9 @@ class PrimitiveRenderer {
   };
   
   PrimitiveRenderer();
+  virtual ~PrimitiveRenderer() { }
+
+  virtual void renderTexturedWindow(VBO & vbo, const canvas::TextureRef & texture, const glm::mat4 & mat, float alpha = 1.0f) { }
 
   const glm::ivec2 & getDisplaySize() const { return current_display_size; }
 
