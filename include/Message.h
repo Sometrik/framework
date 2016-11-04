@@ -34,14 +34,14 @@ class Message {
     CONSUME_PURCHASE
   };
 
- Message(MessageType _message, int _internalId = 0, int _parentInternalId = 0) : messageType(_message), internalId(_internalId), parentInternalId(_parentInternalId) { }
- Message(MessageType _message, const std::string & _textValue) : messageType(_message), internalId(0), parentInternalId(0), textValue(_textValue) { }
- Message(MessageType _message, const std::string & _textValue, const std::string & _textValue2) : messageType(_message), internalId(0), parentInternalId(0), textValue(_textValue), textValue2(_textValue2) { }
+ Message(MessageType _message, int _internalId = 0, int _childInternalId = 0) : messageType(_message), internalId(_internalId), childInternalId(_childInternalId) { }
+ Message(MessageType _message, const std::string & _textValue) : messageType(_message), internalId(0), childInternalId(0), textValue(_textValue) { }
+ Message(MessageType _message, const std::string & _textValue, const std::string & _textValue2) : messageType(_message), internalId(0), childInternalId(0), textValue(_textValue), textValue2(_textValue2) { }
   ~Message() { }
   
   MessageType getType() const { return messageType; }
   int getInternalId() const { return internalId; }
-  int getParentInternalId() const { return parentInternalId; }
+  int getChildInternalId() const { return childInternalId; }
   
   int getValue() const { return value; }
   void setValue(int v) { value = v; }
@@ -56,7 +56,7 @@ class Message {
 
  private:
   MessageType messageType;
-  int internalId, parentInternalId;
+  int internalId, childInternalId;
   int value;
   std::string key;
   std::string textValue, textValue2;
