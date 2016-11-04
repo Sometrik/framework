@@ -16,7 +16,7 @@ class Message;
 
 class Element {
  public:
-  Element() { }
+  Element(int _id = 0) : id(_id) { }
   virtual ~Element() { }
 
   virtual void initialize(FWPlatform * _platform);
