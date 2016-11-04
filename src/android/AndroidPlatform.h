@@ -22,19 +22,11 @@ public:
 
   bool onUpdate(double timestamp);
 
+  std::string showTextEntryDialog(const std::string & message);
+  void showMessageBox(const std::string & title, const std::string & message);
+
   void onDraw();
-
-  void createInputDialog(const char * _title, const char * _message, int params);
-
   void onInit(JNIEnv * env, JavaVM * _gJavaVM);
-
-  void messagePoster(int message, const std::string text);
-  void messagePoster(int message, const std::string title, const std::string text);
-  void messagePoster(int message, int content);
-
-  void showMessageBox(const std::string & title, const std::string & message) override;
-
-  std::string showTextEntryDialog(const std::string & message) override;
   std::string getBundleFilename(const char * filename) override;
   std::string getLocalFilename(const char * filename, FileType type) override;
   double getTime() const override;
@@ -56,16 +48,6 @@ public:
   std::shared_ptr<Logger> createLogger() const override {
     return std::make_shared<AndroidLogger>();
   }
-  void createFormView(int id){
-    messagePoster(8, id);
-  }
-  void createOpenGLView(int id){
-    messagePoster(9, id);
-  }
-  void showView(int id){
-    messagePoster(7, id);
-  }
-
   void sendMessage(const Message & message) override;
 
   JNIEnv* getJNIEnv() const;

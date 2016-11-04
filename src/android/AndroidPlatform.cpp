@@ -71,34 +71,6 @@ AndroidPlatform::menuPressed() {
 //	env->CallVoidMethod(handler, emptyMessageMethod, 1);
 }
 
-int AndroidPlatform::showActionSheet(const FWRect & rect, const FWActionSheet & sheet) {
-
-  //Initialize java int and string arrays
-  auto env = getJNIEnv();
-  std::vector<FWOption> optionsVector = sheet.getOptions();
-  jobjectArray stringArray = (jobjectArray) env->NewObjectArray(optionsVector.size(), env->FindClass("java/lang/String"), 0);
-  jintArray intArray = env->NewIntArray(optionsVector.size());
-  jint fill[optionsVector.size()];
-
-  //Set values to java arrays
-  for (int i = 0; i < optionsVector.size(); i++) {
-    const char * text = optionsVector[i].getText().c_str();
-    jstring jtext = env->NewStringUTF(text);
-    env->SetObjectArrayElement(stringArray, i, jtext);
-    fill[i] = optionsVector[i].getId();
-    env->ReleaseStringUTFChars(jtext, text);
-  }
-  env->SetIntArrayRegion(intArray, 0, optionsVector.size(), fill);
-
-  //Send values to java to create the action sheet
-  jclass cls = env->FindClass("com/sometrik/framework/FrameWork");
-  jmethodID methodRef = env->GetStaticMethodID(cls, "createOptionsFromJNI", "(Lcom/sometrik/framework/FrameWork;I[I[Ljava/lang/String;)V");
-  env->CallStaticVoidMethod(cls, methodRef, framework, 22, intArray, stringArray);
-
-  //Not returning anything
-  return 0;
-}
-
 bool AndroidPlatform::onUpdate(double timestamp) {
   bool shouldUpdate =  getApplication().onUpdate(timestamp);
   return shouldUpdate;
@@ -110,31 +82,6 @@ AndroidPlatform::onDraw() {
   postEvent(ev);
 }
 
-std::string AndroidPlatform::showTextEntryDialog(const std::string & message) {
-  return "";
-}
-
-void AndroidPlatform::showMessageBox(const std::string & title, const std::string & message) {
-
-  messagePoster(5, title, message);
-}
-
-void AndroidPlatform::createInputDialog(const char * _title, const char * _message, int params) {
-
-  auto env = getJNIEnv();
-  jclass cls = env->FindClass("com/sometrik/framework/FrameWork");
-
-  jmethodID methodRef = env->GetMethodID(cls, "createInputDialog", "(Ljava/lang/String;Ljava/lang/String;)V");
-  jstring title = env->NewStringUTF(_title);
-  jstring message = env->NewStringUTF(_message);
-
-  //Call method with void return (env, object, method, parameters...)
-  //String has to be made with jstring name = (*env)->NewStringUTF(env, "What you want");
-  env->CallVoidMethod(framework, methodRef, title, message);
-  env->ReleaseStringUTFChars(title, _title);
-  env->ReleaseStringUTFChars(message, _message);
-}
-
 void AndroidPlatform::showCanvas(canvas::ContextAndroid & context) {
 
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "showCanvas called");
@@ -142,6 +89,15 @@ void AndroidPlatform::showCanvas(canvas::ContextAndroid & context) {
   jclass cls = env->GetObjectClass(framework);
   jmethodID methodRef = env->GetMethodID(cls, "setNativeCanvas", "(Landroid/graphics/Bitmap;)V");
   env->CallVoidMethod(framework, methodRef, dynamic_cast<canvas::AndroidSurface&>(context.getDefaultSurface()).getBitmap());
+
+}
+
+
+std::string AndroidPlatform::showTextEntryDialog(const std::string & message) {
+  return "";
+}
+
+void AndroidPlatform::showMessageBox(const std::string & title, const std::string & message) {
 
 }
 
@@ -205,46 +161,12 @@ void AndroidPlatform::storeValue(const std::string & key, const std::string & va
   env->ReleaseStringUTFChars(jvalue, value.c_str());
 }
 
-void AndroidPlatform::messagePoster(int message, const std::string text) {
-
-  auto env = getJNIEnv();
-  jclass cls = env->FindClass("com/sometrik/framework/FrameWork");
-  jmethodID methodRef = env->GetStaticMethodID(cls, "LeaveMessageToSurface", "(Lcom/sometrik/framework/FrameWork;ILjava/lang/String;)V");
-
-  jstring jtext = env->NewStringUTF(text.c_str());
-  env->CallStaticVoidMethod(cls, methodRef, framework, message, jtext);
-  env->ReleaseStringUTFChars(jtext, text.c_str());
-
-}
-
-void AndroidPlatform::messagePoster(int message, int content) {
-
-  auto env = getJNIEnv();
-  jclass cls = env->FindClass("com/sometrik/framework/FrameWork");
-  jmethodID methodRef = env->GetStaticMethodID(cls, "LeaveMessageToSurface", "(Lcom/sometrik/framework/FrameWork;II)V");
-
-  env->CallStaticVoidMethod(cls, methodRef, framework, message, content);
-
-}
-
-void AndroidPlatform::messagePoster(int message, const std::string title, const std::string text) {
-
-  auto env = getJNIEnv();
-  jclass cls = env->FindClass("com/sometrik/framework/FrameWork");
-  jmethodID methodRef = env->GetStaticMethodID(cls, "LeaveMessageToSurface", "(Lcom/sometrik/framework/FrameWork;ILjava/lang/String;Ljava/lang/String;)V");
-
-  jstring jtitle = env->NewStringUTF(title.c_str());
-  jstring jtext = env->NewStringUTF(text.c_str());
-  env->CallStaticVoidMethod(cls, methodRef, framework, message, jtitle, jtext);
-  env->ReleaseStringUTFChars(jtitle, title.c_str());
-  env->ReleaseStringUTFChars(jtext, text.c_str());
-}
 
 void AndroidPlatform::sendMessage(const Message & message) {
   auto env = getJNIEnv();
-   jclass cls = env->FindClass("com/sometrik/framework/FrameWork");
+   jclass frameworkCls = env->FindClass("com/sometrik/framework/FrameWork");
    jclass messageCls = env->FindClass("com/sometrik/framework/Message");
-   jmethodID methodRef = env->GetStaticMethodID(cls, "LeaveMessageToSurface", "(Lcom/sometrik/framework/FrameWork;Lcom/sometrik/framework/Message)V");
+   jmethodID sendMessageMethod = env->GetStaticMethodID(frameworkCls, "sendMessage", "(Lcom/sometrik/framework/FrameWork;Lcom/sometrik/framework/Message)V");
    jmethodID messageConstructor = env->GetMethodID(messageCls, "<init>", "(IIILjava/lang/String;Ljava/lang/String;)V");
 
    int messageTypeId = int(message.getType());
@@ -253,7 +175,9 @@ void AndroidPlatform::sendMessage(const Message & message) {
    jstring jtextValue = env->NewStringUTF(textValue);
    jstring jtextValue2 = env->NewStringUTF(textValue2);
 
+
    jobject jmessage = env->NewObject(messageCls, messageConstructor, messageTypeId, message.getElementId(), message.getParentElementId(), jtextValue, jtextValue2);
+   env->CallVoidMethod(frameworkCls, sendMessageMethod, framework, jmessage);
    env->ReleaseStringUTFChars(jtextValue, textValue);
    env->ReleaseStringUTFChars(jtextValue2, textValue2);
 }
@@ -266,6 +190,34 @@ double AndroidPlatform::getTime() const {
   env->DeleteLocalRef(systemClass);
 
   return currentTime;
+}
+
+int AndroidPlatform::showActionSheet(const FWRect & rect, const FWActionSheet & sheet) {
+
+  //Initialize java int and string arrays
+  auto env = getJNIEnv();
+  std::vector<FWOption> optionsVector = sheet.getOptions();
+  jobjectArray stringArray = (jobjectArray) env->NewObjectArray(optionsVector.size(), env->FindClass("java/lang/String"), 0);
+  jintArray intArray = env->NewIntArray(optionsVector.size());
+  jint fill[optionsVector.size()];
+
+  //Set values to java arrays
+  for (int i = 0; i < optionsVector.size(); i++) {
+    const char * text = optionsVector[i].getText().c_str();
+    jstring jtext = env->NewStringUTF(text);
+    env->SetObjectArrayElement(stringArray, i, jtext);
+    fill[i] = optionsVector[i].getId();
+    env->ReleaseStringUTFChars(jtext, text);
+  }
+  env->SetIntArrayRegion(intArray, 0, optionsVector.size(), fill);
+
+  //Send values to java to create the action sheet
+  jclass cls = env->FindClass("com/sometrik/framework/FrameWork");
+  jmethodID methodRef = env->GetStaticMethodID(cls, "createOptionsFromJNI", "(Lcom/sometrik/framework/FrameWork;I[I[Ljava/lang/String;)V");
+  env->CallStaticVoidMethod(cls, methodRef, framework, 22, intArray, stringArray);
+
+  //Not returning anything
+  return 0;
 }
 
 JNIEnv* AndroidPlatform::getJNIEnv() const {
