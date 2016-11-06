@@ -2,6 +2,7 @@
 #define _FWVIEW_H_
 
 #include <Element.h>
+#include <Message.h>
 
 class FWViewBase : public Element {
  public:
