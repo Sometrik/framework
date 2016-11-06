@@ -6,7 +6,7 @@
 
 class FormView : public FWViewBase {
  public:
-  FormView(int _id) : FWViewBase(_id) { }
+  FormView(int _id = 0) : FWViewBase(_id) { }
 
   void initialize(FWPlatform * _platform) override {
     FWViewBase::initialize(_platform);
