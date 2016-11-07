@@ -68,9 +68,4 @@ public class FWLayout extends LinearLayout implements NativeMessageHandler{
     }
   }
 
-  @Override
-  public int getId() {
-    return this.getId();
-  }
-
 }
