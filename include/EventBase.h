@@ -8,13 +8,17 @@ class EventBase {
   EventBase() { }
   virtual ~EventBase() { }
 
-  virtual void dispatch(Element & element) = 0;
+  virtual void dispatch(Element & element);
   
   Element * getSourceElement() { return source_element; }
   const Element * getSourceElement() const { return source_element; }
+
+  bool isHandled() const { return is_handled; }
+  void setIsHandled() { is_handled = true; }
   
  private:
   Element * source_element = 0;
+  bool is_handled = false;
 };
 
 #endif
