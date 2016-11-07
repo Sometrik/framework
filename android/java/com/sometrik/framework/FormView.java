@@ -74,6 +74,14 @@ public class FormView implements NativeMessageHandler {
       textView.setText(message.getTextValue());
       baseLayout.addView(textView);
       break;
+
+    case CREATE_BUTTON:
+      Button button = new Button(context);
+      button.setId(message.getChildInternalId());
+      button.setText(message.getTextValue());
+      baseLayout.addView(button);
+      break;
+
     }
     
   }
