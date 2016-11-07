@@ -26,7 +26,8 @@ public:
   void showMessageBox(const std::string & title, const std::string & message);
 
   void onDraw();
-  void setJavaVM(JNIEnv * env, JavaVM * _gJavaVM);
+  void setJavaVM(JavaVM * _gJavaVM) { gJavaVM = _gJavaVM; }
+
   std::string getBundleFilename(const char * filename) override;
   std::string getLocalFilename(const char * filename, FileType type) override;
   double getTime() const override;
@@ -53,7 +54,7 @@ public:
   JNIEnv* getJNIEnv() const;
 
 private:
-  JavaVM * gJavaVM;
+  JavaVM * gJavaVM = 0;
   jobject mgr;
   jobject framework;
   jobject handler;
