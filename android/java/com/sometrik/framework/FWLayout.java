@@ -5,7 +5,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-public class FWLayout extends LinearLayout implements WidgetInterface{
+public class FWLayout extends LinearLayout implements NativeMessageHandler{
   
   private Context context;
   
