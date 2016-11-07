@@ -1,4 +1,5 @@
 #include <EventBase.h>
+#include <Element.h>
 
 void
 EventBase::dispatch(Element & element) {
