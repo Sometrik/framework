@@ -49,9 +49,9 @@ class Element {
   LinearLayout & addVerticalLayout();
 
   int getId() const { return id; }
-  int setId(int _id) const { id = _id; }
+  void setId(int _id) { id = _id; }
 
-  int getInternalId() const { return id; }
+  int getInternalId() const { return internal_id; }
   int getParentInternalId() const { return parent ? parent->getInternalId() : 0; }
   
   void sendMessage(const Message & message);
@@ -93,7 +93,7 @@ class Element {
     }
   }
   
-  Element * getElementById(int _id) const {
+  const Element * getElementById(int _id) const {
     if (_id == id) {
       return this;
     } else {
@@ -118,7 +118,7 @@ class Element {
   }
 
 protected:
-  bool isInitialized() const { return parent != 0; }
+  bool isInitialized() const { return internal_id != 0; }
 
  private:
   FWPlatform * platform = 0;
