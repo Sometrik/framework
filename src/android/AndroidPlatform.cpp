@@ -175,8 +175,9 @@ AndroidPlatform::sendMessage(const Message & message) {
 
    jobject jmessage = env->NewObject(messageCls, messageConstructor, messageTypeId, message.getChildInternalId(), message.getInternalId(), jtextValue, jtextValue2);
    env->CallStaticVoidMethod(frameworkCls, sendMessageMethod, framework, jmessage);
-   env->ReleaseStringUTFChars(jtextValue, textValue);
-   env->ReleaseStringUTFChars(jtextValue2, textValue2);
+   //Fix these releases
+//  env->ReleaseStringUTFChars(jtextValue, textValue);
+//  env->ReleaseStringUTFChars(jtextValue2, textValue2);
 }
 
 double AndroidPlatform::getTime() const {
