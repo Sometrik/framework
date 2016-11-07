@@ -179,7 +179,7 @@ AndroidPlatform::sendMessage(const Message & message) {
    jstring jtextValue2 = env->NewStringUTF(textValue2);
 
 
-   jobject jmessage = env->NewObject(messageCls, messageConstructor, messageTypeId, message.getElementId(), message.getParentElementId(), jtextValue, jtextValue2);
+   jobject jmessage = env->NewObject(messageCls, messageConstructor, messageTypeId, message.getChildInternalId(), message.getInternalId(), jtextValue, jtextValue2);
    env->CallVoidMethod(frameworkCls, sendMessageMethod, framework, jmessage);
    env->ReleaseStringUTFChars(jtextValue, textValue);
    env->ReleaseStringUTFChars(jtextValue2, textValue2);

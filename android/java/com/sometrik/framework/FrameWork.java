@@ -133,7 +133,7 @@ public class FrameWork extends Activity {
 	switch (msg.what) {
 	//ShowView
 	case 1:
-	  showFormView(message.getElementId());
+	  showFormView(message.getInternalId());
 	  
 //	// Touchevents
 //	case 1:
@@ -152,7 +152,7 @@ public class FrameWork extends Activity {
 	
 	// 2-CREATE_FORMVIEW,
 	case 2:
-	  createFormView(message.getElementId());
+	  createFormView(message.getInternalId());
 	  break;
 	//  CREATE_BUTTON
 	case 3:

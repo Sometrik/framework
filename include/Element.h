@@ -49,7 +49,7 @@ class Element {
   LinearLayout & addVerticalLayout();
 
   int getId() const { return id; }
-  int setId(int _id) const { id = _id; }
+  void setId(int _id) { id = _id; }
 
   int getInternalId() const { return id; }
   int getParentInternalId() const { return parent ? parent->getInternalId() : 0; }
@@ -92,7 +92,7 @@ class Element {
       return 0;
     }
   }
-  
+
   Element * getElementById(int _id) const {
     if (_id == id) {
       return this;
