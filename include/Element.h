@@ -5,6 +5,7 @@
 #include <vector>
 #include <Message.h>
 
+class EventBase;
 class TouchEvent;
 class CommandEvent;
 class DrawEvent;
