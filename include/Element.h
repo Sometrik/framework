@@ -22,6 +22,8 @@ class Element {
   virtual void initialize(FWPlatform * _platform);
   virtual void initializeContent() { }
 
+  virtual void onEvent(EventBase & ev);
+  
   virtual void onDrawEvent(DrawEvent & ev) { }
   virtual void onCommandEvent(CommandEvent & ev) { }
   virtual bool onTouchEvent(TouchEvent & ev) { return false; }

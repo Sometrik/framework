@@ -34,3 +34,10 @@ Element::addVerticalLayout() {
   addChild(l);
   return *l;
 }
+
+void
+Element::onEvent(EventBase & ev) {
+  if (parent && !ev.isHandled()) {
+    ev.dispatch(*parent);
+  }
+}
