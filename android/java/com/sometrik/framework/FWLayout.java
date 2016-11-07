@@ -2,7 +2,9 @@ package com.sometrik.framework;
 
 import android.content.Context;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 public class FWLayout extends LinearLayout implements NativeMessageHandler{
@@ -24,6 +26,9 @@ public class FWLayout extends LinearLayout implements NativeMessageHandler{
       break;
 
     case CREATE_PICKER:
+      Spinner spinner = new Spinner(context);
+      spinner.setId(message.getChildInternalId());
+      this.addView(spinner);
       break;
 
     case CREATE_LINEAR_LAYOUT:
@@ -36,18 +41,22 @@ public class FWLayout extends LinearLayout implements NativeMessageHandler{
       break;
 
     case CREATE_TEXTFIELD:
-      TextView textView = new TextView(context);
-      textView.setId(message.getChildInternalId());
-      this.addView(textView);
+      EditText editText = new EditText(context);
+      editText.setId(message.getChildInternalId());
+      this.addView(editText);
       break;
 
     case CREATE_TEXTLABEL:
+      TextView textView = new TextView(context);
+      textView.setId(message.getChildInternalId());
+      this.addView(textView);
       break;
 
     case SET_ATTRIBUTE:
       break;
       
     default:
+      System.out.println("Message couldn't be handled by Element");
       break;
     }
   }
