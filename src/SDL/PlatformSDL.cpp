@@ -18,7 +18,6 @@
 #include <cstdio>
 #include <cstdlib>
 #include <sys/time.h>
-#include <cassert>
 
 using namespace std;
 
@@ -66,6 +65,8 @@ public:
   }
 
   void sendMessage(const Message & message) override {
+    cerr << "sendMessage(" << int(message.getType()) << ")\n";
+    FWPlatform::sendMessage(message);
     switch (message.getType()) {
     case Message::SET_CAPTION:
       SDL_WM_SetCaption(message.getTextValue().c_str(),
@@ -254,7 +255,7 @@ int main(int argc, char *argv[]) {
   eventloop->run();
 #endif
   
-  SysEvent ev(0, SysEvent::SHUTDOWN);
+  SysEvent ev(SysEvent::SHUTDOWN);
   ev.dispatch(platform.getApplication());
   SDL_Quit();
   return 0;
