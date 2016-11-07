@@ -13,13 +13,13 @@ public class FWLayout extends LinearLayout implements NativeMessageHandler{
   
   public FWLayout(Context context) {
     super(context);
+    this.context = context;
     list();
   }
 
   
   private void list(){
-    FrameWork frameWork = (FrameWork)context;
-    frameWork.addToViewList(this);
+    FrameWork.addToViewList(this);
   }
 
   @Override
