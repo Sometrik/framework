@@ -134,14 +134,14 @@ public class FrameWork extends Activity {
 	  setTitle(message.getTextValue());
 	  break;
 	case CREATE_FORMVIEW:
-	  System.out.println("creating formView" + message.getChildInternalId());
+	  System.out.println("creating formView " + message.getChildInternalId());
 	  createFormView(message.getChildInternalId());
-	  // Create notification
 	  break;
 	case CREATE_LINEAR_LAYOUT:
 	  System.out.println("adding linear layout with id: " + message.getChildInternalId());
 	  getFromViewList(message.getInternalId()).handleMessage(message);
 	  break;
+	  // Create notification
 	case POST_NOTIFICATION:
 	  createNotification("", "");
 	  break;
@@ -150,6 +150,10 @@ public class FrameWork extends Activity {
 	  launchBrowser("");
 	  break;
 	case ADD_OPTION:
+	  FormView view = (FormView)getFromViewList(2);
+	  view.showView();
+	  break;
+	default:
 	  break;
 	}
       }
@@ -189,9 +193,7 @@ public class FrameWork extends Activity {
   }
   
   private void createFormView(int id){
-    FormView view = new FormView(id, this);
-    views.add(view);
-    view.showView();
+    views.add(new FormView(id, this));
   }
   private void createOpenGLView(int id){
     MyGLRenderer renderer = new MyGLRenderer(this, screenWidth, screenHeight);
