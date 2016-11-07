@@ -174,14 +174,14 @@ public class FrameWork extends Activity {
   }
   
   private void createFormView(int id){
-    viewList.add(new FormView(id, this));
+    views.add(new FormView(id, this));
   }
   private void createOpenGLView(int id){
     MyGLRenderer renderer = new MyGLRenderer(this, screenWidth, screenHeight);
     MyGLSurfaceView mGLView = new MyGLSurfaceView(this, renderer);
     mGLView.setOnTouchListener(new MyOnTouchListener(this));
     mGLView.setWillNotDraw(false);
-    GLViewList.add(mGLView);
+    views.add(mGLView);
   }
 
   // Lisää kuvan antaminen // Aika // Ääni
