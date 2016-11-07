@@ -163,7 +163,7 @@ AndroidPlatform::sendMessage(const Message & message) {
   auto env = getJNIEnv();
    jclass frameworkCls = env->FindClass("com/sometrik/framework/FrameWork");
    jclass messageCls = env->FindClass("com/sometrik/framework/NativeMessage");
-   jmethodID sendMessageMethod = env->GetStaticMethodID(frameworkCls, "sendMessage", "(Lcom/sometrik/framework/FrameWork;Lcom/sometrik/framework/NativeMessage)V");
+   jmethodID sendMessageMethod = env->GetStaticMethodID(frameworkCls, "sendMessage", "(Lcom/sometrik/framework/FrameWork;Lcom/sometrik/framework/NativeMessage;)V");
    jmethodID messageConstructor = env->GetMethodID(messageCls, "<init>", "(IIILjava/lang/String;Ljava/lang/String;)V");
 
    int messageTypeId = int(message.getType());
@@ -174,7 +174,7 @@ AndroidPlatform::sendMessage(const Message & message) {
 
 
    jobject jmessage = env->NewObject(messageCls, messageConstructor, messageTypeId, message.getChildInternalId(), message.getInternalId(), jtextValue, jtextValue2);
-   env->CallVoidMethod(frameworkCls, sendMessageMethod, framework, jmessage);
+   env->CallStaticVoidMethod(frameworkCls, sendMessageMethod, framework, jmessage);
    env->ReleaseStringUTFChars(jtextValue, textValue);
    env->ReleaseStringUTFChars(jtextValue2, textValue2);
 }

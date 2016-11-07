@@ -570,7 +570,7 @@ public class FrameWork extends Activity {
     return String.valueOf(getDatabasePath(dbName));
   }
 
-  public static void SendMessage(FrameWork frameWork, Message message) {
+  public static void sendMessage(FrameWork frameWork, NativeMessage message) {
     Message msg = Message.obtain(null, 999, message);
     frameWork.mainHandler.sendMessage(msg);
   }
