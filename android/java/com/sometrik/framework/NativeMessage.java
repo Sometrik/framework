@@ -42,7 +42,7 @@ public class NativeMessage {
   NativeMessage(MessageType message, int internalId, int childInternalId, String textValue, String textValue2){
     this.message = message;
     this.internalId = internalId;
-    this.childElementId = childInternalId;
+    this.childInternalId = childInternalId;
     this.textValue = textValue;
     this.textValue2 = textValue2;
   }

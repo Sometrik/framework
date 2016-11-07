@@ -26,7 +26,7 @@ public:
   void showMessageBox(const std::string & title, const std::string & message);
 
   void onDraw();
-  void onInit(JNIEnv * env, JavaVM * _gJavaVM);
+  void setJavaVM(JNIEnv * env, JavaVM * _gJavaVM);
   std::string getBundleFilename(const char * filename) override;
   std::string getLocalFilename(const char * filename, FileType type) override;
   double getTime() const override;

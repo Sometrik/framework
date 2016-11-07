@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <vector>
+#include <Message.h>
 
 class TouchEvent;
 class CommandEvent;
@@ -12,7 +13,6 @@ class SysEvent;
 class LinearLayout;
 
 class FWPlatform;
-class Message;
 
 class Element {
  public:
@@ -92,7 +92,7 @@ class Element {
       return 0;
     }
   }
-  
+
   const Element * getElementById(int _id) const {
     if (_id == id) {
       return this;

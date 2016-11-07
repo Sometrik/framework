@@ -42,11 +42,6 @@ import android.widget.TextView;
 
 public class FrameWork extends Activity {
 
-  // BUG ontouchesevent UP_action tulee myöhässä, kun moveja spammataan //ehkä
-
-  // action Sheet näkymä tiettyyn kohtaan
-  // Setting objektit (ESActionSheet) C - puolella, muista, että menee myös ios
-
   private MyGLSurfaceView mGLView;
   private RelativeLayout mainView;
   private SharedPreferences prefs;
@@ -64,8 +59,7 @@ public class FrameWork extends Activity {
   private AlertDialog.Builder builder;
   private AlertDialog alert;
   private float windowYcoords;
-  private ArrayList<FormView> viewList = new ArrayList<FormView>();
-  private ArrayList<MyGLSurfaceView> GLViewList = new ArrayList<MyGLSurfaceView>();
+  private ArrayList<NativeMessageHandler> views = new ArrayList<NativeMessageHandler>();
 
   private MyGLRenderer renderer;
 
@@ -131,66 +125,17 @@ public class FrameWork extends Activity {
 	NativeMessage message = (NativeMessage)msg.obj;
 
 	switch (msg.what) {
-	//ShowView
+	//Send Message to element
 	case 1:
-	  showFormView(message.getElementId());
-	  
-//	// Touchevents
-//	case 1:
-//
-//	  int[] intArray = (int[]) msg.obj;
-//	  mode = intArray[0];
-//	  fingerIndex = intArray[1];
-//	  time = intArray[2];
-//	  x = (float) intArray[3];
-//	  y = (float) intArray[4];
-//	  System.out.println("MESSAGE RECEIVED " + String.valueOf(mode) + " " + String.valueOf(fingerIndex) + " " + String.valueOf(x) + " " + String.valueOf(y));
-//
-//	  touchEvent(mode, fingerIndex, time, x, y);
-//	  System.out.println("shandler case 1");
-//	  break;
-	
-	// 2-CREATE_FORMVIEW,
+	  getFromViewList(message.getInternalId()).handleMessage(message);
+	break;
+	//Create notification
 	case 2:
-	  createFormView(message.getElementId());
-	  break;
-	//  CREATE_BUTTON
+	  createNotification("", "");
+	break;
+	//Open Browser
 	case 3:
-//	  getFormView(message
-	  break;
-	// Create notification
-	case 4:
-	  String[] notificationArray = (String[]) msg.obj;
-	  createNotification(notificationArray[0], notificationArray[1]);
-	  break;
-	// show message dialog
-	case 5:
-	  String[] dialogArray = (String[]) msg.obj;
-	  showMessageDialog(dialogArray[0], dialogArray[1]);
-	  break;
-	// Show OpenGLView
-	case 6:
-	  setContentView(mGLView);
-	  break;
-	  // Show formView
-	case 7:
-	  showFormView((int)msg.obj);
-	  break;
-	  // create formView
-	case 8:
-	  createFormView((int)msg.obj);
-	  break;
-	  // create OpenGLView
-	case 9:
-	  createOpenGLView((int)msg.obj);
-	  break;
-	  // FormView button was clicked
-	case 10:
-	  int buttonId = (int)msg.obj;
-	  //Call native function for this here¨
-	  break;
-	case 999:
-	  
+	  launchBrowser("");
 	  break;
 	}
       }
@@ -205,6 +150,19 @@ public class FrameWork extends Activity {
     screenWidth = displaymetrics.widthPixels;
     return displaymetrics;
   }
+  
+  public void addToViewList(NativeMessageHandler view){
+    views.add(view);
+  }
+  
+  private NativeMessageHandler getFromViewList(int id){
+    for (NativeMessageHandler view : views){
+      if (view.getId() == id){
+	return view;
+      }
+    }
+    return null;
+  }
 
   public MyGLSurfaceView getSurfaceView() {
     return mGLView;
@@ -216,35 +174,14 @@ public class FrameWork extends Activity {
   }
   
   private void createFormView(int id){
-    viewList.add(new FormView(id, this));
+    views.add(new FormView(id, this));
   }
   private void createOpenGLView(int id){
     MyGLRenderer renderer = new MyGLRenderer(this, screenWidth, screenHeight);
     MyGLSurfaceView mGLView = new MyGLSurfaceView(this, renderer);
     mGLView.setOnTouchListener(new MyOnTouchListener(this));
     mGLView.setWillNotDraw(false);
-    GLViewList.add(mGLView);
-  }
-  
-  private FormView getFormView(int id){
-    for (FormView view : viewList){
-      if (view.getViewId() == id){
-	return view;
-      }
-    }
-    return null;
-  }
-  
-  private void showFormView(int id){
-    getFormView(id).showView();
-  }
-  
-  private void showOpenGLView(int id){
-    for (MyGLSurfaceView view : GLViewList){
-      if (view.getViewId() == id){
-	setContentView(view);
-      }
-    }
+    views.add(mGLView);
   }
 
   // Lisää kuvan antaminen // Aika // Ääni

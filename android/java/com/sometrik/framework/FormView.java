@@ -13,7 +13,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-public class FormView {
+public class FormView implements NativeMessageHandler {
 
   private LinearLayout baseLayout;
   private Context context;
@@ -107,6 +107,17 @@ public class FormView {
   }
   
   public int getViewId(){
+    return viewId;
+  }
+
+  @Override
+  public void handleMessage(NativeMessage message) {
+    // TODO Auto-generated method stub
+    
+  }
+
+  @Override
+  public int getId() {
     return viewId;
   }
 }

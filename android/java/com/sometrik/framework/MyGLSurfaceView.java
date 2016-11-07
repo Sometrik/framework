@@ -11,7 +11,7 @@ import android.graphics.Path;
 import android.opengl.GLSurfaceView;
 import android.os.Handler;
 
-public class MyGLSurfaceView extends GLSurfaceView {
+public class MyGLSurfaceView extends GLSurfaceView implements NativeMessageHandler {
 
   private Context context;
   public Handler sHandler;
@@ -58,6 +58,12 @@ public class MyGLSurfaceView extends GLSurfaceView {
   
   public int getViewId(){
     return viewId;
+  }
+
+  @Override
+  public void handleMessage(NativeMessage message) {
+    // TODO Auto-generated method stub
+    
   }
 
 
