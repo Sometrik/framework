@@ -123,18 +123,28 @@ public class FrameWork extends Activity {
 
 	System.out.println("main message received: " + msg.what);
 	NativeMessage message = (NativeMessage)msg.obj;
+	System.out.println("id: " + message.getInternalId() +" MessageType: " + String.valueOf(message.getMessage()));
 
-	switch (msg.what) {
+	switch (message.getMessage()) {
 	//Send Message to element
-	case 1:
-	  getFromViewList(message.getInternalId()).handleMessage(message);
+	case CREATE_APPLICATION:
+//	  getFromViewList(message.getInternalId()).handleMessage(message);
 	break;
+	case SET_CAPTION:
+	  setTitle(message.getTextValue());
+	  break;
+	case CREATE_FORMVIEW:
+	  createFormView(message.getChildInternalId());
 	//Create notification
-	case 2:
+	case CREATE_LINEAR_LAYOUT:
+	  System.out.println("adding linear layout to: " + message.getInternalId());
+	  getFromViewList(message.getInternalId()).handleMessage(message);
+	 break;
+	case POST_NOTIFICATION:
 	  createNotification("", "");
 	break;
 	//Open Browser
-	case 3:
+	case LAUNCH_BROWSER:
 	  launchBrowser("");
 	  break;
 	}
@@ -571,7 +581,7 @@ public class FrameWork extends Activity {
   }
 
   public static void sendMessage(FrameWork frameWork, NativeMessage message) {
-    Message msg = Message.obtain(null, 999, message);
+    Message msg = Message.obtain(null, 1, message);
     frameWork.mainHandler.sendMessage(msg);
   }
     
