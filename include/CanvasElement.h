@@ -4,6 +4,7 @@
 #include <Element.h>
 #include <TextureRef.h>
 #include <Context.h>
+#include <VBO.h>
  
 class CanvasElement : public Element {
  public:
@@ -15,15 +16,22 @@ class CanvasElement : public Element {
   void setHeight(float _height) { height = _height; }
 
   void onDrawEvent(DrawEvent & ev) {
-#if 0
     if (!texture.get()) {
       texture = drawContent();
     }
-#endif
+    VBO vbo;
+    vbo.quad2d(x, y + height,
+	       x, y,
+	       x + width, y,
+	       x + width, y + height
+	       );
+    glm::mat4 mat(1.0f);
+    auto & renderer = getPlatform().getRenderer();
+    renderer->renderTexturedWindow(vbo, texture, mat);
   }
 
  protected:
-  // virtual canvas::TextureRef drawContent() = 0;
+  virtual canvas::TextureRef drawContent() = 0;
 
   float x = 0, y = 0, width = 0, height = 0;
   
