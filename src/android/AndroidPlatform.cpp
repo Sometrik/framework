@@ -102,18 +102,12 @@ void AndroidPlatform::showMessageBox(const std::string & title, const std::strin
 }
 
 void
-AndroidPlatform::onInit(JNIEnv * env, JavaVM * _gJavaVM) {
-//  gJavaVM = NULL;
-//  env->GetJavaVM(&gJavaVM);
+AndroidPlatform::setJavaVM(JNIEnv * env, JavaVM * _gJavaVM) {
   gJavaVM = _gJavaVM;
   gJavaVM->AttachCurrentThread(&env, NULL);
-  __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "checking gjavavm");
   if (gJavaVM == NULL){
-    __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "1");
+    __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "JavaVM is null");
   }
-  if (_gJavaVM == NULL){
-      __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "2");
-    }
 }
 
 std::string AndroidPlatform::getBundleFilename(const char * filename) {
@@ -277,7 +271,7 @@ void Java_com_sometrik_framework_MyGLRenderer_onInit(JNIEnv* env, jobject thiz, 
   }
   FWApplication * application = applicationMain();
   platform->setApplication(application);
-  platform->onInit(env, gJavaVM);
+  platform->setJavaVM(env, gJavaVM);
   application->initialize(platform.get());
   platform->setDisplayWidth(screenWidth);
   platform->setDisplayHeight(screenHeight);
