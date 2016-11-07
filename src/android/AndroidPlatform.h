@@ -22,9 +22,6 @@ public:
 
   bool onUpdate(double timestamp);
 
-  std::string showTextEntryDialog(const std::string & message);
-  void showMessageBox(const std::string & title, const std::string & message);
-
   void onDraw();
   void setJavaVM(JavaVM * _gJavaVM) { gJavaVM = _gJavaVM; }
 

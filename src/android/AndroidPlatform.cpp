@@ -92,15 +92,6 @@ void AndroidPlatform::showCanvas(canvas::ContextAndroid & context) {
 
 }
 
-
-std::string AndroidPlatform::showTextEntryDialog(const std::string & message) {
-  return "";
-}
-
-void AndroidPlatform::showMessageBox(const std::string & title, const std::string & message) {
-
-}
-
 std::string AndroidPlatform::getBundleFilename(const char * filename) {
   return filename;
 }
