@@ -149,6 +149,8 @@ public class FrameWork extends Activity {
 	case LAUNCH_BROWSER:
 	  launchBrowser("");
 	  break;
+	case ADD_OPTION:
+	  break;
 	}
       }
     };
@@ -187,7 +189,9 @@ public class FrameWork extends Activity {
   }
   
   private void createFormView(int id){
-    views.add(new FormView(id, this));
+    FormView view = new FormView(id, this);
+    views.add(view);
+    view.showView();
   }
   private void createOpenGLView(int id){
     MyGLRenderer renderer = new MyGLRenderer(this, screenWidth, screenHeight);
