@@ -10,9 +10,13 @@ class CButton : public CanvasElement {
 
   canvas::TextureRef drawContent() override {
     auto context = getPlatform().createContextFactory()->createContext(width, height, canvas::InternalFormat::RGBA8, true);
-    context->fillStyle = "#e80";
-    context->fillRect(0, 0, width, height);
-
+    if (is_touched) {
+      context->fillStyle = "#e80";
+      context->fillRect(0, 0, width, height);
+    } else {
+      context->strokeStyle = "#e80";
+      context->strokeRect(0, 0, width, height);
+    }
     context->fillStyle = "#fff";
     context->font.size = 20;
     context->fillText(label, width / 2, height / 2);    
@@ -21,7 +25,7 @@ class CButton : public CanvasElement {
 
  private:
   std::string label;
-  float highlight = 0.0f;
+  // float highlight = 0.0f;
 };
 
 #endif
