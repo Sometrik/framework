@@ -10,10 +10,6 @@
 
 using namespace std;
 
-PrimitiveRenderer::PrimitiveRenderer() {
-  
-}
-
 static set<int> readCompressedFormats() {
   set<int> r;
   GLint num_compressed_format;

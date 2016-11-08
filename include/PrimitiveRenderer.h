@@ -12,6 +12,9 @@
 #define STENCIL_BUFFER_BIT		4
 #define DEPTH_STENCIL_BUFFER_BIT	8
 
+class FWPlatform;
+class Sprite;
+
 class PrimitiveRenderer {
  public:
   enum CompositionMode {
@@ -20,10 +23,12 @@ class PrimitiveRenderer {
     MULTIPLY
   };
   
-  PrimitiveRenderer();
+  PrimitiveRenderer(float _display_scale) : display_scale(_display_scale) { };
   virtual ~PrimitiveRenderer() { }
 
   virtual void renderTexturedWindow(VBO & vbo, const canvas::TextureRef & texture, const glm::mat4 & mat, float alpha = 1.0f) { }
+  virtual void drawSprite(const Sprite & sprite, const glm::mat4 & projMat, const glm::mat4 & mvMat) { }
+  virtual void initialize(FWPlatform & platform) { }
 
   const glm::ivec2 & getDisplaySize() const { return current_display_size; }
 
@@ -32,7 +37,6 @@ class PrimitiveRenderer {
 
   void colorMask(bool r, bool g, bool b, bool a);
   void viewport(unsigned int x, unsigned int y, unsigned int w, unsigned int h);
-  void setDisplayScale(float s) { display_scale = s; }
   
   unsigned int getMaxTextureSize() const { return max_texture_size; } 
   bool hasETC1() const { return has_etc1; }
