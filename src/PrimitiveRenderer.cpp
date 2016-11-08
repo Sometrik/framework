@@ -51,7 +51,6 @@ PrimitiveRenderer::initializeBase() {
 #endif
   
   glPolygonOffset(1, 2);
-  glClearColor(0.98f, 0.98f, 0.98f, 1.0f);
   glActiveTexture(GL_TEXTURE0);
 
   glStencilFuncSeparate(GL_FRONT, GL_EQUAL, 0, 0xff);
@@ -348,5 +347,13 @@ PrimitiveRenderer::invalidateFramebuffer(int bits) {
       // glDiscardFramebufferEXT(GL_FRAMEBUFFER, n, &v[0]);
 #endif
     }
+  }
+}
+
+void
+PrimitiveRenderer::setClearColor(float red, float green, float blue) {
+  if (clear_color.r != red || clear_color.g != green || clear_color.b != blue) {
+    clear_color = glm::vec3(red, green, blue);
+    glClearColor(red, green, blue, 1.0f);
   }
 }

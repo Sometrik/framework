@@ -34,7 +34,7 @@ class PrimitiveRenderer {
 
   void clear(int clear_bits);
   void invalidateFramebuffer(int bits);
-
+  void setClearColor(float r, float g, float b);
   void colorMask(bool r, bool g, bool b, bool a);
   void viewport(unsigned int x, unsigned int y, unsigned int w, unsigned int h);
   
@@ -94,6 +94,7 @@ class PrimitiveRenderer {
   int current_texture_2d = 0, current_vertex_array = 0, current_program = 0;
   bool is_es3 = false;
   unsigned int screen_width = 0, screen_height = 0, actual_screen_width = 0, actual_screen_height = 0;
+  glm::vec3 clear_color;
 };
 
 #endif
