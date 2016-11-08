@@ -34,7 +34,7 @@ class Element {
   virtual void onTouchEvent(TouchEvent & ev) { }
   virtual void onPurchaseEvent(PurchaseEvent & ev) { }
   virtual void onSysEvent(SysEvent & ev) { }
-  virtual void onResize(ResizeEvent & ev) { }
+  virtual void onResizeEvent(ResizeEvent & ev) { }
   
   virtual void onCmdLine(int argc, char *argv[]) { }
   virtual void onKeyPress(char c, double timestamp, int x, int y) { }
