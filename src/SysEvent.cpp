@@ -4,4 +4,5 @@
 void
 SysEvent::dispatch(Element & element) {
   element.onSysEvent(*this);
+  EventBase::dispatch(element);
 }

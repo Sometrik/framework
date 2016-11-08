@@ -4,4 +4,5 @@
 void
 PurchaseEvent::dispatch(Element & element) {
   element.onPurchaseEvent(*this);
+  EventBase::dispatch(element);
 }

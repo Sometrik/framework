@@ -3,5 +3,8 @@
 
 void
 CommandEvent::dispatch(Element & element) {
-  element.onCommandEvent(*this);
+  if (!isHandled()) {
+    element.onCommandEvent(*this);
+  }
+  EventBase::dispatch(element);
 }
