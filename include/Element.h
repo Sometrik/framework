@@ -24,6 +24,7 @@ class Element {
   virtual ~Element() { }
 
   virtual void initialize(FWPlatform * _platform);
+  virtual void initializeContent() { }
 
   virtual void onEvent(EventBase & ev);
   
@@ -36,9 +37,9 @@ class Element {
   virtual void onResize(ResizeEvent & ev) { }
   
   virtual void onCmdLine(int argc, char *argv[]) { }
-  virtual void onKeyPress(char c, double timestamp, int x, int y) { return false; }
-  virtual void flushTouches(int mode, double timestamp) { return false; }
-  virtual voidx onShake(double timestamp) { return false; }
+  virtual void onKeyPress(char c, double timestamp, int x, int y) { }
+  virtual void flushTouches(int mode, double timestamp) { }
+  virtual void onShake(double timestamp) { }
 
   virtual void show() { }
     
@@ -122,9 +123,7 @@ class Element {
     }
   }
 
-protected:
-  virtual void initializeContent() { }
-  
+protected:  
   bool isInitialized() const { return internal_id != 0; }
 
  private:
