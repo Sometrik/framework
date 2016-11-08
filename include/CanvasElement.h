@@ -36,7 +36,7 @@ class CanvasElement : public Element {
     if (ev.getType() == TouchEvent::ACTION_DOWN &&
 	ev.getX() >= x && ev.getX() < x + width &&
 	ev.getY() >= y && ev.getY() < y + height) {
-      CommandEvent ev2(getId());
+      CommandEvent ev2(ev.getTimestamp(), getId());
       ev2.dispatch(*this);
     }
     return false;
