@@ -10,6 +10,7 @@
 #include <TouchEvent.h>
 #include <DrawEvent.h>
 #include <SysEvent.h>
+#include <UpdateEvent.h>
 
 #include <SDL/SDL.h>
 #include <GL/gl.h>
@@ -159,8 +160,10 @@ public:
 
       getApplication().loadEvents();
 
-      if (getApplication().getFirstChild()->onUpdate(getTime())) {
-	DrawEvent ev;
+      UpdateEvent ev0(getTime());
+      postEvent(getActiveViewId(), ev0);
+      if (true) {
+	DrawEvent ev(getTime());
 	postEvent(getActiveViewId(), ev);
 	swapBuffers();
       }
@@ -255,7 +258,7 @@ int main(int argc, char *argv[]) {
   eventloop->run();
 #endif
   
-  SysEvent ev(SysEvent::SHUTDOWN);
+  SysEvent ev(platform.getTime(), SysEvent::SHUTDOWN);
   ev.dispatch(platform.getApplication());
   SDL_Quit();
   return 0;
