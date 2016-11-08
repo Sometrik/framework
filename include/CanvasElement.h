@@ -36,7 +36,6 @@ class CanvasElement : public Element {
     if (ev.getType() == TouchEvent::ACTION_DOWN &&
 	ev.getX() >= x && ev.getX() < x + width &&
 	ev.getY() >= y && ev.getY() < y + height) {
-      std::cerr << "hit in " << getId() << "\n";
       CommandEvent ev2(getId());
       ev2.dispatch(*this);
     }
