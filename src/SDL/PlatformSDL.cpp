@@ -39,14 +39,6 @@ public:
     return t;
   }
     
-  void showMessageBox(const string & title, const string & message) override {
-#if 0
-    SDL_ShowSimpleMessageBox( SDL_MESSAGEBOX_INFORMATION,
-			      title.c_str(),
-			      message.c_str(),
-			      NULL);
-#endif
-  }
   string getLocalFilename(const char * fn, FileType type) {
     string s = "assets/";
     return s + fn;
@@ -71,6 +63,14 @@ public:
     case Message::SET_CAPTION:
       SDL_WM_SetCaption(message.getTextValue().c_str(),
 			message.getTextValue().c_str());
+      break;
+    case Message::SHOW_MESSAGE_DIALOG:
+#if 0
+      SDL_ShowSimpleMessageBox( SDL_MESSAGEBOX_INFORMATION,
+				title.c_str(),
+				message.c_str(),
+				NULL);
+#endif
       break;
     default:
       break;
