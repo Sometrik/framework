@@ -37,8 +37,6 @@ class FWPlatform {
   const std::string & getGLSLVersion() const { return glsl_version; }
   
   virtual std::shared_ptr<EventLoop> createEventLoop() { return std::shared_ptr<EventLoop>(0); }
-  virtual void showMessageBox(const std::string & title, const std::string & message) = 0;
-  virtual std::string showTextEntryDialog(const std::string & message) = 0;
   virtual std::string getBundleFilename(const char * filename) = 0;
   virtual std::string getLocalFilename(const char * filename, FileType type) = 0;
   virtual double getTime() const = 0;

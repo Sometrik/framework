@@ -59,7 +59,7 @@ public class FrameWork extends Activity {
   private AlertDialog.Builder builder;
   private AlertDialog alert;
   private float windowYcoords;
-  private ArrayList<NativeMessageHandler> views = new ArrayList<NativeMessageHandler>();
+  public static ArrayList<NativeMessageHandler> views = new ArrayList<NativeMessageHandler>();
 
   private MyGLRenderer renderer;
 
@@ -123,19 +123,37 @@ public class FrameWork extends Activity {
 
 	System.out.println("main message received: " + msg.what);
 	NativeMessage message = (NativeMessage)msg.obj;
+	System.out.println("id: " + message.getInternalId() +" MessageType: " + String.valueOf(message.getMessage()));
 
-	switch (msg.what) {
-	//Send Message to element
-	case 1:
+	switch (message.getMessage()) {
+	// Send Message to element
+	case CREATE_APPLICATION:
+	  // getFromViewList(message.getInternalId()).handleMessage(message);
+	  break;
+	case SET_CAPTION:
+	  setTitle(message.getTextValue());
+	  break;
+	case CREATE_FORMVIEW:
+	  System.out.println("creating formView " + message.getChildInternalId());
+	  createFormView(message.getChildInternalId());
+	  break;
+	case CREATE_LINEAR_LAYOUT:
+	  System.out.println("adding linear layout with id: " + message.getChildInternalId());
 	  getFromViewList(message.getInternalId()).handleMessage(message);
-	break;
-	//Create notification
-	case 2:
+	  break;
+	  // Create notification
+	case POST_NOTIFICATION:
 	  createNotification("", "");
-	break;
-	//Open Browser
-	case 3:
+	  break;
+	// Open Browser
+	case LAUNCH_BROWSER:
 	  launchBrowser("");
+	  break;
+	case ADD_OPTION:
+	  FormView view = (FormView)getFromViewList(2);
+	  view.showView();
+	  break;
+	default:
 	  break;
 	}
       }
@@ -151,7 +169,7 @@ public class FrameWork extends Activity {
     return displaymetrics;
   }
   
-  public void addToViewList(NativeMessageHandler view){
+  public static void addToViewList(NativeMessageHandler view){
     views.add(view);
   }
   
@@ -161,6 +179,7 @@ public class FrameWork extends Activity {
 	return view;
       }
     }
+    System.out.println("View not found. Returning null");
     return null;
   }
 
@@ -570,8 +589,8 @@ public class FrameWork extends Activity {
     return String.valueOf(getDatabasePath(dbName));
   }
 
-  public static void SendMessage(FrameWork frameWork, Message message) {
-    Message msg = Message.obtain(null, 999, message);
+  public static void sendMessage(FrameWork frameWork, NativeMessage message) {
+    Message msg = Message.obtain(null, 1, message);
     frameWork.mainHandler.sendMessage(msg);
   }
     

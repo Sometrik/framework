@@ -92,24 +92,6 @@ void AndroidPlatform::showCanvas(canvas::ContextAndroid & context) {
 
 }
 
-
-std::string AndroidPlatform::showTextEntryDialog(const std::string & message) {
-  return "";
-}
-
-void AndroidPlatform::showMessageBox(const std::string & title, const std::string & message) {
-
-}
-
-void
-AndroidPlatform::setJavaVM(JNIEnv * env, JavaVM * _gJavaVM) {
-  gJavaVM = _gJavaVM;
-  gJavaVM->AttachCurrentThread(&env, NULL);
-  if (gJavaVM == NULL){
-    __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "JavaVM is null");
-  }
-}
-
 std::string AndroidPlatform::getBundleFilename(const char * filename) {
   return filename;
 }
@@ -163,7 +145,7 @@ AndroidPlatform::sendMessage(const Message & message) {
   auto env = getJNIEnv();
    jclass frameworkCls = env->FindClass("com/sometrik/framework/FrameWork");
    jclass messageCls = env->FindClass("com/sometrik/framework/NativeMessage");
-   jmethodID sendMessageMethod = env->GetStaticMethodID(frameworkCls, "sendMessage", "(Lcom/sometrik/framework/FrameWork;Lcom/sometrik/framework/NativeMessage)V");
+   jmethodID sendMessageMethod = env->GetStaticMethodID(frameworkCls, "sendMessage", "(Lcom/sometrik/framework/FrameWork;Lcom/sometrik/framework/NativeMessage;)V");
    jmethodID messageConstructor = env->GetMethodID(messageCls, "<init>", "(IIILjava/lang/String;Ljava/lang/String;)V");
 
    int messageTypeId = int(message.getType());
@@ -173,10 +155,11 @@ AndroidPlatform::sendMessage(const Message & message) {
    jstring jtextValue2 = env->NewStringUTF(textValue2);
 
 
-   jobject jmessage = env->NewObject(messageCls, messageConstructor, messageTypeId, message.getChildInternalId(), message.getInternalId(), jtextValue, jtextValue2);
-   env->CallVoidMethod(frameworkCls, sendMessageMethod, framework, jmessage);
-   env->ReleaseStringUTFChars(jtextValue, textValue);
-   env->ReleaseStringUTFChars(jtextValue2, textValue2);
+   jobject jmessage = env->NewObject(messageCls, messageConstructor, messageTypeId, message.getInternalId(), message.getChildInternalId(), jtextValue, jtextValue2);
+   env->CallStaticVoidMethod(frameworkCls, sendMessageMethod, framework, jmessage);
+   //Fix these releases
+//  env->ReleaseStringUTFChars(jtextValue, textValue);
+//  env->ReleaseStringUTFChars(jtextValue2, textValue2);
 }
 
 double AndroidPlatform::getTime() const {
@@ -269,9 +252,15 @@ void Java_com_sometrik_framework_MyGLRenderer_onInit(JNIEnv* env, jobject thiz, 
 
     platform = std::make_shared<AndroidPlatform>(env, assetManager, surface, displayScale, glslVersion, hasEs3);
   }
+  
   FWApplication * application = applicationMain();
   platform->setApplication(application);
-  platform->setJavaVM(env, gJavaVM);
+
+  if (gJavaVM) {
+    gJavaVM->AttachCurrentThread(&env, NULL);
+    platform->setJavaVM(gJavaVM);
+  }
+
   application->initialize(platform.get());
   platform->setDisplayWidth(screenWidth);
   platform->setDisplayHeight(screenHeight);
