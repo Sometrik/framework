@@ -56,7 +56,8 @@ AndroidPlatform::onTouchesEvent(jobject * _obj, int mode, int fingerIndex, doubl
   return true;
 }
 
-void AndroidPlatform::onResize(int width, int height) {
+void
+AndroidPlatform::onResize(int width, int height) {
   __android_log_print(ANDROID_LOG_ERROR, "Sometrik", "resize: %d %d ", width, height);
   ResizeEvent ev(getTime(), width / getDisplayScale(), height / getDisplayScale(), width, height);
   postEvent(getActiveView(), ev);
@@ -73,7 +74,8 @@ AndroidPlatform::menuPressed() {
 //	env->CallVoidMethod(handler, emptyMessageMethod, 1);
 }
 
-bool AndroidPlatform::onUpdate(double timestamp) {
+bool
+AndroidPlatform::onUpdate(double timestamp) {
   UpdateEvent ev(getTime());
   postEvent(getActiveViewId(), ev);
   bool shouldUpdate = true; // FIX ME
@@ -166,8 +168,8 @@ AndroidPlatform::sendMessage(const Message & message) {
 //  env->ReleaseStringUTFChars(jtextValue2, textValue2);
 }
 
-double AndroidPlatform::getTime() const {
-
+double
+AndroidPlatform::getTime() const {
   auto env = getJNIEnv();
   jclass systemClass = env->FindClass("Ljava/lang/System");
   double currentTime = (double)env->CallStaticLongMethod(systemClass, env->GetStaticMethodID(systemClass, "currentTimeMillis", "()L"));
@@ -176,7 +178,8 @@ double AndroidPlatform::getTime() const {
   return currentTime;
 }
 
-int AndroidPlatform::showActionSheet(const FWRect & rect, const FWActionSheet & sheet) {
+int
+AndroidPlatform::showActionSheet(const FWRect & rect, const FWActionSheet & sheet) {
 
   //Initialize java int and string arrays
   auto env = getJNIEnv();
@@ -204,15 +207,16 @@ int AndroidPlatform::showActionSheet(const FWRect & rect, const FWActionSheet & 
   return 0;
 }
 
-JNIEnv* AndroidPlatform::getJNIEnv() const {
+JNIEnv *
+AndroidPlatform::getJNIEnv() const {
   if (gJavaVM == NULL) {
     __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "JavaVM is null");
     return NULL;
   }
 
-  JNIEnv *Myenv = NULL;
+  JNIEnv * Myenv = NULL;
   gJavaVM->GetEnv((void**)&Myenv, JNI_VERSION_1_6);
-  if (Myenv == NULL){
+  if (Myenv == NULL) {
     __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Env is null");
   }
   return Myenv;
