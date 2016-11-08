@@ -14,6 +14,7 @@ public:
   
  private:
   int element_id, value;
+  int edge = +1;
 };
 
 #endif
