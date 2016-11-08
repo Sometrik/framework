@@ -8,7 +8,8 @@ public:
   enum Type {
     PURCHASE_STATUS
   };
-  PurchaseEvent(Type _type) : type(_type) { }
+ PurchaseEvent(double _timestamp, Type _type)
+   : EventBase(_timestamp), type(_type) { }
 
   void dispatch(Element & element) override;
   
