@@ -1,9 +1,10 @@
 #ifndef _ELEMENT_H_
 #define _ELEMENT_H_
 
+#include <Message.h>
+
 #include <memory>
 #include <vector>
-#include <Message.h>
 
 class EventBase;
 class TouchEvent;
@@ -12,9 +13,9 @@ class DrawEvent;
 class PurchaseEvent;
 class SysEvent;
 class UpdateEvent;
+class ResizeEvent;
 
 class LinearLayout;
-
 class FWPlatform;
 
 class Element {
@@ -33,12 +34,12 @@ class Element {
   virtual void onTouchEvent(TouchEvent & ev) { }
   virtual void onPurchaseEvent(PurchaseEvent & ev) { }
   virtual void onSysEvent(SysEvent & ev) { }
+  virtual void onResize(ResizeEvent & ev) { }
   
   virtual void onCmdLine(int argc, char *argv[]) { }
-  virtual bool onKeyPress(char c, double timestamp, int x, int y) { return false; }
-  virtual bool onResize(int _logical_width, int _logical_height, int _actual_width, int _actual_height) { return false; }
-  virtual bool flushTouches(int mode, double timestamp) { return false; }
-  virtual bool onShake(double timestamp) { return false; }
+  virtual void onKeyPress(char c, double timestamp, int x, int y) { return false; }
+  virtual void flushTouches(int mode, double timestamp) { return false; }
+  virtual voidx onShake(double timestamp) { return false; }
 
   virtual void show() { }
     
