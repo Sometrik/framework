@@ -55,8 +55,7 @@ AndroidPlatform::onTouchesEvent(jobject * _obj, int mode, int fingerIndex, doubl
   return true;
 }
 
-void AndroidPlatform::onResize(int width, int height) {
-
+void AndroidPlatform::onResize(int width, int height) {  
   __android_log_print(ANDROID_LOG_ERROR, "Sometrik", "resize: %d %d ", width, height);
   getApplication().onResize(width / getDisplayScale(), height / getDisplayScale(), width, height);
 }
@@ -64,7 +63,7 @@ void AndroidPlatform::onResize(int width, int height) {
 void
 AndroidPlatform::menuPressed() {
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Platform menupressed called");
-  CommandEvent ce(FW_ID_MENU);
+  CommandEvent ce(getTime(), FW_ID_MENU);
   postEvent(getActiveViewId(), ce);
 
 //	jclass handlerClass = env->GetObjectClass(handler);
@@ -81,7 +80,7 @@ bool AndroidPlatform::onUpdate(double timestamp) {
 
 void
 AndroidPlatform::onDraw() {
-  DrawEvent ev;
+  DrawEvent ev(getTime());
   postEvent(getActiveViewId(), ev);
 }
 
