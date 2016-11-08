@@ -10,7 +10,8 @@ public:
     MEMORY_WARNING,
     THREAD_TERMINATED
   };
-  SysEvent(Type _type) : type(_type) { }
+ SysEvent(double _timestamp, Type _type)
+   : EventBase(_timestamp), type(_type) { }
 
   void dispatch(Element & element) override;
   
