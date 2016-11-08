@@ -2,6 +2,7 @@
 #include <FWPlatform.h>
 #include <Message.h>
 #include <Logger.h>
+#include <ResizeEvent.h>
 
 #include <sstream>
 
@@ -17,6 +18,14 @@ OpenGLView::initialize(FWPlatform * _platform) {
   logical_height = int(_platform->getDisplayHeight() / _platform->getDisplayScale());
   actual_width = _platform->getDisplayWidth();
   actual_height = _platform->getDisplayHeight();    
+}
+
+void
+OpenGLView::onResize(ResizeEvent & ev) {
+  logical_width = ev.getLogicalWidth();
+  logical_height = ev.getLogicalHeight();
+  actual_width = ev.getActualWidth();
+  actual_height = ev.getActualHeight();
 }
 
 void
