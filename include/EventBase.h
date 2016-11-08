@@ -5,7 +5,7 @@ class Element;
 
 class EventBase {
  public:
-  EventBase() { }
+  EventBase(double _timestamp) : timestamp(_timestamp) { }
   virtual ~EventBase() { }
 
   virtual void dispatch(Element & element);
@@ -13,10 +13,13 @@ class EventBase {
   Element * getSourceElement() { return source_element; }
   const Element * getSourceElement() const { return source_element; }
 
+  double getTimestamp() const { return timestamp; }
+  
   bool isHandled() const { return is_handled; }
   void setIsHandled() { is_handled = true; }
   
  private:
+  double timestamp;
   Element * source_element = 0;
   bool is_handled = false;
 };
