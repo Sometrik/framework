@@ -19,6 +19,7 @@
 #include <TouchEvent.h>
 #include <CommandEvent.h>
 #include <DrawEvent.h>
+#include <UpdateEvent.h>
 
 #include <android_fopen.h>
 
@@ -72,7 +73,9 @@ AndroidPlatform::menuPressed() {
 }
 
 bool AndroidPlatform::onUpdate(double timestamp) {
-  bool shouldUpdate =  getApplication().onUpdate(timestamp);
+  UpdateEvent ev(getTime());
+  postEvent(getActiveViewId(), ev);
+  bool shouldUpdate = true; // FIX ME
   return shouldUpdate;
 }
 
