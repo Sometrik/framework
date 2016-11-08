@@ -13,10 +13,10 @@ public:
 
   void dispatch(Element & element) override;
   
-  Type getType() { return type; }
-  int getX() { return x; }
-  int getY() { return y; }
-  long getIdentifier() { return identifier; }
+  Type getType() const { return type; }
+  int getX() const { return x; }
+  int getY() const { return y; }
+  long getIdentifier() const { return identifier; }
 
  private:
   Type type;
