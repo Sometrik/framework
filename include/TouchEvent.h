@@ -22,7 +22,6 @@ public:
   Type type;
   int x;
   int y;
-  double time;
   int identifier;
 };
 
