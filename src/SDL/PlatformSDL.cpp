@@ -123,21 +123,21 @@ public:
 	  break;
 	case SDL_MOUSEBUTTONDOWN:
 	  {
-	    TouchEvent ev(TouchEvent::ACTION_DOWN, mouse_x, display_height - 1 - mouse_y, getTime(), 0);
+	    TouchEvent ev(TouchEvent::ACTION_DOWN, mouse_x, mouse_y, getTime(), 0);
 	    postEvent(getActiveViewId(), ev);
 	    button_pressed = true;
 	  }
 	  break;
 	case SDL_MOUSEBUTTONUP:
 	  {
-	    TouchEvent ev(TouchEvent::ACTION_UP, mouse_x, display_height - 1 - mouse_y, getTime(), 0);
+	    TouchEvent ev(TouchEvent::ACTION_UP, mouse_x, mouse_y, getTime(), 0);
 	    postEvent(getActiveViewId(), ev);
 	    button_pressed = false;
 	  }
 	  break;
 	case SDL_MOUSEMOTION:
 	  if (button_pressed) {
-	    TouchEvent ev(TouchEvent::ACTION_MOVE, event.motion.x, display_height - 1 - event.motion.y, getTime(), 0);
+	    TouchEvent ev(TouchEvent::ACTION_MOVE, event.motion.x, event.motion.y, getTime(), 0);
 	    postEvent(getActiveViewId(), ev);
 	  }
 	  mouse_x = event.motion.x;
