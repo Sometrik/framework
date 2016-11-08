@@ -20,6 +20,7 @@
 #include <CommandEvent.h>
 #include <DrawEvent.h>
 #include <UpdateEvent.h>
+#include <ResizeEvent.h>
 
 #include <android_fopen.h>
 
@@ -55,9 +56,10 @@ AndroidPlatform::onTouchesEvent(jobject * _obj, int mode, int fingerIndex, doubl
   return true;
 }
 
-void AndroidPlatform::onResize(int width, int height) {  
+void AndroidPlatform::onResize(int width, int height) {
   __android_log_print(ANDROID_LOG_ERROR, "Sometrik", "resize: %d %d ", width, height);
-  getApplication().onResize(width / getDisplayScale(), height / getDisplayScale(), width, height);
+  ResizeEvent ev(getTime(), width / getDisplayScale(), height / getDisplayScale(), width, height);
+  postEvent(getActiveView(), ev);
 }
 
 void
