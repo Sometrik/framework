@@ -11,6 +11,8 @@ class CommandEvent;
 class DrawEvent;
 class PurchaseEvent;
 class SysEvent;
+class UpdateEvent;
+
 class LinearLayout;
 
 class FWPlatform;
@@ -26,14 +28,14 @@ class Element {
   virtual void onEvent(EventBase & ev);
   
   virtual void onDrawEvent(DrawEvent & ev) { }
+  virtual void onUpdateEvent(UpdateEvent & ev) { }
   virtual void onCommandEvent(CommandEvent & ev) { }
-  virtual bool onTouchEvent(TouchEvent & ev) { return false; }
+  virtual void onTouchEvent(TouchEvent & ev) { }
   virtual void onPurchaseEvent(PurchaseEvent & ev) { }
   virtual void onSysEvent(SysEvent & ev) { }
   
   virtual void onCmdLine(int argc, char *argv[]) { }
   virtual bool onKeyPress(char c, double timestamp, int x, int y) { return false; }
-  virtual bool onUpdate(double timestamp) { return false; }
   virtual bool onResize(int _logical_width, int _logical_height, int _actual_width, int _actual_height) { return false; }
   virtual bool flushTouches(int mode, double timestamp) { return false; }
   virtual bool onShake(double timestamp) { return false; }
