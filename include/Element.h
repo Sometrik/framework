@@ -24,7 +24,6 @@ class Element {
   virtual ~Element() { }
 
   virtual void initialize(FWPlatform * _platform);
-  virtual void initializeContent() { }
 
   virtual void onEvent(EventBase & ev);
   
@@ -124,6 +123,8 @@ class Element {
   }
 
 protected:
+  virtual void initializeContent() { }
+  
   bool isInitialized() const { return internal_id != 0; }
 
  private:
