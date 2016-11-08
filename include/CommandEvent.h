@@ -5,7 +5,8 @@
 
 class CommandEvent : public EventBase {
 public:
-  CommandEvent(int _element_id, int _value = 0) : element_id(_element_id), value(_value) { }
+  CommandEvent(double _timestamp, int _element_id, int _value = 0)
+    : ElementBase(_timestamp), element_id(_element_id), value(_value) { }
 
   void dispatch(Element & element) override;
 
