@@ -17,7 +17,7 @@ class CanvasElement : public Element {
   void setWidth(float _width) { width = _width; }
   void setHeight(float _height) { height = _height; }
 
-  void onDrawEvent(DrawEvent & ev) {
+  void onDrawEvent(DrawEvent & ev) override {
     if (!texture.get()) {
       texture = drawContent();
     }
@@ -32,24 +32,32 @@ class CanvasElement : public Element {
     renderer->renderTexturedWindow(vbo, texture, mat);
   }
 
-  bool onTouchEvent(TouchEvent & ev) {
+  void onTouchEvent(TouchEvent & ev) override {
     if (ev.getType() == TouchEvent::ACTION_DOWN &&
 	ev.getX() >= x && ev.getX() < x + width &&
 	ev.getY() >= y && ev.getY() < y + height) {
+      if (!is_touched) {
+	is_touched = true;
+	texture.clear();
+      }
       CommandEvent ev2(ev.getTimestamp(), getId());
       ev2.dispatch(*this);
+    } else if (ev.getType() == TouchEvent::ACTION_UP) {
+      if (is_touched) {
+	is_touched = false;
+	texture.clear();
+      }
     }
-    return false;
   }
 
  protected:
   virtual canvas::TextureRef drawContent() = 0;
 
   float x = 0, y = 0, width = 0, height = 0;
+  bool is_touched = false;
   
  private:
   canvas::TextureRef texture;
-  // canvas::ContextFactory factory;
 };
 
 #endif
