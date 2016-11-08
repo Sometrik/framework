@@ -5,6 +5,8 @@
 #include <TextureRef.h>
 #include <Context.h>
 #include <VBO.h>
+#include <TouchEvent.h>
+#include <CommandEvent.h>
  
 class CanvasElement : public Element {
  public:
@@ -20,14 +22,25 @@ class CanvasElement : public Element {
       texture = drawContent();
     }
     VBO vbo;
-    vbo.quad2d(x, y + height,
-	       x, y,
-	       x + width, y,
-	       x + width, y + height
+    vbo.quad2d(x, y,
+	       x, y + height,
+	       x + width, y + height,
+	       x + width, y
 	       );
     glm::mat4 mat(1.0f);
     auto & renderer = getPlatform().getRenderer();
     renderer->renderTexturedWindow(vbo, texture, mat);
+  }
+
+  bool onTouchEvent(TouchEvent & ev) {
+    if (ev.getType() == TouchEvent::ACTION_DOWN &&
+	ev.getX() >= x && ev.getX() < x + width &&
+	ev.getY() >= y && ev.getY() < y + height) {
+      std::cerr << "hit in " << getId() << "\n";
+      CommandEvent ev2(getId());
+      ev2.dispatch(*this);
+    }
+    return false;
   }
 
  protected:
