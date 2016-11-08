@@ -5,7 +5,7 @@
 
 class DrawEvent : public EventBase {
 public:
-  DrawEvent() { }
+  DrawEvent(double _timestamp) : EventBase(_timestamp) { }
 
   void dispatch(Element & element) override;
     
