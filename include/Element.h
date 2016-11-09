@@ -14,6 +14,7 @@ class PurchaseEvent;
 class SysEvent;
 class UpdateEvent;
 class ResizeEvent;
+class TimerEvent;
 
 class LinearLayout;
 class FWPlatform;
