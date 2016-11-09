@@ -3,6 +3,7 @@
 
 #include <CanvasElement.h>
 #include <PrimitiveRenderer.h>
+#include <OpenGLTexture.h>
 
 class CButton : public CanvasElement {
  public:
@@ -31,6 +32,13 @@ class CButton : public CanvasElement {
     return canvas::OpenGLTexture::createTexture(context->getDefaultSurface());
   }
 
+  void setLabel(const std::string & l) {
+    if (l != label) {
+      label = l;
+      clearTexture();
+    }
+  }
+  
  private:
   std::string label;
   // float highlight = 0.0f;
