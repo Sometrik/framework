@@ -174,6 +174,12 @@ AndroidPlatform::getTime() const {
   return currentTime;
 }
 
+void
+AndroidPlatform::buttonClicked(int id) {
+  CommandEvent ev(getTime(), id);
+  postEvent(id, ev);
+}
+
 int
 AndroidPlatform::showActionSheet(const FWRect & rect, const FWActionSheet & sheet) {
 
@@ -286,6 +292,10 @@ void Java_com_sometrik_framework_FrameWork_okPressed(JNIEnv* env, jobject thiz, 
 
   env->CallVoidMethod(thiz, methodRef, text);
 
+}
+
+void Java_com_sometrik_framework_FrameWork_buttonClicked(JNIEnv* env, jint buttonId) {
+  platform->buttonClicked(buttonId);
 }
 
 jint JNI_OnLoad(JavaVM *vm, void *reserved) {

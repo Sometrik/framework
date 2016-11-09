@@ -46,6 +46,7 @@ public:
   std::shared_ptr<Logger> createLogger() const override {
     return std::make_shared<AndroidLogger>();
   }
+  void buttonClicked(int id);
   void sendMessage(const Message & message) override;
 
   JNIEnv* getJNIEnv() const;
