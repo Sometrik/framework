@@ -70,8 +70,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     System.out.println("(Renderer)onSurfaceCreated(override) called");
 
     renderer = this;
-    System.out.println("surface check: " + frame.getSurfaceView());
-
+    
     DisplayMetrics displayMetrics = frame.getDisplayMetrics();
     System.out.println("Display scale: " + displayMetrics.scaledDensity);
     final ActivityManager activityManager = (ActivityManager) frame.getSystemService(Context.ACTIVITY_SERVICE);

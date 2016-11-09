@@ -3,7 +3,7 @@ package com.sometrik.framework;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
-import com.example.bombdefender.R;
+import com.example.machine.R;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -68,7 +68,7 @@ public class Settings extends PreferenceFragment {
     // Context.MODE_PRIVATE);
     // editor = prefs.edit();
 
-    addPreferencesFromResource(R.layout.settings2);
+//    addPreferencesFromResource(R.layout.settings2);
 
     PreferenceCategory facebookCategory = new PreferenceCategory(this.getActivity());
     facebookCategory.setTitle("Facebook");
@@ -182,7 +182,7 @@ public class Settings extends PreferenceFragment {
       super.onCreate(savedInstanceState);
 
       System.out.println("Settings fragment created");
-      addPreferencesFromResource(R.layout.settings2);
+//      addPreferencesFromResource(R.layout.settings2);
 
       PreferenceScreen screen = this.getPreferenceScreen();
 

@@ -111,7 +111,13 @@ public class FrameWork extends Activity {
     // view
     
     frameWork = this;
-    createOpenGLView(0);
+    
+    renderer = new MyGLRenderer(this, screenWidth, screenHeight);
+    mGLView = new MyGLSurfaceView(this, renderer);
+    mGLView.setOnTouchListener(new MyOnTouchListener(this));
+    mGLView.setWillNotDraw(false);
+    views.add(mGLView);
+    setContentView(mGLView);
     
     // create message handler for framework
     mainHandler = new Handler() {
