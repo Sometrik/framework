@@ -137,10 +137,6 @@ public class FrameWork extends Activity {
 	  System.out.println("creating formView " + message.getChildInternalId());
 	  createFormView(message.getChildInternalId());
 	  break;
-	case CREATE_LINEAR_LAYOUT:
-	  System.out.println("adding linear layout with id: " + message.getChildInternalId());
-	  getFromViewList(message.getInternalId()).handleMessage(message);
-	  break;
 	  // Create notification
 	case POST_NOTIFICATION:
 	  createNotification("", "");
@@ -154,6 +150,7 @@ public class FrameWork extends Activity {
 	  view.showView();
 	  break;
 	default:
+	  getFromViewList(message.getInternalId()).handleMessage(message);
 	  break;
 	}
       }
@@ -170,12 +167,13 @@ public class FrameWork extends Activity {
   }
   
   public static void addToViewList(NativeMessageHandler view){
+    System.out.println(view.getElementId() + " added to view list");
     views.add(view);
   }
   
   private NativeMessageHandler getFromViewList(int id){
     for (NativeMessageHandler view : views){
-      if (view.getId() == id){
+      if (view.getElementId() == id){
 	return view;
       }
     }
