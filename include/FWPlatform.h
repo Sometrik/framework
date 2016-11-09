@@ -77,6 +77,9 @@ class FWPlatform {
     Element * e = getApplication().getElementByInternalId(internal_id);
     if (e) ev.dispatch(*e);
     else getLogger().println("Failed to dispatch event");
+    if (ev.isRedrawNeeded()) {
+      redraw_needed = true;
+    }
   }
   
   int getNextInternalId() { return nextInternalId++; }
@@ -91,8 +94,12 @@ class FWPlatform {
   int getActiveViewId() const { return activeViewId; }
   
  protected:
+  bool isRedrawNeeded() { return redraw_needed; }
+  void clearRedrawNeeded() { redraw_needed = false; }
+  
   virtual std::shared_ptr<SoundCanvas> createSoundCanvas() const = 0;
   virtual std::shared_ptr<Logger> createLogger() const = 0;
+  
   int display_width = 0, display_height = 0;
   float display_scale = 1.0f;
   std::string glsl_version;
@@ -105,6 +112,7 @@ class FWPlatform {
   std::shared_ptr<PrimitiveRenderer> renderer;
   int nextInternalId = 1;
   int activeViewId = 0;
+  bool redraw_needed = false;
 };
 
 #endif
