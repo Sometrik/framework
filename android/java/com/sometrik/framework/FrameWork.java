@@ -2,7 +2,7 @@ package com.sometrik.framework;
 
 import java.util.ArrayList;
 
-import com.example.bombdefender.R;
+import com.example.machine.R;
 import com.sometrik.framework.Settings.MyPreferenceFragment;
 
 import android.app.Activity;
@@ -46,6 +46,7 @@ public class FrameWork extends Activity {
   private RelativeLayout mainView;
   private SharedPreferences prefs;
   private SharedPreferences.Editor editor;
+  private FrameWork frameWork;
 
   private static final int RESULT_SETTINGS = 1;
 
@@ -101,8 +102,6 @@ public class FrameWork extends Activity {
 
     // Set up classes
     settings = new Settings(this);
-    renderer = new MyGLRenderer(this, screenWidth, screenHeight);
-    mGLView = new MyGLSurfaceView(this, renderer);
 
     // Get preferences (simple key-value database)
     prefs = this.getSharedPreferences("com.example.Work", Context.MODE_PRIVATE);
@@ -110,15 +109,11 @@ public class FrameWork extends Activity {
 
     // Create listener for screen touches and make MyGlSurfaceView the active
     // view
-    mGLView.setOnTouchListener(new MyOnTouchListener(this));
-    mGLView.setWillNotDraw(false);
-    setContentView(mGLView);
     
-    int[] coords = new int[2];
-    mGLView.getLocationInWindow(coords);
-    windowYcoords = coords[0];
+    frameWork = this;
+    createOpenGLView(0);
     
-    // create message handler for framework. Messages come from MyGLSurfaceView
+    // create message handler for framework
     mainHandler = new Handler() {
       @Override
       public void handleMessage(Message msg) {
@@ -138,6 +133,9 @@ public class FrameWork extends Activity {
 	  case CREATE_FORMVIEW:
 	    System.out.println("creating formView " + message.getChildInternalId());
 	    createFormView(message.getChildInternalId());
+	    break;
+	  case CREATE_OPENGL_VIEW:
+	    createOpenGLView(message.getChildInternalId());
 	    break;
 	  // Create notification
 	  case POST_NOTIFICATION:
@@ -205,6 +203,7 @@ public class FrameWork extends Activity {
     mGLView.setOnTouchListener(new MyOnTouchListener(this));
     mGLView.setWillNotDraw(false);
     views.add(mGLView);
+    setContentView(mGLView);
   }
 
   // Lisää kuvan antaminen // Aika // Ääni
@@ -219,7 +218,7 @@ public class FrameWork extends Activity {
 
     builder.setContentTitle(title);
     builder.setContentText(text);
-    builder.setSmallIcon(R.drawable.picture);
+//    builder.setSmallIcon(R.drawable.picture);
     builder.setContentIntent(pIntent);
     builder.setAutoCancel(true);
 
@@ -312,15 +311,15 @@ public class FrameWork extends Activity {
 
   //Code to show user preferences on screen. Might be useful later
   private void showUserSettings() {
-    setContentView(R.layout.activity_main);
+//    setContentView(R.layout.activity_main);
     System.out.println("showSettings called");
     SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
     StringBuilder builder = new StringBuilder();
     builder.append("\n Username: " + sharedPrefs.getString("prefUsername", "NULL"));
     builder.append("\n Send report:" + sharedPrefs.getBoolean("prefSendReport", false));
     builder.append("\n Sync Frequency: " + sharedPrefs.getString("prefSyncFrequency", "NULL"));
-    TextView settingsTextView = (TextView) findViewById(R.id.textUserSettings);
-    settingsTextView.setText(builder.toString());
+//    TextView settingsTextView = (TextView) findViewById(R.id.textUserSettings);
+//    settingsTextView.setText(builder.toString());
   }
 
   private static PointF touchScreenStartPtArr[] = new PointF[10];
@@ -555,15 +554,15 @@ public class FrameWork extends Activity {
   public boolean onOptionsItemSelected(MenuItem item) {
     switch (item.getItemId()) {
 
-    case R.id.menu_settings:
-
-      getFragmentManager().beginTransaction().replace(android.R.id.content, new MyPreferenceFragment()).commit();
-
-      break;
-
-    case 1:
-      startActivity(new Intent(this, Settings.class));
-      break;
+//    case R.id.menu_settings:
+//
+//      getFragmentManager().beginTransaction().replace(android.R.id.content, new MyPreferenceFragment()).commit();
+//
+//      break;
+//
+//    case 1:
+//      startActivity(new Intent(this, Settings.class));
+//      break;
 
     }
 
