@@ -18,7 +18,7 @@ class CButton : public CanvasElement {
     context->arcTo(x,   y+h, x,   y,   r);
     context->arcTo(x,   y,   x+w, y,   r);
     if (is_touched) {
-      context->fillStyle = "#a40";
+      context->fillStyle = "#730";
       context->fill();
     }
     context->strokeStyle = "#e80";
@@ -26,6 +26,7 @@ class CButton : public CanvasElement {
     context->fillStyle = "#fff";
     context->font.size = 20;
     context->textAlign = "center";
+    context->textBaseline = "middle";
     context->fillText(label, width / 2, height / 2);    
     return canvas::OpenGLTexture::createTexture(context->getDefaultSurface());
   }
