@@ -53,7 +53,7 @@ public class FormView implements NativeMessageHandler {
   }
   
   public void showView(){
-    FrameWork frame = (FrameWork)context;
+    FrameWork frame = (FrameWork) context;
     frame.setContentView(baseLayout);
   }
 
@@ -81,13 +81,16 @@ public class FormView implements NativeMessageHandler {
       button.setText(message.getTextValue());
       baseLayout.addView(button);
       break;
+    default:
+      System.out.println("Unhandled case");
+      break;
 
     }
     
   }
 
   @Override
-  public int getId() {
+  public int getElementId() {
     return viewId;
   }
 }

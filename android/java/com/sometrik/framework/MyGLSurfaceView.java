@@ -56,7 +56,8 @@ public class MyGLSurfaceView extends GLSurfaceView implements NativeMessageHandl
     super.onDraw(canvas);
   }
   
-  public int getViewId(){
+  @Override
+  public int getElementId(){
     return viewId;
   }
 

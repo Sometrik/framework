@@ -17,6 +17,10 @@ public class FWLayout extends LinearLayout implements NativeMessageHandler{
     list();
   }
 
+  @Override
+  public int getElementId() {
+    return this.getId();
+  }
   
   private void list(){
     FrameWork.addToViewList(this);
@@ -24,6 +28,7 @@ public class FWLayout extends LinearLayout implements NativeMessageHandler{
 
   @Override
   public void handleMessage(NativeMessage message) {
+    System.out.println("Message FWLayout " + this.getId());
     
     switch(message.getMessage()){
     case CREATE_BUTTON:
@@ -40,6 +45,7 @@ public class FWLayout extends LinearLayout implements NativeMessageHandler{
       break;
 
     case CREATE_LINEAR_LAYOUT:
+      System.out.println("FWLayout " + this.getId() + " creating layout");
       FWLayout layout = new FWLayout(context);
       layout.setId(message.getChildInternalId());
       this.addView(layout);
@@ -49,6 +55,7 @@ public class FWLayout extends LinearLayout implements NativeMessageHandler{
       break;
 
     case CREATE_TEXTFIELD:
+      System.out.println("FWLayout " + this.getId() + " creating textfield");
       EditText editText = new EditText(context);
       editText.setId(message.getChildInternalId());
       editText.setText(message.getTextValue());
@@ -56,6 +63,7 @@ public class FWLayout extends LinearLayout implements NativeMessageHandler{
       break;
 
     case CREATE_TEXTLABEL:
+      System.out.println("FWLayout " + this.getId() + " creating textlabel");
       TextView textView = new TextView(context);
       textView.setId(message.getChildInternalId());
       textView.setText(message.getTextValue());
