@@ -11,6 +11,7 @@
 #include <DrawEvent.h>
 #include <SysEvent.h>
 #include <UpdateEvent.h>
+#include <ResizeEvent.h>
 
 #include <SDL/SDL.h>
 #include <GL/gl.h>
@@ -150,7 +151,8 @@ public:
 	    cerr << "resized (" << w << " " << h << ")\n";
 	    setDisplayWidth(w);
 	    setDisplayHeight(h);
-	    getApplication().getFirstChild()->onResize(w, h, w, h);
+	    ResizeEvent ev(getTime(), w, h, w, h);
+	    postEvent(getActiveViewId(), ev);
 	  }
 	  break;
 	case SDL_QUIT:
