@@ -58,7 +58,7 @@ void
 AndroidPlatform::onResize(int width, int height) {
   __android_log_print(ANDROID_LOG_ERROR, "Sometrik", "resize: %d %d ", width, height);
   ResizeEvent ev(getTime(), width / getDisplayScale(), height / getDisplayScale(), width, height);
-  postEvent(getActiveView(), ev);
+  postEvent(getActiveViewId(), ev);
 }
 
 void
