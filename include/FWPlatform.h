@@ -65,8 +65,10 @@ class FWPlatform {
   virtual void sendMessage(const Message & message) {
     if (message.getType() == Message::SHOW_VIEW) {
       activeViewId = message.getInternalId();
+      redraw_needed = true;
     } else if (!activeViewId && (message.getType() == Message::CREATE_FORMVIEW || message.getType() == Message::CREATE_OPENGL_VIEW)) {
       activeViewId = message.getChildInternalId();
+      redraw_needed = true;
     }
   }
 
