@@ -167,8 +167,8 @@ AndroidPlatform::sendMessage(const Message & message) {
 double
 AndroidPlatform::getTime() const {
   auto env = getJNIEnv();
-  jclass systemClass = env->FindClass("Ljava/lang/System");
-  double currentTime = (double)env->CallStaticLongMethod(systemClass, env->GetStaticMethodID(systemClass, "currentTimeMillis", "()L"));
+  jclass systemClass = env->FindClass("java/lang/System");
+  double currentTime = (double)env->CallStaticLongMethod(systemClass, env->GetStaticMethodID(systemClass, "currentTimeMillis", "()J"));
   env->DeleteLocalRef(systemClass);
 
   return currentTime;
