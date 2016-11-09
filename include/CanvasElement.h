@@ -36,21 +36,25 @@ class CanvasElement : public Element {
     if (ev.getType() == TouchEvent::ACTION_DOWN &&
 	ev.getX() >= x && ev.getX() < x + width &&
 	ev.getY() >= y && ev.getY() < y + height) {
-      if (!is_touched) {
-	is_touched = true;
-	texture.clear();
-      }
+      setTouched(true);
       CommandEvent ev2(ev.getTimestamp(), getId());
       ev2.dispatch(*this);
     } else if (ev.getType() == TouchEvent::ACTION_UP) {
-      if (is_touched) {
-	is_touched = false;
-	texture.clear();
-      }
+      setTouched(false); 
     }
   }
 
+  void setTouched(bool t) {
+    if (t != is_touched) {
+      is_touched = t;
+      clearTexture();
+    }
+  }
+
+  bool isTouched() const { return is_touched; }
+
  protected:
+  void clearTexture() { texture.clear(); }
   virtual canvas::TextureRef drawContent() = 0;
 
   float x = 0, y = 0, width = 0, height = 0;
