@@ -164,10 +164,12 @@ public:
 
       UpdateEvent ev0(getTime());
       postEvent(getActiveViewId(), ev0);
-      if (true) {
+
+      if (isRedrawNeeded()) {
 	DrawEvent ev(getTime());
 	postEvent(getActiveViewId(), ev);
 	swapBuffers();
+	clearRedrawNeeded();
       }
     }
   }
