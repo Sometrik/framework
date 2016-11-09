@@ -28,7 +28,7 @@ using namespace std;
 
 extern FWApplication * applicationMain();
 
-bool
+void
 AndroidPlatform::onTouchesEvent(jobject * _obj, int mode, int fingerIndex, double time, float x, float y) {
   x /= getDisplayScale();
   y /= getDisplayScale();
@@ -52,8 +52,6 @@ AndroidPlatform::onTouchesEvent(jobject * _obj, int mode, int fingerIndex, doubl
     }
     break;
   }
-
-  return true;
 }
 
 void
@@ -74,12 +72,10 @@ AndroidPlatform::menuPressed() {
 //	env->CallVoidMethod(handler, emptyMessageMethod, 1);
 }
 
-bool
+void
 AndroidPlatform::onUpdate(double timestamp) {
   UpdateEvent ev(getTime());
   postEvent(getActiveViewId(), ev);
-  bool shouldUpdate = true; // FIX ME
-  return shouldUpdate;
 }
 
 void
@@ -242,11 +238,8 @@ void Java_com_sometrik_framework_FrameWork_touchEvent(JNIEnv* env, jobject thiz,
 }
 
 jboolean Java_com_sometrik_framework_MyGLRenderer_onUpdate(JNIEnv* env, jobject thiz, double timestamp) {
-  if (platform->onUpdate(timestamp)) {
-    return JNI_TRUE;
-  } else {
-    return JNI_FALSE;
-  }
+  platform->onUpdate(timestamp);
+  return JNI_TRUE; // FIX ME: check the return value from event
 }
 
 static JavaVM * gJavaVM = 0;
