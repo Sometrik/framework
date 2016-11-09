@@ -35,6 +35,7 @@ class Element {
   virtual void onPurchaseEvent(PurchaseEvent & ev) { }
   virtual void onSysEvent(SysEvent & ev) { }
   virtual void onResizeEvent(ResizeEvent & ev) { }
+  virtual void onTimerEvent(TimerEvent & ev) { }
   
   virtual void onCmdLine(int argc, char *argv[]) { }
   virtual void onKeyPress(char c, double timestamp, int x, int y) { }

@@ -32,6 +32,10 @@ public class NativeMessage {
     ADD_OPTION,
     QUIT_APP,
 
+    // Timers
+    CREATE_TIMER,
+    DELETE_TIMER,
+    
     // In-app purchases
     LIST_PRODUCTS,
     BUY_PRODUCT,
