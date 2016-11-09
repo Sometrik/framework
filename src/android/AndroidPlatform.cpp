@@ -82,6 +82,7 @@ void
 AndroidPlatform::onDraw() {
   DrawEvent ev(getTime());
   postEvent(getActiveViewId(), ev);
+  clearRedrawNeeded();
 }
 
 void AndroidPlatform::showCanvas(canvas::ContextAndroid & context) {
