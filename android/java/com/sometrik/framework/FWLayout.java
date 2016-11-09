@@ -1,6 +1,8 @@
 package com.sometrik.framework;
 
 import android.content.Context;
+import android.os.Message;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -25,6 +27,22 @@ public class FWLayout extends LinearLayout implements NativeMessageHandler{
   private void list(){
     FrameWork.addToViewList(this);
   }
+  
+  private void createButton(final int id, String text){
+    Button button = new Button(context);
+    button.setId(id);
+    button.setText(text);
+   
+    button.setOnClickListener(new OnClickListener(){
+      @Override
+      public void onClick(View arg0) {
+	FrameWork frame = (FrameWork)context;
+	Message message = Message.obtain(frame.mainHandler, 2, id);
+	message.sendToTarget();
+      }
+    });
+    this.addView(button);
+  }
 
   @Override
   public void handleMessage(NativeMessage message) {
@@ -32,10 +50,7 @@ public class FWLayout extends LinearLayout implements NativeMessageHandler{
     
     switch(message.getMessage()){
     case CREATE_BUTTON:
-      Button button = new Button(context);
-      button.setId(message.getChildInternalId());
-      button.setText(message.getTextValue());
-      this.addView(button);
+      createButton(message.getChildInternalId(), message.getTextValue());
       break;
 
     case CREATE_PICKER:
