@@ -71,6 +71,8 @@ public class FrameWork extends Activity {
 
   public native void okPressed(String text);
   
+  public native void buttonClicked(int id);
+  
   public native void settingsCreator(Settings settings, int id);
 
   public native void menuPressed();
@@ -122,36 +124,40 @@ public class FrameWork extends Activity {
       public void handleMessage(Message msg) {
 
 	System.out.println("main message received: " + msg.what);
-	NativeMessage message = (NativeMessage)msg.obj;
-	System.out.println("id: " + message.getInternalId() +" MessageType: " + String.valueOf(message.getMessage()));
-
-	switch (message.getMessage()) {
-	// Send Message to element
-	case CREATE_APPLICATION:
-	  // getFromViewList(message.getInternalId()).handleMessage(message);
-	  break;
-	case SET_CAPTION:
-	  setTitle(message.getTextValue());
-	  break;
-	case CREATE_FORMVIEW:
-	  System.out.println("creating formView " + message.getChildInternalId());
-	  createFormView(message.getChildInternalId());
-	  break;
+	NativeMessage message = (NativeMessage) msg.obj;
+	System.out.println("id: " + message.getInternalId() + " MessageType: " + String.valueOf(message.getMessage()));
+	if (msg.what == 1) {
+	  switch (message.getMessage()) {
+	  // Send Message to element
+	  case CREATE_APPLICATION:
+	    // getFromViewList(message.getInternalId()).handleMessage(message);
+	    break;
+	  case SET_CAPTION:
+	    setTitle(message.getTextValue());
+	    break;
+	  case CREATE_FORMVIEW:
+	    System.out.println("creating formView " + message.getChildInternalId());
+	    createFormView(message.getChildInternalId());
+	    break;
 	  // Create notification
-	case POST_NOTIFICATION:
-	  createNotification("", "");
-	  break;
-	// Open Browser
-	case LAUNCH_BROWSER:
-	  launchBrowser("");
-	  break;
-	case ADD_OPTION:
-	  FormView view = (FormView)getFromViewList(2);
-	  view.showView();
-	  break;
-	default:
-	  getFromViewList(message.getInternalId()).handleMessage(message);
-	  break;
+	  case POST_NOTIFICATION:
+	    createNotification("", "");
+	    break;
+	  // Open Browser
+	  case LAUNCH_BROWSER:
+	    launchBrowser("");
+	    break;
+	  case ADD_OPTION:
+	    FormView view = (FormView) getFromViewList(2);
+	    view.showView();
+	    break;
+	  default:
+	    getFromViewList(message.getInternalId()).handleMessage(message);
+	    break;
+	  }
+	} else if (msg.what == 2){
+	  //Button has been clicked
+	  buttonClicked((int)msg.obj);
 	}
       }
     };
