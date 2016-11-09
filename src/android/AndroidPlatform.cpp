@@ -259,7 +259,7 @@ void Java_com_sometrik_framework_MyGLRenderer_onInit(JNIEnv* env, jobject thiz, 
 
     platform = std::make_shared<AndroidPlatform>(env, assetManager, surface, displayScale, glslVersion, hasEs3);
   }
-  
+
   FWApplication * application = applicationMain();
   platform->setApplication(application);
 
@@ -271,7 +271,7 @@ void Java_com_sometrik_framework_MyGLRenderer_onInit(JNIEnv* env, jobject thiz, 
   application->initialize(platform.get());
   platform->setDisplayWidth(screenWidth);
   platform->setDisplayHeight(screenHeight);
-  platform->onResize(screenWidth, screenHeight);
+//  platform->onResize(screenWidth, screenHeight);
   application->initializeContent();
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Init end");
 }
