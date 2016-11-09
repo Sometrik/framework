@@ -2,7 +2,6 @@ package com.sometrik.framework;
 
 import java.util.ArrayList;
 
-import com.example.machine.R;
 import com.sometrik.framework.Settings.MyPreferenceFragment;
 
 import android.app.Activity;
