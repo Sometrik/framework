@@ -288,7 +288,7 @@ void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, job
 
 void Java_com_sometrik_framework_FrameWork_nativeSetSurface(JNIEnv* env, jobject thiz, jobject surface){
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "going for it");
-  platform->createOpenGLView(surface);
+  platform->setOpenGLView(surface);
 }
 
 void Java_com_sometrik_framework_NativeLooper_test(JNIEnv* env, jobject thiz) {
