@@ -143,6 +143,7 @@ void AndroidPlatform::storeValue(const std::string & key, const std::string & va
 
 void
 AndroidPlatform::sendMessage(const Message & message) {
+  __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Message for you sir");
   FWPlatform::sendMessage(message);
   
   auto env = getJNIEnv();
@@ -210,6 +211,14 @@ AndroidPlatform::showActionSheet(const FWRect & rect, const FWActionSheet & shee
   return 0;
 }
 
+void
+AndroidPlatform::setOpenGLView(jobject surface){
+  JNIEnv * env = getJNIEnv();
+  window = ANativeWindow_fromSurface(env, surface);
+  application->initializeContent();
+//  pthread_create(&_threadId, 0, threadStartCallback, this);
+}
+
 JNIEnv *
 AndroidPlatform::getJNIEnv() const {
   if (gJavaVM == NULL) {
@@ -250,7 +259,7 @@ jboolean Java_com_sometrik_framework_MyGLRenderer_onUpdate(JNIEnv* env, jobject 
 }
 
 static JavaVM * gJavaVM = 0;
-void Java_com_sometrik_framework_MyGLRenderer_onInit(JNIEnv* env, jobject thiz, jobject assetManager, jobject surface, float screenWidth, float screenHeight, float displayScale, bool hasEs3) {
+void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, jobject assetManager, float screenWidth, float screenHeight, float displayScale, bool hasEs3) {
   if (!platform.get()) {
     __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Creating Platform");
     const char* glslVersion = "#version 100"; // "#version es 300"
@@ -258,7 +267,7 @@ void Java_com_sometrik_framework_MyGLRenderer_onInit(JNIEnv* env, jobject thiz, 
     AAssetManager* manager = AAssetManager_fromJava(env, assetManager);
     android_fopen_set_asset_manager(manager);
 
-    platform = std::make_shared<AndroidPlatform>(env, assetManager, surface, displayScale, glslVersion, hasEs3);
+    platform = std::make_shared<AndroidPlatform>(env, assetManager, thiz, displayScale, glslVersion, hasEs3);
   }
 
   FWApplication * application = applicationMain();
@@ -273,8 +282,13 @@ void Java_com_sometrik_framework_MyGLRenderer_onInit(JNIEnv* env, jobject thiz, 
   platform->setDisplayWidth(screenWidth);
   platform->setDisplayHeight(screenHeight);
 //  platform->onResize(screenWidth, screenHeight);
-  application->initializeContent();
+//  application->initializeContent();
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Init end");
+}
+
+void Java_com_sometrik_framework_FrameWork_nativeSetSurface(JNIEnv* env, jobject thiz, jobject surface){
+  __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "going for it");
+  platform->createOpenGLView(surface);
 }
 
 void Java_com_sometrik_framework_NativeLooper_test(JNIEnv* env, jobject thiz) {
@@ -302,6 +316,10 @@ void Java_com_sometrik_framework_FrameWork_buttonClicked(JNIEnv* env, jint butto
 jint JNI_OnLoad(JavaVM *vm, void *reserved) {
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "JNI_Onload on AndroidPlatform");
   gJavaVM = vm;
+  if (gJavaVM == NULL){
+    __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "problem on load. JavaVm is null");
+
+  }
 
   return JNI_VERSION_1_6;
 }

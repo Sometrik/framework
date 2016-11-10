@@ -3,6 +3,8 @@
 #include <AndroidClient.h>
 #include <AndroidSoundCanvas.h>
 #include <AndroidLogger.h>
+#include <android/native_window_jni.h>
+#include <android/native_window.h>
 
 class AndroidPlatform: public FWPlatform {
 public:
@@ -48,10 +50,14 @@ public:
   }
   void buttonClicked(int id);
   void sendMessage(const Message & message) override;
+  void setOpenGLView(jobject surface);
 
   JNIEnv* getJNIEnv() const;
 
 private:
+
+
+  ANativeWindow * window = 0;
   JavaVM * gJavaVM = 0;
   jobject mgr;
   jobject framework;
