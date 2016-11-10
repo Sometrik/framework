@@ -37,12 +37,6 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
   public native boolean onUpdate(double timestamp);
 
-  public native void onTouchesBegin(int fingerIndex);
-
-  public native void onTouchesEnded(int fingerIndex);
-
-  public native void onTouchesMoved(int fingerIndex);
-
   public MyGLRenderer(Context context, float x, float y) {
 
     frame = (FrameWork) context;

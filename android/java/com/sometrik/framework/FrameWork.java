@@ -2,9 +2,8 @@ package com.sometrik.framework;
 
 import java.util.ArrayList;
 
-import com.sometrik.framework.Settings.MyPreferenceFragment;
-
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -13,10 +12,11 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ConfigurationInfo;
+import android.content.res.AssetManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.PointF;
-import android.media.SoundPool;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -25,21 +25,20 @@ import android.preference.PreferenceManager;
 import android.text.InputType;
 import android.util.DisplayMetrics;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.view.Surface;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.Window;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TableRow;
-import android.widget.TextView;
 
-public class FrameWork extends Activity {
+public class FrameWork extends Activity implements SurfaceHolder.Callback {
 
   private MyGLSurfaceView mGLView;
   private RelativeLayout mainView;
@@ -59,6 +58,7 @@ public class FrameWork extends Activity {
   private AlertDialog.Builder builder;
   private AlertDialog alert;
   private float windowYcoords;
+  private SurfaceView surfaceView;
   public static ArrayList<NativeMessageHandler> views = new ArrayList<NativeMessageHandler>();
 
   private MyGLRenderer renderer;
@@ -84,6 +84,10 @@ public class FrameWork extends Activity {
   public native void onTouchesEnded(int fingerIndex);
 
   public native void onTouchesMoved(int fingerIndex);
+
+  public native void onInit(AssetManager assetManager, float xSize, float ySize, float displayScale, Boolean hasEs3);
+  
+  public native void nativeSetSurface(Surface surface);
 
 
   @Override
@@ -111,12 +115,16 @@ public class FrameWork extends Activity {
     
     frameWork = this;
     
-    renderer = new MyGLRenderer(this, screenWidth, screenHeight);
-    mGLView = new MyGLSurfaceView(this, renderer);
-    mGLView.setOnTouchListener(new MyOnTouchListener(this));
-    mGLView.setWillNotDraw(false);
-    views.add(mGLView);
-    setContentView(mGLView);
+//    renderer = new MyGLRenderer(this, screenWidth, screenHeight);
+//    mGLView = new MyGLSurfaceView(this, renderer);
+//    mGLView.setOnTouchListener(new MyOnTouchListener(this));
+//    mGLView.setWillNotDraw(false);
+//    views.add(mGLView);
+//    setContentView(mGLView);
+    surfaceView = new SurfaceView(this);
+    surfaceView.setOnTouchListener(new MyOnTouchListener(this));
+    surfaceView.getHolder().addCallback(this);
+    setContentView(surfaceView);
     
     // create message handler for framework
     mainHandler = new Handler() {
@@ -164,6 +172,28 @@ public class FrameWork extends Activity {
 	}
       }
     };
+    initNative();
+  }
+  
+  private void initNative(){
+    
+    DisplayMetrics displayMetrics = getDisplayMetrics();
+    System.out.println("Display scale: " + displayMetrics.scaledDensity);
+    final ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+    final ConfigurationInfo configurationInfo = activityManager.getDeviceConfigurationInfo();
+    Boolean hasEs3;
+    if (configurationInfo.reqGlEsVersion >= 0x30000){
+      hasEs3 = true;
+    } else if (configurationInfo.reqGlEsVersion >= 0x20000) {
+      System.out.println("openGLES 3 isn't supported");
+      hasEs3 = false;
+    } else {
+      hasEs3 = false;
+      System.out.println("openGLES 2 isn't supported");
+    }
+    float xSize = displayMetrics.widthPixels / displayMetrics.scaledDensity;
+    float ySize = displayMetrics.heightPixels / displayMetrics.scaledDensity;
+    onInit(getAssets(), xSize, ySize, displayMetrics.scaledDensity, hasEs3);
   }
 
   // Get screen settings
@@ -648,6 +678,23 @@ public class FrameWork extends Activity {
   //Load JNI. Framework references to make file.
   static {
     System.loadLibrary("framework");
+  }
+
+  @Override
+  public void surfaceChanged(SurfaceHolder holder, int arg1, int arg2, int arg3) {
+    nativeSetSurface(holder.getSurface());
+  }
+
+  @Override
+  public void surfaceCreated(SurfaceHolder holder) {
+    // TODO Auto-generated method stub
+    
+  }
+
+  @Override
+  public void surfaceDestroyed(SurfaceHolder holder) {
+    // TODO Auto-generated method stub
+    
   }
 
 }
