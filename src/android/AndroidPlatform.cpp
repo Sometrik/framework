@@ -16,11 +16,14 @@
 #include <AndroidPlatform.h>
 #include <FWApplication.h>
 
+#include <pthread.h>
+
 #include <TouchEvent.h>
 #include <CommandEvent.h>
 #include <DrawEvent.h>
 #include <UpdateEvent.h>
 #include <ResizeEvent.h>
+
 
 #include <android_fopen.h>
 
@@ -218,6 +221,141 @@ AndroidPlatform::setOpenGLView(jobject surface){
   application->initializeContent();
 //  pthread_create(&_threadId, 0, threadStartCallback, this);
 }
+bool
+AndroidPlatform::initializeRenderer(){
+
+  const EGLint attribs[] = {
+         EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
+         EGL_BLUE_SIZE, 8,
+         EGL_GREEN_SIZE, 8,
+         EGL_RED_SIZE, 8,
+         EGL_NONE
+     };
+     EGLDisplay _display;
+     EGLConfig _config;
+     EGLint numConfigs;
+     EGLint format;
+     EGLSurface _surface;
+     EGLContext _context;
+     EGLint width;
+     EGLint height;
+     GLfloat ratio;
+
+     if ((_display = eglGetDisplay(EGL_DEFAULT_DISPLAY)) == EGL_NO_DISPLAY) {
+//         LOG_ERROR("eglGetDisplay() returned error %d", eglGetError());
+         return false;
+     }
+     if (!eglInitialize(_display, 0, 0)) {
+//         LOG_ERROR("eglInitialize() returned error %d", eglGetError());
+         return false;
+     }
+
+     if (!eglChooseConfig(_display, attribs, &_config, 1, &numConfigs)) {
+//         LOG_ERROR("eglChooseConfig() returned error %d", eglGetError());
+//         destroy();
+         return false;
+     }
+
+     if (!eglGetConfigAttrib(_display, _config, EGL_NATIVE_VISUAL_ID, &format)) {
+//         LOG_ERROR("eglGetConfigAttrib() returned error %d", eglGetError());
+//         destroy();
+         return false;
+     }
+
+     ANativeWindow_setBuffersGeometry(window, 0, 0, format);
+
+     if (!(_surface = eglCreateWindowSurface(_display, _config, window, 0))) {
+//         LOG_ERROR("eglCreateWindowSurface() returned error %d", eglGetError());
+//         destroy();
+         return false;
+     }
+
+     if (!(_context = eglCreateContext(_display, _config, 0, 0))) {
+//         LOG_ERROR("eglCreateContext() returned error %d", eglGetError());
+//         destroy();
+         return false;
+     }
+
+     if (!eglMakeCurrent(_display, _surface, _surface, _context)) {
+//         LOG_ERROR("eglMakeCurrent() returned error %d", eglGetError());
+//         destroy();
+         return false;
+     }
+
+     if (!eglQuerySurface(_display, _surface, EGL_WIDTH, &width) ||
+         !eglQuerySurface(_display, _surface, EGL_HEIGHT, &height)) {
+//         LOG_ERROR("eglQuerySurface() returned error %d", eglGetError());
+//         destroy();
+         return false;
+     }
+
+     display = _display;
+     surface = _surface;
+     context = _context;
+
+     glDisable(GL_DITHER);
+     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
+     glClearColor(0, 0, 0, 0);
+     glEnable(GL_CULL_FACE);
+     glShadeModel(GL_SMOOTH);
+     glEnable(GL_DEPTH_TEST);
+
+     glViewport(0, 0, width, height);
+
+     ratio = (GLfloat) width / height;
+     glMatrixMode(GL_PROJECTION);
+     glLoadIdentity();
+     glFrustumf(-ratio, ratio, -1, 1, 1, 10);
+     return true;
+}
+void
+AndroidPlatform::startThread(){
+//  pthread_create(&_threadId, 0, threadStartCallback, this);
+}
+void
+AndroidPlatform::stopThread(){
+//  pthread_join(_threadId, 0);
+}
+void renderLoop() {
+  bool renderingEnabled = true;
+
+//  LOG_INFO("renderLoop()");
+//
+//  while (renderingEnabled) {
+//
+//    pthread_mutex_lock (&_mutex);
+//
+//    // process incoming messages
+//    switch (_msg) {
+//
+//    case MSG_WINDOW_SET:
+//      initialize();
+//      break;
+//
+//    case MSG_RENDER_LOOP_EXIT:
+//      renderingEnabled = false;
+//      destroy();
+//      break;
+//
+//    default:
+//      break;
+//    }
+//    _msg = MSG_NONE;
+//
+//    if (_display) {
+//      drawFrame();
+//      if (!eglSwapBuffers(_display, _surface)) {
+//        LOG_ERROR("eglSwapBuffers() returned error %d", eglGetError());
+//      }
+//    }
+//
+//    pthread_mutex_unlock(&_mutex);
+//  }
+//
+//  LOG_INFO("Render loop exits");
+
+}
+
 
 JNIEnv *
 AndroidPlatform::getJNIEnv() const {
@@ -293,7 +431,6 @@ void Java_com_sometrik_framework_FrameWork_nativeSetSurface(JNIEnv* env, jobject
 
 void Java_com_sometrik_framework_NativeLooper_test(JNIEnv* env, jobject thiz) {
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Test");
-//  platform->onInit();
 }
 
 void Java_com_sometrik_framework_MyGLRenderer_nativeOnDraw(JNIEnv* env, jobject thiz) {
