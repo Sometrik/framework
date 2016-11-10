@@ -115,16 +115,16 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback {
     
     frameWork = this;
     
-//    renderer = new MyGLRenderer(this, screenWidth, screenHeight);
-//    mGLView = new MyGLSurfaceView(this, renderer);
-//    mGLView.setOnTouchListener(new MyOnTouchListener(this));
-//    mGLView.setWillNotDraw(false);
-//    views.add(mGLView);
-//    setContentView(mGLView);
-    surfaceView = new SurfaceView(this);
-    surfaceView.setOnTouchListener(new MyOnTouchListener(this));
-    surfaceView.getHolder().addCallback(this);
-    setContentView(surfaceView);
+    renderer = new MyGLRenderer(this, screenWidth, screenHeight);
+    mGLView = new MyGLSurfaceView(this, renderer);
+    mGLView.setOnTouchListener(new MyOnTouchListener(this));
+    mGLView.setWillNotDraw(false);
+    views.add(mGLView);
+    setContentView(mGLView);
+//    surfaceView = new SurfaceView(this);
+//    surfaceView.setOnTouchListener(new MyOnTouchListener(this));
+//    surfaceView.getHolder().addCallback(this);
+//    setContentView(surfaceView);
     
     // create message handler for framework
     mainHandler = new Handler() {
