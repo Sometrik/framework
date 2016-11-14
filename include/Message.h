@@ -6,7 +6,7 @@
 class Message {
  public:
 
-  enum MessageType {
+  enum Type {
     CREATE_APPLICATION = 0,
     SHOW_VIEW,
     CREATE_FORMVIEW,
@@ -42,12 +42,12 @@ class Message {
     CONSUME_PURCHASE
   };
 
- Message(MessageType _message, int _internalId, int _childInternalId = 0) : messageType(_message), internalId(_internalId), childInternalId(_childInternalId) { }
- Message(MessageType _message, int _internalId, const std::string & _textValue) : messageType(_message), internalId(_internalId), childInternalId(0), textValue(_textValue) { }
- Message(MessageType _message, int _internalId, const std::string & _textValue, const std::string & _textValue2) : messageType(_message), internalId(_internalId), childInternalId(0), textValue(_textValue), textValue2(_textValue2) { }
+ Message(Type _message, int _internalId, int _childInternalId = 0) : messageType(_message), internalId(_internalId), childInternalId(_childInternalId) { }
+ Message(Type _message, int _internalId, const std::string & _textValue) : messageType(_message), internalId(_internalId), childInternalId(0), textValue(_textValue) { }
+ Message(Type _message, int _internalId, const std::string & _textValue, const std::string & _textValue2) : messageType(_message), internalId(_internalId), childInternalId(0), textValue(_textValue), textValue2(_textValue2) { }
   ~Message() { }
   
-  MessageType getType() const { return messageType; }
+  Type getType() const { return messageType; }
   int getInternalId() const { return internalId; }
   int getChildInternalId() const { return childInternalId; }
   
@@ -63,7 +63,7 @@ class Message {
   void setKey(const std::string & _key) { key = _key; }
 
  private:
-  MessageType messageType;
+  Type messageType;
   int internalId, childInternalId;
   int value;
   std::string key;
