@@ -74,6 +74,9 @@ public:
 				NULL);
 #endif
       break;
+    case Message::REQUEST_REDRAW:
+      redraw_needed = true;
+      break;
     default:
       break;
     }
@@ -164,7 +167,7 @@ public:
 
       UpdateEvent ev0(getTime());
       postEvent(getActiveViewId(), ev0);
-
+      
       if (isRedrawNeeded()) {
 	DrawEvent ev(getTime());
 	postEvent(getActiveViewId(), ev);
@@ -173,10 +176,14 @@ public:
       }
     }
   }
-  
+
+  bool isRedrawNeeded() { return redraw_needed; }
+  void clearRedrawNeeded() { redraw_needed = false; }
+
 private:
   bool button_pressed = false;
   int mouse_x = 0, mouse_y = 0;
+  bool redraw_needed = false;
 };
 
 #if 0
