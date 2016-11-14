@@ -77,10 +77,7 @@ class FWPlatform {
     }
   }
 
-  const std::shared_ptr<PrimitiveRenderer> & getRenderer() { return renderer; }
-  void setRenderer(const std::shared_ptr<PrimitiveRenderer> & _renderer) { renderer = _renderer; }
-  
-  void postEvent(int internal_id, EventBase & ev) {
+  virtual void postEvent(int internal_id, EventBase & ev) {
     Element * e = getApplication().getElementByInternalId(internal_id);
     if (e) ev.dispatch(*e);
     else getLogger().println("Failed to dispatch event");
@@ -89,7 +86,10 @@ class FWPlatform {
       sendMessage(m);
     }
   }
-  
+
+  const std::shared_ptr<PrimitiveRenderer> & getRenderer() { return renderer; }
+  void setRenderer(const std::shared_ptr<PrimitiveRenderer> & _renderer) { renderer = _renderer; }
+    
   int getNextInternalId() { return nextInternalId++; }
   
   void setDisplayWidth(int w) { display_width = w; }
