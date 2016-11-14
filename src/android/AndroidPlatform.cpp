@@ -318,18 +318,23 @@ void
 AndroidPlatform::stopThread(){
 //  pthread_join(_threadId, 0);
 }
+
+void
+AndroidPlatform::drawFrame()
+{
+  glClearColor(0, 18, 200, 0);
+}
+
 void
 AndroidPlatform::renderLoop() {
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Looping louie");
   bool renderingEnabled = true;
 
-//  LOG_INFO("renderLoop()");
-//
-//  while (renderingEnabled) {
-//
-//    pthread_mutex_lock (&_mutex);
-//
-//    // process incoming messages
+  while (renderingEnabled) {
+
+    pthread_mutex_lock (&_mutex);
+
+    // process incoming messages
 //    switch (_msg) {
 //
 //    case MSG_WINDOW_SET:
@@ -345,19 +350,19 @@ AndroidPlatform::renderLoop() {
 //      break;
 //    }
 //    _msg = MSG_NONE;
-//
-//    if (_display) {
-//      drawFrame();
-//      if (!eglSwapBuffers(_display, _surface)) {
-//        LOG_ERROR("eglSwapBuffers() returned error %d", eglGetError());
-//      }
-//    }
-//
-//    pthread_mutex_unlock(&_mutex);
-//  }
-//
-//  LOG_INFO("Render loop exits");
 
+    if (display) {
+      drawFrame();
+      getLogger().println("drawing");
+      if (!eglSwapBuffers(display, surface)) {
+        getLogger().println("error eglSwapBuffers");
+      }
+    }
+
+    pthread_mutex_unlock(&_mutex);
+  }
+
+  getLogger().println("Looping Louie is out");
 }
 void* AndroidPlatform::threadStartCallback(void *myself) {
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "About to start thread 2");
@@ -440,6 +445,7 @@ void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, job
 void Java_com_sometrik_framework_FrameWork_nativeSetSurface(JNIEnv* env, jobject thiz, jobject surface){
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "going for it");
   platform->setOpenGLView(surface);
+  platform->initializeRenderer();
   platform->startThread();
 }
 
