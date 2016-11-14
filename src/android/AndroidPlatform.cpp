@@ -374,7 +374,7 @@ void Java_com_sometrik_framework_FrameWork_touchEvent(JNIEnv* env, jobject thiz,
 jboolean Java_com_sometrik_framework_MyGLRenderer_onUpdate(JNIEnv* env, jobject thiz, double timestamp) {
   UpdateEvent ev(platform->getTime());
   platform->postEvent(platform->getActiveViewId(), ev);
-  return JNI_TRUE; // FIX ME: check the return value from event
+  return ev.isRedrawNeeded();
 }
 
 static JavaVM * gJavaVM = 0;
