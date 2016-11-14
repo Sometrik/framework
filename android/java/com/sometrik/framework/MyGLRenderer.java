@@ -29,8 +29,6 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
   public native void nativeOnDraw();
 
-  public native void onInit(AssetManager assetManager, FrameWork frame, float xSize, float ySize, float displayScale, Boolean hasEs3);
-
   public native void Draw();
 
   public native void onResize(float xSize, float ySize);
@@ -64,26 +62,6 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
     System.out.println("(Renderer)onSurfaceCreated(override) called");
 
     renderer = this;
-    
-    DisplayMetrics displayMetrics = frame.getDisplayMetrics();
-    System.out.println("Display scale: " + displayMetrics.scaledDensity);
-    final ActivityManager activityManager = (ActivityManager) frame.getSystemService(Context.ACTIVITY_SERVICE);
-    final ConfigurationInfo configurationInfo = activityManager.getDeviceConfigurationInfo();
-    Boolean hasEs3;
-    if (configurationInfo.reqGlEsVersion >= 0x30000){
-      hasEs3 = true;
-    } else if (configurationInfo.reqGlEsVersion >= 0x20000) {
-      System.out.println("openGLES 3 isn't supported");
-      hasEs3 = false;
-    } else {
-      hasEs3 = false;
-      System.out.println("openGLES 2 isn't supported");
-    }
-    // Calls onInit in AndroidPlatform
-    onInit(assetManager, frame, xSize, ySize, displayMetrics.scaledDensity, hasEs3);
-
-    xSize = displayMetrics.widthPixels / displayMetrics.scaledDensity;
-    ySize = displayMetrics.heightPixels / displayMetrics.scaledDensity;
 
   }
 
