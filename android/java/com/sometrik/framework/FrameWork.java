@@ -115,17 +115,6 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback {
     
     frameWork = this;
     
-//    renderer = new MyGLRenderer(this, screenWidth, screenHeight);
-//    mGLView = new MyGLSurfaceView(this, renderer);
-//    mGLView.setOnTouchListener(new MyOnTouchListener(this));
-//    mGLView.setWillNotDraw(false);
-//    views.add(mGLView);
-//    setContentView(mGLView);
-    surfaceView = new SurfaceView(this);
-    surfaceView.setOnTouchListener(new MyOnTouchListener(this));
-    surfaceView.getHolder().addCallback(this);
-    setContentView(surfaceView);
-    
     // create message handler for framework
     mainHandler = new Handler() {
       @Override
@@ -150,6 +139,9 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback {
 	    break;
 	  case CREATE_OPENGL_VIEW:
 	    createOpenGLView(message.getChildInternalId());
+	    break;
+	  case CREATE_NATIVE_OPENGL_VIEW:
+	    createNativeOpenGLView(message.getChildInternalId());
 	    break;
 	  // Create notification
 	  case POST_NOTIFICATION:
@@ -244,6 +236,13 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback {
     mGLView.setWillNotDraw(false);
     views.add(mGLView);
     setContentView(mGLView);
+  }
+  
+  private void createNativeOpenGLView(int id){
+    surfaceView = new SurfaceView(this);
+    surfaceView.setOnTouchListener(new MyOnTouchListener(this));
+    surfaceView.getHolder().addCallback(this);
+    setContentView(surfaceView);
   }
 
   // Lisää kuvan antaminen // Aika // Ääni
