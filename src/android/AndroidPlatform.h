@@ -59,6 +59,7 @@ public:
   void startThread();
   void stopThread();
   void renderLoop();
+  static void* threadStartCallback(void *myself);
 
   JNIEnv* getJNIEnv() const;
 

@@ -218,7 +218,7 @@ void
 AndroidPlatform::setOpenGLView(jobject surface){
   JNIEnv * env = getJNIEnv();
   window = ANativeWindow_fromSurface(env, surface);
-  application->initializeContent();
+//  application->initializeContent();
 //  pthread_create(&_threadId, 0, threadStartCallback, this);
 }
 bool
@@ -297,26 +297,30 @@ AndroidPlatform::initializeRenderer(){
      glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
      glClearColor(0, 0, 0, 0);
      glEnable(GL_CULL_FACE);
-     glShadeModel(GL_SMOOTH);
+//     glShadeModel(GL_SMOOTH);
      glEnable(GL_DEPTH_TEST);
 
      glViewport(0, 0, width, height);
 
      ratio = (GLfloat) width / height;
-     glMatrixMode(GL_PROJECTION);
-     glLoadIdentity();
-     glFrustumf(-ratio, ratio, -1, 1, 1, 10);
+//     glMatrixMode(GL_PROJECTION);
+//     glLoadIdentity();
+//     glFrustumf(-ratio, ratio, -1, 1, 1, 10);
+     getLogger().println("Piiiip");
      return true;
 }
 void
 AndroidPlatform::startThread(){
-//  pthread_create(&_threadId, 0, threadStartCallback, this);
+  __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "About to start thread 1");
+  pthread_create(&_threadId, 0, threadStartCallback, this);
 }
 void
 AndroidPlatform::stopThread(){
 //  pthread_join(_threadId, 0);
 }
-void renderLoop() {
+void
+AndroidPlatform::renderLoop() {
+  __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Looping louie");
   bool renderingEnabled = true;
 
 //  LOG_INFO("renderLoop()");
@@ -354,6 +358,15 @@ void renderLoop() {
 //
 //  LOG_INFO("Render loop exits");
 
+}
+void* AndroidPlatform::threadStartCallback(void *myself) {
+  __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "About to start thread 2");
+  AndroidPlatform * aplatform = (AndroidPlatform*) myself;
+
+  aplatform->renderLoop();
+  pthread_exit(0);
+
+  return 0;
 }
 
 
@@ -427,6 +440,7 @@ void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, job
 void Java_com_sometrik_framework_FrameWork_nativeSetSurface(JNIEnv* env, jobject thiz, jobject surface){
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "going for it");
   platform->setOpenGLView(surface);
+  platform->startThread();
 }
 
 void Java_com_sometrik_framework_NativeLooper_test(JNIEnv* env, jobject thiz) {
