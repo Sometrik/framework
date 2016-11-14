@@ -55,6 +55,10 @@ public:
 
   JNIEnv* getJNIEnv() const;
 
+  void queueEvent(int internal_id, const EventBase & ev) {
+    eventqueue.push(internal_id, ev);
+  }
+
 private:
   pthread_t _threadId;
 
