@@ -130,11 +130,12 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback {
     mainHandler = new Handler() {
       @Override
       public void handleMessage(Message msg) {
-
 	System.out.println("main message received: " + msg.what);
-	NativeMessage message = (NativeMessage) msg.obj;
-	System.out.println("id: " + message.getInternalId() + " MessageType: " + String.valueOf(message.getMessage()));
 	if (msg.what == 1) {
+	  
+	  NativeMessage message = (NativeMessage) msg.obj;
+	  System.out.println("id: " + message.getInternalId() + " MessageType: " + String.valueOf(message.getMessage()));
+	  
 	  switch (message.getMessage()) {
 	  // Send Message to element
 	  case CREATE_APPLICATION:
@@ -682,7 +683,7 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback {
 
   @Override
   public void surfaceChanged(SurfaceHolder holder, int arg1, int arg2, int arg3) {
-    nativeSetSurface(holder.getSurface());
+//    nativeSetSurface(holder.getSurface());
   }
 
   @Override
