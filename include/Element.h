@@ -15,6 +15,7 @@ class SysEvent;
 class UpdateEvent;
 class ResizeEvent;
 class TimerEvent;
+class TextEvent;
 
 class LinearLayout;
 class FWPlatform;
@@ -37,6 +38,7 @@ class Element {
   virtual void onSysEvent(SysEvent & ev) { }
   virtual void onResizeEvent(ResizeEvent & ev) { }
   virtual void onTimerEvent(TimerEvent & ev) { }
+  virtual void onTextEvent(TextEvent & ev) { }
   
   virtual void onCmdLine(int argc, char *argv[]) { }
   virtual void onKeyPress(char c, double timestamp, int x, int y) { }
