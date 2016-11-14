@@ -19,6 +19,7 @@
 #include <pthread.h>
 
 #include <TouchEvent.h>
+#include <TextEvent.h>
 #include <CommandEvent.h>
 #include <DrawEvent.h>
 #include <UpdateEvent.h>
@@ -368,7 +369,6 @@ void* AndroidPlatform::threadStartCallback(void *myself) {
   return 0;
 }
 
-
 JNIEnv *
 AndroidPlatform::getJNIEnv() const {
   if (gJavaVM == NULL) {
@@ -460,8 +460,14 @@ void Java_com_sometrik_framework_FrameWork_okPressed(JNIEnv* env, jobject thiz, 
 
 }
 
-void Java_com_sometrik_framework_FrameWork_handleEvent(JNIEnv* env, jint id) {
-  CommandEvent ev(platform->getTime(), id);
+void Java_com_sometrik_framework_FrameWork_buttonClicked(JNIEnv* env, jobject thiz, jint id) {
+  CommandEvent ev(platform->getTime(), 0);
+  platform->postEvent(id, ev);
+}
+void Java_com_sometrik_framework_FrameWork_textChangedEvent(JNIEnv* env, jobject thiz, jint id, jstring jtext) {
+  const char * text = env->GetStringUTFChars(jtext, 0);
+  TextEvent ev(platform->getTime(), text);
+  env->ReleaseStringUTFChars(jtext, text);
   platform->postEvent(id, ev);
 }
 
