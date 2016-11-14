@@ -19,16 +19,7 @@ public:
   }
   ~AndroidPlatform() {
   }
-
-  void onTouchesEvent(jobject * _obj, int mode, int fingerIndex, double time, float x, float y);
-
-  void onResize(int width, int height);
-
-  void menuPressed();
-
-  void onUpdate(double timestamp);
-
-  void onDraw();
+  
   void setJavaVM(JavaVM * _gJavaVM) { gJavaVM = _gJavaVM; }
 
   std::string getBundleFilename(const char * filename) override;

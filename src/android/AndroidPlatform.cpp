@@ -32,63 +32,6 @@ using namespace std;
 
 extern FWApplication * applicationMain();
 
-void
-AndroidPlatform::onTouchesEvent(jobject * _obj, int mode, int fingerIndex, double time, float x, float y) {
-  x /= getDisplayScale();
-  y /= getDisplayScale();
-  switch (mode) {
-  case 1:
-    {
-      TouchEvent ev(TouchEvent::ACTION_DOWN, x, y, time, fingerIndex);
-      postEvent(getActiveViewId(), ev);
-    }
-    break;
-  case 2:
-    {
-      TouchEvent ev(TouchEvent::ACTION_MOVE, x, y, time, fingerIndex);
-      postEvent(getActiveViewId(), ev);
-    }
-    break;
-  case 3:
-    {
-      TouchEvent ev(TouchEvent::ACTION_UP, x, y, time, fingerIndex);
-      postEvent(getActiveViewId(), ev);
-    }
-    break;
-  }
-}
-
-void
-AndroidPlatform::onResize(int width, int height) {
-  __android_log_print(ANDROID_LOG_ERROR, "Sometrik", "resize: %d %d ", width, height);
-  ResizeEvent ev(getTime(), width / getDisplayScale(), height / getDisplayScale(), width, height);
-  postEvent(getActiveViewId(), ev);
-}
-
-void
-AndroidPlatform::menuPressed() {
-  __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Platform menupressed called");
-  CommandEvent ce(getTime(), FW_ID_MENU);
-  postEvent(getActiveViewId(), ce);
-
-//	jclass handlerClass = env->GetObjectClass(handler);
-//	jmethodID emptyMessageMethod = env->GetMethodID(handlerClass, "sendEmptyMessage", "(I)Z");
-//	env->CallVoidMethod(handler, emptyMessageMethod, 1);
-}
-
-void
-AndroidPlatform::onUpdate(double timestamp) {
-  UpdateEvent ev(getTime());
-  postEvent(getActiveViewId(), ev);
-}
-
-void
-AndroidPlatform::onDraw() {
-  DrawEvent ev(getTime());
-  postEvent(getActiveViewId(), ev);
-  clearRedrawNeeded();
-}
-
 void AndroidPlatform::showCanvas(canvas::ContextAndroid & context) {
 
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "showCanvas called");
@@ -391,20 +334,46 @@ extern "C" {
 void Java_com_sometrik_framework_MyGLRenderer_onResize(JNIEnv* env, jobject thiz, float x, float y) {
   platform->setDisplayWidth(x);
   platform->setDisplayHeight(y);
-  platform->onResize(x, y);
+
+  ResizeEvent ev(platform->getTime(), width / getDisplayScale(), height / getDisplayScale(), width, height);
+  platform->postEvent(platform->getActiveViewId(), ev);
 }
 
 void Java_com_sometrik_framework_FrameWork_menuPressed(JNIEnv* env, jobject thiz) {
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "menu pressed: env = %p", env);
-  platform->menuPressed();
+
+  CommandEvent ce(platform->getTime(), FW_ID_MENU);
+  platform->postEvent(platform->getActiveViewId(), ce);
 }
 
 void Java_com_sometrik_framework_FrameWork_touchEvent(JNIEnv* env, jobject thiz, int mode, int fingerIndex, long time, float x, float y) {
-  platform->onTouchesEvent(&thiz, mode, fingerIndex, time, x, y);
+  x /= platform->getDisplayScale();
+  y /= platform->getDisplayScale();
+  switch (mode) {
+  case 1:
+    {
+      TouchEvent ev(TouchEvent::ACTION_DOWN, x, y, time, fingerIndex);
+      platform->postEvent(platform->getActiveViewId(), ev);
+    }
+    break;
+  case 2:
+    {
+      TouchEvent ev(TouchEvent::ACTION_MOVE, x, y, time, fingerIndex);
+      platform->postEvent(platform->getActiveViewId(), ev);
+    }
+    break;
+  case 3:
+    {
+      TouchEvent ev(TouchEvent::ACTION_UP, x, y, time, fingerIndex);
+      platform->postEvent(platform->getActiveViewId(), ev);
+    }
+    break;
+  }
 }
 
 jboolean Java_com_sometrik_framework_MyGLRenderer_onUpdate(JNIEnv* env, jobject thiz, double timestamp) {
-  platform->onUpdate(timestamp);
+  UpdateEvent ev(platform->getTime());
+  platform->postEvent(platform->getActiveViewId(), ev);
   return JNI_TRUE; // FIX ME: check the return value from event
 }
 
@@ -448,7 +417,9 @@ void Java_com_sometrik_framework_NativeLooper_test(JNIEnv* env, jobject thiz) {
 }
 
 void Java_com_sometrik_framework_MyGLRenderer_nativeOnDraw(JNIEnv* env, jobject thiz) {
-  platform->onDraw();
+  DrawEvent ev(platform->getTime());
+  platform->postEvent(platform->getActiveViewId(), ev);
+  platform->clearRedrawNeeded();
 }
 
 void Java_com_sometrik_framework_FrameWork_okPressed(JNIEnv* env, jobject thiz, jstring text) {
