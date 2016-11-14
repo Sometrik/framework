@@ -9,6 +9,7 @@
 #include <GLES/gl.h>
 #include <gl.h>
 
+#include <EventQueue.h>
 
 class AndroidPlatform: public FWPlatform {
 public:
@@ -56,13 +57,10 @@ public:
 
 private:
   pthread_t _threadId;
-  pthread_mutex_t _mutex;
-
 
   EGLDisplay display = 0;
   EGLSurface surface = 0;
   EGLContext context = 0;
-  GLfloat angle = 0;
 
   ANativeWindow * window = 0;
   JavaVM * gJavaVM = 0;
@@ -70,4 +68,5 @@ private:
   jobject framework;
   jobject handler;
   char message[256];
+  EventQueue eventqueue;
 };

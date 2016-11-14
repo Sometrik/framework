@@ -231,19 +231,6 @@ AndroidPlatform::initializeRenderer(){
      surface = _surface;
      context = _context;
 
-     glDisable(GL_DITHER);
-     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
-     glClearColor(0, 0, 0, 0);
-     glEnable(GL_CULL_FACE);
-//     glShadeModel(GL_SMOOTH);
-     glEnable(GL_DEPTH_TEST);
-
-     glViewport(0, 0, width, height);
-
-     ratio = (GLfloat) width / height;
-//     glMatrixMode(GL_PROJECTION);
-//     glLoadIdentity();
-//     glFrustumf(-ratio, ratio, -1, 1, 1, 10);
      getLogger().println("Piiiip");
      return true;
 }
@@ -258,19 +245,15 @@ AndroidPlatform::stopThread(){
 }
 
 void
-AndroidPlatform::drawFrame()
-{
-  glClearColor(0, 18, 200, 0);
-}
-
-void
 AndroidPlatform::renderLoop() {
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Looping louie");
   bool renderingEnabled = true;
 
   while (renderingEnabled) {
-
-    pthread_mutex_lock (&_mutex);
+    if (!eventqueue.empty()) {
+      auto ev = eventqueue.pop();
+      postEvent(ev);
+    }
 
     // process incoming messages
 //    switch (_msg) {
@@ -289,6 +272,7 @@ AndroidPlatform::renderLoop() {
 //    }
 //    _msg = MSG_NONE;
 
+#if 0
     if (display) {
       drawFrame();
       getLogger().println("drawing");
@@ -296,8 +280,7 @@ AndroidPlatform::renderLoop() {
         getLogger().println("error eglSwapBuffers");
       }
     }
-
-    pthread_mutex_unlock(&_mutex);
+#endif
   }
 
   getLogger().println("Looping Louie is out");
