@@ -46,15 +46,15 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
   public void onDrawFrame(GL10 unused) {
       // Calls onDraw in AndroidPlatform
-    onUpdate((double) System.currentTimeMillis() / 1000.0);
-    nativeOnDraw();
+//    onUpdate((double) System.currentTimeMillis() / 1000.0);
+//    nativeOnDraw();
   }
 
   public void onSurfaceChanged(GL10 unused, int width, int height) {
     System.out.println("(Renderer) onSurfaceChanged called");
     GLES20.glViewport(0, 0, width, height);
 
-    onResize(width, height);
+//    onResize(width, height);
   }
 
   @Override
