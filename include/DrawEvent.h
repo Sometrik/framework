@@ -7,6 +7,7 @@ class DrawEvent : public EventBase {
 public:
   DrawEvent(double _timestamp) : EventBase(_timestamp) { }
 
+  std::shared_ptr<EventBase> dup() const override { return std::make_shared<DrawEvent>(*this); }
   void dispatch(Element & element) override;
     
  private:  

@@ -9,6 +9,7 @@ public:
   TextEvent(double _timestamp, std::string _text, int _element_id = 0)
     : EventBase(_timestamp), element_id(_element_id), text(_text) { }
 
+  std::shared_ptr<EventBase> dup() const override { return std::make_shared<TextEvent>(*this); }
   void dispatch(Element & element) override;
 
   int getElementId() const { return element_id; }

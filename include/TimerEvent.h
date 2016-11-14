@@ -7,9 +7,8 @@ class TimerEvent : public EventBase {
 public:
   TimerEvent(double _timestamp) : EventBase(_timestamp) { }
 
-  void dispatch(Element & element) override;
-    
- private:  
+  std::shared_ptr<EventBase> dup() const override { return std::make_shared<TimerEvent>(*this); }
+  void dispatch(Element & element) override;    
 };
 
 #endif

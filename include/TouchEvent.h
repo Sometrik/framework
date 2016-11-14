@@ -11,6 +11,7 @@ public:
  TouchEvent(Type _type, float _x, float _y, double _timestamp, int _identifier)
    : EventBase(_timestamp), type(_type), x(_x), y(_y), identifier(_identifier) { }
 
+  std::shared_ptr<EventBase> dup() const override { return std::make_shared<TouchEvent>(*this); }
   void dispatch(Element & element) override;
   
   Type getType() const { return type; }
