@@ -71,7 +71,9 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback {
 
   public native void okPressed(String text);
   
-  public native void handleEvent(int id);
+  public native void buttonClicked(int id);
+  
+  public native void textChangedEvent(int id, String text);
   
   public native void settingsCreator(Settings settings, int id);
 
@@ -161,10 +163,11 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback {
 	  }
 	} else if (msg.what == 2){
 	  //Button has been clicked
-	  handleEvent((int)msg.obj);
+	  buttonClicked((int)msg.obj);
 	} else if (msg.what == 3){
 	  //EditText has been changed
 	  EditTextEvent event = (EditTextEvent)msg.obj;
+	  textChangedEvent(event.getId(), event.getText());
 	  //Send event
 	}
       }
