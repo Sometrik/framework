@@ -55,8 +55,12 @@ public:
 
   JNIEnv* getJNIEnv() const;
 
-  void queueEvent(int internal_id, const EventBase & ev) {
+  void queueEvent(int internal_id, EventBase & ev) {
+#ifdef USE_NATIVE_SURFACE
     eventqueue.push(internal_id, ev);
+#else
+    postEvent(internal_id, ev);
+#endif
   }
 
 private:
