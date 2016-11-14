@@ -77,7 +77,7 @@ class FWPlatform {
     }
   }
 
-  virtual void postEvent(int internal_id, EventBase & ev) {
+  void postEvent(int internal_id, EventBase & ev) {
     Element * e = getApplication().getElementByInternalId(internal_id);
     if (e) ev.dispatch(*e);
     else getLogger().println("Failed to dispatch event");
