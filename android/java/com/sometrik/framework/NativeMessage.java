@@ -22,6 +22,7 @@ public class NativeMessage {
     CREATE_TEXTLABEL,
     CREATE_DIALOG, //For future
     CREATE_CANVAS,
+    REQUEST_REDRAW,
     SHOW_MESSAGE_DIALOG,
     SHOW_INPUT_DIALOG,
     LAUNCH_BROWSER,
