@@ -62,13 +62,18 @@ class FWPlatform {
     }
     return *logger;
   }
+
+  void setActiveView(int id) {
+    activeViewId = id;
+    Message m(Message::REQUEST_REDRAW, id);
+    sendMessage(m);
+  }
+  
   virtual void sendMessage(const Message & message) {
     if (message.getType() == Message::SHOW_VIEW) {
-      activeViewId = message.getInternalId();
-      redraw_needed = true;
+      setActiveView(message.getInternalId());
     } else if (!activeViewId && (message.getType() == Message::CREATE_FORMVIEW || message.getType() == Message::CREATE_OPENGL_VIEW)) {
-      activeViewId = message.getChildInternalId();
-      redraw_needed = true;
+      setActiveView(message.getChildInternalId());
     }
   }
 
@@ -80,7 +85,8 @@ class FWPlatform {
     if (e) ev.dispatch(*e);
     else getLogger().println("Failed to dispatch event");
     if (ev.isRedrawNeeded()) {
-      redraw_needed = true;
+      Message m(Message::REQUEST_REDRAW, internal_id);
+      sendMessage(m);
     }
   }
   
@@ -95,10 +101,7 @@ class FWPlatform {
   bool hasES3() const { return has_es3; }
   int getActiveViewId() const { return activeViewId; }
   
- protected:
-  bool isRedrawNeeded() { return redraw_needed; }
-  void clearRedrawNeeded() { redraw_needed = false; }
-  
+ protected:  
   virtual std::shared_ptr<SoundCanvas> createSoundCanvas() const = 0;
   virtual std::shared_ptr<Logger> createLogger() const = 0;
   
@@ -114,7 +117,6 @@ class FWPlatform {
   std::shared_ptr<PrimitiveRenderer> renderer;
   int nextInternalId = 1;
   int activeViewId = 0;
-  bool redraw_needed = false;
 };
 
 #endif
