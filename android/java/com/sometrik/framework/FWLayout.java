@@ -2,6 +2,8 @@ package com.sometrik.framework;
 
 import android.content.Context;
 import android.os.Message;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -12,10 +14,12 @@ import android.widget.TextView;
 public class FWLayout extends LinearLayout implements NativeMessageHandler{
   
   private Context context;
+  private FrameWork frame;
   
   public FWLayout(Context context) {
     super(context);
     this.context = context;
+    this.frame = (FrameWork)context;
     list();
   }
 
@@ -36,12 +40,31 @@ public class FWLayout extends LinearLayout implements NativeMessageHandler{
     button.setOnClickListener(new OnClickListener(){
       @Override
       public void onClick(View arg0) {
-	FrameWork frame = (FrameWork)context;
 	Message message = Message.obtain(frame.mainHandler, 2, id);
 	message.sendToTarget();
       }
     });
     this.addView(button);
+  }
+  
+  private void createEditText(final int id, String text){
+    System.out.println("FWLayout " + this.getId() + " creating textfield");
+    final EditText editText = new EditText(context);
+    editText.setId(id);
+    editText.setText(text);
+    editText.addTextChangedListener(new TextWatcher() {
+
+      public void afterTextChanged(Editable editable) {
+
+	Message message = Message.obtain(frame.mainHandler, 3, new EditTextEvent(id, editable.toString()));
+	message.sendToTarget();
+      }
+
+      public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+      public void onTextChanged(CharSequence s, int start, int before, int count) {}
+   });
+    this.addView(editText);
   }
 
   @Override
@@ -70,11 +93,7 @@ public class FWLayout extends LinearLayout implements NativeMessageHandler{
       break;
 
     case CREATE_TEXTFIELD:
-      System.out.println("FWLayout " + this.getId() + " creating textfield");
-      EditText editText = new EditText(context);
-      editText.setId(message.getChildInternalId());
-      editText.setText(message.getTextValue());
-      this.addView(editText);
+      createEditText(message.getChildInternalId(), message.getTextValue());
       break;
 
     case CREATE_TEXTLABEL:
