@@ -91,7 +91,7 @@ void AndroidPlatform::storeValue(const std::string & key, const std::string & va
 void
 AndroidPlatform::sendMessage(const Message & message) {
   FWPlatform::sendMessage(message);
-  
+
   auto env = getJNIEnv();
    jclass frameworkCls = env->FindClass("com/sometrik/framework/FrameWork");
    jclass messageCls = env->FindClass("com/sometrik/framework/NativeMessage");
@@ -110,6 +110,12 @@ AndroidPlatform::sendMessage(const Message & message) {
    //Fix these releases
 //  env->ReleaseStringUTFChars(jtextValue, textValue);
 //  env->ReleaseStringUTFChars(jtextValue2, textValue2);
+  
+#ifdef USE_NATIVE_SURFACE
+  if (message.getType() == Message::SHOW_MESSAGE_DIALOG || message.getType() == Message::SHOW_INPUT_DIALOG) {
+    renderLoop();
+  }
+#endif      
 }
 
 double
@@ -246,8 +252,8 @@ AndroidPlatform::stopThread(){
 
 void
 AndroidPlatform::renderLoop() {
+  runloop_level++;
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Looping louie");
-  bool renderingEnabled = true;
 
   while (renderingEnabled) {
     if (!eventqueue.empty()) {
@@ -284,7 +290,9 @@ AndroidPlatform::renderLoop() {
   }
 
   getLogger().println("Looping Louie is out");
+  runloop_level--;
 }
+
 void* AndroidPlatform::threadStartCallback(void *myself) {
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "About to start thread 2");
   AndroidPlatform * aplatform = (AndroidPlatform*) myself;

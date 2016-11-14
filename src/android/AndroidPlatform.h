@@ -77,4 +77,6 @@ private:
   jobject handler;
   char message[256];
   EventQueue eventqueue;
+  int runloop_level = 0;
+  bool renderingEnabled = true;
 };
