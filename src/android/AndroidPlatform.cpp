@@ -146,7 +146,6 @@ void AndroidPlatform::storeValue(const std::string & key, const std::string & va
 
 void
 AndroidPlatform::sendMessage(const Message & message) {
-  __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Message for you sir");
   FWPlatform::sendMessage(message);
   
   auto env = getJNIEnv();
@@ -438,7 +437,7 @@ void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, job
   platform->setDisplayWidth(screenWidth);
   platform->setDisplayHeight(screenHeight);
 //  platform->onResize(screenWidth, screenHeight);
-//  application->initializeContent();
+  application->initializeContent();
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Init end");
 }
 
