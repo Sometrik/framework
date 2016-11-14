@@ -14,6 +14,7 @@ class Message {
     CREATE_PICKER, // called Spinner in Android
     CREATE_LINEAR_LAYOUT,
     CREATE_OPENGL_VIEW,
+    CREATE_NATIVE_OPENGL_VIEW,
     CREATE_TEXTFIELD,
     CREATE_TEXTLABEL,
     CREATE_DIALOG, //For future
