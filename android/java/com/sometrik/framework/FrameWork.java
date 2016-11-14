@@ -170,6 +170,10 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback {
 	} else if (msg.what == 2){
 	  //Button has been clicked
 	  buttonClicked((int)msg.obj);
+	} else if (msg.what == 3){
+	  //EditText has been changed
+	  EditTextEvent event = (EditTextEvent)msg.obj;
+	  //Send event
 	}
       }
     };
