@@ -183,7 +183,6 @@ AndroidPlatform::initializeRenderer(){
      EGLContext _context;
      EGLint width;
      EGLint height;
-     GLfloat ratio;
 
      if ((_display = eglGetDisplay(EGL_DEFAULT_DISPLAY)) == EGL_NO_DISPLAY) {
 //         LOG_ERROR("eglGetDisplay() returned error %d", eglGetError());
