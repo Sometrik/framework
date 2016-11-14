@@ -319,14 +319,14 @@ void Java_com_sometrik_framework_MyGLRenderer_onResize(JNIEnv* env, jobject thiz
   platform->setDisplayHeight(y);
 
   ResizeEvent ev(platform->getTime(), width / getDisplayScale(), height / getDisplayScale(), width, height);
-  platform->postEvent(platform->getActiveViewId(), ev);
+  platform->queueEvent(platform->getActiveViewId(), ev);
 }
 
 void Java_com_sometrik_framework_FrameWork_menuPressed(JNIEnv* env, jobject thiz) {
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "menu pressed: env = %p", env);
 
   CommandEvent ce(platform->getTime(), FW_ID_MENU);
-  platform->postEvent(platform->getActiveViewId(), ce);
+  platform->queueEvent(platform->getActiveViewId(), ce);
 }
 
 void Java_com_sometrik_framework_FrameWork_touchEvent(JNIEnv* env, jobject thiz, int mode, int fingerIndex, long time, float x, float y) {
@@ -336,19 +336,19 @@ void Java_com_sometrik_framework_FrameWork_touchEvent(JNIEnv* env, jobject thiz,
   case 1:
     {
       TouchEvent ev(TouchEvent::ACTION_DOWN, x, y, time / 1000.0, fingerIndex);
-      platform->postEvent(platform->getActiveViewId(), ev);
+      platform->queueEvent(platform->getActiveViewId(), ev);
     }
     break;
   case 2:
     {
       TouchEvent ev(TouchEvent::ACTION_MOVE, x, y, time / 1000.0, fingerIndex);
-      platform->postEvent(platform->getActiveViewId(), ev);
+      platform->queueEvent(platform->getActiveViewId(), ev);
     }
     break;
   case 3:
     {
       TouchEvent ev(TouchEvent::ACTION_UP, x, y, time / 1000.0, fingerIndex);
-      platform->postEvent(platform->getActiveViewId(), ev);
+      platform->queueEvent(platform->getActiveViewId(), ev);
     }
     break;
   }
@@ -356,7 +356,7 @@ void Java_com_sometrik_framework_FrameWork_touchEvent(JNIEnv* env, jobject thiz,
 
 jboolean Java_com_sometrik_framework_MyGLRenderer_onUpdate(JNIEnv* env, jobject thiz, double timestamp) {
   UpdateEvent ev(platform->getTime());
-  platform->postEvent(platform->getActiveViewId(), ev);
+  platform->queueEvent(platform->getActiveViewId(), ev);
   return ev.isRedrawNeeded();
 }
 
@@ -401,7 +401,7 @@ void Java_com_sometrik_framework_NativeLooper_test(JNIEnv* env, jobject thiz) {
 
 void Java_com_sometrik_framework_MyGLRenderer_nativeOnDraw(JNIEnv* env, jobject thiz) {
   DrawEvent ev(platform->getTime());
-  platform->postEvent(platform->getActiveViewId(), ev);
+  platform->queueEvent(platform->getActiveViewId(), ev);
   platform->clearRedrawNeeded();
 }
 
@@ -416,13 +416,14 @@ void Java_com_sometrik_framework_FrameWork_okPressed(JNIEnv* env, jobject thiz, 
 
 void Java_com_sometrik_framework_FrameWork_buttonClicked(JNIEnv* env, jobject thiz, jint id) {
   CommandEvent ev(platform->getTime(), 0);
-  platform->postEvent(id, ev);
+  platform->queueEvent(id, ev);
 }
+  
 void Java_com_sometrik_framework_FrameWork_textChangedEvent(JNIEnv* env, jobject thiz, jint id, jstring jtext) {
   const char * text = env->GetStringUTFChars(jtext, 0);
   TextEvent ev(platform->getTime(), text);
   env->ReleaseStringUTFChars(jtext, text);
-  platform->postEvent(id, ev);
+  platform->queueEvent(id, ev);
 }
 
 jint JNI_OnLoad(JavaVM *vm, void *reserved) {
