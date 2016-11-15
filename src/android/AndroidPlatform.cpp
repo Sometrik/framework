@@ -158,13 +158,6 @@ AndroidPlatform::showActionSheet(const FWRect & rect, const FWActionSheet & shee
   return 0;
 }
 
-void
-AndroidPlatform::setOpenGLView(jobject surface){
-  JNIEnv * env = getJNIEnv();
-  window = ANativeWindow_fromSurface(env, surface);
-//  application->initializeContent();
-//  pthread_create(&_threadId, 0, threadStartCallback, this);
-}
 bool
 AndroidPlatform::initializeRenderer(){
 
@@ -315,6 +308,13 @@ AndroidPlatform::getJNIEnv() const {
   return Myenv;
 }
 
+void
+AndroidPlatform::releaseOpenGLView() {
+  if (window) {
+    ANativeWindow_release(window);
+  }
+}
+
 std::shared_ptr<AndroidPlatform> platform;
 
 extern "C" {
@@ -395,7 +395,12 @@ void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, job
 
 void Java_com_sometrik_framework_FrameWork_nativeSetSurface(JNIEnv* env, jobject thiz, jobject surface){
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "going for it");
-  platform->setOpenGLView(surface);
+  if (surface != 0) {
+    ANativeWindow * window = ANativeWindow_fromSurface(env, surface);
+    platform->setOpenGLView(window);
+  } else {
+    platform->releaseOpenGLView();    
+  }
   platform->initializeRenderer();
   platform->startThread();
 }

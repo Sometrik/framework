@@ -45,7 +45,7 @@ public:
     return std::make_shared<AndroidLogger>();
   }
   void sendMessage(const Message & message) override;
-  void setOpenGLView(jobject surface);
+  void setOpenGLView(ANativeWindow * _window) { window = _window; }
   bool initializeRenderer();
   void startThread();
   void stopThread();
@@ -54,6 +54,8 @@ public:
   static void* threadStartCallback(void *myself);
 
   JNIEnv* getJNIEnv() const;
+
+  void releaseOpenGLView();
 
   void queueEvent(int internal_id, EventBase & ev) {
 #ifdef USE_NATIVE_SURFACE
