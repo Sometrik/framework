@@ -412,7 +412,6 @@ void Java_com_sometrik_framework_NativeLooper_test(JNIEnv* env, jobject thiz) {
 void Java_com_sometrik_framework_MyGLRenderer_nativeOnDraw(JNIEnv* env, jobject thiz) {
   DrawEvent ev(platform->getTime());
   platform->queueEvent(platform->getActiveViewId(), ev);
-  platform->clearRedrawNeeded();
 }
 
 void Java_com_sometrik_framework_FrameWork_okPressed(JNIEnv* env, jobject thiz, jstring text) {
