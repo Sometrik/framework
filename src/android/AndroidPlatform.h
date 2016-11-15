@@ -48,8 +48,6 @@ public:
   void setOpenGLView(ANativeWindow * _window) { window = _window; }
   bool initializeRenderer();
   void startThread();
-  void stopThread();
-  void drawFrame();
   void renderLoop();
   static void* threadStartCallback(void *myself);
 
