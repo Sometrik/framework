@@ -23,6 +23,7 @@ class OpenGLView : public FWViewBase {
   void createFBO(int flags) { }
 
  protected:
+  void swapBuffers();
   void checkGLError();
 
  private:

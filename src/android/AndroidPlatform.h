@@ -63,6 +63,8 @@ public:
 #endif
   }
 
+  void swapBuffers() override;
+
 private:
   pthread_t _threadId;
 

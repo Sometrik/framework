@@ -100,6 +100,8 @@ class FWPlatform {
   float getDisplayScale() const { return display_scale; }
   bool hasES3() const { return has_es3; }
   int getActiveViewId() const { return activeViewId; }
+
+  virtual void swapBuffers() = 0;
   
  protected:  
   virtual std::shared_ptr<SoundCanvas> createSoundCanvas() const = 0;

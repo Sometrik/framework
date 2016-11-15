@@ -277,19 +277,17 @@ AndroidPlatform::renderLoop() {
 //    }
 //    _msg = MSG_NONE;
 
-#if 0
-    if (display) {
-      drawFrame();
-      getLogger().println("drawing");
-      if (!eglSwapBuffers(display, surface)) {
-        getLogger().println("error eglSwapBuffers");
-      }
-    }
-#endif
   }
 
   getLogger().println("Looping Louie is out");
   runloop_level--;
+}
+
+void
+AndroidPlatform::swapBuffers() {
+  if (!eglSwapBuffers(display, surface)) {
+    getLogger().println("error eglSwapBuffers");
+  }
 }
 
 void* AndroidPlatform::threadStartCallback(void *myself) {
