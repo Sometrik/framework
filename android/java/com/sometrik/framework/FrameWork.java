@@ -689,7 +689,7 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback {
 
   @Override
   public void surfaceChanged(SurfaceHolder holder, int arg1, int arg2, int arg3) {
-//    nativeSetSurface(holder.getSurface());
+      nativeSetSurface(holder.getSurface());
   }
 
   @Override
@@ -700,8 +700,7 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback {
 
   @Override
   public void surfaceDestroyed(SurfaceHolder holder) {
-    // TODO Auto-generated method stub
-    
+      nativeSetSurface(null);    
   }
 
 }
