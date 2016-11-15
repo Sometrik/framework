@@ -87,7 +87,6 @@ void AndroidPlatform::storeValue(const std::string & key, const std::string & va
   env->ReleaseStringUTFChars(jvalue, value.c_str());
 }
 
-
 void
 AndroidPlatform::sendMessage(const Message & message) {
   FWPlatform::sendMessage(message);
@@ -232,14 +231,11 @@ AndroidPlatform::initializeRenderer(){
      getLogger().println("Piiiip");
      return true;
 }
+
 void
-AndroidPlatform::startThread(){
+AndroidPlatform::startThread() {
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "About to start thread 1");
   pthread_create(&_threadId, 0, threadStartCallback, this);
-}
-void
-AndroidPlatform::stopThread(){
-//  pthread_join(_threadId, 0);
 }
 
 void
@@ -286,6 +282,9 @@ AndroidPlatform::swapBuffers() {
 void* AndroidPlatform::threadStartCallback(void *myself) {
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "About to start thread 2");
   AndroidPlatform * aplatform = (AndroidPlatform*) myself;
+  aplatform->getApplication().initialize(platform.get());
+  // platform->onResize(screenWidth, screenHeight);
+  aplatform->getApplication().initializeContent();
   aplatform->initializeRenderer();
   aplatform->renderLoop();
   pthread_exit(0);
@@ -385,11 +384,16 @@ void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, job
     platform->setJavaVM(gJavaVM);
   }
 
-  application->initialize(platform.get());
   platform->setDisplayWidth(screenWidth);
   platform->setDisplayHeight(screenHeight);
-//  platform->onResize(screenWidth, screenHeight);
+
+#ifdef USE_NATIVE_SURFACE
+  platform->startThread();
+#else
+  application->initialize(platform.get());
+  // platform->onResize(screenWidth, screenHeight);
   application->initializeContent();
+#endif
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Init end");
 }
 
@@ -401,7 +405,6 @@ void Java_com_sometrik_framework_FrameWork_nativeSetSurface(JNIEnv* env, jobject
   } else {
     platform->releaseOpenGLView();    
   }
-  platform->startThread();
 }
 
 void Java_com_sometrik_framework_NativeLooper_test(JNIEnv* env, jobject thiz) {
