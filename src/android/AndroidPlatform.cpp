@@ -286,7 +286,7 @@ AndroidPlatform::swapBuffers() {
 void* AndroidPlatform::threadStartCallback(void *myself) {
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "About to start thread 2");
   AndroidPlatform * aplatform = (AndroidPlatform*) myself;
-
+  aplatform->initializeRenderer();
   aplatform->renderLoop();
   pthread_exit(0);
 
@@ -401,7 +401,6 @@ void Java_com_sometrik_framework_FrameWork_nativeSetSurface(JNIEnv* env, jobject
   } else {
     platform->releaseOpenGLView();    
   }
-  platform->initializeRenderer();
   platform->startThread();
 }
 
