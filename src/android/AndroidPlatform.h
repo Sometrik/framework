@@ -14,7 +14,7 @@
 class AndroidPlatform: public FWPlatform {
 public:
   AndroidPlatform(JNIEnv * _env, jobject _mgr, jobject _framework, float _display_scale, const char * _glsl_version, bool _has_es3) :
-      FWPlatform(_display_scale, _glsl_version, _has_es3), display(0), surface(0), context(0), angle(0) {
+      FWPlatform(_display_scale, _glsl_version, _has_es3) {
     framework = _env->NewGlobalRef(_framework);
     mgr = _env->NewGlobalRef(_mgr);
   }
@@ -69,14 +69,12 @@ private:
   EGLDisplay display = 0;
   EGLSurface surface = 0;
   EGLContext context = 0;
-  float angle = 0;
 
   ANativeWindow * window = 0;
   JavaVM * gJavaVM = 0;
   jobject mgr;
   jobject framework;
   jobject handler;
-  char message[256];
   EventQueue eventqueue;
   int runloop_level = 0;
   bool renderingEnabled = true;
