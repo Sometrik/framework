@@ -171,6 +171,7 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback {
 	    }
 	    break;
 	  }
+	} 
       }
     };
     initNative();
