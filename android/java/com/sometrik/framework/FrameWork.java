@@ -169,7 +169,7 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback {
 	  EditTextEvent event = (EditTextEvent)msg.obj;
 	  textChangedEvent(event.getId(), event.getText());
 	  //Send event
-	}
+	} 
       }
     };
     initNative();
@@ -396,31 +396,14 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback {
       //Touch event of screen touch-down for the first finger
       case MotionEvent.ACTION_DOWN:
 	
-	System.out.println("Liike alkoi: " + event.getX() + " " + event.getY() + " - id: " + event.getActionIndex() + " time: " + System.currentTimeMillis());
-	intArray = new int[5];
-	intArray[0] = 1;
-	intArray[1] = event.getActionIndex();
-	intArray[2] = (int) System.currentTimeMillis();
-	intArray[3] = (int) event.getX();
-	intArray[4] = (int) (screenHeight - event.getRawY() - windowYcoords);
-
-	msg = Message.obtain(null, 1, intArray);
-	mainHandler.sendMessage(msg);
+//	System.out.println("Liike alkoi: " + event.getX() + " " + event.getY() + " - id: " + event.getActionIndex() + " time: " + System.currentTimeMillis());
+	touchEvent(1, event.getActionIndex(), (int) System.currentTimeMillis(), (int) event.getX(), (int) (screenHeight - event.getRawY() - windowYcoords));
 
 	break;
 	//Touch event of screen touch-down after the first touch
       case MotionEvent.ACTION_POINTER_DOWN:
-	System.out.println("Liike alkoi: " + event.getX() + " " + event.getY() + " - id: " + event.getActionIndex());
-
-	intArray = new int[5];
-	intArray[0] = 1;
-	intArray[1] = event.getActionIndex();
-	intArray[2] = (int) System.currentTimeMillis();
-	intArray[3] = (int) event.getX();
-	intArray[4] = (int) (screenHeight - event.getRawY() - windowYcoords);
-	msg = Message.obtain(null, 1, intArray);
-	mainHandler.sendMessage(msg);
-
+//	System.out.println("Liike alkoi: " + event.getX() + " " + event.getY() + " - id: " + event.getActionIndex());
+	touchEvent(1, event.getActionIndex(), (int) System.currentTimeMillis(), (int) event.getX(), (int) (screenHeight - event.getRawY() - windowYcoords));
 	break;
 
 	//Touch event of finger moving
@@ -432,72 +415,24 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback {
 	  int pointerId = event.getPointerId(pointerIndex);
 
 	  if (pointerId == 0) {
-
-	    // System.out.println("fingerOne move: " +
-	    // event.getX(pointerIndex) + event.getY(pointerIndex));
-
-	    intArray = new int[5];
-	    intArray[0] = 3;
-	    intArray[1] = 0;
-	    intArray[2] = (int) System.currentTimeMillis();
-	    intArray[3] = (int) event.getX();
-	    intArray[4] = (int) (screenHeight - event.getRawY() - windowYcoords);
-	    msg = Message.obtain(null, 1, intArray);
-	    mainHandler.sendMessage(msg);
-
+	    // System.out.println("fingerOne move: " + event.getX(pointerIndex) + event.getY(pointerIndex));
+		touchEvent(2, 0, (int) System.currentTimeMillis(), (int) event.getX(), (int) (screenHeight - event.getRawY() - windowYcoords));
 	  }
 	  if (pointerId == 1) {
-	    // System.out.println("fingerTwo move: " +
-	    // event.getX(pointerIndex) + event.getY(pointerIndex));
-
-	    intArray = new int[5];
-	    intArray[0] = 3;
-	    intArray[1] = 1;
-	    intArray[2] = (int) System.currentTimeMillis();
-	    intArray[3] = (int) event.getX();
-	    intArray[4] = (int) (screenHeight - event.getRawY() - windowYcoords);
-	    msg = Message.obtain(null, 1, intArray);
-	    mainHandler.sendMessage(msg);
+	    // System.out.println("fingerTwo move: " + event.getX(pointerIndex) + event.getY(pointerIndex));
+		touchEvent(2, 1, (int) System.currentTimeMillis(), (int) event.getX(), (int) (screenHeight - event.getRawY() - windowYcoords));
 	  }
 	  if (pointerId == 2) {
-	    // System.out.println("fingerThree move: " +
-	    // event.getX(pointerIndex) +
-	    // event.getY(pointerIndex));'
-
-	    intArray = new int[5];
-	    intArray[0] = 3;
-	    intArray[1] = 2;
-	    intArray[2] = (int) System.currentTimeMillis();
-	    intArray[3] = (int) event.getX();
-	    intArray[4] = (int) (screenHeight - event.getRawY() - windowYcoords);
-	    msg = Message.obtain(null, 1, intArray);
-	    mainHandler.sendMessage(msg);
+//	     System.out.println("fingerThree move: " + event.getX(pointerIndex) + event.getY(pointerIndex));
+		touchEvent(2, 2, (int) System.currentTimeMillis(), (int) event.getX(), (int) (screenHeight - event.getRawY() - windowYcoords));
 	  }
 	  if (pointerId == 3) {
-	    // System.out.println("fingerFour move: " +
-	    // event.getX(pointerIndex) + event.getY(pointerIndex));
-
-	    intArray = new int[5];
-	    intArray[0] = 3;
-	    intArray[1] = 3;
-	    intArray[2] = (int) System.currentTimeMillis();
-	    intArray[3] = (int) event.getX();
-	    intArray[4] = (int) (screenHeight - event.getRawY() - windowYcoords);
-	    msg = Message.obtain(null, 1, intArray);
-	    mainHandler.sendMessage(msg);
+	    // System.out.println("fingerFour move: " + event.getX(pointerIndex) + event.getY(pointerIndex));
+		touchEvent(2, 3, (int) System.currentTimeMillis(), (int) event.getX(), (int) (screenHeight - event.getRawY() - windowYcoords));
 	  }
 	  if (pointerId == 4) {
-	    // System.out.println("fingerFive move: " +
-	    // event.getX(pointerIndex) + event.getY(pointerIndex));
-
-	    intArray = new int[5];
-	    intArray[0] = 3;
-	    intArray[1] = 4;
-	    intArray[2] = (int) System.currentTimeMillis();
-	    intArray[3] = (int) event.getX();
-	    intArray[4] = (int) (screenHeight - event.getRawY() - windowYcoords);
-	    msg = Message.obtain(null, 1, intArray);
-	    mainHandler.sendMessage(msg);
+	    // System.out.println("fingerFive move: " + event.getX(pointerIndex) + event.getY(pointerIndex));
+		touchEvent(2, 4, (int) System.currentTimeMillis(), (int) event.getX(), (int) (screenHeight - event.getRawY() - windowYcoords));
 	  }
 
 	}
@@ -509,28 +444,12 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback {
 	//touch event of first finger being removed from the screen
       case MotionEvent.ACTION_UP:
 
-	intArray = new int[5];
-	intArray[0] = 2;
-	intArray[1] = event.getActionIndex();
-	intArray[2] = (int) System.currentTimeMillis();
-	intArray[3] = (int) event.getX();
-	intArray[4] = (int) (screenHeight - event.getRawY() - windowYcoords);
-	msg = Message.obtain(null, 1, intArray);
-	mainHandler.sendMessage(msg);
-	break;
+	touchEvent(3, event.getActionIndex(), (int) System.currentTimeMillis(), (int) event.getX(), (int) (screenHeight - event.getRawY() - windowYcoords));
 
 	//touch event of fingers other than the first leaving the screen
       case MotionEvent.ACTION_POINTER_UP:
 
-	intArray = new int[5];
-	intArray[0] = 2;
-	intArray[1] = event.getActionIndex();
-	intArray[2] = (int) System.currentTimeMillis();
-	intArray[3] = (int) event.getX();
-	intArray[4] = (int) (screenHeight - event.getRawY() - windowYcoords);
-	msg = Message.obtain(null, 1, intArray);
-	mainHandler.sendMessage(msg);
-	break;
+	touchEvent(3, event.getActionIndex(), (int) System.currentTimeMillis(), (int) event.getX(), (int) (screenHeight - event.getRawY() - windowYcoords));
 
       }
       return true;
