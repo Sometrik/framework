@@ -12,10 +12,6 @@ class FormView : public FWViewBase {
     FWViewBase::initialize(_platform);
     sendMessage(Message(Message::CREATE_FORMVIEW, getParentInternalId(), getInternalId()));
   }
-
-  void show() override { }
-    sendMessage(Message(Message::SHOW_VIEW, getInternalId()));
-  }
 };
 
 #endif
