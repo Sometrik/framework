@@ -158,7 +158,12 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback {
 	    view.showView();
 	    break;
 	  default:
-	    getFromViewList(message.getInternalId()).handleMessage(message);
+	    NativeMessageHandler handlerView = getFromViewList(message.getInternalId());
+	    if (handlerView != null){
+	      handlerView.handleMessage(message);
+	    } else {
+	      System.out.println("Message not handled");
+	    }
 	    break;
 	  }
 	} else if (msg.what == 2){
