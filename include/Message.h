@@ -62,12 +62,19 @@ class Message {
   const std::string & getKey() const { return key; }
   void setKey(const std::string & _key) { key = _key; }
 
+  void setWidth(int _width){ width = _width; }
+  int getWidth(){ return width; }
+  void setHeight(int _height) { height = _height; }
+  int getHeight() { return height; }
+
+
  private:
   Type messageType;
   int internalId, childInternalId;
   int value;
   std::string key;
   std::string textValue, textValue2;
+  int width = 0, height = 0;
 };
 
 #endif
