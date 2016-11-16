@@ -234,6 +234,20 @@ AndroidPlatform::initializeRenderer(ANativeWindow * _window) {
 }
 
 void
+AndroidPlatform::deinitializeRenderer() {
+  if (display) {
+    eglMakeCurrent(_display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+    eglDestroyContext(_display, _context);
+    eglDestroySurface(_display, _surface);
+    eglTerminate(_display);
+    
+    _display = EGL_NO_DISPLAY;
+    _surface = EGL_NO_SURFACE;
+    _context = EGL_NO_CONTEXT;
+  }
+}
+
+void
 AndroidPlatform::startThread() {
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "About to start thread 1");
   pthread_create(&_threadId, 0, threadStartCallback, this);
@@ -292,6 +306,7 @@ void* AndroidPlatform::threadStartCallback(void *myself) {
   // platform->onResize(screenWidth, screenHeight);
   aplatform->getApplication().initializeContent();
   aplatform->renderLoop();
+  aplatform->deinitializeRenderer();
   pthread_exit(0);
 
   return 0;

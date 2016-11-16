@@ -46,6 +46,7 @@ public:
   }
   void sendMessage(const Message & message) override;
   bool initializeRenderer(ANativeWindow * _window);
+  void deinitializeRenderer();
   void startThread();
   void renderLoop();
   static void* threadStartCallback(void *myself);
