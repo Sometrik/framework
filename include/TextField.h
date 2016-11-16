@@ -13,6 +13,10 @@ class TextField : public Element {
     sendMessage(Message(Message::CREATE_TEXTFIELD, getParentInternalId(), getInternalId()));
   }
 
+  void onTextEvent(TextEvent & ev) override {
+    value = ev.getText();
+  }
+
   const std::string & getValue() { return value; }
 			       
  private:
