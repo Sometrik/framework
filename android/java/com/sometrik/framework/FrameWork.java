@@ -161,8 +161,6 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback {
 	    launchBrowser("");
 	    break;
 	  case ADD_OPTION:
-	    FormView view = (FormView) getFromViewList(2);
-	    view.showView();
 	    break;
 	  default:
 	    NativeMessageHandler handlerView = getFromViewList(message.getInternalId());
@@ -242,7 +240,9 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback {
   }
   
   private void createFormView(int id){
-    views.add(new FormView(id, this));
+    FWLayout layout = new FWLayout(this);
+    layout.setId(id);
+    views.add(layout);
   }
   private void createOpenGLView(int id){
     MyGLRenderer renderer = new MyGLRenderer(this, screenWidth, screenHeight);
@@ -255,6 +255,7 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback {
   
   private void createNativeOpenGLView(int id){
     surfaceView = new SurfaceView(this);
+    surfaceView.setId(id);
     surfaceView.setOnTouchListener(new MyOnTouchListener(this));
     surfaceView.getHolder().addCallback(this);
     setContentView(surfaceView);
