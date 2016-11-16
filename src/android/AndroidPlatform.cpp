@@ -364,7 +364,7 @@ void Java_com_sometrik_framework_FrameWork_touchEvent(JNIEnv* env, jobject thiz,
 }
 
 jboolean Java_com_sometrik_framework_MyGLRenderer_onUpdate(JNIEnv* env, jobject thiz, double timestamp) {
-  UpdateEvent ev(platform->getTime());
+  UpdateEvent ev(timestamp);
   platform->queueEvent(platform->getActiveViewId(), ev);
   return ev.isRedrawNeeded();
 }
@@ -384,10 +384,6 @@ void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, job
   FWApplication * application = applicationMain();
   platform->setApplication(application);
 
-  if (gJavaVM) {
-    gJavaVM->AttachCurrentThread(&env, NULL);
-    platform->setJavaVM(gJavaVM);
-  }
 
   platform->setDisplayWidth(screenWidth);
   platform->setDisplayHeight(screenHeight);
@@ -395,6 +391,10 @@ void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, job
 #ifdef USE_NATIVE_SURFACE
   platform->startThread();
 #else
+  if (gJavaVM) {
+    gJavaVM->AttachCurrentThread(&env, NULL);
+    platform->setJavaVM(gJavaVM);
+  }
   application->initialize(platform.get());
   // platform->onResize(screenWidth, screenHeight);
   application->initializeContent();
