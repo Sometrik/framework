@@ -16,7 +16,7 @@ class EventQueue {
   }
 
   void push(int internal_id, EventBase & ev) { data.push_front(std::pair<int, std::shared_ptr<EventBase> >(internal_id, ev.dup())); }
-  std::pair<int internal_id, std::shared_ptr<EventBase> > pop() {
+  std::pair<int, std::shared_ptr<EventBase> > pop() {
     pthread_mutex_lock (&_mutex);
     if (!data.empty()) {
       auto ev = data.back();
@@ -32,7 +32,7 @@ class EventQueue {
   
  private:
   pthread_mutex_t _mutex;
-  std::list<std::shared_ptr<int, std::shared_ptr<EventBase> > > data;
+  std::list<std::pair<int, std::shared_ptr<EventBase> > > data;
 };
 
 #endif

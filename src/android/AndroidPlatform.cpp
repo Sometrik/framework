@@ -247,9 +247,9 @@ AndroidPlatform::renderLoop() {
   while (renderingEnabled) {
     if (!eventqueue.empty()) {
       auto ev = eventqueue.pop();
-      postEvent(ev.first, ev.second);
+      postEvent(ev.first, *ev.second.get());
 
-      auto ev2 = dynamic_cast<AndroidConfigurationEvent*>(ev.first.get());
+      auto ev2 = dynamic_cast<AndroidConfigurationEvent*>(ev.second.get());
       if (ev2) {
 	initializeRenderer(ev2->getWindow());
       }
@@ -288,7 +288,7 @@ AndroidPlatform::swapBuffers() {
 void* AndroidPlatform::threadStartCallback(void *myself) {
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "About to start thread 2");
   AndroidPlatform * aplatform = (AndroidPlatform*) myself;
-  aplatform->getApplication().initialize(platform.get());
+  aplatform->getApplication().initialize(aplatform);
   // platform->onResize(screenWidth, screenHeight);
   aplatform->getApplication().initializeContent();
   aplatform->renderLoop();
@@ -327,7 +327,7 @@ void Java_com_sometrik_framework_MyGLRenderer_onResize(JNIEnv* env, jobject thiz
   platform->setDisplayWidth(x);
   platform->setDisplayHeight(y);
 
-  ResizeEvent ev(platform->getTime(), width / getDisplayScale(), height / getDisplayScale(), width, height);
+  ResizeEvent ev(platform->getTime(), x / platform->getDisplayScale(), y / platform->getDisplayScale(), x, y);
   platform->queueEvent(platform->getActiveViewId(), ev);
 }
 
@@ -406,7 +406,7 @@ void Java_com_sometrik_framework_FrameWork_nativeSetSurface(JNIEnv* env, jobject
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "going for it");
   ANativeWindow * window = 0;
   if (surface != 0) window = ANativeWindow_fromSurface(env, surface);
-  AndroidConfigurationEvent ev(window);
+  AndroidConfigurationEvent ev(platform->getTime(), window);
   platform->queueEvent(platform->getActiveViewId(), ev);
 }
 

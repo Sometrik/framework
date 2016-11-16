@@ -49,6 +49,7 @@ public:
   void startThread();
   void renderLoop();
   static void* threadStartCallback(void *myself);
+  void releaseOpenGLView();
 
   JNIEnv* getJNIEnv() const;
 
@@ -68,6 +69,7 @@ private:
   EGLDisplay display = 0;
   EGLSurface surface = 0;
   EGLContext context = 0;
+  float angle = 0;
 
   ANativeWindow * window = 0;
   JavaVM * gJavaVM = 0;
