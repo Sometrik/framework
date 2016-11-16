@@ -47,7 +47,9 @@ class Element {
   virtual void flushTouches(int mode, double timestamp) { }
   virtual void onShake(double timestamp) { }
 
-  virtual void show() { }
+  virtual void show() {
+    sendMessage(Message(Message::SHOW_VIEW, internal_id));
+  }
     
   Element & addChild(const std::shared_ptr<Element> & element) {
     element->parent = this;
