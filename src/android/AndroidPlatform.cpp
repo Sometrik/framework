@@ -95,7 +95,7 @@ AndroidPlatform::sendMessage(const Message & message) {
    jclass frameworkCls = env->FindClass("com/sometrik/framework/FrameWork");
    jclass messageCls = env->FindClass("com/sometrik/framework/NativeMessage");
    jmethodID sendMessageMethod = env->GetStaticMethodID(frameworkCls, "sendMessage", "(Lcom/sometrik/framework/FrameWork;Lcom/sometrik/framework/NativeMessage;)V");
-   jmethodID messageConstructor = env->GetMethodID(messageCls, "<init>", "(IIILjava/lang/String;Ljava/lang/String;)V");
+   jmethodID messageConstructor = env->GetMethodID(messageCls, "<init>", "(IIIILjava/lang/String;Ljava/lang/String;)V");
 
    int messageTypeId = int(message.getType());
    const char * textValue = message.getTextValue().c_str();
