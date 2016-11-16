@@ -25,7 +25,7 @@ public class FormView implements NativeMessageHandler {
   public FormView(int id, Context context) {
     this.context = context;
     baseLayout = new LinearLayout(context);
-    baseLayout.setOrientation(0);
+    baseLayout.setOrientation(1);
     baseLayout.setId(0);
     viewId = id;
     FrameWork frame = (FrameWork)context;
