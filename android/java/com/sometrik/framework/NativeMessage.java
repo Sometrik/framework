@@ -4,6 +4,7 @@ public class NativeMessage {
 
   private int internalId = 0;
   private int childInternalId = 0;
+  private int value = 0;
   private String textValue = "";
   private String textValue2 = "";
   private MessageType message;
@@ -52,10 +53,11 @@ public class NativeMessage {
     this.textValue = textValue;
     this.textValue2 = textValue2;
   }
-  NativeMessage(int messageTypeId, int internalId, int childInternalId, String textValue, String textValue2){
+  NativeMessage(int messageTypeId, int internalId, int childInternalId, int value, String textValue, String textValue2){
     message = MessageType.values()[messageTypeId];
     this.internalId = internalId;
     this.childInternalId = childInternalId;
+    this.value = value;
     this.textValue = textValue;
     this.textValue2 = textValue2;
   }
@@ -80,5 +82,8 @@ public class NativeMessage {
   }
   public MessageType getMessage() {
     return message;
+  }
+  public int getValue() {
+    return value;
   }
 }

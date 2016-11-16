@@ -86,6 +86,11 @@ public class FWLayout extends LinearLayout implements NativeMessageHandler{
       System.out.println("FWLayout " + this.getId() + " creating layout");
       FWLayout layout = new FWLayout(context);
       layout.setId(message.getChildInternalId());
+      if (message.getValue() == 2){
+	layout.setOrientation(LinearLayout.HORIZONTAL);
+      } else if (message.getValue() == 1){
+	layout.setOrientation(LinearLayout.VERTICAL);
+      }
       this.addView(layout);
       break;
 

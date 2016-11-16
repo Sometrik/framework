@@ -104,7 +104,7 @@ AndroidPlatform::sendMessage(const Message & message) {
    jstring jtextValue2 = env->NewStringUTF(textValue2);
 
 
-   jobject jmessage = env->NewObject(messageCls, messageConstructor, messageTypeId, message.getInternalId(), message.getChildInternalId(), jtextValue, jtextValue2);
+   jobject jmessage = env->NewObject(messageCls, messageConstructor, messageTypeId, message.getInternalId(), message.getChildInternalId(), message.getValue(), jtextValue, jtextValue2);
    env->CallStaticVoidMethod(frameworkCls, sendMessageMethod, framework, jmessage);
    //Fix these releases
 //  env->ReleaseStringUTFChars(jtextValue, textValue);
