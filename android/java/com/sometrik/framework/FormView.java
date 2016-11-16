@@ -52,6 +52,7 @@ public class FormView implements NativeMessageHandler {
     });
   }
   
+  @Override
   public void showView(){
     FrameWork frame = (FrameWork) context;
     frame.setContentView(baseLayout);

@@ -67,5 +67,11 @@ public class MyGLSurfaceView extends GLSurfaceView implements NativeMessageHandl
     
   }
 
+  @Override
+  public void showView() {
+    // TODO Auto-generated method stub
+    
+  }
+
 
 }

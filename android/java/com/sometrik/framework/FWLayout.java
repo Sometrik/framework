@@ -28,6 +28,11 @@ public class FWLayout extends LinearLayout implements NativeMessageHandler{
     return this.getId();
   }
   
+  @Override
+  public void showView(){
+    frame.setContentView(this);
+  }
+  
   private void list(){
     FrameWork.addToViewList(this);
   }
