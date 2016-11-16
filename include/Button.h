@@ -3,6 +3,7 @@
 
 #include <Element.h>
 #include <Message.h>
+#include <CommandEvent.h>
 
 class Button : public Element {
  public:
@@ -13,6 +14,13 @@ class Button : public Element {
     Message m(Message::CREATE_BUTTON, getParentInternalId(), getInternalId());
     m.setTextValue(label);
     sendMessage(m);
+  }
+
+  void onTouchEvent(TouchEvent & ev) override {
+    if (ev.getType() == TouchEvent::ACTION_CLICK) {
+      CommandEvent ev2(ev.getTimestamp(), getId());
+      ev2.dispatch(*this);
+    }
   }
 
  private:

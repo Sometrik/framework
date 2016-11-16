@@ -421,7 +421,7 @@ void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, job
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Init end");
 }
 
-void Java_com_sometrik_framework_FrameWork_nativeSetSurface(JNIEnv* env, jobject thiz, jobject surface){
+void Java_com_sometrik_framework_FrameWork_nativeSetSurface(JNIEnv* env, jobject thiz, jobject surface) {
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "going for it");
   ANativeWindow * window = 0;
   if (surface != 0) window = ANativeWindow_fromSurface(env, surface);
@@ -435,7 +435,7 @@ void Java_com_sometrik_framework_MyGLRenderer_nativeOnDraw(JNIEnv* env, jobject 
 }
 
 void Java_com_sometrik_framework_FrameWork_buttonClicked(JNIEnv* env, jobject thiz, jint id) {
-  CommandEvent ev(platform->getTime(), 0);
+  TouchEvent ev(platform->getTime(), TouchEvent::ACTION_CLICK);
   platform->queueEvent(id, ev);
 }
   
