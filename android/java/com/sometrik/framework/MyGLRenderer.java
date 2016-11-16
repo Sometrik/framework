@@ -52,7 +52,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
   public void onSurfaceChanged(GL10 unused, int width, int height) {
     System.out.println("(Renderer) onSurfaceChanged called");
-    GLES20.glViewport(0, 0, width, height);
+//    GLES20.glViewport(0, 0, width, height);
 
 //    onResize(width, height);
   }
