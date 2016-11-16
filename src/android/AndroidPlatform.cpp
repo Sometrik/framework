@@ -160,77 +160,81 @@ AndroidPlatform::showActionSheet(const FWRect & rect, const FWActionSheet & shee
 bool
 AndroidPlatform::initializeRenderer(ANativeWindow * _window) {
   window = _window;
-  
-  const EGLint attribs[] = {
-         EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
-         EGL_BLUE_SIZE, 8,
-         EGL_GREEN_SIZE, 8,
-         EGL_RED_SIZE, 8,
-         EGL_NONE
-     };
-     EGLDisplay _display;
-     EGLConfig _config;
-     EGLint numConfigs;
-     EGLint format;
-     EGLSurface _surface;
-     EGLContext _context;
-     EGLint width;
-     EGLint height;
 
-     if ((_display = eglGetDisplay(EGL_DEFAULT_DISPLAY)) == EGL_NO_DISPLAY) {
-//         LOG_ERROR("eglGetDisplay() returned error %d", eglGetError());
-         return false;
-     }
-     if (!eglInitialize(_display, 0, 0)) {
-//         LOG_ERROR("eglInitialize() returned error %d", eglGetError());
-         return false;
-     }
+  if (window) {
+    const EGLint attribs[] = {
+      EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
+      EGL_BLUE_SIZE, 8,
+      EGL_GREEN_SIZE, 8,
+      EGL_RED_SIZE, 8,
+      EGL_NONE
+    };
+    EGLDisplay _display;
+    EGLConfig _config;
+    EGLint numConfigs;
+    EGLint format;
+    EGLSurface _surface;
+    EGLContext _context;
+    EGLint width;
+    EGLint height;
 
-     if (!eglChooseConfig(_display, attribs, &_config, 1, &numConfigs)) {
-//         LOG_ERROR("eglChooseConfig() returned error %d", eglGetError());
-//         destroy();
-         return false;
-     }
+    if ((_display = eglGetDisplay(EGL_DEFAULT_DISPLAY)) == EGL_NO_DISPLAY) {
+      //         LOG_ERROR("eglGetDisplay() returned error %d", eglGetError());
+      return false;
+    }
+    if (!eglInitialize(_display, 0, 0)) {
+      //         LOG_ERROR("eglInitialize() returned error %d", eglGetError());
+      return false;
+    }
 
-     if (!eglGetConfigAttrib(_display, _config, EGL_NATIVE_VISUAL_ID, &format)) {
-//         LOG_ERROR("eglGetConfigAttrib() returned error %d", eglGetError());
-//         destroy();
-         return false;
-     }
+    if (!eglChooseConfig(_display, attribs, &_config, 1, &numConfigs)) {
+      //         LOG_ERROR("eglChooseConfig() returned error %d", eglGetError());
+      //         destroy();
+      return false;
+    }
 
-     ANativeWindow_setBuffersGeometry(window, 0, 0, format);
+    if (!eglGetConfigAttrib(_display, _config, EGL_NATIVE_VISUAL_ID, &format)) {
+      //         LOG_ERROR("eglGetConfigAttrib() returned error %d", eglGetError());
+      //         destroy();
+      return false;
+    }
 
-     if (!(_surface = eglCreateWindowSurface(_display, _config, window, 0))) {
-//         LOG_ERROR("eglCreateWindowSurface() returned error %d", eglGetError());
-//         destroy();
-         return false;
-     }
+    ANativeWindow_setBuffersGeometry(window, 0, 0, format);
 
-     if (!(_context = eglCreateContext(_display, _config, 0, 0))) {
-//         LOG_ERROR("eglCreateContext() returned error %d", eglGetError());
-//         destroy();
-         return false;
-     }
+    if (!(_surface = eglCreateWindowSurface(_display, _config, window, 0))) {
+      //         LOG_ERROR("eglCreateWindowSurface() returned error %d", eglGetError());
+      //         destroy();
+      return false;
+    }
 
-     if (!eglMakeCurrent(_display, _surface, _surface, _context)) {
-//         LOG_ERROR("eglMakeCurrent() returned error %d", eglGetError());
-//         destroy();
-         return false;
-     }
+    if (!(_context = eglCreateContext(_display, _config, 0, 0))) {
+      //         LOG_ERROR("eglCreateContext() returned error %d", eglGetError());
+      //         destroy();
+      return false;
+    }
 
-     if (!eglQuerySurface(_display, _surface, EGL_WIDTH, &width) ||
-         !eglQuerySurface(_display, _surface, EGL_HEIGHT, &height)) {
-//         LOG_ERROR("eglQuerySurface() returned error %d", eglGetError());
-//         destroy();
-         return false;
-     }
+    if (!eglMakeCurrent(_display, _surface, _surface, _context)) {
+      //         LOG_ERROR("eglMakeCurrent() returned error %d", eglGetError());
+      //         destroy();
+      return false;
+    }
 
-     display = _display;
-     surface = _surface;
-     context = _context;
+    if (!eglQuerySurface(_display, _surface, EGL_WIDTH, &width) ||
+	!eglQuerySurface(_display, _surface, EGL_HEIGHT, &height)) {
+      //         LOG_ERROR("eglQuerySurface() returned error %d", eglGetError());
+      //         destroy();
+      return false;
+    }
 
-     getLogger().println("Piiiip");
-     return true;
+    display = _display;
+    surface = _surface;
+    context = _context;
+
+    getLogger().println("Piiiip");
+    return true;
+  } else {
+    return false;
+  }
 }
 
 void
