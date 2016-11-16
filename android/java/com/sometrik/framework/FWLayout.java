@@ -45,8 +45,7 @@ public class FWLayout extends LinearLayout implements NativeMessageHandler{
     button.setOnClickListener(new OnClickListener(){
       @Override
       public void onClick(View arg0) {
-	Message message = Message.obtain(frame.mainHandler, 2, id);
-	message.sendToTarget();
+	frame.buttonClicked(id);
       }
     });
     this.addView(button);
@@ -61,8 +60,7 @@ public class FWLayout extends LinearLayout implements NativeMessageHandler{
 
       public void afterTextChanged(Editable editable) {
 
-	Message message = Message.obtain(frame.mainHandler, 3, new EditTextEvent(id, editable.toString()));
-	message.sendToTarget();
+	  frame.textChangedEvent(id, editable.toString());
       }
 
       public void beforeTextChanged(CharSequence s, int start, int count, int after) {}

@@ -171,15 +171,6 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback {
 	    }
 	    break;
 	  }
-	} else if (msg.what == 2){
-	  //Button has been clicked
-	  buttonClicked((int)msg.obj);
-	} else if (msg.what == 3){
-	  //EditText has been changed
-	  EditTextEvent event = (EditTextEvent)msg.obj;
-	  textChangedEvent(event.getId(), event.getText());
-	  //Send event
-	} 
       }
     };
     initNative();
