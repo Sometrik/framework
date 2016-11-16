@@ -24,7 +24,7 @@
 #include <DrawEvent.h>
 #include <UpdateEvent.h>
 #include <ResizeEvent.h>
-
+#include <AndroidConfigurationEvent.h>
 
 #include <android_fopen.h>
 
@@ -158,8 +158,9 @@ AndroidPlatform::showActionSheet(const FWRect & rect, const FWActionSheet & shee
 }
 
 bool
-AndroidPlatform::initializeRenderer(){
-
+AndroidPlatform::initializeRenderer(ANativeWindow * _window) {
+  window = _window;
+  
   const EGLint attribs[] = {
          EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
          EGL_BLUE_SIZE, 8,
@@ -246,7 +247,12 @@ AndroidPlatform::renderLoop() {
   while (renderingEnabled) {
     if (!eventqueue.empty()) {
       auto ev = eventqueue.pop();
-      postEvent(ev);
+      postEvent(ev.first, ev.second);
+
+      auto ev2 = dynamic_cast<AndroidConfigurationEvent*>(ev.first.get());
+      if (ev2) {
+	initializeRenderer(ev2->getWindow());
+      }
     }
 
     // process incoming messages
@@ -285,7 +291,6 @@ void* AndroidPlatform::threadStartCallback(void *myself) {
   aplatform->getApplication().initialize(platform.get());
   // platform->onResize(screenWidth, screenHeight);
   aplatform->getApplication().initializeContent();
-  aplatform->initializeRenderer();
   aplatform->renderLoop();
   pthread_exit(0);
 
@@ -399,12 +404,10 @@ void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, job
 
 void Java_com_sometrik_framework_FrameWork_nativeSetSurface(JNIEnv* env, jobject thiz, jobject surface){
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "going for it");
-  if (surface != 0) {
-    ANativeWindow * window = ANativeWindow_fromSurface(env, surface);
-    platform->setOpenGLView(window);
-  } else {
-    platform->releaseOpenGLView();    
-  }
+  ANativeWindow * window = 0;
+  if (surface != 0) window = ANativeWindow_fromSurface(env, surface);
+  AndroidConfigurationEvent ev(window);
+  platform->queueEvent(platform->getActiveViewId(), ev);
 }
 
 void Java_com_sometrik_framework_NativeLooper_test(JNIEnv* env, jobject thiz) {
