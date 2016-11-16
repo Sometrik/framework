@@ -128,7 +128,14 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback {
 	  System.out.println("id: " + message.getInternalId() + " MessageType: " + String.valueOf(message.getMessage()));
 	  
 	  switch (message.getMessage()) {
-	  // Send Message to element
+	  case SHOW_VIEW:
+	    NativeMessageHandler formViewToShow = getFromViewList(message.getInternalId());
+	    if (formViewToShow != null) {
+	      formViewToShow.showView();
+	    } else {
+	      System.out.println("Message not handled");
+	    }
+	    break;
 	  case CREATE_APPLICATION:
 	    // getFromViewList(message.getInternalId()).handleMessage(message);
 	    break;
