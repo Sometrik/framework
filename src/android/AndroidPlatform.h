@@ -50,7 +50,6 @@ public:
   void startThread();
   void renderLoop();
   static void* threadStartCallback(void *myself);
-  void releaseOpenGLView();
 
   JNIEnv* getJNIEnv() const;
 

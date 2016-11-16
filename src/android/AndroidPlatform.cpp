@@ -249,6 +249,10 @@ AndroidPlatform::deinitializeRenderer() {
     _surface = EGL_NO_SURFACE;
     _context = EGL_NO_CONTEXT;
   }
+
+  if (window) {
+    ANativeWindow_release(window);
+  }
 }
 
 void
@@ -329,13 +333,6 @@ AndroidPlatform::getJNIEnv() const {
     __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Env is null");
   }
   return Myenv;
-}
-
-void
-AndroidPlatform::releaseOpenGLView() {
-  if (window) {
-    ANativeWindow_release(window);
-  }
 }
 
 std::shared_ptr<AndroidPlatform> platform;
