@@ -410,22 +410,9 @@ void Java_com_sometrik_framework_FrameWork_nativeSetSurface(JNIEnv* env, jobject
   platform->queueEvent(platform->getActiveViewId(), ev);
 }
 
-void Java_com_sometrik_framework_NativeLooper_test(JNIEnv* env, jobject thiz) {
-  __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Test");
-}
-
 void Java_com_sometrik_framework_MyGLRenderer_nativeOnDraw(JNIEnv* env, jobject thiz) {
   DrawEvent ev(platform->getTime());
   platform->queueEvent(platform->getActiveViewId(), ev);
-}
-
-void Java_com_sometrik_framework_FrameWork_okPressed(JNIEnv* env, jobject thiz, jstring text) {
-
-  jclass cls = env->FindClass("com/sometrik/framework/FrameWork");
-  jmethodID methodRef = env->GetMethodID(cls, "printText", "(Ljava/lang/String;)V");
-
-  env->CallVoidMethod(thiz, methodRef, text);
-
 }
 
 void Java_com_sometrik_framework_FrameWork_buttonClicked(JNIEnv* env, jobject thiz, jint id) {
