@@ -6,10 +6,12 @@
 class TouchEvent : public EventBase {
 public:
   enum Type {
-    ACTION_DOWN, ACTION_MOVE, ACTION_UP
+    ACTION_DOWN, ACTION_MOVE, ACTION_UP, ACTION_CLICK
   };
- TouchEvent(Type _type, float _x, float _y, double _timestamp, int _identifier)
+ TouchEvent(double _timestamp, Type _type, float _x, float _y, int _identifier)
    : EventBase(_timestamp), type(_type), x(_x), y(_y), identifier(_identifier) { }
+ TouchEvent(double _timestamp, Type _type)
+   : EventBase(_timestamp), type(_type), x(0), y(0), identifier(0) { }
 
   std::shared_ptr<EventBase> dup() const override { return std::make_shared<TouchEvent>(*this); }
   void dispatch(Element & element) override;
