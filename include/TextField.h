@@ -3,6 +3,7 @@
 
 #include <Element.h>
 #include <Message.h>
+#include <TextEvent.h>
 
 class TextField : public Element {
  public:
