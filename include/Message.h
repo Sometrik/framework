@@ -9,6 +9,7 @@ class Message {
   enum Type {
     CREATE_APPLICATION = 0,
     SHOW_VIEW,
+    SHOW,
     CREATE_FORMVIEW,
     CREATE_BUTTON,
     CREATE_PICKER, // called Spinner in Android
@@ -19,6 +20,7 @@ class Message {
     CREATE_TEXTLABEL,
     CREATE_DIALOG, // For future
     CREATE_IMAGE_ELEMENT,
+    CREATE_ACTION_SHEET,
     REQUEST_REDRAW,
     SHOW_MESSAGE_DIALOG,
     SHOW_INPUT_DIALOG,

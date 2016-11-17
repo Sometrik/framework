@@ -13,6 +13,7 @@ public class NativeMessage {
   public enum MessageType{
     CREATE_APPLICATION,
     SHOW_VIEW,
+    SHOW,
     CREATE_FORMVIEW,
     CREATE_BUTTON,
     CREATE_PICKER, // called Spinner in Android
@@ -23,6 +24,7 @@ public class NativeMessage {
     CREATE_TEXTLABEL,
     CREATE_DIALOG, // For future
     CREATE_IMAGE_ELEMENT,
+    CREATE_ACTION_SHEET,
     REQUEST_REDRAW,
     SHOW_MESSAGE_DIALOG,
     SHOW_INPUT_DIALOG,
