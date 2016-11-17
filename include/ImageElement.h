@@ -12,7 +12,7 @@ class ImageElement : public Element {
     Element::initialize(_platform);
     Message m(Message::CREATE_IMAGE_ELEMENT, getParentInternalId(), getInternalId());
     m.setWidth(width);
-    m.setHeigh(height);
+    m.setHeight(height);
     sendMessage(m);
   }
 
