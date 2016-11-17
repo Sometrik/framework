@@ -1,8 +1,6 @@
 #ifndef _FWPLATFORM_H_
 #define _FWPLATFORM_H_
 
-#include <FWRect.h>
-#include <FWActionSheet.h>
 #include <FWApplication.h>
 #include <EventBase.h>
 #include <Message.h>
@@ -44,7 +42,6 @@ class FWPlatform {
   virtual std::shared_ptr<HTTPClientFactory> createHTTPClientFactory() const = 0;
   virtual void storeValue(const std::string & key, const std::string & value) = 0;
   virtual std::string loadValue(const std::string & key) = 0;
-  virtual int showActionSheet(const FWRect & rect, const FWActionSheet & sheet) = 0;
   
   std::string getBundleFilename(const std::string & filename) { return getBundleFilename(filename.c_str()); }
   
