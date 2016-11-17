@@ -48,6 +48,7 @@ class Element {
   virtual void onShake(double timestamp) { }
 
   virtual void show() { }
+  virtual int showModal() { return 0; }
     
   Element & addChild(const std::shared_ptr<Element> & element) {
     element->parent = this;
