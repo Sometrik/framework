@@ -4,6 +4,7 @@
 #include <Element.h>
 #include <Message.h>
 #include <CommandEvent.h>
+#include <TouchEvent.h>
 
 class Button : public Element {
  public:
