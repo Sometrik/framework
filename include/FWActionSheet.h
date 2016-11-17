@@ -1,8 +1,7 @@
 #ifndef _FWACTIONSHEET_H_
 #define _FWACTIONSHEET_H_
 
-#include <string>
-#include <vector>
+#include <Element.h>
 
 class FWOption {
  public:
@@ -16,10 +15,13 @@ class FWOption {
   std::string text;
 };
 
-class FWActionSheet {
+class FWActionSheet : public Element {
  public:
-  FWActionSheet(const std::string & _title)
-    : title(_title) { }
+  FWActionSheet(Element & parent, const std::string & _title)
+    : title(_title) {
+    FWPlatform & p = parent.getPlatform();
+    initialize(&p);
+  }
 
   void addOption(int id, const std::string & name) {
     options.push_back(FWOption(id, name));
@@ -27,6 +29,21 @@ class FWActionSheet {
 
   const std::string & getTitle() const { return title; }
   const std::vector<FWOption> & getOptions() const { return options; }
+
+  int showModal() override {
+    Message m0(Message::CREATE_ACTION_SHEET, getInternalId());
+    m0.setTextValue(title);
+    sendMessage(m0);
+    for (auto & op : options) {
+      Message m(Message::ADD_OPTION, getInternalId());
+      m.setValue(op.getId());
+      m.setTextValue(op.getText());
+      sendMessage(m);
+    }
+    Message m1(Message::SHOW, getInternalId());
+    sendMessage(m1);
+    return 0;
+  }
   
  private:
   std::string title;
