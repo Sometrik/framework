@@ -103,8 +103,6 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback {
     // Create listener for screen touches and make MyGlSurfaceView the active
     // view
     
-    frameWork = this;
-    
     // create message handler for framework
     mainHandler = new Handler() {
       @Override
@@ -230,6 +228,7 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback {
     MyGLSurfaceView mGLView = new MyGLSurfaceView(this, renderer);
     mGLView.setOnTouchListener(new MyOnTouchListener(this));
     mGLView.setWillNotDraw(false);
+    mGLView.getHolder().addCallback(this);
     views.add(mGLView);
     setContentView(mGLView);
     currentView = id;
@@ -535,6 +534,10 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback {
     Message msg = Message.obtain(null, message, optionsList);
     view.sHandler.sendMessage(msg);
 
+  }
+  
+  public float getScreenWidth(){
+    return screenWidth;
   }
 
   // returns database path
