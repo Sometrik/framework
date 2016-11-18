@@ -57,6 +57,7 @@ public class FWLayout extends LinearLayout implements NativeMessageHandler{
     final EditText editText = new EditText(context);
     editText.setId(id);
     editText.setText(text);
+    editText.setMinimumWidth(400000 / (int)frame.getScreenWidth());
     editText.addTextChangedListener(new TextWatcher() {
 
       public void afterTextChanged(Editable editable) {
