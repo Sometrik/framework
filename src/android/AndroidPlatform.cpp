@@ -407,21 +407,21 @@ void Java_com_sometrik_framework_FrameWork_buttonClicked(JNIEnv* env, jobject th
   platform->queueEvent(id, ev);
 }
 
-void Java_com_sometrik_framework_FrameWork_nativeOnResume(JNIEnv* env, jobject thiz) {
+void Java_com_sometrik_framework_FrameWork_nativeOnResume(JNIEnv* env, jobject thiz, int appId) {
   SysEvent ev(platform->getTime(), SysEvent::RESUME);
-  platform->queueEvent(id, ev);
+  platform->queueEvent(appId, ev);
 }
-void Java_com_sometrik_framework_FrameWork_nativeOnPause(JNIEnv* env, jobject thiz) {
+void Java_com_sometrik_framework_FrameWork_nativeOnPause(JNIEnv* env, jobject thiz, int appId) {
   SysEvent ev(platform->getTime(), SysEvent::PAUSE);
-  platform->queueEvent(id, ev);
+  platform->queueEvent(appId, ev);
 }
-void Java_com_sometrik_framework_FrameWork_nativeOnStop(JNIEnv* env, jobject thiz) {
+void Java_com_sometrik_framework_FrameWork_nativeOnStop(JNIEnv* env, jobject thiz, int appId) {
   SysEvent ev(platform->getTime(), SysEvent::STOP);
-  platform->queueEvent(id, ev);
+  platform->queueEvent(appId, ev);
 }
-void Java_com_sometrik_framework_FrameWork_nativeOnRestart(JNIEnv* env, jobject thiz) {
+void Java_com_sometrik_framework_FrameWork_nativeOnRestart(JNIEnv* env, jobject thiz, int appId) {
   SysEvent ev(platform->getTime(), SysEvent::RESTART);
-  platform->queueEvent(id, ev);
+  platform->queueEvent(appId, ev);
 }
   
 void Java_com_sometrik_framework_FrameWork_textChangedEvent(JNIEnv* env, jobject thiz, jint id, jstring jtext) {
