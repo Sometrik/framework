@@ -19,6 +19,7 @@
 #include <pthread.h>
 
 #include <TouchEvent.h>
+#include <SysEvent.h>
 #include <TextEvent.h>
 #include <CommandEvent.h>
 #include <DrawEvent.h>
@@ -403,6 +404,23 @@ void Java_com_sometrik_framework_MyGLRenderer_nativeOnDraw(JNIEnv* env, jobject 
 
 void Java_com_sometrik_framework_FrameWork_buttonClicked(JNIEnv* env, jobject thiz, jint id) {
   TouchEvent ev(platform->getTime(), TouchEvent::ACTION_CLICK);
+  platform->queueEvent(id, ev);
+}
+
+void Java_com_sometrik_framework_FrameWork_nativeOnResume(JNIEnv* env, jobject thiz) {
+  SysEvent ev(platform->getTime(), SysEvent::RESUME);
+  platform->queueEvent(id, ev);
+}
+void Java_com_sometrik_framework_FrameWork_nativeOnPause(JNIEnv* env, jobject thiz) {
+  SysEvent ev(platform->getTime(), SysEvent::PAUSE);
+  platform->queueEvent(id, ev);
+}
+void Java_com_sometrik_framework_FrameWork_nativeOnStop(JNIEnv* env, jobject thiz) {
+  SysEvent ev(platform->getTime(), SysEvent::STOP);
+  platform->queueEvent(id, ev);
+}
+void Java_com_sometrik_framework_FrameWork_nativeOnRestart(JNIEnv* env, jobject thiz) {
+  SysEvent ev(platform->getTime(), SysEvent::RESTART);
   platform->queueEvent(id, ev);
 }
   
