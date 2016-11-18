@@ -211,14 +211,14 @@ AndroidPlatform::initializeRenderer(ANativeWindow * _window) {
 void
 AndroidPlatform::deinitializeRenderer() {
   if (display) {
-    eglMakeCurrent(_display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
-    eglDestroyContext(_display, _context);
-    eglDestroySurface(_display, _surface);
-    eglTerminate(_display);
+    eglMakeCurrent(display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+    eglDestroyContext(display, context);
+    eglDestroySurface(display, surface);
+    eglTerminate(display);
     
-    _display = EGL_NO_DISPLAY;
-    _surface = EGL_NO_SURFACE;
-    _context = EGL_NO_CONTEXT;
+    display = EGL_NO_DISPLAY;
+    surface = EGL_NO_SURFACE;
+    context = EGL_NO_CONTEXT;
   }
 
   if (window) {
