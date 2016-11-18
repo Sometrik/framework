@@ -439,23 +439,16 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback {
 	    // System.out.println("fingerFive move: " + event.getX(pointerIndex) + event.getY(pointerIndex));
 		touchEvent(2, 4, (int) System.currentTimeMillis(), (int) event.getX(), (int) (screenHeight - event.getRawY() - windowYcoords));
 	  }
-
 	}
 	// System.out.println("Liikettä: " + event.getX() + " " +
 	// event.getY() + " - id: " + event.getActionIndex());
-
 	break;
-
 	//touch event of first finger being removed from the screen
       case MotionEvent.ACTION_UP:
-
-	touchEvent(3, event.getActionIndex(), (int) System.currentTimeMillis(), (int) event.getX(), (int) (screenHeight - event.getRawY() - windowYcoords));
-
 	//touch event of fingers other than the first leaving the screen
       case MotionEvent.ACTION_POINTER_UP:
-
 	touchEvent(3, event.getActionIndex(), (int) System.currentTimeMillis(), (int) event.getX(), (int) (screenHeight - event.getRawY() - windowYcoords));
-
+	break;
       }
       return true;
     }
