@@ -8,7 +8,11 @@ public:
   enum Type {
     SHUTDOWN,
     MEMORY_WARNING,
-    THREAD_TERMINATED
+    THREAD_TERMINATED,
+    RESUME,
+    PAUSE,
+    STOP,
+    RESTART
   };
  SysEvent(double _timestamp, Type _type) : EventBase(_timestamp), type(_type) { }
 
