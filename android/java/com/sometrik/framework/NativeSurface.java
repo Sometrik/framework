@@ -24,6 +24,7 @@ public class NativeSurface extends SurfaceView implements NativeMessageHandler {
       break;
     }
   }
+  
 
   @Override
   public void showView() {
