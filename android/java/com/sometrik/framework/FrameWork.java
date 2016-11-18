@@ -58,7 +58,6 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback {
   private AlertDialog.Builder builder;
   private AlertDialog alert;
   private float windowYcoords;
-  private SurfaceView surfaceView;
   public static ArrayList<NativeMessageHandler> views = new ArrayList<NativeMessageHandler>();
 
   private MyGLRenderer renderer;
@@ -246,10 +245,11 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback {
   }
   
   private void createNativeOpenGLView(int id){
-    surfaceView = new SurfaceView(this);
+    NativeSurface surfaceView = new NativeSurface(this);
     surfaceView.setId(id);
     surfaceView.setOnTouchListener(new MyOnTouchListener(this));
     surfaceView.getHolder().addCallback(this);
+    views.add(surfaceView);
     setContentView(surfaceView);
   }
 
