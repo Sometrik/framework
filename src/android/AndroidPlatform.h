@@ -39,7 +39,6 @@ public:
   }
   void storeValue(const std::string & key, const std::string & value) override;
   std::string loadValue(const std::string & key) override;
-  int showActionSheet(const FWRect & rect, const FWActionSheet & sheet) override;
   void showCanvas(canvas::ContextAndroid & context);
   std::shared_ptr<Logger> createLogger() const override {
     return std::make_shared<AndroidLogger>();

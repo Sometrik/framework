@@ -127,36 +127,6 @@ AndroidPlatform::getTime() const {
   return currentTime;
 }
 
-
-int
-AndroidPlatform::showActionSheet(const FWRect & rect, const FWActionSheet & sheet) {
-
-  //Initialize java int and string arrays
-  auto env = getJNIEnv();
-  std::vector<FWOption> optionsVector = sheet.getOptions();
-  jobjectArray stringArray = (jobjectArray) env->NewObjectArray(optionsVector.size(), env->FindClass("java/lang/String"), 0);
-  jintArray intArray = env->NewIntArray(optionsVector.size());
-  jint fill[optionsVector.size()];
-
-  //Set values to java arrays
-  for (int i = 0; i < optionsVector.size(); i++) {
-    const char * text = optionsVector[i].getText().c_str();
-    jstring jtext = env->NewStringUTF(text);
-    env->SetObjectArrayElement(stringArray, i, jtext);
-    fill[i] = optionsVector[i].getId();
-    env->ReleaseStringUTFChars(jtext, text);
-  }
-  env->SetIntArrayRegion(intArray, 0, optionsVector.size(), fill);
-
-  //Send values to java to create the action sheet
-  jclass cls = env->FindClass("com/sometrik/framework/FrameWork");
-  jmethodID methodRef = env->GetStaticMethodID(cls, "createOptionsFromJNI", "(Lcom/sometrik/framework/FrameWork;I[I[Ljava/lang/String;)V");
-  env->CallStaticVoidMethod(cls, methodRef, framework, 22, intArray, stringArray);
-
-  //Not returning anything
-  return 0;
-}
-
 bool
 AndroidPlatform::initializeRenderer(ANativeWindow * _window) {
   window = _window;
