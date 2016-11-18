@@ -1,15 +1,19 @@
 package com.sometrik.framework;
 
-import android.graphics.SurfaceTexture;
-import android.view.Surface;
+import android.content.Context;
+import android.view.SurfaceView;
 
-public class NativeSurface extends Surface{
+public class NativeSurface extends SurfaceView {
   
+  private Context context;
+  
+  public NativeSurface(Context context) {
+    super(context);
+    this.context = context;
+  }
+
   private int id;
 
-  public NativeSurface(SurfaceTexture surfaceTexture) {
-    super(surfaceTexture);
-  }
 
   public int getId() {
     return id;
