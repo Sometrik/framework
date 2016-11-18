@@ -6,7 +6,6 @@ import android.view.SurfaceView;
 public class NativeSurface extends SurfaceView implements NativeMessageHandler {
   
   private Context context;
-  private int id;
   
   public NativeSurface(Context context) {
     super(context);
@@ -34,7 +33,7 @@ public class NativeSurface extends SurfaceView implements NativeMessageHandler {
 
   @Override
   public int getElementId() {
-    return id;
+    return getId();
   }
 
 }
