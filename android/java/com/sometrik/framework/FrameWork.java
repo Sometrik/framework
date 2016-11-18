@@ -61,6 +61,7 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback {
   public static ArrayList<NativeMessageHandler> views = new ArrayList<NativeMessageHandler>();
   public static int currentView;
   private MyGLRenderer renderer;
+  private int appId = 0;
 
   public native void NativeOnTouch();
   public native int GetInt(float x, float y);
@@ -73,10 +74,10 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback {
   public native void touchEvent(int mode, int fingerIndex, long time, float x, float y);
   public native void onInit(AssetManager assetManager, float xSize, float ySize, float displayScale, Boolean hasEs3);
   public native void nativeSetSurface(Surface surface, int surfaceId);
-  public native void nativeOnResume();
-  public native void nativeOnPause();
-  public native void nativeOnStop();
-  public native void nativeOnRestart();
+  public native void nativeOnResume(int appId);
+  public native void nativeOnPause(int appId);
+  public native void nativeOnStop(int appId);
+  public native void nativeOnRestart(int appId);
 
 
   @Override
@@ -125,6 +126,7 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback {
 	    break;
 	  case CREATE_APPLICATION:
 	    // getFromViewList(message.getInternalId()).handleMessage(message);
+	    appId = message.getInternalId();
 	    break;
 	  case SET_CAPTION:
 	    setTitle(message.getTextValue());
@@ -593,22 +595,22 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback {
   @Override 
   public void onResume(){
     super.onResume();
-    nativeOnResume();
+    nativeOnResume(appId);
   }
   @Override 
   public void onPause(){
     super.onPause();
-    nativeOnPause();
+    nativeOnPause(appId);
   }
   @Override 
   public void onStop(){
     super.onStop();
-    nativeOnStop();
+    nativeOnStop(appId);
   }
   @Override 
   public void onRestart(){
     super.onRestart();
-    nativeOnRestart();
+    nativeOnRestart(appId);
   }
   
 
