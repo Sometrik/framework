@@ -63,26 +63,20 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback {
   private MyGLRenderer renderer;
 
   public native void NativeOnTouch();
-
   public native int GetInt(float x, float y);
-
   public native String getText();
-
   public native void okPressed(String text);
-  
   public native void buttonClicked(int id);
-  
   public native void textChangedEvent(int id, String text);
-  
   public native void settingsCreator(Settings settings, int id);
-
   public native void menuPressed();
-  
   public native void touchEvent(int mode, int fingerIndex, long time, float x, float y);
-
   public native void onInit(AssetManager assetManager, float xSize, float ySize, float displayScale, Boolean hasEs3);
-  
   public native void nativeSetSurface(Surface surface, int surfaceId);
+  public native void nativeOnResume();
+  public native void nativeOnPause();
+  public native void nativeOnStop();
+  public native void nativeOnRestart();
 
 
   @Override
@@ -594,10 +588,27 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback {
     // mCurrentScore = savedInstanceState.getInt(STATE_SCORE);
     // mCurrentLevel = savedInstanceState.getInt(STATE_LEVEL);
   }
-
-  //Load JNI. Framework references to make file.
-  static {
-    System.loadLibrary("framework");
+  
+  
+  @Override 
+  public void onResume(){
+    super.onResume();
+    nativeOnResume();
+  }
+  @Override 
+  public void onPause(){
+    super.onPause();
+    nativeOnPause();
+  }
+  @Override 
+  public void onStop(){
+    super.onStop();
+    nativeOnStop();
+  }
+  @Override 
+  public void onRestart(){
+    super.onRestart();
+    nativeOnRestart();
   }
   
 
@@ -615,6 +626,12 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback {
   @Override
   public void surfaceDestroyed(SurfaceHolder holder) {
     // Empty
+  }
+
+
+  //Load JNI. Framework references to make file.
+  static {
+    System.loadLibrary("framework");
   }
 
 }
