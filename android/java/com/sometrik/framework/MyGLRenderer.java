@@ -33,7 +33,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
   public native void onResize(float xSize, float ySize);
 
-  public native boolean onUpdate(double timestamp);
+  public native boolean onUpdate(double timestamp, int viewId);
 
   public MyGLRenderer(Context context, float x, float y) {
 
@@ -46,8 +46,8 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 
   public void onDrawFrame(GL10 unused) {
       // Calls onDraw in AndroidPlatform
-//    onUpdate((double) System.currentTimeMillis() / 1000.0);
-//    nativeOnDraw();
+    onUpdate((double) System.currentTimeMillis() / 1000.0, frame.currentView);
+    nativeOnDraw();
   }
 
   public void onSurfaceChanged(GL10 unused, int width, int height) {
