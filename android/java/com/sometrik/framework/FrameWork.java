@@ -59,7 +59,7 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback {
   private AlertDialog alert;
   private float windowYcoords;
   public static ArrayList<NativeMessageHandler> views = new ArrayList<NativeMessageHandler>();
-
+  public static int currentView;
   private MyGLRenderer renderer;
 
   public native void NativeOnTouch();
@@ -88,7 +88,7 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback {
 
   public native void onInit(AssetManager assetManager, float xSize, float ySize, float displayScale, Boolean hasEs3);
   
-  public native void nativeSetSurface(Surface surface);
+  public native void nativeSetSurface(Surface surface, int surfaceId);
 
 
   @Override
@@ -606,7 +606,7 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback {
 
   @Override
   public void surfaceChanged(SurfaceHolder holder, int arg1, int arg2, int arg3) {
-      nativeSetSurface(holder.getSurface());
+    nativeSetSurface(holder.getSurface(), currentView);
   }
 
   @Override
@@ -617,7 +617,7 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback {
 
   @Override
   public void surfaceDestroyed(SurfaceHolder holder) {
-      nativeSetSurface(null);    
+    // Empty
   }
 
 }
