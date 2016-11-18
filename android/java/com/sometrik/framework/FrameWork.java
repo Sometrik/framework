@@ -80,12 +80,6 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback {
   
   public native void touchEvent(int mode, int fingerIndex, long time, float x, float y);
 
-  public native void onTouchesBegin(int fingerIndex);
-
-  public native void onTouchesEnded(int fingerIndex);
-
-  public native void onTouchesMoved(int fingerIndex);
-
   public native void onInit(AssetManager assetManager, float xSize, float ySize, float displayScale, Boolean hasEs3);
   
   public native void nativeSetSurface(Surface surface, int surfaceId);
@@ -605,6 +599,7 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback {
   static {
     System.loadLibrary("framework");
   }
+  
 
   @Override
   public void surfaceChanged(SurfaceHolder holder, int arg1, int arg2, int arg3) {
