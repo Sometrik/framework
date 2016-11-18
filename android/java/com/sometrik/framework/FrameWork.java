@@ -242,6 +242,7 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback {
     mGLView.setWillNotDraw(false);
     views.add(mGLView);
     setContentView(mGLView);
+    currentView = id;
   }
   
   private void createNativeOpenGLView(int id){
@@ -251,6 +252,7 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback {
     surfaceView.getHolder().addCallback(this);
     views.add(surfaceView);
     setContentView(surfaceView);
+    currentView = id;
   }
 
   // Lisää kuvan antaminen // Aika // Ääni

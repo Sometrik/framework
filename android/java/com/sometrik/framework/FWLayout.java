@@ -25,12 +25,13 @@ public class FWLayout extends LinearLayout implements NativeMessageHandler{
 
   @Override
   public int getElementId() {
-    return this.getId();
+    return getId();
   }
   
   @Override
   public void showView(){
     frame.setContentView(this);
+    FrameWork.currentView = getId();
   }
   
   private void list(){

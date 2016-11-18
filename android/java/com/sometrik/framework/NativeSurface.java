@@ -29,6 +29,7 @@ public class NativeSurface extends SurfaceView implements NativeMessageHandler {
   public void showView() {
     FrameWork frame = (FrameWork)context;
     frame.setContentView(this);
+    FrameWork.currentView = getId();
   }
 
   @Override
