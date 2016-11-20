@@ -7,6 +7,7 @@
 #include <Message.h>
 #include <FWApplication.h>
 
+#include <InitEvent.h>
 #include <TouchEvent.h>
 #include <DrawEvent.h>
 #include <SysEvent.h>
@@ -49,11 +50,7 @@ public:
   std::shared_ptr<HTTPClientFactory> createHTTPClientFactory() const {
     return std::make_shared<CurlClientFactory>();
   }
-  
-  int showActionSheet(const FWRect&, const FWActionSheet&) {
-    return 0;
-  }
-  
+    
   std::shared_ptr<canvas::ContextFactory> createContextFactory() const {
     return std::shared_ptr<canvas::ContextFactory>(new canvas::CairoContextFactory);
   }
@@ -165,6 +162,12 @@ public:
 
       getApplication().loadEvents();
 
+      if (!is_initialized) {
+	InitEvent ev(getTime());
+	postEvent(getActiveViewId(), ev);
+	is_initialized = true;
+      }
+      
       UpdateEvent ev0(getTime());
       postEvent(getActiveViewId(), ev0);
       
@@ -183,6 +186,7 @@ private:
   bool button_pressed = false;
   int mouse_x = 0, mouse_y = 0;
   bool redraw_needed = false;
+  bool is_initialized = false;
 };
 
 #if 0
