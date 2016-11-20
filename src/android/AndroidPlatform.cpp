@@ -350,6 +350,11 @@ void Java_com_sometrik_framework_FrameWork_touchEvent(JNIEnv* env, jobject thiz,
   }
 }
 
+void Java_com_sometrik_framework_MyGLRenderer_onInitElement(JNIEnv* env, jobject thiz, double timestamp, int viewId) {
+  InitEvent ev(timestamp);
+  platform->queueEvent(viewId, ev);
+}
+
 jboolean Java_com_sometrik_framework_MyGLRenderer_onUpdate(JNIEnv* env, jobject thiz, double timestamp, int viewId) {
   UpdateEvent ev(timestamp);
   platform->queueEvent(viewId, ev);
