@@ -378,13 +378,13 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback, Nativ
       case MotionEvent.ACTION_DOWN:
 	
 //	System.out.println("Liike alkoi: " + event.getX() + " " + event.getY() + " - id: " + event.getActionIndex() + " time: " + System.currentTimeMillis());
-	touchEvent(1, event.getActionIndex(), (int) System.currentTimeMillis(), (int) event.getX(), (int) (screenHeight - event.getRawY() - windowYcoords));
+	touchEvent(1, event.getActionIndex(), System.currentTimeMillis(), (int) event.getX(), (int) (screenHeight - event.getRawY() - windowYcoords));
 
 	break;
 	//Touch event of screen touch-down after the first touch
       case MotionEvent.ACTION_POINTER_DOWN:
 //	System.out.println("Liike alkoi: " + event.getX() + " " + event.getY() + " - id: " + event.getActionIndex());
-	touchEvent(1, event.getActionIndex(), (int) System.currentTimeMillis(), (int) event.getX(), (int) (screenHeight - event.getRawY() - windowYcoords));
+	touchEvent(1, event.getActionIndex(), System.currentTimeMillis(), (int) event.getX(), (int) (screenHeight - event.getRawY() - windowYcoords));
 	break;
 
 	//Touch event of finger moving
@@ -397,23 +397,23 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback, Nativ
 
 	  if (pointerId == 0) {
 	    // System.out.println("fingerOne move: " + event.getX(pointerIndex) + event.getY(pointerIndex));
-		touchEvent(2, 0, (int) System.currentTimeMillis(), (int) event.getX(), (int) (screenHeight - event.getRawY() - windowYcoords));
+		touchEvent(2, 0, System.currentTimeMillis(), (int) event.getX(), (int) (screenHeight - event.getRawY() - windowYcoords));
 	  }
 	  if (pointerId == 1) {
 	    // System.out.println("fingerTwo move: " + event.getX(pointerIndex) + event.getY(pointerIndex));
-		touchEvent(2, 1, (int) System.currentTimeMillis(), (int) event.getX(), (int) (screenHeight - event.getRawY() - windowYcoords));
+		touchEvent(2, 1, System.currentTimeMillis(), (int) event.getX(), (int) (screenHeight - event.getRawY() - windowYcoords));
 	  }
 	  if (pointerId == 2) {
 //	     System.out.println("fingerThree move: " + event.getX(pointerIndex) + event.getY(pointerIndex));
-		touchEvent(2, 2, (int) System.currentTimeMillis(), (int) event.getX(), (int) (screenHeight - event.getRawY() - windowYcoords));
+		touchEvent(2, 2, System.currentTimeMillis(), (int) event.getX(), (int) (screenHeight - event.getRawY() - windowYcoords));
 	  }
 	  if (pointerId == 3) {
 	    // System.out.println("fingerFour move: " + event.getX(pointerIndex) + event.getY(pointerIndex));
-		touchEvent(2, 3, (int) System.currentTimeMillis(), (int) event.getX(), (int) (screenHeight - event.getRawY() - windowYcoords));
+		touchEvent(2, 3, System.currentTimeMillis(), (int) event.getX(), (int) (screenHeight - event.getRawY() - windowYcoords));
 	  }
 	  if (pointerId == 4) {
 	    // System.out.println("fingerFive move: " + event.getX(pointerIndex) + event.getY(pointerIndex));
-		touchEvent(2, 4, (int) System.currentTimeMillis(), (int) event.getX(), (int) (screenHeight - event.getRawY() - windowYcoords));
+		touchEvent(2, 4, System.currentTimeMillis(), (int) event.getX(), (int) (screenHeight - event.getRawY() - windowYcoords));
 	  }
 	}
 	// System.out.println("Liikettä: " + event.getX() + " " +
@@ -423,7 +423,7 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback, Nativ
       case MotionEvent.ACTION_UP:
 	//touch event of fingers other than the first leaving the screen
       case MotionEvent.ACTION_POINTER_UP:
-	touchEvent(3, event.getActionIndex(), (int) System.currentTimeMillis(), (int) event.getX(), (int) (screenHeight - event.getRawY() - windowYcoords));
+	touchEvent(3, event.getActionIndex(), System.currentTimeMillis(), (int) event.getX(), (int) (screenHeight - event.getRawY() - windowYcoords));
 	break;
       }
       return true;
