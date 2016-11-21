@@ -10,7 +10,7 @@ class Picker : public Element {
   
   void initialize(FWPlatform * _platform) override {
     Element::initialize(_platform);
-    sendMessage(Command(Command::CREATE_PICKER, getParentInternalId(), getInternalId()));
+    sendCommand(Command(Command::CREATE_PICKER, getParentInternalId(), getInternalId()));
     for (auto & o : options) {
       initializeOption(o);
     }
@@ -28,7 +28,7 @@ class Picker : public Element {
     Command c(Command::ADD_OPTION, getInternalId(), 0);
     c.setValue(o.first);
     c.setTextValue(o.second);
-    sendMessage(c);
+    sendCommand(c);
   }
 
  private:

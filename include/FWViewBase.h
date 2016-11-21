@@ -9,7 +9,7 @@ class FWViewBase : public Element {
   FWViewBase(int _id) : Element(_id) { }
 
   void show() override {
-    sendMessage(Command(Command::SHOW_VIEW, getInternalId()));
+    sendCommand(Command(Command::SHOW_VIEW, getInternalId()));
   }
 };
 

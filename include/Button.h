@@ -14,7 +14,7 @@ class Button : public Element {
     Element::initialize(_platform);
     Command c(Command::CREATE_BUTTON, getParentInternalId(), getInternalId());
     c.setTextValue(label);
-    sendMessage(c);
+    sendCommand(c);
   }
 
   void onTouchEvent(TouchEvent & ev) override {

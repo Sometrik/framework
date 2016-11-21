@@ -33,15 +33,15 @@ class FWActionSheet : public Element {
   int showModal() override {
     Command c0(Command::CREATE_ACTION_SHEET, getInternalId());
     c0.setTextValue(title);
-    sendMessage(c0);
+    sendCommand(c0);
     for (auto & op : options) {
       Command c(Command::ADD_OPTION, getInternalId());
       c.setValue(op.getId());
       c.setTextValue(op.getText());
-      sendMessage(c);
+      sendCommand(c);
     }
     Command c1(Command::SHOW, getInternalId());
-    sendMessage(c1);
+    sendCommand(c1);
     return 0;
   }
   

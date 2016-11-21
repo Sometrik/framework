@@ -12,21 +12,21 @@ public:
 
   void initialize(FWPlatform * _platform) override {
     Element::initialize(_platform);
-    sendMessage(Command(Command::CREATE_APPLICATION, getParentInternalId(), getInternalId()));
+    sendCommand(Command(Command::CREATE_APPLICATION, getParentInternalId(), getInternalId()));
   }
 
   void setCaption(const std::string & s) {
     Command c(Command::SET_CAPTION, getId());
     c.setTextValue(s);
-    sendMessage(c);
+    sendCommand(c);
   }
 
   void launchBrowser(const std::string & input_url) {
-    sendMessage(Command(Command::LAUNCH_BROWSER, getInternalId(), input_url));
+    sendCommand(Command(Command::LAUNCH_BROWSER, getInternalId(), input_url));
   }
   
   void postNotification(const std::string & title, const std::string & command) {
-    sendMessage(Command(Command::POST_NOTIFICATION, getInternalId(), title, command));
+    sendCommand(Command(Command::POST_NOTIFICATION, getInternalId(), title, command));
   }
 
  private:

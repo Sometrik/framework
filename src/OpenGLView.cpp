@@ -18,7 +18,7 @@ OpenGLView::initialize(FWPlatform * _platform) {
 #else
   Command::Type type = Command::CREATE_OPENGL_VIEW;
 #endif
-  sendMessage(Command(type, getParentInternalId(), getInternalId()));
+  sendCommand(Command(type, getParentInternalId(), getInternalId()));
   logical_width = int(_platform->getDisplayWidth() / _platform->getDisplayScale());
   logical_height = int(_platform->getDisplayHeight() / _platform->getDisplayScale());
   actual_width = _platform->getDisplayWidth();

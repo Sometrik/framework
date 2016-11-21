@@ -15,7 +15,7 @@ class LinearLayout : public Element {
     Element::initialize(_platform);
     Command c(Command::CREATE_LINEAR_LAYOUT, getParentInternalId(), getInternalId());
     c.setValue(direction);
-    sendMessage(c);
+    sendCommand(c);
   }
 			       
  private:

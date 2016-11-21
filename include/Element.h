@@ -69,7 +69,7 @@ class Element {
   int getInternalId() const { return internal_id; }
   int getParentInternalId() const { return parent ? parent->getInternalId() : 0; }
   
-  void sendMessage(const Command & command);
+  void sendCommand(const Command & command);
   
   FWPlatform & getPlatform() { return *platform; }
   const FWPlatform & getPlatform() const { return *platform; }

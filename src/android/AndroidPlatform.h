@@ -43,7 +43,7 @@ public:
   std::shared_ptr<Logger> createLogger() const override {
     return std::make_shared<AndroidLogger>();
   }
-  void sendMessage(const Command & command) override;
+  void sendCommand(const Command & command) override;
   bool initializeRenderer(ANativeWindow * _window);
   void deinitializeRenderer();
   void startThread();

@@ -63,10 +63,10 @@ class FWPlatform {
   void setActiveView(int id) {
     activeViewId = id;
     Command c(Command::REQUEST_REDRAW, id);
-    sendMessage(c);
+    sendCommand(c);
   }
   
-  virtual void sendMessage(const Command & command) {
+  virtual void sendCommand(const Command & command) {
     if (command.getType() == Command::SHOW_VIEW) {
       setActiveView(command.getInternalId());
     } else if (!activeViewId && (command.getType() == Command::CREATE_FORMVIEW || command.getType() == Command::CREATE_OPENGL_VIEW)) {
@@ -80,7 +80,7 @@ class FWPlatform {
     else getLogger().println("Failed to dispatch event");
     if (ev.isRedrawNeeded()) {
       Command c(Command::REQUEST_REDRAW, internal_id);
-      sendMessage(c);
+      sendCommand(c);
     }
   }
 

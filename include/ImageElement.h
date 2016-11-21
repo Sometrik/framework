@@ -13,7 +13,7 @@ class ImageElement : public Element {
     Command c(Command::CREATE_IMAGE_ELEMENT, getParentInternalId(), getInternalId());
     c.setWidth(width);
     c.setHeight(height);
-    sendMessage(c);
+    sendCommand(c);
   }
 
  private:

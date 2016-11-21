@@ -12,7 +12,7 @@ class TextLabel : public Element {
     Element::initialize(_platform);
     Command c(Command::CREATE_TEXTLABEL, getParentInternalId(), getInternalId());
     c.setTextValue(text);
-    sendMessage(c);
+    sendCommand(c);
   }
 
  private:

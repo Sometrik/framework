@@ -11,7 +11,7 @@ class TextField : public Element {
 
   void initialize(FWPlatform * _platform) override {
     Element::initialize(_platform);
-    sendMessage(Command(Command::CREATE_TEXTFIELD, getParentInternalId(), getInternalId()));
+    sendCommand(Command(Command::CREATE_TEXTFIELD, getParentInternalId(), getInternalId()));
   }
 
   void onTextEvent(TextEvent & ev) override {
