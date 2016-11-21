@@ -56,7 +56,6 @@ public:
   }
 
   void sendMessage(const Message & message) override {
-    cerr << "sendMessage(" << int(message.getType()) << ")\n";
     FWPlatform::sendMessage(message);
     switch (message.getType()) {
     case Message::SET_CAPTION:
