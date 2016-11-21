@@ -609,7 +609,7 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback, Nativ
   }
   @Override
   public int getElementId() {
-    return 0;
+    return appId;
   }
 
 }
