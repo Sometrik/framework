@@ -6,6 +6,7 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -114,6 +115,12 @@ public class FWLayout extends LinearLayout implements NativeMessageHandler{
       break;
 
     case SET_ATTRIBUTE:
+      break;
+    case CREATE_IMAGE_ELEMENT:
+      ImageView imageView = new ImageView(context);
+      imageView.setId(message.getChildInternalId());
+      //Missing image set
+//      imageView.setImageBitmap();
       break;
       
     default:

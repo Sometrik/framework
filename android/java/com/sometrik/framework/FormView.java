@@ -8,6 +8,7 @@ import android.os.Message;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -92,6 +93,13 @@ public class FormView implements NativeMessageHandler {
       picker.setId(message.getChildInternalId()); 
       FrameWork.addToViewList(picker);
       baseLayout.addView(picker);
+      break;
+
+    case CREATE_IMAGE_ELEMENT:
+      ImageView imageView = new ImageView(context);
+      imageView.setId(message.getChildInternalId());
+      //Missing image set
+//      imageView.setImageBitmap();
       break;
       
     default:
