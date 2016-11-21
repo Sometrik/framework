@@ -26,11 +26,12 @@ public class MyGLSurfaceView extends GLSurfaceView implements NativeMessageHandl
   private SharedPreferences.Editor editor;
   private int viewId;
   
-  public MyGLSurfaceView(Context context, MyGLRenderer renderer) {
+  public MyGLSurfaceView(Context context, MyGLRenderer renderer, int viewId) {
     super(context);
     this.context = context;
     this.renderer = renderer;
     frame = (FrameWork) context;
+    this.viewId = viewId;
     
     // Create an OpenGL ES 2.0 context
     setEGLContextClientVersion(2);
