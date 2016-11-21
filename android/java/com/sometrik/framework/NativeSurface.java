@@ -13,9 +13,9 @@ public class NativeSurface extends SurfaceView implements NativeMessageHandler {
   }
 
   @Override
-  public void handleMessage(NativeMessage message) {
+  public void handleCommand(NativeCommand command) {
     
-    switch (message.getMessage()){
+    switch (command.getCommand()){
     case SHOW_VIEW:
       showView();
       break;

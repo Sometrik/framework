@@ -59,17 +59,17 @@ public class FormView implements NativeMessageHandler {
   }
 
   @Override
-  public void handleMessage(NativeMessage message) {
+  public void handleCommand(NativeCommand command) {
     
-    switch (message.getMessage()){
+    switch (command.getCommand()){
     case CREATE_LINEAR_LAYOUT:
       System.out.println("Formview creating layout");
       FWLayout layout = new FWLayout(context);
-      layout.setId(message.getChildInternalId());
-      FrameWork.addToViewList(message.getChildInternalId(), layout);
-      if (message.getValue() == 2){
+      layout.setId(command.getChildInternalId());
+      FrameWork.addToViewList(command.getChildInternalId(), layout);
+      if (command.getValue() == 2){
 	layout.setOrientation(LinearLayout.HORIZONTAL);
-      } else if (message.getValue() == 1){
+      } else if (command.getValue() == 1){
 	layout.setOrientation(LinearLayout.VERTICAL);
       }
       baseLayout.addView(layout);
@@ -77,28 +77,28 @@ public class FormView implements NativeMessageHandler {
 
     case CREATE_TEXTLABEL:
       TextView textView = new TextView(context);
-      textView.setId(message.getChildInternalId());
-      textView.setText(message.getTextValue());
+      textView.setId(command.getChildInternalId());
+      textView.setText(command.getTextValue());
       baseLayout.addView(textView);
       break;
 
     case CREATE_BUTTON:
       Button button = new Button(context);
-      button.setId(message.getChildInternalId());
-      button.setText(message.getTextValue());
+      button.setId(command.getChildInternalId());
+      button.setText(command.getTextValue());
       baseLayout.addView(button);
       break;
       
     case CREATE_PICKER:
       FWPicker picker = new FWPicker(context);
-      picker.setId(message.getChildInternalId()); 
-      FrameWork.addToViewList(message.getChildInternalId(), picker);
+      picker.setId(command.getChildInternalId()); 
+      FrameWork.addToViewList(command.getChildInternalId(), picker);
       baseLayout.addView(picker);
       break;
 
     case CREATE_IMAGE_ELEMENT:
       ImageView imageView = new ImageView(context);
-      imageView.setId(message.getChildInternalId());
+      imageView.setId(command.getChildInternalId());
       //Missing image set
 //      imageView.setImageBitmap();
       break;

@@ -41,13 +41,13 @@ public class FWPicker extends Spinner implements NativeMessageHandler {
   }
 
   @Override
-  public void handleMessage(NativeMessage message) {
+  public void handleCommand(NativeCommand command) {
     
-    switch (message.getMessage()) {
+    switch (command.getCommand()) {
     case ADD_OPTION:
       adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item);
-      valueMap.put(message.getValue(), message.getTextValue());
-      numberList.add(message.getValue());
+      valueMap.put(command.getValue(), command.getTextValue());
+      numberList.add(command.getValue());
       for (int i = 0; i < numberList.size(); i++) {
 	adapter.add(valueMap.get(numberList.get(i)));
       }

@@ -1,16 +1,16 @@
 package com.sometrik.framework;
 
-public class NativeMessage {
+public class NativeCommand {
 
   private int internalId = 0;
   private int childInternalId = 0;
   private int value = 0;
   private String textValue = "";
   private String textValue2 = "";
-  private MessageType message;
+  private CommandType command;
   private String key;
   
-  public enum MessageType{
+  public enum CommandType{
     CREATE_APPLICATION,
     SHOW_VIEW,
     SHOW,
@@ -48,15 +48,15 @@ public class NativeMessage {
     CONSUME_PURCHASE
   }
   
-  NativeMessage(MessageType message, int internalId, int childInternalId, String textValue, String textValue2){
-    this.message = message;
+  NativeCommand(CommandType command, int internalId, int childInternalId, String textValue, String textValue2){
+    this.command = command;
     this.internalId = internalId;
     this.childInternalId = childInternalId;
     this.textValue = textValue;
     this.textValue2 = textValue2;
   }
-  NativeMessage(int messageTypeId, int internalId, int childInternalId, int value, String textValue, String textValue2){
-    message = MessageType.values()[messageTypeId];
+  NativeCommand(int messageTypeId, int internalId, int childInternalId, int value, String textValue, String textValue2){
+    command = CommandType.values()[messageTypeId];
     this.internalId = internalId;
     this.childInternalId = childInternalId;
     this.value = value;
@@ -82,8 +82,8 @@ public class NativeMessage {
   public String getTextValue2() {
     return textValue2;
   }
-  public MessageType getMessage() {
-    return message;
+  public CommandType getCommand() {
+    return command;
   }
   public int getValue() {
     return value;

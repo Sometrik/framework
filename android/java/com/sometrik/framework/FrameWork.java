@@ -106,12 +106,12 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback, Nativ
   }
 
   @Override
-  public void handleMessage(NativeMessage message) {
-    System.out.println("id: " + message.getInternalId() + " MessageType: " + String.valueOf(message.getMessage()));
+  public void handleCommand(NativeCommand command) {
+    System.out.println("id: " + command.getInternalId() + " MessageType: " + String.valueOf(command.getCommand()));
 
-    switch (message.getMessage()) {
+    switch (command.getCommand()) {
     case SHOW_VIEW:
-      NativeMessageHandler formViewToShow = views.get((message.getInternalId()));
+      NativeMessageHandler formViewToShow = views.get((command.getInternalId()));
       if (formViewToShow != null) {
 	formViewToShow.showView();
       } else {
@@ -119,20 +119,20 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback, Nativ
       }
       break;
     case CREATE_APPLICATION:
-      appId = message.getInternalId();
+      appId = command.getInternalId();
       break;
     case SET_CAPTION:
-      setTitle(message.getTextValue());
+      setTitle(command.getTextValue());
       break;
     case CREATE_FORMVIEW:
-      System.out.println("creating formView " + message.getChildInternalId());
-      createFormView(message.getChildInternalId());
+      System.out.println("creating formView " + command.getChildInternalId());
+      createFormView(command.getChildInternalId());
       break;
     case CREATE_OPENGL_VIEW:
-      createOpenGLView(message.getChildInternalId());
+      createOpenGLView(command.getChildInternalId());
       break;
     case CREATE_NATIVE_OPENGL_VIEW:
-      createNativeOpenGLView(message.getChildInternalId());
+      createNativeOpenGLView(command.getChildInternalId());
       break;
     // Create notification
     case POST_NOTIFICATION:
@@ -143,9 +143,9 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback, Nativ
       launchBrowser("");
       break;
     default:
-      NativeMessageHandler handlerView = views.get((message.getInternalId()));
+      NativeMessageHandler handlerView = views.get((command.getInternalId()));
       if (handlerView != null) {
-	handlerView.handleMessage(message);
+	handlerView.handleCommand(command);
       } else {
 	System.out.println("Message not handled");
       }
@@ -514,8 +514,8 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback, Nativ
     return String.valueOf(getDatabasePath(dbName));
   }
 
-  public static void sendMessage(FrameWork frameWork, NativeMessage message) {
-    Message msg = Message.obtain(null, 1, message);
+  public static void sendMessage(FrameWork frameWork, NativeCommand command) {
+    Message msg = Message.obtain(null, 1, command);
     frameWork.mainHandler.sendMessage(msg);
   }
     

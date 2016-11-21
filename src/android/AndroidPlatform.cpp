@@ -95,19 +95,19 @@ AndroidPlatform::sendCommand(const Command & command) {
 
   auto env = getJNIEnv();
    jclass frameworkCls = env->FindClass("com/sometrik/framework/FrameWork");
-   jclass messageCls = env->FindClass("com/sometrik/framework/NativeMessage");
-   jmethodID sendCommandMethod = env->GetMethodID(frameworkCls, "handleMessage", "(Lcom/sometrik/framework/NativeMessage;)V");
-   jmethodID messageConstructor = env->GetMethodID(messageCls, "<init>", "(IIIILjava/lang/String;Ljava/lang/String;)V");
+   jclass commandCls = env->FindClass("com/sometrik/framework/NativeCommand");
+   jmethodID sendCommandMethod = env->GetMethodID(frameworkCls, "handleCommand", "(Lcom/sometrik/framework/NativeCommand;)V");
+   jmethodID commandConstructor = env->GetMethodID(commandCls, "<init>", "(IIIILjava/lang/String;Ljava/lang/String;)V");
 
-   int messageTypeId = int(command.getType());
+   int commandTypeId = int(command.getType());
    const char * textValue = command.getTextValue().c_str();
    const char * textValue2 = command.getTextValue2().c_str();
    jstring jtextValue = env->NewStringUTF(textValue);
    jstring jtextValue2 = env->NewStringUTF(textValue2);
 
 
-   jobject jmessage = env->NewObject(messageCls, messageConstructor, messageTypeId, command.getInternalId(), command.getChildInternalId(), command.getValue(), jtextValue, jtextValue2);
-   env->CallVoidMethod(framework, sendCommandMethod, jmessage);
+   jobject jcommand = env->NewObject(commandCls, commandConstructor, commandTypeId, command.getInternalId(), command.getChildInternalId(), command.getValue(), jtextValue, jtextValue2);
+   env->CallVoidMethod(framework, sendCommandMethod, jcommand);
    //Fix these releases
 //  env->ReleaseStringUTFChars(jtextValue, textValue);
 //  env->ReleaseStringUTFChars(jtextValue2, textValue2);
