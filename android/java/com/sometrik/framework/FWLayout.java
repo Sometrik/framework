@@ -34,7 +34,7 @@ public class FWLayout extends LinearLayout implements NativeMessageHandler{
   }
   
   private void list(){
-    FrameWork.addToViewList(this);
+    FrameWork.addToViewList(getId(), this);
   }
   
   private void createButton(final int id, String text){
@@ -83,7 +83,7 @@ public class FWLayout extends LinearLayout implements NativeMessageHandler{
     case CREATE_PICKER:
       FWPicker picker = new FWPicker(context);
       picker.setId(message.getChildInternalId());
-      FrameWork.addToViewList(picker);
+      FrameWork.addToViewList(message.getChildInternalId(), picker);
       this.addView(picker);
       break;
 
