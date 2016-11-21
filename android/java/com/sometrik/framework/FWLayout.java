@@ -82,6 +82,7 @@ public class FWLayout extends LinearLayout implements NativeMessageHandler{
     case CREATE_PICKER:
       FWPicker picker = new FWPicker(context);
       picker.setId(message.getChildInternalId());
+      FrameWork.addToViewList(picker);
       this.addView(picker);
       break;
 

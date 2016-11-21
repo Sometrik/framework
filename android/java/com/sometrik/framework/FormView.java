@@ -90,6 +90,7 @@ public class FormView implements NativeMessageHandler {
     case CREATE_PICKER:
       FWPicker picker = new FWPicker(context);
       picker.setId(message.getChildInternalId()); 
+      FrameWork.addToViewList(picker);
       baseLayout.addView(picker);
       break;
       
