@@ -22,6 +22,7 @@
 #include <SysEvent.h>
 #include <TextEvent.h>
 #include <CommandEvent.h>
+#include <InitEvent.h>
 #include <DrawEvent.h>
 #include <UpdateEvent.h>
 #include <ResizeEvent.h>
