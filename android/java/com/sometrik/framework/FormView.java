@@ -8,9 +8,11 @@ import android.os.Handler;
 import android.os.Message;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 public class FormView implements NativeMessageHandler {
@@ -88,6 +90,13 @@ public class FormView implements NativeMessageHandler {
       button.setText(message.getTextValue());
       baseLayout.addView(button);
       break;
+      
+    case CREATE_PICKER:
+      Spinner spinner = new Spinner(context);
+      spinner.setId(message.getChildInternalId());
+      baseLayout.addView(spinner);
+      break;
+      
     default:
       System.out.println("Unhandled case");
       break;
