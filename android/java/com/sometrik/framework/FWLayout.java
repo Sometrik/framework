@@ -1,14 +1,12 @@
 package com.sometrik.framework;
 
 import android.content.Context;
-import android.os.Message;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 public class FWLayout extends LinearLayout implements NativeMessageHandler{
@@ -82,9 +80,9 @@ public class FWLayout extends LinearLayout implements NativeMessageHandler{
       break;
 
     case CREATE_PICKER:
-      Spinner spinner = new Spinner(context);
-      spinner.setId(message.getChildInternalId());
-      this.addView(spinner);
+      FWPicker picker = new FWPicker(context);
+      picker.setId(message.getChildInternalId());
+      this.addView(picker);
       break;
 
     case CREATE_LINEAR_LAYOUT:

@@ -3,16 +3,12 @@ package com.sometrik.framework;
 import java.util.ArrayList;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 public class FormView implements NativeMessageHandler {
@@ -92,9 +88,9 @@ public class FormView implements NativeMessageHandler {
       break;
       
     case CREATE_PICKER:
-      Spinner spinner = new Spinner(context);
-      spinner.setId(message.getChildInternalId());
-      baseLayout.addView(spinner);
+      FWPicker picker = new FWPicker(context);
+      picker.setId(message.getChildInternalId()); 
+      baseLayout.addView(picker);
       break;
       
     default:
@@ -102,7 +98,6 @@ public class FormView implements NativeMessageHandler {
       break;
 
     }
-    
   }
 
   @Override
