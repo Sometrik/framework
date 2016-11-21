@@ -39,7 +39,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
-public class FrameWork extends Activity implements SurfaceHolder.Callback {
+public class FrameWork extends Activity implements SurfaceHolder.Callback, NativeMessageHandler {
 
   private MyGLSurfaceView mGLView;
   private RelativeLayout mainView;
@@ -102,67 +102,57 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback {
     prefs = this.getSharedPreferences("com.example.Work", Context.MODE_PRIVATE);
     editor = prefs.edit();
 
-    // Create listener for screen touches and make MyGlSurfaceView the active
-    // view
-    
-    // create message handler for framework
-    mainHandler = new Handler() {
-      @Override
-      public void handleMessage(Message msg) {
-	System.out.println("main message received: " + msg.what);
-	if (msg.what == 1) {
-	  
-	  NativeMessage message = (NativeMessage) msg.obj;
-	  System.out.println("id: " + message.getInternalId() + " MessageType: " + String.valueOf(message.getMessage()));
-	  
-	  switch (message.getMessage()) {
-	  case SHOW_VIEW:
-	    NativeMessageHandler formViewToShow = views.get((message.getInternalId()));
-	    if (formViewToShow != null) {
-	      formViewToShow.showView();
-	    } else {
-	      System.out.println("Message not handled");
-	    }
-	    break;
-	  case CREATE_APPLICATION:
-	    appId = message.getInternalId();
-	    break;
-	  case SET_CAPTION:
-	    setTitle(message.getTextValue());
-	    break;
-	  case CREATE_FORMVIEW:
-	    System.out.println("creating formView " + message.getChildInternalId());
-	    createFormView(message.getChildInternalId());
-	    break;
-	  case CREATE_OPENGL_VIEW:
-	    createOpenGLView(message.getChildInternalId());
-	    break;
-	  case CREATE_NATIVE_OPENGL_VIEW:
-	    createNativeOpenGLView(message.getChildInternalId());
-	    break;
-	  // Create notification
-	  case POST_NOTIFICATION:
-	    createNotification("", "");
-	    break;
-	  // Open Browser
-	  case LAUNCH_BROWSER:
-	    launchBrowser("");
-	    break;
-	  default:
-	    NativeMessageHandler handlerView = views.get((message.getInternalId()));
-	    if (handlerView != null){
-	      handlerView.handleMessage(message);
-	    } else {
-	      System.out.println("Message not handled");
-	    }
-	    break;
-	  }
-	} 
-      }
-    };
     initNative();
   }
-  
+
+  @Override
+  public void handleMessage(NativeMessage message) {
+    System.out.println("id: " + message.getInternalId() + " MessageType: " + String.valueOf(message.getMessage()));
+
+    switch (message.getMessage()) {
+    case SHOW_VIEW:
+      NativeMessageHandler formViewToShow = views.get((message.getInternalId()));
+      if (formViewToShow != null) {
+	formViewToShow.showView();
+      } else {
+	System.out.println("Message not handled");
+      }
+      break;
+    case CREATE_APPLICATION:
+      appId = message.getInternalId();
+      break;
+    case SET_CAPTION:
+      setTitle(message.getTextValue());
+      break;
+    case CREATE_FORMVIEW:
+      System.out.println("creating formView " + message.getChildInternalId());
+      createFormView(message.getChildInternalId());
+      break;
+    case CREATE_OPENGL_VIEW:
+      createOpenGLView(message.getChildInternalId());
+      break;
+    case CREATE_NATIVE_OPENGL_VIEW:
+      createNativeOpenGLView(message.getChildInternalId());
+      break;
+    // Create notification
+    case POST_NOTIFICATION:
+      createNotification("", "");
+      break;
+    // Open Browser
+    case LAUNCH_BROWSER:
+      launchBrowser("");
+      break;
+    default:
+      NativeMessageHandler handlerView = views.get((message.getInternalId()));
+      if (handlerView != null) {
+	handlerView.handleMessage(message);
+      } else {
+	System.out.println("Message not handled");
+      }
+      break;
+    }
+  }
+
   private void initNative(){
     
     DisplayMetrics displayMetrics = getDisplayMetrics();
@@ -632,6 +622,14 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback {
   //Load JNI. Framework references to make file.
   static {
     System.loadLibrary("framework");
+  }
+
+  @Override
+  public void showView() {
+  }
+  @Override
+  public int getElementId() {
+    return 0;
   }
 
 }
