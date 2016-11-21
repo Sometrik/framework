@@ -147,8 +147,6 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback {
 	  case LAUNCH_BROWSER:
 	    launchBrowser("");
 	    break;
-	  case ADD_OPTION:
-	    break;
 	  default:
 	    NativeMessageHandler handlerView = getFromViewList(message.getInternalId());
 	    if (handlerView != null){
@@ -225,7 +223,7 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback {
   }
   private void createOpenGLView(int id){
     MyGLRenderer renderer = new MyGLRenderer(this, screenWidth, screenHeight);
-    MyGLSurfaceView mGLView = new MyGLSurfaceView(this, renderer);
+    MyGLSurfaceView mGLView = new MyGLSurfaceView(this, renderer, id);
     mGLView.setOnTouchListener(new MyOnTouchListener(this));
     mGLView.setWillNotDraw(false);
     mGLView.getHolder().addCallback(this);
