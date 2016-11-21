@@ -14,20 +14,22 @@ public class FWPicker extends Spinner implements NativeMessageHandler {
   private ArrayAdapter<String> adapter;
   private ArrayList<Integer> numberList;
   private TreeMap<Integer, String> valueMap;
+  private final int id;
   
-  private native void pickerOptionSelected(int id);
+  private native void pickerOptionSelected(int id, int position);
 
   public FWPicker(Context context) {
     super(context);
     adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item);
     valueMap = new TreeMap<Integer, String>();
     numberList = new ArrayList<Integer>();
+    id = this.getId();
     
     setOnItemSelectedListener(new OnItemSelectedListener() {
 
       @Override
       public void onItemSelected(AdapterView<?> arg0, View arg1, int position, long arg3) {
-	pickerOptionSelected(position);
+	pickerOptionSelected(id, position);
       }
 
       @Override
