@@ -1,6 +1,7 @@
 package com.sometrik.framework;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import android.app.Activity;
 import android.app.ActivityManager;
@@ -58,7 +59,7 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback {
   private AlertDialog.Builder builder;
   private AlertDialog alert;
   private float windowYcoords;
-  public static ArrayList<NativeMessageHandler> views = new ArrayList<NativeMessageHandler>();
+  public static HashMap<Integer, NativeMessageHandler> views = new HashMap<Integer, NativeMessageHandler>();
   public static int currentView;
   private MyGLRenderer renderer;
   private int appId = 0;
@@ -115,7 +116,7 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback {
 	  
 	  switch (message.getMessage()) {
 	  case SHOW_VIEW:
-	    NativeMessageHandler formViewToShow = getFromViewList(message.getInternalId());
+	    NativeMessageHandler formViewToShow = views.get((message.getInternalId()));
 	    if (formViewToShow != null) {
 	      formViewToShow.showView();
 	    } else {
@@ -123,7 +124,6 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback {
 	    }
 	    break;
 	  case CREATE_APPLICATION:
-	    // getFromViewList(message.getInternalId()).handleMessage(message);
 	    appId = message.getInternalId();
 	    break;
 	  case SET_CAPTION:
@@ -148,7 +148,7 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback {
 	    launchBrowser("");
 	    break;
 	  default:
-	    NativeMessageHandler handlerView = getFromViewList(message.getInternalId());
+	    NativeMessageHandler handlerView = views.get((message.getInternalId()));
 	    if (handlerView != null){
 	      handlerView.handleMessage(message);
 	    } else {
@@ -192,19 +192,9 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback {
     return displaymetrics;
   }
   
-  public static void addToViewList(NativeMessageHandler view){
+  public static void addToViewList(NativeMessageHandler view, int id){
     System.out.println(view.getElementId() + " added to view list");
-    views.add(view);
-  }
-  
-  private NativeMessageHandler getFromViewList(int id){
-    for (NativeMessageHandler view : views){
-      if (view.getElementId() == id){
-	return view;
-      }
-    }
-    System.out.println("View not found. Returning null");
-    return null;
+    views.put(id, view);
   }
 
   public MyGLSurfaceView getSurfaceView() {
@@ -219,7 +209,7 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback {
   private void createFormView(int id){
     FWLayout layout = new FWLayout(this);
     layout.setId(id);
-    views.add(layout);
+    views.put(id, layout);
   }
   private void createOpenGLView(int id){
     MyGLRenderer renderer = new MyGLRenderer(this, screenWidth, screenHeight);
@@ -227,7 +217,7 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback {
     mGLView.setOnTouchListener(new MyOnTouchListener(this));
     mGLView.setWillNotDraw(false);
     mGLView.getHolder().addCallback(this);
-    views.add(mGLView);
+    views.put(id, mGLView);
     setContentView(mGLView);
     currentView = id;
   }
@@ -237,7 +227,7 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback {
     surfaceView.setId(id);
     surfaceView.setOnTouchListener(new MyOnTouchListener(this));
     surfaceView.getHolder().addCallback(this);
-    views.add(surfaceView);
+    views.put(id, surfaceView);
     setContentView(surfaceView);
     currentView = id;
   }
