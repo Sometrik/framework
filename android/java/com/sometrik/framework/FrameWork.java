@@ -504,23 +504,6 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback, Nativ
     return true;
   }
   
-  
-  //Creates ActionSheet. Called from JNI message
-  public static void createOptionsFromJNI(MyGLSurfaceView view, int message, int[] idArray, String[] nameArray) {
-
-    OptionsItem[] optionsList = new OptionsItem[nameArray.length];
-    for (int i = 0; i < optionsList.length; i++) {
-      System.out.println("createOptionsFromJni " + "i: " + i + "  intarray length: " + nameArray.length);
-      optionsList[i] = new OptionsItem(idArray[i], nameArray[i]);
-    }
-
-    System.out.println("messageposter array: " + view);
-    System.out.println("messageposter array: " + nameArray);
-    Message msg = Message.obtain(null, message, optionsList);
-    view.sHandler.sendMessage(msg);
-
-  }
-  
   public float getScreenWidth(){
     return screenWidth;
   }
