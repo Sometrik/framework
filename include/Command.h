@@ -1,9 +1,9 @@
-#ifndef _MESSAGE_H_
-#define _MESSAGE_H_
+#ifndef _COMMAND_H_
+#define _COMMAND_H_
 
 #include <string>
 
-class Message {
+class Command {
  public:
 
   enum Type {
@@ -44,12 +44,12 @@ class Message {
     CONSUME_PURCHASE
   };
 
- Message(Type _message, int _internalId, int _childInternalId = 0) : messageType(_message), internalId(_internalId), childInternalId(_childInternalId) { }
- Message(Type _message, int _internalId, const std::string & _textValue) : messageType(_message), internalId(_internalId), childInternalId(0), textValue(_textValue) { }
- Message(Type _message, int _internalId, const std::string & _textValue, const std::string & _textValue2) : messageType(_message), internalId(_internalId), childInternalId(0), textValue(_textValue), textValue2(_textValue2) { }
-  ~Message() { }
+ Command(Type _command, int _internalId, int _childInternalId = 0) : commandType(_command), internalId(_internalId), childInternalId(_childInternalId) { }
+ Command(Type _command, int _internalId, const std::string & _textValue) : commandType(_command), internalId(_internalId), childInternalId(0), textValue(_textValue) { }
+ Command(Type _command, int _internalId, const std::string & _textValue, const std::string & _textValue2) : commandType(_command), internalId(_internalId), childInternalId(0), textValue(_textValue), textValue2(_textValue2) { }
+  ~Command() { }
   
-  Type getType() const { return messageType; }
+  Type getType() const { return commandType; }
   int getInternalId() const { return internalId; }
   int getChildInternalId() const { return childInternalId; }
   
@@ -71,7 +71,7 @@ class Message {
 
 
  private:
-  Type messageType;
+  Type commandType;
   int internalId, childInternalId;
   int value;
   std::string key;
