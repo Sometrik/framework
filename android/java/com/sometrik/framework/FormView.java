@@ -66,6 +66,7 @@ public class FormView implements NativeMessageHandler {
       System.out.println("Formview creating layout");
       FWLayout layout = new FWLayout(context);
       layout.setId(message.getChildInternalId());
+      FrameWork.addToViewList(message.getChildInternalId(), layout);
       if (message.getValue() == 2){
 	layout.setOrientation(LinearLayout.HORIZONTAL);
       } else if (message.getValue() == 1){

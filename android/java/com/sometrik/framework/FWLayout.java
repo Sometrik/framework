@@ -19,7 +19,6 @@ public class FWLayout extends LinearLayout implements NativeMessageHandler{
     super(context);
     this.context = context;
     this.frame = (FrameWork)context;
-    list();
   }
 
   @Override
@@ -31,10 +30,6 @@ public class FWLayout extends LinearLayout implements NativeMessageHandler{
   public void showView(){
     frame.setContentView(this);
     FrameWork.currentView = getId();
-  }
-  
-  private void list(){
-    FrameWork.addToViewList(getId(), this);
   }
   
   private void createButton(final int id, String text){
