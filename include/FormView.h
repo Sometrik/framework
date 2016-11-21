@@ -2,7 +2,7 @@
 #define _FORMVIEW_H_
 
 #include <FWViewBase.h>
-#include <Message.h>
+#include <Command.h>
 
 class FormView : public FWViewBase {
  public:
@@ -10,7 +10,7 @@ class FormView : public FWViewBase {
 
   void initialize(FWPlatform * _platform) override {
     FWViewBase::initialize(_platform);
-    sendMessage(Message(Message::CREATE_FORMVIEW, getParentInternalId(), getInternalId()));
+    sendMessage(Command(Command::CREATE_FORMVIEW, getParentInternalId(), getInternalId()));
   }
 };
 

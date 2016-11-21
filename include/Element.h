@@ -1,7 +1,7 @@
 #ifndef _ELEMENT_H_
 #define _ELEMENT_H_
 
-#include <Message.h>
+#include <Command.h>
 
 #include <memory>
 #include <vector>
@@ -69,7 +69,7 @@ class Element {
   int getInternalId() const { return internal_id; }
   int getParentInternalId() const { return parent ? parent->getInternalId() : 0; }
   
-  void sendMessage(const Message & message);
+  void sendMessage(const Command & command);
   
   FWPlatform & getPlatform() { return *platform; }
   const FWPlatform & getPlatform() const { return *platform; }

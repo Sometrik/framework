@@ -2,7 +2,7 @@
 #define _FWAPPLICATION_H_
 
 #include <Element.h>
-#include <Message.h>
+#include <Command.h>
 
 class FWApplication : public Element {
 public:
@@ -12,21 +12,21 @@ public:
 
   void initialize(FWPlatform * _platform) override {
     Element::initialize(_platform);
-    sendMessage(Message(Message::CREATE_APPLICATION, getParentInternalId(), getInternalId()));
+    sendMessage(Command(Command::CREATE_APPLICATION, getParentInternalId(), getInternalId()));
   }
 
   void setCaption(const std::string & s) {
-    Message m(Message::SET_CAPTION, getId());
-    m.setTextValue(s);
-    sendMessage(m);
+    Command c(Command::SET_CAPTION, getId());
+    c.setTextValue(s);
+    sendMessage(c);
   }
 
   void launchBrowser(const std::string & input_url) {
-    sendMessage(Message(Message::LAUNCH_BROWSER, getInternalId(), input_url));
+    sendMessage(Command(Command::LAUNCH_BROWSER, getInternalId(), input_url));
   }
   
-  void postNotification(const std::string & title, const std::string & message) {
-    sendMessage(Message(Message::POST_NOTIFICATION, getInternalId(), title, message));
+  void postNotification(const std::string & title, const std::string & command) {
+    sendMessage(Command(Command::POST_NOTIFICATION, getInternalId(), title, command));
   }
 
  private:

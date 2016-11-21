@@ -2,7 +2,7 @@
 #define _IMAGEELEMENT_H_
 
 #include <Element.h>
-#include <Message.h>
+#include <Command.h>
 
 class ImageElement : public Element {
  public:
@@ -10,10 +10,10 @@ class ImageElement : public Element {
 
   void initialize(FWPlatform * _platform) override {
     Element::initialize(_platform);
-    Message m(Message::CREATE_IMAGE_ELEMENT, getParentInternalId(), getInternalId());
-    m.setWidth(width);
-    m.setHeight(height);
-    sendMessage(m);
+    Command c(Command::CREATE_IMAGE_ELEMENT, getParentInternalId(), getInternalId());
+    c.setWidth(width);
+    c.setHeight(height);
+    sendMessage(c);
   }
 
  private:

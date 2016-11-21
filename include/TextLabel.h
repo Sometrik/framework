@@ -2,7 +2,7 @@
 #define _TEXTLABEL_H_
 
 #include <Element.h>
-#include <Message.h>
+#include <Command.h>
 
 class TextLabel : public Element {
  public:
@@ -10,9 +10,9 @@ class TextLabel : public Element {
 
   void initialize(FWPlatform * _platform) override {
     Element::initialize(_platform);
-    Message m(Message::CREATE_TEXTLABEL, getParentInternalId(), getInternalId());
-    m.setTextValue(text);
-    sendMessage(m);
+    Command c(Command::CREATE_TEXTLABEL, getParentInternalId(), getInternalId());
+    c.setTextValue(text);
+    sendMessage(c);
   }
 
  private:

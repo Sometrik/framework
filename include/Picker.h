@@ -2,7 +2,7 @@
 #define _PICKER_H_
 
 #include <Element.h>
-#include <Message.h>
+#include <Command.h>
 
 class Picker : public Element {
  public:
@@ -10,7 +10,7 @@ class Picker : public Element {
   
   void initialize(FWPlatform * _platform) override {
     Element::initialize(_platform);
-    sendMessage(Message(Message::CREATE_PICKER, getParentInternalId(), getInternalId()));
+    sendMessage(Command(Command::CREATE_PICKER, getParentInternalId(), getInternalId()));
     for (auto & o : options) {
       initializeOption(o);
     }
@@ -25,10 +25,10 @@ class Picker : public Element {
 
  protected:
   void initializeOption(const std::pair<int, std::string> & o) {
-    Message m(Message::ADD_OPTION, getInternalId(), 0);
-    m.setValue(o.first);
-    m.setTextValue(o.second);
-    sendMessage(m);
+    Command c(Command::ADD_OPTION, getInternalId(), 0);
+    c.setValue(o.first);
+    c.setTextValue(o.second);
+    sendMessage(c);
   }
 
  private:

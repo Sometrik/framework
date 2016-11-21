@@ -2,7 +2,7 @@
 #define _LINEARLAYOUT_H_
 
 #include <Element.h>
-#include <Message.h>
+#include <Command.h>
 
 #define FW_VERTICAL	1
 #define FW_HORIZONTAL	2
@@ -13,9 +13,9 @@ class LinearLayout : public Element {
 
   void initialize(FWPlatform * _platform) override {
     Element::initialize(_platform);
-    Message m(Message::CREATE_LINEAR_LAYOUT, getParentInternalId(), getInternalId());
-    m.setValue(direction);
-    sendMessage(m);
+    Command c(Command::CREATE_LINEAR_LAYOUT, getParentInternalId(), getInternalId());
+    c.setValue(direction);
+    sendMessage(c);
   }
 			       
  private:

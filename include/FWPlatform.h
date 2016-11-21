@@ -3,7 +3,7 @@
 
 #include <FWApplication.h>
 #include <EventBase.h>
-#include <Message.h>
+#include <Command.h>
 #include <Logger.h>
 #include <SoundCanvas.h>
 #include <PrimitiveRenderer.h>
@@ -62,15 +62,15 @@ class FWPlatform {
 
   void setActiveView(int id) {
     activeViewId = id;
-    Message m(Message::REQUEST_REDRAW, id);
-    sendMessage(m);
+    Command c(Command::REQUEST_REDRAW, id);
+    sendMessage(c);
   }
   
-  virtual void sendMessage(const Message & message) {
-    if (message.getType() == Message::SHOW_VIEW) {
-      setActiveView(message.getInternalId());
-    } else if (!activeViewId && (message.getType() == Message::CREATE_FORMVIEW || message.getType() == Message::CREATE_OPENGL_VIEW)) {
-      setActiveView(message.getChildInternalId());
+  virtual void sendMessage(const Command & command) {
+    if (command.getType() == Command::SHOW_VIEW) {
+      setActiveView(command.getInternalId());
+    } else if (!activeViewId && (command.getType() == Command::CREATE_FORMVIEW || command.getType() == Command::CREATE_OPENGL_VIEW)) {
+      setActiveView(command.getChildInternalId());
     }
   }
 
@@ -79,8 +79,8 @@ class FWPlatform {
     if (e) ev.dispatch(*e);
     else getLogger().println("Failed to dispatch event");
     if (ev.isRedrawNeeded()) {
-      Message m(Message::REQUEST_REDRAW, internal_id);
-      sendMessage(m);
+      Command c(Command::REQUEST_REDRAW, internal_id);
+      sendMessage(c);
     }
   }
 

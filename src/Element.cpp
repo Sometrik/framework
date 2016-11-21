@@ -12,8 +12,8 @@ Element::initialize(FWPlatform * _platform) {
 }
 
 void
-Element::sendMessage(const Message & message){
-  platform->sendMessage(message);
+Element::sendMessage(const Command & command){
+  platform->sendMessage(command);
 }
 
 Element &

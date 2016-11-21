@@ -2,14 +2,14 @@
 #define _FWVIEW_H_
 
 #include <Element.h>
-#include <Message.h>
+#include <Command.h>
 
 class FWViewBase : public Element {
  public:
   FWViewBase(int _id) : Element(_id) { }
 
   void show() override {
-    sendMessage(Message(Message::SHOW_VIEW, getInternalId()));
+    sendMessage(Command(Command::SHOW_VIEW, getInternalId()));
   }
 };
 

@@ -90,8 +90,8 @@ void AndroidPlatform::storeValue(const std::string & key, const std::string & va
 }
 
 void
-AndroidPlatform::sendMessage(const Message & message) {
-  FWPlatform::sendMessage(message);
+AndroidPlatform::sendMessage(const Command & command) {
+  FWPlatform::sendMessage(command);
 
   auto env = getJNIEnv();
    jclass frameworkCls = env->FindClass("com/sometrik/framework/FrameWork");
@@ -99,14 +99,14 @@ AndroidPlatform::sendMessage(const Message & message) {
    jmethodID sendMessageMethod = env->GetMethodID(frameworkCls, "handleMessage", "(Lcom/sometrik/framework/NativeMessage;)V");
    jmethodID messageConstructor = env->GetMethodID(messageCls, "<init>", "(IIIILjava/lang/String;Ljava/lang/String;)V");
 
-   int messageTypeId = int(message.getType());
-   const char * textValue = message.getTextValue().c_str();
-   const char * textValue2 = message.getTextValue2().c_str();
+   int messageTypeId = int(command.getType());
+   const char * textValue = command.getTextValue().c_str();
+   const char * textValue2 = command.getTextValue2().c_str();
    jstring jtextValue = env->NewStringUTF(textValue);
    jstring jtextValue2 = env->NewStringUTF(textValue2);
 
 
-   jobject jmessage = env->NewObject(messageCls, messageConstructor, messageTypeId, message.getInternalId(), message.getChildInternalId(), message.getValue(), jtextValue, jtextValue2);
+   jobject jmessage = env->NewObject(messageCls, messageConstructor, messageTypeId, command.getInternalId(), command.getChildInternalId(), command.getValue(), jtextValue, jtextValue2);
    env->CallVoidMethod(framework, sendMessageMethod, jmessage);
    //Fix these releases
 //  env->ReleaseStringUTFChars(jtextValue, textValue);

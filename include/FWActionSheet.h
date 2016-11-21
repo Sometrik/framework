@@ -31,17 +31,17 @@ class FWActionSheet : public Element {
   const std::vector<FWOption> & getOptions() const { return options; }
 
   int showModal() override {
-    Message m0(Message::CREATE_ACTION_SHEET, getInternalId());
-    m0.setTextValue(title);
-    sendMessage(m0);
+    Command c0(Command::CREATE_ACTION_SHEET, getInternalId());
+    c0.setTextValue(title);
+    sendMessage(c0);
     for (auto & op : options) {
-      Message m(Message::ADD_OPTION, getInternalId());
-      m.setValue(op.getId());
-      m.setTextValue(op.getText());
-      sendMessage(m);
+      Command c(Command::ADD_OPTION, getInternalId());
+      c.setValue(op.getId());
+      c.setTextValue(op.getText());
+      sendMessage(c);
     }
-    Message m1(Message::SHOW, getInternalId());
-    sendMessage(m1);
+    Command c1(Command::SHOW, getInternalId());
+    sendMessage(c1);
     return 0;
   }
   

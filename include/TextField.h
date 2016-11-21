@@ -2,7 +2,7 @@
 #define _TEXTFIELD_H_
 
 #include <Element.h>
-#include <Message.h>
+#include <Command.h>
 #include <TextEvent.h>
 
 class TextField : public Element {
@@ -11,7 +11,7 @@ class TextField : public Element {
 
   void initialize(FWPlatform * _platform) override {
     Element::initialize(_platform);
-    sendMessage(Message(Message::CREATE_TEXTFIELD, getParentInternalId(), getInternalId()));
+    sendMessage(Command(Command::CREATE_TEXTFIELD, getParentInternalId(), getInternalId()));
   }
 
   void onTextEvent(TextEvent & ev) override {

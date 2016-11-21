@@ -2,7 +2,7 @@
 #define _BUTTON_H_
 
 #include <Element.h>
-#include <Message.h>
+#include <Command.h>
 #include <CommandEvent.h>
 #include <TouchEvent.h>
 
@@ -12,9 +12,9 @@ class Button : public Element {
 
   void initialize(FWPlatform * _platform) override {
     Element::initialize(_platform);
-    Message m(Message::CREATE_BUTTON, getParentInternalId(), getInternalId());
-    m.setTextValue(label);
-    sendMessage(m);
+    Command c(Command::CREATE_BUTTON, getParentInternalId(), getInternalId());
+    c.setTextValue(label);
+    sendMessage(c);
   }
 
   void onTouchEvent(TouchEvent & ev) override {
