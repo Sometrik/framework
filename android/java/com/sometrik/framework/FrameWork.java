@@ -51,7 +51,6 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback, Nativ
 
   private Settings settings;
 
-  private Boolean firstViewSet = false;
   private float screenHeight;
   private float screenWidth;
   public Handler mainHandler;
@@ -61,7 +60,7 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback, Nativ
   private AlertDialog alert;
   private float windowYcoords;
   public static HashMap<Integer, NativeMessageHandler> views = new HashMap<Integer, NativeMessageHandler>();
-  public static int currentView;
+  public static int currentView = 0;
   private MyGLRenderer renderer;
   private int appId = 0;
 
@@ -209,10 +208,9 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback, Nativ
     mGLView.setWillNotDraw(false);
     mGLView.getHolder().addCallback(this);
     views.put(id, mGLView);
-    if (!firstViewSet) {
+    if (currentView == 0) {
       setContentView(mGLView);
       currentView = id;
-      firstViewSet = true;
     }
   }
   
@@ -222,10 +220,9 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback, Nativ
     surfaceView.setOnTouchListener(new MyOnTouchListener(this));
     surfaceView.getHolder().addCallback(this);
     views.put(id, surfaceView);
-    if (!firstViewSet) {
+    if (currentView == 0) {
       setContentView(surfaceView);
       currentView = id;
-      firstViewSet = true;
     }
   }
 
