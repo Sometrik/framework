@@ -51,6 +51,7 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback {
 
   private Settings settings;
 
+  private Boolean firstViewSet = false;
   private float screenHeight;
   private float screenWidth;
   public Handler mainHandler;
@@ -218,8 +219,11 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback {
     mGLView.setWillNotDraw(false);
     mGLView.getHolder().addCallback(this);
     views.put(id, mGLView);
-    setContentView(mGLView);
-    currentView = id;
+    if (!firstViewSet) {
+      setContentView(mGLView);
+      currentView = id;
+      firstViewSet = true;
+    }
   }
   
   private void createNativeOpenGLView(int id){
@@ -228,8 +232,11 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback {
     surfaceView.setOnTouchListener(new MyOnTouchListener(this));
     surfaceView.getHolder().addCallback(this);
     views.put(id, surfaceView);
-    setContentView(surfaceView);
-    currentView = id;
+    if (!firstViewSet) {
+      setContentView(surfaceView);
+      currentView = id;
+      firstViewSet = true;
+    }
   }
 
   // Lisää kuvan antaminen // Aika // Ääni
