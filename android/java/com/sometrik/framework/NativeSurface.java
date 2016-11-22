@@ -4,7 +4,7 @@ import android.content.Context;
 import android.view.SurfaceView;
 import android.view.View;
 
-public class NativeSurface extends SurfaceView implements NativeMessageHandler {
+public class NativeSurface extends SurfaceView implements NativeCommandHandler {
   
   private Context context;
   

@@ -12,7 +12,7 @@ import android.opengl.GLSurfaceView;
 import android.os.Handler;
 import android.view.View;
 
-public class MyGLSurfaceView extends GLSurfaceView implements NativeMessageHandler {
+public class MyGLSurfaceView extends GLSurfaceView implements NativeCommandHandler {
 
   private Context context;
   public Handler sHandler;

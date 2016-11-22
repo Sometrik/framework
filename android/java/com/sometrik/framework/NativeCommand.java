@@ -1,6 +1,5 @@
 package com.sometrik.framework;
 
-import android.content.Context;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -9,7 +8,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.Spinner;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 public class NativeCommand {
@@ -83,7 +82,7 @@ public class NativeCommand {
     apply(FrameWork.views.get(internalId));
   }
   
-  public void apply(NativeMessageHandler view) {
+  public void apply(NativeCommandHandler view) {
 
     switch (command) {
 
@@ -210,6 +209,8 @@ public class NativeCommand {
     FWLayout layout = new FWLayout(frame);
     layout.setId(getChildInternalId());
     FrameWork.views.put(getChildInternalId(), layout);
+//    ScrollView scrollView = new ScrollView(frame);
+//    scrollView.addView(layout);
   }
 
   public String getKey() {

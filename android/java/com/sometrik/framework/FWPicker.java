@@ -9,7 +9,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
-public class FWPicker extends Spinner implements NativeMessageHandler {
+public class FWPicker extends Spinner implements NativeCommandHandler {
   
   private Context context;
   private ArrayAdapter<String> adapter;

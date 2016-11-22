@@ -4,7 +4,7 @@ import android.content.Context;
 import android.view.View;
 import android.widget.LinearLayout;
 
-public class FWLayout extends LinearLayout implements NativeMessageHandler{
+public class FWLayout extends LinearLayout implements NativeCommandHandler {
   
   private Context context;
   private FrameWork frame;

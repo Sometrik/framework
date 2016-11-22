@@ -1,7 +1,6 @@
 package com.sometrik.framework;
 
 import java.util.HashMap;
-
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
@@ -38,7 +37,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
-public class FrameWork extends Activity implements SurfaceHolder.Callback, NativeMessageHandler {
+public class FrameWork extends Activity implements SurfaceHolder.Callback, NativeCommandHandler {
 
   private MyGLSurfaceView mGLView;
   private RelativeLayout mainView;
@@ -58,7 +57,7 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback, Nativ
   private AlertDialog.Builder builder;
   private AlertDialog alert;
   private float windowYcoords;
-  public static HashMap<Integer, NativeMessageHandler> views = new HashMap<Integer, NativeMessageHandler>();
+  public static HashMap<Integer, NativeCommandHandler> views = new HashMap<Integer, NativeCommandHandler>();
   public static int currentView = 0;
   private MyGLRenderer renderer;
   private int appId = 0;
@@ -137,7 +136,7 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback, Nativ
     return displaymetrics;
   }
   
-  public static void addToViewList( NativeMessageHandler view){
+  public static void addToViewList(NativeCommandHandler view){
     System.out.println(view.getElementId() + " added to view list");
     views.put(view.getElementId(), view);
   }
