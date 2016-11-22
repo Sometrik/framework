@@ -66,7 +66,7 @@ public class FormView implements NativeMessageHandler {
       System.out.println("Formview creating layout");
       FWLayout layout = new FWLayout(context);
       layout.setId(command.getChildInternalId());
-      FrameWork.addToViewList(command.getChildInternalId(), layout);
+      FrameWork.addToViewList(layout);
       if (command.getValue() == 2){
 	layout.setOrientation(LinearLayout.HORIZONTAL);
       } else if (command.getValue() == 1){
@@ -92,7 +92,7 @@ public class FormView implements NativeMessageHandler {
     case CREATE_PICKER:
       FWPicker picker = new FWPicker(context);
       picker.setId(command.getChildInternalId()); 
-      FrameWork.addToViewList(command.getChildInternalId(), picker);
+      FrameWork.addToViewList(picker);
       baseLayout.addView(picker);
       break;
 

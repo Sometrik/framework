@@ -78,7 +78,7 @@ public class FWLayout extends LinearLayout implements NativeMessageHandler{
     case CREATE_PICKER:
       FWPicker picker = new FWPicker(context);
       picker.setId(command.getChildInternalId());
-      FrameWork.addToViewList(command.getChildInternalId(), picker);
+      FrameWork.addToViewList(picker);
       this.addView(picker);
       break;
 
@@ -86,7 +86,7 @@ public class FWLayout extends LinearLayout implements NativeMessageHandler{
       System.out.println("FWLayout " + this.getId() + " creating layout " + command.getChildInternalId());
       FWLayout layout = new FWLayout(context);
       layout.setId(command.getChildInternalId());
-      FrameWork.addToViewList(command.getChildInternalId(), layout);
+      FrameWork.addToViewList(layout);
       if (command.getValue() == 2){
 	layout.setOrientation(LinearLayout.HORIZONTAL);
       } else if (command.getValue() == 1){
