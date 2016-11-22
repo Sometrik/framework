@@ -110,7 +110,7 @@ AndroidPlatform::sendCommand(const Command & command) {
 //  env->ReleaseStringUTFChars(jtextValue2, textValue2);
   
 #ifdef USE_NATIVE_SURFACE
-  if (message.getType() == Message::SHOW_MESSAGE_DIALOG || message.getType() == Message::SHOW_INPUT_DIALOG) {
+  if (command.getType() == Command::SHOW_MESSAGE_DIALOG || command.getType() == Command::SHOW_INPUT_DIALOG) {
     renderLoop();
   }
 #endif      
@@ -278,7 +278,14 @@ AndroidPlatform::swapBuffers() {
 
 void* AndroidPlatform::threadStartCallback(void *myself) {
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "About to start thread 2");
+
   AndroidPlatform * aplatform = (AndroidPlatform*) myself;
+
+
+  JNIEnv * env;
+  aplatform->getJavaVM()->AttachCurrentThread(&env, NULL);
+
+
   aplatform->getApplication().initialize(aplatform);
   // platform->onResize(screenWidth, screenHeight);
   aplatform->getApplication().initializeContent();
@@ -379,6 +386,10 @@ void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, job
   platform->setDisplayHeight(screenHeight);
 
 #ifdef USE_NATIVE_SURFACE
+
+  if (gJavaVM) {
+  platform->setJavaVM(gJavaVM);
+  }
   platform->startThread();
 #else
   if (gJavaVM) {

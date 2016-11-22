@@ -22,6 +22,7 @@ public:
   }
   
   void setJavaVM(JavaVM * _gJavaVM) { gJavaVM = _gJavaVM; }
+  JavaVM * getJavaVM() { return gJavaVM; }
 
   std::string getBundleFilename(const char * filename) override;
   std::string getLocalFilename(const char * filename, FileType type) override;
