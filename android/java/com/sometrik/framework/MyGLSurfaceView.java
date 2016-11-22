@@ -10,6 +10,7 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.opengl.GLSurfaceView;
 import android.os.Handler;
+import android.view.View;
 
 public class MyGLSurfaceView extends GLSurfaceView implements NativeMessageHandler {
 
@@ -63,15 +64,21 @@ public class MyGLSurfaceView extends GLSurfaceView implements NativeMessageHandl
   }
 
   @Override
-  public void handleCommand(NativeCommand command) {
+  public void showView() {
     // TODO Auto-generated method stub
     
   }
 
   @Override
-  public void showView() {
-    // TODO Auto-generated method stub
-    
+  public void addChild(View view) {
+    System.out.println("Native Surface couldn't handle addChild");
+    //TODO
+  }
+
+  @Override
+  public void handleCommand(NativeCommand command) {
+    System.out.println("Native Surface couldn't handle command");
+    //Possible commands that have to be handled
   }
 
 

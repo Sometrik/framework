@@ -98,7 +98,6 @@ AndroidPlatform::sendCommand(const Command & command) {
    jclass commandCls = env->FindClass("com/sometrik/framework/NativeCommand");
    jmethodID sendCommandMethod = env->GetMethodID(frameworkCls, "handleCommand", "(Lcom/sometrik/framework/NativeCommand;)V");
    jmethodID commandConstructor = env->GetMethodID(commandCls, "<init>", "(IIIILjava/lang/String;Ljava/lang/String;)V");
-
    int commandTypeId = int(command.getType());
    const char * textValue = command.getTextValue().c_str();
    const char * textValue2 = command.getTextValue2().c_str();

@@ -2,6 +2,7 @@ package com.sometrik.framework;
 
 import android.content.Context;
 import android.view.SurfaceView;
+import android.view.View;
 
 public class NativeSurface extends SurfaceView implements NativeMessageHandler {
   
@@ -11,21 +12,7 @@ public class NativeSurface extends SurfaceView implements NativeMessageHandler {
     super(context);
     this.context = context;
   }
-
-  @Override
-  public void handleCommand(NativeCommand command) {
-    
-    switch (command.getCommand()){
-    case SHOW_VIEW:
-      showView();
-      break;
-    default:
-      System.out.println("Message couldn't been handled by NativeSurface");
-      break;
-    }
-  }
   
-
   @Override
   public void showView() {
     FrameWork frame = (FrameWork)context;
@@ -36,6 +23,18 @@ public class NativeSurface extends SurfaceView implements NativeMessageHandler {
   @Override
   public int getElementId() {
     return getId();
+  }
+
+  @Override
+  public void addChild(View view) {
+    System.out.println("Native Surface couldn't handle addChild");
+    //TODO
+  }
+
+  @Override
+  public void handleCommand(NativeCommand command) {
+    System.out.println("Native Surface couldn't handle command");
+    //Possible commands that have to be handled
   }
 
 }

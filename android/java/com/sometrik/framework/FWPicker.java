@@ -5,6 +5,7 @@ import java.util.TreeMap;
 
 import android.content.Context;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
@@ -40,7 +41,6 @@ public class FWPicker extends Spinner implements NativeMessageHandler {
     });
   }
 
-  @Override
   public void handleCommand(NativeCommand command) {
     
     switch (command.getCommand()) {
@@ -67,6 +67,12 @@ public class FWPicker extends Spinner implements NativeMessageHandler {
   @Override
   public int getElementId() {
     return getId();
+  }
+
+  @Override
+  public void addChild(View view) {
+    System.out.println("Picker couldn't handle addChild");
+    //TODO
   }
 
 }

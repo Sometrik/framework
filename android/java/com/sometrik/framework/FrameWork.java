@@ -104,52 +104,9 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback, Nativ
     initNative();
   }
 
-  @Override
   public void handleCommand(NativeCommand command) {
     System.out.println("id: " + command.getInternalId() + " MessageType: " + String.valueOf(command.getCommand()));
-
-    switch (command.getCommand()) {
-    case SHOW_VIEW:
-      NativeMessageHandler formViewToShow = views.get((command.getInternalId()));
-      if (formViewToShow != null) {
-	formViewToShow.showView();
-      } else {
-	System.out.println("Message not handled");
-      }
-      break;
-    case CREATE_APPLICATION:
-      appId = command.getInternalId();
-      break;
-    case SET_CAPTION:
-      setTitle(command.getTextValue());
-      break;
-    case CREATE_FORMVIEW:
-      System.out.println("creating formView " + command.getChildInternalId());
-      createFormView(command.getChildInternalId());
-      break;
-    case CREATE_OPENGL_VIEW:
-      createOpenGLView(command.getChildInternalId());
-      break;
-    case CREATE_NATIVE_OPENGL_VIEW:
-      createNativeOpenGLView(command.getChildInternalId());
-      break;
-    // Create notification
-    case POST_NOTIFICATION:
-      createNotification("", "");
-      break;
-    // Open Browser
-    case LAUNCH_BROWSER:
-      launchBrowser("");
-      break;
-    default:
-      NativeMessageHandler handlerView = views.get((command.getInternalId()));
-      if (handlerView != null) {
-	handlerView.handleCommand(command);
-      } else {
-	System.out.println("Message not handled");
-      }
-      break;
-    }
+    command.apply(views.get(command.getInternalId()), this);
   }
 
   private void initNative(){
@@ -504,6 +461,10 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback, Nativ
   public float getScreenWidth(){
     return screenWidth;
   }
+  
+  public void setAppId(int id){
+    this.appId = id;
+  }
 
   // returns database path
   public String getDBPath(String dbName) {
@@ -610,6 +571,11 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback, Nativ
   @Override
   public int getElementId() {
     return appId;
+  }
+  @Override
+  public void addChild(View view) {
+    System.out.println("FrameWork couldn't handle addChild");
+    //TODO
   }
 
 }

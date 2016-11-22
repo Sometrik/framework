@@ -31,98 +31,16 @@ public class FWLayout extends LinearLayout implements NativeMessageHandler{
     frame.setContentView(this);
     FrameWork.currentView = getId();
   }
-  
-  private void createButton(final int id, String text){
-    Button button = new Button(context);
-    button.setId(id);
-    button.setText(text);
-   
-    button.setOnClickListener(new OnClickListener(){
-      @Override
-      public void onClick(View arg0) {
-	frame.buttonClicked(id);
-      }
-    });
-    this.addView(button);
-  }
-  
-  private void createEditText(final int id, String text){
-    System.out.println("FWLayout " + this.getId() + " creating textfield");
-    final EditText editText = new EditText(context);
-    editText.setId(id);
-    editText.setText(text);
-    editText.setMinimumWidth(400000 / (int)frame.getScreenWidth());
-    editText.addTextChangedListener(new TextWatcher() {
-
-      public void afterTextChanged(Editable editable) {
-
-	  frame.textChangedEvent(id, editable.toString());
-      }
-
-      public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-      public void onTextChanged(CharSequence s, int start, int before, int count) {}
-   });
-    this.addView(editText);
+ 
+  @Override
+  public void addChild(View view) {
+    addView((View)view);
   }
 
   @Override
   public void handleCommand(NativeCommand command) {
-    System.out.println("Message FWLayout " + this.getId());
-    
-    switch(command.getCommand()){
-    case CREATE_BUTTON:
-      createButton(command.getChildInternalId(), command.getTextValue());
-      break;
-
-    case CREATE_PICKER:
-      FWPicker picker = new FWPicker(context);
-      picker.setId(command.getChildInternalId());
-      FrameWork.addToViewList(picker);
-      this.addView(picker);
-      break;
-
-    case CREATE_LINEAR_LAYOUT:
-      System.out.println("FWLayout " + this.getId() + " creating layout " + command.getChildInternalId());
-      FWLayout layout = new FWLayout(context);
-      layout.setId(command.getChildInternalId());
-      FrameWork.addToViewList(layout);
-      if (command.getValue() == 2){
-	layout.setOrientation(LinearLayout.HORIZONTAL);
-      } else if (command.getValue() == 1){
-	layout.setOrientation(LinearLayout.VERTICAL);
-      }
-      this.addView(layout);
-      break;
-
-    case CREATE_OPENGL_VIEW:
-      break;
-
-    case CREATE_TEXTFIELD:
-      createEditText(command.getChildInternalId(), command.getTextValue());
-      break;
-
-    case CREATE_TEXTLABEL:
-      System.out.println("FWLayout " + this.getId() + " creating textlabel");
-      TextView textView = new TextView(context);
-      textView.setId(command.getChildInternalId());
-      textView.setText(command.getTextValue());
-      this.addView(textView);
-      break;
-
-    case SET_ATTRIBUTE:
-      break;
-    case CREATE_IMAGE_ELEMENT:
-      ImageView imageView = new ImageView(context);
-      imageView.setId(command.getChildInternalId());
-      //Missing image set
-//      imageView.setImageBitmap();
-      break;
-      
-    default:
-      System.out.println("Message couldn't be handled by Element");
-      break;
-    }
+    System.out.println("Native Surface couldn't handle command");
+    //Possible commands that have to be handled
   }
 
 }
