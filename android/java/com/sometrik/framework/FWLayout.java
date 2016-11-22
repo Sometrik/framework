@@ -2,6 +2,7 @@ package com.sometrik.framework;
 
 import android.content.Context;
 import android.view.View;
+import android.view.ViewParent;
 import android.widget.LinearLayout;
 
 public class FWLayout extends LinearLayout implements NativeCommandHandler {
@@ -22,8 +23,15 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
   
   @Override
   public void showView(){
-    frame.setContentView(this);
+    System.out.println("oh no");
+    ViewParent vp = getParent();
+    if (vp == null){
+      frame.setContentView(this);
+    } else {
+      frame.setContentView((View)vp);
+    }
     FrameWork.currentView = getId();
+    System.out.println("here we go");
   }
  
   @Override

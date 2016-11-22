@@ -84,6 +84,8 @@ public class NativeCommand {
   
   public void apply(NativeCommandHandler view) {
 
+    System.out.println("Processing message " + command);
+
     switch (command) {
 
     case CREATE_FORMVIEW:
@@ -213,8 +215,8 @@ public class NativeCommand {
     FWLayout layout = new FWLayout(frame);
     layout.setId(getChildInternalId());
     FrameWork.views.put(getChildInternalId(), layout);
-//    ScrollView scrollView = new ScrollView(frame);
-//    scrollView.addView(layout);
+    ScrollView scrollView = new ScrollView(frame);
+    scrollView.addView(layout);
   }
 
   public String getKey() {
