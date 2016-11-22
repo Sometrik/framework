@@ -1,6 +1,6 @@
 package com.sometrik.framework;
 
-import java.util.ArrayList;
+import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import android.content.Context;
@@ -13,7 +13,6 @@ public class FWPicker extends Spinner implements NativeMessageHandler {
   
   private Context context;
   private ArrayAdapter<String> adapter;
-  private ArrayList<Integer> numberList;
   private TreeMap<Integer, String> valueMap;
   private final int id;
   
@@ -23,7 +22,6 @@ public class FWPicker extends Spinner implements NativeMessageHandler {
     super(context);
     adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item);
     valueMap = new TreeMap<Integer, String>();
-    numberList = new ArrayList<Integer>();
     id = getId();
     this.context = context;
     
@@ -46,9 +44,8 @@ public class FWPicker extends Spinner implements NativeMessageHandler {
     case ADD_OPTION:
       adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item);
       valueMap.put(command.getValue(), command.getTextValue());
-      numberList.add(command.getValue());
-      for (int i = 0; i < numberList.size(); i++) {
-	adapter.add(valueMap.get(numberList.get(i)));
+      for(Entry<Integer, String> entry : valueMap.entrySet()) {
+	adapter.add(entry.getValue());
       }
       setAdapter(adapter);
       break;
