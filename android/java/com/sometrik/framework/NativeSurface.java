@@ -37,4 +37,9 @@ public class NativeSurface extends SurfaceView implements NativeCommandHandler {
     //Possible commands that have to be handled
   }
 
+  @Override
+  public void addOption() {
+    System.out.println("Native Surface couldn't handle command");
+  }
+
 }

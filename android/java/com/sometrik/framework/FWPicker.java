@@ -71,4 +71,10 @@ public class FWPicker extends Spinner implements NativeCommandHandler {
     //TODO
   }
 
+  @Override
+  public void addOption() {
+    // TODO Auto-generated method stub
+    
+  }
+
 }

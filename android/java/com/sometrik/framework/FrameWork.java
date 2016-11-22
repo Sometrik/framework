@@ -572,7 +572,10 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback, Nativ
   @Override
   public void addChild(View view) {
     System.out.println("FrameWork couldn't handle addChild");
-    //TODO
+  }
+  @Override
+  public void addOption() {
+    System.out.println("FrameWork couldn't handle addOption");
   }
 
 }
