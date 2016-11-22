@@ -82,7 +82,7 @@ public class MyGLSurfaceView extends GLSurfaceView implements NativeCommandHandl
   }
 
   @Override
-  public void addOption() {
+  public void addOption(int position, String text) {
     System.out.println("Native Surface couldn't handle command");
   }
 

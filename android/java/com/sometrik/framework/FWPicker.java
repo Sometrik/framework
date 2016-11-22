@@ -39,20 +39,6 @@ public class FWPicker extends Spinner implements NativeCommandHandler {
   }
 
   public void handleCommand(NativeCommand command) {
-    
-    switch (command.getCommand()) {
-    case ADD_OPTION:
-      adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item);
-      valueMap.put(command.getValue(), command.getTextValue());
-      for(Entry<Integer, String> entry : valueMap.entrySet()) {
-	adapter.add(entry.getValue());
-      }
-      setAdapter(adapter);
-      break;
-    default:
-      System.out.println("Message couldn't be handled by Picker");
-      break;
-    }
   }
 
   @Override
@@ -72,9 +58,12 @@ public class FWPicker extends Spinner implements NativeCommandHandler {
   }
 
   @Override
-  public void addOption() {
-    // TODO Auto-generated method stub
-    
+  public void addOption(int position, String text) {
+    adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item);
+    valueMap.put(position, text);
+    for(Entry<Integer, String> entry : valueMap.entrySet()) {
+	adapter.add(entry.getValue());
+    }
+    setAdapter(adapter);
   }
-
 }
