@@ -92,15 +92,7 @@ public class NativeCommand {
       break;
       
     case CREATE_LINEAR_LAYOUT:
-      System.out.println("FWLayout " + getInternalId() + " creating layout " + getChildInternalId());
-      FWLayout layout = new FWLayout(frame);
-      layout.setId(getChildInternalId());
-      FrameWork.addToViewList(layout);
-      if (getValue() == 2) {
-	layout.setOrientation(LinearLayout.HORIZONTAL);
-      } else if (getValue() == 1) {
-	layout.setOrientation(LinearLayout.VERTICAL);
-      }
+      FWLayout layout = createLinearLayout();
       view.addChild(layout);
       break;
 
@@ -158,6 +150,18 @@ public class NativeCommand {
       System.out.println("Message couldn't be handled");
       break;
     }
+  }
+  
+  private FWLayout createLinearLayout(){
+    FWLayout layout = new FWLayout(frame);
+    layout.setId(getChildInternalId());
+    FrameWork.addToViewList(layout);
+    if (getValue() == 2) {
+	layout.setOrientation(LinearLayout.HORIZONTAL);
+    } else if (getValue() == 1) {
+	layout.setOrientation(LinearLayout.VERTICAL);
+    }
+    return layout;
   }
 
   private Button createButton() {
