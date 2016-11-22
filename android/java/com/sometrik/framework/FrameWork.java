@@ -182,9 +182,9 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback, Nativ
     return displaymetrics;
   }
   
-  public static void addToViewList(int id, NativeMessageHandler view){
+  public static void addToViewList( NativeMessageHandler view){
     System.out.println(view.getElementId() + " added to view list");
-    views.put(id, view);
+    views.put(view.getElementId(), view);
   }
 
   public MyGLSurfaceView getSurfaceView() {
