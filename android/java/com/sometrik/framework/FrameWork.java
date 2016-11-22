@@ -102,10 +102,6 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback, Nativ
     initNative();
   }
 
-  public void handleCommand(NativeCommand command) {
-    //TODO
-  }
-
   private void initNative(){
     
     DisplayMetrics displayMetrics = getDisplayMetrics();

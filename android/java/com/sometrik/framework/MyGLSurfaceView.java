@@ -74,13 +74,7 @@ public class MyGLSurfaceView extends GLSurfaceView implements NativeCommandHandl
     System.out.println("Native Surface couldn't handle addChild");
     //TODO
   }
-
-  @Override
-  public void handleCommand(NativeCommand command) {
-    System.out.println("Native Surface couldn't handle command");
-    //Possible commands that have to be handled
-  }
-
+  
   @Override
   public void addOption(int position, String text) {
     System.out.println("Native Surface couldn't handle command");
