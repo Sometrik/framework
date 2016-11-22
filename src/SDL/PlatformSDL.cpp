@@ -4,7 +4,7 @@
 #include <Logger.h>
 #include <ContextCairo.h>
 #include <SDLSoundCanvas.h>
-#include <Message.h>
+#include <Command.h>
 #include <FWApplication.h>
 
 #include <InitEvent.h>
@@ -55,14 +55,14 @@ public:
     return std::shared_ptr<canvas::ContextFactory>(new canvas::CairoContextFactory);
   }
 
-  void sendMessage(const Message & message) override {
-    FWPlatform::sendMessage(message);
-    switch (message.getType()) {
-    case Message::SET_CAPTION:
-      SDL_WM_SetCaption(message.getTextValue().c_str(),
-			message.getTextValue().c_str());
+  void sendCommand(const Command & command) override {
+    FWPlatform::sendCommand(command);
+    switch (command.getType()) {
+    case Command::SET_CAPTION:
+      SDL_WM_SetCaption(command.getTextValue().c_str(),
+			command.getTextValue().c_str());
       break;
-    case Message::SHOW_MESSAGE_DIALOG:
+    case Command::SHOW_MESSAGE_DIALOG:
 #if 0
       SDL_ShowSimpleMessageBox( SDL_MESSAGEBOX_INFORMATION,
 				title.c_str(),
@@ -70,7 +70,7 @@ public:
 				NULL);
 #endif
       break;
-    case Message::REQUEST_REDRAW:
+    case Command::REQUEST_REDRAW:
       redraw_needed = true;
       break;
     default:
@@ -88,10 +88,6 @@ public:
 
   // std::shared_ptr<EventLoop> createEventLoop() override;
   
-  std::string showTextEntryDialog(const std::string & message) {
-    return "";
-  }
-
   std::string getBundleFilename(const char * filename) {
     string s = "assets/";
     return s + filename;
