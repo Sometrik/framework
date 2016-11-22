@@ -5,7 +5,6 @@ import java.util.TreeMap;
 
 import android.content.Context;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
@@ -61,7 +60,7 @@ public class FWPicker extends Spinner implements NativeMessageHandler {
 
   @Override
   public void showView() {
-    
+    System.out.println("Picker couldn't handle showView");
   }
 
   @Override

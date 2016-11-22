@@ -1,14 +1,8 @@
 package com.sometrik.framework;
 
 import android.content.Context;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 public class FWLayout extends LinearLayout implements NativeMessageHandler{
   
