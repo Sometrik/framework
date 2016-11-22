@@ -136,6 +136,7 @@ public class NativeCommand {
     case ADD_OPTION:
       //Forward Command to FWPicker
       view.addOption(getValue(), getTextValue());
+      break;
     case POST_NOTIFICATION:
       // TODO
       break;
