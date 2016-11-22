@@ -61,35 +61,40 @@ public class NativeCommand {
     CONSUME_PURCHASE
   }
   
-  public NativeCommand(CommandType command, int internalId, int childInternalId, String textValue, String textValue2){
+  public NativeCommand(FrameWork frame, CommandType command, int internalId, int childInternalId, String textValue, String textValue2){
+    this.frame = frame;
     this.command = command;
     this.internalId = internalId;
     this.childInternalId = childInternalId;
     this.textValue = textValue;
     this.textValue2 = textValue2;
+
+    apply(FrameWork.views.get(internalId));
   }
-  public NativeCommand(int messageTypeId, int internalId, int childInternalId, int value, String textValue, String textValue2){
+  public NativeCommand(FrameWork frame, int messageTypeId, int internalId, int childInternalId, int value, String textValue, String textValue2){
+    this.frame = frame;
     command = CommandType.values()[messageTypeId];
     this.internalId = internalId;
     this.childInternalId = childInternalId;
     this.value = value;
     this.textValue = textValue;
     this.textValue2 = textValue2;
+    
+    apply(FrameWork.views.get(internalId));
   }
   
-  public void apply(NativeMessageHandler view, Context context) {
-    frame = (FrameWork)context;
+  public void apply(NativeMessageHandler view) {
 
     switch (command) {
 
     case CREATE_FORMVIEW:
       System.out.println("creating formView " + getChildInternalId());
-      createFormView(context);
+      createFormView();
       break;
       
     case CREATE_LINEAR_LAYOUT:
       System.out.println("FWLayout " + getInternalId() + " creating layout " + getChildInternalId());
-      FWLayout layout = new FWLayout(context);
+      FWLayout layout = new FWLayout(frame);
       layout.setId(getChildInternalId());
       FrameWork.addToViewList(layout);
       if (getValue() == 2) {
@@ -101,12 +106,12 @@ public class NativeCommand {
       break;
 
     case CREATE_BUTTON:
-      Button button = createButton(context);
+      Button button = createButton();
       view.addChild(button);
       break;
 
     case CREATE_PICKER:
-      FWPicker picker = createSpinner(context);
+      FWPicker picker = createSpinner();
       view.addChild(picker);
       break;
 
@@ -114,19 +119,19 @@ public class NativeCommand {
       break;
 
     case CREATE_TEXTFIELD:
-      EditText editText = createEditText(context);
+      EditText editText = createEditText();
       view.addChild(editText);
       break;
 
     case CREATE_TEXTLABEL:
-      TextView textView = createTextView(context);
+      TextView textView = createTextView();
       view.addChild(textView);
       break;
 
     case SET_ATTRIBUTE:
       break;
     case CREATE_IMAGE_ELEMENT:
-      ImageView imageView = new ImageView(context);
+      ImageView imageView = new ImageView(frame);
       imageView.setId(getChildInternalId());
       // Missing image set
       // imageView.setImageBitmap();
@@ -156,11 +161,10 @@ public class NativeCommand {
     }
   }
 
-  private Button createButton(Context context) {
-    Button button = new Button(context);
+  private Button createButton() {
+    Button button = new Button(frame);
     button.setId(getInternalId());
     button.setText(getTextValue());
-    final FrameWork frame = (FrameWork) context;
 
     button.setOnClickListener(new OnClickListener() {
       @Override
@@ -171,11 +175,10 @@ public class NativeCommand {
     return button;
   }
   
-  private EditText createEditText(Context context){
-    final EditText editText = new EditText(context);
+  private EditText createEditText(){
+    final EditText editText = new EditText(frame);
     editText.setId(getChildInternalId());
     editText.setText(getTextValue());
-    final FrameWork frame = (FrameWork) context;
     editText.setMinimumWidth(400000 / (int)frame.getScreenWidth());
     editText.addTextChangedListener(new TextWatcher() {
       public void afterTextChanged(Editable editable) {
@@ -188,23 +191,23 @@ public class NativeCommand {
     return editText;
   }
   
-  private FWPicker createSpinner(Context context){
-    FWPicker picker = new FWPicker(context);
+  private FWPicker createSpinner(){
+    FWPicker picker = new FWPicker(frame);
     picker.setId(getChildInternalId());
     FrameWork.views.put(getChildInternalId(), picker);
     
     return picker;
   }
 
-  private TextView createTextView(Context context) {
-    TextView textView = new TextView(context);
+  private TextView createTextView() {
+    TextView textView = new TextView(frame);
     textView.setId(getChildInternalId());
     textView.setText(getTextValue());
     return textView;
   }
   
-  private void createFormView(Context context){
-    FWLayout layout = new FWLayout(context);
+  private void createFormView(){
+    FWLayout layout = new FWLayout(frame);
     layout.setId(getChildInternalId());
     FrameWork.views.put(getChildInternalId(), layout);
   }

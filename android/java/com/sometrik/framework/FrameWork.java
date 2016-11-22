@@ -105,8 +105,7 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback, Nativ
   }
 
   public void handleCommand(NativeCommand command) {
-    System.out.println("id: " + command.getInternalId() + " MessageType: " + String.valueOf(command.getCommand()));
-    command.apply(views.get(command.getInternalId()), this);
+    //TODO
   }
 
   private void initNative(){
