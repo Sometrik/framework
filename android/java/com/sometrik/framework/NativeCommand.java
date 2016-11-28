@@ -109,6 +109,11 @@ public class NativeCommand {
       break;
 
     case CREATE_OPENGL_VIEW:
+      frame.createOpenGLView(childInternalId);
+      break;
+
+    case CREATE_NATIVE_OPENGL_VIEW:
+      frame.createNativeOpenGLView(childInternalId);
       break;
 
     case CREATE_TEXTFIELD:

@@ -151,7 +151,8 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback, Nativ
     layout.setId(id);
     views.put(id, layout);
   }
-  private void createOpenGLView(int id){
+  
+  public MyGLSurfaceView createOpenGLView(int id){
     MyGLRenderer renderer = new MyGLRenderer(this, screenWidth, screenHeight);
     MyGLSurfaceView mGLView = new MyGLSurfaceView(this, renderer, id);
     mGLView.setOnTouchListener(new MyOnTouchListener(this));
@@ -162,9 +163,10 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback, Nativ
       setContentView(mGLView);
       currentView = id;
     }
+    return mGLView;
   }
   
-  private void createNativeOpenGLView(int id){
+  public void createNativeOpenGLView(int id){
     NativeSurface surfaceView = new NativeSurface(this);
     surfaceView.setId(id);
     surfaceView.setOnTouchListener(new MyOnTouchListener(this));
