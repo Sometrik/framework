@@ -469,6 +469,15 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback, Nativ
     Message msg = Message.obtain(null, 1, command);
     frameWork.mainHandler.sendMessage(msg);
   }
+  
+  public void addToPrefs(String key, String value){
+    editor.putString(key, value);
+    editor.apply();
+  }
+  
+  public String getFromPrefs(String key){
+    return prefs.getString(key, "");
+  }
     
   @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
