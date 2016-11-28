@@ -15,8 +15,13 @@ class JavaCache {
 
 public:
   JavaCache(JNIEnv * env) {
-    nativeCommandClass = (jclass) env->NewGlobalRef(env->FindClass("com/sometrik/framework/NativeCommand"));
+    env->GetJavaVM(&javaVM);
 
+    nativeCommandClass = (jclass) env->NewGlobalRef(env->FindClass("com/sometrik/framework/NativeCommand"));
+    frameworkClass = (jclass) env->NewGlobalRef(env->FindClass("com/sometrik/framework/FrameWork"));
+    systemClass = (jclass) env->NewGlobalRef(env->FindClass("java/lang/System"));
+
+    currentTimeMillisMethod = env->GetStaticMethodID(systemClass, "currentTimeMillis", "()J");
     nativeCommandConstructor = env->GetMethodID(nativeCommandClass, "<init>", "(Lcom/sometrik/framework/FrameWork;IIIILjava/lang/String;Ljava/lang/String;)V");
 
     if (env->ExceptionCheck()){
@@ -25,13 +30,34 @@ public:
   }
 
   ~JavaCache() {
-//      env->DeleteGlobalRef(nativeCommandClass);
+    JNIEnv * env = getJNIEnv();
+      env->DeleteGlobalRef(nativeCommandClass);
+      env->DeleteGlobalRef(frameworkClass);
+  }
+
+  JNIEnv * getJNIEnv() {
+    __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Canvas getJNIENv called");
+    if (javaVM == NULL){
+      __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "VM is null");
+    }
+
+    JNIEnv *Myenv = NULL;
+    javaVM->GetEnv((void**)&Myenv, JNI_VERSION_1_6);
+    if (Myenv == NULL){
+       __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Env is null");
+     }
+    return Myenv;
   }
 
   jclass nativeCommandClass;
+  jclass frameworkClass;
+  jclass systemClass;
 
+  jmethodID currentTimeMillisMethod;
   jmethodID nativeCommandConstructor;
 
+private:
+  JavaVM * javaVM;
 };
 
 class AndroidPlatform: public FWPlatform {

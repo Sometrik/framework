@@ -87,9 +87,7 @@ AndroidPlatform::sendCommand(const Command & command) {
 double
 AndroidPlatform::getTime() const {
   auto env = getJNIEnv();
-  jclass systemClass = env->FindClass("java/lang/System");
-  double currentTime = (double)env->CallStaticLongMethod(systemClass, env->GetStaticMethodID(systemClass, "currentTimeMillis", "()J"));
-  env->DeleteLocalRef(systemClass);
+  double currentTime = (double)env->CallStaticLongMethod(javaCache.systemClass, javaCache.currentTimeMillisMethod);
 
   return currentTime;
 }
