@@ -94,8 +94,6 @@ AndroidPlatform::sendCommand(const Command & command) {
   FWPlatform::sendCommand(command);
 
   auto env = getJNIEnv();
-   jclass commandCls = env->FindClass("com/sometrik/framework/NativeCommand");
-   jmethodID commandConstructor = env->GetMethodID(commandCls, "<init>", "(Lcom/sometrik/framework/FrameWork;IIIILjava/lang/String;Ljava/lang/String;)V");
    int commandTypeId = int(command.getType());
    const char * textValue = command.getTextValue().c_str();
    const char * textValue2 = command.getTextValue2().c_str();
@@ -103,7 +101,7 @@ AndroidPlatform::sendCommand(const Command & command) {
    jstring jtextValue2 = env->NewStringUTF(textValue2);
 
 
-   jobject jcommand = env->NewObject(commandCls, commandConstructor, framework, commandTypeId, command.getInternalId(), command.getChildInternalId(), command.getValue(), jtextValue, jtextValue2);
+   jobject jcommand = env->NewObject(javaCache.nativeCommandClass, javaCache.nativeCommandConstructor, framework, commandTypeId, command.getInternalId(), command.getChildInternalId(), command.getValue(), jtextValue, jtextValue2);
 
    //Fix these releases
 //  env->ReleaseStringUTFChars(jtextValue, textValue);

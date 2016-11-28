@@ -11,10 +11,33 @@
 
 #include <EventQueue.h>
 
+class JavaCache {
+
+public:
+  JavaCache(JNIEnv * env) {
+    nativeCommandClass = (jclass) env->NewGlobalRef(env->FindClass("com/sometrik/framework/NativeCommand"));
+
+    nativeCommandConstructor = env->GetMethodID(nativeCommandClass, "<init>", "(Lcom/sometrik/framework/FrameWork;IIIILjava/lang/String;Ljava/lang/String;)V");
+
+    if (env->ExceptionCheck()){
+
+    }
+  }
+
+  ~JavaCache() {
+//      env->DeleteGlobalRef(nativeCommandClass);
+  }
+
+  jclass nativeCommandClass;
+
+  jmethodID nativeCommandConstructor;
+
+};
+
 class AndroidPlatform: public FWPlatform {
 public:
   AndroidPlatform(JNIEnv * _env, jobject _mgr, jobject _framework, float _display_scale, const char * _glsl_version, bool _has_es3) :
-      FWPlatform(_display_scale, _glsl_version, _has_es3) {
+      FWPlatform(_display_scale, _glsl_version, _has_es3), javaCache(JavaCache(_env)) {
     framework = _env->NewGlobalRef(_framework);
     mgr = _env->NewGlobalRef(_mgr);
   }
@@ -52,6 +75,7 @@ public:
   static void* threadStartCallback(void *myself);
 
   JNIEnv* getJNIEnv() const;
+//  JavaCache getJavaCache() const { return &javaCache; }
 
   void queueEvent(int internal_id, EventBase & ev) {
 #ifdef USE_NATIVE_SURFACE
@@ -65,6 +89,7 @@ public:
 
 private:
   pthread_t _threadId;
+  JavaCache javaCache;
 
   EGLDisplay display = 0;
   EGLSurface surface = 0;
@@ -78,4 +103,6 @@ private:
   EventQueue eventqueue;
   int runloop_level = 0;
   bool renderingEnabled = true;
+
+
 };
