@@ -47,12 +47,7 @@ std::string AndroidPlatform::getLocalFilename(const char * filename, FileType ty
   switch (type) {
   case DATABASE:
   case CACHE_DATABASE:
-    jfilename = env->NewStringUTF(filename);
-    path = (jstring) env->CallObjectMethod(framework, env->GetMethodID(env->GetObjectClass(framework), "getDBPath", "(Ljava/lang/String;)Ljava/lang/String;"), jfilename);
-    result = env->GetStringUTFChars(path, JNI_FALSE);
-    env->ReleaseStringUTFChars(jfilename, filename);
-    env->ReleaseStringUTFChars(path, result.c_str());
-    return result;
+    return "";
   case NORMAL:
     return "";
   }
