@@ -54,6 +54,27 @@ std::string AndroidPlatform::getLocalFilename(const char * filename, FileType ty
   return "";
 }
 
+
+std::string AndroidPlatform::loadValue(const std::string & key) {
+  auto env = getJNIEnv();
+  jstring jkey = env->NewStringUTF(key.c_str());
+  jstring value = (jstring) env->CallObjectMethod(framework, javaCache.loadPrefsValueMethod, jkey);
+  std::string result = env->GetStringUTFChars(value, JNI_FALSE);
+  env->ReleaseStringUTFChars(jkey, key.c_str());
+  env->ReleaseStringUTFChars(value, result.c_str());
+
+  return result;
+}
+
+void AndroidPlatform::storeValue(const std::string & key, const std::string & value) {
+  auto env = getJNIEnv();
+  jstring jkey = env->NewStringUTF(key.c_str());
+  jstring jvalue = env->NewStringUTF(value.c_str());
+  env->CallVoidMethod(framework, javaCache.addPrefsValueMethod, jkey, jvalue);
+  env->ReleaseStringUTFChars(jkey, key.c_str());
+  env->ReleaseStringUTFChars(jvalue, value.c_str());
+}
+
 void
 AndroidPlatform::sendCommand(const Command & command) {
   FWPlatform::sendCommand(command);
