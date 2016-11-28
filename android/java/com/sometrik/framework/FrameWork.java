@@ -29,6 +29,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.SurfaceHolder;
+import android.view.SurfaceHolder.Callback;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.View.OnTouchListener;
@@ -37,7 +38,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
-public class FrameWork extends Activity implements SurfaceHolder.Callback, NativeCommandHandler {
+public class FrameWork extends Activity implements NativeCommandHandler {
 
   private MyGLSurfaceView mGLView;
   private RelativeLayout mainView;
@@ -152,12 +153,22 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback, Nativ
     views.put(id, layout);
   }
   
-  public MyGLSurfaceView createOpenGLView(int id){
+  public MyGLSurfaceView createOpenGLView(final int id){
     MyGLRenderer renderer = new MyGLRenderer(this, screenWidth, screenHeight);
     MyGLSurfaceView mGLView = new MyGLSurfaceView(this, renderer, id);
     mGLView.setOnTouchListener(new MyOnTouchListener(this));
     mGLView.setWillNotDraw(false);
-    mGLView.getHolder().addCallback(this);
+    mGLView.getHolder().addCallback(new Callback() {
+      public void surfaceDestroyed(SurfaceHolder holder) {
+      }
+
+      public void surfaceCreated(SurfaceHolder holder) {
+      }
+
+      public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+	nativeSetSurface(holder.getSurface(), id);
+      }
+    });
     views.put(id, mGLView);
     if (currentView == 0) {
       setContentView(mGLView);
@@ -165,12 +176,23 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback, Nativ
     }
     return mGLView;
   }
-  
-  public void createNativeOpenGLView(int id){
+
+  public void createNativeOpenGLView(final int id) {
     NativeSurface surfaceView = new NativeSurface(this);
     surfaceView.setId(id);
     surfaceView.setOnTouchListener(new MyOnTouchListener(this));
-    surfaceView.getHolder().addCallback(this);
+    surfaceView.getHolder().addCallback(new Callback() {
+      public void surfaceDestroyed(SurfaceHolder holder) {
+      }
+
+      public void surfaceCreated(SurfaceHolder holder) {
+      }
+
+      public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+	nativeSetSurface(holder.getSurface(), id);
+      }
+    });
+
     views.put(id, surfaceView);
     if (currentView == 0) {
       setContentView(surfaceView);
@@ -544,23 +566,6 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback, Nativ
   public void onRestart(){
     super.onRestart();
     nativeOnRestart(appId);
-  }
-  
-
-  @Override
-  public void surfaceChanged(SurfaceHolder holder, int arg1, int arg2, int arg3) {
-    nativeSetSurface(holder.getSurface(), currentView);
-  }
-
-  @Override
-  public void surfaceCreated(SurfaceHolder holder) {
-    // TODO Auto-generated method stub
-    
-  }
-
-  @Override
-  public void surfaceDestroyed(SurfaceHolder holder) {
-    // Empty
   }
 
 
