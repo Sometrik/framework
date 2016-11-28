@@ -21,6 +21,8 @@ public:
     frameworkClass = (jclass) env->NewGlobalRef(env->FindClass("com/sometrik/framework/FrameWork"));
     systemClass = (jclass) env->NewGlobalRef(env->FindClass("java/lang/System"));
 
+    loadPrefsValueMethod = env->GetMethodID(frameworkClass, "addToPrefs", "(Ljava/lang/String;Ljava/lang/String;)V");
+    addPrefsValueMethod  = env->GetMethodID(frameworkClass, "getFromPrefs", "(Ljava/lang/String;)Ljava/lang/String;");
     currentTimeMillisMethod = env->GetStaticMethodID(systemClass, "currentTimeMillis", "()J");
     nativeCommandConstructor = env->GetMethodID(nativeCommandClass, "<init>", "(Lcom/sometrik/framework/FrameWork;IIIILjava/lang/String;Ljava/lang/String;)V");
 
@@ -53,6 +55,9 @@ public:
   jclass frameworkClass;
   jclass systemClass;
 
+  jmethodID loadPrefsValueMethod;
+  jmethodID addPrefsValueMethod;
+  jmethodID storeValueMethod;
   jmethodID currentTimeMillisMethod;
   jmethodID nativeCommandConstructor;
 
