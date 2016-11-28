@@ -34,16 +34,6 @@ using namespace std;
 
 extern FWApplication * applicationMain();
 
-void AndroidPlatform::showCanvas(canvas::ContextAndroid & context) {
-
-  __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "showCanvas called");
-  auto env = getJNIEnv();
-  jclass cls = env->GetObjectClass(framework);
-  jmethodID methodRef = env->GetMethodID(cls, "setNativeCanvas", "(Landroid/graphics/Bitmap;)V");
-  env->CallVoidMethod(framework, methodRef, dynamic_cast<canvas::AndroidSurface&>(context.getDefaultSurface()).getBitmap());
-
-}
-
 std::string AndroidPlatform::getBundleFilename(const char * filename) {
   return filename;
 }
