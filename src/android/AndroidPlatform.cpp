@@ -29,6 +29,7 @@
 #include <AndroidConfigurationEvent.h>
 
 #include <android_fopen.h>
+#include <unistd.h>
 
 using namespace std;
 
@@ -88,6 +89,7 @@ AndroidPlatform::sendCommand(const Command & command) {
 
 
    jobject jcommand = env->NewObject(javaCache.nativeCommandClass, javaCache.nativeCommandConstructor, framework, commandTypeId, command.getInternalId(), command.getChildInternalId(), command.getValue(), jtextValue, jtextValue2);
+   env->CallStaticVoidMethod(javaCache.frameworkClass, javaCache.sendCommandMethod, framework, jcommand);
 
    //Fix these releases
 //  env->ReleaseStringUTFChars(jtextValue, textValue);
@@ -215,17 +217,37 @@ AndroidPlatform::startThread() {
 void
 AndroidPlatform::renderLoop() {
   runloop_level++;
+
+  bool canDraw = false;
+
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Looping louie");
 
   while (renderingEnabled) {
     if (!eventqueue.empty()) {
       auto ev = eventqueue.pop();
+
+      std::ostringstream s;
+      s << "trying to dispatch event " << typeid(*ev.second.get()).name() << " to: " << ev.first ;
+      getLogger().println(s.str());
+
       postEvent(ev.first, *ev.second.get());
+
 
       auto ev2 = dynamic_cast<AndroidConfigurationEvent*>(ev.second.get());
       if (ev2) {
+        __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "initializeRenderer reached");
 	initializeRenderer(ev2->getWindow());
+	canDraw = true;
       }
+
+    }
+
+    if (canDraw) {
+      UpdateEvent ev(getTime());
+      postEvent(getActiveViewId(), ev);
+
+      DrawEvent ev2(getTime());
+      postEvent(getActiveViewId(), ev2);
     }
 
     // process incoming messages
@@ -379,7 +401,7 @@ void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, job
     platform->setJavaVM(gJavaVM);
   }
   application->initialize(platform.get());
-  // platform->onResize(screenWidth, screenHeight);
+   platform->onResize(screenWidth, screenHeight);
   application->initializeContent();
 #endif
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Init end");
@@ -422,6 +444,7 @@ void Java_com_sometrik_framework_FrameWork_nativeOnRestart(JNIEnv* env, jobject 
   
 void Java_com_sometrik_framework_FrameWork_textChangedEvent(JNIEnv* env, jobject thiz, jint id, jstring jtext) {
   const char * text = env->GetStringUTFChars(jtext, 0);
+  __android_log_print(ANDROID_LOG_INFO, "Sometrik", "textChangedEvent: %s", text);
   TextEvent ev(platform->getTime(), text);
   env->ReleaseStringUTFChars(jtext, text);
   platform->queueEvent(id, ev);

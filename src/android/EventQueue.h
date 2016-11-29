@@ -15,7 +15,11 @@ class EventQueue {
     pthread_mutex_destroy(&_mutex);
   }
 
-  void push(int internal_id, EventBase & ev) { data.push_front(std::pair<int, std::shared_ptr<EventBase> >(internal_id, ev.dup())); }
+  void push(int internal_id, EventBase & ev) {
+    pthread_mutex_lock (&_mutex);
+    data.push_front(std::pair<int, std::shared_ptr<EventBase> >(internal_id, ev.dup()));
+    pthread_mutex_unlock(&_mutex);
+  }
   std::pair<int, std::shared_ptr<EventBase> > pop() {
     pthread_mutex_lock (&_mutex);
     if (!data.empty()) {
@@ -28,10 +32,15 @@ class EventQueue {
       return std::pair<int, std::shared_ptr<EventBase> >(0, std::shared_ptr<EventBase>(0));
     }
   }
-  bool empty() const { return data.empty(); }
+  bool empty() const {
+    pthread_mutex_lock(&_mutex);
+    bool e = data.empty();
+    pthread_mutex_unlock(&_mutex);
+    return e;
+  }
   
  private:
-  pthread_mutex_t _mutex;
+  mutable pthread_mutex_t _mutex;
   std::list<std::pair<int, std::shared_ptr<EventBase> > > data;
 };
 
