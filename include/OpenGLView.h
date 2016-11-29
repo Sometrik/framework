@@ -13,7 +13,7 @@ class OpenGLView : public FWViewBase {
 
   void initialize(FWPlatform * _platform) override;
 
-  void onResize(ResizeEvent & ev);
+  void onResizeEvent(ResizeEvent & ev) override;
   
   int getLogicalWidth() const { return logical_width; }
   int getLogicalHeight() const { return logical_height; }
