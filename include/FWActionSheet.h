@@ -31,7 +31,7 @@ class FWActionSheet : public Element {
   const std::vector<FWOption> & getOptions() const { return options; }
 
   int showModal() override {
-    Command c0(Command::CREATE_ACTION_SHEET, getInternalId());
+    Command c0(Command::CREATE_ACTION_SHEET, getParentInternalId(), getInternalId());
     c0.setTextValue(title);
     sendCommand(c0);
     for (auto & op : options) {
