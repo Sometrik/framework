@@ -99,6 +99,17 @@ public class FrameWork extends Activity implements NativeCommandHandler {
     // Get preferences (simple key-value database)
     prefs = this.getSharedPreferences("com.example.Work", Context.MODE_PRIVATE);
     editor = prefs.edit();
+    
+    mainHandler = new Handler(){
+      
+      public void handleMessage(Message msg){
+	
+	NativeCommand command = (NativeCommand)msg.obj;
+	command.apply(FrameWork.views.get(command.getInternalId()));
+	
+      }
+      
+    };
 
     initNative();
   }
@@ -122,6 +133,9 @@ public class FrameWork extends Activity implements NativeCommandHandler {
     float xSize = displayMetrics.widthPixels / displayMetrics.scaledDensity;
     float ySize = displayMetrics.heightPixels / displayMetrics.scaledDensity;
     onInit(getAssets(), xSize, ySize, displayMetrics.scaledDensity, hasEs3);
+    
+    
+    
   }
 
   // Get screen settings
@@ -178,7 +192,9 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   }
 
   public void createNativeOpenGLView(final int id) {
+    System.out.println("about to create native surface");
     NativeSurface surfaceView = new NativeSurface(this);
+    System.out.println("Piip");
     surfaceView.setId(id);
     surfaceView.setOnTouchListener(new MyOnTouchListener(this));
     surfaceView.getHolder().addCallback(new Callback() {
@@ -189,15 +205,17 @@ public class FrameWork extends Activity implements NativeCommandHandler {
       }
 
       public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+	System.out.println("setting native surface");
 	nativeSetSurface(holder.getSurface(), id);
+	System.out.println("native surface has been set");
       }
     });
 
+    System.out.println("...");
     views.put(id, surfaceView);
-    if (currentView == 0) {
-      setContentView(surfaceView);
-      currentView = id;
-    }
+    setContentView(surfaceView);
+    currentView = id;
+    System.out.println("native surface created");
   }
 
   // Lisää kuvan antaminen // Aika // Ääni
@@ -278,6 +296,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
     builder.setTitle(title);
     builder.setMessage(message);
     builder.setCancelable(false);
+    System.out.println("creating message dialog");
 
     // Negative button listener
     builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
