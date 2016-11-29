@@ -5,6 +5,7 @@
 #include <Command.h>
 #include <CommandEvent.h>
 #include <TouchEvent.h>
+#include <FWPlatform.h>
 
 class Button : public Element {
  public:
@@ -18,7 +19,9 @@ class Button : public Element {
   }
 
   void onTouchEvent(TouchEvent & ev) override {
+    getPlatform().getLogger().println("Button received event");
     if (ev.getType() == TouchEvent::ACTION_CLICK) {
+      getPlatform().getLogger().println("Button received event was handled");
       CommandEvent ev2(ev.getTimestamp(), getId());
       ev2.dispatch(*this);
     }

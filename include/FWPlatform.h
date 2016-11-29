@@ -8,6 +8,7 @@
 #include <SoundCanvas.h>
 #include <PrimitiveRenderer.h>
 #include <FWDefs.h>
+#include <sstream>
 
 #include <string>
 #include <memory>
@@ -77,7 +78,11 @@ class FWPlatform {
   void postEvent(int internal_id, EventBase & ev) {
     Element * e = getApplication().getElementByInternalId(internal_id);
     if (e) ev.dispatch(*e);
-    else getLogger().println("Failed to dispatch event");
+    else{
+      std::ostringstream s;
+      s << "Failed to dispatch event " << typeid(ev).name() << " id: " << internal_id;
+      getLogger().println(s.str());
+    }
     if (ev.isRedrawNeeded()) {
       Command c(Command::REQUEST_REDRAW, internal_id);
       sendCommand(c);

@@ -29,6 +29,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.SurfaceHolder;
+import android.view.SurfaceHolder.Callback;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.View.OnTouchListener;
@@ -37,7 +38,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
-public class FrameWork extends Activity implements SurfaceHolder.Callback, NativeCommandHandler {
+public class FrameWork extends Activity implements NativeCommandHandler {
 
   private MyGLSurfaceView mGLView;
   private RelativeLayout mainView;
@@ -98,6 +99,17 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback, Nativ
     // Get preferences (simple key-value database)
     prefs = this.getSharedPreferences("com.example.Work", Context.MODE_PRIVATE);
     editor = prefs.edit();
+    
+    mainHandler = new Handler(){
+      
+      public void handleMessage(Message msg){
+	
+	NativeCommand command = (NativeCommand)msg.obj;
+	command.apply(FrameWork.views.get(command.getInternalId()));
+	
+      }
+      
+    };
 
     initNative();
   }
@@ -121,6 +133,9 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback, Nativ
     float xSize = displayMetrics.widthPixels / displayMetrics.scaledDensity;
     float ySize = displayMetrics.heightPixels / displayMetrics.scaledDensity;
     onInit(getAssets(), xSize, ySize, displayMetrics.scaledDensity, hasEs3);
+    
+    
+    
   }
 
   // Get screen settings
@@ -151,29 +166,56 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback, Nativ
     layout.setId(id);
     views.put(id, layout);
   }
-  private void createOpenGLView(int id){
+  
+  public MyGLSurfaceView createOpenGLView(final int id){
     MyGLRenderer renderer = new MyGLRenderer(this, screenWidth, screenHeight);
     MyGLSurfaceView mGLView = new MyGLSurfaceView(this, renderer, id);
     mGLView.setOnTouchListener(new MyOnTouchListener(this));
     mGLView.setWillNotDraw(false);
-    mGLView.getHolder().addCallback(this);
+    mGLView.getHolder().addCallback(new Callback() {
+      public void surfaceDestroyed(SurfaceHolder holder) {
+      }
+
+      public void surfaceCreated(SurfaceHolder holder) {
+      }
+
+      public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+	nativeSetSurface(holder.getSurface(), id);
+      }
+    });
     views.put(id, mGLView);
     if (currentView == 0) {
       setContentView(mGLView);
       currentView = id;
     }
+    return mGLView;
   }
-  
-  private void createNativeOpenGLView(int id){
+
+  public void createNativeOpenGLView(final int id) {
+    System.out.println("about to create native surface");
     NativeSurface surfaceView = new NativeSurface(this);
+    System.out.println("Piip");
     surfaceView.setId(id);
     surfaceView.setOnTouchListener(new MyOnTouchListener(this));
-    surfaceView.getHolder().addCallback(this);
+    surfaceView.getHolder().addCallback(new Callback() {
+      public void surfaceDestroyed(SurfaceHolder holder) {
+      }
+
+      public void surfaceCreated(SurfaceHolder holder) {
+      }
+
+      public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+	System.out.println("setting native surface");
+	nativeSetSurface(holder.getSurface(), id);
+	System.out.println("native surface has been set");
+      }
+    });
+
+    System.out.println("...");
     views.put(id, surfaceView);
-    if (currentView == 0) {
-      setContentView(surfaceView);
-      currentView = id;
-    }
+    setContentView(surfaceView);
+    currentView = id;
+    System.out.println("native surface created");
   }
 
   // Lisää kuvan antaminen // Aika // Ääni
@@ -254,6 +296,7 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback, Nativ
     builder.setTitle(title);
     builder.setMessage(message);
     builder.setCancelable(false);
+    System.out.println("creating message dialog");
 
     // Negative button listener
     builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -469,6 +512,15 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback, Nativ
     Message msg = Message.obtain(null, 1, command);
     frameWork.mainHandler.sendMessage(msg);
   }
+  
+  public void addToPrefs(String key, String value){
+    editor.putString(key, value);
+    editor.apply();
+  }
+  
+  public String getFromPrefs(String key){
+    return prefs.getString(key, "");
+  }
     
   @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -533,23 +585,6 @@ public class FrameWork extends Activity implements SurfaceHolder.Callback, Nativ
   public void onRestart(){
     super.onRestart();
     nativeOnRestart(appId);
-  }
-  
-
-  @Override
-  public void surfaceChanged(SurfaceHolder holder, int arg1, int arg2, int arg3) {
-    nativeSetSurface(holder.getSurface(), currentView);
-  }
-
-  @Override
-  public void surfaceCreated(SurfaceHolder holder) {
-    // TODO Auto-generated method stub
-    
-  }
-
-  @Override
-  public void surfaceDestroyed(SurfaceHolder holder) {
-    // Empty
   }
 
 

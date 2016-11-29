@@ -68,7 +68,6 @@ public class NativeCommand {
     this.textValue = textValue;
     this.textValue2 = textValue2;
 
-    apply(FrameWork.views.get(internalId));
   }
   public NativeCommand(FrameWork frame, int messageTypeId, int internalId, int childInternalId, int value, String textValue, String textValue2){
     this.frame = frame;
@@ -79,7 +78,7 @@ public class NativeCommand {
     this.textValue = textValue;
     this.textValue2 = textValue2;
     
-    apply(FrameWork.views.get(internalId));
+    
   }
   
   public void apply(NativeCommandHandler view) {
@@ -109,6 +108,11 @@ public class NativeCommand {
       break;
 
     case CREATE_OPENGL_VIEW:
+      frame.createOpenGLView(childInternalId);
+      break;
+
+    case CREATE_NATIVE_OPENGL_VIEW:
+      frame.createNativeOpenGLView(childInternalId);
       break;
 
     case CREATE_TEXTFIELD:
@@ -175,7 +179,7 @@ public class NativeCommand {
     button.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View arg0) {
-	frame.buttonClicked(getInternalId());
+	frame.buttonClicked(getChildInternalId());
       }
     });
     return button;

@@ -29,20 +29,11 @@
 #include <AndroidConfigurationEvent.h>
 
 #include <android_fopen.h>
+#include <unistd.h>
 
 using namespace std;
 
 extern FWApplication * applicationMain();
-
-void AndroidPlatform::showCanvas(canvas::ContextAndroid & context) {
-
-  __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "showCanvas called");
-  auto env = getJNIEnv();
-  jclass cls = env->GetObjectClass(framework);
-  jmethodID methodRef = env->GetMethodID(cls, "setNativeCanvas", "(Landroid/graphics/Bitmap;)V");
-  env->CallVoidMethod(framework, methodRef, dynamic_cast<canvas::AndroidSurface&>(context.getDefaultSurface()).getBitmap());
-
-}
 
 std::string AndroidPlatform::getBundleFilename(const char * filename) {
   return filename;
@@ -57,22 +48,18 @@ std::string AndroidPlatform::getLocalFilename(const char * filename, FileType ty
   switch (type) {
   case DATABASE:
   case CACHE_DATABASE:
-    jfilename = env->NewStringUTF(filename);
-    path = (jstring) env->CallObjectMethod(framework, env->GetMethodID(env->GetObjectClass(framework), "getDBPath", "(Ljava/lang/String;)Ljava/lang/String;"), jfilename);
-    result = env->GetStringUTFChars(path, JNI_FALSE);
-    env->ReleaseStringUTFChars(jfilename, filename);
-    env->ReleaseStringUTFChars(path, result.c_str());
-    return result;
+    return "";
   case NORMAL:
     return "";
   }
   return "";
 }
 
+
 std::string AndroidPlatform::loadValue(const std::string & key) {
   auto env = getJNIEnv();
   jstring jkey = env->NewStringUTF(key.c_str());
-  jstring value = (jstring) env->CallObjectMethod(framework, env->GetMethodID(env->GetObjectClass(framework), "getFromPrefs", "(Ljava/lang/String;)Ljava/lang/String;"), jkey);
+  jstring value = (jstring) env->CallObjectMethod(framework, javaCache.loadPrefsValueMethod, jkey);
   std::string result = env->GetStringUTFChars(value, JNI_FALSE);
   env->ReleaseStringUTFChars(jkey, key.c_str());
   env->ReleaseStringUTFChars(value, result.c_str());
@@ -84,7 +71,7 @@ void AndroidPlatform::storeValue(const std::string & key, const std::string & va
   auto env = getJNIEnv();
   jstring jkey = env->NewStringUTF(key.c_str());
   jstring jvalue = env->NewStringUTF(value.c_str());
-  env->CallVoidMethod(framework, env->GetMethodID(env->GetObjectClass(framework), "addToPrefs", "(Ljava/lang/String;Ljava/lang/String;)V"), jkey, jvalue);
+  env->CallVoidMethod(framework, javaCache.addPrefsValueMethod, jkey, jvalue);
   env->ReleaseStringUTFChars(jkey, key.c_str());
   env->ReleaseStringUTFChars(jvalue, value.c_str());
 }
@@ -94,8 +81,6 @@ AndroidPlatform::sendCommand(const Command & command) {
   FWPlatform::sendCommand(command);
 
   auto env = getJNIEnv();
-   jclass commandCls = env->FindClass("com/sometrik/framework/NativeCommand");
-   jmethodID commandConstructor = env->GetMethodID(commandCls, "<init>", "(Lcom/sometrik/framework/FrameWork;IIIILjava/lang/String;Ljava/lang/String;)V");
    int commandTypeId = int(command.getType());
    const char * textValue = command.getTextValue().c_str();
    const char * textValue2 = command.getTextValue2().c_str();
@@ -103,7 +88,8 @@ AndroidPlatform::sendCommand(const Command & command) {
    jstring jtextValue2 = env->NewStringUTF(textValue2);
 
 
-   jobject jcommand = env->NewObject(commandCls, commandConstructor, framework, commandTypeId, command.getInternalId(), command.getChildInternalId(), command.getValue(), jtextValue, jtextValue2);
+   jobject jcommand = env->NewObject(javaCache.nativeCommandClass, javaCache.nativeCommandConstructor, framework, commandTypeId, command.getInternalId(), command.getChildInternalId(), command.getValue(), jtextValue, jtextValue2);
+   env->CallStaticVoidMethod(javaCache.frameworkClass, javaCache.sendCommandMethod, framework, jcommand);
 
    //Fix these releases
 //  env->ReleaseStringUTFChars(jtextValue, textValue);
@@ -119,9 +105,7 @@ AndroidPlatform::sendCommand(const Command & command) {
 double
 AndroidPlatform::getTime() const {
   auto env = getJNIEnv();
-  jclass systemClass = env->FindClass("java/lang/System");
-  double currentTime = (double)env->CallStaticLongMethod(systemClass, env->GetStaticMethodID(systemClass, "currentTimeMillis", "()J"));
-  env->DeleteLocalRef(systemClass);
+  double currentTime = (double)env->CallStaticLongMethod(javaCache.systemClass, javaCache.currentTimeMillisMethod);
 
   return currentTime;
 }
@@ -233,17 +217,37 @@ AndroidPlatform::startThread() {
 void
 AndroidPlatform::renderLoop() {
   runloop_level++;
+
+  bool canDraw = false;
+
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Looping louie");
 
   while (renderingEnabled) {
     if (!eventqueue.empty()) {
       auto ev = eventqueue.pop();
+
+      std::ostringstream s;
+      s << "trying to dispatch event " << typeid(*ev.second.get()).name() << " to: " << ev.first ;
+      getLogger().println(s.str());
+
       postEvent(ev.first, *ev.second.get());
+
 
       auto ev2 = dynamic_cast<AndroidConfigurationEvent*>(ev.second.get());
       if (ev2) {
+        __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "initializeRenderer reached");
 	initializeRenderer(ev2->getWindow());
+	canDraw = true;
       }
+
+    }
+
+    if (canDraw) {
+      UpdateEvent ev(getTime());
+      postEvent(getActiveViewId(), ev);
+
+      DrawEvent ev2(getTime());
+      postEvent(getActiveViewId(), ev2);
     }
 
     // process incoming messages
@@ -397,7 +401,7 @@ void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, job
     platform->setJavaVM(gJavaVM);
   }
   application->initialize(platform.get());
-  // platform->onResize(screenWidth, screenHeight);
+   platform->onResize(screenWidth, screenHeight);
   application->initializeContent();
 #endif
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Init end");
@@ -440,6 +444,7 @@ void Java_com_sometrik_framework_FrameWork_nativeOnRestart(JNIEnv* env, jobject 
   
 void Java_com_sometrik_framework_FrameWork_textChangedEvent(JNIEnv* env, jobject thiz, jint id, jstring jtext) {
   const char * text = env->GetStringUTFChars(jtext, 0);
+  __android_log_print(ANDROID_LOG_INFO, "Sometrik", "textChangedEvent: %s", text);
   TextEvent ev(platform->getTime(), text);
   env->ReleaseStringUTFChars(jtext, text);
   platform->queueEvent(id, ev);

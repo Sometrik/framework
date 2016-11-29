@@ -11,6 +11,7 @@ public class NativeSurface extends SurfaceView implements NativeCommandHandler {
   public NativeSurface(Context context) {
     super(context);
     this.context = context;
+    System.out.println("Native Surface constructor complete");
   }
   
   @Override
