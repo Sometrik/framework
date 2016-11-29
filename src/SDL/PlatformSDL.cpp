@@ -13,16 +13,42 @@
 #include <SysEvent.h>
 #include <UpdateEvent.h>
 #include <ResizeEvent.h>
+#include <TimerEvent.h>
 
 #include <SDL/SDL.h>
-#include <GL/gl.h>
-#include <GL/glu.h>
 
 #include <cstdio>
 #include <cstdlib>
 #include <sys/time.h>
 
 using namespace std;
+
+static Uint32 timer_callback(Uint32 interval, void *param);
+
+class Timer {
+public:
+  Timer(int _id, int _interval) : id(_id), interval(_interval) { }
+
+  int getId() const { return id; }
+  
+  void create() {
+    SDL_AddTimer(interval, timer_callback, this);
+  }
+
+private:
+  int id, interval;
+};
+
+static Uint32 timer_callback(Uint32 interval, void *param) {
+  Timer * timer = (Timer *)timer;
+  SDL_Event user_event;
+  user_event.type = SDL_USEREVENT;
+  user_event.user.code = 1;
+  user_event.user.data1 = timer;
+  user_event.user.data2 = NULL;
+  SDL_PushEvent(&user_event);
+  return interval;
+}
 
 class PlatformSDL : public FWPlatform {
 public:
@@ -72,6 +98,13 @@ public:
       break;
     case Command::REQUEST_REDRAW:
       redraw_needed = true;
+      break;
+    case Command::CREATE_TIMER:
+      {
+	auto timer = std::make_shared<Timer>(command.getChildInternalId(), command.getValue());
+	timer->create();
+	timers[timer->getId()] = timer;
+      }
       break;
     default:
       break;
@@ -150,6 +183,13 @@ public:
 	    postEvent(getActiveViewId(), ev);
 	  }
 	  break;
+	case SDL_USEREVENT:
+	  {
+	    Timer * timer = (Timer*)event.user.data1;
+	    TimerEvent ev(getTime(), timer->getId());
+	    postEvent(getActiveViewId(), ev);
+	  }
+	  break;
 	case SDL_QUIT:
 	  return;
 	}
@@ -182,6 +222,7 @@ private:
   int mouse_x = 0, mouse_y = 0;
   bool redraw_needed = false;
   bool is_initialized = false;
+  map<int, shared_ptr<Timer> > timers;
 };
 
 #if 0
@@ -212,7 +253,7 @@ static void handle_key_down(SDL_keysym* keysym) {
 extern FWApplication * applicationMain();
 
 int main(int argc, char *argv[]) {
-  if( SDL_Init( SDL_INIT_VIDEO | SDL_INIT_AUDIO ) < 0 ) {
+  if ( SDL_Init( SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER ) < 0 ) {
     /* Failed, exit. */
     fprintf( stderr, "Video initialization failed: %s\n",
              SDL_GetError( ) );
@@ -238,7 +279,7 @@ int main(int argc, char *argv[]) {
   SDL_GL_SetAttribute( SDL_GL_DEPTH_SIZE, 16 );
   SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 );
   
-  int flags = SDL_OPENGL; // | SDL_FULLSCREEN;
+  int flags = SDL_OPENGL | SDL_RESIZABLE; // | SDL_FULLSCREEN;
 
   if (SDL_SetVideoMode( width, height, bpp, flags ) == 0) {
     fprintf( stderr, "Video mode set failed: %s\n",
