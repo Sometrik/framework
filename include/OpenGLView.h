@@ -20,7 +20,9 @@ class OpenGLView : public FWViewBase {
   int getActualWidth() const { return actual_width; }
   int getActualHeight() const { return actual_height; }
 
+#if 0
   void createFBO(int flags) { }
+#endif
 
  protected:
   void swapBuffers();
