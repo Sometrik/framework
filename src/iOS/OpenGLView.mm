@@ -563,7 +563,6 @@ extern FWApplication * applicationMain();
 }
 
 - (void) requestUpdate {
-  cerr << "update requested\n";
   need_update = true;
 }
 
