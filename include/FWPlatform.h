@@ -112,7 +112,9 @@ class FWPlatform {
   
  protected:
 #ifdef HAS_SOUNDCANVAS
-  virtual std::shared_ptr<SoundCanvas> createSoundCanvas() const = 0;
+  virtual std::shared_ptr<SoundCanvas> createSoundCanvas() const {
+    return std::make_shared<DummySoundCanvas>();
+  }
 #endif
   virtual std::shared_ptr<Logger> createLogger() const = 0;
   
