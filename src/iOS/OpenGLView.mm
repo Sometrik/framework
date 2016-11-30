@@ -435,7 +435,9 @@ extern FWApplication * applicationMain();
     need_update |= ev.isRedrawNeeded();
     // need_update |= _esContext->touchesEnded(touchPoint.x, touchPoint.y, event.timestamp, id);
   }];
-  need_update |= _esContext->flushTouches(3, event.timestamp);
+  TouchEvent ev(event.timestamp, TouchEvent::ACTION_UP, true);
+  _platform->postEvent(_platform->getActiveViewId(), ev);
+  need_update |= ev.isRedrawNeeded();
 }
 
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
@@ -450,7 +452,9 @@ extern FWApplication * applicationMain();
     need_update |= ev.isRedrawNeeded();
     // need_update |= _esContext->touchesMoved(touchPoint.x, touchPoint.y, event.timestamp, id);
   }];
-  need_update |= _esContext->flushTouches(2, event.timestamp);
+  TouchEvent ev(event.timestamp, TouchEvent::ACTION_MOVE, true);
+  _platform->postEvent(_platform->getActiveViewId(), ev);
+  need_update |= ev.isRedrawNeeded();
 }
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
@@ -466,7 +470,9 @@ extern FWApplication * applicationMain();
     need_update |= ev.isRedrawNeeded();
     // need_update |= _esContext->touchesBegin(touchPoint.x, touchPoint.y, event.timestamp, id);
   }];
-  need_update |= _esContext->flushTouches(1, event.timestamp);
+  TouchEvent ev(event.timestamp, TouchEvent::ACTION_DOWN, true);
+  _platform->postEvent(_platform->getActiveViewId(), ev);
+  need_update |= ev.isRedrawNeeded();
 }
 
 -(BOOL)canBecomeFirstResponser {
