@@ -1,5 +1,4 @@
 #include <FWPlatform.h>
-#include <EventLoop.h>
 #include <CurlClient.h>
 #include <Logger.h>
 #include <ContextCairo.h>
@@ -114,9 +113,7 @@ public:
   std::shared_ptr<SoundCanvas> createSoundCanvas() const override {
     return std::make_shared<SDLSoundCanvas>();
   }
-  
-  // std::shared_ptr<EventLoop> createEventLoop() override;
-  
+    
   std::string getBundleFilename(const char * filename) {
     string s = "assets/";
     return s + filename;
@@ -298,11 +295,6 @@ int main(int argc, char *argv[]) {
   platform.getApplication().initializeContent();	   
     
   platform.run();
-  
-#if 0
-  auto eventloop = platform.createEventLoop();
-  eventloop->run();
-#endif
   
   SysEvent ev(platform.getTime(), SysEvent::SHUTDOWN);
   ev.dispatch(platform.getApplication());
