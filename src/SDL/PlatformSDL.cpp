@@ -115,10 +115,6 @@ public:
     return std::make_shared<SDLSoundCanvas>();
   }
   
-  std::shared_ptr<Logger> createLogger() const override {
-    return std::make_shared<BasicLogger>();
-  }
-
   // std::shared_ptr<EventLoop> createEventLoop() override;
   
   std::string getBundleFilename(const char * filename) {
