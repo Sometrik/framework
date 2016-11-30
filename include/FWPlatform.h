@@ -75,15 +75,20 @@ class FWPlatform {
   virtual void sendCommand(const Command & command) {
     if (command.getType() == Command::SHOW_VIEW) {
       setActiveView(command.getInternalId());
-    } else if (!activeViewId && (command.getType() == Command::CREATE_FORMVIEW || command.getType() == Command::CREATE_OPENGL_VIEW)) {
+    } else if (!activeViewId && (command.getType() == Command::CREATE_FORMVIEW || command.getType() == Command::CREATE_OPENGL_VIEW || command.getType() == Command::CREATE_NATIVE_OPENGL_VIEW)) {
       setActiveView(command.getChildInternalId());
     }
   }
 
   void postEvent(int internal_id, EventBase & ev) {
-    Element * e = getApplication().getElementByInternalId(internal_id);
+    Element * e = 0;
+    if (!internal_id) {
+      e = &(getApplication());
+    } else {
+      e = getApplication().getElementByInternalId(internal_id);
+    }
     if (e) ev.dispatch(*e);
-    else{
+    else {
       std::ostringstream s;
       s << "Failed to dispatch event " << typeid(ev).name() << " id: " << internal_id;
       getLogger().println(s.str());
@@ -108,8 +113,8 @@ class FWPlatform {
   bool hasES3() const { return has_es3; }
   int getActiveViewId() const { return activeViewId; }
 
+  virtual void createFBO(int flags) { }
   virtual std::string showTextEntryDialog(const std::string & message) = 0;
-
   virtual void swapBuffers() = 0;
   
  protected:
@@ -118,7 +123,9 @@ class FWPlatform {
     return std::make_shared<DummySoundCanvas>();
   }
 #endif
-  virtual std::shared_ptr<Logger> createLogger() const = 0;
+  virtual std::shared_ptr<Logger> createLogger() const {
+    return std::make_shared<BasicLogger>();
+  }
   
   int display_width = 0, display_height = 0;
   float display_scale = 1.0f;
