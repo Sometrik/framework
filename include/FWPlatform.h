@@ -5,10 +5,13 @@
 #include <EventBase.h>
 #include <Command.h>
 #include <Logger.h>
-#include <SoundCanvas.h>
 #include <PrimitiveRenderer.h>
 #include <FWDefs.h>
 #include <sstream>
+
+#ifdef HAS_SOUNDCANVAS
+#include <SoundCanvas.h>
+#endif
 
 #include <string>
 #include <memory>
@@ -48,12 +51,14 @@ class FWPlatform {
   
   void setApplication(FWApplication * _application) {application = _application;}
   FWApplication & getApplication() { return *application; }
+#ifdef HAS_SOUNDCANVAS
   SoundCanvas & getSoundCanvas() {
     if (soundCanvas == 0){
       soundCanvas = createSoundCanvas();
     }
     return *soundCanvas;
   }
+#endif
   Logger & getLogger() {
     if (logger == 0) {
       logger = createLogger();
@@ -105,8 +110,10 @@ class FWPlatform {
 
   virtual void swapBuffers() = 0;
   
- protected:  
+ protected:
+#ifdef HAS_SOUNDCANVAS
   virtual std::shared_ptr<SoundCanvas> createSoundCanvas() const = 0;
+#endif
   virtual std::shared_ptr<Logger> createLogger() const = 0;
   
   int display_width = 0, display_height = 0;
@@ -116,7 +123,9 @@ class FWPlatform {
   FWApplication * application = 0;
     
  private:
+#ifdef HAS_SOUNDCANVAS
   std::shared_ptr<SoundCanvas> soundCanvas;
+#endif
   std::shared_ptr<Logger> logger;
   std::shared_ptr<PrimitiveRenderer> renderer;
   int nextInternalId = 1;
