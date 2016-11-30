@@ -16,7 +16,7 @@ public class FWPicker extends Spinner implements NativeCommandHandler {
   private TreeMap<Integer, String> valueMap;
   private final int id;
   
-  private native void pickerOptionSelected(int id, int position);
+  private native void pickerOptionSelected(double timestamp, int id, int position);
 
   public FWPicker(Context context) {
     super(context);
@@ -29,7 +29,7 @@ public class FWPicker extends Spinner implements NativeCommandHandler {
 
       @Override
       public void onItemSelected(AdapterView<?> arg0, View arg1, int position, long arg3) {
-	pickerOptionSelected(id, position);
+	pickerOptionSelected(System.currentTimeMillis() / 1000.0, id, position);
       }
 
       @Override

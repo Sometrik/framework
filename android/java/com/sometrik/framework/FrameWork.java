@@ -67,18 +67,17 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   public native int GetInt(float x, float y);
   public native String getText();
   public native void okPressed(String text);
-  public native void buttonClicked(int id);
-  public native void textChangedEvent(int id, String text);
+  public native void buttonClicked(double timestamp, int id);
+  public native void textChangedEvent(double timestamp, int id, String text);
   public native void settingsCreator(Settings settings, int id);
-  public native void menuPressed();
+  public native void menuPressed(double timestamp);
   public native void touchEvent(int mode, int fingerIndex, long time, float x, float y);
   public native void onInit(AssetManager assetManager, float xSize, float ySize, float displayScale, Boolean hasEs3);
   public native void nativeSetSurface(Surface surface, int surfaceId);
-  public native void nativeOnResume(int appId);
-  public native void nativeOnPause(int appId);
-  public native void nativeOnStop(int appId);
-  public native void nativeOnRestart(int appId);
-
+  public native void nativeOnResume(double timestamp, int appId);
+  public native void nativeOnPause(double timestamp, int appId);
+  public native void nativeOnStop(double timestamp, int appId);
+  public native void nativeOnRestart(double timestamp, int appId);
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -569,22 +568,22 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   @Override 
   public void onResume(){
     super.onResume();
-    nativeOnResume(appId);
+    nativeOnResume(System.currentTimeMillis() / 1000.0, appId);
   }
   @Override 
   public void onPause(){
     super.onPause();
-    nativeOnPause(appId);
+    nativeOnPause(System.currentTimeMillis() / 1000.0, appId);
   }
   @Override 
   public void onStop(){
     super.onStop();
-    nativeOnStop(appId);
+    nativeOnStop(System.currentTimeMillis() / 1000.0, appId);
   }
   @Override 
   public void onRestart(){
     super.onRestart();
-    nativeOnRestart(appId);
+    nativeOnRestart(System.currentTimeMillis() / 1000.0, appId);
   }
 
 

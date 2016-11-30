@@ -319,18 +319,18 @@ std::shared_ptr<AndroidPlatform> platform;
 
 extern "C" {
 
-void Java_com_sometrik_framework_MyGLRenderer_onResize(JNIEnv* env, jobject thiz, float x, float y) {
+void Java_com_sometrik_framework_MyGLRenderer_onResize(JNIEnv* env, jobject thiz, double timestamp, float x, float y) {
   platform->setDisplayWidth(x);
   platform->setDisplayHeight(y);
 
-  ResizeEvent ev(platform->getTime(), x / platform->getDisplayScale(), y / platform->getDisplayScale(), x, y);
+  ResizeEvent ev(timestamp, x / platform->getDisplayScale(), y / platform->getDisplayScale(), x, y);
   platform->queueEvent(platform->getActiveViewId(), ev);
 }
 
-void Java_com_sometrik_framework_FrameWork_menuPressed(JNIEnv* env, jobject thiz) {
+void Java_com_sometrik_framework_FrameWork_menuPressed(JNIEnv* env, jobject thiz, double timestamp) {
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "menu pressed: env = %p", env);
 
-  CommandEvent ce(platform->getTime(), FW_ID_MENU);
+  CommandEvent ce(timestamp, FW_ID_MENU);
   platform->queueEvent(platform->getActiveViewId(), ce);
 }
 
@@ -415,43 +415,43 @@ void Java_com_sometrik_framework_FrameWork_nativeSetSurface(JNIEnv* env, jobject
   platform->queueEvent(surfaceId, ev);
 }
 
-void Java_com_sometrik_framework_MyGLRenderer_nativeOnDraw(JNIEnv* env, jobject thiz) {
-  DrawEvent ev(platform->getTime());
+void Java_com_sometrik_framework_MyGLRenderer_nativeOnDraw(JNIEnv* env, double timestamp,jobject thiz) {
+  DrawEvent ev(timestamp);
   platform->queueEvent(platform->getActiveViewId(), ev);
 }
 
-void Java_com_sometrik_framework_FrameWork_buttonClicked(JNIEnv* env, jobject thiz, jint id) {
-  TouchEvent ev(platform->getTime(), TouchEvent::ACTION_CLICK);
+void Java_com_sometrik_framework_FrameWork_buttonClicked(JNIEnv* env, jobject thiz, double timestamp, jint id) {
+  TouchEvent ev(timestamp, TouchEvent::ACTION_CLICK);
   platform->queueEvent(id, ev);
 }
 
-void Java_com_sometrik_framework_FrameWork_nativeOnResume(JNIEnv* env, jobject thiz, int appId) {
-  SysEvent ev(platform->getTime(), SysEvent::RESUME);
+void Java_com_sometrik_framework_FrameWork_nativeOnResume(JNIEnv* env, jobject thiz, double timestamp, int appId) {
+  SysEvent ev(timestamp, SysEvent::RESUME);
   platform->queueEvent(appId, ev);
 }
-void Java_com_sometrik_framework_FrameWork_nativeOnPause(JNIEnv* env, jobject thiz, int appId) {
-  SysEvent ev(platform->getTime(), SysEvent::PAUSE);
+void Java_com_sometrik_framework_FrameWork_nativeOnPause(JNIEnv* env, jobject thiz, double timestamp, int appId) {
+  SysEvent ev(timestamp, SysEvent::PAUSE);
   platform->queueEvent(appId, ev);
 }
-void Java_com_sometrik_framework_FrameWork_nativeOnStop(JNIEnv* env, jobject thiz, int appId) {
-  SysEvent ev(platform->getTime(), SysEvent::STOP);
+void Java_com_sometrik_framework_FrameWork_nativeOnStop(JNIEnv* env, jobject thiz, double timestamp, int appId) {
+  SysEvent ev(timestamp, SysEvent::STOP);
   platform->queueEvent(appId, ev);
 }
-void Java_com_sometrik_framework_FrameWork_nativeOnRestart(JNIEnv* env, jobject thiz, int appId) {
-  SysEvent ev(platform->getTime(), SysEvent::RESTART);
+void Java_com_sometrik_framework_FrameWork_nativeOnRestart(JNIEnv* env, jobject thiz, double timestamp, int appId) {
+  SysEvent ev(timestamp, SysEvent::RESTART);
   platform->queueEvent(appId, ev);
 }
   
-void Java_com_sometrik_framework_FrameWork_textChangedEvent(JNIEnv* env, jobject thiz, jint id, jstring jtext) {
+void Java_com_sometrik_framework_FrameWork_textChangedEvent(JNIEnv* env, jobject thiz, double timestamp, jint id, jstring jtext) {
   const char * text = env->GetStringUTFChars(jtext, 0);
   __android_log_print(ANDROID_LOG_INFO, "Sometrik", "textChangedEvent: %s", text);
-  TextEvent ev(platform->getTime(), text);
+  TextEvent ev(timestamp, text);
   env->ReleaseStringUTFChars(jtext, text);
   platform->queueEvent(id, ev);
 }
 
-void Java_com_sometrik_framework_FWPicker_pickerOptionSelected(JNIEnv* env, jobject thiz, jint id, jint position){
-  CommandEvent ev(platform->getTime(), id, position);
+void Java_com_sometrik_framework_FWPicker_pickerOptionSelected(JNIEnv* env, jobject thiz, double timestamp, jint id, jint position){
+  CommandEvent ev(timestamp, id, position);
   platform->queueEvent(id, ev);
 }
 

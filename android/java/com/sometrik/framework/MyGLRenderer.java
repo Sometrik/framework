@@ -28,11 +28,11 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
   long startTime;
   boolean is_initialized = false;
 
-  public native void nativeOnDraw();
+  public native void nativeOnDraw(double timestamp);
 
   public native void Draw();
 
-  public native void onResize(float xSize, float ySize);
+  public native void onResize(double timestamp, float xSize, float ySize);
 
   public native void onInitElement(double timestamp, int viewId);
 
@@ -54,14 +54,14 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
       is_initialized = true;
     }
     onUpdate((double) System.currentTimeMillis() / 1000.0, frame.currentView);
-    nativeOnDraw();
+    nativeOnDraw(System.currentTimeMillis() / 1000.0);
   }
 
   public void onSurfaceChanged(GL10 unused, int width, int height) {
     System.out.println("(Renderer) onSurfaceChanged called");
 //    GLES20.glViewport(0, 0, width, height);
 
-//    onResize(width, height);
+//    onResize(System.currentTimeMillis() / 1000.0, width, height);
   }
 
   @Override
