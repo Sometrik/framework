@@ -3,7 +3,18 @@
 #include <FWApplication.h>
 #include <FWPlatform.h>
 
+#include <InitEvent.h>
+#include <SysEvent.h>
+#include <TouchEvent.h>
+#include <UpdateEvent.h>
+#include <ResizeEvent.h>
+#include <DrawEvent.h>
+
 #include <ContextQuartz2D.h>
+
+#define FBO_COLOR       1
+#define FBO_DEPTH       2
+#define FBO_STENCIL     4
 
 #define USE_CURL
 
@@ -58,14 +69,12 @@ public:
     void createFBO(int flags) override {
       [controller createFBO: flags];
     }
-    void showMessageBox(const std::string & title, const std::string & message) override {
-      has_active_modal = true;
-      has_active_modal = false;
-    }
+#if 0
     void postNotification(const std::string & title, const std::string & message) override {
       NSString* message2 = [NSString stringWithUTF8String:message.c_str()];
 //      [[NSNotificationCenter defaultCenter] postNotificationName:message2 object:self];
     }
+#endif
     std::string showTextEntryDialog(const std::string & message) override {
       // NSString* message2 = [NSString stringWithUTF8String:message];
       InputDialog * dlg = [InputDialog dialog];
@@ -130,18 +139,30 @@ public:
     return std::make_shared<iOSClientFactory>();
 #endif
   }
-  void launchBrowser(const std::string & input_url) override {
-    cerr << "trying to open browser" << endl;
-    NSString *input_url2 = [NSString stringWithUTF8String:input_url.c_str()];
-    NSURL *url = [NSURL URLWithString:input_url2];
-    [[UIApplication sharedApplication] openURL:url];
-    // no need to release anything
+  void sendCommand(const Command & command) override {
+    FWPlatform::sendCommand(command);
+    switch (command.getType()) {
+      case Command::LAUNCH_BROWSER:
+      {
+        cerr << "trying to open browser" << endl;
+        NSString *input_url2 = [NSString stringWithUTF8String:command.getTextValue().c_str()];
+        NSURL *url = [NSURL URLWithString:input_url2];
+        [[UIApplication sharedApplication] openURL:url];
+        // no need to release anything
+      }
+      case Command::REQUEST_REDRAW:
+        [controller requestUpdate];
+        break;
+      default:
+        break;
+    }
   }
   double getTime() const override {
     double t = [[NSProcessInfo processInfo] systemUptime];
     return t;
   }
   bool hasActiveModal() const { return has_active_modal; }
+#if 0
   int showActionSheet(const FWRect & rect, const FWActionSheet & sheet) override {
     NSString *title = [[NSString alloc] initWithUTF8String:sheet.getTitle().c_str()];
     UIAlertController * view = [UIAlertController
@@ -175,7 +196,10 @@ public:
     
     return 0;
   }
-  
+#endif
+        
+  void swapBuffers() override { }
+        
 private:
   NSUserDefaults *defaults;
   bool has_active_modal = false;
@@ -186,7 +210,7 @@ extern FWApplication * applicationMain();
 
 @interface OpenGLView ()
 {
-  FWContextBase * _esContext;
+  FWApplication * _esContext;
   FWiOSPlatform * _platform;
 //  float _display_scale;
   int _opengl_version;
@@ -345,22 +369,24 @@ extern FWApplication * applicationMain();
             return nil;
         }
       
-        self->drawableWidth = int(CGRectGetWidth(frame) * scale);
-        self->drawableHeight = int(CGRectGetHeight(frame) * scale);
+	drawableWidth = drawableHeight = 0; // set to zero so that ResizeEvent is sent
+
+        int actual_width = int(CGRectGetWidth(frame) * scale);
+        int actual_height = int(CGRectGetHeight(frame) * scale);
         // m_applicationEngine->Initialize(width, height);
 
         _platform = new FWiOSPlatform(self, scale, 1 ? "#version 100" : "#version 300 es", _has_es3);
         _esContext = applicationMain();
 
 	_platform->setApplication(_esContext);
-	_platform->getApplication().initialize(&platform);
+	_platform->getApplication().initialize(_platform);
 
-	_platform->setDisplayWidth(width);
-	_platform->setDisplayHeight(height);
+	_platform->setDisplayWidth(actual_width);
+	_platform->setDisplayHeight(actual_height);
 	_platform->getApplication().initializeContent();	   
       
 	InitEvent ev(_platform->getTime());
-	postEvent(_platform->getActiveViewId(), ev);
+	_platform->postEvent(_platform->getActiveViewId(), ev);
 
         [self drawView: nil];
         // m_timestamp = CACurrentMediaTime();
@@ -404,7 +430,10 @@ extern FWApplication * applicationMain();
     UITouch *touch = obj;
     long long id = (long long)touch;
     CGPoint touchPoint = [touch locationInView:self];
-    need_update |= _esContext->touchesEnded(touchPoint.x, touchPoint.y, event.timestamp, id);
+    TouchEvent ev(event.timestamp, TouchEvent::ACTION_UP, touchPoint.x, touchPoint.y, id);
+    _platform->postEvent(_platform->getActiveViewId(), ev);
+    need_update |= ev.isRedrawNeeded();
+    // need_update |= _esContext->touchesEnded(touchPoint.x, touchPoint.y, event.timestamp, id);
   }];
   need_update |= _esContext->flushTouches(3, event.timestamp);
 }
@@ -416,7 +445,10 @@ extern FWApplication * applicationMain();
     UITouch *touch = obj;
     long long id = (long long)touch;
     CGPoint touchPoint = [touch locationInView:self];
-    need_update |= _esContext->touchesMoved(touchPoint.x, touchPoint.y, event.timestamp, id);
+    TouchEvent ev(event.timestamp, TouchEvent::ACTION_MOVE, touchPoint.x, touchPoint.y, id);
+    _platform->postEvent(_platform->getActiveViewId(), ev);
+    need_update |= ev.isRedrawNeeded();
+    // need_update |= _esContext->touchesMoved(touchPoint.x, touchPoint.y, event.timestamp, id);
   }];
   need_update |= _esContext->flushTouches(2, event.timestamp);
 }
@@ -429,7 +461,10 @@ extern FWApplication * applicationMain();
     UITouch *touch = obj;
     long long id = (long long)touch;
     CGPoint touchPoint = [touch locationInView:self];
-    need_update |= _esContext->touchesBegin(touchPoint.x, touchPoint.y, event.timestamp, id);
+    TouchEvent ev(event.timestamp, TouchEvent::ACTION_DOWN, touchPoint.x, touchPoint.y, id);
+    _platform->postEvent(_platform->getActiveViewId(), ev);
+    need_update |= ev.isRedrawNeeded();
+    // need_update |= _esContext->touchesBegin(touchPoint.x, touchPoint.y, event.timestamp, id);
   }];
   need_update |= _esContext->flushTouches(1, event.timestamp);
 }
@@ -469,7 +504,9 @@ extern FWApplication * applicationMain();
 
 - (void)tearDownGL {
   [EAGLContext setCurrentContext:self->context];
-  _esContext->onShutdown();
+  double t = [[NSProcessInfo processInfo] systemUptime];
+  SysEvent ev(t, SysEvent::SHUTDOWN);
+  _platform->postEvent(0, ev);
   delete _esContext;
 }
 
@@ -478,7 +515,11 @@ extern FWApplication * applicationMain();
   [EAGLContext setCurrentContext:self->context];
   need_update |= _esContext->loadEvents();
   double t = [[NSProcessInfo processInfo] systemUptime];
-  need_update |= _esContext->onUpdate(t);
+  assert(_platform->getActiveViewId());
+  UpdateEvent ev0(t);
+  _platform->postEvent(_platform->getActiveViewId(), ev0);
+  need_update |= ev0.isRedrawNeeded();
+  // need_update |= _esContext->onUpdate(t);
   if (need_update) {
     // CGRect adjustedFrame = [self convertRect:self.bounds fromView:nil];
     unsigned int logical_width = int(CGRectGetWidth(self.bounds));
@@ -495,14 +536,20 @@ extern FWApplication * applicationMain();
     }
 #endif
   
-    drawableWidth = int(logical_width * self.contentScaleFactor);
-    drawableHeight = int(logical_height * self.contentScaleFactor);
+    int newWidth = int(logical_width * self.contentScaleFactor);
+    int newHeight = int(logical_height * self.contentScaleFactor);
   
-    if (drawableWidth != _esContext->getActualWidth() || drawableHeight != _esContext->getActualHeight()) {
+    if (newWidth != drawableWidth || newHeight != drawableHeight) {
+      drawableWidth = newWidth;
+      drawableHeight = newHeight;
+      
       cerr << "resize window: " << logical_width << " " << logical_height << endl;
-      _esContext->onResize(logical_width, logical_height, drawableWidth, drawableHeight);
+      ResizeEvent ev(t, logical_width, logical_height, drawableWidth, drawableHeight);
+      _platform->postEvent(_platform->getActiveViewId(), ev);
+      // _esContext->onResize(logical_width, logical_height, drawableWidth, drawableHeight);
     }
-    _esContext->onDraw();
+    DrawEvent ev1(t);
+    _platform->postEvent(_platform->getActiveViewId(), ev1);
     
     [context presentRenderbuffer:GL_RENDERBUFFER];
     need_update = false;
@@ -510,6 +557,7 @@ extern FWApplication * applicationMain();
 }
 
 - (void) requestUpdate {
+  cerr << "update requested\n";
   need_update = true;
 }
 
@@ -536,7 +584,9 @@ extern FWApplication * applicationMain();
 
 - (void)sendMemoryWarning
 {
-     _esContext->onMemoryWarning();
+  double t = [[NSProcessInfo processInfo] systemUptime];
+  SysEvent ev(t, SysEvent::MEMORY_WARNING);
+  _platform->postEvent(0, ev);
 }
 
 #if 0
