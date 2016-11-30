@@ -413,6 +413,12 @@ void Java_com_sometrik_framework_FrameWork_nativeSetSurface(JNIEnv* env, jobject
   if (surface != 0) window = ANativeWindow_fromSurface(env, surface);
   AndroidConfigurationEvent ev(platform->getTime(), window);
   platform->queueEvent(surfaceId, ev);
+#ifdef USE_NATIVE_SURFACE
+  if (surface != 0) {
+    InitEvent ev2(platform->getTime());
+    platform->queueEvent(surfaceId, ev2);
+  }
+#endif
 }
 
 void Java_com_sometrik_framework_MyGLRenderer_nativeOnDraw(JNIEnv* env, double timestamp,jobject thiz) {
