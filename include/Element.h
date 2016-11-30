@@ -44,10 +44,10 @@ class Element {
   virtual void onConfigurationEvent(ConfigurationEvent & ev) { }
   virtual void onInitEvent(InitEvent & ev) { }
   
-  virtual void onCmdLine(int argc, char *argv[]) { }
-  virtual void onKeyPress(char c, double timestamp, int x, int y) { }
-  virtual void flushTouches(int mode, double timestamp) { }
-  virtual void onShake(double timestamp) { }
+  virtual bool onCmdLine(int argc, char *argv[]) { return false; }
+  virtual bool onKeyPress(char c, double timestamp, int x, int y) { return false; }
+  virtual bool flushTouches(int mode, double timestamp) { return false; }
+  virtual bool onShake(double timestamp) { return false; }
 
   virtual void show() { }
   virtual int showModal() { return 0; }
