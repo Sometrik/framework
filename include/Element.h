@@ -46,7 +46,6 @@ class Element {
   
   virtual bool onCmdLine(int argc, char *argv[]) { return false; }
   virtual bool onKeyPress(char c, double timestamp, int x, int y) { return false; }
-  virtual bool flushTouches(int mode, double timestamp) { return false; }
   virtual bool onShake(double timestamp) { return false; }
 
   virtual void show() { }
