@@ -108,6 +108,8 @@ class FWPlatform {
   bool hasES3() const { return has_es3; }
   int getActiveViewId() const { return activeViewId; }
 
+  virtual std::string showTextEntryDialog(const std::string & message) = 0;
+
   virtual void swapBuffers() = 0;
   
  protected:
