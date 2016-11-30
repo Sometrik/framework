@@ -1,7 +1,7 @@
 #import "OpenGLView.h"
 #import "InputDialog.h"
-#include "FWContextBase.h"
-#include "FWPlatformBase.h"
+#include <FWApplication.h>
+#include <FWPlatform.h>
 
 #include <ContextQuartz2D.h>
 
@@ -47,10 +47,10 @@ public:
 };
 };
 
-class FWiOSPlatform : public FWPlatformBase {
+class FWiOSPlatform : public FWPlatform {
 public:
     FWiOSPlatform(OpenGLView * _controller, float _display_scale, const std::string & glsl_version, bool has_es3)
-  : FWPlatformBase(_display_scale, glsl_version.c_str(), has_es3),
+  : FWPlatform(_display_scale, glsl_version.c_str(), has_es3),
   controller(_controller) {
       defaults = [NSUserDefaults standardUserDefaults];
     }
@@ -182,7 +182,7 @@ private:
   OpenGLView * controller;
 };
 
-extern FWContextBase * esMain(FWPlatformBase * platform);
+extern FWApplication * applicationMain();
 
 @interface OpenGLView ()
 {
@@ -350,8 +350,18 @@ extern FWContextBase * esMain(FWPlatformBase * platform);
         // m_applicationEngine->Initialize(width, height);
 
         _platform = new FWiOSPlatform(self, scale, 1 ? "#version 100" : "#version 300 es", _has_es3);
-        _esContext = esMain(_platform);
+        _esContext = applicationMain();
+
+	_platform->setApplication(_esContext);
+	_platform->getApplication().initialize(&platform);
+
+	_platform->setDisplayWidth(width);
+	_platform->setDisplayHeight(height);
+	_platform->getApplication().initializeContent();	   
       
+	InitEvent ev(_platform->getTime());
+	postEvent(_platform->getActiveViewId(), ev);
+
         [self drawView: nil];
         // m_timestamp = CACurrentMediaTime();
         
