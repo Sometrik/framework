@@ -8,7 +8,7 @@ public:
   enum Type {
     ACTION_DOWN, ACTION_MOVE, ACTION_UP, ACTION_CLICK
   };
- TouchEvent(double _timestamp, Type _type, float _x, float _y, long longt _identifier)
+ TouchEvent(double _timestamp, Type _type, float _x, float _y, long long _identifier)
    : EventBase(_timestamp), type(_type), x(_x), y(_y), identifier(_identifier) { }
  TouchEvent(double _timestamp, Type _type)
    : EventBase(_timestamp), type(_type), x(0), y(0), identifier(0) { }
