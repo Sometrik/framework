@@ -45,6 +45,7 @@ class PrimitiveRenderer {
   bool hasRGB565() const { return has_rgb565; }
 
   float getDisplayScale() const { return display_scale; }
+  void setDisplayScale(float f) { display_scale = f; }
 
   void setScreenSize(unsigned int _width, unsigned int _height, unsigned int _actual_width, unsigned int _actual_height) {
     screen_width = _width;
