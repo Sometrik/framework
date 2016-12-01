@@ -46,6 +46,7 @@ public class NativeCommand {
     SET_LABEL, //this sets label for buttons and labels.
     SET_ATTRIBUTE,
     SET_CAPTION,
+    UPDATE_PREFERENCE,
     ADD_OPTION,
     QUIT_APP,
 
