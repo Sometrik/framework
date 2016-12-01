@@ -249,24 +249,6 @@ AndroidPlatform::renderLoop() {
       DrawEvent ev2(getTime());
       postEvent(getActiveViewId(), ev2);
     }
-
-    // process incoming messages
-//    switch (_msg) {
-//
-//    case MSG_WINDOW_SET:
-//      initialize();
-//      break;
-//
-//    case MSG_RENDER_LOOP_EXIT:
-//      renderingEnabled = false;
-//      destroy();
-//      break;
-//
-//    default:
-//      break;
-//    }
-//    _msg = MSG_NONE;
-
   }
 
   getLogger().println("Looping Louie is out");
