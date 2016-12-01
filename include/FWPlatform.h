@@ -7,12 +7,13 @@
 #include <Logger.h>
 #include <PrimitiveRenderer.h>
 #include <FWDefs.h>
-#include <sstream>
+#include <FWPreferences.h>
 
 #ifdef HAS_SOUNDCANVAS
 #include <SoundCanvas.h>
 #endif
 
+#include <sstream>
 #include <string>
 #include <memory>
 
@@ -130,6 +131,7 @@ class FWPlatform {
   std::string glsl_version;
   bool has_es3 = false;
   FWApplication * application = 0;
+  FWPreferences preferences;
     
  private:
 #ifdef HAS_SOUNDCANVAS
