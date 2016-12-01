@@ -1,5 +1,5 @@
-#ifndef _CANVASELEMENT_H_
-#define _CANVASELEMENT_H_
+#ifndef _UIELEMENT_H_
+#define _UIELEMENT_H_
 
 #include <Element.h>
 #include <TextureRef.h>
@@ -8,9 +8,9 @@
 #include <TouchEvent.h>
 #include <CommandEvent.h>
  
-class CanvasElement : public Element {
+class UIElement : public Element {
  public:
-  CanvasElement() { }
+  UIElement() { }
 
   void setX(float _x) { x = _x; }
   void setY(float _y) { y = _y; }
