@@ -88,12 +88,19 @@ public:
   }
   std::shared_ptr<HTTPClientFactory> createHTTPClientFactory() const override {
     auto env = getJNIEnv();
-    return std::make_shared<AndroidClientFactory>(env);
+    return std::make_shared < AndroidClientFactory > (env);
   }
+  void createFBO(int flags) { }
+  std::string showTextEntryDialog(const std::string & message) { return ""; }
+
+#ifdef HAS_SOUNDCANVAS
   std::shared_ptr<SoundCanvas> createSoundCanvas() const override {
     auto env = getJNIEnv();
     return std::make_shared<AndroidSoundCanvas>(env, mgr);
   }
+}
+#endif
+
   void storeValue(const std::string & key, const std::string & value) override;
   std::string loadValue(const std::string & key) override;
   void showCanvas(canvas::ContextAndroid & context);

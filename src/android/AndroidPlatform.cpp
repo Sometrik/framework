@@ -243,6 +243,7 @@ AndroidPlatform::renderLoop() {
     }
 
     if (canDraw) {
+      getLogger().println("Going for updates");
       UpdateEvent ev(getTime());
       postEvent(getActiveViewId(), ev);
 
