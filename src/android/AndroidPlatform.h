@@ -70,9 +70,10 @@ private:
 class AndroidPlatform: public FWPlatform {
 public:
   AndroidPlatform(JNIEnv * _env, jobject _mgr, jobject _framework, float _display_scale, const char * _glsl_version, bool _has_es3) :
-      FWPlatform(_display_scale, _glsl_version, _has_es3), javaCache(JavaCache(_env)), canvasCache(canvas::AndroidCache(_env, _mgr)) {
+      FWPlatform(_display_scale, _glsl_version, _has_es3), javaCache(JavaCache(_env)) {
     framework = _env->NewGlobalRef(_framework);
     mgr = _env->NewGlobalRef(_mgr);
+    canvasCache = std::make_shared<canvas::AndroidCache>(_env, _mgr);
   }
   ~AndroidPlatform() {
   }
@@ -84,7 +85,7 @@ public:
   std::string getLocalFilename(const char * filename, FileType type) override;
   double getTime() const override;
   std::shared_ptr<canvas::ContextFactory> createContextFactory() const override {
-    return std::make_shared<canvas::AndroidContextFactory>(getJNIEnv(), mgr, canvasCache);
+    return std::make_shared<canvas::AndroidContextFactory>(mgr, canvasCache);
   }
   std::shared_ptr<HTTPClientFactory> createHTTPClientFactory() const override {
     auto env = getJNIEnv();
@@ -134,7 +135,7 @@ private:
   EGLDisplay display = 0;
   EGLSurface surface = 0;
   EGLContext context = 0;
-  canvas::AndroidCache canvasCache;
+  std::shared_ptr<canvas::AndroidCache> canvasCache;
 
   ANativeWindow * window = 0;
   JavaVM * gJavaVM = 0;
