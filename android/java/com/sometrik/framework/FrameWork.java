@@ -419,11 +419,11 @@ public class FrameWork extends Activity implements NativeCommandHandler {
     }
   }
 
-  //Build in Methods of Menu Creating. Propably removable
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
 
     System.out.println("onCreateOptionsMenu");
+    menuPressed(System.currentTimeMillis() / 1000.0);
     // getMenuInflater().inflate(R.menu.settings, menu);
     return true;
   }
