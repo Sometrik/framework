@@ -228,6 +228,7 @@ AndroidPlatform::renderLoop() {
 
       std::ostringstream s;
       s << "trying to dispatch event " << typeid(*ev.second.get()).name() << " to: " << ev.first ;
+      __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "dispatching event");
       getLogger().println(s.str());
 
       postEvent(ev.first, *ev.second.get());
@@ -237,13 +238,17 @@ AndroidPlatform::renderLoop() {
       if (ev2) {
         __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "initializeRenderer reached");
 	initializeRenderer(ev2->getWindow());
-	canDraw = true;
+      }
+
+      auto ev3 = dynamic_cast<InitEvent*>(ev.second.get());
+      if (ev3) {
+        __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "dispatching initevent");
+        canDraw = true;
       }
 
     }
 
     if (canDraw) {
-      getLogger().println("Going for updates");
       UpdateEvent ev(getTime());
       postEvent(getActiveViewId(), ev);
 
@@ -397,7 +402,9 @@ void Java_com_sometrik_framework_FrameWork_nativeSetSurface(JNIEnv* env, jobject
   AndroidConfigurationEvent ev(platform->getTime(), window);
   platform->queueEvent(surfaceId, ev);
 #ifdef USE_NATIVE_SURFACE
+  __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Checking");
   if (surface != 0) {
+    __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Checked");
     InitEvent ev2(platform->getTime());
     platform->queueEvent(surfaceId, ev2);
   }
