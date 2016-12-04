@@ -246,6 +246,10 @@ AndroidPlatform::renderLoop() {
         canDraw = true;
       }
 
+      auto ev4 = dynamic_cast<SysEvent*>(ev.second.get());
+      if (ev4 && ev4->getType() == SysEvent::END_MODAL) {
+	break;
+      }
     }
 
     if (canDraw) {
