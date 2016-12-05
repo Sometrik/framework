@@ -77,7 +77,8 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   public native void nativeOnResume(double timestamp, int appId);
   public native void nativeOnPause(double timestamp, int appId);
   public native void nativeOnStop(double timestamp, int appId);
-  public native void nativeOnRestart(double timestamp, int appId);
+  public native void nativeOnStart(double timestamp, int appId);
+  public native void nativeOnDestroy(double timestamp, int appId);
   public static native void onResize(double timeStamp, float width, float height, int viewId);
 
   @Override
@@ -582,8 +583,13 @@ public class FrameWork extends Activity implements NativeCommandHandler {
     nativeOnStop(System.currentTimeMillis() / 1000.0, appId);
   }
   @Override 
-  public void onRestart(){
-    super.onRestart();
+  public void onStart(){
+    super.onStart();
+    nativeOnStart(System.currentTimeMillis() / 1000.0, appId);
+  }
+  @Override 
+  public void onDestroy(){
+    super.onDestroy();
     nativeOnRestart(System.currentTimeMillis() / 1000.0, appId);
   }
 

@@ -437,8 +437,12 @@ void Java_com_sometrik_framework_FrameWork_nativeOnStop(JNIEnv* env, jobject thi
   SysEvent ev(timestamp, SysEvent::STOP);
   platform->queueEvent(appId, ev);
 }
-void Java_com_sometrik_framework_FrameWork_nativeOnRestart(JNIEnv* env, jobject thiz, double timestamp, int appId) {
-  SysEvent ev(timestamp, SysEvent::RESTART);
+void Java_com_sometrik_framework_FrameWork_nativeOnStart(JNIEnv* env, jobject thiz, double timestamp, int appId) {
+  SysEvent ev(timestamp, SysEvent::START);
+  platform->queueEvent(appId, ev);
+}
+void Java_com_sometrik_framework_FrameWork_nativeOnDestroy(JNIEnv* env, jobject thiz, double timestamp, int appId) {
+  SysEvent ev(timestamp, SysEvent::DESTROY);
   platform->queueEvent(appId, ev);
 }
   

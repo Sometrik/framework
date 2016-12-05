@@ -8,13 +8,13 @@
 class SysEvent : public EventBase {
 public:
   enum Type {
-    SHUTDOWN,
+    START = 1, // Called when app is becoming visible
+    RESUME, // Called when the app will start interacting with the user
+    PAUSE, // Called when the app is no longer interacting with the user
+    STOP, // Called when app is no longer visible
+    DESTROY, // Called just before the app is destroyed
     MEMORY_WARNING,
     THREAD_TERMINATED,
-    RESUME,
-    PAUSE,
-    STOP,
-    RESTART,
     END_MODAL
   };
  SysEvent(double _timestamp, Type _type) : EventBase(_timestamp), type(_type) { }
