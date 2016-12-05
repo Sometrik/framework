@@ -6,7 +6,7 @@
 #include <Command.h>
 #include <FWApplication.h>
 
-#include <InitEvent.h>
+#include <OpenGLInitEvent.h>
 #include <TouchEvent.h>
 #include <DrawEvent.h>
 #include <SysEvent.h>
@@ -191,7 +191,7 @@ public:
       getApplication().loadEvents();
 
       if (!is_initialized) {
-	InitEvent ev(getTime());
+	OpenGLInitEvent ev(getTime(), 300);
 	postEvent(getActiveViewId(), ev);
 	is_initialized = true;
       }
