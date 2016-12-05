@@ -1,8 +1,6 @@
 #ifndef _ELEMENT_H_
 #define _ELEMENT_H_
 
-#include <Command.h>
-
 #include <memory>
 #include <vector>
 
@@ -17,7 +15,7 @@ class ResizeEvent;
 class TimerEvent;
 class TextEvent;
 class OpenGLInitEvent;
-
+class Command;
 class LinearLayout;
 class FWPlatform;
 

@@ -2,6 +2,7 @@
 #include <FWPlatform.h>
 #include <TextLabel.h>
 #include <LinearLayout.h>
+#include <Command.h>
 
 using namespace std;
 
