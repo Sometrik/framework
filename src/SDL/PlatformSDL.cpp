@@ -127,10 +127,6 @@ public:
     return "";
   }
 
-  void swapBuffers() override {
-    SDL_GL_SwapBuffers( );
-  }
-
   void run() {
     SDL_Event event;
 
@@ -202,6 +198,7 @@ public:
       if (isRedrawNeeded()) {
 	DrawEvent ev(getTime());
 	postEvent(getActiveViewId(), ev);
+	SDL_GL_SwapBuffers( );
 	clearRedrawNeeded();
       }
     }
