@@ -295,7 +295,7 @@ int main(int argc, char *argv[]) {
     
   platform.run();
   
-  SysEvent ev(platform.getTime(), SysEvent::SHUTDOWN);
+  SysEvent ev(platform.getTime(), SysEvent::DESTROY);
   ev.dispatch(platform.getApplication());
   SDL_Quit();
   return 0;
