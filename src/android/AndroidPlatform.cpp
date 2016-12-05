@@ -130,24 +130,25 @@ AndroidPlatform::initializeRenderer(ANativeWindow * _window) {
     EGLContext _context;
     EGLint width;
     EGLint height;
+    EGLint contextAttribs[] = { EGL_CONTEXT_CLIENT_VERSION, 3, EGL_NONE };
 
     if ((_display = eglGetDisplay(EGL_DEFAULT_DISPLAY)) == EGL_NO_DISPLAY) {
-      //         LOG_ERROR("eglGetDisplay() returned error %d", eglGetError());
+      __android_log_print(ANDROID_LOG_INFO, "Sometrik", "eglGetDisplay() returned error %d", eglGetError());
       return false;
     }
     if (!eglInitialize(_display, 0, 0)) {
-      //         LOG_ERROR("eglInitialize() returned error %d", eglGetError());
+      __android_log_print(ANDROID_LOG_INFO, "Sometrik", "eglInitialize() returned error %d", eglGetError());
       return false;
     }
 
     if (!eglChooseConfig(_display, attribs, &_config, 1, &numConfigs)) {
-      //         LOG_ERROR("eglChooseConfig() returned error %d", eglGetError());
+      __android_log_print(ANDROID_LOG_INFO, "Sometrik", "eglChooseConfig() returned error %d", eglGetError());
       //         destroy();
       return false;
     }
 
     if (!eglGetConfigAttrib(_display, _config, EGL_NATIVE_VISUAL_ID, &format)) {
-      //         LOG_ERROR("eglGetConfigAttrib() returned error %d", eglGetError());
+      __android_log_print(ANDROID_LOG_INFO, "Sometrik", "eglGetConfigAttrib() returned error %d", eglGetError());
       //         destroy();
       return false;
     }
@@ -155,26 +156,25 @@ AndroidPlatform::initializeRenderer(ANativeWindow * _window) {
     ANativeWindow_setBuffersGeometry(window, 0, 0, format);
 
     if (!(_surface = eglCreateWindowSurface(_display, _config, window, 0))) {
-      //         LOG_ERROR("eglCreateWindowSurface() returned error %d", eglGetError());
+      __android_log_print(ANDROID_LOG_INFO, "Sometrik", "eglCreateWindowSurface() returned error %d", eglGetError());
       //         destroy();
       return false;
     }
 
-    if (!(_context = eglCreateContext(_display, _config, 0, 0))) {
-      //         LOG_ERROR("eglCreateContext() returned error %d", eglGetError());
+    if (!(_context = eglCreateContext(_display, _config, 0, contextAttribs))) {
+      __android_log_print(ANDROID_LOG_INFO, "Sometrik", "eglCreateContext() returned error %d", eglGetError());
       //         destroy();
       return false;
     }
 
     if (!eglMakeCurrent(_display, _surface, _surface, _context)) {
-      //         LOG_ERROR("eglMakeCurrent() returned error %d", eglGetError());
+      __android_log_print(ANDROID_LOG_INFO, "Sometrik", "eglMakeCurrent() returned error %d", eglGetError());
       //         destroy();
       return false;
     }
 
-    if (!eglQuerySurface(_display, _surface, EGL_WIDTH, &width) ||
-	!eglQuerySurface(_display, _surface, EGL_HEIGHT, &height)) {
-      //         LOG_ERROR("eglQuerySurface() returned error %d", eglGetError());
+    if (!eglQuerySurface(_display, _surface, EGL_WIDTH, &width) || !eglQuerySurface(_display, _surface, EGL_HEIGHT, &height)) {
+      __android_log_print(ANDROID_LOG_INFO, "Sometrik", "eglQuerySurface() returned error %d", eglGetError());
       //         destroy();
       return false;
     }
@@ -183,7 +183,7 @@ AndroidPlatform::initializeRenderer(ANativeWindow * _window) {
     surface = _surface;
     context = _context;
 
-    getLogger().println("Piiiip");
+    getLogger().println("renderer initialized");
     return true;
   } else {
     return false;
