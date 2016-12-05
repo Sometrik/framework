@@ -218,8 +218,6 @@ void
 AndroidPlatform::renderLoop() {
   runloop_level++;
 
-  bool canDraw = false;
-
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Looping louie");
 
   while (renderingEnabled) {
@@ -233,21 +231,8 @@ AndroidPlatform::renderLoop() {
 
       postEvent(ev.first, *ev.second.get());
 
-
-      auto ev2 = dynamic_cast<AndroidConfigurationEvent*>(ev.second.get());
-      if (ev2) {
-        __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "initializeRenderer reached");
-	initializeRenderer(ev2->getOpenGLESVersion(), ev2->getWindow());
-      }
-
-      auto ev3 = dynamic_cast<InitEvent*>(ev.second.get());
-      if (ev3) {
-        __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "dispatching initevent");
-        canDraw = true;
-      }
-
-      auto ev4 = dynamic_cast<SysEvent*>(ev.second.get());
-      if (ev4 && ev4->getType() == SysEvent::END_MODAL) {
+      auto ev2 = dynamic_cast<SysEvent*>(ev.second.get());
+      if (ev2 && ev2->getType() == SysEvent::END_MODAL) {
 	break;
       }
     }
@@ -270,6 +255,23 @@ AndroidPlatform::swapBuffers() {
   if (!eglSwapBuffers(display, surface)) {
     getLogger().println("error eglSwapBuffers");
   }
+}
+
+void
+AndroidPlatform::onConfigurationEvent(ConfigurationEvent & _ev) {
+  auto & ev = dynamic_cast<AndroidConfigurationEvent&>(ev);
+  __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "initializeRenderer reached");
+  initializeRenderer(ev2->getOpenGLESVersion(), ev2->getWindow());
+}
+
+void
+AndroidPlatform::onInitEvent(InitEvent & ev) {
+  canDraw = true;
+}
+
+void
+AndroidPlatform::onSysEvent(SysEvent & ev) {
+
 }
 
 void* AndroidPlatform::threadStartCallback(void *myself) {

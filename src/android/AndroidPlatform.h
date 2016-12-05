@@ -127,6 +127,9 @@ public:
   }
 
   void swapBuffers() override;
+  void onConfigurationEvent(ConfigurationEvent & _ev) override;
+  void onInitEvent(InitEvent & ev) override;
+  void onSysEvent(SysEvent & ev) override;
 
 private:
   pthread_t _threadId;
@@ -146,6 +149,5 @@ private:
   EventQueue eventqueue;
   int runloop_level = 0;
   bool renderingEnabled = true;
-
-
+  bool canDraw = false;
 };
