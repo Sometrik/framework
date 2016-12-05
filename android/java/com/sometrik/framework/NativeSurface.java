@@ -6,19 +6,17 @@ import android.view.View;
 
 public class NativeSurface extends SurfaceView implements NativeCommandHandler {
   
-  private Context context;
   private FrameWork framework;
   
-  public NativeSurface(Context context, FrameWork framework) {
-    super(context);
-    this.context = context;
+  public NativeSurface(FrameWork framework) {
+    super(framework);
     this.framework = framework;
     System.out.println("Native Surface constructor complete");
   }
   
   @Override
   public void showView() {
-    FrameWork frame = (FrameWork)context;
+    FrameWork frame = framework;
     frame.setContentView(this);
     FrameWork.currentView = getId();
   }
@@ -30,7 +28,7 @@ public class NativeSurface extends SurfaceView implements NativeCommandHandler {
     
     float width = w;
     float height = h;
-    framework.onResize(System.currentTimeMillis() / 1000.0, width, height, getId());
+    FrameWork.onResize(System.currentTimeMillis() / 1000.0, width, height, getId());
     
   }
 
