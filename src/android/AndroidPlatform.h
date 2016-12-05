@@ -110,6 +110,7 @@ public:
   bool initializeRenderer(ANativeWindow * _window);
   void deinitializeRenderer();
   void startThread();
+  void joinThread();
   void renderLoop();
   static void* threadStartCallback(void *myself);
 

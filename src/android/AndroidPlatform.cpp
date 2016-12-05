@@ -213,6 +213,11 @@ AndroidPlatform::startThread() {
 }
 
 void
+AndroidPlatform::joinThread() {
+  pthread_join(_threadId, 0);
+}
+
+void
 AndroidPlatform::renderLoop() {
   runloop_level++;
 
@@ -430,6 +435,7 @@ void Java_com_sometrik_framework_FrameWork_nativeOnStart(JNIEnv* env, jobject th
 void Java_com_sometrik_framework_FrameWork_nativeOnDestroy(JNIEnv* env, jobject thiz, double timestamp, int appId) {
   SysEvent ev(timestamp, SysEvent::DESTROY);
   platform->queueEvent(appId, ev);
+  platform->joinThread();
 }
   
 void Java_com_sometrik_framework_FrameWork_textChangedEvent(JNIEnv* env, jobject thiz, double timestamp, jint id, jstring jtext) {
