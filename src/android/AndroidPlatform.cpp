@@ -111,7 +111,7 @@ AndroidPlatform::getTime() const {
 }
 
 bool
-AndroidPlatform::initializeRenderer(ANativeWindow * _window) {
+AndroidPlatform::initializeRenderer(int opengl_es_version, ANativeWindow * _window) {
   window = _window;
 
   if (window) {
@@ -130,7 +130,7 @@ AndroidPlatform::initializeRenderer(ANativeWindow * _window) {
     EGLContext _context;
     EGLint width;
     EGLint height;
-    EGLint contextAttribs[] = { EGL_CONTEXT_CLIENT_VERSION, 3, EGL_NONE };
+    EGLint contextAttribs[] = { EGL_CONTEXT_CLIENT_VERSION, opengl_es_version / 100, EGL_NONE };
 
     if ((_display = eglGetDisplay(EGL_DEFAULT_DISPLAY)) == EGL_NO_DISPLAY) {
       __android_log_print(ANDROID_LOG_INFO, "Sometrik", "eglGetDisplay() returned error %d", eglGetError());
@@ -237,7 +237,7 @@ AndroidPlatform::renderLoop() {
       auto ev2 = dynamic_cast<AndroidConfigurationEvent*>(ev.second.get());
       if (ev2) {
         __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "initializeRenderer reached");
-	initializeRenderer(ev2->getWindow());
+	initializeRenderer(ev2->getOpenGLESVersion(), ev2->getWindow());
       }
 
       auto ev3 = dynamic_cast<InitEvent*>(ev.second.get());
@@ -403,7 +403,7 @@ void Java_com_sometrik_framework_FrameWork_nativeSetSurface(JNIEnv* env, jobject
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "going for it");
   ANativeWindow * window = 0;
   if (surface != 0) window = ANativeWindow_fromSurface(env, surface);
-  AndroidConfigurationEvent ev(platform->getTime(), window);
+  AndroidConfigurationEvent ev(platform->getTime(), 300, window);
   platform->queueEvent(surfaceId, ev);
 #ifdef USE_NATIVE_SURFACE
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Checking");

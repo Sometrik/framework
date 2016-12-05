@@ -6,8 +6,8 @@
 
 class AndroidConfigurationEvent : public ConfigurationEvent {
 public:
- AndroidConfigurationEvent(double _timestamp, ANativeWindow * _window)
-   : ConfigurationEvent(_timestamp), window(_window) { }
+ AndroidConfigurationEvent(double _timestamp, int _opengl_es_version, ANativeWindow * _window)
+   : ConfigurationEvent(_timestamp, _opengl_es_version), window(_window) { }
 
   ANativeWindow * getWindow() { return window; }
   std::shared_ptr<EventBase> dup() const { return  std::make_shared<AndroidConfigurationEvent>(*this); }
