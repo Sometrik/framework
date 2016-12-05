@@ -13,12 +13,7 @@ using namespace std;
 void
 OpenGLView::initialize(FWPlatform * _platform) {
   FWViewBase::initialize(_platform);
-#ifdef USE_NATIVE_SURFACE
-  Command::Type type = Command::CREATE_NATIVE_OPENGL_VIEW;
-#else
-  Command::Type type = Command::CREATE_OPENGL_VIEW;
-#endif
-  sendCommand(Command(type, getParentInternalId(), getInternalId()));
+  sendCommand(Command(Command::CREATE_NATIVE_OPENGL_VIEW, getParentInternalId(), getInternalId()));
   logical_width = int(_platform->getDisplayWidth() / _platform->getDisplayScale());
   logical_height = int(_platform->getDisplayHeight() / _platform->getDisplayScale());
   actual_width = _platform->getDisplayWidth();

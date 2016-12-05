@@ -117,11 +117,7 @@ public:
 //  JavaCache getJavaCache() const { return &javaCache; }
 
   void queueEvent(int internal_id, EventBase & ev) {
-#ifdef USE_NATIVE_SURFACE
     eventqueue.push(internal_id, ev);
-#else
-    postEvent(internal_id, ev);
-#endif
   }
 
   void swapBuffers() override;

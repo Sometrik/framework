@@ -95,11 +95,9 @@ AndroidPlatform::sendCommand(const Command & command) {
 //  env->ReleaseStringUTFChars(jtextValue, textValue);
 //  env->ReleaseStringUTFChars(jtextValue2, textValue2);
   
-#ifdef USE_NATIVE_SURFACE
   if (command.getType() == Command::SHOW_MESSAGE_DIALOG || command.getType() == Command::SHOW_INPUT_DIALOG) {
     renderLoop();
   }
-#endif      
 }
 
 double
@@ -383,21 +381,10 @@ void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, job
   platform->setDisplayWidth(screenWidth);
   platform->setDisplayHeight(screenHeight);
 
-#ifdef USE_NATIVE_SURFACE
-
   if (gJavaVM) {
-  platform->setJavaVM(gJavaVM);
-  }
-  platform->startThread();
-#else
-  if (gJavaVM) {
-    gJavaVM->AttachCurrentThread(&env, NULL);
     platform->setJavaVM(gJavaVM);
   }
-  application->initialize(platform.get());
-   platform->onResize(screenWidth, screenHeight);
-  application->initializeContent();
-#endif
+  platform->startThread();
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Init end");
 }
 
@@ -407,14 +394,12 @@ void Java_com_sometrik_framework_FrameWork_nativeSetSurface(JNIEnv* env, jobject
   if (surface != 0) window = ANativeWindow_fromSurface(env, surface);
   AndroidConfigurationEvent ev(platform->getTime(), 300, window);
   platform->queueEvent(surfaceId, ev);
-#ifdef USE_NATIVE_SURFACE
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Checking");
   if (surface != 0) {
     __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Checked");
     InitEvent ev2(platform->getTime());
     platform->queueEvent(surfaceId, ev2);
   }
-#endif
 }
 
 void Java_com_sometrik_framework_MyGLRenderer_nativeOnDraw(JNIEnv* env, double timestamp,jobject thiz) {

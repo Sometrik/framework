@@ -30,7 +30,6 @@ public class NativeCommand {
     CREATE_BUTTON,
     CREATE_PICKER, // called Spinner in Android
     CREATE_LINEAR_LAYOUT,
-    CREATE_OPENGL_VIEW,
     CREATE_NATIVE_OPENGL_VIEW,
     CREATE_TEXTFIELD,
     CREATE_TEXTLABEL,
@@ -108,9 +107,9 @@ public class NativeCommand {
       view.addChild(picker);
       break;
 
-    case CREATE_OPENGL_VIEW:
-      frame.createOpenGLView(childInternalId);
-      break;
+      //    case CREATE_OPENGL_VIEW:
+      // frame.createOpenGLView(childInternalId);
+      // break;
 
     case CREATE_NATIVE_OPENGL_VIEW:
       frame.createNativeOpenGLView(childInternalId);
