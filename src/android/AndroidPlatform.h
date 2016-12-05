@@ -142,6 +142,5 @@ private:
   jobject handler;
   EventQueue eventqueue;
   int runloop_level = 0;
-  bool renderingEnabled = true;
   bool canDraw = false;
 };

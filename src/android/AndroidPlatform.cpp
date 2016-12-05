@@ -223,7 +223,7 @@ AndroidPlatform::renderLoop() {
 
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Looping louie");
 
-  while (renderingEnabled) {
+  while (1) {
     if (!eventqueue.empty()) {
       auto ev = eventqueue.pop();
 
