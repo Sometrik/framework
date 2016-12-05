@@ -25,7 +25,6 @@ class OpenGLView : public FWViewBase {
 #endif
 
  protected:
-  void swapBuffers();
   void checkGLError();
 
  private:

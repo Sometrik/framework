@@ -55,8 +55,3 @@ OpenGLView::checkGLError() {
     getPlatform().getLogger().println(s.str());
   }
 }
-
-void
-OpenGLView::swapBuffers() {
-  getPlatform().swapBuffers();
-}
