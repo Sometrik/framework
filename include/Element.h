@@ -24,7 +24,7 @@ class FWPlatform;
 class Element {
  public:
   Element(int _id = 0) : id(_id) { }
-  virtual ~Element() { }
+  virtual ~Element();
 
   virtual void initialize(FWPlatform * _platform);
   virtual void initializeContent() { }

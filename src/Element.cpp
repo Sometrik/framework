@@ -6,6 +6,13 @@
 using namespace std;
 
 void
+Element::~Element() {
+  if (isInitialized()) {
+    sendCommand(Command(Command::DELETE_ELEMENT, getParentInternalId(), getInternalId()));
+  }
+}
+
+void
 Element::initialize(FWPlatform * _platform) {
   platform = _platform;
   internal_id = platform->getNextInternalId();
