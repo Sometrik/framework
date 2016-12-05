@@ -230,7 +230,7 @@ AndroidPlatform::renderLoop() {
       postEvent(ev.first, *ev.second.get());
 
       auto ev2 = dynamic_cast<SysEvent*>(ev.second.get());
-      if (ev2 && ev2->getType() == SysEvent::END_MODAL) {
+      if (ev2 && (ev2->getType() == SysEvent::END_MODAL || ev2->getType() == SysEvent::DESTROY)) {
 	break;
       }
     }
