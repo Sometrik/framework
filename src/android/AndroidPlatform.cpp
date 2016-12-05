@@ -287,7 +287,6 @@ void* AndroidPlatform::threadStartCallback(void *myself) {
   aplatform->getApplication().initializeContent();
   aplatform->renderLoop();
   aplatform->deinitializeRenderer();
-  pthread_exit(0);
 
   return 0;
 }
