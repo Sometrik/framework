@@ -7,6 +7,7 @@
 #include <VBO.h>
 #include <TouchEvent.h>
 #include <CommandEvent.h>
+#include <FWPlatform.h>
  
 class UIElement : public Element {
  public:
