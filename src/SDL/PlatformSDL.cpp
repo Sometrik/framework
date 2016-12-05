@@ -110,9 +110,11 @@ public:
     }
   }
 
+#ifdef HAS_SOUNDCANVAS
   std::shared_ptr<SoundCanvas> createSoundCanvas() const override {
     return std::make_shared<SDLSoundCanvas>();
   }
+#endif
     
   std::string getBundleFilename(const char * filename) {
     string s = "assets/";
