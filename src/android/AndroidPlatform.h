@@ -74,6 +74,7 @@ public:
     framework = _env->NewGlobalRef(_framework);
     mgr = _env->NewGlobalRef(_mgr);
     canvasCache = std::make_shared<canvas::AndroidCache>(_env, _mgr);
+    clientCache = std::make_shared<AndroidClientCache>(_env);
   }
   ~AndroidPlatform() {
   }
@@ -89,7 +90,7 @@ public:
   }
   std::shared_ptr<HTTPClientFactory> createHTTPClientFactory() const override {
     auto env = getJNIEnv();
-    return std::make_shared < AndroidClientFactory > (env);
+    return std::make_shared<AndroidClientFactory>(clientCache);
   }
   void createFBO(int flags) { }
   std::string showTextEntryDialog(const std::string & message) { return ""; }
@@ -99,7 +100,6 @@ public:
     auto env = getJNIEnv();
     return std::make_shared<AndroidSoundCanvas>(env, mgr);
   }
-}
 #endif
 
   void storeValue(const std::string & key, const std::string & value) override;
@@ -136,6 +136,7 @@ private:
   EGLSurface surface = 0;
   EGLContext context = 0;
   std::shared_ptr<canvas::AndroidCache> canvasCache;
+  std::shared_ptr<AndroidClientCache> clientCache;
 
   ANativeWindow * window = 0;
   JavaVM * gJavaVM = 0;
