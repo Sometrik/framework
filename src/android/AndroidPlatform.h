@@ -76,8 +76,6 @@ public:
     canvasCache = std::make_shared<canvas::AndroidCache>(_env, _mgr);
     clientCache = std::make_shared<AndroidClientCache>(_env);
   }
-  ~AndroidPlatform() {
-  }
   
   void setJavaVM(JavaVM * _gJavaVM) { gJavaVM = _gJavaVM; }
   JavaVM * getJavaVM() { return gJavaVM; }
