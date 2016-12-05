@@ -311,12 +311,12 @@ std::shared_ptr<AndroidPlatform> platform;
 
 extern "C" {
 
-void Java_com_sometrik_framework_MyGLRenderer_onResize(JNIEnv* env, jobject thiz, double timestamp, float x, float y) {
+void Java_com_sometrik_framework_FrameWork_onResize(JNIEnv* env, jobject thiz, double timestamp, float x, float y, int viewId) {
   platform->setDisplayWidth(x);
   platform->setDisplayHeight(y);
 
   ResizeEvent ev(timestamp, x / platform->getDisplayScale(), y / platform->getDisplayScale(), x, y);
-  platform->queueEvent(platform->getActiveViewId(), ev);
+  platform->queueEvent(viewId, ev);
 }
 
 void Java_com_sometrik_framework_FrameWork_menuPressed(JNIEnv* env, jobject thiz, double timestamp) {

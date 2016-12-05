@@ -50,7 +50,10 @@ public class MyGLSurfaceView extends GLSurfaceView implements NativeCommandHandl
     super.onSizeChanged(w, h, oldw, oldh);
 
     System.out.println("MyView onsizechanged called");
-    setWillNotDraw(false);
+    
+    float width = w;
+    float height = h;
+    ((FrameWork)context).onResize(System.currentTimeMillis() / 1000, width, height, getId());
   }
 
   @Override

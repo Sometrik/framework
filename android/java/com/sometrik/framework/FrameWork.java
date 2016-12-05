@@ -78,6 +78,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   public native void nativeOnPause(double timestamp, int appId);
   public native void nativeOnStop(double timestamp, int appId);
   public native void nativeOnRestart(double timestamp, int appId);
+  public native void onResize(double timeStamp, float width, float height, int viewId);
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -192,7 +193,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
 
   public void createNativeOpenGLView(final int id) {
     System.out.println("about to create native surface");
-    NativeSurface surfaceView = new NativeSurface(this);
+    NativeSurface surfaceView = new NativeSurface(this, this);
     System.out.println("Piip");
     surfaceView.setId(id);
     surfaceView.setOnTouchListener(new MyOnTouchListener(this));
