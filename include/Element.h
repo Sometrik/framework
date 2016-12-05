@@ -50,7 +50,8 @@ class Element {
 
   virtual void show() { }
   virtual int showModal() { return 0; }
-    
+  virtual void sendCommand(const Command & command);
+  
   Element & addChild(const std::shared_ptr<Element> & element) {
     element->parent = this;
     element->initialize(platform);
@@ -67,9 +68,7 @@ class Element {
 
   int getInternalId() const { return internal_id; }
   int getParentInternalId() const { return parent ? parent->getInternalId() : 0; }
-  
-  void sendCommand(const Command & command);
-  
+    
   FWPlatform & getPlatform() { return *platform; }
   const FWPlatform & getPlatform() const { return *platform; }
   

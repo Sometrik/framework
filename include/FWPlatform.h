@@ -1,6 +1,7 @@
 #ifndef _FWPLATFORM_H_
 #define _FWPLATFORM_H_
 
+#include <Element.h>
 #include <FWApplication.h>
 #include <EventBase.h>
 #include <Command.h>
@@ -24,7 +25,7 @@ namespace canvas {
 };
 class HTTPClientFactory;
 
-class FWPlatform {
+class FWPlatform : public Element {
  public:
   enum FileType {
     NORMAL = 1,
@@ -33,8 +34,9 @@ class FWPlatform {
   };
   
  FWPlatform(float _display_scale, const char * _glsl_version, bool _has_es3)
-   : display_scale(_display_scale), glsl_version(_glsl_version), has_es3(_has_es3) { }
-  virtual ~FWPlatform() { }
+   : display_scale(_display_scale), glsl_version(_glsl_version), has_es3(_has_es3) {
+    initialize(this);
+  }
 
   const std::string & getGLSLVersion() const { return glsl_version; }
   
@@ -71,7 +73,7 @@ class FWPlatform {
     sendCommand(c);
   }
   
-  virtual void sendCommand(const Command & command) {
+  void sendCommand(const Command & command) override {
     if (command.getType() == Command::SHOW_VIEW) {
       setActiveView(command.getInternalId());
     } else if (!activeViewId && (command.getType() == Command::CREATE_FORMVIEW || command.getType() == Command::CREATE_OPENGL_VIEW || command.getType() == Command::CREATE_NATIVE_OPENGL_VIEW)) {
