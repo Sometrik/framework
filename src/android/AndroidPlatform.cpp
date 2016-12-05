@@ -271,7 +271,11 @@ AndroidPlatform::onInitEvent(InitEvent & ev) {
 
 void
 AndroidPlatform::onSysEvent(SysEvent & ev) {
-
+  if (ev.getType() == SysEvent::PAUSE) {
+    isPaused = true;
+  } else if (ev.getType() == SysEvent::RESUME) {
+    isPaused = false;
+  }
 }
 
 void* AndroidPlatform::threadStartCallback(void *myself) {
