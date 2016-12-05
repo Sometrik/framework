@@ -22,9 +22,15 @@ class Button : public UIElement {
   }
 
   void onTouchEvent(TouchEvent & ev) override {
-    getPlatform().getLogger().println("Button received event");
-    if (ev.getType() == TouchEvent::ACTION_CLICK) {
-      getPlatform().getLogger().println("Button received event was handled");
+    if (ev.getType() == TouchEvent::ACTION_DOWN) {
+      if (ev.getX() >= x && ev.getX() < x + width && ev.getY() >= y && ev.getY() < y + height) {
+        setTouched(true);
+        CommandEvent ev2(ev.getTimestamp(), getId());
+        ev2.dispatch(*this);
+      }
+    } else if (ev.getType() == TouchEvent::ACTION_UP) {
+      setTouched(false);
+    } else if (ev.getType() == TouchEvent::ACTION_CLICK) {
       CommandEvent ev2(ev.getTimestamp(), getId());
       ev2.dispatch(*this);
     }
