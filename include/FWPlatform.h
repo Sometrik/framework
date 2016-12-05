@@ -119,7 +119,6 @@ class FWPlatform : public Element {
 
   virtual void createFBO(int flags) { }
   virtual std::string showTextEntryDialog(const std::string & message) = 0;
-  virtual void swapBuffers() = 0;
   
  protected:
 #ifdef HAS_SOUNDCANVAS

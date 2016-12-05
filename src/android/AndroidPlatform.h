@@ -121,7 +121,6 @@ public:
     eventqueue.push(internal_id, ev);
   }
 
-  void swapBuffers() override;
   void onConfigurationEvent(ConfigurationEvent & _ev) override;
   void onInitEvent(InitEvent & ev) override;
   void onSysEvent(SysEvent & ev) override;

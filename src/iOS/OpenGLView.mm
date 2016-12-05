@@ -197,9 +197,7 @@ public:
     return 0;
   }
 #endif
-        
-  void swapBuffers() override { }
-        
+                
 private:
   NSUserDefaults *defaults;
   bool has_active_modal = false;

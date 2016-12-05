@@ -240,24 +240,21 @@ AndroidPlatform::renderLoop() {
       }
     }
 
-    if (canDraw) {
+    if (canDraw && surface) {
       UpdateEvent ev(getTime());
       postEvent(getActiveViewId(), ev);
 
       DrawEvent ev2(getTime());
       postEvent(getActiveViewId(), ev2);
+
+      if (!eglSwapBuffers(display, surface)) {
+	getLogger().println("error eglSwapBuffers");
+      }
     }
   }
 
   getLogger().println("Looping Louie is out");
   runloop_level--;
-}
-
-void
-AndroidPlatform::swapBuffers() {
-  if (!eglSwapBuffers(display, surface)) {
-    getLogger().println("error eglSwapBuffers");
-  }
 }
 
 void
