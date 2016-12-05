@@ -94,6 +94,9 @@ class FWPlatform : public Element {
       s << "Failed to dispatch event " << typeid(ev).name() << " id: " << internal_id;
       getLogger().println(s.str());
     }
+    if (!ev.isHandled()) {
+      ev.dispatch(*this);
+    }
     if (ev.isRedrawNeeded()) {
       Command c(Command::REQUEST_REDRAW, internal_id);
       sendCommand(c);
