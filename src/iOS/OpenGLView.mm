@@ -3,7 +3,7 @@
 #include <FWApplication.h>
 #include <FWPlatform.h>
 
-#include <InitEvent.h>
+#include <OpenGLInitEvent.h>
 #include <SysEvent.h>
 #include <TouchEvent.h>
 #include <UpdateEvent.h>
@@ -383,7 +383,7 @@ extern FWApplication * applicationMain();
 	_platform->setDisplayHeight(actual_height);
 	_platform->getApplication().initializeContent();	   
       
-	InitEvent ev(_platform->getTime());
+	OpenGLInitEvent ev(_platform->getTime(), self->_opengl_version);
 	_platform->postEvent(_platform->getActiveViewId(), ev);
 
         [self drawView: nil];

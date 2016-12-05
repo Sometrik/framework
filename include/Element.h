@@ -16,8 +16,7 @@ class UpdateEvent;
 class ResizeEvent;
 class TimerEvent;
 class TextEvent;
-class ConfigurationEvent;
-class InitEvent;
+class OpenGLInitEvent;
 
 class LinearLayout;
 class FWPlatform;
@@ -41,8 +40,7 @@ class Element {
   virtual void onResizeEvent(ResizeEvent & ev) { }
   virtual void onTimerEvent(TimerEvent & ev) { }
   virtual void onTextEvent(TextEvent & ev) { }
-  virtual void onConfigurationEvent(ConfigurationEvent & ev) { }
-  virtual void onInitEvent(InitEvent & ev) { }
+  virtual void onOpenGLInitEvent(OpenGLInitEvent & ev) { }
   
   virtual bool onCmdLine(int argc, char *argv[]) { return false; }
   virtual bool onKeyPress(char c, double timestamp, int x, int y) { return false; }

@@ -1,11 +1,11 @@
-#ifndef _CONFIGURATIONEVENT_H_
-#define _CONFIGURATIONEVENT_H_
+#ifndef _OPENGLINITEVENT_H_
+#define _OPENGLINITEVENT_H_
 
 #include <EventBase.h>
 
-class ConfigurationEvent : public EventBase {
+class OpenGLInitEvent : public EventBase {
 public:
- ConfigurationEvent(double _timestamp, int _opengl_es_version)
+ OpenGLInitEvent(double _timestamp, int _opengl_es_version)
    : EventBase(_timestamp), opengl_es_version(_opengl_es_version) { }
 
   int getOpenGLESVersion() const { return opengl_es_version; }

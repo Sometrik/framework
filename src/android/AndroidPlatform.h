@@ -121,8 +121,7 @@ public:
     eventqueue.push(internal_id, ev);
   }
 
-  void onConfigurationEvent(ConfigurationEvent & _ev) override;
-  void onInitEvent(InitEvent & ev) override;
+  void onOpenGLInitEvent(OpenGLInitEvent & _ev) override;
   void onSysEvent(SysEvent & ev) override;
 
 private:

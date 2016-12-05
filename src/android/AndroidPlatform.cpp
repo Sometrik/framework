@@ -22,11 +22,10 @@
 #include <SysEvent.h>
 #include <TextEvent.h>
 #include <CommandEvent.h>
-#include <InitEvent.h>
 #include <DrawEvent.h>
 #include <UpdateEvent.h>
 #include <ResizeEvent.h>
-#include <AndroidConfigurationEvent.h>
+#include <AndroidOpenGLInitEvent.h>
 
 #include <android_fopen.h>
 #include <unistd.h>
@@ -203,6 +202,7 @@ AndroidPlatform::deinitializeRenderer() {
 
   if (window) {
     ANativeWindow_release(window);
+    window = 0;
   }
 }
 
@@ -258,15 +258,16 @@ AndroidPlatform::renderLoop() {
 }
 
 void
-AndroidPlatform::onConfigurationEvent(ConfigurationEvent & _ev) {
-  auto & ev = dynamic_cast<AndroidConfigurationEvent&>(ev);
+AndroidPlatform::onOpenGLInitEvent(OpenGLInitEvent & _ev) {
+  auto & ev = dynamic_cast<AndroidOpenGLInitEvent&>(ev);
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "initializeRenderer reached");
-  initializeRenderer(ev2->getOpenGLESVersion(), ev2->getWindow());
-}
-
-void
-AndroidPlatform::onInitEvent(InitEvent & ev) {
-  canDraw = true;
+  if (ev2->getWindow()) {
+    initializeRenderer(ev2->getOpenGLESVersion(), ev2->getWindow());
+    canDraw = true;
+  } else {
+    deinitializeRenderer();
+    canDraw = false;
+  }
 }
 
 void
@@ -357,8 +358,6 @@ void Java_com_sometrik_framework_FrameWork_touchEvent(JNIEnv* env, jobject thiz,
 }
 
 void Java_com_sometrik_framework_MyGLRenderer_onInitElement(JNIEnv* env, jobject thiz, double timestamp, int viewId) {
-  InitEvent ev(timestamp);
-  platform->queueEvent(viewId, ev);
 }
 
 jboolean Java_com_sometrik_framework_MyGLRenderer_onUpdate(JNIEnv* env, jobject thiz, double timestamp, int viewId) {
@@ -397,14 +396,8 @@ void Java_com_sometrik_framework_FrameWork_nativeSetSurface(JNIEnv* env, jobject
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "going for it");
   ANativeWindow * window = 0;
   if (surface != 0) window = ANativeWindow_fromSurface(env, surface);
-  AndroidConfigurationEvent ev(platform->getTime(), 300, window);
+  AndroidOpenGLInitEvent ev(platform->getTime(), 300, window);
   platform->queueEvent(surfaceId, ev);
-  __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Checking");
-  if (surface != 0) {
-    __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Checked");
-    InitEvent ev2(platform->getTime());
-    platform->queueEvent(surfaceId, ev2);
-  }
 }
 
 void Java_com_sometrik_framework_MyGLRenderer_nativeOnDraw(JNIEnv* env, double timestamp,jobject thiz) {
