@@ -95,6 +95,7 @@ AndroidPlatform::sendCommand(const Command & command) {
 //  env->ReleaseStringUTFChars(jtextValue2, textValue2);
   
   if (command.getType() == Command::SHOW_MESSAGE_DIALOG || command.getType() == Command::SHOW_INPUT_DIALOG) {
+    modal_result_text = "";
     renderLoop();
   }
 }
@@ -276,6 +277,8 @@ AndroidPlatform::onSysEvent(SysEvent & ev) {
     isPaused = true;
   } else if (ev.getType() == SysEvent::RESUME) {
     isPaused = false;
+  } else if (ev.getType() == SysEvent::END_MODAL) {
+    modal_result_text = ev.getTextValue();
   }
 }
 
