@@ -119,6 +119,8 @@ class FWPlatform : public Element {
 
   virtual void createFBO(int flags) { }
   virtual std::string showTextEntryDialog(const std::string & message) = 0;
+
+  const std::string & getModalResultText() const { return modal_result_text; }
   
  protected:
 #ifdef HAS_SOUNDCANVAS
@@ -136,6 +138,7 @@ class FWPlatform : public Element {
   bool has_es3 = false;
   FWApplication * application = 0;
   FWPreferences preferences;
+  std::string modal_result_text;
     
  private:
 #ifdef HAS_SOUNDCANVAS
