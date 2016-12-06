@@ -95,6 +95,7 @@ AndroidPlatform::sendCommand(const Command & command) {
 //  env->ReleaseStringUTFChars(jtextValue2, textValue2);
   
  if (command.getType() == Command::SHOW_MESSAGE_DIALOG || command.getType() == Command::SHOW_INPUT_DIALOG || command.getType() == Command::SHOW_ACTION_SHEET) {
+    modal_result_value = 0;
     modal_result_text = "";
     renderLoop();
   }
@@ -275,6 +276,7 @@ AndroidPlatform::onSysEvent(SysEvent & ev) {
   } else if (ev.getType() == SysEvent::RESUME) {
     isPaused = false;
   } else if (ev.getType() == SysEvent::END_MODAL) {
+    modal_result_value = ev.getValue();
     modal_result_text = ev.getTextValue();
   }
 }
@@ -409,6 +411,7 @@ void Java_com_sometrik_framework_MyGLRenderer_nativeOnDraw(JNIEnv* env, double t
   const char * text = env->GetStringUTFChars(jtext, 0);
   __android_log_print(ANDROID_LOG_INFO, "Sometrik", "endModal: %d %s", value, text);
   SysEvent ev(timestamp, SysEvent::END_MODAL);
+  ev.setValue(value);
   ev.setTextValue(text);
   env->ReleaseStringUTFChars(jtext, text);
   platform->queueEvent(id, ev);

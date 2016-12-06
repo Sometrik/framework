@@ -120,6 +120,7 @@ class FWPlatform : public Element {
   virtual void createFBO(int flags) { }
   virtual std::string showTextEntryDialog(const std::string & message) = 0;
 
+  int getModalResultValue() const { return modal_result_value; }
   const std::string & getModalResultText() const { return modal_result_text; }
   
  protected:
@@ -138,6 +139,7 @@ class FWPlatform : public Element {
   bool has_es3 = false;
   FWApplication * application = 0;
   FWPreferences preferences;
+  int modal_result_value = 0;
   std::string modal_result_text;
     
  private:
