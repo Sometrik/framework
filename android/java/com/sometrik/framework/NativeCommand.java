@@ -26,7 +26,6 @@ public class NativeCommand {
   public enum CommandType{
     CREATE_APPLICATION,
     SHOW_VIEW,
-    SHOW,
     CREATE_FORMVIEW,
     CREATE_BUTTON,
     CREATE_PICKER, // called Spinner in Android
@@ -41,6 +40,7 @@ public class NativeCommand {
     REQUEST_REDRAW,
     SHOW_MESSAGE_DIALOG,
     SHOW_INPUT_DIALOG,
+    SHOW_ACTION_SHEET,
     LAUNCH_BROWSER,
     POST_NOTIFICATION,
     SET_VALUE, //Sets value of textfields.
