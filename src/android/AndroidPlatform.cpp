@@ -220,8 +220,6 @@ AndroidPlatform::joinThread() {
 
 void
 AndroidPlatform::renderLoop() {
-  runloop_level++;
-
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Looping louie");
 
   while (1) {
@@ -255,7 +253,6 @@ AndroidPlatform::renderLoop() {
   }
 
   getLogger().println("Looping Louie is out");
-  runloop_level--;
 }
 
 void

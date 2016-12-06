@@ -140,6 +140,5 @@ private:
   jobject framework;
   jobject handler;
   EventQueue eventqueue;
-  int runloop_level = 0;
   bool canDraw = false, isPaused = false;
 };
