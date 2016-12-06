@@ -408,9 +408,9 @@ void Java_com_sometrik_framework_MyGLRenderer_nativeOnDraw(JNIEnv* env, double t
   platform->queueEvent(platform->getActiveViewId(), ev);
 }
 
-void Java_com_sometrik_framework_FrameWork_endModal(JNIEnv* env, jobject thiz, double timestamp, jstring jtext) {
+  void Java_com_sometrik_framework_FrameWork_endModal(JNIEnv* env, jobject thiz, double timestamp, int value, jstring jtext) {
   const char * text = env->GetStringUTFChars(jtext, 0);
-  __android_log_print(ANDROID_LOG_INFO, "Sometrik", "endModal: %s", text);
+  __android_log_print(ANDROID_LOG_INFO, "Sometrik", "endModal: %d %s", value, text);
   SysEvent ev(timestamp, SysEvent::END_MODAL);
   ev.setTextValue(text);
   env->ReleaseStringUTFChars(jtext, text);
