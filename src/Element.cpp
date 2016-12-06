@@ -49,3 +49,18 @@ Element::onEvent(EventBase & ev) {
     ev.dispatch(*parent);
   }
 }
+
+void
+Element::showMessageDialog(const std::string & text) {
+  Command c(Command::SHOW_MESSAGE_DIALOG);
+  c.setTextValue(text);
+  sendCommand(c);
+}
+
+std::string
+Element::showInputDialog(const std::string & text) {
+  Command c(Command::SHOW_INPUT_DIALOG);
+  c.setTextValue(text);
+  sendCommand(c);
+  return platform->getModalResultText();
+}
