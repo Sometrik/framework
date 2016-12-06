@@ -94,7 +94,7 @@ AndroidPlatform::sendCommand(const Command & command) {
 //  env->ReleaseStringUTFChars(jtextValue, textValue);
 //  env->ReleaseStringUTFChars(jtextValue2, textValue2);
   
-  if (command.getType() == Command::SHOW_MESSAGE_DIALOG || command.getType() == Command::SHOW_INPUT_DIALOG) {
+ if (command.getType() == Command::SHOW_MESSAGE_DIALOG || command.getType() == Command::SHOW_INPUT_DIALOG || command.getType() == Command::SHOW_ACTION_SHEET) {
     modal_result_text = "";
     renderLoop();
   }
