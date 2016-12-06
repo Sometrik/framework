@@ -2,6 +2,7 @@
 #define _FWACTIONSHEET_H_
 
 #include <Element.h>
+#include <Command.h>
 
 class FWOption {
  public:
@@ -40,7 +41,7 @@ class FWActionSheet : public Element {
       c.setTextValue(op.getText());
       sendCommand(c);
     }
-    Command c1(Command::SHOW, getInternalId());
+    Command c1(Command::SHOW_ACTION_SHEET, getInternalId());
     sendCommand(c1);
     return 0;
   }
