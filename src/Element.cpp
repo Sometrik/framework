@@ -6,7 +6,6 @@
 
 using namespace std;
 
-void
 Element::~Element() {
   if (isInitialized()) {
     sendCommand(Command(Command::DELETE_ELEMENT, getParentInternalId(), getInternalId()));
@@ -52,14 +51,14 @@ Element::onEvent(EventBase & ev) {
 
 void
 Element::showMessageDialog(const std::string & text) {
-  Command c(Command::SHOW_MESSAGE_DIALOG);
+  Command c(Command::SHOW_MESSAGE_DIALOG, getParentInternalId(), getInternalId());
   c.setTextValue(text);
   sendCommand(c);
 }
 
 std::string
 Element::showInputDialog(const std::string & text) {
-  Command c(Command::SHOW_INPUT_DIALOG);
+  Command c(Command::SHOW_INPUT_DIALOG, getParentInternalId(), getInternalId());
   c.setTextValue(text);
   sendCommand(c);
   return platform->getModalResultText();
