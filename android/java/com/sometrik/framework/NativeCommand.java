@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.app.AlertDialog;
 
 public class NativeCommand {
 
@@ -154,6 +155,11 @@ public class NativeCommand {
     case LAUNCH_BROWSER:
       // TODO
       break;
+    case SHOW_MESSAGE_DIALOG:
+      showMessageDialog(textValue, textValue2);
+      break;
+    case SHOW_INPUT_DIALOG:
+      showInputDialog(textValue, textValue2);
     default:
       System.out.println("Message couldn't be handled");
       break;
@@ -223,6 +229,73 @@ public class NativeCommand {
     FrameWork.views.put(getChildInternalId(), layout);
     ScrollView scrollView = new ScrollView(frame);
     scrollView.addView(layout);
+  }
+
+ // Create dialog with user text input
+  private void showInputDialog(String title, String message) {
+    System.out.println("Creating input dialog");
+
+    AlertDialog.Builder builder;
+    builder = new AlertDialog.Builder(frame);
+
+    // Building an alert
+    builder.setTitle(title);
+    builder.setMessage(message);
+    builder.setCancelable(true);
+
+    final EditText input = new EditText(frame);
+    input.setInputType(InputType.TYPE_CLASS_TEXT);
+    builder.setView(input);
+
+    // Negative button listener
+    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+      public void onClick(DialogInterface dialog, int id) {
+	frame.endModal(0, "");	
+	dialog.cancel();
+      }
+    });
+
+    // Positive button listener
+    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+      public void onClick(DialogInterface dialog, int id) {
+	String inputText = String.valueOf(input.getText());
+	frame.endModal(1, inputText);
+	dialog.cancel();
+      }
+    });
+
+    // Create and show the alert
+    alert = builder.create();
+    alert.show();
+  }
+
+  // create Message dialog
+  private void showMessageDialog(String title, String message) {
+
+    System.out.println("creating message dialog");
+
+    AlertDialog.Builder builder;
+    builder = new AlertDialog.Builder(frame);
+
+    // Building an alert
+    builder.setTitle(title);
+    builder.setMessage(message);
+    builder.setCancelable(false);
+    System.out.println("creating message dialog");
+
+    // Positive button listener
+    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+      public void onClick(DialogInterface dialog, int id) {
+	frame.endModal(1, "");
+	dialog.cancel();
+      }
+    });
+
+    // Create and show the alert
+    alert = builder.create();
+    alert.show();
+
+    System.out.println("message dialog created");
   }
 
   public String getKey() {
