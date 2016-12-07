@@ -40,10 +40,6 @@ class Element {
   virtual void onTextEvent(TextEvent & ev) { }
   virtual void onOpenGLInitEvent(OpenGLInitEvent & ev) { }
   
-  virtual bool onCmdLine(int argc, char *argv[]) { return false; }
-  virtual bool onKeyPress(char c, double timestamp, int x, int y) { return false; }
-  virtual bool onShake(double timestamp) { return false; }
-
   virtual void show() { }
   virtual int showModal() { return 0; }
   virtual void sendCommand(const Command & command);
