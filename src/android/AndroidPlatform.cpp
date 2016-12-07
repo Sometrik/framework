@@ -479,12 +479,6 @@ void Java_com_sometrik_framework_FWPicker_pickerOptionSelected(JNIEnv* env, jobj
   platform->queueEvent(id, ev);
 }
 
-void Java_com_sometrik_framework_FWPicker_menuOptionSelected(JNIEnv* env, jobject thiz, double timestamp, jint id){
-//  CommandEvent ev(timestamp, id, position);
-//  platform->queueEvent(id, ev);
-}
-
-
 jint JNI_OnLoad(JavaVM *vm, void *reserved) {
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "JNI_Onload on AndroidPlatform");
   gJavaVM = vm;
