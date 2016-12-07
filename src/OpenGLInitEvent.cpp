@@ -6,5 +6,11 @@ OpenGLInitEvent::dispatch(Element & element) {
   if (!isHandled()) {
     element.onOpenGLInitEvent(*this);
   }
-  EventBase::dispatch(element);
+
+  if (!isHandled()){
+    for (auto & c: element.getChildren()){
+      dispatch(*c);
+    }
+  }
+  //Do not call super class.
 }

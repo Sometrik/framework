@@ -122,8 +122,8 @@ class Element {
     }
   }
   
-  void showMessageDialog(const std::string & text);
-  std::string showInputDialog(const std::string & text);
+  void showMessageDialog(const std::string & title, const std::string & text);
+  std::string showInputDialog(const std::string & title, const std::string & text);
     
 protected:  
   bool isInitialized() const { return internal_id != 0; }

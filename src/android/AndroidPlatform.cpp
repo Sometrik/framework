@@ -146,6 +146,9 @@ AndroidPlatform::initializeRenderer(int opengl_es_version, ANativeWindow * _wind
     EGLContext _context;
     EGLint width;
     EGLint height;
+    int version = opengl_es_version / 100;
+
+    __android_log_print(ANDROID_LOG_INFO, "Sometrik", "version check: %d", version);
     EGLint contextAttribs[] = { EGL_CONTEXT_CLIENT_VERSION, opengl_es_version / 100, EGL_NONE };
 
     if ((_display = eglGetDisplay(EGL_DEFAULT_DISPLAY)) == EGL_NO_DISPLAY) {
@@ -415,7 +418,7 @@ void Java_com_sometrik_framework_FrameWork_nativeSetSurface(JNIEnv* env, jobject
   ANativeWindow * window = 0;
   if (surface != 0) window = ANativeWindow_fromSurface(env, surface);
   AndroidOpenGLInitEvent ev(platform->getTime(), 300, window);
-  platform->queueEvent(surfaceId, ev);
+  platform->queueEvent(platform->getInternalId(), ev);
 }
 
 void Java_com_sometrik_framework_MyGLRenderer_nativeOnDraw(JNIEnv* env, double timestamp,jobject thiz) {
@@ -423,14 +426,15 @@ void Java_com_sometrik_framework_MyGLRenderer_nativeOnDraw(JNIEnv* env, double t
   platform->queueEvent(platform->getActiveViewId(), ev);
 }
 
-  void Java_com_sometrik_framework_FrameWork_endModal(JNIEnv* env, jobject thiz, double timestamp, int value, jstring jtext, int id) {
+  void Java_com_sometrik_framework_FrameWork_endModal(JNIEnv* env, jobject thiz, double timestamp, int value, jstring jtext) {
+    __android_log_print(ANDROID_LOG_INFO, "Sometrik", "endModal");
   const char * text = env->GetStringUTFChars(jtext, 0);
   __android_log_print(ANDROID_LOG_INFO, "Sometrik", "endModal: %d %s", value, text);
   SysEvent ev(timestamp, SysEvent::END_MODAL);
   ev.setValue(value);
   ev.setTextValue(text);
   env->ReleaseStringUTFChars(jtext, text);
-  platform->queueEvent(id, ev);
+  platform->queueEvent(0, ev);
 }
 
 void Java_com_sometrik_framework_FrameWork_buttonClicked(JNIEnv* env, jobject thiz, double timestamp, jint id) {
@@ -472,6 +476,12 @@ void Java_com_sometrik_framework_FWPicker_pickerOptionSelected(JNIEnv* env, jobj
   CommandEvent ev(timestamp, id, position);
   platform->queueEvent(id, ev);
 }
+
+void Java_com_sometrik_framework_FWPicker_menuOptionSelected(JNIEnv* env, jobject thiz, double timestamp, jint id){
+//  CommandEvent ev(timestamp, id, position);
+//  platform->queueEvent(id, ev);
+}
+
 
 jint JNI_OnLoad(JavaVM *vm, void *reserved) {
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "JNI_Onload on AndroidPlatform");

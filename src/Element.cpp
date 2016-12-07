@@ -50,16 +50,18 @@ Element::onEvent(EventBase & ev) {
 }
 
 void
-Element::showMessageDialog(const std::string & text) {
+Element::showMessageDialog(const std::string & title, const std::string & text) {
   Command c(Command::SHOW_MESSAGE_DIALOG, getParentInternalId(), getInternalId());
-  c.setTextValue(text);
+  c.setTextValue(title);
+  c.setTextValue2(text);
   sendCommand(c);
 }
 
 std::string
-Element::showInputDialog(const std::string & text) {
+Element::showInputDialog(const std::string & title, const std::string & text) {
   Command c(Command::SHOW_INPUT_DIALOG, getParentInternalId(), getInternalId());
-  c.setTextValue(text);
+  c.setTextValue(title);
+  c.setTextValue2(text);
   sendCommand(c);
   return platform->getModalResultText();
 }
