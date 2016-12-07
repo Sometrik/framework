@@ -11,7 +11,7 @@ public:
 
   ANativeWindow * getWindow() { return window; }
   std::shared_ptr<EventBase> dup() const { return  std::make_shared<AndroidOpenGLInitEvent>(*this); }
-  void dispatch(Element & element);
+  void dispatch(Element & element) { }
   
  private:
   ANativeWindow * window = 0;
