@@ -66,7 +66,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   public native void NativeOnTouch();
   public native int GetInt(float x, float y);
   public native String getText();
-  public native void endModal(int value, String text, int id);
+  public native void endModal(double timestamp, int value, String text);
   public native void buttonClicked(double timestamp, int id);
   public native void textChangedEvent(double timestamp, int id, String text);
   public native void settingsCreator(Settings settings, int id);
@@ -354,7 +354,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
     case KeyEvent.KEYCODE_MENU:
 
       System.out.println("KeyEvent");
-      mGLView.sHandler.sendEmptyMessage(2);
+      menuPressed(System.currentTimeMillis() / 1000);
       return true;
     }
 

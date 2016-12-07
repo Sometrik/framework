@@ -1,18 +1,24 @@
 package com.sometrik.framework;
 
+import java.util.ArrayList;
+
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
+import android.widget.PopupMenu.OnMenuItemClickListener;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 
 public class NativeCommand {
 
@@ -24,6 +30,7 @@ public class NativeCommand {
   private CommandType command;
   private String key;
   private FrameWork frame;
+  private ArrayList<PopupMenu> menuList = new ArrayList<PopupMenu>();
   
   public enum CommandType{
     CREATE_APPLICATION,
@@ -158,14 +165,36 @@ public class NativeCommand {
       // TODO
       break;
     case SHOW_MESSAGE_DIALOG:
-      showMessageDialog(textValue, textValue2, getChildInternalId());
+      showMessageDialog(textValue, textValue2);
       break;
     case SHOW_INPUT_DIALOG:
-      showInputDialog(textValue, textValue2, getChildInternalId());
+      showInputDialog(textValue, textValue2);
+      break;
+    case CREATE_ACTION_SHEET:
+      createActionSheet();
+      break;
     default:
       System.out.println("Message couldn't be handled");
       break;
     }
+  }
+  
+  
+  private void createActionSheet(){
+    PopupMenu menu = new PopupMenu(frame, null);
+    menu.setOnMenuItemClickListener(new OnMenuItemClickListener(){
+      @Override
+      public boolean onMenuItemClick(MenuItem item) {
+	
+	return false;
+      }
+    });
+    menuList.add(menu);
+  }
+  
+  private void addOption(int menuId, int optionId, String optionText){
+    PopupMenu menu = menuList.get(menuId);
+    menu.getMenu().add(Menu.NONE, optionId, Menu.NONE, optionText);
   }
   
   private FWLayout createLinearLayout(){
@@ -234,7 +263,7 @@ public class NativeCommand {
   }
 
  // Create dialog with user text input
-  private void showInputDialog(String title, String message, final int dialogId) {
+  private void showInputDialog(String title, String message) {
     System.out.println("Creating input dialog");
 
     AlertDialog.Builder builder;
@@ -252,7 +281,7 @@ public class NativeCommand {
     // Negative button listener
     builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
       public void onClick(DialogInterface dialog, int id) {
-	frame.endModal(0, "", dialogId);	
+	frame.endModal(System.currentTimeMillis() / 1000.0f, 0, "");	
 	dialog.cancel();
       }
     });
@@ -261,7 +290,7 @@ public class NativeCommand {
     builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
       public void onClick(DialogInterface dialog, int id) {
 	String inputText = String.valueOf(input.getText());
-	frame.endModal(1, inputText, dialogId);
+	frame.endModal(System.currentTimeMillis() / 1000.0f, 1, inputText);
 	dialog.cancel();
       }
     });
@@ -272,7 +301,7 @@ public class NativeCommand {
   }
 
   // create Message dialog
-  private void showMessageDialog(String title, String message, final int dialogId) {
+  private void showMessageDialog(String title, String message) {
 
     System.out.println("creating message dialog");
 
@@ -283,12 +312,11 @@ public class NativeCommand {
     builder.setTitle(title);
     builder.setMessage(message);
     builder.setCancelable(false);
-    System.out.println("creating message dialog");
 
     // Positive button listener
     builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
       public void onClick(DialogInterface dialog, int id) {
-	frame.endModal(1, "", dialogId);
+	frame.endModal(System.currentTimeMillis() / 1000.0f, 1, "");
 	dialog.cancel();
       }
     });
