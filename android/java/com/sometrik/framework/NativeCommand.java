@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnCancelListener;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
@@ -173,6 +174,10 @@ public class NativeCommand {
     case CREATE_ACTION_SHEET:
       createActionSheet();
       break;
+    case QUIT_APP:
+      // TODO
+      frame.finish();
+      break;
     default:
       System.out.println("Message couldn't be handled");
       break;
@@ -277,6 +282,14 @@ public class NativeCommand {
     final EditText input = new EditText(frame);
     input.setInputType(InputType.TYPE_CLASS_TEXT);
     builder.setView(input);
+    
+    builder.setOnCancelListener(new OnCancelListener(){
+
+      @Override
+      public void onCancel(DialogInterface arg0) {
+	frame.endModal(System.currentTimeMillis() / 1000.0f, 0, "");
+      }
+    });
 
     // Negative button listener
     builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -311,13 +324,22 @@ public class NativeCommand {
     // Building an alert
     builder.setTitle(title);
     builder.setMessage(message);
-    builder.setCancelable(false);
+    builder.setCancelable(true);
+    
+    builder.setOnCancelListener(new OnCancelListener(){
+
+      @Override
+      public void onCancel(DialogInterface arg0) {
+	frame.endModal(System.currentTimeMillis() / 1000.0f, 0, "");
+      }
+      
+    });
 
     // Positive button listener
     builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
       public void onClick(DialogInterface dialog, int id) {
 	frame.endModal(System.currentTimeMillis() / 1000.0f, 1, "");
-	dialog.cancel();
+	dialog.dismiss();
       }
     });
 
