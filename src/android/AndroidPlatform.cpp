@@ -42,8 +42,8 @@ std::string AndroidPlatform::getBundleFilename(const char * filename) {
 std::string AndroidPlatform::getLocalFilename(const char * filename, FileType type) {
 
   auto env = getJNIEnv();
-  jstring path;
-  jstring jfilename;
+//  jstring path;
+//  jstring jfilename;
   std::string result;
   switch (type) {
   case DATABASE:
@@ -74,6 +74,8 @@ void AndroidPlatform::storeValue(const std::string & key, const std::string & va
   env->CallVoidMethod(framework, javaCache.addPrefsValueMethod, jkey, jvalue);
   env->ReleaseStringUTFChars(jkey, key.c_str());
   env->ReleaseStringUTFChars(jvalue, value.c_str());
+  env->DeleteLocalRef(jkey);
+  env->DeleteLocalRef(jvalue);
 }
 
 void
@@ -91,6 +93,9 @@ AndroidPlatform::sendCommand(const Command & command) {
    jobject jcommand = env->NewObject(javaCache.nativeCommandClass, javaCache.nativeCommandConstructor, framework, commandTypeId, command.getInternalId(), command.getChildInternalId(), command.getValue(), jtextValue, jtextValue2);
    env->CallStaticVoidMethod(javaCache.frameworkClass, javaCache.sendCommandMethod, framework, jcommand);
 
+   env->DeleteLocalRef(jcommand);
+   env->DeleteLocalRef(jtextValue);
+   env->DeleteLocalRef(jtextValue2);
    //Fix these releases
 //  env->ReleaseStringUTFChars(jtextValue, textValue);
 //  env->ReleaseStringUTFChars(jtextValue2, textValue2);
