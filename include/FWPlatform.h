@@ -122,6 +122,11 @@ class FWPlatform : public Element {
 
   int getModalResultValue() const { return modal_result_value; }
   const std::string & getModalResultText() const { return modal_result_text; }
+
+  void exit() {
+    Command c(Command::QUIT_APP, internal_id);
+    sendCommand(c);
+  }
   
  protected:
 #ifdef HAS_SOUNDCANVAS
