@@ -333,7 +333,7 @@ AndroidPlatform::getJNIEnv() const {
   return Myenv;
 }
 
-std::shared_ptr<AndroidPlatform> platform;
+static AndroidPlatform * platform = 0;
 
 extern "C" {
 
@@ -389,14 +389,14 @@ jboolean Java_com_sometrik_framework_MyGLRenderer_onUpdate(JNIEnv* env, jobject 
 static JavaVM * gJavaVM = 0;
 void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, jobject assetManager, float screenWidth, float screenHeight, float displayScale, bool hasEs3) {
   bool start_thread = false;
-  if (!platform.get()) {
+  if (!platform) {
     __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Creating Platform");
     const char* glslVersion = "#version 100"; // "#version es 300"
 
     AAssetManager* manager = AAssetManager_fromJava(env, assetManager);
     android_fopen_set_asset_manager(manager);
 
-    platform = std::make_shared<AndroidPlatform>(env, assetManager, thiz, displayScale, glslVersion, hasEs3);
+    platform = new AndroidPlatform(env, assetManager, thiz, displayScale, glslVersion, hasEs3);
     platform->setDisplayWidth(screenWidth);
     platform->setDisplayHeight(screenHeight);
   
@@ -462,6 +462,7 @@ void Java_com_sometrik_framework_FrameWork_nativeOnDestroy(JNIEnv* env, jobject 
   SysEvent ev(timestamp, SysEvent::DESTROY);
   platform->queueEvent(appId, ev);
   platform->joinThread();
+  delete platform;
 }
   
 void Java_com_sometrik_framework_FrameWork_textChangedEvent(JNIEnv* env, jobject thiz, double timestamp, jint id, jstring jtext) {
