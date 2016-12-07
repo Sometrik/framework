@@ -1,6 +1,7 @@
 package com.sometrik.framework;
 
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -11,6 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 
 public class NativeCommand {
 
@@ -265,7 +267,7 @@ public class NativeCommand {
     });
 
     // Create and show the alert
-    alert = builder.create();
+    AlertDialog alert = builder.create();
     alert.show();
   }
 
@@ -292,7 +294,7 @@ public class NativeCommand {
     });
 
     // Create and show the alert
-    alert = builder.create();
+    AlertDialog alert = builder.create();
     alert.show();
 
     System.out.println("message dialog created");

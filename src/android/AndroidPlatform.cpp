@@ -275,10 +275,10 @@ AndroidPlatform::renderLoop() {
 
 void
 AndroidPlatform::onOpenGLInitEvent(OpenGLInitEvent & _ev) {
-  auto & ev = dynamic_cast<AndroidOpenGLInitEvent&>(ev);
+  auto & ev = dynamic_cast<AndroidOpenGLInitEvent&>(_ev);
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "initializeRenderer reached");
-  if (ev2->getWindow()) {
-    initializeRenderer(ev2->getOpenGLESVersion(), ev2->getWindow());
+  if (ev.getWindow()) {
+    initializeRenderer(ev.getOpenGLESVersion(), ev.getWindow());
     canDraw = true;
   } else {
     deinitializeRenderer();

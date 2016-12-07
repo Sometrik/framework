@@ -107,7 +107,7 @@ public:
     return std::make_shared<AndroidLogger>();
   }
   void sendCommand(const Command & command) override;
-  bool initializeRenderer(ANativeWindow * _window);
+  bool initializeRenderer(int opengl_es_version, ANativeWindow * _window);
   void deinitializeRenderer();
   void startThread();
   void joinThread();
