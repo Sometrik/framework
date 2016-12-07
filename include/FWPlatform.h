@@ -124,7 +124,7 @@ class FWPlatform : public Element {
   const std::string & getModalResultText() const { return modal_result_text; }
 
   void exit() {
-    Command c(Command::QUIT_APP, internal_id);
+    Command c(Command::QUIT_APP, getInternalId());
     sendCommand(c);
   }
   
