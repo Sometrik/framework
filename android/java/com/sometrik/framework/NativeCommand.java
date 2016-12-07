@@ -158,10 +158,10 @@ public class NativeCommand {
       // TODO
       break;
     case SHOW_MESSAGE_DIALOG:
-      showMessageDialog(textValue, textValue2);
+      showMessageDialog(textValue, textValue2, getChildInternalId());
       break;
     case SHOW_INPUT_DIALOG:
-      showInputDialog(textValue, textValue2);
+      showInputDialog(textValue, textValue2, getChildInternalId());
     default:
       System.out.println("Message couldn't be handled");
       break;
@@ -234,7 +234,7 @@ public class NativeCommand {
   }
 
  // Create dialog with user text input
-  private void showInputDialog(String title, String message) {
+  private void showInputDialog(String title, String message, final int dialogId) {
     System.out.println("Creating input dialog");
 
     AlertDialog.Builder builder;
@@ -252,7 +252,7 @@ public class NativeCommand {
     // Negative button listener
     builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
       public void onClick(DialogInterface dialog, int id) {
-	frame.endModal(0, "");	
+	frame.endModal(0, "", dialogId);	
 	dialog.cancel();
       }
     });
@@ -261,7 +261,7 @@ public class NativeCommand {
     builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
       public void onClick(DialogInterface dialog, int id) {
 	String inputText = String.valueOf(input.getText());
-	frame.endModal(1, inputText);
+	frame.endModal(1, inputText, dialogId);
 	dialog.cancel();
       }
     });
@@ -272,7 +272,7 @@ public class NativeCommand {
   }
 
   // create Message dialog
-  private void showMessageDialog(String title, String message) {
+  private void showMessageDialog(String title, String message, final int dialogId) {
 
     System.out.println("creating message dialog");
 
@@ -288,7 +288,7 @@ public class NativeCommand {
     // Positive button listener
     builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
       public void onClick(DialogInterface dialog, int id) {
-	frame.endModal(1, "");
+	frame.endModal(1, "", dialogId);
 	dialog.cancel();
       }
     });
