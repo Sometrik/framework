@@ -374,14 +374,12 @@ extern FWApplication * applicationMain();
         // m_applicationEngine->Initialize(width, height);
 
         _platform = new FWiOSPlatform(self, scale, 1 ? "#version 100" : "#version 300 es", _has_es3);
-        _esContext = applicationMain();
-
-	_platform->setApplication(_esContext);
-	_platform->getApplication().initialize(_platform);
-
 	_platform->setDisplayWidth(actual_width);
 	_platform->setDisplayHeight(actual_height);
-	_platform->getApplication().initializeContent();	   
+
+	_esContext = applicationMain();
+
+	_platform->addChild(std::shared_ptr<Element>(_esContext));
       
 	OpenGLInitEvent ev(_platform->getTime(), self->_opengl_version);
 	_platform->postEvent(_platform->getActiveViewId(), ev);

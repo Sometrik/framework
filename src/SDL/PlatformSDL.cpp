@@ -287,18 +287,14 @@ int main(int argc, char *argv[]) {
   cerr << "starting, app = " << application << "\n";
 
   PlatformSDL platform;  
-  platform.setApplication(application);
-  platform.getApplication().initialize(&platform);
-  platform.getApplication().onCmdLine(argc, argv);
-
   platform.setDisplayWidth(width);
   platform.setDisplayHeight(height);
-  platform.getApplication().initializeContent();	   
+  platform.addChild(std::shared_ptr<Element>(application));
     
   platform.run();
   
   SysEvent ev(platform.getTime(), SysEvent::DESTROY);
-  ev.dispatch(platform.getApplication());
+  platform.postEvent(application->getInternalId(), ev);
   SDL_Quit();
   return 0;
 }

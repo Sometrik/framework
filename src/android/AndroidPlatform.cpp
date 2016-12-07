@@ -286,17 +286,15 @@ void* AndroidPlatform::threadStartCallback(void *myself) {
 
   AndroidPlatform * aplatform = (AndroidPlatform*) myself;
 
-
   JNIEnv * env;
   aplatform->getJavaVM()->AttachCurrentThread(&env, NULL);
 
+  FWApplication * application = applicationMain();
+  aplatform->addChild(std::shared_ptr<Element>(application));
 
-  aplatform->getApplication().initialize(aplatform);
-  // platform->onResize(screenWidth, screenHeight);
-  aplatform->getApplication().initializeContent();
   aplatform->renderLoop();
   aplatform->deinitializeRenderer();
-
+  
   return 0;
 }
 
@@ -370,6 +368,7 @@ jboolean Java_com_sometrik_framework_MyGLRenderer_onUpdate(JNIEnv* env, jobject 
 
 static JavaVM * gJavaVM = 0;
 void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, jobject assetManager, float screenWidth, float screenHeight, float displayScale, bool hasEs3) {
+  bool start_thread = false;
   if (!platform.get()) {
     __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Creating Platform");
     const char* glslVersion = "#version 100"; // "#version es 300"
@@ -378,19 +377,19 @@ void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, job
     android_fopen_set_asset_manager(manager);
 
     platform = std::make_shared<AndroidPlatform>(env, assetManager, thiz, displayScale, glslVersion, hasEs3);
+    platform->setDisplayWidth(screenWidth);
+    platform->setDisplayHeight(screenHeight);
+  
+    start_thread = true;
   }
-
-  FWApplication * application = applicationMain();
-  platform->setApplication(application);
-
-
-  platform->setDisplayWidth(screenWidth);
-  platform->setDisplayHeight(screenHeight);
 
   if (gJavaVM) {
     platform->setJavaVM(gJavaVM);
   }
-  platform->startThread();
+
+  if (start_thread) {
+    platform->startThread();
+  }
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Init end");
 }
 

@@ -18,8 +18,6 @@
 #include <string>
 #include <memory>
 
-class FWApplication;
-
 namespace canvas {
   class ContextFactory;
 };
@@ -50,8 +48,12 @@ class FWPlatform : public Element {
   
   std::string getBundleFilename(const std::string & filename) { return getBundleFilename(filename.c_str()); }
   
-  void setApplication(FWApplication * _application) {application = _application;}
-  FWApplication & getApplication() { return *application; }
+  FWApplication & getApplication() {
+    auto ptr = getFirstChild();
+    FWApplication * app = dynamic_cast<FWApplication*>(ptr.get());
+    return *app;
+  }
+  
 #ifdef HAS_SOUNDCANVAS
   SoundCanvas & getSoundCanvas() {
     if (soundCanvas == 0){
@@ -84,18 +86,16 @@ class FWPlatform : public Element {
   void postEvent(int internal_id, EventBase & ev) {
     Element * e = 0;
     if (!internal_id) {
-      e = &(getApplication());
+      auto ptr = getFirstChild();
+      e = ptr.get();
     } else {
-      e = getApplication().getElementByInternalId(internal_id);
+      e = getElementByInternalId(internal_id);
     }
     if (e) ev.dispatch(*e);
     else {
       std::ostringstream s;
       s << "Failed to dispatch event " << typeid(ev).name() << " id: " << internal_id;
       getLogger().println(s.str());
-    }
-    if (!ev.isHandled()) {
-      ev.dispatch(*this);
     }
     if (ev.isRedrawNeeded()) {
       Command c(Command::REQUEST_REDRAW, internal_id);
@@ -137,7 +137,6 @@ class FWPlatform : public Element {
   float display_scale = 1.0f;
   std::string glsl_version;
   bool has_es3 = false;
-  FWApplication * application = 0;
   FWPreferences preferences;
   int modal_result_value = 0;
   std::string modal_result_text;
