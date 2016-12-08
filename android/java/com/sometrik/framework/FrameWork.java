@@ -115,28 +115,12 @@ public class FrameWork extends Activity implements NativeCommandHandler {
     initNative();
   }
 
-  private void initNative(){
-    
+  private void initNative() {    
     DisplayMetrics displayMetrics = getDisplayMetrics();
     System.out.println("Display scale: " + displayMetrics.scaledDensity);
-    final ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-    final ConfigurationInfo configurationInfo = activityManager.getDeviceConfigurationInfo();
-    Boolean hasEs3;
-    if (configurationInfo.reqGlEsVersion >= 0x30000){
-      hasEs3 = true;
-    } else if (configurationInfo.reqGlEsVersion >= 0x20000) {
-      System.out.println("openGLES 3 isn't supported");
-      hasEs3 = false;
-    } else {
-      hasEs3 = false;
-      System.out.println("openGLES 2 isn't supported");
-    }
     float xSize = displayMetrics.widthPixels / displayMetrics.scaledDensity;
     float ySize = displayMetrics.heightPixels / displayMetrics.scaledDensity;
-    onInit(getAssets(), xSize, ySize, displayMetrics.scaledDensity, hasEs3);
-    
-    
-    
+    onInit(getAssets(), xSize, ySize, displayMetrics.scaledDensity);
   }
 
   // Get screen settings
@@ -193,6 +177,9 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   }
 
   public void createNativeOpenGLView(final int id) {
+    final ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+    final ConfigurationInfo configurationInfo = activityManager.getDeviceConfigurationInfo();
+    int gl_version = configurationInfo.reqGlEsVersion;    
     System.out.println("about to create native surface");
     NativeSurface surfaceView = new NativeSurface(this);
     System.out.println("Piip");
@@ -207,7 +194,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
 
       public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
 	System.out.println("setting native surface");
-	nativeSetSurface(holder.getSurface(), id);
+	nativeSetSurface(holder.getSurface(), id, gl_version);
 	System.out.println("native surface has been set");
       }
     });

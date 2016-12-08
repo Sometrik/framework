@@ -135,10 +135,10 @@ AndroidPlatform::initializeRenderer(int opengl_es_version, ANativeWindow * _wind
     EGLContext _context;
     EGLint width;
     EGLint height;
-    int version = opengl_es_version / 100;
+    int version = opengl_es_version >> 16;
 
     __android_log_print(ANDROID_LOG_INFO, "Sometrik", "version check: %d", version);
-    EGLint contextAttribs[] = { EGL_CONTEXT_CLIENT_VERSION, opengl_es_version / 100, EGL_NONE };
+    EGLint contextAttribs[] = { EGL_CONTEXT_CLIENT_VERSION, version, EGL_NONE };
 
     if ((_display = eglGetDisplay(EGL_DEFAULT_DISPLAY)) == EGL_NO_DISPLAY) {
       __android_log_print(ANDROID_LOG_INFO, "Sometrik", "eglGetDisplay() returned error %d", eglGetError());
@@ -377,7 +377,7 @@ jboolean Java_com_sometrik_framework_MyGLRenderer_onUpdate(JNIEnv* env, jobject 
 }
 
 static JavaVM * gJavaVM = 0;
-void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, jobject assetManager, float screenWidth, float screenHeight, float displayScale, bool hasEs3) {
+void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, jobject assetManager, float screenWidth, float screenHeight, float displayScale) {
   bool start_thread = false;
   if (!platform) {
     __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Creating Platform");
@@ -402,11 +402,11 @@ void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, job
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Init end");
 }
 
-void Java_com_sometrik_framework_FrameWork_nativeSetSurface(JNIEnv* env, jobject thiz, jobject surface, int surfaceId) {
+  void Java_com_sometrik_framework_FrameWork_nativeSetSurface(JNIEnv* env, jobject thiz, jobject surface, int surfaceId, int gl_version) {
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "going for it");
   ANativeWindow * window = 0;
   if (surface != 0) window = ANativeWindow_fromSurface(env, surface);
-  AndroidOpenGLInitEvent ev(platform->getTime(), 300, window);
+  AndroidOpenGLInitEvent ev(platform->getTime(), gl_version, window);
   platform->queueEvent(platform->getInternalId(), ev);
 }
 
