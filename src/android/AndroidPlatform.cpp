@@ -67,17 +67,6 @@ std::string AndroidPlatform::loadValue(const std::string & key) {
   return result;
 }
 
-void AndroidPlatform::storeValue(const std::string & key, const std::string & value) {
-  auto env = getJNIEnv();
-  jstring jkey = env->NewStringUTF(key.c_str());
-  jstring jvalue = env->NewStringUTF(value.c_str());
-  env->CallVoidMethod(framework, javaCache.addPrefsValueMethod, jkey, jvalue);
-  env->ReleaseStringUTFChars(jkey, key.c_str());
-  env->ReleaseStringUTFChars(jvalue, value.c_str());
-  env->DeleteLocalRef(jkey);
-  env->DeleteLocalRef(jvalue);
-}
-
 void
 AndroidPlatform::sendCommand(const Command & command) {
   FWPlatform::sendCommand(command);
