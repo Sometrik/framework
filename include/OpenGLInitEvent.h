@@ -14,7 +14,7 @@ public:
   int getOpenGLESVersion() const { return opengl_es_version; }
   
  private:
-  int opengl_es_version; // 300 = OpenGL es 3.0
+  int opengl_es_version; // 0x30000 = OpenGL es 3.0, 0x20000 = OpenGL ES 2.0
 };
 
 #endif
