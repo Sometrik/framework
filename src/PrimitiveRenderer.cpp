@@ -370,8 +370,8 @@ PrimitiveRenderer::getGLSLVersion() const {
 const char *
 PrimitiveRenderer::getModernGLSLVersion() const {
   if (is_es3) {
-    return "#version es 300";
+    return "#version 300 es";
   } else {
-    return "#version es 300"; // fix
+    return "#version 300 es"; // fix
   }
 }
