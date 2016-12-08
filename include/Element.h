@@ -11,6 +11,9 @@ class Element : public EventHandler {
   Element(int _id = 0) : id(_id) { }
   ~Element();
 
+  Element(const Element & other) = delete;
+  Element & operator= (const Element & other) = delete;
+
   virtual void initialize(FWPlatform * _platform);
   virtual void initializeContent() { }
   
