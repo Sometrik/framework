@@ -178,6 +178,13 @@ public class NativeCommand {
       // TODO
       frame.finish();
       break;
+    case UPDATE_PREFERENCES:
+      // env->CallVoidMethod(framework, javaCache.addPrefsValueMethod, jkey, jvalue);
+      // env->ReleaseStringUTFChars(jkey, key.c_str());
+      // env->ReleaseStringUTFChars(jvalue, value.c_str());
+      // env->DeleteLocalRef(jkey);
+      // env->DeleteLocalRef(jvalue);
+      break;
     default:
       System.out.println("Message couldn't be handled");
       break;
