@@ -164,7 +164,7 @@ public class NativeCommand {
       frame.setTitle(getTextValue());
       break;
     case LAUNCH_BROWSER:
-      // TODO
+      frame.launchBrowser(getTextValue());
       break;
     case SHOW_MESSAGE_DIALOG:
       showMessageDialog(textValue, textValue2);
