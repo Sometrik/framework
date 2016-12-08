@@ -1,44 +1,18 @@
 #ifndef _ELEMENT_H_
 #define _ELEMENT_H_
 
+#include <EventHandler.h>
+
 #include <memory>
 #include <vector>
 
-class EventBase;
-class TouchEvent;
-class CommandEvent;
-class DrawEvent;
-class PurchaseEvent;
-class SysEvent;
-class UpdateEvent;
-class ResizeEvent;
-class TimerEvent;
-class TextEvent;
-class OpenGLInitEvent;
-class Command;
-class LinearLayout;
-class FWPlatform;
-
-class Element {
+class Element : public EventHandler {
  public:
   Element(int _id = 0) : id(_id) { }
-  virtual ~Element();
+  ~Element();
 
   virtual void initialize(FWPlatform * _platform);
   virtual void initializeContent() { }
-
-  virtual void onEvent(EventBase & ev);
-  
-  virtual void onDrawEvent(DrawEvent & ev) { }
-  virtual void onUpdateEvent(UpdateEvent & ev) { }
-  virtual void onCommandEvent(CommandEvent & ev) { }
-  virtual void onTouchEvent(TouchEvent & ev) { }
-  virtual void onPurchaseEvent(PurchaseEvent & ev) { }
-  virtual void onSysEvent(SysEvent & ev) { }
-  virtual void onResizeEvent(ResizeEvent & ev) { }
-  virtual void onTimerEvent(TimerEvent & ev) { }
-  virtual void onTextEvent(TextEvent & ev) { }
-  virtual void onOpenGLInitEvent(OpenGLInitEvent & ev) { }
   
   virtual void show() { }
   virtual int showModal() { return 0; }
