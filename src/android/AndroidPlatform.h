@@ -23,7 +23,7 @@ public:
 
     loadPrefsValueMethod = env->GetMethodID(frameworkClass, "addToPrefs", "(Ljava/lang/String;Ljava/lang/String;)V");
     addPrefsValueMethod  = env->GetMethodID(frameworkClass, "getFromPrefs", "(Ljava/lang/String;)Ljava/lang/String;");
-    currentTimeMillisMethod = env->GetStaticMethodID(systemClass, "currentTimeMillis", "()J");
+    // currentTimeMillisMethod = env->GetStaticMethodID(systemClass, "currentTimeMillis", "()J");
     nativeCommandConstructor = env->GetMethodID(nativeCommandClass, "<init>", "(Lcom/sometrik/framework/FrameWork;IIIILjava/lang/String;Ljava/lang/String;)V");
     sendCommandMethod = env->GetStaticMethodID(frameworkClass, "sendMessage", "(Lcom/sometrik/framework/FrameWork;Lcom/sometrik/framework/NativeCommand;)V");
 
@@ -59,7 +59,7 @@ public:
   jmethodID loadPrefsValueMethod;
   jmethodID addPrefsValueMethod;
   jmethodID storeValueMethod;
-  jmethodID currentTimeMillisMethod;
+  // jmethodID currentTimeMillisMethod;
   jmethodID nativeCommandConstructor;
   jmethodID sendCommandMethod;
 
