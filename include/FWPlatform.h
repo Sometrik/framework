@@ -41,11 +41,17 @@ class FWPlatform : public Element {
   virtual double getTime() const = 0;
   virtual std::shared_ptr<canvas::ContextFactory> createContextFactory() const = 0;
   virtual std::shared_ptr<HTTPClientFactory> createHTTPClientFactory() const = 0;
-  virtual void storeValue(const std::string & key, const std::string & value) = 0;
   virtual std::string loadValue(const std::string & key) = 0;
   
   std::string getBundleFilename(const std::string & filename) { return getBundleFilename(filename.c_str()); }
-  
+
+  void storeValue(const std::string & key, const std::string & value) {
+    Command c(Command::UPDATE_PREFERENCE, 0);
+    c.setKey(key);
+    c.setTextValue(value);
+    sendCommand(c);
+  }
+
   FWApplication & getApplication() {
     auto ptr = getFirstChild();
     FWApplication * app = dynamic_cast<FWApplication*>(ptr.get());
