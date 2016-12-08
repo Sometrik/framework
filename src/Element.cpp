@@ -4,6 +4,8 @@
 #include <LinearLayout.h>
 #include <Command.h>
 
+#include <cassert>
+
 using namespace std;
 
 Element::~Element() {
@@ -20,6 +22,7 @@ Element::initialize(FWPlatform * _platform) {
 
 void
 Element::sendCommand(const Command & command){
+  assert(this != platform);
   platform->sendCommand(command);
 }
 
