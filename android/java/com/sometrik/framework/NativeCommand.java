@@ -34,6 +34,7 @@ public class NativeCommand {
   private ArrayList<PopupMenu> menuList = new ArrayList<PopupMenu>();
   
   public enum CommandType{
+    CREATE_PLATFORM,
     CREATE_APPLICATION,
     SHOW_VIEW,
     CREATE_FORMVIEW,
