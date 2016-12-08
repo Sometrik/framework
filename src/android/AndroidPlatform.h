@@ -69,8 +69,8 @@ private:
 
 class AndroidPlatform: public FWPlatform {
 public:
-  AndroidPlatform(JNIEnv * _env, jobject _mgr, jobject _framework, float _display_scale, const char * _glsl_version, bool _has_es3) :
-      FWPlatform(_display_scale, _glsl_version, _has_es3), javaCache(JavaCache(_env)) {
+  AndroidPlatform(JNIEnv * _env, jobject _mgr, jobject _framework, float _display_scale) :
+      FWPlatform(_display_scale), javaCache(JavaCache(_env)) {
     framework = _env->NewGlobalRef(_framework);
     mgr = _env->NewGlobalRef(_mgr);
     canvasCache = std::make_shared<canvas::AndroidCache>(_env, _mgr);

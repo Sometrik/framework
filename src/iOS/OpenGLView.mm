@@ -373,7 +373,7 @@ extern FWApplication * applicationMain();
         int actual_height = int(CGRectGetHeight(frame) * scale);
         // m_applicationEngine->Initialize(width, height);
 
-        _platform = new FWiOSPlatform(self, scale, 1 ? "#version 100" : "#version 300 es", _has_es3);
+        _platform = new FWiOSPlatform(self, scale);
 	_platform->setDisplayWidth(actual_width);
 	_platform->setDisplayHeight(actual_height);
 

@@ -392,12 +392,11 @@ void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, job
   bool start_thread = false;
   if (!platform) {
     __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Creating Platform");
-    const char* glslVersion = "#version 100"; // "#version es 300"
 
     AAssetManager* manager = AAssetManager_fromJava(env, assetManager);
     android_fopen_set_asset_manager(manager);
 
-    platform = new AndroidPlatform(env, assetManager, thiz, displayScale, glslVersion, hasEs3);
+    platform = new AndroidPlatform(env, assetManager, thiz, displayScale);
     platform->setDisplayWidth(screenWidth);
     platform->setDisplayHeight(screenHeight);
   

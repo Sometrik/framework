@@ -51,10 +51,7 @@ static Uint32 timer_callback(Uint32 interval, void *param) {
 
 class PlatformSDL : public FWPlatform {
 public:
-  PlatformSDL() : FWPlatform(1.0f,
-			     // "#version 300 es",
-			     "#version 100",
-			     true) { }
+  PlatformSDL() : FWPlatform(1.0f) { }
 
   double getTime() const override {
     struct timeval tv;

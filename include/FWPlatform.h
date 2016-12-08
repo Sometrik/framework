@@ -31,12 +31,10 @@ class FWPlatform : public Element {
     CACHE_DATABASE
   };
   
- FWPlatform(float _display_scale, const char * _glsl_version, bool _has_es3)
-   : display_scale(_display_scale), glsl_version(_glsl_version), has_es3(_has_es3) {
+ FWPlatform(float _display_scale)
+   : display_scale(_display_scale) {
     initialize(this);
   }
-
-  const std::string & getGLSLVersion() const { return glsl_version; }
   
   virtual std::string getBundleFilename(const char * filename) = 0;
   virtual std::string getLocalFilename(const char * filename, FileType type) = 0;
@@ -114,7 +112,6 @@ class FWPlatform : public Element {
   int getDisplayWidth() const { return display_width; }
   int getDisplayHeight() const { return display_height; }
   float getDisplayScale() const { return display_scale; }
-  bool hasES3() const { return has_es3; }
   int getActiveViewId() const { return activeViewId; }
 
   virtual void createFBO(int flags) { }
@@ -140,8 +137,6 @@ class FWPlatform : public Element {
   
   int display_width = 0, display_height = 0;
   float display_scale = 1.0f;
-  std::string glsl_version;
-  bool has_es3 = false;
   FWPreferences preferences;
   int modal_result_value = 0;
   std::string modal_result_text;
