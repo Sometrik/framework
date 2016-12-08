@@ -23,6 +23,10 @@ class Picker : public Element {
     }
   }
 
+  void onValueEvent(ValueEvent & ev) override {
+    value = ev.getValue();
+  }
+
  protected:
   void initializeOption(const std::pair<int, std::string> & o) {
     Command c(Command::ADD_OPTION, getInternalId(), 0);

@@ -3,7 +3,7 @@
 
 #include <Element.h>
 #include <Command.h>
-#include <TextEvent.h>
+#include <ValueEvent.h>
 
 class TextField : public Element {
  public:
@@ -14,8 +14,8 @@ class TextField : public Element {
     sendCommand(Command(Command::CREATE_TEXTFIELD, getParentInternalId(), getInternalId()));
   }
 
-  void onTextEvent(TextEvent & ev) override {
-    value = ev.getText();
+  void onValueEvent(ValueEvent & ev) override {
+    value = ev.getTextValue();
   }
 
   const std::string & getValue() { return value; }

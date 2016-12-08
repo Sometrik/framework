@@ -457,13 +457,13 @@ void Java_com_sometrik_framework_FrameWork_nativeOnDestroy(JNIEnv* env, jobject 
 void Java_com_sometrik_framework_FrameWork_textChangedEvent(JNIEnv* env, jobject thiz, double timestamp, jint id, jstring jtext) {
   const char * text = env->GetStringUTFChars(jtext, 0);
   __android_log_print(ANDROID_LOG_INFO, "Sometrik", "textChangedEvent: %s", text);
-  TextEvent ev(timestamp, text);
+  ValueEvent ev(timestamp, text);
   env->ReleaseStringUTFChars(jtext, text);
   platform->queueEvent(id, ev);
 }
 
 void Java_com_sometrik_framework_FWPicker_pickerOptionSelected(JNIEnv* env, jobject thiz, double timestamp, jint id, jint position){
-  CommandEvent ev(timestamp, id, position);
+  ValueEvent ev(timestamp, position);
   platform->queueEvent(id, ev);
 }
 

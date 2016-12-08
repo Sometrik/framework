@@ -10,7 +10,7 @@ class SysEvent;
 class UpdateEvent;
 class ResizeEvent;
 class TimerEvent;
-class TextEvent;
+class ValueEvent;
 class OpenGLInitEvent;
 class Command;
 class LinearLayout;
@@ -30,7 +30,7 @@ class EventHandler {
   virtual void onSysEvent(SysEvent & ev) { }
   virtual void onResizeEvent(ResizeEvent & ev) { }
   virtual void onTimerEvent(TimerEvent & ev) { }
-  virtual void onTextEvent(TextEvent & ev) { }
+  virtual void onValueEvent(ValueEvent & ev) { }
   virtual void onOpenGLInitEvent(OpenGLInitEvent & ev) { }  
 };
 
