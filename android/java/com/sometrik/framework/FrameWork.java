@@ -72,8 +72,8 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   public native void settingsCreator(Settings settings, int id);
   public native void menuPressed(double timestamp);
   public native void touchEvent(int mode, int fingerIndex, long time, float x, float y);
-  public native void onInit(AssetManager assetManager, float xSize, float ySize, float displayScale, Boolean hasEs3);
-  public native void nativeSetSurface(Surface surface, int surfaceId);
+  public native void onInit(AssetManager assetManager, float xSize, float ySize, float displayScale);
+  public native void nativeSetSurface(Surface surface, int surfaceId, int gl_version);
   public native void nativeOnResume(double timestamp, int appId);
   public native void nativeOnPause(double timestamp, int appId);
   public native void nativeOnStop(double timestamp, int appId);
