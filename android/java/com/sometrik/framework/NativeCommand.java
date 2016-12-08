@@ -155,7 +155,7 @@ public class NativeCommand {
       view.addOption(getValue(), getTextValue());
       break;
     case POST_NOTIFICATION:
-      // TODO
+      frame.createNotification(getTextValue(), getTextValue2());
       break;
     case CREATE_APPLICATION:
       frame.setAppId(getInternalId());
