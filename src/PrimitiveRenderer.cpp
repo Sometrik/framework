@@ -357,3 +357,21 @@ PrimitiveRenderer::setClearColor(float red, float green, float blue) {
     glClearColor(red, green, blue, 1.0f);
   }
 }
+
+const char *
+PrimitiveRenderer::getGLSLVersion() const {
+  if (is_es3) {
+    return "#version 100";
+  } else {
+    return "#version 100";
+  }
+}
+
+const char *
+PrimitiveRenderer::getModernGLSLVersion() const {
+  if (is_es3) {
+    return "#version es 300";
+  } else {
+    return "#version es 300"; // fix
+  }
+}

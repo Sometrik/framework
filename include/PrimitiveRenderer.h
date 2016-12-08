@@ -76,6 +76,8 @@ class PrimitiveRenderer {
   void bind(const canvas::TextureRef & texture);
   void bind(const VBO & vbo);
   void use(const gpufw::shader_program & program);
+  const char * getGLSLVersion() const;
+  const char * getModernGLSLVersion() const;
 
  private:
   unsigned int max_texture_size = 0;
