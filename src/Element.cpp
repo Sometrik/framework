@@ -46,7 +46,7 @@ Element::addVerticalLayout() {
 }
 
 void
-Element::onEvent(EventBase & ev) {
+Element::onEvent(Event & ev) {
   if (parent && !ev.isHandled()) {
     ev.dispatch(*parent);
   }

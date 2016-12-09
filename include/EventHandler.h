@@ -1,7 +1,7 @@
 #ifndef _EVENTHANDLER_H_
 #define _EVENTHANDLER_H_
 
-class EventBase;
+class Event;
 class TouchEvent;
 class CommandEvent;
 class DrawEvent;
@@ -12,8 +12,6 @@ class ResizeEvent;
 class TimerEvent;
 class ValueEvent;
 class OpenGLInitEvent;
-
-class Event;
 class UIEvent;
 class MouseEvent;
 class PaintEvent;
@@ -43,7 +41,7 @@ class EventHandler {
   EventHandler() { }
   virtual ~EventHandler() { }
 
-  virtual void onEvent(EventBase & ev) { }
+  virtual void onEvent(Event & ev) { }
   virtual void onDrawEvent(DrawEvent & ev) { }
   virtual void onUpdateEvent(UpdateEvent & ev) { }
   virtual void onCommandEvent(CommandEvent & ev) { }
@@ -54,8 +52,6 @@ class EventHandler {
   virtual void onTimerEvent(TimerEvent & ev) { }
   virtual void onValueEvent(ValueEvent & ev) { }
   virtual void onOpenGLInitEvent(OpenGLInitEvent & ev) { }
-
-  virtual void handleEvent(Event & ev) { }
   virtual void handleUIEvent(UIEvent & ev) { }
   virtual void handleCommandEvent(CommandEvent & ev) { }
   virtual void handlePrepareEvent(PrepareEvent & ev) { }

@@ -3,7 +3,7 @@
 
 #include <Element.h>
 #include <FWApplication.h>
-#include <EventBase.h>
+#include <Event.h>
 #include <Command.h>
 #include <Logger.h>
 #include <PrimitiveRenderer.h>
@@ -46,7 +46,7 @@ class FWPlatform : public Element {
   virtual double getTime() const = 0;
   virtual std::shared_ptr<canvas::ContextFactory> createContextFactory() const = 0;
   virtual std::shared_ptr<HTTPClientFactory> createHTTPClientFactory() const = 0;
-  virtual void pushEvent(const EventBase & ev) { }
+  virtual void pushEvent(const Event & ev) { }
     
   std::string getBundleFilename(const std::string & filename) { return getBundleFilename(filename.c_str()); }
 
@@ -92,7 +92,7 @@ class FWPlatform : public Element {
     }
   }
 
-  void postEvent(int internal_id, EventBase & ev) {
+  void postEvent(int internal_id, Event & ev) {
     Element * e = 0;
     if (!internal_id) {
       auto ptr = getFirstChild();

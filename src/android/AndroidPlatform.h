@@ -115,7 +115,7 @@ public:
   JNIEnv* getJNIEnv() const;
 //  JavaCache getJavaCache() const { return &javaCache; }
 
-  void queueEvent(int internal_id, EventBase & ev) {
+  void queueEvent(int internal_id, Event & ev) {
     eventqueue.push(internal_id, ev);
   }
 

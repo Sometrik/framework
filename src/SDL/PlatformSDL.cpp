@@ -64,7 +64,7 @@ public:
     return t;
   }
 
-  void pushEvent(const EventBase & ev) override {
+  void pushEvent(const Event & ev) override {
     SDL_Event user_event;
     user_event.type = SDL_USEREVENT;
     user_event.user.code = 1;
@@ -174,9 +174,9 @@ public:
 	  break;
 	case SDL_USEREVENT:
 	  {
-	    EventBase * ev = (EventBase*)event.user.data1;
+	    Event * ev = (Event*)event.user.data1;
 	    assert(ev);
-	    std::shared_ptr<EventBase> ptr(ev);
+	    std::shared_ptr<Event> ptr(ev);
 	    postEvent(getActiveViewId(), *ptr);
 	  }
 	  break;
