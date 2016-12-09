@@ -131,8 +131,6 @@ class FWPlatform : public Element {
   int getModalResultValue() const { return modal_result_value; }
   const std::string & getModalResultText() const { return modal_result_text; }
 
-  const char * getGLSLVersion()  { return GLSLVersion; }
-
   void exit() {
     Command c(Command::QUIT_APP, getInternalId());
     sendCommand(c);
@@ -160,7 +158,6 @@ class FWPlatform : public Element {
 #endif
   std::shared_ptr<Logger> logger;
   std::shared_ptr<PrimitiveRenderer> renderer;
-  const char * GLSLVersion = "";
   int nextInternalId = 1;
   int activeViewId = 0;
 };
