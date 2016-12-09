@@ -26,6 +26,14 @@ class Event {
 
   void update() { redraw_needed = true; }
 
+  const EventHandler * getHandler() const { return handler; }
+  EventHandler * getHandler() { return handler; }
+
+  void setEventHandler(EventHandler * h) { handler = h; }
+
+ protected:
+  EventHandler * handler = 0;
+
  private:
   double timestamp;
   bool is_handled = false;
