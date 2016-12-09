@@ -21,7 +21,7 @@ class EventHandler {
   EventHandler() { }
   virtual ~EventHandler() { }
 
-  virtual void onEvent(EventBase & ev);
+  virtual void onEvent(EventBase & ev) { }
   virtual void onDrawEvent(DrawEvent & ev) { }
   virtual void onUpdateEvent(UpdateEvent & ev) { }
   virtual void onCommandEvent(CommandEvent & ev) { }
