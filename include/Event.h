@@ -24,6 +24,7 @@ class Event {
   void requestAnimation() { request_animation = true; }
   void updateLayout() { update_layout_needed = true; }
 
+  bool needUpdate() const { return redraw_needed; }
   void update() { redraw_needed = true; }
 
   const EventHandler * getHandler() const { return handler; }
