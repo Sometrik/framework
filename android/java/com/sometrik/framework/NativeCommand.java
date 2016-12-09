@@ -3,8 +3,10 @@ package com.sometrik.framework;
 import java.util.ArrayList;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
+import android.content.SharedPreferences;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
@@ -120,10 +122,6 @@ public class NativeCommand {
       view.addChild(picker);
       break;
 
-      //    case CREATE_OPENGL_VIEW:
-      // frame.createOpenGLView(childInternalId);
-      // break;
-
     case CREATE_NATIVE_OPENGL_VIEW:
       frame.createNativeOpenGLView(childInternalId);
       break;
@@ -148,6 +146,7 @@ public class NativeCommand {
       break;
       
     case SHOW_VIEW:
+    	frame.disableDraw();
       view.showView();
       break;
     case ADD_OPTION:
@@ -179,12 +178,12 @@ public class NativeCommand {
       // TODO
       frame.finish();
       break;
-    case UPDATE_PREFERENCES:
-      // env->CallVoidMethod(framework, javaCache.addPrefsValueMethod, jkey, jvalue);
-      // env->ReleaseStringUTFChars(jkey, key.c_str());
-      // env->ReleaseStringUTFChars(jvalue, value.c_str());
-      // env->DeleteLocalRef(jkey);
-      // env->DeleteLocalRef(jvalue);
+    case UPDATE_PREFERENCE:
+    	//Now stores String value to string key.
+      SharedPreferences prefs = frame.getSharedPreferences("com.example.framework", Context.MODE_PRIVATE);
+      SharedPreferences.Editor editor = prefs.edit();
+      editor.putString(textValue, textValue2);
+      editor.apply();
       break;
     default:
       System.out.println("Message couldn't be handled");

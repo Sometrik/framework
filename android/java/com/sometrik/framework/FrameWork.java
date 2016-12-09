@@ -40,13 +40,13 @@ import android.widget.RelativeLayout;
 
 public class FrameWork extends Activity implements NativeCommandHandler {
 
-  private MyGLSurfaceView mGLView;
   private RelativeLayout mainView;
   private SharedPreferences prefs;
   private SharedPreferences.Editor editor;
   private FrameWork frameWork;
-
   private static final int RESULT_SETTINGS = 1;
+  
+  private boolean drawMode = false;
 
   private Settings settings;
 
@@ -60,7 +60,6 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   private float windowYcoords;
   public static HashMap<Integer, NativeCommandHandler> views = new HashMap<Integer, NativeCommandHandler>();
   public static int currentView = 0;
-  private MyGLRenderer renderer;
   private int appId = 0;
 
   public native void NativeOnTouch();
@@ -79,7 +78,9 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   public native void nativeOnStop(double timestamp, int appId);
   public native void nativeOnStart(double timestamp, int appId);
   public native void nativeOnDestroy(double timestamp, int appId);
-  public static native void onResize(double timeStamp, float width, float height, int viewId);
+  public static native void onResize(double timestamp, float width, float height, int viewId);
+  public native void nativeOnDraw(double timestamp, int viewId);
+  public native void nativeOnUpdate(double timestamp, int viewId);
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -132,13 +133,14 @@ public class FrameWork extends Activity implements NativeCommandHandler {
     return displaymetrics;
   }
   
+  public void setToDraw(Runnable runnable){
+  	drawMode = true;
+  	mainHandler.post(runnable);
+  }
+  
   public static void addToViewList(NativeCommandHandler view){
     System.out.println(view.getElementId() + " added to view list");
     views.put(view.getElementId(), view);
-  }
-
-  public MyGLSurfaceView getSurfaceView() {
-    return mGLView;
   }
 
   public void launchBrowser(String url) {
@@ -151,35 +153,11 @@ public class FrameWork extends Activity implements NativeCommandHandler {
     layout.setId(id);
     views.put(id, layout);
   }
-  
-  public MyGLSurfaceView createOpenGLView(final int id){
-    MyGLRenderer renderer = new MyGLRenderer(this, screenWidth, screenHeight);
-    MyGLSurfaceView mGLView = new MyGLSurfaceView(this, renderer, id);
-    mGLView.setOnTouchListener(new MyOnTouchListener(this));
-    mGLView.setWillNotDraw(false);
-    mGLView.getHolder().addCallback(new Callback() {
-      public void surfaceDestroyed(SurfaceHolder holder) {
-      }
-
-      public void surfaceCreated(SurfaceHolder holder) {
-      }
-
-      public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-	nativeSetSurface(holder.getSurface(), id);
-      }
-    });
-    views.put(id, mGLView);
-    if (currentView == 0) {
-      setContentView(mGLView);
-      currentView = id;
-    }
-    return mGLView;
-  }
 
   public void createNativeOpenGLView(final int id) {
     final ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
     final ConfigurationInfo configurationInfo = activityManager.getDeviceConfigurationInfo();
-    int gl_version = configurationInfo.reqGlEsVersion;    
+    final int gl_version = configurationInfo.reqGlEsVersion;    
     System.out.println("about to create native surface");
     NativeSurface surfaceView = new NativeSurface(this);
     System.out.println("Piip");
@@ -407,6 +385,10 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   public void setAppId(int id){
     this.appId = id;
   }
+  
+  public boolean getDrawMode(){ return drawMode; }
+  
+  public void disableDraw(){ drawMode = false; }
 
   // returns database path
   public String getDBPath(String dbName) {

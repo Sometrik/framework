@@ -19,8 +19,8 @@
 #include <pthread.h>
 
 #include <TouchEvent.h>
+#include <ValueEvent.h>
 #include <SysEvent.h>
-#include <TextEvent.h>
 #include <CommandEvent.h>
 #include <DrawEvent.h>
 #include <UpdateEvent.h>
@@ -53,18 +53,6 @@ std::string AndroidPlatform::getLocalFilename(const char * filename, FileType ty
     return "";
   }
   return "";
-}
-
-
-std::string AndroidPlatform::loadValue(const std::string & key) {
-  auto env = getJNIEnv();
-  jstring jkey = env->NewStringUTF(key.c_str());
-  jstring value = (jstring) env->CallObjectMethod(framework, javaCache.loadPrefsValueMethod, jkey);
-  std::string result = env->GetStringUTFChars(value, JNI_FALSE);
-  env->ReleaseStringUTFChars(jkey, key.c_str());
-  env->ReleaseStringUTFChars(value, result.c_str());
-
-  return result;
 }
 
 void
@@ -370,7 +358,7 @@ void Java_com_sometrik_framework_FrameWork_touchEvent(JNIEnv* env, jobject thiz,
 void Java_com_sometrik_framework_MyGLRenderer_onInitElement(JNIEnv* env, jobject thiz, double timestamp, int viewId) {
 }
 
-jboolean Java_com_sometrik_framework_MyGLRenderer_onUpdate(JNIEnv* env, jobject thiz, double timestamp, int viewId) {
+jboolean Java_com_sometrik_framework_FrameWork_onUpdate(JNIEnv* env, jobject thiz, double timestamp, int viewId) {
   UpdateEvent ev(timestamp);
   platform->queueEvent(viewId, ev);
   return ev.isRedrawNeeded();
@@ -410,7 +398,7 @@ void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, job
   platform->queueEvent(platform->getInternalId(), ev);
 }
 
-void Java_com_sometrik_framework_MyGLRenderer_nativeOnDraw(JNIEnv* env, double timestamp,jobject thiz) {
+void Java_com_sometrik_framework_FrameWork_nativeOnDraw(JNIEnv* env, double timestamp,jobject thiz) {
   DrawEvent ev(timestamp);
   platform->queueEvent(platform->getActiveViewId(), ev);
 }
