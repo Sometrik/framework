@@ -18,6 +18,7 @@ class Event {
 
   void setHandled() { is_handled = true; }
   void requestRedraw() { redraw_needed = true; } 
+  void update() { redraw_needed = true; }
 
  private:
   double timestamp;
