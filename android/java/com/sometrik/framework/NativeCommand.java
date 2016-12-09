@@ -179,7 +179,7 @@ public class NativeCommand {
       // TODO
       frame.finish();
       break;
-    case UPDATE_PREFERENCES:
+    case UPDATE_PREFERENCE:
       // env->CallVoidMethod(framework, javaCache.addPrefsValueMethod, jkey, jvalue);
       // env->ReleaseStringUTFChars(jkey, key.c_str());
       // env->ReleaseStringUTFChars(jvalue, value.c_str());
