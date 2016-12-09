@@ -1,8 +1,8 @@
 #include <ResizeEvent.h>
-#include <Element.h>
+#include <EventHandler.h>
 
 void
-ResizeEvent::dispatch(Element & element) {
+ResizeEvent::dispatch(EventHandler & element) {
   element.onResizeEvent(*this);
   Event::dispatch(element);
 }

@@ -1,8 +1,8 @@
 #include <TimerEvent.h>
-#include <Element.h>
+#include <EventHandler.h>
 
 void
-TimerEvent::dispatch(Element & element) {
+TimerEvent::dispatch(EventHandler & element) {
   element.onTimerEvent(*this);
   Event::dispatch(element);
 }

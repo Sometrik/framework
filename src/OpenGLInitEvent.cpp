@@ -1,16 +1,10 @@
 #include <OpenGLInitEvent.h>
-#include <Element.h>
+#include <EventHandler.h>
 
 void
-OpenGLInitEvent::dispatch(Element & element) {
+OpenGLInitEvent::dispatch(EventHandler & element) {
   if (!isHandled()) {
     element.onOpenGLInitEvent(*this);
   }
-
-  if (!isHandled()){
-    for (auto & c: element.getChildren()){
-      dispatch(*c);
-    }
-  }
-  //Do not call super class.
+  // Do not call super class.
 }

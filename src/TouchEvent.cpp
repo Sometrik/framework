@@ -1,8 +1,8 @@
 #include <TouchEvent.h>
-#include <Element.h>
+#include <EventHandler.h>
 
 void
-TouchEvent::dispatch(Element & element) {
+TouchEvent::dispatch(EventHandler & element) {
   element.onTouchEvent(*this);
   Event::dispatch(element);
 }

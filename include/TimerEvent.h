@@ -8,7 +8,7 @@ public:
   TimerEvent(double _timestamp, int _id) : Event(_timestamp), id(_id) { }
 
   Event * dup() const override { return new TimerEvent(*this); }
-  void dispatch(Element & element) override;
+  void dispatch(EventHandler & element) override;
 
  private:
   int id;

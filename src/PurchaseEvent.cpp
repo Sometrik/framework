@@ -1,8 +1,8 @@
 #include <PurchaseEvent.h>
-#include <Element.h>
+#include <EventHandler.h>
 
 void
-PurchaseEvent::dispatch(Element & element) {
+PurchaseEvent::dispatch(EventHandler & element) {
   element.onPurchaseEvent(*this);
   Event::dispatch(element);
 }

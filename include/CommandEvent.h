@@ -9,7 +9,7 @@ public:
     : Event(_timestamp), element_id(_element_id), value(_value) { }
 
   Event * dup() const override { return new CommandEvent(*this); }
-  void dispatch(Element & element) override;
+  void dispatch(EventHandler & element) override;
 
   int getElementId() const { return element_id; }
   int getValue() const { return value; }

@@ -1,8 +1,8 @@
 #include <ValueEvent.h>
-#include <Element.h>
+#include <EventHandler.h>
 
 void
-ValueEvent::dispatch(Element & element) {
+ValueEvent::dispatch(EventHandler & element) {
   if (!isHandled()) {
     element.onValueEvent(*this);
   }

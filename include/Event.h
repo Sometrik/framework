@@ -1,6 +1,8 @@
 #ifndef _EVENT_H_
 #define _EVENT_H_
 
+class EventHandler;
+
 class Event {
  public:
   Event(double _timestamp) : timestamp(_timestamp) { }

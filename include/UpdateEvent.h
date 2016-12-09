@@ -8,7 +8,7 @@ public:
   UpdateEvent(double _timestamp) : Event(_timestamp) { }
 
   Event * dup() const override { return new UpdateEvent(*this); }
-  void dispatch(Element & element) override;
+  void dispatch(EventHandler & element) override;
 };
 
 #endif

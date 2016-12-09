@@ -20,7 +20,7 @@ public:
  SysEvent(double _timestamp, Type _type) : Event(_timestamp), type(_type) { }
 
   Event * dup() const override { return new SysEvent(*this); }
-  void dispatch(Element & element) override;
+  void dispatch(EventHandler & element) override;
 
   void setValue(int _value) { value = _value; }
   void setTextValue(const std::string & _text_value) { text_value = _text_value; }

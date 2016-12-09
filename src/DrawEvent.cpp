@@ -1,8 +1,8 @@
 #include <DrawEvent.h>
-#include <Element.h>
+#include <EventHandler.h>
 
 void
-DrawEvent::dispatch(Element & element) {
+DrawEvent::dispatch(EventHandler & element) {
   element.onDrawEvent(*this);
   Event::dispatch(element);
 }

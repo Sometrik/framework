@@ -1,8 +1,8 @@
 #include <UpdateEvent.h>
-#include <Element.h>
+#include <EventHandler.h>
 
 void
-UpdateEvent::dispatch(Element & element) {
+UpdateEvent::dispatch(EventHandler & element) {
   element.onUpdateEvent(*this);
   Event::dispatch(element);
 }

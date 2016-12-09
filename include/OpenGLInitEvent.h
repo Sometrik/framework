@@ -9,7 +9,7 @@ public:
    : Event(_timestamp), opengl_es_version(_opengl_es_version) { }
 
   Event * dup() const override { return new OpenGLInitEvent(*this); }
-  void dispatch(Element & element) override;
+  void dispatch(EventHandler & element) override;
 
   int getOpenGLESVersion() const { return opengl_es_version; }
   

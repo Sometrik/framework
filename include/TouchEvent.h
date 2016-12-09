@@ -14,7 +14,7 @@ public:
    : Event(_timestamp), type(_type), x(0), y(0), identifier(0), flush(_flush) { }
 
   Event * dup() const override { return new TouchEvent(*this); }
-  void dispatch(Element & element) override;
+  void dispatch(EventHandler & element) override;
   
   Type getType() const { return type; }
   float getX() const { return x; }

@@ -8,7 +8,7 @@ public:
   DrawEvent(double _timestamp) : Event(_timestamp) { }
 
   Event * dup() const override { return new DrawEvent(*this); }
-  void dispatch(Element & element) override;
+  void dispatch(EventHandler & element) override;
     
  private:  
 };

@@ -12,7 +12,7 @@ public:
     : Event(_timestamp), value(_value) { }
 
   Event * dup() const override { return new ValueEvent(*this); }
-  void dispatch(Element & element) override;
+  void dispatch(EventHandler & element) override;
 
   const std::string & getTextValue() const { return text; }
   int getValue() const { return value; }

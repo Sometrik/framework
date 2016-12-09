@@ -11,7 +11,7 @@ public:
  PurchaseEvent(double _timestamp, Type _type) : Event(_timestamp), type(_type) { }
 
   Event * dup() const override { return new PurchaseEvent(*this); }
-  void dispatch(Element & element) override;
+  void dispatch(EventHandler & element) override;
   
   Type getType() { return type; }
 

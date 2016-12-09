@@ -1,8 +1,8 @@
 #include <CommandEvent.h>
-#include <Element.h>
+#include <EventHandler.h>
 
 void
-CommandEvent::dispatch(Element & element) {
+CommandEvent::dispatch(EventHandler & element) {
   if (!isHandled()) {
     element.onCommandEvent(*this);
   }

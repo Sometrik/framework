@@ -1,14 +1,8 @@
 #include <SysEvent.h>
-#include <Element.h>
+#include <EventHandler.h>
 
 void
-SysEvent::dispatch(Element & element) {
+SysEvent::dispatch(EventHandler & element) {
   element.onSysEvent(*this);
-
-  if (!isHandled()){
-    for (auto & c: element.getChildren()){
-      dispatch(*c);
-    }
-  }
-  //Do not call super class.
+  // Do not call super class.
 }
