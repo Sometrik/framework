@@ -16,7 +16,7 @@ class Event {
   bool isHandled() const { return is_handled; }
   bool isRedrawNeeded() const { return redraw_needed; }
 
-  void setIsHandled() { is_handled = true; }
+  void setHandled() { is_handled = true; }
   void requestRedraw() { redraw_needed = true; } 
 
  private:
