@@ -20,7 +20,9 @@ class Element : public EventHandler {
   virtual void show() { }
   virtual int showModal() { return 0; }
   virtual void sendCommand(const Command & command);
-  
+
+  void onEvent(EventBase & ev) override;
+
   Element & addChild(const std::shared_ptr<Element> & element) {
     element->parent = this;
     element->initialize(platform);
