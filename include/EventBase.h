@@ -1,8 +1,6 @@
 #ifndef _EVENTBASE_H_
 #define _EVENTBASE_H_
 
-#include <memory>
-
 class Element;
 
 class EventBase {
