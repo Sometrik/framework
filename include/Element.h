@@ -6,6 +6,10 @@
 #include <memory>
 #include <vector>
 
+class FWPlatform;
+class Command;
+class LinearLayout;
+
 class Element : public EventHandler {
  public:
   Element(int _id = 0) : id(_id) { }
