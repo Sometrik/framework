@@ -8,6 +8,7 @@ class Event {
   Event(double _timestamp) : timestamp(_timestamp) { }
   virtual ~Event() { }
 
+  virtual const char * key() const { return "event"; }
   virtual Event * dup() const = 0;
   virtual void dispatch(EventHandler & ev);
   
@@ -19,9 +20,9 @@ class Event {
   bool needAnimation() const { return animation_needed; }
   bool needUpdateLayout() const { return update_layout_needed; }
 
-  void setHandled() { is_handled = true; }
+  void setHandled(bool t = true) { is_handled = t; }
   void requestRedraw() { redraw_needed = true; }
-  void requestAnimation() { request_animation = true; }
+  void requestAnimation() { animation_needed = true; }
   void updateLayout() { update_layout_needed = true; }
 
   bool needUpdate() const { return redraw_needed; }
