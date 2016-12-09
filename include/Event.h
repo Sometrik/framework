@@ -15,11 +15,14 @@ class Event {
   
   bool isHandled() const { return is_handled; }
   bool isRedrawNeeded() const { return redraw_needed; }
+
   bool needAnimation() const { return animation_needed; }
+  bool needUpdateLayout() const { return update_layout_needed; }
 
   void setHandled() { is_handled = true; }
   void requestRedraw() { redraw_needed = true; }
   void requestAnimation() { request_animation = true; }
+  void updateLayout() { update_layout_needed = true; }
 
   void update() { redraw_needed = true; }
 
@@ -28,6 +31,7 @@ class Event {
   bool is_handled = false;
   bool redraw_needed = false;
   bool animation_needed = false;
+  bool update_layout_needed = false;
 };
 
 #endif
