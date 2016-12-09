@@ -15,15 +15,19 @@ class Event {
   
   bool isHandled() const { return is_handled; }
   bool isRedrawNeeded() const { return redraw_needed; }
+  bool needAnimation() const { return animation_needed; }
 
   void setHandled() { is_handled = true; }
-  void requestRedraw() { redraw_needed = true; } 
+  void requestRedraw() { redraw_needed = true; }
+  void requestAnimation() { request_animation = true; }
+
   void update() { redraw_needed = true; }
 
  private:
   double timestamp;
   bool is_handled = false;
   bool redraw_needed = false;
+  bool animation_needed = false;
 };
 
 #endif
