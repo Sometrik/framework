@@ -4,5 +4,5 @@
 void
 UpdateEvent::dispatch(Element & element) {
   element.onUpdateEvent(*this);
-  EventBase::dispatch(element);
+  Event::dispatch(element);
 }

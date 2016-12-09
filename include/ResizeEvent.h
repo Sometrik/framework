@@ -1,14 +1,14 @@
 #ifndef _RESIZEEVENT_H_
 #define _RESIZEEVENT_H_
 
-#include <EventBase.h>
+#include <Event.h>
 
-class ResizeEvent : public EventBase {
+class ResizeEvent : public Event {
 public:
  ResizeEvent(double _timestamp, int _logical_width, int _logical_height, int _actual_width, int _actual_height )
-   : EventBase(_timestamp), logical_width(_logical_width), logical_height(_logical_height), actual_width(_actual_width), actual_height(_actual_height) { }
+   : Event(_timestamp), logical_width(_logical_width), logical_height(_logical_height), actual_width(_actual_width), actual_height(_actual_height) { }
 
-  EventBase * dup() const override { return new ResizeEvent(*this); }
+  Event * dup() const override { return new ResizeEvent(*this); }
   void dispatch(Element & element) override;
 
   int getLogicalWidth() const { return logical_width; }

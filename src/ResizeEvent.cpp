@@ -4,5 +4,5 @@
 void
 ResizeEvent::dispatch(Element & element) {
   element.onResizeEvent(*this);
-  EventBase::dispatch(element);
+  Event::dispatch(element);
 }

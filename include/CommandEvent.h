@@ -1,14 +1,14 @@
 #ifndef _COMMANDEVENT_H_
 #define _COMMANDEVENT_H_
 
-#include <EventBase.h>
+#include <Event.h>
 
-class CommandEvent : public EventBase {
+class CommandEvent : public Event {
 public:
   CommandEvent(double _timestamp, int _element_id = 0, int _value = 0)
-    : EventBase(_timestamp), element_id(_element_id), value(_value) { }
+    : Event(_timestamp), element_id(_element_id), value(_value) { }
 
-  EventBase * dup() const override { return new CommandEvent(*this); }
+  Event * dup() const override { return new CommandEvent(*this); }
   void dispatch(Element & element) override;
 
   int getElementId() const { return element_id; }

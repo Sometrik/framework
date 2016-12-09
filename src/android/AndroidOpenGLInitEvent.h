@@ -10,7 +10,7 @@ public:
    : OpenGLInitEvent(_timestamp, _opengl_es_version), window(_window) { }
 
   ANativeWindow * getWindow() { return window; }
-  EventBase * dup() const { return new AndroidOpenGLInitEvent(*this); }
+  Event * dup() const { return new AndroidOpenGLInitEvent(*this); }
   
  private:
   ANativeWindow * window = 0;

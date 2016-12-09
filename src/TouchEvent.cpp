@@ -4,5 +4,5 @@
 void
 TouchEvent::dispatch(Element & element) {
   element.onTouchEvent(*this);
-  EventBase::dispatch(element);
+  Event::dispatch(element);
 }

@@ -6,5 +6,5 @@ ValueEvent::dispatch(Element & element) {
   if (!isHandled()) {
     element.onValueEvent(*this);
   }
-  EventBase::dispatch(element);
+  Event::dispatch(element);
 }

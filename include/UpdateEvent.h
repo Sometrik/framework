@@ -1,13 +1,13 @@
 #ifndef _UPDATEEVENT_H_
 #define _UPDATEEVENT_H_
 
-#include <EventBase.h>
+#include <Event.h>
 
-class UpdateEvent : public EventBase {
+class UpdateEvent : public Event {
 public:
-  UpdateEvent(double _timestamp) : EventBase(_timestamp) { }
+  UpdateEvent(double _timestamp) : Event(_timestamp) { }
 
-  EventBase * dup() const override { return new UpdateEvent(*this); }
+  Event * dup() const override { return new UpdateEvent(*this); }
   void dispatch(Element & element) override;
 };
 

@@ -4,5 +4,5 @@
 void
 TimerEvent::dispatch(Element & element) {
   element.onTimerEvent(*this);
-  EventBase::dispatch(element);
+  Event::dispatch(element);
 }

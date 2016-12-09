@@ -6,5 +6,5 @@ CommandEvent::dispatch(Element & element) {
   if (!isHandled()) {
     element.onCommandEvent(*this);
   }
-  EventBase::dispatch(element);
+  Event::dispatch(element);
 }

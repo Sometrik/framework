@@ -1,13 +1,13 @@
 #ifndef _TIMEREVENT_H_
 #define _TIMEREVENT_H_
 
-#include <EventBase.h>
+#include <Event.h>
 
-class TimerEvent : public EventBase {
+class TimerEvent : public Event {
 public:
-  TimerEvent(double _timestamp, int _id) : EventBase(_timestamp), id(_id) { }
+  TimerEvent(double _timestamp, int _id) : Event(_timestamp), id(_id) { }
 
-  EventBase * dup() const override { return new TimerEvent(*this); }
+  Event * dup() const override { return new TimerEvent(*this); }
   void dispatch(Element & element) override;
 
  private:

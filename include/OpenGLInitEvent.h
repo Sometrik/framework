@@ -1,14 +1,14 @@
 #ifndef _OPENGLINITEVENT_H_
 #define _OPENGLINITEVENT_H_
 
-#include <EventBase.h>
+#include <Event.h>
 
-class OpenGLInitEvent : public EventBase {
+class OpenGLInitEvent : public Event {
 public:
  OpenGLInitEvent(double _timestamp, int _opengl_es_version)
-   : EventBase(_timestamp), opengl_es_version(_opengl_es_version) { }
+   : Event(_timestamp), opengl_es_version(_opengl_es_version) { }
 
-  EventBase * dup() const override { return new OpenGLInitEvent(*this); }
+  Event * dup() const override { return new OpenGLInitEvent(*this); }
   void dispatch(Element & element) override;
 
   int getOpenGLESVersion() const { return opengl_es_version; }

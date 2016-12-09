@@ -1,11 +1,11 @@
 #ifndef _SYSEVENT_H_
 #define _SYSEVENT_H_
 
-#include <EventBase.h>
+#include <Event.h>
 
 #include <string>
 
-class SysEvent : public EventBase {
+class SysEvent : public Event {
 public:
   enum Type {
     START = 1, // Called when app is becoming visible
@@ -17,9 +17,9 @@ public:
     THREAD_TERMINATED,
     END_MODAL
   };
- SysEvent(double _timestamp, Type _type) : EventBase(_timestamp), type(_type) { }
+ SysEvent(double _timestamp, Type _type) : Event(_timestamp), type(_type) { }
 
-  EventBase * dup() const override { return new SysEvent(*this); }
+  Event * dup() const override { return new SysEvent(*this); }
   void dispatch(Element & element) override;
 
   void setValue(int _value) { value = _value; }
