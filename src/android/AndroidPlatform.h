@@ -100,8 +100,6 @@ public:
   }
 #endif
 
-  void storeValue(const std::string & key, const std::string & value) override;
-  std::string loadValue(const std::string & key) override;
   void showCanvas(canvas::ContextAndroid & context);
   std::shared_ptr<Logger> createLogger() const override {
     return std::make_shared<AndroidLogger>();

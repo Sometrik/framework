@@ -20,7 +20,6 @@
 
 #include <TouchEvent.h>
 #include <SysEvent.h>
-#include <TextEvent.h>
 #include <CommandEvent.h>
 #include <DrawEvent.h>
 #include <UpdateEvent.h>
@@ -53,18 +52,6 @@ std::string AndroidPlatform::getLocalFilename(const char * filename, FileType ty
     return "";
   }
   return "";
-}
-
-
-std::string AndroidPlatform::loadValue(const std::string & key) {
-  auto env = getJNIEnv();
-  jstring jkey = env->NewStringUTF(key.c_str());
-  jstring value = (jstring) env->CallObjectMethod(framework, javaCache.loadPrefsValueMethod, jkey);
-  std::string result = env->GetStringUTFChars(value, JNI_FALSE);
-  env->ReleaseStringUTFChars(jkey, key.c_str());
-  env->ReleaseStringUTFChars(value, result.c_str());
-
-  return result;
 }
 
 void
