@@ -4,5 +4,11 @@
 void
 SysEvent::dispatch(Element & element) {
   element.onSysEvent(*this);
-  EventBase::dispatch(element);
+
+  if (!isHandled()){
+    for (auto & c: element.getChildren()){
+      dispatch(*c);
+    }
+  }
+  //Do not call super class.
 }
