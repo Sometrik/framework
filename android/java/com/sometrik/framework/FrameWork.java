@@ -40,7 +40,6 @@ import android.widget.RelativeLayout;
 
 public class FrameWork extends Activity implements NativeCommandHandler {
 
-  private MyGLSurfaceView mGLView;
   private RelativeLayout mainView;
   private SharedPreferences prefs;
   private SharedPreferences.Editor editor;
@@ -60,7 +59,6 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   private float windowYcoords;
   public static HashMap<Integer, NativeCommandHandler> views = new HashMap<Integer, NativeCommandHandler>();
   public static int currentView = 0;
-  private MyGLRenderer renderer;
   private int appId = 0;
 
   public native void NativeOnTouch();
@@ -135,10 +133,6 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   public static void addToViewList(NativeCommandHandler view){
     System.out.println(view.getElementId() + " added to view list");
     views.put(view.getElementId(), view);
-  }
-
-  public MyGLSurfaceView getSurfaceView() {
-    return mGLView;
   }
 
   public void launchBrowser(String url) {
