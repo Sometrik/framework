@@ -46,7 +46,6 @@ class FWPlatform : public Element {
   virtual double getTime() const = 0;
   virtual std::shared_ptr<canvas::ContextFactory> createContextFactory() const = 0;
   virtual std::shared_ptr<HTTPClientFactory> createHTTPClientFactory() const = 0;
-  virtual std::string loadValue(const std::string & key) = 0;
   virtual void pushEvent(const EventBase & ev) { }
     
   std::string getBundleFilename(const std::string & filename) { return getBundleFilename(filename.c_str()); }
