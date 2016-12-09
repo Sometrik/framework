@@ -4,7 +4,7 @@
 void
 Event::dispatch(EventHandler & evh) {
   if (!isHandled()) {
-    element.onEvent(*this);
+    evh.onEvent(*this);
     if (isHandled() && !handler) {
       handler = &evh;
     }
