@@ -120,10 +120,6 @@ public class NativeCommand {
       view.addChild(picker);
       break;
 
-      //    case CREATE_OPENGL_VIEW:
-      // frame.createOpenGLView(childInternalId);
-      // break;
-
     case CREATE_NATIVE_OPENGL_VIEW:
       frame.createNativeOpenGLView(childInternalId);
       break;
