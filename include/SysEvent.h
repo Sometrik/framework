@@ -19,7 +19,7 @@ public:
   };
  SysEvent(double _timestamp, Type _type) : EventBase(_timestamp), type(_type) { }
 
-  std::shared_ptr<EventBase> dup() const override { return std::make_shared<SysEvent>(*this); }
+  EventBase * dup() const override { return new SysEvent(*this); }
   void dispatch(Element & element) override;
 
   void setValue(int _value) { value = _value; }

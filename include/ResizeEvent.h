@@ -8,7 +8,7 @@ public:
  ResizeEvent(double _timestamp, int _logical_width, int _logical_height, int _actual_width, int _actual_height )
    : EventBase(_timestamp), logical_width(_logical_width), logical_height(_logical_height), actual_width(_actual_width), actual_height(_actual_height) { }
 
-  std::shared_ptr<EventBase> dup() const override { return std::make_shared<ResizeEvent>(*this); }
+  EventBase * dup() const override { return new ResizeEvent(*this); }
   void dispatch(Element & element) override;
 
   int getLogicalWidth() const { return logical_width; }

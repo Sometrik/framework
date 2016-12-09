@@ -13,7 +13,7 @@ public:
  TouchEvent(double _timestamp, Type _type, bool _flush = false)
    : EventBase(_timestamp), type(_type), x(0), y(0), identifier(0), flush(_flush) { }
 
-  std::shared_ptr<EventBase> dup() const override { return std::make_shared<TouchEvent>(*this); }
+  EventBase * dup() const override { return new TouchEvent(*this); }
   void dispatch(Element & element) override;
   
   Type getType() const { return type; }

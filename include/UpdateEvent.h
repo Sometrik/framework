@@ -7,7 +7,7 @@ class UpdateEvent : public EventBase {
 public:
   UpdateEvent(double _timestamp) : EventBase(_timestamp) { }
 
-  std::shared_ptr<EventBase> dup() const override { return std::make_shared<UpdateEvent>(*this); }
+  EventBase * dup() const override { return new UpdateEvent(*this); }
   void dispatch(Element & element) override;
 };
 

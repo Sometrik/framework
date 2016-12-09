@@ -15,9 +15,10 @@ class EventQueue {
     pthread_mutex_destroy(&_mutex);
   }
 
-  void push(int internal_id, EventBase & ev) {
+  void push(int internal_id, const EventBase & ev) {
+    std::shared_ptr<EventBase> ptr(ev.dup());
     pthread_mutex_lock (&_mutex);
-    data.push_front(std::pair<int, std::shared_ptr<EventBase> >(internal_id, ev.dup()));
+    data.push_front(std::pair<int, std::shared_ptr<EventBase> >(internal_id, ptr));
     pthread_mutex_unlock(&_mutex);
   }
   std::pair<int, std::shared_ptr<EventBase> > pop() {

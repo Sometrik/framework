@@ -8,7 +8,7 @@ public:
  OpenGLInitEvent(double _timestamp, int _opengl_es_version)
    : EventBase(_timestamp), opengl_es_version(_opengl_es_version) { }
 
-  std::shared_ptr<EventBase> dup() const override { return std::make_shared<OpenGLInitEvent>(*this); }
+  EventBase * dup() const override { return new OpenGLInitEvent(*this); }
   void dispatch(Element & element) override;
 
   int getOpenGLESVersion() const { return opengl_es_version; }

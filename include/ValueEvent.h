@@ -11,7 +11,7 @@ public:
   ValueEvent(double _timestamp, int _value)
     : EventBase(_timestamp), value(_value) { }
 
-  std::shared_ptr<EventBase> dup() const override { return std::make_shared<ValueEvent>(*this); }
+  EventBase * dup() const override { return new ValueEvent(*this); }
   void dispatch(Element & element) override;
 
   const std::string & getTextValue() const { return text_value; }

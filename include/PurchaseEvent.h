@@ -10,7 +10,7 @@ public:
   };
  PurchaseEvent(double _timestamp, Type _type) : EventBase(_timestamp), type(_type) { }
 
-  std::shared_ptr<EventBase> dup() const override { return std::make_shared<PurchaseEvent>(*this); }
+  EventBase * dup() const override { return new PurchaseEvent(*this); }
   void dispatch(Element & element) override;
   
   Type getType() { return type; }

@@ -10,7 +10,7 @@ class EventBase {
   EventBase(double _timestamp) : timestamp(_timestamp) { }
   virtual ~EventBase() { }
 
-  virtual std::shared_ptr<EventBase> dup() const = 0;
+  virtual EventBase * dup() const = 0;
   virtual void dispatch(Element & element);
   
   Element * getSourceElement() { return source_element; }
