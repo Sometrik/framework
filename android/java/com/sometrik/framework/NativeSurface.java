@@ -7,6 +7,8 @@ import android.view.View;
 public class NativeSurface extends SurfaceView implements NativeCommandHandler {
   
   private FrameWork framework;
+  //draw and update call frequency in millis
+  private static final int UPDATE_FREQUENCY = 16;
   
   public NativeSurface(FrameWork framework) {
     super(framework);
@@ -19,6 +21,28 @@ public class NativeSurface extends SurfaceView implements NativeCommandHandler {
     FrameWork frame = framework;
     frame.setContentView(this);
     FrameWork.currentView = getId();
+    framework.setToDraw(new drawRunnable(getId()));
+  }
+  
+
+  
+  class drawRunnable implements Runnable {
+  	
+  	int viewId;
+  	public drawRunnable(int viewId){
+  		this.viewId = viewId;
+  	}
+  	
+		@Override
+		public void run() {
+
+			double timestamp = System.currentTimeMillis() / 1000.0;
+			framework.nativeOnDraw(timestamp, viewId);
+			framework.nativeOnUpdate(timestamp, viewId);
+			if (FrameWork.drawing){
+				framework.mainHandler.postDelayed(this, UPDATE_FREQUENCY);
+			}
+		}
   }
 
   @Override

@@ -44,8 +44,9 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   private SharedPreferences prefs;
   private SharedPreferences.Editor editor;
   private FrameWork frameWork;
-  
   private static final int RESULT_SETTINGS = 1;
+  
+  public static boolean drawing = false;
 
   private Settings settings;
 
@@ -77,7 +78,9 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   public native void nativeOnStop(double timestamp, int appId);
   public native void nativeOnStart(double timestamp, int appId);
   public native void nativeOnDestroy(double timestamp, int appId);
-  public static native void onResize(double timeStamp, float width, float height, int viewId);
+  public static native void onResize(double timestamp, float width, float height, int viewId);
+  public native void nativeOnDraw(double timestamp, int viewId);
+  public native void nativeOnUpdate(double timestamp, int viewId);
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -128,6 +131,11 @@ public class FrameWork extends Activity implements NativeCommandHandler {
     screenHeight = displaymetrics.heightPixels;
     screenWidth = displaymetrics.widthPixels;
     return displaymetrics;
+  }
+  
+  public void setToDraw(Runnable runnable){
+  	drawing = true;
+  	mainHandler.post(runnable);
   }
   
   public static void addToViewList(NativeCommandHandler view){
