@@ -19,6 +19,7 @@
 #include <pthread.h>
 
 #include <TouchEvent.h>
+#include <ValueEvent.h>
 #include <SysEvent.h>
 #include <CommandEvent.h>
 #include <DrawEvent.h>
