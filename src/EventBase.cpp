@@ -1,8 +1,8 @@
-#include <EventBase.h>
+#include <Event.h>
 #include <Element.h>
 
 void
-EventBase::dispatch(Element & element) {
+Event::dispatch(Element & element) {
   if (!isHandled()) {
     element.onEvent(*this);
   }

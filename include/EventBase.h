@@ -1,14 +1,14 @@
-#ifndef _EVENTBASE_H_
-#define _EVENTBASE_H_
+#ifndef _EVENT_H_
+#define _EVENT_H_
 
 class Element;
 
-class EventBase {
+class Event {
  public:
-  EventBase(double _timestamp) : timestamp(_timestamp) { }
-  virtual ~EventBase() { }
+  Event(double _timestamp) : timestamp(_timestamp) { }
+  virtual ~Event() { }
 
-  virtual EventBase * dup() const = 0;
+  virtual Event * dup() const = 0;
   virtual void dispatch(Element & element);
   
   Element * getSourceElement() { return source_element; }
