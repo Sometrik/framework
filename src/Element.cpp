@@ -4,6 +4,9 @@
 #include <LinearLayout.h>
 #include <Command.h>
 
+#include <SysEvent.h>
+#include <OpenGLInitEvent.h>
+
 #include <cassert>
 
 using namespace std;
@@ -43,6 +46,25 @@ Element::addVerticalLayout() {
   auto l = make_shared<LinearLayout>(FW_VERTICAL);
   addChild(l);
   return *l;
+}
+
+  
+void
+Element::onSysEvent(SysEvent & ev) {
+  if (!ev.isHandled()){
+    for (auto & c : getChildren()){
+      ev.dispatch(*c);
+    }
+  }
+}
+
+void
+Element::onOpenGLInitEvent(OpenGLInitEvent & ev) {
+  if (!ev.isHandled()){
+    for (auto & c : getChildren()){
+      ev.dispatch(*c);
+    }
+  }
 }
 
 void

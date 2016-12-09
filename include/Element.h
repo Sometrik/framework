@@ -26,6 +26,8 @@ class Element : public EventHandler {
   virtual void sendCommand(const Command & command);
 
   void onEvent(Event & ev) override;
+  void onSysEvent(SysEvent & ev) override;
+  void onOpenGLInitEvent(OpenGLInitEvent & ev) override;
 
   Element & addChild(const std::shared_ptr<Element> & element) {
     element->parent = this;
