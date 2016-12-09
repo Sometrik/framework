@@ -45,7 +45,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   private SharedPreferences prefs;
   private SharedPreferences.Editor editor;
   private FrameWork frameWork;
-
+  
   private static final int RESULT_SETTINGS = 1;
 
   private Settings settings;
@@ -151,35 +151,11 @@ public class FrameWork extends Activity implements NativeCommandHandler {
     layout.setId(id);
     views.put(id, layout);
   }
-  
-  public MyGLSurfaceView createOpenGLView(final int id){
-    MyGLRenderer renderer = new MyGLRenderer(this, screenWidth, screenHeight);
-    MyGLSurfaceView mGLView = new MyGLSurfaceView(this, renderer, id);
-    mGLView.setOnTouchListener(new MyOnTouchListener(this));
-    mGLView.setWillNotDraw(false);
-    mGLView.getHolder().addCallback(new Callback() {
-      public void surfaceDestroyed(SurfaceHolder holder) {
-      }
-
-      public void surfaceCreated(SurfaceHolder holder) {
-      }
-
-      public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-	nativeSetSurface(holder.getSurface(), id);
-      }
-    });
-    views.put(id, mGLView);
-    if (currentView == 0) {
-      setContentView(mGLView);
-      currentView = id;
-    }
-    return mGLView;
-  }
 
   public void createNativeOpenGLView(final int id) {
     final ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
     final ConfigurationInfo configurationInfo = activityManager.getDeviceConfigurationInfo();
-    int gl_version = configurationInfo.reqGlEsVersion;    
+    final int gl_version = configurationInfo.reqGlEsVersion;    
     System.out.println("about to create native surface");
     NativeSurface surfaceView = new NativeSurface(this);
     System.out.println("Piip");
