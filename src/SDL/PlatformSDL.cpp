@@ -64,16 +64,16 @@ public:
     return t;
   }
     
-  string getLocalFilename(const char * fn, FileType type) {
+  string getLocalFilename(const char * fn, FileType type) override {
     string s = "assets/";
     return s + fn;
   }
   
-  std::shared_ptr<HTTPClientFactory> createHTTPClientFactory() const {
+  std::shared_ptr<HTTPClientFactory> createHTTPClientFactory() const override {
     return std::make_shared<CurlClientFactory>();
   }
     
-  std::shared_ptr<canvas::ContextFactory> createContextFactory() const {
+  std::shared_ptr<canvas::ContextFactory> createContextFactory() const override {
     return std::shared_ptr<canvas::ContextFactory>(new canvas::CairoContextFactory);
   }
 
@@ -113,17 +113,13 @@ public:
   }
 #endif
     
-  std::string getBundleFilename(const char * filename) {
+  std::string getBundleFilename(const char * filename) override {
     string s = "assets/";
     return s + filename;
   }
 
-  void storeValue(const std::string & key, const std::string & value) {
+  void storeValue(const std::string & key, const std::string & value) override {
     
-  }
-
-  std::string loadValue(const std::string & key) {
-    return "";
   }
 
   void run() {
@@ -280,8 +276,6 @@ int main(int argc, char *argv[]) {
   }
 
   FWApplication * application = applicationMain();
-
-  cerr << "starting, app = " << application << "\n";
 
   PlatformSDL platform;  
   platform.setDisplayWidth(width);
