@@ -146,6 +146,7 @@ public class NativeCommand {
       break;
       
     case SHOW_VIEW:
+    	frame.disableDraw();
       view.showView();
       break;
     case ADD_OPTION:

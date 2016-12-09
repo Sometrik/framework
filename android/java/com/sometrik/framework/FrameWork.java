@@ -46,7 +46,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   private FrameWork frameWork;
   private static final int RESULT_SETTINGS = 1;
   
-  public static boolean drawing = false;
+  private boolean drawMode = false;
 
   private Settings settings;
 
@@ -134,7 +134,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   }
   
   public void setToDraw(Runnable runnable){
-  	drawing = true;
+  	drawMode = true;
   	mainHandler.post(runnable);
   }
   
@@ -385,6 +385,10 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   public void setAppId(int id){
     this.appId = id;
   }
+  
+  public boolean getDrawMode(){ return drawMode; }
+  
+  public void disableDraw(){ drawMode = false; }
 
   // returns database path
   public String getDBPath(String dbName) {
