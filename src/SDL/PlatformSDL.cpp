@@ -26,26 +26,26 @@ static Uint32 timer_callback(Uint32 interval, void *param);
 
 class Timer {
 public:
-  Timer(int _id, int _interval) : id(_id), interval(_interval) { }
+  Timer(FWPlatform * _platform, int _id, int _interval)
+    : platform(_platform), id(_id), interval(_interval) { }
 
   int getId() const { return id; }
-  
+  FWPlatform * getPlatform() { return platform; }
+      
   void create() {
     SDL_AddTimer(interval, timer_callback, this);
   }
 
 private:
+  FWPlatform * platform;
   int id, interval;
 };
 
 static Uint32 timer_callback(Uint32 interval, void *param) {
   Timer * timer = (Timer *)timer;
-  SDL_Event user_event;
-  user_event.type = SDL_USEREVENT;
-  user_event.user.code = 1;
-  user_event.user.data1 = timer;
-  user_event.user.data2 = NULL;
-  SDL_PushEvent(&user_event);
+  FWPlatform * platform = timer->getPlatform();
+  TimerEvent ev(platform->getTime(), timer->getId());
+  platform->pushEvent(ev);
   return interval;
 }
 
@@ -63,7 +63,16 @@ public:
     }
     return t;
   }
-    
+
+  void pushEvent(const EventBase & ev) override {
+    SDL_Event user_event;
+    user_event.type = SDL_USEREVENT;
+    user_event.user.code = 1;
+    user_event.user.data1 = ev.dup();
+    user_event.user.data2 = NULL;
+    SDL_PushEvent(&user_event);
+  }
+  
   string getLocalFilename(const char * fn, FileType type) override {
     string s = "assets/";
     return s + fn;
@@ -97,7 +106,7 @@ public:
       break;
     case Command::CREATE_TIMER:
       {
-	auto timer = std::make_shared<Timer>(command.getChildInternalId(), command.getValue());
+	auto timer = std::make_shared<Timer>(this, command.getChildInternalId(), command.getValue());
 	timer->create();
 	timers[timer->getId()] = timer;
       }
@@ -116,10 +125,6 @@ public:
   std::string getBundleFilename(const char * filename) override {
     string s = "assets/";
     return s + filename;
-  }
-
-  void storeValue(const std::string & key, const std::string & value) override {
-    
   }
 
   void run() {
@@ -169,9 +174,10 @@ public:
 	  break;
 	case SDL_USEREVENT:
 	  {
-	    Timer * timer = (Timer*)event.user.data1;
-	    TimerEvent ev(getTime(), timer->getId());
-	    postEvent(getActiveViewId(), ev);
+	    EventBase * ev = (EventBase*)event.user.data1;
+	    assert(ev);
+	    std::shared_ptr<EventBase> ptr(ev);
+	    postEvent(getActiveViewId(), *ptr);
 	  }
 	  break;
 	case SDL_QUIT:
