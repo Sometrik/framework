@@ -3,6 +3,8 @@
 
 #include <string>
 
+#define COMMAND_FLAG_PASSWORD 1
+
 class Command {
  public:
 
@@ -71,6 +73,8 @@ class Command {
   void setHeight(int _height) { height = _height; }
   int getHeight() { return height; }
 
+  void setFlags(unsigned int _flags) { flags = _flags; }
+  unsigned int getFlags() const { return flags; }
 
  private:
   Type commandType;
@@ -79,6 +83,7 @@ class Command {
   std::string key;
   std::string textValue, textValue2;
   int width = 0, height = 0;
+  unsigned int flags = 0;
 };
 
 #endif
