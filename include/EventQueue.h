@@ -3,8 +3,10 @@
 
 #include <Event.h>
 
+#include <memory>
 #include <pthread.h>
 #include <list>
+#include <vector>
 
 class EventQueue {
  public:
@@ -38,6 +40,25 @@ class EventQueue {
     bool e = data.empty();
     pthread_mutex_unlock(&_mutex);
     return e;
+  }
+
+  std::vector<std::shared_ptr<Event> > recvAll() {
+    pthread_mutex_lock(&_mutex);
+    std::vector<std::shared_ptr<Event> > v;    
+    while (!data.empty()) {
+      v.push_back(data.front().second);
+      data.pop_front();
+    }
+    pthread_mutex_unlock(&_mutex);
+    return v;
+  }
+
+  size_t recv(EventHandler & evh) {
+    auto events = recvAll();    
+    for (auto & ev : events) {
+      ev->dispatch(evh);     
+    }
+    return events.size();
   }
   
  private:
