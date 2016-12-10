@@ -22,6 +22,7 @@ namespace canvas {
   class ContextFactory;
 };
 class HTTPClientFactory;
+class Runnable;
 
 class FWPlatform : public Element {
  public:
@@ -136,7 +137,11 @@ class FWPlatform : public Element {
     Command c(Command::QUIT_APP, getInternalId());
     sendCommand(c);
   }
-  
+
+  std::shared_ptr<PlatformThread> run(std::shared_ptr<Runnable> runnable);
+
+  size_t getNumRunningThreads() const { return num_running_threads; }
+
  protected:
 #ifdef HAS_SOUNDCANVAS
   virtual std::shared_ptr<SoundCanvas> createSoundCanvas() const {
@@ -146,7 +151,9 @@ class FWPlatform : public Element {
   virtual std::shared_ptr<Logger> createLogger() const {
     return std::make_shared<BasicLogger>();
   }
-  
+
+  virtual std::shared_ptr<PlatformThread> run2(std::shared_ptr<Runnable> & runnable);
+
   int display_width = 0, display_height = 0;
   float display_scale = 1.0f;
   FWPreferences preferences;
@@ -161,6 +168,9 @@ class FWPlatform : public Element {
   std::shared_ptr<PrimitiveRenderer> renderer;
   int nextInternalId = 1;
   int activeViewId = 0;
+
+  std::list<std::shared_ptr<PlatformThread> > threads;
+  size_t num_running_threads = 0;
 };
 
 #endif
