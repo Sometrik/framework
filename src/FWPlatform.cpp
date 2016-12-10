@@ -2,6 +2,12 @@
 
 #include <pthread.h>
 #include <PlatformThread.h>
+#include <Runnable.h>
+
+#include <iostream>
+#include <unistd.h>
+
+using namespace std;
 
 class PosixThread : public PlatformThread {
 public:
@@ -93,8 +99,8 @@ FWPlatform::run(std::shared_ptr<Runnable> runnable) {
 }
 
 std::shared_ptr<PlatformThread>
-Controller::run2(std::shared_ptr<Runnable> & runnable) {
-  std::shared_ptr<PlatformThread> thread(new PosixThread(runnable, platform));
+FWPlatform::run2(std::shared_ptr<Runnable> & runnable) {
+  std::shared_ptr<PlatformThread> thread(new PosixThread(runnable, this));
   thread->start();
   return thread;
 }
