@@ -17,12 +17,14 @@
 #include <sstream>
 #include <string>
 #include <memory>
+#include <list>
 
 namespace canvas {
   class ContextFactory;
 };
 class HTTPClientFactory;
 class Runnable;
+class PlatformThread;
 
 class FWPlatform : public Element {
  public:
