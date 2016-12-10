@@ -404,12 +404,7 @@ void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, job
   platform->queueEvent(platform->getInternalId(), ev);
 }
 
-void Java_com_sometrik_framework_FrameWork_nativeOnDraw(JNIEnv* env, double timestamp,jobject thiz) {
-  DrawEvent ev(timestamp);
-  platform->queueEvent(platform->getActiveViewId(), ev);
-}
-
-  void Java_com_sometrik_framework_FrameWork_endModal(JNIEnv* env, jobject thiz, double timestamp, int value, jstring jtext) {
+void Java_com_sometrik_framework_FrameWork_endModal(JNIEnv* env, jobject thiz, double timestamp, int value, jstring jtext) {
     __android_log_print(ANDROID_LOG_INFO, "Sometrik", "endModal");
   const char * text = env->GetStringUTFChars(jtext, 0);
   __android_log_print(ANDROID_LOG_INFO, "Sometrik", "endModal: %d %s", value, text);

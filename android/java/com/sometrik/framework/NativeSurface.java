@@ -37,7 +37,6 @@ public class NativeSurface extends SurfaceView implements NativeCommandHandler {
 		public void run() {
 
 			double timestamp = System.currentTimeMillis() / 1000.0;
-			framework.nativeOnDraw(timestamp, viewId);
 			framework.nativeOnUpdate(timestamp, viewId);
 			if (framework.getDrawMode()){
 				framework.mainHandler.postDelayed(this, UPDATE_FREQUENCY);
