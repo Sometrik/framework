@@ -14,7 +14,7 @@ class ValueEvent;
 class OpenGLInitEvent;
 
 class UIEvent;
-class UICommandEent;
+class UICommandEvent;
 class MouseEvent;
 class PaintEvent;
 class PaintEventCanvas;
