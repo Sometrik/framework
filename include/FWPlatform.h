@@ -47,6 +47,7 @@ class FWPlatform : public Element {
   virtual std::shared_ptr<canvas::ContextFactory> createContextFactory() const = 0;
   virtual std::shared_ptr<HTTPClientFactory> createHTTPClientFactory() const = 0;
   virtual void pushEvent(const Event & ev) { }
+  virtual void setCursor(const std::string & cursor) { }
     
   std::string getBundleFilename(const std::string & filename) { return getBundleFilename(filename.c_str()); }
 
@@ -126,7 +127,7 @@ class FWPlatform : public Element {
   int getActiveViewId() const { return activeViewId; }
 
   virtual void createFBO(int flags) { }
-  virtual std::string showTextEntryDialog(const std::string & message) = 0;
+  virtual std::string showTextEntryDialog(const std::string & title, const std::string & message) = 0;
 
   int getModalResultValue() const { return modal_result_value; }
   const std::string & getModalResultText() const { return modal_result_text; }
