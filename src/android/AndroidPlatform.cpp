@@ -55,29 +55,35 @@ std::string AndroidPlatform::getLocalFilename(const char * filename, FileType ty
   return "";
 }
 
+jbyteArray
+AndroidPlatform::convertToByteArray(const std::string & s) {
+  auto env = getJNIEnv();
+  jbyte * pNativeMessage = reinterpret_cast<const jbyte*>(s.c_str());
+  jbyteArray bytes = env->NewByteArray(s.size());
+  env->SetByteArrayRegion(bytes, 0, s.size(), pNativeMessage);
+  return bytes;
+}
+
 void
 AndroidPlatform::sendCommand(const Command & command) {
   FWPlatform::sendCommand(command);
 
   auto env = getJNIEnv();
-   int commandTypeId = int(command.getType());
-   const char * textValue = command.getTextValue().c_str();
-   const char * textValue2 = command.getTextValue2().c_str();
-   jstring jtextValue = env->NewStringUTF(textValue);
-   jstring jtextValue2 = env->NewStringUTF(textValue2);
-
-
-   jobject jcommand = env->NewObject(javaCache.nativeCommandClass, javaCache.nativeCommandConstructor, framework, commandTypeId, command.getInternalId(), command.getChildInternalId(), command.getValue(), jtextValue, jtextValue2);
-   env->CallStaticVoidMethod(javaCache.frameworkClass, javaCache.sendCommandMethod, framework, jcommand);
-
-   env->DeleteLocalRef(jcommand);
-   env->DeleteLocalRef(jtextValue);
-   env->DeleteLocalRef(jtextValue2);
-   //Fix these releases
-//  env->ReleaseStringUTFChars(jtextValue, textValue);
-//  env->ReleaseStringUTFChars(jtextValue2, textValue2);
+  int commandTypeId = int(command.getType());
+  auto textValue = command.getTextValue();
+  auto textValue2 = command.getTextValue2();
+  jbyteArray jtextValue = 0, jtextValue2 = 0;
+  if (!textValue.empty()) textValue = convertToByteArray(textValue);
+  if (!textValue2.empty()) textValue2 = convertToByteArray(textValue);
   
- if (command.getType() == Command::SHOW_MESSAGE_DIALOG || command.getType() == Command::SHOW_INPUT_DIALOG || command.getType() == Command::SHOW_ACTION_SHEET) {
+  jobject jcommand = env->NewObject(javaCache.nativeCommandClass, javaCache.nativeCommandConstructor, framework, commandTypeId, command.getInternalId(), command.getChildInternalId(), command.getValue(), jtextValue, jtextValue2);
+  env->CallStaticVoidMethod(javaCache.frameworkClass, javaCache.sendCommandMethod, framework, jcommand);
+  
+  env->DeleteLocalRef(jcommand);
+  if (jTextValue) env->DeleteLocalRef(jtextValue);
+  if (jTextValue2) env->DeleteLocalRef(jtextValue2);
+  
+  if (command.getType() == Command::SHOW_MESSAGE_DIALOG || command.getType() == Command::SHOW_INPUT_DIALOG || command.getType() == Command::SHOW_ACTION_SHEET) {
     modal_result_value = 0;
     modal_result_text = "";
     renderLoop();

@@ -122,6 +122,9 @@ public:
   void onOpenGLInitEvent(OpenGLInitEvent & _ev) override;
   void onSysEvent(SysEvent & ev) override;
 
+ protected:
+  jbyteArray convertToByteArray(const std::string & s);
+
 private:
   pthread_t _threadId;
   JavaCache javaCache;

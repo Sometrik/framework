@@ -75,25 +75,32 @@ public class NativeCommand {
     CONSUME_PURCHASE
   }
   
-  public NativeCommand(FrameWork frame, CommandType command, int internalId, int childInternalId, String textValue, String textValue2){
+  public NativeCommand(FrameWork frame, CommandType command, int internalId, int childInternalId, byte[] textValue, byte[] textValue2){
     this.frame = frame;
     this.command = command;
     this.internalId = internalId;
     this.childInternalId = childInternalId;
-    this.textValue = textValue;
-    this.textValue2 = textValue2;
 
+    if (textValue != null) {
+	this.textValue = new String(textValue, Charset.forName("UTF-8"));
+    }
+    if (textValue2 != null) {
+	this.textValue2 = new String(textValue2, Charset.forName("UTF-8"));
+    }
   }
-  public NativeCommand(FrameWork frame, int messageTypeId, int internalId, int childInternalId, int value, String textValue, String textValue2){
+  public NativeCommand(FrameWork frame, int messageTypeId, int internalId, int childInternalId, int value, byte[] textValue, byte[] textValue2){
     this.frame = frame;
     command = CommandType.values()[messageTypeId];
     this.internalId = internalId;
     this.childInternalId = childInternalId;
     this.value = value;
-    this.textValue = textValue;
-    this.textValue2 = textValue2;
-    
-    
+
+    if (textValue != null) {
+	this.textValue = new String(textValue, Charset.forName("UTF-8"));
+    }
+    if (textValue2 != null) {
+	this.textValue2 = new String(textValue2, Charset.forName("UTF-8"));
+    }
   }
   
   public void apply(NativeCommandHandler view) {
