@@ -54,6 +54,7 @@ class EventHandler {
   virtual void onTimerEvent(TimerEvent & ev) { }
   virtual void onValueEvent(ValueEvent & ev) { }
   virtual void onOpenGLInitEvent(OpenGLInitEvent & ev) { }
+
   virtual void handleUIEvent(UIEvent & ev) { }
   virtual void handleUICommandEvent(UICommandEvent & ev) { }
   virtual void handlePrepareEvent(PrepareEvent & ev) { }
@@ -78,8 +79,6 @@ class EventHandler {
   virtual void handleMouseClickEvent(MouseEvent & ev) { }
   virtual void handleMouseDragEvent(MouseEvent & ev) { }
   virtual void handleMouseScrollEvent(MouseEvent & ev) { }
-  virtual void handleMouseEnter(MouseEvent & ev) { }
-  virtual void handleMouseLeave(MouseEvent & ev) { }
   virtual void handleMouseEvent(MouseEvent & ev) { }
   virtual void handleScrollEvent(ScrollEvent & ev) { }
   virtual void handleImageRequestEvent(ImageRequestEvent & ev) { }
