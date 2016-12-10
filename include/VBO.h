@@ -97,7 +97,7 @@ class VBO {
 #if 1
   const canvas::TextureRef & getTexture() const { return texture; }
   void setTexture(const canvas::TextureRef & _texture) { texture = _texture; } 
-  void clearTexture() { texture.clear(); }
+  void clearTexture() { texture.reset(); }
   bool hasTexture() const { return texture.get() != 0; }
 #endif
 
