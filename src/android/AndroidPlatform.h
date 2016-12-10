@@ -100,7 +100,6 @@ public:
   }
 #endif
 
-  void showCanvas(canvas::ContextAndroid & context);
   std::shared_ptr<Logger> createLogger() const override {
     return std::make_shared<AndroidLogger>();
   }
