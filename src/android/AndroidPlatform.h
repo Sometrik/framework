@@ -91,7 +91,7 @@ public:
     return std::make_shared<AndroidClientFactory>(clientCache);
   }
   void createFBO(int flags) { }
-  std::string showTextEntryDialog(const std::string & message) { return ""; }
+  std::string showTextEntryDialog(const std::string & title, const std::string & message) { return ""; }
 
 #ifdef HAS_SOUNDCANVAS
   std::shared_ptr<SoundCanvas> createSoundCanvas() const override {
