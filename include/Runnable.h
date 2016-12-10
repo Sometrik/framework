@@ -23,7 +23,7 @@ class Runnable : public EventHandler {
   PlatformThread * getThreadPtr() { return thread; }
 
   void sendEvent(const Event & ev) {
-    event_queue.send(ev);
+    event_queue.push(0, ev);
   }
     
   void logMessage(const std::string & message) { logMessage(message.c_str()); }
