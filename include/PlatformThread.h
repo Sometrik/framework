@@ -2,14 +2,9 @@
 #define _PLATFORMTHREAD_H_
 
 #include <memory>
-#include <InternalFormat.h>
 
 class Runnable;
 class Event;
-
-namespace canvas {
-  class Image;
-};
 
 class PlatformThread {
  public:
@@ -24,7 +19,6 @@ class PlatformThread {
   virtual void sendEventFromThread(const Event & ev) = 0;
   virtual void terminate() = 0;
   virtual void disconnect() = 0;
-  virtual std::shared_ptr<canvas::Image> loadImageFromMemory(const unsigned char * buffer, size_t size, canvas::InternalFormat target_format, unsigned int required_width = 0, unsigned int required_height = 0, unsigned int requested_levels = 1) const = 0;
   virtual void logMessage(const char * message) = 0;
   virtual void sleep(float t) = 0;
   virtual void alert(const char * message) { }
