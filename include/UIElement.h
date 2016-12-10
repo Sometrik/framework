@@ -7,6 +7,7 @@
 #include <VBO.h>
 #include <TouchEvent.h>
 #include <CommandEvent.h>
+#include <SysEvent.h>
 #include <FWPlatform.h>
  
 class UIElement : public Element {
@@ -42,6 +43,12 @@ class UIElement : public Element {
       ev2.dispatch(*this);
     } else if (ev.getType() == TouchEvent::ACTION_UP) {
       setTouched(false); 
+    }
+  }
+
+  void onSysEvent(SysEvent & ev) {
+    if (ev.getType() == SysEvent::STOP) {
+      clearTexture();
     }
   }
 
