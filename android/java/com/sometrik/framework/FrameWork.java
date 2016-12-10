@@ -79,7 +79,6 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   public native void nativeOnStart(double timestamp, int appId);
   public native void nativeOnDestroy(double timestamp, int appId);
   public static native void onResize(double timestamp, float width, float height, int viewId);
-  public native void nativeOnDraw(double timestamp, int viewId);
   public native void nativeOnUpdate(double timestamp, int viewId);
 
   @Override
