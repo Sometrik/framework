@@ -274,6 +274,8 @@ AndroidPlatform::onOpenGLInitEvent(OpenGLInitEvent & _ev) {
 
 void
 AndroidPlatform::onSysEvent(SysEvent & ev) {
+  FWPlatform::onSysEvent(ev);
+  
   if (ev.getType() == SysEvent::PAUSE) {
     isPaused = true;
   } else if (ev.getType() == SysEvent::RESUME) {
