@@ -264,7 +264,7 @@ AndroidPlatform::onOpenGLInitEvent(OpenGLInitEvent & _ev) {
   auto & ev = dynamic_cast<AndroidOpenGLInitEvent&>(_ev);
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "initializeRenderer reached");
   if (ev.getWindow()) {
-    initializeRenderer(ev.getOpenGLESVersion(), ev.getWindow());
+    initializeRenderer(ev.getOpenGLVersion(), ev.getWindow());
     canDraw = true;
   } else {
     deinitializeRenderer();
@@ -402,7 +402,7 @@ void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, job
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "going for it");
   ANativeWindow * window = 0;
   if (surface != 0) window = ANativeWindow_fromSurface(env, surface);
-  AndroidOpenGLInitEvent ev(platform->getTime(), gl_version, window);
+  AndroidOpenGLInitEvent ev(platform->getTime(), gl_version, true, window);
   platform->queueEvent(platform->getInternalId(), ev);
 }
 

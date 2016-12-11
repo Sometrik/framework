@@ -188,7 +188,7 @@ public:
       getApplication().loadEvents();
 
       if (!is_initialized) {
-	OpenGLInitEvent ev(getTime(), 300);
+	OpenGLInitEvent ev(getTime(), 0x30000, true);
 	postEvent(getActiveViewId(), ev);
 	is_initialized = true;
       }
