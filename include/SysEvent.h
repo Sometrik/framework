@@ -5,6 +5,8 @@
 
 #include <string>
 
+class PlatformThread;
+
 class SysEvent : public Event {
 public:
   enum Type {
@@ -24,15 +26,18 @@ public:
 
   void setValue(int _value) { value = _value; }
   void setTextValue(const std::string & _text_value) { text_value = _text_value; }
+  void setThread(PlatformThread * _thread) { thread = _thread; }
   
   Type getType() { return type; }
   int getValue() { return value; }
   const std::string & getTextValue() const { return text_value; }
-
+  const PlatformThread * getThread() const { return thread; }
+  
  private:
   Type type;
   int value = 0;
   std::string text_value;
+  PlatformThread * thread = 0;
 };
 
 #endif
