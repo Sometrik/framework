@@ -2,7 +2,7 @@
 
 #include <PlatformThread.h>
 #include <Event.h>
-#include <ThreadEvent.h>
+#include <SysEvent.h>
 
 #include <cassert>
 #include <iostream>
@@ -15,7 +15,8 @@ Runnable::start(PlatformThread * _thread) {
   assert(_thread);
   thread = _thread;
   run();
-  ThreadEvent ev(0.0, ThreadEvent::THREAD_STOPPED, thread);
+  SysEvent ev(0.0, SysEvent::THREAD_TERMINATED);
+  ev.setThread(thread);
   postEvent(ev);
 }
 
