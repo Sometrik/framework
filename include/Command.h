@@ -11,18 +11,25 @@ class Command {
   enum Type {
     CREATE_PLATFORM = 0,
     CREATE_APPLICATION,
-    SHOW_VIEW,
     CREATE_FORMVIEW,
+    CREATE_NATIVE_OPENGL_VIEW,
+    CREATE_GRIDVIEW,
     CREATE_BUTTON,
+    CREATE_SWITCH,
     CREATE_PICKER, // called Spinner in Android
     CREATE_LINEAR_LAYOUT,
-    CREATE_NATIVE_OPENGL_VIEW,
     CREATE_TEXTFIELD,
     CREATE_TEXTLABEL,
     CREATE_DIALOG, // For future
     CREATE_IMAGE_ELEMENT,
     CREATE_ACTION_SHEET,
+    CREATE_CHECKBOX,
+    CREATE_RADIO_GROUP,
+    CREATE_SEPARATOR,
+    CREATE_SLIDER,
+    SET_USER_ID, // Sets the user assignable id of element
     DELETE_ELEMENT,
+    SHOW_VIEW,
     REQUEST_REDRAW,
     SHOW_MESSAGE_DIALOG,
     SHOW_INPUT_DIALOG,
@@ -39,7 +46,6 @@ class Command {
 
     // Timers
     CREATE_TIMER,
-    DELETE_TIMER,
     
     // In-app purchases
     LIST_PRODUCTS,
