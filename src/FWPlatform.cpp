@@ -3,6 +3,7 @@
 #include <pthread.h>
 #include <PlatformThread.h>
 #include <Runnable.h>
+#include <SysEvent.h>
 
 #include <iostream>
 #include <unistd.h>
@@ -104,3 +105,34 @@ FWPlatform::run2(std::shared_ptr<Runnable> & runnable) {
   thread->start();
   return thread;
 }
+
+void
+FWPlatform::terminateThreads() {
+  cerr << "terminating " << threads.size() << " threads\n";
+  for (auto & thread : threads) {
+    assert(thread.get());
+    thread->terminate();
+  }
+}
+
+void
+FWPlatform::disconnectThreads() {
+  for (auto & thread : threads) {
+    thread->disconnect();
+  }
+}
+
+void
+FWPlatform::onSysEvent(SysEvent & ev) {
+  if (ev.getType() == SysEvent::THREAD_TERMINATED) {
+    for (auto it = threads.begin(); it != threads.end(); it++) {
+      PlatformThread * thread = it->get();
+      if (thread == ev.getThread()) {
+	threads.erase(it);
+	num_running_threads--;
+	break;
+      }
+    }
+  }
+}
+

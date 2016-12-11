@@ -51,7 +51,9 @@ class FWPlatform : public Element {
   virtual std::shared_ptr<HTTPClientFactory> createHTTPClientFactory() const = 0;
   virtual void pushEvent(const Event & ev) { }
   virtual void setCursor(const std::string & cursor) { }
-    
+
+  void onSysEvent(SysEvent & ev) override;
+
   std::string getBundleFilename(const std::string & filename) { return getBundleFilename(filename.c_str()); }
 
   void storeValue(const std::string & key, const std::string & value) {
@@ -143,6 +145,9 @@ class FWPlatform : public Element {
   std::shared_ptr<PlatformThread> run(std::shared_ptr<Runnable> runnable);
 
   size_t getNumRunningThreads() const { return num_running_threads; }
+
+  void terminateThreads();
+  void disconnectThreads();
 
  protected:
 #ifdef HAS_SOUNDCANVAS
