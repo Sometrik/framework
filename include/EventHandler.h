@@ -13,7 +13,7 @@ class TimerEvent;
 class ValueEvent;
 class OpenGLInitEvent;
 
-class UIEvent;
+class WindowEvent;
 class UICommandEvent;
 class MouseEvent;
 class PaintEvent;
@@ -55,7 +55,7 @@ class EventHandler {
   virtual void onValueEvent(ValueEvent & ev) { }
   virtual void onOpenGLInitEvent(OpenGLInitEvent & ev) { }
 
-  virtual void handleUIEvent(UIEvent & ev) { }
+  virtual void handleWindowEvent(WindowEvent & ev) { }
   virtual void handleUICommandEvent(UICommandEvent & ev) { }
   virtual void handlePrepareEvent(PrepareEvent & ev) { }
   virtual void handlePaintEventRecursive(PaintEvent & ev) { }
