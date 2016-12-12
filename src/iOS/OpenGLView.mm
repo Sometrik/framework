@@ -9,6 +9,7 @@
 #include <UpdateEvent.h>
 #include <ResizeEvent.h>
 #include <DrawEvent.h>
+#include <EventQueue.h>
 
 #include <ContextQuartz2D.h>
 
@@ -60,9 +61,7 @@ public:
 
 class FWiOSPlatform : public FWPlatform {
 public:
-    FWiOSPlatform(OpenGLView * _controller, float _display_scale, const std::string & glsl_version, bool has_es3)
-  : FWPlatform(_display_scale, glsl_version.c_str(), has_es3),
-  controller(_controller) {
+    FWiOSPlatform(OpenGLView * _controller, float _display_scale) : FWPlatform(_display_scale), controller(_controller) {
       defaults = [NSUserDefaults standardUserDefaults];
     }
     
@@ -75,7 +74,7 @@ public:
 //      [[NSNotificationCenter defaultCenter] postNotificationName:message2 object:self];
     }
 #endif
-    std::string showTextEntryDialog(const std::string & message) override {
+  std::string showTextEntryDialog(const std::string & title, const std::string & message) override {
       // NSString* message2 = [NSString stringWithUTF8String:message];
       InputDialog * dlg = [InputDialog dialog];
       has_active_modal = true;
@@ -116,6 +115,7 @@ public:
       const char * ptr = [finalPath cStringUsingEncoding:1];
      return ptr;
   }
+#if 0
   void storeValue(const std::string & key, const std::string & value) override {
     NSString *storedVal = [NSString stringWithUTF8String:value.c_str()];
     NSString *storedKey = [NSString stringWithUTF8String:key.c_str()];
@@ -128,6 +128,7 @@ public:
     string r = [results cStringUsingEncoding:[NSString defaultCStringEncoding]]; // wrong encoding
     return r;
   }
+#endif
   std::shared_ptr<canvas::ContextFactory> createContextFactory() const override {
     std::shared_ptr<canvas::FilenameConverter> ptr(new canvas::BundleFilenameConverter);
     return std::make_shared<canvas::Quartz2DContextFactory>(getDisplayScale(), ptr);
@@ -156,6 +157,9 @@ public:
       default:
         break;
     }
+  }
+  void pushEvent(const Event & ev) override {
+    event_queue.push(0, ev);
   }
   double getTime() const override {
     double t = [[NSProcessInfo processInfo] systemUptime];
@@ -197,6 +201,8 @@ public:
     return 0;
   }
 #endif
+
+  EventQueue event_queue;
                 
 private:
   NSUserDefaults *defaults;
@@ -381,7 +387,7 @@ extern FWApplication * applicationMain();
 
 	_platform->addChild(std::shared_ptr<Element>(_esContext));
       
-	OpenGLInitEvent ev(_platform->getTime(), self->_opengl_version);
+	OpenGLInitEvent ev(_platform->getTime(), self->_opengl_version, true);
 	_platform->postEvent(_platform->getActiveViewId(), ev);
 
         [self drawView: nil];
@@ -483,7 +489,6 @@ extern FWApplication * applicationMain();
     if (motion == UIEventSubtypeMotionShake ) {
         // User was shaking the device. Post a notification named "shake".
         // [[NSNotificationCenter defaultCenter] postNotificationName:@"shake" object:self];
-	need_update |= _esContext->onShake(event.timestamp);
     }
 }
 
@@ -507,7 +512,7 @@ extern FWApplication * applicationMain();
 - (void)tearDownGL {
   [EAGLContext setCurrentContext:self->context];
   double t = [[NSProcessInfo processInfo] systemUptime];
-  SysEvent ev(t, SysEvent::SHUTDOWN);
+  SysEvent ev(t, SysEvent::DESTROY);
   _platform->postEvent(0, ev);
   delete _esContext;
 }
@@ -515,7 +520,16 @@ extern FWApplication * applicationMain();
 - (void) drawView: (CADisplayLink*) displayLink
 {
   [EAGLContext setCurrentContext:self->context];
-  need_update |= _esContext->loadEvents();
+  
+  vector<std::shared_ptr<Event> > events = _platform->event_queue.recvAll();
+  if (!events.empty()) {
+    // cerr << "received " << events.size() << " events from threads\n";
+    for (auto & ev : events) {
+      ev->dispatch(*_esContext);
+      need_update |= ev->needUpdate();
+    }
+  }
+
   double t = [[NSProcessInfo processInfo] systemUptime];
   assert(_platform->getActiveViewId());
   UpdateEvent ev0(t);
