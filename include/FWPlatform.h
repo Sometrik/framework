@@ -49,7 +49,7 @@ class FWPlatform : public Element {
   virtual double getTime() const = 0;
   virtual std::shared_ptr<canvas::ContextFactory> createContextFactory() const = 0;
   virtual std::shared_ptr<HTTPClientFactory> createHTTPClientFactory() const = 0;
-  virtual void pushEvent(const Event & ev) { }
+  virtual void pushEvent(const Event & ev) = 0;
   virtual void setCursor(const std::string & cursor) { }
 
   void onSysEvent(SysEvent & ev) override;
