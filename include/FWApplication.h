@@ -8,8 +8,6 @@ class FWApplication : public Element {
 public:
   FWApplication(bool _full_screen = false) : full_screen(_full_screen) { }
     
-  virtual bool loadEvents() { return false; }
-
   void initialize(FWPlatform * _platform) override {
     Element::initialize(_platform);
     sendCommand(Command(Command::CREATE_APPLICATION, getParentInternalId(), getInternalId()));
