@@ -244,11 +244,10 @@ AndroidPlatform::renderLoop() {
     }
 
     if (canDraw && surface) {
-      UpdateEvent ev(getTime());
-      postEvent(getActiveViewId(), ev);
-
-      DrawEvent ev2(getTime());
-      postEvent(getActiveViewId(), ev2);
+//      UpdateEvent ev(getTime());
+//      postEvent(getActiveViewId(), ev);
+//      DrawEvent ev2(getTime());
+//      postEvent(getActiveViewId(), ev2);
 
       if (!eglSwapBuffers(display, surface)) {
 	getLogger().println("error eglSwapBuffers");

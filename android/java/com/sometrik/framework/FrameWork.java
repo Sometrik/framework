@@ -44,6 +44,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   private SharedPreferences prefs;
   private SharedPreferences.Editor editor;
   private FrameWork frameWork;
+  private double updateTimer = 0;
   private static final int RESULT_SETTINGS = 1;
   
   private boolean drawMode = false;
@@ -79,7 +80,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   public native void nativeOnStart(double timestamp, int appId);
   public native void nativeOnDestroy(double timestamp, int appId);
   public static native void onResize(double timestamp, float width, float height, int viewId);
-  public native void nativeOnUpdate(double timestamp, int viewId);
+  public static native void onUpdate(double timestamp, int viewId);
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -131,12 +132,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
     screenWidth = displaymetrics.widthPixels;
     return displaymetrics;
   }
-  
-  public void setToDraw(Runnable runnable){
-  	drawMode = true;
-  	mainHandler.post(runnable);
-  }
-  
+
   public static void addToViewList(NativeCommandHandler view){
     System.out.println(view.getElementId() + " added to view list");
     views.put(view.getElementId(), view);
@@ -153,7 +149,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
     views.put(id, layout);
   }
 
-  public void createNativeOpenGLView(final int id) {
+  public NativeSurface createNativeOpenGLView(final int id) {
     final ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
     final ConfigurationInfo configurationInfo = activityManager.getDeviceConfigurationInfo();
     final int gl_version = configurationInfo.reqGlEsVersion;    
@@ -178,9 +174,10 @@ public class FrameWork extends Activity implements NativeCommandHandler {
 
     System.out.println("...");
     views.put(id, surfaceView);
-    setContentView(surfaceView);
+    surfaceView.showView();
     currentView = id;
     System.out.println("native surface created");
+    return surfaceView;
   }
 
   // Lisää kuvan antaminen // Aika // Ääni

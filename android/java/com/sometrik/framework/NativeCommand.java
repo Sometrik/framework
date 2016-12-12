@@ -138,7 +138,8 @@ public class NativeCommand {
       break;
 
     case CREATE_NATIVE_OPENGL_VIEW:
-      frame.createNativeOpenGLView(childInternalId);
+      NativeSurface surface = frame.createNativeOpenGLView(childInternalId);
+      surface.showView();
       break;
 
     case CREATE_TEXTFIELD:

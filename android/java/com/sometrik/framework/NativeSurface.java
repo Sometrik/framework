@@ -1,18 +1,23 @@
 package com.sometrik.framework;
 
-import android.content.Context;
+import java.util.Timer;
+import java.util.TimerTask;
+
 import android.view.SurfaceView;
 import android.view.View;
 
 public class NativeSurface extends SurfaceView implements NativeCommandHandler {
   
   private FrameWork framework;
+  private Timer timer;
+  private DrawTimer drawTimer;
   //draw and update call frequency in millis
   private static final int UPDATE_FREQUENCY = 16;
   
   public NativeSurface(FrameWork framework) {
     super(framework);
     this.framework = framework;
+    timer = new Timer();
     System.out.println("Native Surface constructor complete");
   }
   
@@ -20,28 +25,24 @@ public class NativeSurface extends SurfaceView implements NativeCommandHandler {
   public void showView() {
     FrameWork frame = framework;
     frame.setContentView(this);
+    drawTimer = new DrawTimer(getId());
     FrameWork.currentView = getId();
-    framework.setToDraw(new drawRunnable(getId()));
+    timer.scheduleAtFixedRate(drawTimer, UPDATE_FREQUENCY, UPDATE_FREQUENCY);
   }
   
+  class DrawTimer extends TimerTask {
 
-  
-  class drawRunnable implements Runnable {
-  	
-  	int viewId;
-  	public drawRunnable(int viewId){
-  		this.viewId = viewId;
-  	}
-  	
-		@Override
-		public void run() {
+    int viewId;
+   
+    public DrawTimer(int viewId){
+      this.viewId = viewId;
+    }
 
-			double timestamp = System.currentTimeMillis() / 1000.0;
-			framework.nativeOnUpdate(timestamp, viewId);
-			if (framework.getDrawMode()){
-				framework.mainHandler.postDelayed(this, UPDATE_FREQUENCY);
-			}
-		}
+    @Override
+    public void run() {
+      System.out.println("onUpdate");
+      FrameWork.onUpdate(System.currentTimeMillis() / 1000.0, viewId);
+    }
   }
 
   @Override
