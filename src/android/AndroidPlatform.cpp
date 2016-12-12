@@ -58,7 +58,7 @@ std::string AndroidPlatform::getLocalFilename(const char * filename, FileType ty
 jbyteArray
 AndroidPlatform::convertToByteArray(const std::string & s) {
   auto env = getJNIEnv();
-  jbyte * pNativeMessage = reinterpret_cast<const jbyte*>(s.c_str());
+  const jbyte * pNativeMessage = reinterpret_cast<const jbyte*>(s.c_str());
   jbyteArray bytes = env->NewByteArray(s.size());
   env->SetByteArrayRegion(bytes, 0, s.size(), pNativeMessage);
   return bytes;
@@ -73,15 +73,15 @@ AndroidPlatform::sendCommand(const Command & command) {
   auto textValue = command.getTextValue();
   auto textValue2 = command.getTextValue2();
   jbyteArray jtextValue = 0, jtextValue2 = 0;
-  if (!textValue.empty()) textValue = convertToByteArray(textValue);
-  if (!textValue2.empty()) textValue2 = convertToByteArray(textValue);
+  if (!textValue.empty()) jtextValue = convertToByteArray(textValue);
+  if (!textValue2.empty()) jtextValue2 = convertToByteArray(textValue);
   
   jobject jcommand = env->NewObject(javaCache.nativeCommandClass, javaCache.nativeCommandConstructor, framework, commandTypeId, command.getInternalId(), command.getChildInternalId(), command.getValue(), jtextValue, jtextValue2);
   env->CallStaticVoidMethod(javaCache.frameworkClass, javaCache.sendCommandMethod, framework, jcommand);
   
   env->DeleteLocalRef(jcommand);
-  if (jTextValue) env->DeleteLocalRef(jtextValue);
-  if (jTextValue2) env->DeleteLocalRef(jtextValue2);
+  if (jtextValue) env->DeleteLocalRef(jtextValue);
+  if (jtextValue2) env->DeleteLocalRef(jtextValue2);
   
   if (command.getType() == Command::SHOW_MESSAGE_DIALOG || command.getType() == Command::SHOW_INPUT_DIALOG || command.getType() == Command::SHOW_ACTION_SHEET) {
     modal_result_value = 0;

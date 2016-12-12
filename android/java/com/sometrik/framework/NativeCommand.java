@@ -1,5 +1,6 @@
 package com.sometrik.framework;
 
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 
 import android.app.AlertDialog;

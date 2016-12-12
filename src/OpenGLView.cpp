@@ -28,7 +28,7 @@ OpenGLView::onResizeEvent(ResizeEvent & ev) {
   actual_width = ev.getActualWidth();
   actual_height = ev.getActualHeight();
   ev.requestRedraw();
-  ev.setIsHandled();
+  ev.setHandled();
 }
 
 void
