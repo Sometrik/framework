@@ -62,7 +62,7 @@ class UIElement : public Element {
   bool isTouched() const { return is_touched; }
 
  protected:
-  void clearTexture() { texture.clear(); }
+  void clearTexture() { texture.reset(); }
   virtual canvas::TextureRef drawContent() = 0;
 
   float x = 0, y = 0, width = 0, height = 0;
