@@ -241,16 +241,15 @@ AndroidPlatform::renderLoop() {
       if (ev2 && (ev2->getType() == SysEvent::END_MODAL || ev2->getType() == SysEvent::DESTROY)) {
 	break;
       }
-    }
 
-    if (canDraw && surface) {
-//      UpdateEvent ev(getTime());
-//      postEvent(getActiveViewId(), ev);
-//      DrawEvent ev2(getTime());
-//      postEvent(getActiveViewId(), ev2);
+      if (canDraw && surface && ev.second.get()->isRedrawNeeded()) {
+        __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "I Wanna draw");
+        DrawEvent dev(getTime());
+        postEvent(getActiveViewId(), dev);
 
-      if (!eglSwapBuffers(display, surface)) {
-	getLogger().println("error eglSwapBuffers");
+        if (!eglSwapBuffers(display, surface)) {
+          getLogger().println("error eglSwapBuffers");
+        }
       }
     }
   }
