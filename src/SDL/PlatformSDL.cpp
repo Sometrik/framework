@@ -208,7 +208,7 @@ public:
   bool isRedrawNeeded() { return redraw_needed; }
   void clearRedrawNeeded() { redraw_needed = false; }
 
-  std::string showTextEntryDialog(const std::string & message) override { return ""; }
+  std::string showTextEntryDialog(const std::string & title, const std::string & message) override { return ""; }
 
 private:
   bool button_pressed = false;
