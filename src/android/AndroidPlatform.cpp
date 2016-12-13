@@ -227,29 +227,26 @@ AndroidPlatform::renderLoop() {
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Looping louie");
 
   while (1) {
-    if (!eventqueue.empty()) {
-      auto ev = eventqueue.pop();
+    auto ev = eventqueue.pop();
 
-      std::ostringstream s;
-      s << "trying to dispatch event " << typeid(*ev.second.get()).name() << " to: " << ev.first ;
-      __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "dispatching event");
-      getLogger().println(s.str());
+    std::ostringstream s;
+    s << "trying to dispatch event " << typeid(*ev.second.get()).name() << " to: " << ev.first ;
+    getLogger().println(s.str());
+    
+    postEvent(ev.first, *ev.second.get());
+    
+    auto ev2 = dynamic_cast<SysEvent*>(ev.second.get());
+    if (ev2 && (ev2->getType() == SysEvent::END_MODAL || ev2->getType() == SysEvent::DESTROY)) {
+      break;
+    }
 
-      postEvent(ev.first, *ev.second.get());
-
-      auto ev2 = dynamic_cast<SysEvent*>(ev.second.get());
-      if (ev2 && (ev2->getType() == SysEvent::END_MODAL || ev2->getType() == SysEvent::DESTROY)) {
-	break;
-      }
-
-      if (canDraw && surface && ev.second.get()->isRedrawNeeded()) {
-        __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "I Wanna draw");
-        DrawEvent dev(getTime());
-        postEvent(getActiveViewId(), dev);
-
-        if (!eglSwapBuffers(display, surface)) {
-          getLogger().println("error eglSwapBuffers");
-        }
+    if (canDraw && surface && ev.second.get()->isRedrawNeeded()) {
+      __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "I Wanna draw");
+      DrawEvent dev(getTime());
+      postEvent(getActiveViewId(), dev);
+      
+      if (!eglSwapBuffers(display, surface)) {
+	getLogger().println("error eglSwapBuffers");
       }
     }
   }
