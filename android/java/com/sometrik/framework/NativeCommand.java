@@ -310,14 +310,14 @@ public class NativeCommand {
 
       @Override
       public void onCancel(DialogInterface arg0) {
-	frame.endModal(System.currentTimeMillis() / 1000.0f, 0, "");
+	frame.endModal(System.currentTimeMillis() / 1000.0f, 0, null);
       }
     });
 
     // Negative button listener
     builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
       public void onClick(DialogInterface dialog, int id) {
-	frame.endModal(System.currentTimeMillis() / 1000.0f, 0, "");	
+	frame.endModal(System.currentTimeMillis() / 1000.0f, 0, null);
 	dialog.cancel();
       }
     });
@@ -326,7 +326,8 @@ public class NativeCommand {
     builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
       public void onClick(DialogInterface dialog, int id) {
 	String inputText = String.valueOf(input.getText());
-	frame.endModal(System.currentTimeMillis() / 1000.0f, 1, inputText);
+	byte[] b = inputText.getBytes(Charset.forName("UTF-8"));
+	frame.endModal(System.currentTimeMillis() / 1000.0f, 1, b);
 	dialog.cancel();
       }
     });
@@ -353,7 +354,7 @@ public class NativeCommand {
 
       @Override
       public void onCancel(DialogInterface arg0) {
-	frame.endModal(System.currentTimeMillis() / 1000.0f, 0, "");
+	frame.endModal(System.currentTimeMillis() / 1000.0f, 0, null);
       }
       
     });
@@ -361,7 +362,7 @@ public class NativeCommand {
     // Positive button listener
     builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
       public void onClick(DialogInterface dialog, int id) {
-	frame.endModal(System.currentTimeMillis() / 1000.0f, 1, "");
+	frame.endModal(System.currentTimeMillis() / 1000.0f, 1, null);
 	dialog.dismiss();
       }
     });
