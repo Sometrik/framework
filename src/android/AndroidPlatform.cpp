@@ -409,7 +409,7 @@ void Java_com_sometrik_framework_FrameWork_endModal(JNIEnv* env, jobject thiz, d
     text = string((const char *)content_array, env->GetArrayLength(content_array));
     env->ReleaseByteArrayElements(jtext, content_array, JNI_ABORT);
   }
-  __android_log_print(ANDROID_LOG_INFO, "Sometrik", "endModal: %d %s", value, text);
+  __android_log_print(ANDROID_LOG_INFO, "Sometrik", "endModal: %d %s", value, text.c_str());
   SysEvent ev(timestamp, SysEvent::END_MODAL);
   ev.setValue(value);
   ev.setTextValue(text);
