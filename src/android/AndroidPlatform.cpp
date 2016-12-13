@@ -401,9 +401,14 @@ void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, job
   platform->queueEvent(platform->getInternalId(), ev);
 }
 
-void Java_com_sometrik_framework_FrameWork_endModal(JNIEnv* env, jobject thiz, double timestamp, int value, jstring jtext) {
-    __android_log_print(ANDROID_LOG_INFO, "Sometrik", "endModal");
-  const char * text = env->GetStringUTFChars(jtext, 0);
+void Java_com_sometrik_framework_FrameWork_endModal(JNIEnv* env, jobject thiz, double timestamp, int value, jbyteArray jtext) {
+  __android_log_print(ANDROID_LOG_INFO, "Sometrik", "endModal");
+  string text;
+  if (jtext) {
+    jbyte* content_array = env->GetByteArrayElements(array, NULL);
+    text = string((const char *)content_array, env->GetArrayLength(content_array));
+    env->ReleaseByteArrayElements(jtext, content_array, JNI_ABORT);
+  }
   __android_log_print(ANDROID_LOG_INFO, "Sometrik", "endModal: %d %s", value, text);
   SysEvent ev(timestamp, SysEvent::END_MODAL);
   ev.setValue(value);
