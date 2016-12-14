@@ -394,22 +394,24 @@ void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, job
 }
 
   void Java_com_sometrik_framework_FrameWork_nativeSetSurface(JNIEnv* env, jobject thiz, jobject surface, int surfaceId, int gl_version) {
-  __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "going for it");
+  __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "setting native surface on androidPlatform");
   ANativeWindow * window = 0;
   if (surface != 0) window = ANativeWindow_fromSurface(env, surface);
   AndroidOpenGLInitEvent ev(platform->getTime(), gl_version, true, window);
   platform->queueEvent(platform->getInternalId(), ev);
 }
 
-void Java_com_sometrik_framework_FrameWork_endModal(JNIEnv* env, jobject thiz, double timestamp, int value, jbyteArray jtext) {
-  __android_log_print(ANDROID_LOG_INFO, "Sometrik", "endModal");
-  string text;
-  if (jtext) {
-    jbyte* content_array = env->GetByteArrayElements(array, NULL);
-    text = string((const char *)content_array, env->GetArrayLength(content_array));
-    env->ReleaseByteArrayElements(jtext, content_array, JNI_ABORT);
-  }
-  __android_log_print(ANDROID_LOG_INFO, "Sometrik", "endModal: %d %s", value, text.c_str());
+
+ void Java_com_sometrik_framework_FrameWork_nativeSurfaceDestroyed(JNIEnv* env, jobject thiz, jobject surface, int surfaceId) {
+   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "native surface destroyed on androidPlatform");
+
+   //TODO
+ }
+
+void Java_com_sometrik_framework_FrameWork_endModal(JNIEnv* env, jobject thiz, double timestamp, int value, jstring jtext) {
+    __android_log_print(ANDROID_LOG_INFO, "Sometrik", "endModal");
+  const char * text = env->GetStringUTFChars(jtext, 0);
+  __android_log_print(ANDROID_LOG_INFO, "Sometrik", "endModal: %d %s", value, text);
   SysEvent ev(timestamp, SysEvent::END_MODAL);
   ev.setValue(value);
   ev.setTextValue(text);
