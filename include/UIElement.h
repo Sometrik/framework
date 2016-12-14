@@ -41,9 +41,11 @@ class UIElement : public Element {
       setTouched(true);
       CommandEvent ev2(ev.getTimestamp(), getId());
       ev2.dispatch(*this);
+      ev.setHandled();
       ev.requestRedraw();
     } else if (ev.getType() == TouchEvent::ACTION_UP && isTouched()) {
       setTouched(false);
+      ev.setHandled();
       ev.requestRedraw();
     }
   }
