@@ -73,6 +73,10 @@ public:
     mgr = _env->NewGlobalRef(_mgr);
     canvasCache = std::make_shared<canvas::AndroidCache>(_env, _mgr);
     clientCache = std::make_shared<AndroidClientCache>(_env);
+
+#ifdef HAS_SOUNDCANVAS
+    soundCache = std::make_shared<AndroidSoundCache>(_env, _mgr);
+#endif
   }
   
   void setJavaVM(JavaVM * _gJavaVM) { gJavaVM = _gJavaVM; }
@@ -84,6 +88,10 @@ public:
   std::shared_ptr<canvas::ContextFactory> createContextFactory() const override {
     return std::make_shared<canvas::AndroidContextFactory>(mgr, canvasCache);
   }
+
+  virtual void pushEvent(const Event & ev) {
+   //TODO
+  }
   std::shared_ptr<HTTPClientFactory> createHTTPClientFactory() const override {
     auto env = getJNIEnv();
     return std::make_shared<AndroidClientFactory>(clientCache);
@@ -94,7 +102,7 @@ public:
 #ifdef HAS_SOUNDCANVAS
   std::shared_ptr<SoundCanvas> createSoundCanvas() const override {
     auto env = getJNIEnv();
-    return std::make_shared<AndroidSoundCanvas>(env, mgr);
+    return std::make_shared<AndroidSoundCanvas>(soundCache);
   }
 #endif
 
@@ -131,6 +139,7 @@ private:
   EGLContext context = 0;
   std::shared_ptr<canvas::AndroidCache> canvasCache;
   std::shared_ptr<AndroidClientCache> clientCache;
+  std::shared_ptr<AndroidSoundCache> soundCache;
 
   ANativeWindow * window = 0;
   JavaVM * gJavaVM = 0;

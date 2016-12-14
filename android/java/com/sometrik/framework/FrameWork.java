@@ -74,6 +74,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   public native void touchEvent(int mode, int fingerIndex, long time, float x, float y);
   public native void onInit(AssetManager assetManager, float xSize, float ySize, float displayScale);
   public native void nativeSetSurface(Surface surface, int surfaceId, int gl_version);
+  public native void nativeSurfaceDestroyed(double timestamp, int surfaceId);
   public native void nativeOnResume(double timestamp, int appId);
   public native void nativeOnPause(double timestamp, int appId);
   public native void nativeOnStop(double timestamp, int appId);
@@ -160,6 +161,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
     surfaceView.setOnTouchListener(new MyOnTouchListener(this));
     surfaceView.getHolder().addCallback(new Callback() {
       public void surfaceDestroyed(SurfaceHolder holder) {
+      	nativeSurfaceDestroyed(System.currentTimeMillis() / 1000.0, id);
       }
 
       public void surfaceCreated(SurfaceHolder holder) {
