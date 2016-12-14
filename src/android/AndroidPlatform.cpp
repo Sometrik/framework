@@ -226,7 +226,7 @@ void
 AndroidPlatform::renderLoop() {
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Looping louie");
 
-  while (1) {
+  while (!isDestroyed) {
     auto ev = eventqueue.pop();
 
     std::ostringstream s;
@@ -271,14 +271,21 @@ AndroidPlatform::onOpenGLInitEvent(OpenGLInitEvent & _ev) {
 void
 AndroidPlatform::onSysEvent(SysEvent & ev) {
   FWPlatform::onSysEvent(ev);
-  
-  if (ev.getType() == SysEvent::PAUSE) {
+
+  switch (ev.getType()) {
+  case SysEvent::PAUSE:
     isPaused = true;
-  } else if (ev.getType() == SysEvent::RESUME) {
+    break;
+  case SysEvent::RESUME:
     isPaused = false;
-  } else if (ev.getType() == SysEvent::END_MODAL) {
+    break;
+  case SysEvent::END_MODAL:
     modal_result_value = ev.getValue();
     modal_result_text = ev.getTextValue();
+    break;
+  case SysEvent::DESTROY:
+    isDestroyed = true;
+    break;
   }
 }
 

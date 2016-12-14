@@ -140,5 +140,5 @@ private:
   jobject framework;
   jobject handler;
   EventQueue eventqueue;
-  bool canDraw = false, isPaused = false;
+  bool canDraw = false, isPaused = false, isDestroyed = false;
 };
