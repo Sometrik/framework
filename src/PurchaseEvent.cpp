@@ -3,6 +3,11 @@
 
 void
 PurchaseEvent::dispatch(EventHandler & element) {
-  element.onPurchaseEvent(*this);
+  if (!isHandled()) {
+    element.onPurchaseEvent(*this);
+    if (isHandled() && !handler) {
+      handler = &element;
+    }
+  }
   Event::dispatch(element);
 }

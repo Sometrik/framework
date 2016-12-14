@@ -5,6 +5,9 @@ void
 CommandEvent::dispatch(EventHandler & element) {
   if (!isHandled()) {
     element.onCommandEvent(*this);
+    if (isHandled() && !handler) {
+      handler = &element;
+    }
   }
   Event::dispatch(element);
 }
