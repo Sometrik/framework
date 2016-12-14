@@ -185,8 +185,6 @@ public:
 	}
       }
 
-      getApplication().loadEvents();
-
       if (!is_initialized) {
 	OpenGLInitEvent ev(getTime(), 0x30000, true);
 	postEvent(getActiveViewId(), ev);
@@ -199,7 +197,7 @@ public:
       if (isRedrawNeeded()) {
 	DrawEvent ev(getTime());
 	postEvent(getActiveViewId(), ev);
-	SDL_GL_SwapBuffers( );
+	SDL_GL_SwapBuffers();
 	clearRedrawNeeded();
       }
     }
