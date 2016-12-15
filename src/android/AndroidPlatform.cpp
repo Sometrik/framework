@@ -415,16 +415,20 @@ void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, job
    //TODO
  }
 
-void Java_com_sometrik_framework_FrameWork_endModal(JNIEnv* env, jobject thiz, double timestamp, int value, jstring jtext) {
-    __android_log_print(ANDROID_LOG_INFO, "Sometrik", "endModal");
-  const char * text = env->GetStringUTFChars(jtext, 0);
-  __android_log_print(ANDROID_LOG_INFO, "Sometrik", "endModal: %d %s", value, text);
-  SysEvent ev(timestamp, SysEvent::END_MODAL);
-  ev.setValue(value);
-  ev.setTextValue(text);
-  env->ReleaseStringUTFChars(jtext, text);
-  platform->queueEvent(0, ev);
-}
+ void Java_com_sometrik_framework_FrameWork_endModal(JNIEnv* env, jobject thiz, double timestamp, int value, jbyteArray jarray) {
+   __android_log_print(ANDROID_LOG_INFO, "Sometrik", "endModal");
+   string text;
+   if (jarray) {
+     jbyte* content_array = env->GetByteArrayElements(jarray, NULL);
+     text = string((const char *)content_array, env->GetArrayLength(jarray));
+     env->ReleaseByteArrayElements(jarray, content_array, JNI_ABORT);
+   }
+   __android_log_print(ANDROID_LOG_INFO, "Sometrik", "endModal: %d %s", value, text.c_str());
+   SysEvent ev(timestamp, SysEvent::END_MODAL);
+   ev.setValue(value);
+   ev.setTextValue(text);
+   platform->queueEvent(0, ev);
+ }
 
 void Java_com_sometrik_framework_FrameWork_buttonClicked(JNIEnv* env, jobject thiz, double timestamp, jint id) {
   TouchEvent ev(timestamp, TouchEvent::ACTION_CLICK);
