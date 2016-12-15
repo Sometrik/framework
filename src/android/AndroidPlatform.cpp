@@ -409,10 +409,10 @@ void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, job
 }
 
 
- void Java_com_sometrik_framework_FrameWork_nativeSurfaceDestroyed(JNIEnv* env, jobject thiz, jobject surface, int surfaceId) {
+ void Java_com_sometrik_framework_FrameWork_nativeSurfaceDestroyed(JNIEnv* env, jobject thiz, int surfaceId) {
    __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "native surface destroyed on androidPlatform");
-
-   //TODO
+  AndroidOpenGLInitEvent ev(platform->getTime(), gl_version, true, 0);
+  platform->queueEvent(platform->getInternalId(), ev);
  }
 
 void Java_com_sometrik_framework_FrameWork_endModal(JNIEnv* env, jobject thiz, double timestamp, int value, jstring jtext) {
