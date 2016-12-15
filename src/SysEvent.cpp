@@ -3,6 +3,11 @@
 
 void
 SysEvent::dispatch(EventHandler & element) {
-  element.onSysEvent(*this);
+  if (!isHandled()) {
+    element.onSysEvent(*this);
+    if (isHandled() && !handler) {
+      handler = &element;
+    }
+  }
   // Do not call super class.
 }

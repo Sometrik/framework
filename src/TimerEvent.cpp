@@ -3,6 +3,11 @@
 
 void
 TimerEvent::dispatch(EventHandler & element) {
-  element.onTimerEvent(*this);
+  if (!isHandled()) {
+    element.onTimerEvent(*this);
+    if (isHandled() && !handler) {
+      handler = &element;
+    }
+  }
   Event::dispatch(element);
 }

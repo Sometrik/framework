@@ -89,9 +89,6 @@ public:
     return std::make_shared<canvas::AndroidContextFactory>(mgr, canvasCache);
   }
 
-  virtual void pushEvent(const Event & ev) {
-   //TODO
-  }
   std::shared_ptr<HTTPClientFactory> createHTTPClientFactory() const override {
     auto env = getJNIEnv();
     return std::make_shared<AndroidClientFactory>(clientCache);
@@ -120,8 +117,12 @@ public:
   JNIEnv* getJNIEnv() const;
 //  JavaCache getJavaCache() const { return &javaCache; }
 
-  void queueEvent(int internal_id, Event & ev) {
+  void queueEvent(int internal_id, const Event & ev) {
     eventqueue.push(internal_id, ev);
+  }
+
+  void pushEvent(const Event & ev) {
+    queueEvent(0, ev);
   }
 
   void onOpenGLInitEvent(OpenGLInitEvent & _ev) override;

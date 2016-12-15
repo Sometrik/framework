@@ -3,6 +3,11 @@
 
 void
 TouchEvent::dispatch(EventHandler & element) {
-  element.onTouchEvent(*this);
+  if (!isHandled()) {
+    element.onTouchEvent(*this);
+    if (isHandled() && !handler) {
+      handler = &element;
+    }
+  }
   Event::dispatch(element);
 }

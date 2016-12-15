@@ -3,6 +3,11 @@
 
 void
 UpdateEvent::dispatch(EventHandler & element) {
-  element.onUpdateEvent(*this);
+  if (!isHandled()) {
+    element.onUpdateEvent(*this);
+    if (isHandled() && !handler) {
+      handler = &element;
+    }
+  }
   Event::dispatch(element);
 }

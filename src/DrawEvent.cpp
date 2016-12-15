@@ -3,6 +3,11 @@
 
 void
 DrawEvent::dispatch(EventHandler & element) {
-  element.onDrawEvent(*this);
+  if (!isHandled()) {
+    element.onDrawEvent(*this);
+    if (isHandled() && !handler) {
+      handler = &element;
+    }
+  }
   Event::dispatch(element);
 }

@@ -3,6 +3,11 @@
 
 void
 ResizeEvent::dispatch(EventHandler & element) {
-  element.onResizeEvent(*this);
+  if (!isHandled()) {
+    element.onResizeEvent(*this);
+    if (isHandled() && !handler) {
+      handler = &element;
+    }
+  }
   Event::dispatch(element);
 }
