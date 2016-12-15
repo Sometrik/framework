@@ -386,6 +386,8 @@ void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, job
     platform = new AndroidPlatform(env, assetManager, thiz, displayScale);
     platform->setDisplayWidth(screenWidth);
     platform->setDisplayHeight(screenHeight);
+
+    __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Creating Platform");
   
     start_thread = true;
   }
