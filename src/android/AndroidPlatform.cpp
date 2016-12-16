@@ -286,6 +286,18 @@ AndroidPlatform::onSysEvent(SysEvent & ev) {
   case SysEvent::DESTROY:
     isDestroyed = true;
     break;
+  case SysEvent::MEMORY_WARNING:
+    //TODO
+    break;
+  case SysEvent::START:
+    //TODO
+    break;
+  case SysEvent::STOP:
+    //TODO
+    break;
+  case SysEvent::STOP:
+    //TODO
+    break;
   }
 }
 
