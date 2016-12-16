@@ -260,6 +260,7 @@ AndroidPlatform::onOpenGLInitEvent(OpenGLInitEvent & _ev) {
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "initializeRenderer reached");
   if (ev.getWindow()) {
     initializeRenderer(ev.getOpenGLVersion(), ev.getWindow());
+    postEvent(0, _ev);
     ev.requestRedraw();
     canDraw = true;
   } else {
