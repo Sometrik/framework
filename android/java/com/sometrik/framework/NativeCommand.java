@@ -22,6 +22,7 @@ import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.PopupMenu.OnMenuItemClickListener;
 import android.widget.ScrollView;
+import android.widget.Switch;
 import android.widget.TextView;
 
 public class NativeCommand {
@@ -140,6 +141,13 @@ public class NativeCommand {
     case CREATE_PICKER:
       FWPicker picker = createSpinner();
       view.addChild(picker);
+      break;
+      
+    case CREATE_SWITCH:
+      Switch click = new Switch(frame);
+      // TODO
+      //add listener
+      view.addChild(click);
       break;
 
     case CREATE_NATIVE_OPENGL_VIEW:
