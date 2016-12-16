@@ -8,33 +8,27 @@ public class FWTable extends TableLayout implements NativeCommandHandler {
   
   public FWTable(Context context) {
     super(context);
-    // TODO Auto-generated constructor stub
   }
 
 
 
 @Override
 public void addChild(View view) {
-  // TODO Auto-generated method stub
-  
+  System.out.println("FWTable couldn't handle addChild command");
 }
 
 @Override
 public void showView() {
-  // TODO Auto-generated method stub
-  
+  System.out.println("FWTable couldn't handle showView command");
 }
 
 @Override
 public void addOption(int position, String text) {
-  // TODO Auto-generated method stub
-  
 }
 
 @Override
 public int getElementId() {
-  // TODO Auto-generated method stub
-  return 0;
+  return getId();
 }
 
 
