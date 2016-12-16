@@ -295,7 +295,7 @@ AndroidPlatform::onSysEvent(SysEvent & ev) {
   case SysEvent::STOP:
     //TODO
     break;
-  case SysEvent::STOP:
+  case SysEvent::THREAD_TERMINATED:
     //TODO
     break;
   }
