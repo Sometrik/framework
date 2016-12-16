@@ -70,5 +70,26 @@ public class NativeSurface extends SurfaceView implements NativeCommandHandler {
   public void addOption(int position, String text) {
     System.out.println("Native Surface couldn't handle command");
   }
+  
+  @Override
+  public void onWindowVisibilityChanged (int visibility){
+
+    timer.cancel();
+    timer = new Timer();
+    
+    switch (visibility){
+    case GONE:
+      System.out.println("NativeSurface visibility changed to GONE");
+      break;
+    case INVISIBLE:
+      System.out.println("NativeSurface visibility changed to INVISIBLE");
+      break;
+    case VISIBLE:
+      System.out.println("NativeSurface visibility changed to VISIBLE");
+      timer.scheduleAtFixedRate(drawTimer, UPDATE_FREQUENCY, UPDATE_FREQUENCY);
+      break;
+    }
+    
+  }
 
 }
