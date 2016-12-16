@@ -126,6 +126,11 @@ public class NativeCommand {
       FWLayout layout = createLinearLayout();
       view.addChild(layout);
       break;
+      
+    case CREATE_TABLE_LAYOUT:
+      FWTable table = createTableLayout();
+      view.addChild(table);
+      break;
 
     case CREATE_BUTTON:
       Button button = createButton();
@@ -218,6 +223,13 @@ public class NativeCommand {
       }
     });
     menuList.add(menu);
+  }
+  
+  private FWTable createTableLayout(){
+    FWTable table = new FWTable(frame);
+    table.setId(getChildInternalId());
+    FrameWork.addToViewList(table);
+    return table;
   }
   
   private void addOption(int menuId, int optionId, String optionText){
