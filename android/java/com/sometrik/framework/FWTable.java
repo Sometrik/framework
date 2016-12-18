@@ -6,7 +6,7 @@ import android.widget.TableLayout;
 
 public class FWTable extends TableLayout implements NativeCommandHandler {
   
-  public FWTable(Context context) {
+  public FWTable(Context context) {
     super(context);
   }
 
