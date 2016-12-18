@@ -1,11 +1,7 @@
 #ifndef _MUTEX_H_
 #define _MUTEX_H_
 
-#if (defined _WXWIDGETS && defined _WIN32)
-#include <wx/thread.h>
-#else
 #include <pthread.h>
-#endif
 
 class Mutex {
  public:
@@ -19,11 +15,7 @@ class Mutex {
   void unlock();
   
  private:
-#if (defined _WXWIDGETS && defined _WIN32)
-  wxMutex m;
-#else
   pthread_mutex_t m;
-#endif
 };
 
 class MutexLocker {
