@@ -56,10 +56,9 @@ VBO::setPointers() const {
     glVertexAttribPointer(0, 4, GL_UNSIGNED_BYTE, GL_TRUE, getStride(), (void *)(0)); // color
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, getStride(), (void *)(4)); // center position
     glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, getStride(), (void *)(16)); // age
-    glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, getStride(), (void *)(20)); // size
-    glVertexAttribPointer(4, 1, GL_FLOAT, GL_FALSE, getStride(), (void *)(24)); // scaling
-    glVertexAttribPointer(5, 2, GL_UNSIGNED_SHORT, GL_FALSE, getStride(), (void *)(28)); // texture / flags
-    n_arrays = 6;
+    glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, getStride(), (void *)(20)); // size
+    glVertexAttribPointer(4, 2, GL_UNSIGNED_SHORT, GL_FALSE, getStride(), (void *)(28)); // texture / flags
+    n_arrays = 5;
     break;
   case BILLBOARDS:
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, getStride(), (void *)(0 * sizeof(float)));
@@ -75,9 +74,8 @@ VBO::setPointers() const {
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, getStride(), (void *)(1 * sizeof(float)));
     glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, getStride(), (void *)(4 * sizeof(float)));
     glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, getStride(), (void *)(7 * sizeof(float)));
-    glVertexAttribPointer(4, 1, GL_FLOAT, GL_FALSE, getStride(), (void *)(8 * sizeof(float)));
-    glVertexAttribPointer(5, 1, GL_FLOAT, GL_FALSE, getStride(), (void *)(9 * sizeof(float)));
-    n_arrays = 6;
+    glVertexAttribPointer(4, 2, GL_FLOAT, GL_FALSE, getStride(), (void *)(8 * sizeof(float)));
+    n_arrays = 5;
     break;
   case ARCS_2D:
     glVertexAttribPointer(0, 4, GL_UNSIGNED_BYTE, GL_TRUE, getStride(), (void *)(0 * sizeof(float)));
