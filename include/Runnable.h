@@ -8,6 +8,7 @@
 
 class PlatformThread;
 class Event;
+class FWPlatform;
 
 class Runnable : public EventHandler {
  public:
@@ -30,6 +31,8 @@ class Runnable : public EventHandler {
   void logMessage(const char * message);
     
  protected:
+  FWPlatform & getPlatform();
+      
   EventQueue event_queue;
   void postEvent(const Event & event);
   virtual void run() = 0;

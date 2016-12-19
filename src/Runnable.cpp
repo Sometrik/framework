@@ -43,6 +43,11 @@ Runnable::logMessage(const char * message) {
   getThread().logMessage(message);
 }
   
+FWPlatform &
+Runnable::getPlatform() {
+  return getThread().getPlatform();
+}
+
 // void
 // Runnable::stop() {
 //   // assert(thread);
