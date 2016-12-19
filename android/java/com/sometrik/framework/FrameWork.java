@@ -318,10 +318,10 @@ public class FrameWork extends Activity implements NativeCommandHandler {
     case KeyEvent.KEYCODE_MENU:
 
       System.out.println("KeyEvent");
-      menuPressed(System.currentTimeMillis() / 1000);
+      menuPressed(System.currentTimeMillis() / 1000.0);
       return true;
     default:
-      keyPressed(System.currentTimeMillis() / 1000, e.getKeyCode());
+      keyPressed(System.currentTimeMillis() / 1000.0, e.getKeyCode());
       break;
     }
 
