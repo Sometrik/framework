@@ -32,7 +32,8 @@ class Runnable : public EventHandler {
     
  protected:
   FWPlatform & getPlatform();
-      
+  const FWPlatform & getPlatform() const;
+  
   EventQueue event_queue;
   void postEvent(const Event & event);
   virtual void run() = 0;
