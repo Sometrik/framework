@@ -72,7 +72,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   public native void settingsCreator(Settings settings, int id);
   public native void menuPressed(double timestamp);
   public native void keyPressed(double timestamp, int keyId);
-  public native void touchEvent(int mode, int fingerIndex, long time, float x, float y);
+  public native void touchEvent(int viewId, int mode, int fingerIndex, long time, float x, float y);
   public native void onInit(AssetManager assetManager, float xSize, float ySize, float displayScale);
   public native void nativeSetSurface(Surface surface, int surfaceId, int gl_version);
   public native void nativeSurfaceDestroyed(double timestamp, int surfaceId, int gl_version);
@@ -159,7 +159,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
     NativeSurface surfaceView = new NativeSurface(this);
     System.out.println("Piip");
     surfaceView.setId(id);
-    surfaceView.setOnTouchListener(new MyOnTouchListener(this));
+    surfaceView.setOnTouchListener(new MyOnTouchListener(this, id));
     surfaceView.getHolder().addCallback(new Callback() {
       public void surfaceDestroyed(SurfaceHolder holder) {
       	nativeSurfaceDestroyed(System.currentTimeMillis() / 1000.0, id, gl_version);
@@ -224,10 +224,11 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   private class MyOnTouchListener implements OnTouchListener {
 
     FrameWork frameWork;
+    int viewId;
 
-    public MyOnTouchListener(FrameWork frameWork) {
+    public MyOnTouchListener(FrameWork frameWork, int viewId) {
       this.frameWork = frameWork;
-
+      this.viewId = viewId;
     }
 
     public void onClick(View v) {
@@ -251,13 +252,13 @@ public class FrameWork extends Activity implements NativeCommandHandler {
       case MotionEvent.ACTION_DOWN:
 	
 //	System.out.println("Liike alkoi: " + event.getX() + " " + event.getY() + " - id: " + event.getActionIndex() + " time: " + System.currentTimeMillis());
-	touchEvent(1, event.getActionIndex(), System.currentTimeMillis(), (int) event.getX(), (int) (event.getRawY() + windowYcoords));
+	touchEvent(viewId, 1, event.getActionIndex(), System.currentTimeMillis(), (int) event.getX(), (int) (event.getRawY() + windowYcoords));
 
 	break;
 	//Touch event of screen touch-down after the first touch
       case MotionEvent.ACTION_POINTER_DOWN:
 //	System.out.println("Liike alkoi: " + event.getX() + " " + event.getY() + " - id: " + event.getActionIndex());
-	touchEvent(1, event.getActionIndex(), System.currentTimeMillis(), (int) event.getX(), (int) (event.getRawY() + windowYcoords));
+	touchEvent(viewId, 1, event.getActionIndex(), System.currentTimeMillis(), (int) event.getX(), (int) (event.getRawY() + windowYcoords));
 	break;
 
 	//Touch event of finger moving
@@ -270,23 +271,23 @@ public class FrameWork extends Activity implements NativeCommandHandler {
 
 	  if (pointerId == 0) {
 	    // System.out.println("fingerOne move: " + event.getX(pointerIndex) + event.getY(pointerIndex));
-		touchEvent(2, 0, System.currentTimeMillis(), (int) event.getX(), (int) (event.getRawY() + windowYcoords));
+	      touchEvent(viewId, 2, 0, System.currentTimeMillis(), (int) event.getX(), (int) (event.getRawY() + windowYcoords));
 	  }
 	  if (pointerId == 1) {
 	    // System.out.println("fingerTwo move: " + event.getX(pointerIndex) + event.getY(pointerIndex));
-		touchEvent(2, 1, System.currentTimeMillis(), (int) event.getX(), (int) (event.getRawY() + windowYcoords));
+	      touchEvent(viewId, 2, 1, System.currentTimeMillis(), (int) event.getX(), (int) (event.getRawY() + windowYcoords));
 	  }
 	  if (pointerId == 2) {
 //	     System.out.println("fingerThree move: " + event.getX(pointerIndex) + event.getY(pointerIndex));
-		touchEvent(2, 2, System.currentTimeMillis(), (int) event.getX(), (int) (event.getRawY() + windowYcoords));
+	      touchEvent(viewId, 2, 2, System.currentTimeMillis(), (int) event.getX(), (int) (event.getRawY() + windowYcoords));
 	  }
 	  if (pointerId == 3) {
 	    // System.out.println("fingerFour move: " + event.getX(pointerIndex) + event.getY(pointerIndex));
-		touchEvent(2, 3, System.currentTimeMillis(), (int) event.getX(), (int) (event.getRawY() + windowYcoords));
+	      touchEvent(viewId, 2, 3, System.currentTimeMillis(), (int) event.getX(), (int) (event.getRawY() + windowYcoords));
 	  }
 	  if (pointerId == 4) {
 	    // System.out.println("fingerFive move: " + event.getX(pointerIndex) + event.getY(pointerIndex));
-		touchEvent(2, 4, System.currentTimeMillis(), (int) event.getX(), (int) (event.getRawY() + windowYcoords));
+	      touchEvent(viewId, 2, 4, System.currentTimeMillis(), (int) event.getX(), (int) (event.getRawY() + windowYcoords));
 	  }
 	}
 	// System.out.println("Liikettä: " + event.getX() + " " +
@@ -296,7 +297,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
       case MotionEvent.ACTION_UP:
 	//touch event of fingers other than the first leaving the screen
       case MotionEvent.ACTION_POINTER_UP:
-	touchEvent(3, event.getActionIndex(), System.currentTimeMillis(), (int) event.getX(), (int) (event.getRawY() + windowYcoords));
+	  touchEvent(viewId, 3, event.getActionIndex(), System.currentTimeMillis(), (int) event.getX(), (int) (event.getRawY() + windowYcoords));
 	break;
       }
       return true;
