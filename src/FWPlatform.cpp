@@ -12,9 +12,8 @@ using namespace std;
 
 class PosixThread : public PlatformThread {
 public:
-  PosixThread(std::shared_ptr<Runnable> & _runnable, FWPlatform * _platform)
-    : PlatformThread(_runnable),
-      platform(_platform)
+  PosixThread(FWPlatform * _platform, std::shared_ptr<Runnable> & _runnable)
+    : PlatformThread(_platform, _runnable)
   {
     
   }
@@ -37,7 +36,7 @@ public:
   }
 
   void disconnect() override {
-    platform = 0;
+    // platform = 0;
   }
 
   void logMessage(const char * message) override {
@@ -54,9 +53,7 @@ public:
   
 protected:
   void sendEventFromThread(const Event & ev) override {
-    if (platform) {
-      platform->pushEvent(ev);
-    }
+    getPlatform().pushEvent(ev);
   }
   
 private:
@@ -65,7 +62,6 @@ private:
   pthread_t thread;
   pthread_t thread_id;
   volatile bool terminate_thread = false;
-  FWPlatform * platform;
 };
 
 void *
@@ -101,7 +97,7 @@ FWPlatform::run(std::shared_ptr<Runnable> runnable) {
 
 std::shared_ptr<PlatformThread>
 FWPlatform::run2(std::shared_ptr<Runnable> & runnable) {
-  std::shared_ptr<PlatformThread> thread(new PosixThread(runnable, this));
+  std::shared_ptr<PlatformThread> thread(new PosixThread(this, runnable));
   thread->start();
   return thread;
 }
