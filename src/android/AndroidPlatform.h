@@ -141,6 +141,7 @@ private:
   std::shared_ptr<canvas::AndroidCache> canvasCache;
   std::shared_ptr<AndroidClientCache> clientCache;
   std::shared_ptr<AndroidSoundCache> soundCache;
+//  AndroidSoundCache * soundCache;
 
   ANativeWindow * window = 0;
   JavaVM * gJavaVM = 0;

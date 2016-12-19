@@ -62,6 +62,7 @@ public:
 class FWiOSPlatform : public FWPlatform {
 public:
     FWiOSPlatform(OpenGLView * _controller, float _display_scale) : FWPlatform(_display_scale), controller(_controller) {
+      CurlClientFactory::globalInit();
       defaults = [NSUserDefaults standardUserDefaults];
     }
     

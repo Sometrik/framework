@@ -51,7 +51,9 @@ static Uint32 timer_callback(Uint32 interval, void *param) {
 
 class PlatformSDL : public FWPlatform {
 public:
-  PlatformSDL() : FWPlatform(1.0f) { }
+  PlatformSDL() : FWPlatform(1.0f) {
+    CurlClientFactory::globalInit();
+  }
 
   double getTime() const override {
     struct timeval tv;

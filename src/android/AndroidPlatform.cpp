@@ -260,6 +260,7 @@ AndroidPlatform::onOpenGLInitEvent(OpenGLInitEvent & _ev) {
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "initializeRenderer reached");
   if (ev.getWindow()) {
     initializeRenderer(ev.getOpenGLVersion(), ev.getWindow());
+    postEvent(0, _ev);
     ev.requestRedraw();
     canDraw = true;
   } else {
@@ -285,6 +286,18 @@ AndroidPlatform::onSysEvent(SysEvent & ev) {
     break;
   case SysEvent::DESTROY:
     isDestroyed = true;
+    break;
+  case SysEvent::MEMORY_WARNING:
+    //TODO
+    break;
+  case SysEvent::START:
+    //TODO
+    break;
+  case SysEvent::STOP:
+    //TODO
+    break;
+  case SysEvent::THREAD_TERMINATED:
+    //TODO
     break;
   }
 }
