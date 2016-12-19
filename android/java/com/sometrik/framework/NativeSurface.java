@@ -40,7 +40,6 @@ public class NativeSurface extends SurfaceView implements NativeCommandHandler {
 
     @Override
     public void run() {
-      System.out.println("onUpdate");
       FrameWork.onUpdate(System.currentTimeMillis() / 1000.0, viewId);
     }
   }
