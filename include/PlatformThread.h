@@ -29,6 +29,7 @@ class PlatformThread {
   const Runnable * getRunnablePtr() const { return runnable.get(); }
 
   FWPlatform & getPlatform() { return *platform; }
+  const FWPlatform & getPlatform() const { return *platform; }
   
  protected:
     
