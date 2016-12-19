@@ -71,6 +71,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   public native void textChangedEvent(double timestamp, int id, String text);
   public native void settingsCreator(Settings settings, int id);
   public native void menuPressed(double timestamp);
+  public native void keyPressed(double timestamp, int keyId);
   public native void touchEvent(int mode, int fingerIndex, long time, float x, float y);
   public native void onInit(AssetManager assetManager, float xSize, float ySize, float displayScale);
   public native void nativeSetSurface(Surface surface, int surfaceId, int gl_version);
@@ -319,6 +320,9 @@ public class FrameWork extends Activity implements NativeCommandHandler {
       System.out.println("KeyEvent");
       menuPressed(System.currentTimeMillis() / 1000);
       return true;
+    default:
+      keyPressed(System.currentTimeMillis() / 1000, e.getKeyCode());
+      break;
     }
 
     return super.onKeyDown(keycode, e);
