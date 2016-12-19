@@ -48,6 +48,11 @@ Runnable::getPlatform() {
   return getThread().getPlatform();
 }
 
+const FWPlatform &
+Runnable::getPlatform() const {
+  return getThread().getPlatform();
+}
+
 // void
 // Runnable::stop() {
 //   // assert(thread);
