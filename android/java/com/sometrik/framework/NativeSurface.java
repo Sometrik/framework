@@ -75,6 +75,7 @@ public class NativeSurface extends SurfaceView implements NativeCommandHandler {
   public void onWindowVisibilityChanged (int visibility){
 
     timer.cancel();
+    drawTimer = new DrawTimer(getId());
     timer = new Timer();
     
     switch (visibility){
@@ -89,7 +90,6 @@ public class NativeSurface extends SurfaceView implements NativeCommandHandler {
       timer.scheduleAtFixedRate(drawTimer, UPDATE_FREQUENCY, UPDATE_FREQUENCY);
       break;
     }
-    
   }
 
 }
