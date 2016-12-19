@@ -260,13 +260,13 @@ AndroidPlatform::onOpenGLInitEvent(OpenGLInitEvent & _ev) {
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "initializeRenderer reached");
   if (ev.getWindow()) {
     initializeRenderer(ev.getOpenGLVersion(), ev.getWindow());
-    postEvent(0, _ev);
     ev.requestRedraw();
     canDraw = true;
   } else {
     deinitializeRenderer();
     canDraw = false;
   }
+  FWPlatform::onOpenGLInitEvent(_ev);
 }
 
 void
@@ -444,7 +444,7 @@ void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, job
    SysEvent ev(timestamp, SysEvent::END_MODAL);
    ev.setValue(value);
    ev.setTextValue(text);
-   platform->queueEvent(0, ev);
+   platform->queueEvent(platform->getInternalId(), ev);
  }
 
 void Java_com_sometrik_framework_FrameWork_buttonClicked(JNIEnv* env, jobject thiz, double timestamp, jint id) {
