@@ -348,9 +348,12 @@ void Java_com_sometrik_framework_FrameWork_onResize(JNIEnv* env, jobject thiz, d
 }
 
 void Java_com_sometrik_framework_FrameWork_menuPressed(JNIEnv* env, jobject thiz, double timestamp) {
-  __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "menu pressed: env = %p", env);
-
   CommandEvent ce(timestamp, FW_ID_MENU);
+  platform->queueEvent(platform->getActiveViewId(), ce);
+}
+
+void Java_com_sometrik_framework_FrameWork_keyPressed(JNIEnv* env, jobject thiz, double timestamp, int keyId) {
+  CommandEvent ce(timestamp, keyId);
   platform->queueEvent(platform->getActiveViewId(), ce);
 }
 
