@@ -5,11 +5,12 @@
 
 class Runnable;
 class Event;
+class FWPlatform;
 
 class PlatformThread {
  public:
-  PlatformThread(std::shared_ptr<Runnable> & _runnable)
-    : runnable(_runnable) {
+ PlatformThread(FWPlatform * _platform, std::shared_ptr<Runnable> & _runnable)
+   : platform(_platform), runnable(_runnable) {
     
   }
   virtual ~PlatformThread() { }  
@@ -27,9 +28,12 @@ class PlatformThread {
   Runnable * getRunnablePtr() { return runnable.get(); }
   const Runnable * getRunnablePtr() const { return runnable.get(); }
 
+  FWPlatform & getPlatform() { return *platform; }
+  
  protected:
     
  private:
+  FWPlatform * platform;
   std::shared_ptr<Runnable> runnable;
 };
 
