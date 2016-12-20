@@ -4,6 +4,7 @@
 #include <PlatformThread.h>
 #include <Runnable.h>
 #include <SysEvent.h>
+#include <StringUtils.h>
 
 #include <iostream>
 #include <unistd.h>
@@ -85,6 +86,11 @@ PosixThread::entryPoint(void * pthis) {
   pthread_exit(0);
   
   return 0;
+}
+
+FWPlatform::FWPlatform(float _display_scale) : display_scale(_display_scale) {
+  StringUtils::initialize();
+  initialize(this);
 }
 
 std::shared_ptr<PlatformThread>

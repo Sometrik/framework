@@ -34,11 +34,8 @@ class FWPlatform : public Element {
     CACHE_DATABASE
   };
   
- FWPlatform(float _display_scale)
-   : display_scale(_display_scale) {
-    initialize(this);
-  }
-
+  FWPlatform(float _display_scale);
+  
   void initialize(FWPlatform * _platform) override {
     Element::initialize(_platform);
     sendCommand(Command(Command::CREATE_PLATFORM, getParentInternalId(), getInternalId()));
