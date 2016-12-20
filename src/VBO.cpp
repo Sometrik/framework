@@ -72,7 +72,7 @@ VBO::setPointers() const {
     glVertexAttribPointer(0, 4, GL_UNSIGNED_BYTE, GL_TRUE, getStride(), (void *)(0 * sizeof(float)));
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, getStride(), (void *)(1 * sizeof(float)));
     glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, getStride(), (void *)(4 * sizeof(float)));
-    glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, getStride(), (void *)(7 * sizeof(float)));
+    glVertexAttribPointer(3, 2, GL_HALF_FLOAT, GL_FALSE, getStride(), (void *)(7 * sizeof(float)));
     n_arrays = 4;
     break;
   case ARCS_2D:
