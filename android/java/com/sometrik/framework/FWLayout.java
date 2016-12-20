@@ -32,7 +32,6 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
       System.out.println("yayyy parent");
       frame.setContentView((View)vp);
     }
-    FrameWork.currentView = getId();
   }
  
   @Override

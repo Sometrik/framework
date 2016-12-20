@@ -60,7 +60,6 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   private AlertDialog alert;
   private float windowYcoords;
   public static HashMap<Integer, NativeCommandHandler> views = new HashMap<Integer, NativeCommandHandler>();
-  public static int currentView = 0;
   private int appId = 0;
 
   public native void NativeOnTouch();
@@ -178,7 +177,6 @@ public class FrameWork extends Activity implements NativeCommandHandler {
     System.out.println("...");
     views.put(id, surfaceView);
     surfaceView.showView();
-    currentView = id;
     System.out.println("native surface created");
     return surfaceView;
   }
