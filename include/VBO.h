@@ -31,7 +31,7 @@ struct billboard_data_s {
 struct line_data_s {
   unsigned char r, g, b, a;
   glm::vec3 position, other_position;
-  float node_age, node_size, node_scaled_size;
+  glm::uint32 node_size;
 };
 
 struct arc_data_2d_s {
@@ -47,8 +47,8 @@ struct arc_data_3d_s {
 struct node_billboard_vbo_s {
   unsigned char r, g, b, a; // 0
   glm::vec3 center_pos; // 4
-  float age, size, scaled_size; // 16
-  short texture; // 24
+  glm::uint32 node_size; // 16
+  short texture; // 20
   unsigned short flags;
 };
 
