@@ -19,8 +19,11 @@ Element::~Element() {
 
 void
 Element::initialize(FWPlatform * _platform) {
-  platform = _platform;
-  internal_id = platform->getNextInternalId();
+  assert(_platform);
+  if (_platform) {
+    platform = _platform;
+    internal_id = platform->getNextInternalId();
+  }
 }
 
 void
