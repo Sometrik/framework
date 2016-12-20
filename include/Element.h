@@ -110,6 +110,9 @@ class Element : public EventHandler {
   
   void showMessageDialog(const std::string & title, const std::string & text);
   std::string showInputDialog(const std::string & title, const std::string & text);
+
+  Element * getParent() { return parent; }
+  const Element * getParent() const { return parent; }
     
 protected:  
   bool isInitialized() const { return internal_id != 0; }
