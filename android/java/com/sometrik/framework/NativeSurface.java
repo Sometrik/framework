@@ -23,8 +23,8 @@ public class NativeSurface extends SurfaceView implements NativeCommandHandler {
   
   @Override
   public void showView() {
-    FrameWork frame = framework;
-    frame.setContentView(this);
+  	framework.setContentView(this);
+  	framework.setCurrentView(getId());
     drawTimer = new DrawTimer(getId());
     timer.scheduleAtFixedRate(drawTimer, UPDATE_FREQUENCY, UPDATE_FREQUENCY);
   }

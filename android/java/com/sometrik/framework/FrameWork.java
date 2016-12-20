@@ -61,6 +61,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   private float windowYcoords;
   public static HashMap<Integer, NativeCommandHandler> views = new HashMap<Integer, NativeCommandHandler>();
   private int appId = 0;
+  private int currentView = 0;
 
   public native void NativeOnTouch();
   public native int GetInt(float x, float y);
@@ -69,8 +70,8 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   public native void buttonClicked(double timestamp, int id);
   public native void textChangedEvent(double timestamp, int id, String text);
   public native void settingsCreator(Settings settings, int id);
-  public native void menuPressed(double timestamp);
-  public native void keyPressed(double timestamp, int keyId);
+  public native void menuPressed(double timestamp, int viewId);
+  public native void keyPressed(double timestamp, int keyId, int viewId);
   public native void touchEvent(int viewId, int mode, int fingerIndex, long time, float x, float y);
   public native void onInit(AssetManager assetManager, float xSize, float ySize, float displayScale);
   public native void nativeSetSurface(Surface surface, int surfaceId, int gl_version);
@@ -144,6 +145,10 @@ public class FrameWork extends Activity implements NativeCommandHandler {
     startActivity(browserIntent);
   }
   
+  public void setCurrentView(int viewId){
+  	currentView = viewId;
+  }
+  
   private void createFormView(int id){
     FWLayout layout = new FWLayout(this);
     layout.setId(id);
@@ -177,6 +182,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
     System.out.println("...");
     views.put(id, surfaceView);
     surfaceView.showView();
+    setCurrentView(id);
     System.out.println("native surface created");
     return surfaceView;
   }
@@ -306,7 +312,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   public boolean onCreateOptionsMenu(Menu menu) {
 
     System.out.println("onCreateOptionsMenu");
-    menuPressed(System.currentTimeMillis() / 1000.0);
+//    menuPressed(System.currentTimeMillis() / 1000.0);
     // getMenuInflater().inflate(R.menu.settings, menu);
     return true;
   }
@@ -315,12 +321,12 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   public boolean onKeyDown(int keycode, KeyEvent e) {
     switch (keycode) {
     case KeyEvent.KEYCODE_MENU:
-
-      System.out.println("KeyEvent");
-      menuPressed(System.currentTimeMillis() / 1000.0);
+      System.out.println("KeyEvent. KeyCode: " + keycode + " ViewId: " + findViewById(android.R.id.content).getRootView().getId());
+      menuPressed(System.currentTimeMillis() / 1000.0, currentView);
       return true;
     default:
-      keyPressed(System.currentTimeMillis() / 1000.0, e.getKeyCode());
+      System.out.println("KeyEvent. KeyCode: " + keycode + " ViewId: " + findViewById(android.R.id.content).getRootView().getId());
+      keyPressed(System.currentTimeMillis() / 1000.0, e.getKeyCode(), currentView);
       break;
     }
 

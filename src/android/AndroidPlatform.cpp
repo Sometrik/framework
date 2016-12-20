@@ -347,14 +347,14 @@ void Java_com_sometrik_framework_FrameWork_onResize(JNIEnv* env, jobject thiz, d
   platform->queueEvent(viewId, ev);
 }
 
-void Java_com_sometrik_framework_FrameWork_menuPressed(JNIEnv* env, jobject thiz, double timestamp) {
+void Java_com_sometrik_framework_FrameWork_menuPressed(JNIEnv* env, jobject thiz, double timestamp, int viewId) {
   CommandEvent ce(timestamp, FW_ID_MENU);
   platform->queueEvent(platform->getActiveViewId(), ce);
 }
 
-void Java_com_sometrik_framework_FrameWork_keyPressed(JNIEnv* env, jobject thiz, double timestamp, int keyId) {
+void Java_com_sometrik_framework_FrameWork_keyPressed(JNIEnv* env, jobject thiz, double timestamp, int keyId, int viewId) {
   CommandEvent ce(timestamp, keyId);
-  platform->queueEvent(platform->getActiveViewId(), ce);
+  platform->queueEvent(viewId, ce);
 }
 
 void Java_com_sometrik_framework_FrameWork_touchEvent(JNIEnv* env, jobject thiz, int viewId, int mode, int fingerIndex, long time, float x, float y) {
