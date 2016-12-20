@@ -181,8 +181,10 @@ public class FrameWork extends Activity implements NativeCommandHandler {
 
     System.out.println("...");
     views.put(id, surfaceView);
-    surfaceView.showView();
-    setCurrentView(id);
+    if (currentView == 0){
+      surfaceView.showView();
+      setCurrentView(id);
+    }
     System.out.println("native surface created");
     return surfaceView;
   }
