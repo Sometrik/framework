@@ -22,7 +22,7 @@ OpenGLView::initialize(FWPlatform * _platform) {
 
 void
 OpenGLView::onResizeEvent(ResizeEvent & ev) {
-  cerr << "got resizeevent\n";
+  cerr << "OpenGLView: got resizeevent\n";
   logical_width = ev.getLogicalWidth();
   logical_height = ev.getLogicalHeight();
   actual_width = ev.getActualWidth();
