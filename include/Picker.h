@@ -3,6 +3,7 @@
 
 #include <Element.h>
 #include <Command.h>
+#include <ValueEvent.h>
 
 class Picker : public Element {
  public:
