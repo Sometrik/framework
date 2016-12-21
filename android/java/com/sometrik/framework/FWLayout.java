@@ -46,4 +46,9 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
     System.out.println("Native Surface couldn't handle command");
   }
 
+  @Override
+  public void removeChild(View view) {
+    removeView((View)view);
+  }
+
 }

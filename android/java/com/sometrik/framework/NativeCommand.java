@@ -219,6 +219,8 @@ public class NativeCommand {
       frame.getPreferencesEditor().putString(textValue, textValue2);
       frame.getPreferencesEditor().apply();
       break;
+    case DELETE_ELEMENT:
+      break;
     default:
       System.out.println("Message couldn't be handled");
       break;

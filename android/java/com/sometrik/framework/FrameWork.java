@@ -522,5 +522,10 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   public void addOption(int position, String text) {
     System.out.println("FrameWork couldn't handle addOption");
   }
+  @Override
+  public void removeChild(View view) {
+    // TODO Auto-generated method stub
+    
+  }
 
 }

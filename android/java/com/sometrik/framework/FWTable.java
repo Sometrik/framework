@@ -41,6 +41,12 @@ public int getElementId() {
   return getId();
 }
 
+@Override
+public void removeChild(View view) {
+  // TODO Auto-generated method stub
+  
+}
+
 
 
 }
