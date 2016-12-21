@@ -240,6 +240,7 @@ public class NativeCommand {
   private FWTable createTableLayout(){
     FWTable table = new FWTable(frame);
     table.setId(getChildInternalId());
+    table.setColumnCount(value);
     FrameWork.addToViewList(table);
     return table;
   }

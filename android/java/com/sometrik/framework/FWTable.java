@@ -8,6 +8,7 @@ import android.widget.TableRow;
 public class FWTable extends TableLayout implements NativeCommandHandler {
   
   Context context;
+  int columnCount = 1;
   
   public FWTable(Context context) {
     super(context);
@@ -18,6 +19,8 @@ public class FWTable extends TableLayout implements NativeCommandHandler {
     TableRow row = new TableRow(context);
     //TODO
   }
+  
+  public void setColumnCount(int columnCount) { this.columnCount = columnCount; };
 
 
 
