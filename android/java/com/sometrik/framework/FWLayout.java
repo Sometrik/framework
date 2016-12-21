@@ -28,7 +28,7 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
     if (vp == null){
       frame.setCurrentView(this);
     } else {
-      frame.setCurrentView(this);
+      frame.setCurrentView((View)vp);
     }
   }
  
