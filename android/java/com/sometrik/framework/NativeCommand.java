@@ -193,6 +193,7 @@ public class NativeCommand {
       break;
     case CREATE_APPLICATION:
       frame.setAppId(getInternalId());
+      frame.setSharedPreferences(textValue);
       break;
     case SET_CAPTION:
       frame.setTitle(getTextValue());
@@ -215,10 +216,8 @@ public class NativeCommand {
       break;
     case UPDATE_PREFERENCE:
     	//Now stores String value to string key.
-      SharedPreferences prefs = frame.getSharedPreferences("com.example.framework", Context.MODE_PRIVATE);
-      SharedPreferences.Editor editor = prefs.edit();
-      editor.putString(textValue, textValue2);
-      editor.apply();
+      frame.getPreferencesEditor().putString(textValue, textValue2);
+      frame.getPreferencesEditor().apply();
       break;
     default:
       System.out.println("Message couldn't be handled");

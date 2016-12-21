@@ -135,6 +135,13 @@ public class FrameWork extends Activity implements NativeCommandHandler {
     screenWidth = displaymetrics.widthPixels;
     return displaymetrics;
   }
+  
+  public void setSharedPreferences(String textValue){
+    prefs = getSharedPreferences(textValue, Context.MODE_PRIVATE);
+    editor = prefs.edit();
+  }
+  
+  public SharedPreferences.Editor getPreferencesEditor(){ return editor; }
 
   public static void addToViewList(NativeCommandHandler view){
     System.out.println(view.getElementId() + " added to view list");
