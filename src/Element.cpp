@@ -51,29 +51,16 @@ Element::addVerticalLayout() {
   return *l;
 }
 
-  
-void
-Element::onSysEvent(SysEvent & ev) {
-  if (!ev.isHandled()){
-    for (auto & c : getChildren()){
-      ev.dispatch(*c);
-    }
-  }
-}
-
-void
-Element::onOpenGLInitEvent(OpenGLInitEvent & ev) {
-  if (!ev.isHandled()){
-    for (auto & c : getChildren()){
-      ev.dispatch(*c);
-    }
-  }
-}
-
 void
 Element::onEvent(Event & ev) {
-  if (parent && !ev.isHandled()) {
-    ev.dispatch(*parent);
+  if (!ev.isHandled()) {
+    if (ev.isBroadcast()) {
+      for (auto & c : getChildren()){
+	ev.dispatch(*c);
+      }
+    } else if (parent) {
+      ev.dispatch(*parent);
+    }
   }
 }
 
