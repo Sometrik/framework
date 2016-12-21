@@ -10,7 +10,7 @@ class SysEvent;
 class UpdateEvent;
 class ResizeEvent;
 class TimerEvent;
-#include <ValueEvent.h>
+class ValueEvent;
 class OpenGLInitEvent;
 
 class WindowEvent;
@@ -28,7 +28,6 @@ class ImageEvent;
 class PositionEvent;
 class GraphChangeEvent;
 class RebuildEvent;
-class ReshapeEvent;
 class LicenseEvent;
 class EdgeEvent;
 class PrepareEvent;
@@ -66,7 +65,6 @@ class EventHandler {
   virtual void handleLayoutEvent(LayoutEvent & ev) { }
   virtual void handleGraphChangeEvent(GraphChangeEvent & ev) { }
   virtual void handleRebuildEvent(RebuildEvent & ev) { }
-  virtual void handleReshapeEvent(ReshapeEvent & ev) { }
   virtual void handleLicenseEvent(LicenseEvent & ev) { }
   virtual void handleEdgeEvent(EdgeEvent & ev) { }
   virtual void handleThreadEvent(ThreadEvent & ev) { }
