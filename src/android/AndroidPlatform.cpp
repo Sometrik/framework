@@ -343,7 +343,7 @@ static AndroidPlatform * platform = 0;
 
 extern "C" {
 
-void Java_com_sometrik_framework_FrameWork_onResize(JNIEnv* env, jclass frameWorkClass, double timestamp, float x, float y, int viewId) {
+void Java_com_sometrik_framework_FrameWork_onResize(JNIEnv* env, jclass clazz, double timestamp, float x, float y, int viewId) {
   platform->setDisplayWidth(x);
   platform->setDisplayHeight(y);
 
