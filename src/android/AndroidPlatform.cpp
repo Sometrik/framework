@@ -319,7 +319,7 @@ void* AndroidPlatform::threadStartCallback(void *myself) {
   aplatform->deinitializeRenderer();
 //  Command c = Command(Command::Type::QUIT_APP, 0, 0);
 //  aplatform->sendCommand(c);
-  getJavaVM()->DetachCurrentThread();
+  aplatform->getJavaVM()->DetachCurrentThread();
   
   return 0;
 }
