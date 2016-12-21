@@ -3,6 +3,7 @@ package com.sometrik.framework;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 
@@ -71,6 +72,7 @@ public class NativeSurface extends SurfaceView implements NativeCommandHandler {
   
   @Override
   public void onWindowVisibilityChanged (int visibility){
+    super.onWindowVisibilityChanged(visibility);
 
     timer.cancel();
     drawTimer = new DrawTimer(getId());
