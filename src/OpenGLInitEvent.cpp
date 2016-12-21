@@ -9,5 +9,5 @@ OpenGLInitEvent::dispatch(EventHandler & element) {
       handler = &element;
     }
   }
-  // Do not call super class.
+  Event::dispatch(element);
 }
