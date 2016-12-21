@@ -66,6 +66,7 @@ AndroidPlatform::convertToByteArray(const std::string & s) {
 
 void
 AndroidPlatform::sendCommand(const Command & command) {
+  getLogger().println("sending command");
   FWPlatform::sendCommand(command);
 
   auto env = getJNIEnv();
@@ -194,6 +195,7 @@ AndroidPlatform::initializeRenderer(int opengl_es_version, ANativeWindow * _wind
 
 void
 AndroidPlatform::deinitializeRenderer() {
+
   if (display) {
     eglMakeCurrent(display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
     eglDestroyContext(display, context);
@@ -315,7 +317,9 @@ void* AndroidPlatform::threadStartCallback(void *myself) {
 
   aplatform->renderLoop();
   aplatform->deinitializeRenderer();
-  aplatform->getJavaVM()->DetachCurrentThread();
+//  Command c = Command(Command::Type::QUIT_APP, 0, 0);
+//  aplatform->sendCommand(c);
+  getJavaVM()->DetachCurrentThread();
   
   return 0;
 }
@@ -339,7 +343,7 @@ static AndroidPlatform * platform = 0;
 
 extern "C" {
 
-void Java_com_sometrik_framework_FrameWork_onResize(JNIEnv* env, jobject thiz, double timestamp, float x, float y, int viewId) {
+void Java_com_sometrik_framework_FrameWork_onResize(JNIEnv* env, jclass frameWorkClass, double timestamp, float x, float y, int viewId) {
   platform->setDisplayWidth(x);
   platform->setDisplayHeight(y);
 
