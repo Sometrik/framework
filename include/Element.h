@@ -13,7 +13,7 @@ class LinearLayout;
 
 class Element : public EventHandler {
  public:
-  Element(int _id = 0) : id(_id) { }
+ Element(int _id = 0, unsigned int _flags = 0) : id(_id), flags(_flags) { }
   ~Element();
 
   Element(const Element & other) = delete;
@@ -44,7 +44,9 @@ class Element : public EventHandler {
 
   int getInternalId() const { return internal_id; }
   int getParentInternalId() const { return parent ? parent->getInternalId() : 0; }
-    
+
+  unsigned int getFlags() const { return flags; }
+
   FWPlatform & getPlatform() { return *platform; }
   const FWPlatform & getPlatform() const { return *platform; }
   
@@ -121,6 +123,7 @@ protected:
   int internal_id = 0, id = 0;
   std::string name;
   std::vector<std::shared_ptr<Element> > children;
+  unsigned int flags;
 };
 
 #endif
