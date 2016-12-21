@@ -153,8 +153,9 @@ public class FrameWork extends Activity implements NativeCommandHandler {
     startActivity(browserIntent);
   }
 
-  public void setCurrentView(int viewId) {
-    currentView = viewId;
+  public void setCurrentView(View view) {
+    currentView = view.getId();
+    setContentView(view);
   }
   
   private void createFormView(int id){
@@ -195,7 +196,6 @@ public class FrameWork extends Activity implements NativeCommandHandler {
 //    if (currentView == 0){
 	setContentView(surfaceView);
       surfaceView.showView();
-      setCurrentView(id);
 //    }
     System.out.println("native surface created");
     return surfaceView;
