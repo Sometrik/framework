@@ -31,7 +31,7 @@ public:
   }
 
  private:
-  string name;
+  std::string name;
   bool full_screen;
 };
 

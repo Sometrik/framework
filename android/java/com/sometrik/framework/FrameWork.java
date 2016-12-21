@@ -101,10 +101,6 @@ public class FrameWork extends Activity implements NativeCommandHandler {
     // Set up classes
     settings = new Settings(this);
 
-    // Get preferences (simple key-value database)
-    prefs = this.getSharedPreferences("com.example.Work", Context.MODE_PRIVATE);
-    editor = prefs.edit();
-
     mainHandler = new Handler() {
 
       public void handleMessage(Message msg) {
@@ -201,7 +197,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
     return surfaceView;
   }
 
-  // Lisää kuvan antaminen // Aika // Ääni
+  // Lisï¿½ï¿½ kuvan antaminen // Aika // ï¿½ï¿½ni
   public void createNotification(String title, String text) {
 
     System.out.println("Creating notification");
@@ -287,28 +283,10 @@ public class FrameWork extends Activity implements NativeCommandHandler {
 	  pointerIndex = i;
 	  int pointerId = event.getPointerId(pointerIndex);
 
-	  if (pointerId == 0) {
-	    // System.out.println("fingerOne move: " + event.getX(pointerIndex) + event.getY(pointerIndex));
-	      touchEvent(viewId, 2, 0, System.currentTimeMillis(), (int) event.getX(), (int) (event.getRawY() + windowYcoords));
-	  }
-	  if (pointerId == 1) {
-	    // System.out.println("fingerTwo move: " + event.getX(pointerIndex) + event.getY(pointerIndex));
-	      touchEvent(viewId, 2, 1, System.currentTimeMillis(), (int) event.getX(), (int) (event.getRawY() + windowYcoords));
-	  }
-	  if (pointerId == 2) {
-//	     System.out.println("fingerThree move: " + event.getX(pointerIndex) + event.getY(pointerIndex));
-	      touchEvent(viewId, 2, 2, System.currentTimeMillis(), (int) event.getX(), (int) (event.getRawY() + windowYcoords));
-	  }
-	  if (pointerId == 3) {
-	    // System.out.println("fingerFour move: " + event.getX(pointerIndex) + event.getY(pointerIndex));
-	      touchEvent(viewId, 2, 3, System.currentTimeMillis(), (int) event.getX(), (int) (event.getRawY() + windowYcoords));
-	  }
-	  if (pointerId == 4) {
-	    // System.out.println("fingerFive move: " + event.getX(pointerIndex) + event.getY(pointerIndex));
-	      touchEvent(viewId, 2, 4, System.currentTimeMillis(), (int) event.getX(), (int) (event.getRawY() + windowYcoords));
-	  }
+	     System.out.println("finger move. FingerId: " + pointerId);
+	      touchEvent(viewId, 2, pointerId, System.currentTimeMillis(), (int) event.getX(), (int) (event.getRawY() + windowYcoords));
 	}
-	// System.out.println("Liikettä: " + event.getX() + " " +
+	// System.out.println("Liikettï¿½: " + event.getX() + " " +
 	// event.getY() + " - id: " + event.getActionIndex());
 	break;
 	//touch event of first finger being removed from the screen
@@ -372,7 +350,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   private void optionSelected(int id) {
 
     settings = new Settings(this);
-    // Settings täytyy tehdä uusiksi tässä, jotta lista ei pysy samana
+    // Settings tï¿½ytyy tehdï¿½ uusiksi tï¿½ssï¿½, jotta lista ei pysy samana
     settingsCreator(settings, id);
     
 

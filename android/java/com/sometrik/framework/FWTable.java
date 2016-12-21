@@ -13,11 +13,12 @@ public class FWTable extends TableLayout implements NativeCommandHandler {
   public FWTable(Context context) {
     super(context);
     this.context = context;
+    TableRow row = new TableRow(context);
   }
   
-  private void addRow(){
-    TableRow row = new TableRow(context);
+  private TableRow getCurrentRow(){
     //TODO
+    return new TableRow(context);
   }
   
   public void setColumnCount(int columnCount) { this.columnCount = columnCount; };
@@ -26,7 +27,7 @@ public class FWTable extends TableLayout implements NativeCommandHandler {
 
 @Override
 public void addChild(View view) {
-  addRow();
+//  addRow();
   System.out.println("FWTable couldn't handle addChild command");
 }
 
