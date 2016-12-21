@@ -278,15 +278,12 @@ public class NativeCommand {
     editText.setId(getChildInternalId());
     editText.setText(getTextValue());
     editText.setMinimumWidth(400000 / (int) frame.getScreenWidth());
-    if (getTextValue2() != null) {
-      if (getTextValue2().equals("password") || getTextValue2().equals("Password") ||getTextValue2().equals("PASSWORD")) {
-	editText.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
-      }
+    if (flags == 1) {
+      editText.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
     }
     editText.addTextChangedListener(new TextWatcher() {
       public void afterTextChanged(Editable editable) {
-
-	  frame.textChangedEvent(System.currentTimeMillis() / 1000.0, getChildInternalId(), editable.toString());
+	frame.textChangedEvent(System.currentTimeMillis() / 1000.0, getChildInternalId(), editable.toString());
       }
       public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
       public void onTextChanged(CharSequence s, int start, int before, int count) {}
