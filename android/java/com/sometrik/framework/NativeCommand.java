@@ -1,5 +1,7 @@
 package com.sometrik.framework;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 
@@ -9,8 +11,10 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.SharedPreferences;
 import android.text.Editable;
+import android.text.Html;
 import android.text.InputType;
 import android.text.TextWatcher;
+import android.text.method.LinkMovementMethod;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -302,7 +306,19 @@ public class NativeCommand {
   private TextView createTextView() {
     TextView textView = new TextView(frame);
     textView.setId(getChildInternalId());
-    textView.setText(getTextValue());
+    if (flags == 1) {
+      textView.setMovementMethod(LinkMovementMethod.getInstance());
+      try {
+	URL url = new URL(textValue2);
+	String text = "<a href='" + url + "'>" + textValue + "</a>";
+	textView.setText(Html.fromHtml(text));
+      } catch (MalformedURLException e) {
+	textView.setText(" <invalid URL> ");
+	e.printStackTrace();
+      }
+    } else {
+      textView.setText(getTextValue());
+    }
     return textView;
   }
   
