@@ -313,6 +313,8 @@ public class NativeCommand {
       textView.setMovementMethod(LinkMovementMethod.getInstance());
       String text = "<a href='" + textValue2 + "'>" + textValue + "</a>";
       textView.setText(Html.fromHtml(text));
+    } else {
+      textView.setText(textValue);
     }
     return textView;
   }
