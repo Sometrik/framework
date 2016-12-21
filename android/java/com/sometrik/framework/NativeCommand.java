@@ -284,6 +284,8 @@ public class NativeCommand {
     editText.setMinimumWidth(400000 / (int) frame.getScreenWidth());
     if (flags == 1) {
       editText.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
+    } else if (flags == 2){
+      editText.setInputType(InputType.TYPE_CLASS_NUMBER);
     }
     editText.addTextChangedListener(new TextWatcher() {
       public void afterTextChanged(Editable editable) {
