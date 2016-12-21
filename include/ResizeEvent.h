@@ -10,6 +10,7 @@ public:
 
   Event * dup() const override { return new ResizeEvent(*this); }
   void dispatch(EventHandler & element) override;
+  bool isBroadcast() const override { return true; }
 
   int getLogicalWidth() const { return logical_width; }
   int getLogicalHeight() const { return logical_height; }

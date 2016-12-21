@@ -11,6 +11,7 @@ class Event {
   virtual const char * key() const { return "event"; }
   virtual Event * dup() const = 0;
   virtual void dispatch(EventHandler & ev);
+  virtual bool isBroadcast() const { return false; }
   
   double getTimestamp() const { return timestamp; }
   

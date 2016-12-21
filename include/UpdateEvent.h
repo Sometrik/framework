@@ -9,6 +9,7 @@ public:
 
   Event * dup() const override { return new UpdateEvent(*this); }
   void dispatch(EventHandler & element) override;
+  bool isBroadcast() const override { return true; }
 };
 
 #endif

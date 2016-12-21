@@ -15,6 +15,7 @@ public:
 
   Event * dup() const override { return new TouchEvent(*this); }
   void dispatch(EventHandler & element) override;
+  bool isBroadcast() const override { return true; }
   
   Type getType() const { return type; }
   float getX() const { return x; }

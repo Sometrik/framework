@@ -23,6 +23,7 @@ public:
 
   Event * dup() const override { return new SysEvent(*this); }
   void dispatch(EventHandler & element) override;
+  bool isBroadcast() const override { return true; }
 
   void setValue(int _value) { value = _value; }
   void setTextValue(const std::string & _text_value) { text_value = _text_value; }

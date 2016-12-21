@@ -10,6 +10,7 @@ public:
 
   Event * dup() const override { return new OpenGLInitEvent(*this); }
   void dispatch(EventHandler & element) override;
+  bool isBroadcast() const override { return true; }
 
   int getOpenGLVersion() const { return opengl_version; }
   bool isES() const { return is_opengl_es; }
