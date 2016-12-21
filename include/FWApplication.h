@@ -6,11 +6,14 @@
 
 class FWApplication : public Element {
 public:
-  FWApplication(bool _full_screen = false) : full_screen(_full_screen) { }
+  FWApplication(const char * _name, bool _full_screen = false)
+    : name(_name), full_screen(_full_screen) { }
     
   void initialize(FWPlatform * _platform) override {
     Element::initialize(_platform);
-    sendCommand(Command(Command::CREATE_APPLICATION, getParentInternalId(), getInternalId()));
+    Command c(Command::CREATE_APPLICATION, getParentInternalId(), getInternalId());
+    c.setTextValue(name);
+    sendCommand(c);
   }
 
   void setCaption(const std::string & s) {
@@ -28,6 +31,7 @@ public:
   }
 
  private:
+  string name;
   bool full_screen;
 };
 
