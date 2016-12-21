@@ -35,6 +35,7 @@ import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.Window;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
@@ -144,9 +145,9 @@ public class FrameWork extends Activity implements NativeCommandHandler {
     Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
     startActivity(browserIntent);
   }
-  
-  public void setCurrentView(int viewId){
-  	currentView = viewId;
+
+  public void setCurrentView(int viewId) {
+    currentView = viewId;
   }
   
   private void createFormView(int id){
@@ -163,14 +164,17 @@ public class FrameWork extends Activity implements NativeCommandHandler {
     NativeSurface surfaceView = new NativeSurface(this);
     System.out.println("Piip");
     surfaceView.setId(id);
+    surfaceView.setLayoutParams(new FrameLayout.LayoutParams((int)screenWidth, (int)screenHeight));
     surfaceView.setOnTouchListener(new MyOnTouchListener(this, id));
-    surfaceView.getHolder().addCallback(new Callback() {
+    SurfaceHolder holder = surfaceView.getHolder();
+    holder.setFixedSize((int)screenWidth, (int)screenHeight);
+	holder.addCallback(new Callback() {
       public void surfaceDestroyed(SurfaceHolder holder) {
+	System.out.println("surfaceDestroyed");
       	nativeSurfaceDestroyed(System.currentTimeMillis() / 1000.0, id, gl_version);
       }
 
-      public void surfaceCreated(SurfaceHolder holder) {
-      }
+      public void surfaceCreated(SurfaceHolder holder) { }
 
       public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
 	System.out.println("setting native surface");
@@ -181,10 +185,11 @@ public class FrameWork extends Activity implements NativeCommandHandler {
 
     System.out.println("...");
     views.put(id, surfaceView);
-    if (currentView == 0){
+//    if (currentView == 0){
+	setContentView(surfaceView);
       surfaceView.showView();
       setCurrentView(id);
-    }
+//    }
     System.out.println("native surface created");
     return surfaceView;
   }
