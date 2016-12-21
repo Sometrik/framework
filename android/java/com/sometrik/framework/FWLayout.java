@@ -26,11 +26,8 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
     ViewParent vp = getParent();
     System.out.println("showing " + getId());
     if (vp == null){
-      System.out.println("no parent");
       frame.setCurrentView(this);
     } else {
-      System.out.println("yayyy parent");
-      frame.setContentView((View)vp);
       frame.setCurrentView(this);
     }
   }
