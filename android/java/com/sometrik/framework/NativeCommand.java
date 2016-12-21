@@ -42,6 +42,15 @@ public class NativeCommand {
   private FrameWork frame;
   private ArrayList<PopupMenu> menuList = new ArrayList<PopupMenu>();
   
+
+  private final int FLAG_PADDING_LEFT = 1;
+  private final int FLAG_PADDING_RIGHT = 2;
+  private final int FLAG_PADDING_TOP = 3;
+  private final int FLAG_PADDING_BOTTOM = 4;
+  private final int FLAG_PASSWORD = 5;
+  private final int FLAG_NUMERIC = 6;
+  private final int FLAG_HYPERLINK = 7;
+  
   public enum CommandType {
     CREATE_PLATFORM,
     CREATE_APPLICATION,
@@ -89,19 +98,6 @@ public class NativeCommand {
     CONSUME_PURCHASE
   }
   
-  public NativeCommand(FrameWork frame, CommandType command, int internalId, int childInternalId, byte[] textValue, byte[] textValue2){
-    this.frame = frame;
-    this.command = command;
-    this.internalId = internalId;
-    this.childInternalId = childInternalId;
-
-    if (textValue != null) {
-	this.textValue = new String(textValue, Charset.forName("UTF-8"));
-    }
-    if (textValue2 != null) {
-	this.textValue2 = new String(textValue2, Charset.forName("UTF-8"));
-    }
-  }
   public NativeCommand(FrameWork frame, int messageTypeId, int internalId, int childInternalId, int value, byte[] textValue, byte[] textValue2, int flags){
     this.frame = frame;
     command = CommandType.values()[messageTypeId];
@@ -284,9 +280,11 @@ public class NativeCommand {
     editText.setId(getChildInternalId());
     editText.setText(getTextValue());
     editText.setMinimumWidth(400000 / (int) frame.getScreenWidth());
-    if (flags == 1) {
+    if ((flags & FLAG_PASSWORD) != 0 && (flags & FLAG_NUMERIC) != 0){
+      editText.setInputType(InputType.TYPE_NUMBER_VARIATION_PASSWORD);
+    } else if ((flags & FLAG_PASSWORD) != 0) {
       editText.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
-    } else if (flags == 2){
+    } else if ((flags & FLAG_NUMERIC) != 0){
       editText.setInputType(InputType.TYPE_CLASS_NUMBER);
     }
     editText.addTextChangedListener(new TextWatcher() {
@@ -310,18 +308,10 @@ public class NativeCommand {
   private TextView createTextView() {
     TextView textView = new TextView(frame);
     textView.setId(getChildInternalId());
-    if (flags == 1) {
+    if ((flags & FLAG_HYPERLINK) != 0) {
       textView.setMovementMethod(LinkMovementMethod.getInstance());
-      try {
-	URL url = new URL(textValue2);
-	String text = "<a href='" + url + "'>" + textValue + "</a>";
-	textView.setText(Html.fromHtml(text));
-      } catch (MalformedURLException e) {
-	textView.setText(" <invalid URL> ");
-	e.printStackTrace();
-      }
-    } else {
-      textView.setText(getTextValue());
+      String text = "<a href='" + textValue2 + "'>" + textValue + "</a>";
+      textView.setText(Html.fromHtml(text));
     }
     return textView;
   }
