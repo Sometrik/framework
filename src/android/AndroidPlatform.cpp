@@ -315,7 +315,7 @@ void* AndroidPlatform::threadStartCallback(void *myself) {
 
   aplatform->renderLoop();
   aplatform->deinitializeRenderer();
-//  aplatform->getJavaVM()->DetachCurrentThread();
+  aplatform->getJavaVM()->DetachCurrentThread();
   
   return 0;
 }
