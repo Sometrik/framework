@@ -280,11 +280,11 @@ public class NativeCommand {
     editText.setId(getChildInternalId());
     editText.setText(getTextValue());
     editText.setMinimumWidth(400000 / (int) frame.getScreenWidth());
-    if ((flags & FLAG_PASSWORD) != 0 && (flags & FLAG_NUMERIC) != 0){
+    if (isSet(FLAG_PASSWORD) && isSet(FLAG_NUMERIC)){
       editText.setInputType(InputType.TYPE_NUMBER_VARIATION_PASSWORD);
-    } else if ((flags & FLAG_PASSWORD) != 0) {
+    } else if (isSet(FLAG_PASSWORD)) {
       editText.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
-    } else if ((flags & FLAG_NUMERIC) != 0){
+    } else if (isSet(FLAG_NUMERIC)){
       editText.setInputType(InputType.TYPE_CLASS_NUMBER);
     }
     editText.addTextChangedListener(new TextWatcher() {
@@ -308,7 +308,7 @@ public class NativeCommand {
   private TextView createTextView() {
     TextView textView = new TextView(frame);
     textView.setId(getChildInternalId());
-    if ((flags & FLAG_HYPERLINK) != 0) {
+    if (isSet(FLAG_HYPERLINK)) {
       textView.setMovementMethod(LinkMovementMethod.getInstance());
       String text = "<a href='" + textValue2 + "'>" + textValue + "</a>";
       textView.setText(Html.fromHtml(text));
@@ -406,6 +406,14 @@ public class NativeCommand {
     alert.show();
 
     System.out.println("message dialog created");
+  }
+  
+  private Boolean isSet(int flag){
+    if ((flags & flag) != 0){
+      return true;
+    } else {
+      return false;
+    }
   }
 
   public String getKey() {
