@@ -104,20 +104,20 @@ public class FrameWork extends Activity implements NativeCommandHandler {
     // Get preferences (simple key-value database)
     prefs = this.getSharedPreferences("com.example.Work", Context.MODE_PRIVATE);
     editor = prefs.edit();
-    
-		mainHandler = new Handler() {
 
-			public void handleMessage(Message msg) {
+    mainHandler = new Handler() {
 
-				NativeCommand command = (NativeCommand) msg.obj;
-				command.apply(FrameWork.views.get(command.getInternalId()));
+      public void handleMessage(Message msg) {
 
-			}
+	NativeCommand command = (NativeCommand) msg.obj;
+	command.apply(FrameWork.views.get(command.getInternalId()));
 
-		};
+      }
 
-		initNative();
-	}
+    };
+
+    initNative();
+  }
 
   private void initNative() {    
     DisplayMetrics displayMetrics = getDisplayMetrics();
