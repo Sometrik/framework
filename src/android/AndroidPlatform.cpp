@@ -77,7 +77,7 @@ AndroidPlatform::sendCommand(const Command & command) {
   if (!textValue.empty()) jtextValue = convertToByteArray(textValue);
   if (!textValue2.empty()) jtextValue2 = convertToByteArray(textValue);
   
-  jobject jcommand = env->NewObject(javaCache.nativeCommandClass, javaCache.nativeCommandConstructor, framework, commandTypeId, command.getInternalId(), command.getChildInternalId(), command.getValue(), jtextValue, jtextValue2);
+  jobject jcommand = env->NewObject(javaCache.nativeCommandClass, javaCache.nativeCommandConstructor, framework, commandTypeId, command.getInternalId(), command.getChildInternalId(), command.getValue(), jtextValue, jtextValue2, command.getFlags());
   env->CallStaticVoidMethod(javaCache.frameworkClass, javaCache.sendCommandMethod, framework, jcommand);
   
   env->DeleteLocalRef(jcommand);

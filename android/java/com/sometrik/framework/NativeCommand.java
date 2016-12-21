@@ -30,6 +30,7 @@ public class NativeCommand {
   private int internalId = 0;
   private int childInternalId = 0;
   private int value = 0;
+  private int flags = 0;
   private String textValue = "";
   private String textValue2 = "";
   private CommandType command;
@@ -97,12 +98,13 @@ public class NativeCommand {
 	this.textValue2 = new String(textValue2, Charset.forName("UTF-8"));
     }
   }
-  public NativeCommand(FrameWork frame, int messageTypeId, int internalId, int childInternalId, int value, byte[] textValue, byte[] textValue2){
+  public NativeCommand(FrameWork frame, int messageTypeId, int internalId, int childInternalId, int value, byte[] textValue, byte[] textValue2, int flags){
     this.frame = frame;
     command = CommandType.values()[messageTypeId];
     this.internalId = internalId;
     this.childInternalId = childInternalId;
     this.value = value;
+    this.flags = flags;
 
     if (textValue != null) {
 	this.textValue = new String(textValue, Charset.forName("UTF-8"));
