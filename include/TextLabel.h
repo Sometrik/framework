@@ -6,7 +6,7 @@
 
 class TextLabel : public Element {
  public:
- TextLabel(const std::string & _text, unsigned int _flags = 0) : text(_text), flags(_flags) { }
+ TextLabel(const std::string & _text, unsigned int _flags = 0) : Element(0, _flags), text(_text) { }
 
   void initialize(FWPlatform * _platform) override {
     Element::initialize(_platform);
