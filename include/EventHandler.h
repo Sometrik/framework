@@ -10,7 +10,7 @@ class SysEvent;
 class UpdateEvent;
 class ResizeEvent;
 class TimerEvent;
-class ValueEvent;
+#include <ValueEvent.h>
 class OpenGLInitEvent;
 
 class WindowEvent;
