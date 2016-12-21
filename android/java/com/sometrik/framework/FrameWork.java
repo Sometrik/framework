@@ -523,7 +523,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
     System.out.println("FrameWork couldn't handle addOption");
   }
   @Override
-  public void removeChild(View view) {
+  public void removeChild(int id) {
     // TODO Auto-generated method stub
     
   }

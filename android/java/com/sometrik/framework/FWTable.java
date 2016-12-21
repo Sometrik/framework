@@ -42,7 +42,7 @@ public int getElementId() {
 }
 
 @Override
-public void removeChild(View view) {
+public void removeChild(int id) {
   // TODO Auto-generated method stub
   
 }

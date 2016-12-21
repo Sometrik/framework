@@ -93,7 +93,7 @@ public class NativeSurface extends SurfaceView implements NativeCommandHandler {
   }
 
   @Override
-  public void removeChild(View view) {
+  public void removeChild(int id) {
     System.out.println("surface couldn't handle remove element");
     // TODO Auto-generated method stub
     

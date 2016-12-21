@@ -47,8 +47,6 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
   }
 
   @Override
-  public void removeChild(View view) {
-    removeView((View)view);
+  public void removeChild(int id) {
   }
-
 }

@@ -220,6 +220,7 @@ public class NativeCommand {
       frame.getPreferencesEditor().apply();
       break;
     case DELETE_ELEMENT:
+//      view.removeChild();
       break;
     default:
       System.out.println("Message couldn't be handled");
