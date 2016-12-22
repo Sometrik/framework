@@ -3,6 +3,7 @@
 #include <Command.h>
 #include <Logger.h>
 #include <ResizeEvent.h>
+#include <FWApplication.h>
 
 #include <sstream>
 
@@ -44,7 +45,7 @@ OpenGLView::checkGLError() {
     // glGetError() itself returns an error, we risk looping forever here
     // so check that we get a different error than the last time
     if (err == errLast) {
-      getPlatform().getLogger().println("OpenGL error state couldn't be reset.");
+      getApplication().getLogger().println("OpenGL error state couldn't be reset.");
       return;
     }
 
@@ -52,6 +53,6 @@ OpenGLView::checkGLError() {
 
     ostringstream s;
     s << "got OpenGL error " << err;
-    getPlatform().getLogger().println(s.str());
+    getApplication().getLogger().println(s.str());
   }
 }
