@@ -29,8 +29,7 @@ public class FWTable extends TableLayout implements NativeCommandHandler {
       rowList.add(row);
       return row;
     } else {
-      TableRow row = rowList.get(rowList.size() - 1);
-      return new TableRow(frame);
+      return rowList.get(rowList.size() - 1);
     }
   }
   
