@@ -2,7 +2,6 @@
 #define _FWPLATFORM_H_
 
 #include <Element.h>
-#include <FWApplication.h>
 #include <Event.h>
 #include <Command.h>
 #include <Logger.h>
@@ -59,12 +58,6 @@ class FWPlatform : public Element {
     c.setTextValue(value);
     sendCommand(c);
   }
-
-  FWApplication & getApplication() {
-    auto ptr = getFirstChild();
-    FWApplication * app = dynamic_cast<FWApplication*>(ptr.get());
-    return *app;
-  }
   
 #ifdef HAS_SOUNDCANVAS
   SoundCanvas & getSoundCanvas() {
@@ -74,12 +67,6 @@ class FWPlatform : public Element {
     return *soundCanvas;
   }
 #endif
-  Logger & getLogger() {
-    if (logger == 0) {
-      logger = createLogger();
-    }
-    return *logger;
-  }
 
   void setActiveView(int id) {
     activeViewId = id;
@@ -140,15 +127,23 @@ class FWPlatform : public Element {
   void terminateThreads();
   void disconnectThreads();
 
+  virtual std::shared_ptr<Logger> createLogger(const std::string & name) const {
+    return std::make_shared<BasicLogger>(name);
+  }
+  
  protected:
+  Logger & getLogger() {
+    if (!logger.get()) {
+      logger = createLogger("Framework");
+    }
+    return *logger;
+  }
+
 #ifdef HAS_SOUNDCANVAS
   virtual std::shared_ptr<SoundCanvas> createSoundCanvas() const {
     return std::make_shared<DummySoundCanvas>();
   }
 #endif
-  virtual std::shared_ptr<Logger> createLogger() const {
-    return std::make_shared<BasicLogger>();
-  }
 
   virtual std::shared_ptr<PlatformThread> run2(std::shared_ptr<Runnable> & runnable);
 
