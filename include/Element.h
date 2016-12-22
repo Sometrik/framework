@@ -13,8 +13,7 @@ class LinearLayout;
 
 class Element : public EventHandler {
  public:
- Element(int _id = 0, unsigned int _flags = 0) : id(_id), flags(_flags) { }
-  ~Element();
+  Element(int _id = 0, unsigned int _flags = 0) : id(_id), flags(_flags) { }
 
   Element(const Element & other) = delete;
   Element & operator= (const Element & other) = delete;
