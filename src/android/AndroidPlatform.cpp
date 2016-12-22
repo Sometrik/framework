@@ -228,21 +228,29 @@ void
 AndroidPlatform::renderLoop() {
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Looping louie");
 
-  while (!isDestroyed) {
-    auto ev = eventqueue.pop();
-
-//    std::ostringstream s;
-//    s << "trying to dispatch event " << typeid(*ev.second.get()).name() << " to: " << ev.first ;
-//    getLogger().println(s.str());
-    
-    postEvent(ev.first, *ev.second.get());
-    
-    auto ev2 = dynamic_cast<SysEvent*>(ev.second.get());
-    if (ev2 && (ev2->getType() == SysEvent::END_MODAL || ev2->getType() == SysEvent::DESTROY)) {
-      break;
+  bool exit_loop = false;
+  while (!isDestroyed && !exit_loop) {
+    std::vector<std::pair<int, std::shared_ptr<Event> > evs;
+    evs.push_back(eventqueue.pop());
+    while (!eventqueue.empty()) {
+      evs.push_back(eventqueue.pop());
     }
 
-    if (canDraw && surface && ev.second.get()->isRedrawNeeded()) {
+    bool redraw = false;
+    for (auto & ev : evs) {
+      postEvent(ev.first, *ev.second.get());
+      
+      auto ev2 = dynamic_cast<SysEvent*>(ev.second.get());
+      if (ev2 && (ev2->getType() == SysEvent::END_MODAL || ev2->getType() == SysEvent::DESTROY)) {
+	exit_loop = true;
+      }
+
+      if (ev.second.get()->isRedrawNeeded()) {
+	redraw = true;
+      }
+    }
+
+    if (canDraw && surface && redraw) {
       __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "I Wanna draw");
       DrawEvent dev(getTime());
       postEvent(getActiveViewId(), dev);
