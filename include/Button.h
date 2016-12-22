@@ -22,14 +22,18 @@ class Button : public UIElement {
   }
 
   void onTouchEvent(TouchEvent & ev) override {
-    if (ev.getType() == TouchEvent::ACTION_DOWN) {
-      if (ev.getX() >= x && ev.getX() < x + width && ev.getY() >= y && ev.getY() < y + height) {
-        setTouched(true);
-        CommandEvent ev2(ev.getTimestamp(), getId());
-        ev2.dispatch(*this);
-      }
-    } else if (ev.getType() == TouchEvent::ACTION_UP) {
+    if (ev.getType() == TouchEvent::ACTION_DOWN &&
+	ev.getX() >= x && ev.getX() < x + width &&
+	ev.getY() >= y && ev.getY() < y + height) {
+      setTouched(true);
+      CommandEvent ev2(ev.getTimestamp(), getId());
+      ev2.dispatch(*this);
+      ev.setHandled();
+      ev.requestRedraw();
+    } else if (ev.getType() == TouchEvent::ACTION_UP && isTouched()) {
       setTouched(false);
+      ev.setHandled();
+      ev.requestRedraw();
     } else if (ev.getType() == TouchEvent::ACTION_CLICK) {
       CommandEvent ev2(ev.getTimestamp(), getId());
       ev2.dispatch(*this);
