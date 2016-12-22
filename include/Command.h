@@ -31,7 +31,6 @@ class Command {
     SET_USER_ID, // Sets the user assignable id of element
     DELETE_ELEMENT,
     SHOW_VIEW,
-    REQUEST_REDRAW,
     SHOW_MESSAGE_DIALOG,
     SHOW_INPUT_DIALOG,
     SHOW_ACTION_SHEET,

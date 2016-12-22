@@ -74,7 +74,6 @@ public class NativeCommand {
     SET_USER_ID,
     DELETE_ELEMENT,
     SHOW_VIEW,
-    REQUEST_REDRAW,
     SHOW_MESSAGE_DIALOG,
     SHOW_INPUT_DIALOG,
     SHOW_ACTION_SHEET,
