@@ -3,6 +3,7 @@
 #include <TextLabel.h>
 #include <LinearLayout.h>
 #include <Command.h>
+#include <FWApplication.h>
 
 #include <SysEvent.h>
 #include <OpenGLInitEvent.h>
@@ -74,3 +75,16 @@ Element::showInputDialog(const std::string & title, const std::string & text) {
   sendCommand(c);
   return platform->getModalResultText();
 }
+
+FWApplication &
+Element::getApplication() {
+  auto p = getPlatform().getFirstChild();
+  return dynamic_cast<FWApplication&>(*p);
+}
+
+const FWApplication &
+Element::getApplication() const {
+  auto p = getPlatform().getFirstChild();
+  return dynamic_cast<const FWApplication&>(*p);
+}
+

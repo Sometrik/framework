@@ -8,6 +8,7 @@
 #include <string>
 
 class FWPlatform;
+class FWApplication;
 class Command;
 class LinearLayout;
 
@@ -48,7 +49,10 @@ class Element : public EventHandler {
 
   FWPlatform & getPlatform() { return *platform; }
   const FWPlatform & getPlatform() const { return *platform; }
-  
+
+  FWApplication & getApplication();
+  const FWApplication & getApplication() const;
+    
   std::shared_ptr<Element> getFirstChild() const {
     if (!children.empty()) {
       return children.front();
