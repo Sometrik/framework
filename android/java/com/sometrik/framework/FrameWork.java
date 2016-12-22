@@ -197,7 +197,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
     return surfaceView;
   }
 
-  // Lis�� kuvan antaminen // Aika // ��ni
+ // TODO: Add icon and sound
   public void createNotification(String title, String text) {
 
     System.out.println("Creating notification");
@@ -350,7 +350,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   private void optionSelected(int id) {
 
     settings = new Settings(this);
-    // Settings t�ytyy tehd� uusiksi t�ss�, jotta lista ei pysy samana
+    // TODO: settings must be recreated to update changes
     settingsCreator(settings, id);
     
 
