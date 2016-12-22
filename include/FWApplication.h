@@ -3,6 +3,7 @@
 
 #include <Element.h>
 #include <Command.h>
+#include <FWPlatform.h>
 
 class FWApplication : public Element {
 public:
@@ -30,9 +31,17 @@ public:
     sendCommand(Command(Command::POST_NOTIFICATION, getInternalId(), title, command));
   }
 
+  Logger & getLogger() {
+    if (!logger.get()) {
+      logger = getPlatform().createLogger(name);
+    }
+    return *logger;
+  }
+
  private:
   std::string name;
   bool full_screen;
+  std::shared_ptr<Logger> logger;
 };
 
 #endif
