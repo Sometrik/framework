@@ -9,6 +9,8 @@
 #include <CommandEvent.h>
 #include <SysEvent.h>
 #include <FWPlatform.h>
+
+#include <cassert>
  
 class UIElement : public Element {
  public:
@@ -32,22 +34,6 @@ class UIElement : public Element {
     glm::mat4 mat(1.0f);
     auto & renderer = getPlatform().getRenderer();
     renderer->renderTexturedWindow(vbo, texture, mat);
-  }
-
-  void onTouchEvent(TouchEvent & ev) override {
-    if (ev.getType() == TouchEvent::ACTION_DOWN &&
-	ev.getX() >= x && ev.getX() < x + width &&
-	ev.getY() >= y && ev.getY() < y + height) {
-      setTouched(true);
-      CommandEvent ev2(ev.getTimestamp(), getId());
-      ev2.dispatch(*this);
-      ev.setHandled();
-      ev.requestRedraw();
-    } else if (ev.getType() == TouchEvent::ACTION_UP && isTouched()) {
-      setTouched(false);
-      ev.setHandled();
-      ev.requestRedraw();
-    }
   }
 
   void onSysEvent(SysEvent & ev) {
