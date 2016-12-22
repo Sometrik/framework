@@ -410,12 +410,8 @@ public class NativeCommand {
     System.out.println("message dialog created");
   }
   
-  private Boolean isSet(int flag){
-    if ((flags & flag) != 0){
-      return true;
-    } else {
-      return false;
-    }
+  private Boolean isSet(int flag) {
+    return (flags & flag) != 0;
   }
 
   public String getKey() {
