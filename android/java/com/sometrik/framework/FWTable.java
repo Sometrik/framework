@@ -19,6 +19,7 @@ public class FWTable extends TableLayout implements NativeCommandHandler {
     super(context);
     this.context = context;
     rowList = new ArrayList<TableRow>();
+    rowList.add(new TableRow(context));
     dataList = new ArrayList<View>();
   }
   
