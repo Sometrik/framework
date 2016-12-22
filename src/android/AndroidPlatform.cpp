@@ -231,9 +231,9 @@ AndroidPlatform::renderLoop() {
   while (!isDestroyed) {
     auto ev = eventqueue.pop();
 
-    std::ostringstream s;
-    s << "trying to dispatch event " << typeid(*ev.second.get()).name() << " to: " << ev.first ;
-    getLogger().println(s.str());
+//    std::ostringstream s;
+//    s << "trying to dispatch event " << typeid(*ev.second.get()).name() << " to: " << ev.first ;
+//    getLogger().println(s.str());
     
     postEvent(ev.first, *ev.second.get());
     
@@ -259,7 +259,7 @@ AndroidPlatform::renderLoop() {
 void
 AndroidPlatform::onOpenGLInitEvent(OpenGLInitEvent & _ev) {
   auto & ev = dynamic_cast<AndroidOpenGLInitEvent&>(_ev);
-  __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "initializeRenderer reached");
+  __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "platform OpenGLInitEvent");
   if (ev.getWindow()) {
     initializeRenderer(ev.getOpenGLVersion(), ev.getWindow());
     ev.requestRedraw();
@@ -317,8 +317,6 @@ void* AndroidPlatform::threadStartCallback(void *myself) {
 
   aplatform->renderLoop();
   aplatform->deinitializeRenderer();
-//  Command c = Command(Command::Type::QUIT_APP, 0, 0);
-//  aplatform->sendCommand(c);
   aplatform->getJavaVM()->DetachCurrentThread();
   
   return 0;
