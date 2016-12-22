@@ -193,8 +193,8 @@ public:
       if (!is_initialized) {
 	OpenGLInitEvent ev(getTime(), 0x30000, true);
 	postEvent(getActiveViewId(), ev);
-	if (ev.isRedrawNeeded()) redraw_screen = true;
 	is_initialized = true;
+	redraw_screen = true;	
       }
       
       UpdateEvent ev0(getTime());
