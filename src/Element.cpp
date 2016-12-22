@@ -11,12 +11,6 @@
 
 using namespace std;
 
-Element::~Element() {
-  if (isInitialized()) {
-    sendCommand(Command(Command::DELETE_ELEMENT, getParentInternalId(), getInternalId()));
-  }
-}
-
 void
 Element::initialize(FWPlatform * _platform) {
   assert(_platform);
