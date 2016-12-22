@@ -19,8 +19,6 @@ std::map<std::string, int> StringUtils::entities;
 
 void
 StringUtils::initialize() {
-  cerr << "INITIALIZING STRINGUTILS!!!!!!!!!!!\n";
-
   initialized = true;
   
   entities["rsquor"] = 0x2019;
