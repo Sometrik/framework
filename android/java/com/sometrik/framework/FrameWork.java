@@ -286,8 +286,6 @@ public class FrameWork extends Activity implements NativeCommandHandler {
 	     System.out.println("finger move. FingerId: " + pointerId);
 	      touchEvent(viewId, 2, pointerId, System.currentTimeMillis(), (int) event.getX(), (int) (event.getRawY() + windowYcoords));
 	}
-	// System.out.println("Liikett�: " + event.getX() + " " +
-	// event.getY() + " - id: " + event.getActionIndex());
 	break;
 	//touch event of first finger being removed from the screen
       case MotionEvent.ACTION_UP:
