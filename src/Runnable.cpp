@@ -11,7 +11,6 @@ using namespace std;
 
 void
 Runnable::start(PlatformThread * _thread) {
-  cerr << "starting runnable\n";
   assert(_thread);
   thread = _thread;
   run();
