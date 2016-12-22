@@ -1,5 +1,7 @@
 package com.sometrik.framework;
 
+import java.util.ArrayList;
+
 import android.content.Context;
 import android.view.View;
 import android.widget.TableLayout;
@@ -9,16 +11,27 @@ public class FWTable extends TableLayout implements NativeCommandHandler {
   
   Context context;
   int columnCount = 1;
+  int rowCounter = 0;
+  ArrayList<TableRow> rowList;
+  ArrayList<View> dataList;
   
   public FWTable(Context context) {
     super(context);
     this.context = context;
-    TableRow row = new TableRow(context);
+    rowList = new ArrayList<TableRow>();
+    dataList = new ArrayList<View>();
   }
   
   private TableRow getCurrentRow(){
-    //TODO
-    return new TableRow(context);
+    if (rowCounter > columnCount){
+      TableRow row = new TableRow(context);
+      rowList.add(row);
+      rowCounter = 0;
+      return row;
+    } else {
+      TableRow row = rowList.get(rowList.size() - 1);
+      return new TableRow(context);
+    }
   }
   
   public void setColumnCount(int columnCount) { this.columnCount = columnCount; };
