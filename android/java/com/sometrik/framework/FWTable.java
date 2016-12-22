@@ -4,19 +4,20 @@ import java.util.ArrayList;
 
 import android.content.Context;
 import android.view.View;
+import android.view.ViewParent;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 
 public class FWTable extends TableLayout implements NativeCommandHandler {
   
-  Context context;
+  FrameWork frame;
   int columnCount = 1;
   ArrayList<TableRow> rowList;
   ArrayList<View> dataList;
   
   public FWTable(Context context) {
     super(context);
-    this.context = context;
+    context = (FrameWork)context;
     rowList = new ArrayList<TableRow>();
     rowList.add(new TableRow(context));
     dataList = new ArrayList<View>();
@@ -24,30 +25,29 @@ public class FWTable extends TableLayout implements NativeCommandHandler {
   
   private TableRow getCurrentRow(){
     if (dataList.size() / columnCount > rowList.size()){
-      TableRow row = new TableRow(context);
+      TableRow row = new TableRow(frame);
       rowList.add(row);
       return row;
     } else {
       TableRow row = rowList.get(rowList.size() - 1);
-      return new TableRow(context);
+      return new TableRow(frame);
     }
   }
   
   public void setColumnCount(int columnCount) { this.columnCount = columnCount; };
 
 
+  @Override
+  public void addChild(View view) {
+    TableRow row = getCurrentRow();
+    row.addView(view);
+    dataList.add(view);
+  }
 
-@Override
-public void addChild(View view) {
-  TableRow row = getCurrentRow();
-  row.addView(view);
-  dataList.add(view);
-}
-
-@Override
-public void showView() {
-  System.out.println("FWTable couldn't handle showView command");
-}
+  @Override
+  public void showView() {
+    frame.setCurrentView(this);
+  }
 
 @Override
 public void addOption(int position, String text) {
