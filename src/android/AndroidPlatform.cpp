@@ -236,8 +236,16 @@ AndroidPlatform::renderLoop() {
       evs.push_back(eventqueue.pop());
     }
 
-    bool redraw = false;
+    bool redraw = false, update_sent = false;    
+    std::pair<int, std::shared_ptr<UpdateEvent> > update_ev;
     for (auto & ev : evs) {
+      if (dynamic_cast<UpdateEvent*>(ev.second.get())) {
+	if (update_sent) {
+	  getLogger().println("skipping update event!");
+	  continue;
+	} else update_sent = true;
+      }
+      
       postEvent(ev.first, *ev.second.get());
       
       auto ev2 = dynamic_cast<SysEvent*>(ev.second.get());
