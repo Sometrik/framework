@@ -83,8 +83,6 @@ class FWPlatform : public Element {
 
   void setActiveView(int id) {
     activeViewId = id;
-    Command c(Command::REQUEST_REDRAW, id);
-    sendCommand(c);
   }
   
   void sendCommand(const Command & command) override {
