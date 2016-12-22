@@ -11,7 +11,6 @@ public class FWTable extends TableLayout implements NativeCommandHandler {
   
   Context context;
   int columnCount = 1;
-  int rowCounter = 0;
   ArrayList<TableRow> rowList;
   ArrayList<View> dataList;
   
@@ -27,7 +26,6 @@ public class FWTable extends TableLayout implements NativeCommandHandler {
     if (dataList.size() / columnCount > rowList.size()){
       TableRow row = new TableRow(context);
       rowList.add(row);
-      rowCounter = 0;
       return row;
     } else {
       TableRow row = rowList.get(rowList.size() - 1);
@@ -44,7 +42,6 @@ public void addChild(View view) {
   TableRow row = getCurrentRow();
   row.addView(view);
   dataList.add(view);
-  rowCounter++;
 }
 
 @Override
