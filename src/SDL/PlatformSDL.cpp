@@ -103,9 +103,6 @@ public:
 				NULL);
 #endif
       break;
-    case Command::REQUEST_REDRAW:
-      redraw_needed = true;
-      break;
     case Command::CREATE_TIMER:
       {
 	auto timer = std::make_shared<Timer>(this, command.getChildInternalId(), command.getValue());
@@ -135,6 +132,7 @@ public:
     cerr << "starting runloop\n";
     
     while ( true ) {
+      bool redraw_screen = false;
       /* Grab all the events off the queue. */
       while( SDL_PollEvent( &event ) ) {
 	switch( event.type ) {
@@ -146,6 +144,7 @@ public:
 	  {
 	    TouchEvent ev(getTime(), TouchEvent::ACTION_DOWN, mouse_x, mouse_y, 0);
 	    postEvent(getActiveViewId(), ev);
+	    if (ev.isRedrawNeeded()) redraw_screen = true;
 	    button_pressed = true;
 	  }
 	  break;
@@ -153,6 +152,7 @@ public:
 	  {
 	    TouchEvent ev(getTime(), TouchEvent::ACTION_UP, mouse_x, mouse_y, 0);
 	    postEvent(getActiveViewId(), ev);
+	    if (ev.isRedrawNeeded()) redraw_screen = true;
 	    button_pressed = false;
 	  }
 	  break;
@@ -160,6 +160,7 @@ public:
 	  if (button_pressed) {
 	    TouchEvent ev(getTime(), TouchEvent::ACTION_MOVE, event.motion.x, event.motion.y, 0);
 	    postEvent(getActiveViewId(), ev);
+	    if (ev.isRedrawNeeded()) redraw_screen = true;
 	  }
 	  mouse_x = event.motion.x;
 	  mouse_y = event.motion.y;
@@ -172,6 +173,7 @@ public:
 	    setDisplayHeight(h);
 	    ResizeEvent ev(getTime(), w, h, w, h);
 	    postEvent(getActiveViewId(), ev);
+	    if (ev.isRedrawNeeded()) redraw_screen = true;
 	  }
 	  break;
 	case SDL_USEREVENT:
@@ -180,6 +182,7 @@ public:
 	    assert(ev);
 	    std::shared_ptr<Event> ptr(ev);
 	    postEvent(getActiveViewId(), *ptr);
+	    if (ptr->isRedrawNeeded()) redraw_screen = true;
 	  }
 	  break;
 	case SDL_QUIT:
@@ -190,30 +193,27 @@ public:
       if (!is_initialized) {
 	OpenGLInitEvent ev(getTime(), 0x30000, true);
 	postEvent(getActiveViewId(), ev);
+	if (ev.isRedrawNeeded()) redraw_screen = true;
 	is_initialized = true;
       }
       
       UpdateEvent ev0(getTime());
       postEvent(getActiveViewId(), ev0);
+      if (ev0.isRedrawNeeded()) redraw_screen = true;
       
-      if (isRedrawNeeded()) {
+      if (redraw_screen) {
 	DrawEvent ev(getTime());
 	postEvent(getActiveViewId(), ev);
 	SDL_GL_SwapBuffers();
-	clearRedrawNeeded();
       }
     }
   }
-
-  bool isRedrawNeeded() { return redraw_needed; }
-  void clearRedrawNeeded() { redraw_needed = false; }
 
   std::string showTextEntryDialog(const std::string & title, const std::string & message) override { return ""; }
 
 private:
   bool button_pressed = false;
   int mouse_x = 0, mouse_y = 0;
-  bool redraw_needed = false;
   bool is_initialized = false;
   map<int, shared_ptr<Timer> > timers;
 };
