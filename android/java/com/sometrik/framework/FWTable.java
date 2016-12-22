@@ -48,21 +48,27 @@ public class FWTable extends TableLayout implements NativeCommandHandler {
     frame.setCurrentView(this);
   }
 
-@Override
-public void addOption(int position, String text) {
-}
+  @Override
+  public void addOption(int position, String text) {
+  }
 
-@Override
-public int getElementId() {
-  return getId();
-}
+  @Override
+  public int getElementId() {
+    return getId();
+  }
 
-@Override
-public void removeChild(int id) {
-  // TODO Auto-generated method stub
-  
-}
+  @Override
+  public void removeChild(int id) {
+    for (int i = 0; i < getChildCount(); i++) {
+      View v = getChildAt(i);
+      if (v.getId() == id) {
+	removeView(v);
+	System.out.println("Child " + id + " removed succesfully");
+	return;
+      }
+    }
+    System.out.println("Child " + id + " wasn't found and wasn't removed");
 
-
+  }
 
 }
