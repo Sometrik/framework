@@ -145,6 +145,11 @@ public:
 	    TouchEvent ev(getTime(), TouchEvent::ACTION_DOWN, mouse_x, mouse_y, 0);
 	    postEvent(getActiveViewId(), ev);
 	    if (ev.isRedrawNeeded()) redraw_screen = true;
+
+	    TouchEvent ev2(getTime(), TouchEvent::ACTION_DOWN, true);
+	    postEvent(getActiveViewId(), ev2);
+	    if (ev2.isRedrawNeeded()) redraw_screen = true;
+
 	    button_pressed = true;
 	  }
 	  break;
@@ -153,6 +158,11 @@ public:
 	    TouchEvent ev(getTime(), TouchEvent::ACTION_UP, mouse_x, mouse_y, 0);
 	    postEvent(getActiveViewId(), ev);
 	    if (ev.isRedrawNeeded()) redraw_screen = true;
+
+	    TouchEvent ev2(getTime(), TouchEvent::ACTION_UP, true);
+	    postEvent(getActiveViewId(), ev2);
+	    if (ev2.isRedrawNeeded()) redraw_screen = true;
+
 	    button_pressed = false;
 	  }
 	  break;
@@ -161,6 +171,10 @@ public:
 	    TouchEvent ev(getTime(), TouchEvent::ACTION_MOVE, event.motion.x, event.motion.y, 0);
 	    postEvent(getActiveViewId(), ev);
 	    if (ev.isRedrawNeeded()) redraw_screen = true;
+
+	    TouchEvent ev2(getTime(), TouchEvent::ACTION_MOVE, true);
+	    postEvent(getActiveViewId(), ev2);
+	    if (ev2.isRedrawNeeded()) redraw_screen = true;
 	  }
 	  mouse_x = event.motion.x;
 	  mouse_y = event.motion.y;
