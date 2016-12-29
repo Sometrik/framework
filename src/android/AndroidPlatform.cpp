@@ -230,7 +230,7 @@ AndroidPlatform::renderLoop() {
 
   bool exit_loop = false;
   while (!isDestroyed && !exit_loop) {
-    std::vector<std::pair<int, std::shared_ptr<Event> > evs;
+    std::vector<std::pair<int, std::shared_ptr<Event>> > evs;
     evs.push_back(eventqueue.pop());
     while (!eventqueue.empty()) {
       evs.push_back(eventqueue.pop());
