@@ -86,7 +86,7 @@ public:
   std::string getLocalFilename(const char * filename, FileType type) override;
   double getTime() const override;
   std::shared_ptr<canvas::ContextFactory> createContextFactory() const override {
-    return std::make_shared<canvas::AndroidContextFactory>(mgr, canvasCache);
+    return std::make_shared<canvas::AndroidContextFactory>(mgr, canvasCache, getDisplayScale());
   }
 
   std::shared_ptr<HTTPClientFactory> createHTTPClientFactory() const override {
