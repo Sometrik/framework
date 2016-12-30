@@ -164,9 +164,8 @@ public class FrameWork extends Activity implements NativeCommandHandler {
     final ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
     final ConfigurationInfo configurationInfo = activityManager.getDeviceConfigurationInfo();
     final int gl_version = configurationInfo.reqGlEsVersion;    
-    System.out.println("about to create native surface");
+    System.out.println("about to create native surface. gl_version: " + gl_version);
     NativeSurface surfaceView = new NativeSurface(this);
-    System.out.println("Piip");
     surfaceView.setId(id);
     surfaceView.setLayoutParams(new FrameLayout.LayoutParams((int)screenWidth, (int)screenHeight));
     surfaceView.setOnTouchListener(new MyOnTouchListener(this, id));
