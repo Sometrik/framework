@@ -280,11 +280,11 @@ AndroidPlatform::onOpenGLInitEvent(OpenGLInitEvent & _ev) {
     initializeRenderer(ev.getOpenGLVersion(), ev.getWindow());
     ev.requestRedraw();
     canDraw = true;
+    FWPlatform::onOpenGLInitEvent(_ev);
   } else {
     deinitializeRenderer();
     canDraw = false;
   }
-  FWPlatform::onOpenGLInitEvent(_ev);
 }
 
 void
