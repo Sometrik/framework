@@ -13,7 +13,7 @@ public class PurchaseHelper {
 	
 	IInAppBillingService mService;
 	private static PurchaseHelper instance = null;
-
+	protected PurchaseHelper() { }
 	public static PurchaseHelper getInstance() {
 		if (instance == null) {
 			instance = new PurchaseHelper();
@@ -33,13 +33,16 @@ public class PurchaseHelper {
 		}
 	};
 
-	protected PurchaseHelper() {
+	public void disconnect(FrameWork framework) {
+		if (mService != null) {
+			framework.unbindService(mServiceConn);
+		}
 	}
 
-	public void createConnection(Activity activity) {
+	public void createConnection(FrameWork framework) {
 		Intent serviceIntent = new Intent("com.android.vending.billing.InAppBillingService.BIND");
 		serviceIntent.setPackage("com.android.vending");
-		activity.bindService(serviceIntent, mServiceConn, Context.BIND_AUTO_CREATE);
+		framework.bindService(serviceIntent, mServiceConn, Context.BIND_AUTO_CREATE);
 	}
 
 }
