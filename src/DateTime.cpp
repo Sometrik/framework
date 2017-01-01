@@ -416,13 +416,3 @@ DateTime::getCurrentTime() {
   }
   return t;
 }
-
-#if 0
-void
-Linux::sleep(double t) const {
-  int sec = int(t);
-  int msec = int((t - sec) * 1000);
-  struct timespec req = { sec, msec * 1000000 };
-  nanosleep(&req, NULL);
-}
-#endif
