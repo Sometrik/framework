@@ -40,8 +40,8 @@ class Button : public UIElement {
     }
   }
 
-  canvas::TextureRef drawContent() override {
-    auto context = getPlatform().createContextFactory()->createContext(width, height, canvas::InternalFormat::RGBA8, true);
+  std::shared_ptr<canvas::Texture> drawContent() override {
+    auto context = getPlatform().createContextFactory()->createContext(width, height, canvas::InternalFormat::RGBA8);
 
     float x = 0.0f, y = 0.0f, w = width - 1, h = height - 1, r = 5.0f;
     context->moveTo(x+r, y);

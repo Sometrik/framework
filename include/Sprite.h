@@ -1,7 +1,11 @@
 #ifndef _SPRITE_H_
 #define _SPRITE_H_
 
-#include <TextureRef.h>
+#include <memory>
+
+namespace canvas {
+  class Texture;
+};
 
 #include <glm/glm.hpp>
 
@@ -10,8 +14,8 @@ class Sprite {
   Sprite();
   virtual ~Sprite();
   
-  canvas::TextureRef getTexture() const { return texture; }
-  void setTexture(canvas::TextureRef _texture) { texture = _texture; }
+  const std::shared_ptr<canvas::Texture> & getTexture() const { return texture; }
+  void setTexture(const std::shared_ptr<canvas::Texture> & _texture) { texture = _texture; }
 
   const glm::vec2 & getPosition() const { return position; }
   float getWidth() const { return width; }
@@ -26,7 +30,7 @@ class Sprite {
 
  private:
   float width = 0, height = 0;
-  canvas::TextureRef texture;
+  std::shared_ptr<canvas::Texture> texture;
 };
 
 #endif

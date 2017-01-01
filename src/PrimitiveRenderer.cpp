@@ -209,7 +209,7 @@ PrimitiveRenderer::setLineWidth(float w) {
 }
 
 void
-PrimitiveRenderer::bind(const canvas::TextureRef & texture) {
+PrimitiveRenderer::bind(const canvas::Texture & texture) {
   int id = texture.getTextureId();
   if (!id) {
     cerr << "trying to bind zero tex" << endl;

@@ -2,7 +2,6 @@
 #define _UIELEMENT_H_
 
 #include <Element.h>
-#include <TextureRef.h>
 #include <Context.h>
 #include <VBO.h>
 #include <TouchEvent.h>
@@ -11,6 +10,10 @@
 #include <FWPlatform.h>
 
 #include <cassert>
+
+namespace canvas {
+  class Texture;
+};
  
 class UIElement : public Element {
  public:
@@ -33,7 +36,7 @@ class UIElement : public Element {
 	       );
     glm::mat4 mat(1.0f);
     auto & renderer = getPlatform().getRenderer();
-    renderer->renderTexturedWindow(vbo, texture, mat);
+    renderer->renderTexturedWindow(vbo, *texture, mat);
   }
 
   void onSysEvent(SysEvent & ev) {
@@ -53,13 +56,13 @@ class UIElement : public Element {
 
  protected:
   void clearTexture() { texture.reset(); }
-  virtual canvas::TextureRef drawContent() = 0;
+  virtual std::shared_ptr<canvas::Texture> drawContent() = 0;
 
   float x = 0, y = 0, width = 0, height = 0;
   bool is_touched = false;
   
  private:
-  canvas::TextureRef texture;
+  std::shared_ptr<canvas::Texture> texture;
 };
 
 #endif

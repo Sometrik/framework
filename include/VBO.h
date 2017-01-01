@@ -1,14 +1,15 @@
 #ifndef _VBO_H_
 #define _VBO_H_
 
-#include <cstddef>
-#include <vector>
-
 #include <glm/glm.hpp>
 
-#if 1
-#include <TextureRef.h>
-#endif
+#include <cstddef>
+#include <vector>
+#include <memory>
+
+namespace canvas {
+  class Texture;
+};
 
 struct vbo_data_s {
   glm::vec2 tex;
@@ -94,12 +95,10 @@ class VBO {
   unsigned int getNumIndices() const { return num_indices; }
   unsigned int getNumElements() const { return num_elements; }
 
-#if 1
-  const canvas::TextureRef & getTexture() const { return texture; }
-  void setTexture(const canvas::TextureRef & _texture) { texture = _texture; } 
+  const std::shared_ptr<canvas::Texture> & getTexture() const { return texture; }
+  void setTexture(const std::shared_ptr<canvas::Texture> & _texture) { texture = _texture; } 
   void clearTexture() { texture.reset(); }
   bool hasTexture() const { return texture.get() != 0; }
-#endif
 
   void setPointers() const;
     
@@ -111,9 +110,7 @@ class VBO {
   int getStride() const { return stride; }
 
   unsigned int vao = 0, vbo = 0, indexVbo = 0;
-#if 1
-  canvas::TextureRef texture;
-#endif
+  std::shared_ptr<canvas::Texture> texture;
 
  private:
   DrawType default_draw_type = NONE;
