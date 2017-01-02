@@ -50,6 +50,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   private SharedPreferences.Editor editor;
   private FrameWork frameWork;
   private double updateTimer = 0;
+  private IabHelper purchaseHelper;
   private static final int RESULT_SETTINGS = 1;
   
   private boolean drawMode = false;
@@ -104,6 +105,21 @@ public class FrameWork extends Activity implements NativeCommandHandler {
 
     // Set up classes
     settings = new Settings(this);
+    
+    // Get PurchaseHelper. Requires App public key
+    //TODO
+  	purchaseHelper = new IabHelper(this, "");
+  	purchaseHelper.startSetup(new IabHelper.OnIabSetupFinishedListener(){
+
+			@Override
+			public void onIabSetupFinished(IabResult result) {
+				if (result.isSuccess()){
+					System.out.println("PurchaseHelper successfully setup");
+				} else {
+					System.out.println("PurchaseHelper failed to setup");
+				}
+			}
+  	});
 
     mainHandler = new Handler() {
 
