@@ -54,6 +54,7 @@ public class NativeCommand {
   private final int FLAG_PASSWORD = 5;
   private final int FLAG_NUMERIC = 6;
   private final int FLAG_HYPERLINK = 7;
+  private final int FLAG_USE_PURCHASES_API = 8;
   
   public enum CommandType {
     CREATE_PLATFORM,
@@ -193,6 +194,10 @@ public class NativeCommand {
     case CREATE_APPLICATION:
       frame.setAppId(getInternalId());
       frame.setSharedPreferences(textValue);
+      if (isSet(FLAG_USE_PURCHASES_API)){
+      	System.out.println("Initializing purchaseHelper");
+      	frame.initializePurchaseHelper(textValue);
+      }
       break;
     case SET_CAPTION:
       frame.setTitle(getTextValue());
