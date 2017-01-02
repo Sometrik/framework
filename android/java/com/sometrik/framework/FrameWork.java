@@ -2,8 +2,10 @@ package com.sometrik.framework;
 
 import java.util.HashMap;
 
+import com.example.android.trivialdrivesample.util.IabException;
 import com.example.android.trivialdrivesample.util.IabHelper;
 import com.example.android.trivialdrivesample.util.IabResult;
+import com.example.android.trivialdrivesample.util.Inventory;
 
 import android.app.Activity;
 import android.app.ActivityManager;
@@ -49,6 +51,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   private double updateTimer = 0;
   private IabHelper purchaseHelper;
   private static final int RESULT_SETTINGS = 1;
+  private Inventory inventory;
   
   private boolean drawMode = false;
 
@@ -113,7 +116,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
     initNative();
   }
   
-  public void initializePurchaseHelper(String key){
+  public Inventory initializePurchaseHelper(String key){
     // Get PurchaseHelper. Requires App public key
   	purchaseHelper = new IabHelper(this, key);
   	purchaseHelper.startSetup(new IabHelper.OnIabSetupFinishedListener(){
@@ -127,6 +130,13 @@ public class FrameWork extends Activity implements NativeCommandHandler {
 				}
 			}
   	});
+  	try {
+			inventory = purchaseHelper.queryInventory(true, null);
+		} catch (IabException e) {
+			System.out.println("Exception getting inventory with message: " + e.getMessage());
+			e.printStackTrace();
+		}
+		return inventory;
   }
 
   private void initNative() {    
