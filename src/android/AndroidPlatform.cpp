@@ -506,6 +506,12 @@ void Java_com_sometrik_framework_FWPicker_pickerOptionSelected(JNIEnv* env, jobj
   platform->queueEvent(id, ev);
 }
 
+void Java_com_sometrik_framework_FrameWork_sendPurchaseHistory(JNIEnv* env, jclass clazz, double timestamp, jstring productId, jstring orderId){
+  //TODO purchaseEvents not complete
+//  PurchaseEvent ev(timestamp, PURCHASE_STATUS);
+//  platform->queueEvent(id, ev);
+}
+
 jint JNI_OnLoad(JavaVM *vm, void *reserved) {
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "JNI_Onload on AndroidPlatform");
   gJavaVM = vm;
