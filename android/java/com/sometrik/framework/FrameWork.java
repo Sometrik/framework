@@ -105,21 +105,6 @@ public class FrameWork extends Activity implements NativeCommandHandler {
 
     // Set up classes
     settings = new Settings(this);
-    
-    // Get PurchaseHelper. Requires App public key
-    //TODO
-  	purchaseHelper = new IabHelper(this, "");
-  	purchaseHelper.startSetup(new IabHelper.OnIabSetupFinishedListener(){
-
-			@Override
-			public void onIabSetupFinished(IabResult result) {
-				if (result.isSuccess()){
-					System.out.println("PurchaseHelper successfully setup");
-				} else {
-					System.out.println("PurchaseHelper failed to setup");
-				}
-			}
-  	});
 
     mainHandler = new Handler() {
 
@@ -133,6 +118,22 @@ public class FrameWork extends Activity implements NativeCommandHandler {
     };
 
     initNative();
+  }
+  
+  public void initializePurchaseHelper(String key){
+    // Get PurchaseHelper. Requires App public key
+  	purchaseHelper = new IabHelper(this, key);
+  	purchaseHelper.startSetup(new IabHelper.OnIabSetupFinishedListener(){
+
+			@Override
+			public void onIabSetupFinished(IabResult result) {
+				if (result.isSuccess()){
+					System.out.println("PurchaseHelper successfully setup");
+				} else {
+					System.out.println("PurchaseHelper failed to setup");
+				}
+			}
+  	});
   }
 
   private void initNative() {    
