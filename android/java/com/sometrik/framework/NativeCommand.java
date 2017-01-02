@@ -4,9 +4,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.List;
 
 import com.example.android.trivialdrivesample.util.IabHelper;
 import com.example.android.trivialdrivesample.util.IabResult;
+import com.example.android.trivialdrivesample.util.Inventory;
 import com.example.android.trivialdrivesample.util.Purchase;
 
 import android.app.AlertDialog;
@@ -196,7 +198,7 @@ public class NativeCommand {
       frame.setSharedPreferences(textValue);
       if (isSet(FLAG_USE_PURCHASES_API)){
       	System.out.println("Initializing purchaseHelper");
-      	frame.initializePurchaseHelper(textValue);
+      	sendInventory(frame.initializePurchaseHelper(textValue));
       }
       break;
     case SET_CAPTION:
@@ -437,6 +439,14 @@ public class NativeCommand {
 			}
   		
   	}, "");
+  }
+  
+  private void sendInventory(Inventory inventory){
+  	List <Purchase> purchaseList = inventory.getAllPurchases();
+  	System.out.println("getting purchase history. Purchase list size: " + purchaseList.size());
+  	for (Purchase purchase : inventory.getAllPurchases()){
+  		FrameWork.sendPurchaseHistory(purchase.getOrderId(), purchase.getSku(), purchase.getPurchaseTime() / 1000.0);
+  	}
   }
   
   private Boolean isSet(int flag) {

@@ -83,6 +83,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   public native void nativeOnStop(double timestamp, int appId);
   public native void nativeOnStart(double timestamp, int appId);
   public native void nativeOnDestroy(double timestamp, int appId);
+  public static native void sendPurchaseHistory(String orderId, String productId, double purchaseTime);
   public static native void onResize(double timestamp, float width, float height, int viewId);
   public static native void onUpdate(double timestamp, int viewId);
 
