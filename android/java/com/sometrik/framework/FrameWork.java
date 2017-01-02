@@ -499,6 +499,10 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   	purchaseHelper = null;
     nativeOnDestroy(System.currentTimeMillis() / 1000.0, appId);
   }
+  
+  public IabHelper getPurchaseHelper(){
+  	return purchaseHelper;
+  }
 
 
   //Load JNI. Framework references to make file.
