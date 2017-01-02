@@ -69,13 +69,9 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   private int appId = 0;
   private int currentView = 0;
 
-  public native void NativeOnTouch();
-  public native int GetInt(float x, float y);
-  public native String getText();
   public native void endModal(double timestamp, int value, byte[] textValue);
   public native void buttonClicked(double timestamp, int id);
   public native void textChangedEvent(double timestamp, int id, String text);
-  public native void settingsCreator(Settings settings, int id);
   public native void menuPressed(double timestamp, int viewId);
   public native void keyPressed(double timestamp, int keyId, int viewId);
   public native void touchEvent(int viewId, int mode, int fingerIndex, long time, float x, float y);
@@ -367,12 +363,6 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   //Called after option was selected from ActionSheet. Currently creates settings view
   private void optionSelected(int id) {
 
-    settings = new Settings(this);
-    // TODO: settings must be recreated to update changes
-    settingsCreator(settings, id);
-    
-
-    getFragmentManager().beginTransaction().replace(android.R.id.content, settings).addToBackStack("main").commit();
   }
 
   //Listener for built in menu options. Propably removable
