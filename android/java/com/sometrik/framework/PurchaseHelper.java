@@ -18,15 +18,7 @@ import android.os.RemoteException;
 public class PurchaseHelper {
 	
 	IInAppBillingService mService;
-	private static PurchaseHelper instance = null;
-	protected PurchaseHelper() { }
-	public static PurchaseHelper getInstance() {
-		if (instance == null) {
-			instance = new PurchaseHelper();
-		}
-		return instance;
-	}
-
+	
 	ServiceConnection mServiceConn = new ServiceConnection() {
 		@Override
 		public void onServiceDisconnected(ComponentName name) {
@@ -38,6 +30,8 @@ public class PurchaseHelper {
 			mService = IInAppBillingService.Stub.asInterface(service);
 		}
 	};
+	
+	public PurchaseHelper() { }
 
 	public ArrayList<String> getItemList(ArrayList<String> productIDList, String packageName) {
 		//Create a query with Product IDs

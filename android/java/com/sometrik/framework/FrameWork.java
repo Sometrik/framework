@@ -46,7 +46,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   private SharedPreferences.Editor editor;
   private FrameWork frameWork;
   private double updateTimer = 0;
-  private PurchaseHelper purchaseHelper = PurchaseHelper.getInstance();
+  private PurchaseHelper purchaseHelper;
   private static final int RESULT_SETTINGS = 1;
   
   private boolean drawMode = false;
@@ -101,6 +101,9 @@ public class FrameWork extends Activity implements NativeCommandHandler {
 
     // Set up classes
     settings = new Settings(this);
+    
+    // Get PurchaseHelper
+    purchaseHelper = new PurchaseHelper();
 
     mainHandler = new Handler() {
 
