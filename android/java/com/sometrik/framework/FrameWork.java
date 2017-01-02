@@ -477,7 +477,6 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   @Override 
   public void onDestroy(){
     super.onDestroy();
-    purchaseHelper.disconnect(this);
     nativeOnDestroy(System.currentTimeMillis() / 1000.0, appId);
   }
 
