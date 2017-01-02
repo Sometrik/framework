@@ -5,6 +5,10 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 
+import com.example.android.trivialdrivesample.util.IabHelper;
+import com.example.android.trivialdrivesample.util.IabResult;
+import com.example.android.trivialdrivesample.util.Purchase;
+
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -217,6 +221,8 @@ public class NativeCommand {
     case DELETE_ELEMENT:
       view.removeChild(childInternalId);
       break;
+    case BUY_PRODUCT:
+    	launchPurchase(textValue);
     default:
       System.out.println("Message couldn't be handled");
       break;
@@ -408,6 +414,24 @@ public class NativeCommand {
     alert.show();
 
     System.out.println("message dialog created");
+  }
+  
+  private void launchPurchase(final String productId){
+  	//Sku = product id from google account
+  	frame.getPurchaseHelper().launchPurchaseFlow(frame, productId, IabHelper.ITEM_TYPE_INAPP, 1, new IabHelper.OnIabPurchaseFinishedListener(){
+
+			@Override
+			public void onIabPurchaseFinished(IabResult result, Purchase info) {
+				if (result.isSuccess()){
+					System.out.println("Purchase of product id " + productId + " completed");
+					//TODO
+				} else {
+					System.out.println("Purchase of product id " + productId + " failed");
+					//TODO
+				}
+			}
+  		
+  	}, "");
   }
   
   private Boolean isSet(int flag) {
