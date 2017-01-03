@@ -42,7 +42,6 @@ class FWPlatform : public Element {
   
   virtual std::string getBundleFilename(const char * filename) = 0;
   virtual std::string getLocalFilename(const char * filename, FileType type) = 0;
-  virtual double getTime() const = 0;
   virtual std::shared_ptr<canvas::ContextFactory> createContextFactory() const = 0;
   virtual std::shared_ptr<HTTPClientFactory> createHTTPClientFactory() const = 0;
   virtual void pushEvent(const Event & ev) = 0;
@@ -130,7 +129,9 @@ class FWPlatform : public Element {
   virtual std::shared_ptr<Logger> createLogger(const std::string & name) const {
     return std::make_shared<BasicLogger>(name);
   }
-  
+
+  double getTime() const;
+
  protected:
   Logger & getLogger() {
     if (!logger.get()) {

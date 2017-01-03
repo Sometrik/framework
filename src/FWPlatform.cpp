@@ -8,6 +8,7 @@
 
 #include <iostream>
 #include <unistd.h>
+#include <sys/time.h>
 
 using namespace std;
 
@@ -138,3 +139,14 @@ FWPlatform::onSysEvent(SysEvent & ev) {
   }
 }
 
+double
+FWPlatform::getTime() const {
+  struct timeval tv;
+  struct timezone tz;
+  int r = gettimeofday(&tv, &tz);
+  double t = 0;
+  if (r == 0) {
+    t = (double)tv.tv_sec + tv.tv_usec / 1000000.0;
+  }
+  return t;
+}

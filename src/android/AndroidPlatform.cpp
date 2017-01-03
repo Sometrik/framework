@@ -29,7 +29,6 @@
 
 #include <android_fopen.h>
 #include <unistd.h>
-#include <sys/time.h>
 
 using namespace std;
 
@@ -89,25 +88,6 @@ AndroidPlatform::sendCommand(const Command & command) {
     modal_result_text = "";
     renderLoop();
   }
-}
-
-double
-AndroidPlatform::getTime() const {
-#if 1
-  struct timeval tv;
-  struct timezone tz;
-  int r = gettimeofday(&tv, &tz);
-  double t = 0;
-  if (r == 0) {
-    t = (double)tv.tv_sec + tv.tv_usec / 1000000.0;
-  }
-  return t;
-#else
-  auto env = getJNIEnv();
-  double currentTime = (double)env->CallStaticLongMethod(javaCache.systemClass, javaCache.currentTimeMillisMethod);
-
-  return currentTime;
-#endif
 }
 
 bool

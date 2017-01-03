@@ -18,7 +18,6 @@
 
 #include <cstdio>
 #include <cstdlib>
-#include <sys/time.h>
 
 using namespace std;
 
@@ -53,17 +52,6 @@ class PlatformSDL : public FWPlatform {
 public:
   PlatformSDL() : FWPlatform(1.0f) {
     CurlClientFactory::globalInit();
-  }
-
-  double getTime() const override {
-    struct timeval tv;
-    struct timezone tz;
-    int r = gettimeofday(&tv, &tz);
-    double t = 0;
-    if (r == 0) {
-      t = (double)tv.tv_sec + tv.tv_usec / 1000000.0;
-    }
-    return t;
   }
 
   void pushEvent(const Event & ev) override {
