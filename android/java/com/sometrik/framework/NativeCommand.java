@@ -445,7 +445,7 @@ public class NativeCommand {
   	List <Purchase> purchaseList = inventory.getAllPurchases();
   	System.out.println("getting purchase history. Purchase list size: " + purchaseList.size());
   	for (Purchase purchase : inventory.getAllPurchases()){
-  		FrameWork.sendPurchaseHistory(purchase.getPurchaseTime() / 1000.0, purchase.getSku(), purchase.getOrderId());
+  		FrameWork.onPurchaseEvent(purchase.getPurchaseTime() / 1000.0, purchase.getSku(), false);
   	}
   }
   

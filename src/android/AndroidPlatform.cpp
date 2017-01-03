@@ -19,6 +19,7 @@
 #include <pthread.h>
 
 #include <TouchEvent.h>
+#include <PurchaseEvent.h>
 #include <ValueEvent.h>
 #include <SysEvent.h>
 #include <CommandEvent.h>
@@ -486,10 +487,13 @@ void Java_com_sometrik_framework_FWPicker_pickerOptionSelected(JNIEnv* env, jobj
   platform->queueEvent(id, ev);
 }
 
-void Java_com_sometrik_framework_FrameWork_sendPurchaseHistory(JNIEnv* env, jclass clazz, double timestamp, jstring productId, jstring orderId){
-  //TODO purchaseEvents not complete
-//  PurchaseEvent ev(timestamp, PURCHASE_STATUS);
-//  platform->queueEvent(id, ev);
+void Java_com_sometrik_framework_FrameWork_OnPurchaseEvent(JNIEnv* env, jclass clazz, double timestamp, jstring productId, bool newPurchase){
+  const char * cstring = env->GetStringUTFChars(productId, 0);
+  //PurchaseEvent Type not used yet //TODO
+  PurchaseEvent ev(timestamp, cstring, PurchaseEvent::PURCHASE_STATUS, newPurchase);
+ //Id not used. Sent to 0 //TODO
+  platform->queueEvent(0, ev);
+  env->ReleaseStringUTFChars(productId, cstring);
 }
 
 jint JNI_OnLoad(JavaVM *vm, void *reserved) {
