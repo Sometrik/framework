@@ -8,7 +8,7 @@ public:
   enum Type {
     PURCHASE_STATUS
   };
- PurchaseEvent(double _timestamp, std::string _productId, Type _type, bool _newPurchase) : Event(_timestamp), type(_type), newPurchase(_newPurchase), productId(_productId) { }
+ PurchaseEvent(double _timestamp, const char * _productId, Type _type, bool _newPurchase) : Event(_timestamp), type(_type), newPurchase(_newPurchase), productId(_productId) { }
 
   Event * dup() const override { return new PurchaseEvent(*this); }
   void dispatch(EventHandler & element) override;
@@ -21,7 +21,7 @@ public:
  private:
   Type type;
   bool newPurchase;
-  std::string productId;
+  const char * productId;
 };
 
 #endif
