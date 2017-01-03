@@ -431,6 +431,7 @@ public class NativeCommand {
 			public void onIabPurchaseFinished(IabResult result, Purchase info) {
 				if (result.isSuccess()){
 					System.out.println("Purchase of product id " + productId + " completed");
+		  		FrameWork.onPurchaseEvent(info.getPurchaseTime() / 1000.0, info.getSku(), true);
 					//TODO
 				} else {
 					System.out.println("Purchase of product id " + productId + " failed");
