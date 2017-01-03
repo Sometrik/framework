@@ -16,7 +16,7 @@ public:
   
   Type getType() { return type; }
   bool isNew() { return newPurchase; }
-  std::string getProductId() { return productId; }
+  const char * getProductId() { return productId; }
 
  private:
   Type type;
