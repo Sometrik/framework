@@ -198,7 +198,7 @@ public class NativeCommand {
       frame.setSharedPreferences(textValue);
       if (isSet(FLAG_USE_PURCHASES_API)){
       	System.out.println("Initializing purchaseHelper");
-      	sendInventory(frame.initializePurchaseHelper(textValue));
+      	sendInventory(frame.initializePurchaseHelper(textValue2));
       }
       break;
     case SET_CAPTION:
