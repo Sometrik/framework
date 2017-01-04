@@ -51,12 +51,12 @@ public class NativeCommand {
 
   private final int FLAG_PADDING_LEFT = 1;
   private final int FLAG_PADDING_RIGHT = 2;
-  private final int FLAG_PADDING_TOP = 3;
-  private final int FLAG_PADDING_BOTTOM = 4;
-  private final int FLAG_PASSWORD = 5;
-  private final int FLAG_NUMERIC = 6;
-  private final int FLAG_HYPERLINK = 7;
-  private final int FLAG_USE_PURCHASES_API = 8;
+  private final int FLAG_PADDING_TOP = 4;
+  private final int FLAG_PADDING_BOTTOM = 8;
+  private final int FLAG_PASSWORD = 16;
+  private final int FLAG_NUMERIC = 32;
+  private final int FLAG_HYPERLINK = 64;
+  private final int FLAG_USE_PURCHASES_API = 128;
   
   public enum CommandType {
     CREATE_PLATFORM,
