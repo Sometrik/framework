@@ -3,6 +3,8 @@
 
 #include <Event.h>
 
+#include <string>
+
 class PurchaseEvent : public Event {
 public:
   enum Type {
@@ -16,12 +18,12 @@ public:
   
   Type getType() const { return type; }
   bool isNew() const { return newPurchase; }
-  const char * getProductId() const { return productId; }
+  const std::string & getProductId() const { return productId; }
 
  private:
   Type type;
   bool newPurchase;
-  const char * productId;
+  std::string productId;
 };
 
 #endif
