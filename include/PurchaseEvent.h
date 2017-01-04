@@ -14,9 +14,9 @@ public:
   void dispatch(EventHandler & element) override;
   bool isBroadcast() const override { return true; }
   
-  Type getType() { return type; }
-  bool isNew() { return newPurchase; }
-  const char * getProductId() { return productId; }
+  Type getType() const { return type; }
+  bool isNew() const { return newPurchase; }
+  const char * getProductId() const { return productId; }
 
  private:
   Type type;
