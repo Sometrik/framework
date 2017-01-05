@@ -11,7 +11,7 @@ public:
     : name(_name), full_screen(_full_screen) { }
 
  FWApplication(const char * _name, const char * _iap_public_key, bool _full_screen = false)
-   : name(_name), iap_public_key(iap_public_key), full_screen(_full_screen) { }
+   : name(_name), iap_public_key(_iap_public_key), full_screen(_full_screen) { }
 
   void initialize(FWPlatform * _platform) override {
     Element::initialize(_platform);
