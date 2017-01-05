@@ -49,9 +49,8 @@ struct node_billboard_vbo_s {
   unsigned char r, g, b, a; // 0
   glm::vec3 center_pos; // 4
   glm::uint32 node_size; // 16
-  short texture; // 20
-  unsigned short flags;
-  float pow;
+  short texture, pow; // 20
+  int node_id;
 };
 
 class VBO {
