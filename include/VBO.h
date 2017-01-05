@@ -51,6 +51,7 @@ struct node_billboard_vbo_s {
   glm::uint32 node_size; // 16
   short texture; // 20
   unsigned short flags;
+  float pow;
 };
 
 class VBO {

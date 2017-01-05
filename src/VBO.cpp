@@ -57,7 +57,8 @@ VBO::setPointers() const {
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, getStride(), (void *)(4)); // center position
     glVertexAttribPointer(2, 2, GL_HALF_FLOAT, GL_FALSE, getStride(), (void *)(16)); // size
     glVertexAttribPointer(3, 2, GL_UNSIGNED_SHORT, GL_FALSE, getStride(), (void *)(20)); // texture / flags
-    n_arrays = 4;
+    glVertexAttribPointer(4, 1, GL_FLOAT, GL_FALSE, getStride(), (void *)(24)); // pow
+    n_arrays = 5;
     break;
   case BILLBOARDS:
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, getStride(), (void *)(0 * sizeof(float)));
