@@ -368,7 +368,7 @@ void Java_com_sometrik_framework_FrameWork_touchEvent(JNIEnv* env, jobject thiz,
     break;
   case 2:
     {
-      TouchEvent ev(time / 1000.0, TouchEvent::ACTION_MOVE, x, y, fingerIndex);
+      TouchEvent ev(time / 1000.0, TouchEvent::ACTION_DRAG, x, y, fingerIndex);
       platform->queueEvent(viewId, ev);
     }
     break;

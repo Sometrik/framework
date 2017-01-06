@@ -450,12 +450,12 @@ extern FWApplication * applicationMain();
     UITouch *touch = obj;
     long long id = (long long)touch;
     CGPoint touchPoint = [touch locationInView:self];
-    TouchEvent ev(event.timestamp, TouchEvent::ACTION_MOVE, touchPoint.x, touchPoint.y, id);
+    TouchEvent ev(event.timestamp, TouchEvent::ACTION_DRAG, touchPoint.x, touchPoint.y, id);
     _platform->postEvent(_platform->getActiveViewId(), ev);
     need_update |= ev.isRedrawNeeded();
     // need_update |= _esContext->touchesMoved(touchPoint.x, touchPoint.y, event.timestamp, id);
   }];
-  TouchEvent ev(event.timestamp, TouchEvent::ACTION_MOVE, true);
+  TouchEvent ev(event.timestamp, TouchEvent::ACTION_DRAG, true);
   _platform->postEvent(_platform->getActiveViewId(), ev);
   need_update |= ev.isRedrawNeeded();
 }

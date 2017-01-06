@@ -156,11 +156,11 @@ public:
 	  break;
 	case SDL_MOUSEMOTION:
 	  if (button_pressed) {
-	    TouchEvent ev(getTime(), TouchEvent::ACTION_MOVE, event.motion.x, event.motion.y, 0);
+	    TouchEvent ev(getTime(), TouchEvent::ACTION_DRAG, event.motion.x, event.motion.y, 0);
 	    postEvent(getActiveViewId(), ev);
 	    if (ev.isRedrawNeeded()) redraw_screen = true;
 
-	    TouchEvent ev2(getTime(), TouchEvent::ACTION_MOVE, true);
+	    TouchEvent ev2(getTime(), TouchEvent::ACTION_DRAG, true);
 	    postEvent(getActiveViewId(), ev2);
 	    if (ev2.isRedrawNeeded()) redraw_screen = true;
 	  }
