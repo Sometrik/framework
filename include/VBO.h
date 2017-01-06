@@ -51,6 +51,7 @@ struct node_billboard_vbo_s {
   glm::uint32 node_size; // 16
   short texture, pow; // 20
   int node_id;
+  float aspect_ratio;
 };
 
 class VBO {
