@@ -31,7 +31,8 @@ struct billboard_data_s {
 
 struct line_data_s {
   unsigned char r, g, b, a;
-  glm::vec3 position, other_position;
+  glm::vec3 position;
+  glm::uint32 other_dir;
   glm::uint32 node_size;
 };
 
