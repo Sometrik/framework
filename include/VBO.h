@@ -97,6 +97,8 @@ class VBO {
   unsigned int getNumIndices() const { return num_indices; }
   unsigned int getNumElements() const { return num_elements; }
 
+  void setBaseInstanceSize(unsigned int n) { base_instance_size = n; }
+
   const std::shared_ptr<canvas::Texture> & getTexture() const { return texture; }
   void setTexture(const std::shared_ptr<canvas::Texture> & _texture) { texture = _texture; } 
   void clearTexture() { texture.reset(); }
@@ -118,7 +120,7 @@ class VBO {
   DrawType default_draw_type = NONE;
   DataType data_type = T2F_N3F_V3F;
   int stride = 0;
-  unsigned int num_indices = 0, num_elements = 0;  
+  unsigned int num_indices = 0, num_elements = 0, base_instance_size = 0;
   bool is_dynamic;
   bool data_uploaded = false, indices_uploaded = false;
 

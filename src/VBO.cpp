@@ -59,6 +59,13 @@ VBO::setPointers() const {
     glVertexAttribPointer(3, 2, GL_UNSIGNED_SHORT, GL_FALSE, getStride(), (void *)(20)); // texture / power
     glVertexAttribPointer(4, 1, GL_INT, GL_FALSE, getStride(), (void *)(24)); // node_id
     glVertexAttribPointer(5, 1, GL_FLOAT, GL_FALSE, getStride(), (void *)(28)); // aspect_ratio
+
+    glVertexAttribDivisor(0, 1);
+    glVertexAttribDivisor(1, 1);
+    glVertexAttribDivisor(2, 1);
+    glVertexAttribDivisor(3, 1);
+    glVertexAttribDivisor(4, 1);
+    glVertexAttribDivisor(5, 1);
     n_arrays = 6;
     break;
   case BILLBOARDS:
@@ -158,7 +165,10 @@ VBO::draw(DrawType type) {
   if (!hasVertexArrayObjects()) {
     setPointers();
   }
-  if (!num_indices) {
+  if (base_instance_size) {
+    assert(!num_indices);
+    glDrawArraysInstanced(getGLDrawType(type), 0, base_instance_size, num_elements);
+  } else if (!num_indices) {
     // cerr << "drawing A: " << num_elements << endl;
     glDrawArrays(getGLDrawType(type), 0, num_elements);
   } else {
