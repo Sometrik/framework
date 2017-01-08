@@ -81,7 +81,6 @@ class VBO {
   void setDrawType(DrawType type) { default_draw_type = type; }
 
   void draw(DrawType type = NONE);
-  void draw(DrawType type, const std::vector<int> & indices);
 
   void quad2d(float x1, float y1,
 	      float x2, float y2,
