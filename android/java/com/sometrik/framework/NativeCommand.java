@@ -191,19 +191,30 @@ public class NativeCommand {
       view.addOption(getValue(), getTextValue());
       break;
     case POST_NOTIFICATION:
-      frame.createNotification(getTextValue(), getTextValue2());
-      break;
-    case CREATE_APPLICATION:
-      frame.setAppId(getInternalId());
-      frame.setSharedPreferences(textValue);
-      if (isSet(FLAG_USE_PURCHASES_API)){
-      	System.out.println("Initializing purchaseHelper");
-      	sendInventory(frame.initializePurchaseHelper(textValue2));
-      }
-      break;
-    case SET_CAPTION:
-      frame.setTitle(getTextValue());
-      break;
+			frame.createNotification(getTextValue(), getTextValue2());
+			break;
+		case CREATE_APPLICATION:
+			frame.setAppId(getInternalId());
+			frame.setSharedPreferences(textValue);
+			// if (isSet(FLAG_USE_PURCHASES_API)){
+			System.out.println("Initializing purchaseHelper");
+			frame.initializePurchaseHelper(textValue2, new IabHelper.OnIabSetupFinishedListener() {
+
+				@Override
+				public void onIabSetupFinished(IabResult result) {
+					if (result.isSuccess()) {
+						System.out.println("PurchaseHelper successfully setup");
+						sendInventory(frame.getPurchaseHelperInventory());
+					} else {
+						System.out.println("PurchaseHelper failed to setup");
+					}
+				}
+			});
+			// }
+			break;
+		case SET_CAPTION:
+			frame.setTitle(getTextValue());
+			break;
     case LAUNCH_BROWSER:
       frame.launchBrowser(getTextValue());
       break;

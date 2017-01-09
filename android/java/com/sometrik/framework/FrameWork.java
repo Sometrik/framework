@@ -118,27 +118,23 @@ public class FrameWork extends Activity implements NativeCommandHandler {
     initNative();
   }
   
-  public Inventory initializePurchaseHelper(String key){
+  public Boolean initializePurchaseHelper(String key, IabHelper.OnIabSetupFinishedListener listener) {
     // Get PurchaseHelper. Requires App public key
   	purchaseHelper = new IabHelper(this, key);
-  	purchaseHelper.startSetup(new IabHelper.OnIabSetupFinishedListener(){
-
-			@Override
-			public void onIabSetupFinished(IabResult result) {
-				if (result.isSuccess()){
-					System.out.println("PurchaseHelper successfully setup");
-				} else {
-					System.out.println("PurchaseHelper failed to setup");
-				}
-			}
-  	});
+  	purchaseHelper.startSetup(listener);
+		return true;
+  }
+  
+  public Inventory getPurchaseHelperInventory() {
+  	System.out.println("about to query purchaseHelper inventory");
   	try {
 			inventory = purchaseHelper.queryInventory(true, null);
+			return inventory;
 		} catch (IabException e) {
 			System.out.println("Exception getting inventory with message: " + e.getMessage());
 			e.printStackTrace();
 		}
-		return inventory;
+  	return null;
   }
 
   private void initNative() {    
