@@ -13,7 +13,7 @@ public class FWPicker extends Spinner implements NativeCommandHandler {
   
   private Context context;
   private ArrayAdapter<String> adapter;
-  private TreeMap<Integer, String> valueMap;
+  private TreeMap<Long, String> valueMap;
   private final int id;
   
   private native void pickerOptionSelected(double timestamp, int id, int position);
@@ -21,7 +21,7 @@ public class FWPicker extends Spinner implements NativeCommandHandler {
   public FWPicker(Context context) {
     super(context);
     adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item);
-    valueMap = new TreeMap<Integer, String>();
+    valueMap = new TreeMap<Long, String>();
     id = getId();
     this.context = context;
     
@@ -58,10 +58,10 @@ public class FWPicker extends Spinner implements NativeCommandHandler {
   }
 
   @Override
-  public void addOption(int position, String text) {
+  public void addOption(long optionId, String text) {
     adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item);
-    valueMap.put(position, text);
-    for(Entry<Integer, String> entry : valueMap.entrySet()) {
+    valueMap.put(optionId, text);
+    for(Entry<Long, String> entry : valueMap.entrySet()) {
 	adapter.add(entry.getValue());
     }
     setAdapter(adapter);
