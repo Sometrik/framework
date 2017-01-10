@@ -482,8 +482,8 @@ void Java_com_sometrik_framework_FrameWork_textChangedEvent(JNIEnv* env, jobject
   platform->queueEvent(id, ev);
 }
 
-void Java_com_sometrik_framework_FWPicker_pickerOptionSelected(JNIEnv* env, jobject thiz, double timestamp, jint id, jint position){
-  ValueEvent ev(timestamp, position);
+void Java_com_sometrik_framework_FWPicker_intChangedEvent(JNIEnv* env, jobject thiz, double timestamp, jint id, jint changedInt){
+  ValueEvent ev(timestamp, changedInt);
   platform->queueEvent(id, ev);
 }
 
