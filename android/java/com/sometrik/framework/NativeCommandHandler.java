@@ -6,7 +6,7 @@ public interface NativeCommandHandler {
   public void addChild(View view);
   public void removeChild(int id);
   public void showView();
-  public void addOption(long optionId, String text);
+  public void addOption(int optionId, String text);
   
   public int getElementId();
 }

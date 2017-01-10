@@ -524,7 +524,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
     System.out.println("FrameWork couldn't handle addChild");
   }
   @Override
-  public void addOption(long optionId, String text) {
+  public void addOption(int optionId, String text) {
     System.out.println("FrameWork couldn't handle addOption");
   }
   @Override
