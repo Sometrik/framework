@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import com.example.android.trivialdrivesample.util.IabException;
 import com.example.android.trivialdrivesample.util.IabHelper;
+import com.example.android.trivialdrivesample.util.IabHelper.IabAsyncInProgressException;
 import com.example.android.trivialdrivesample.util.IabResult;
 import com.example.android.trivialdrivesample.util.Inventory;
 
@@ -117,24 +118,24 @@ public class FrameWork extends Activity implements NativeCommandHandler {
 
     initNative();
   }
-  
+
   public Boolean initializePurchaseHelper(String key, IabHelper.OnIabSetupFinishedListener listener) {
     // Get PurchaseHelper. Requires App public key
-  	purchaseHelper = new IabHelper(this, key);
-  	purchaseHelper.startSetup(listener);
-		return true;
+    purchaseHelper = new IabHelper(this, key);
+    purchaseHelper.startSetup(listener);
+    return true;
   }
-  
+
   public Inventory getPurchaseHelperInventory() {
-  	System.out.println("about to query purchaseHelper inventory");
-  	try {
-			inventory = purchaseHelper.queryInventory(true, null);
-			return inventory;
-		} catch (IabException e) {
-			System.out.println("Exception getting inventory with message: " + e.getMessage());
-			e.printStackTrace();
-		}
-  	return null;
+    System.out.println("about to query purchaseHelper inventory");
+    try {
+      inventory = purchaseHelper.queryInventory();
+      return inventory;
+    } catch (IabException e) {
+      System.out.println("Exception getting inventory with message: " + e.getMessage());
+      e.printStackTrace();
+    }
+    return null;
   }
 
   private void initNative() {    
@@ -490,7 +491,12 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   public void onDestroy(){
     super.onDestroy();
     if (purchaseHelper != null){
-    	purchaseHelper.dispose();
+    	try {
+	  purchaseHelper.dispose();
+	} catch (IabAsyncInProgressException e) {
+	  e.printStackTrace();
+	  System.out.println("Error in disposing purchaseHelper with message: " + e.getMessage());
+	}
     }
   	purchaseHelper = null;
     nativeOnDestroy(System.currentTimeMillis() / 1000.0, appId);
