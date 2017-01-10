@@ -13,11 +13,11 @@ import android.widget.Spinner;
 public class FWPicker extends Spinner implements NativeCommandHandler {
   
   private Context context;
+  private FrameWork frame;
   private ArrayAdapter<String> adapter;
   private ArrayList<Integer> idList;
   private final int id;
   
-  private native void pickerOptionSelected(double timestamp, int id, int position);
 
   public FWPicker(Context context) {
     super(context);
@@ -25,12 +25,13 @@ public class FWPicker extends Spinner implements NativeCommandHandler {
     idList = new ArrayList<Integer>();
     id = getId();
     this.context = context;
+    this.frame = (FrameWork)context;
     
     setOnItemSelectedListener(new OnItemSelectedListener() {
 
       @Override
       public void onItemSelected(AdapterView<?> view, View arg1, int position, long itemId) {
-	pickerOptionSelected(System.currentTimeMillis() / 1000.0, id, idList.get(position));
+	frame.intChangedEvent(System.currentTimeMillis() / 1000.0, id, idList.get(position));
       }
 
       @Override

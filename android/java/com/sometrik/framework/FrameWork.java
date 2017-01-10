@@ -74,6 +74,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   public native void endModal(double timestamp, int value, byte[] textValue);
   public native void buttonClicked(double timestamp, int id);
   public native void textChangedEvent(double timestamp, int id, String text);
+  public native void intChangedEvent(double timestamp, int id, int optionId);
   public native void menuPressed(double timestamp, int viewId);
   public native void keyPressed(double timestamp, int keyId, int viewId);
   public native void touchEvent(int viewId, int mode, int fingerIndex, long time, float x, float y);
