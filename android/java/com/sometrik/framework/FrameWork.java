@@ -2,11 +2,11 @@ package com.sometrik.framework;
 
 import java.util.HashMap;
 
-import com.example.android.trivialdrivesample.util.IabException;
-import com.example.android.trivialdrivesample.util.IabHelper;
-import com.example.android.trivialdrivesample.util.IabHelper.IabAsyncInProgressException;
-import com.example.android.trivialdrivesample.util.IabResult;
-import com.example.android.trivialdrivesample.util.Inventory;
+import com.android.trivialdrivesample.util.IabException;
+import com.android.trivialdrivesample.util.IabHelper;
+import com.android.trivialdrivesample.util.IabHelper.IabAsyncInProgressException;
+import com.android.trivialdrivesample.util.IabResult;
+import com.android.trivialdrivesample.util.Inventory;
 
 import android.R.bool;
 import android.app.Activity;

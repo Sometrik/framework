@@ -6,11 +6,11 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.example.android.trivialdrivesample.util.IabHelper;
-import com.example.android.trivialdrivesample.util.IabHelper.IabAsyncInProgressException;
-import com.example.android.trivialdrivesample.util.IabResult;
-import com.example.android.trivialdrivesample.util.Inventory;
-import com.example.android.trivialdrivesample.util.Purchase;
+import com.android.trivialdrivesample.util.IabHelper;
+import com.android.trivialdrivesample.util.IabHelper.IabAsyncInProgressException;
+import com.android.trivialdrivesample.util.IabResult;
+import com.android.trivialdrivesample.util.Inventory;
+import com.android.trivialdrivesample.util.Purchase;
 
 import android.app.AlertDialog;
 import android.content.Context;
