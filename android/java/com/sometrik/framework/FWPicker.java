@@ -31,7 +31,7 @@ public class FWPicker extends Spinner implements NativeCommandHandler {
 
       @Override
       public void onItemSelected(AdapterView<?> view, View arg1, int position, long itemId) {
-	frame.intChangedEvent(System.currentTimeMillis() / 1000.0, id, idList.get(position));
+	frame.intChangedEvent(System.currentTimeMillis() / 1000.0, getId(), idList.get(position));
       }
 
       @Override
