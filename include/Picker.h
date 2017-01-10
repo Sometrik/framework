@@ -18,6 +18,9 @@ class Picker : public Element {
   }
 
   void addOption(int id, const std::string & name) {
+    if (options.empty()){
+      value = id;
+    }
     options.push_back(std::pair<int, std::string>(id, name));
     if (isInitialized()) {
       initializeOption(options.back());
@@ -37,7 +40,7 @@ class Picker : public Element {
   }
 
  private:
-  int value;
+  int value = 0;
   std::vector<std::pair<int, std::string> > options;
 };
 
