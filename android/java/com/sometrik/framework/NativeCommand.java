@@ -58,7 +58,7 @@ public class NativeCommand {
   private final int FLAG_NUMERIC = 32;
   private final int FLAG_HYPERLINK = 64;
   private final int FLAG_USE_PURCHASES_API = 128;
-  
+ 
   public enum CommandType {
     CREATE_PLATFORM,
     CREATE_APPLICATION,
@@ -197,21 +197,21 @@ public class NativeCommand {
     case CREATE_APPLICATION:
       frame.setAppId(getInternalId());
       frame.setSharedPreferences(textValue);
-      // if (isSet(FLAG_USE_PURCHASES_API)){
-      System.out.println("Initializing purchaseHelper");
-      frame.initializePurchaseHelper(textValue2, new IabHelper.OnIabSetupFinishedListener() {
+      if (isSet(FLAG_USE_PURCHASES_API)) {
+	System.out.println("Initializing purchaseHelper");
+	frame.initializePurchaseHelper(textValue2, new IabHelper.OnIabSetupFinishedListener() {
 
-	@Override
-	public void onIabSetupFinished(IabResult result) {
-	  if (result.isSuccess()) {
-	    System.out.println("PurchaseHelper successfully setup");
-	    sendInventory(frame.getPurchaseHelperInventory());
-	  } else {
-	    System.out.println("PurchaseHelper failed to setup");
+	  @Override
+	  public void onIabSetupFinished(IabResult result) {
+	    if (result.isSuccess()) {
+	      System.out.println("PurchaseHelper successfully setup");
+	      sendInventory(frame.getPurchaseHelperInventory());
+	    } else {
+	      System.out.println("PurchaseHelper failed to setup");
+	    }
 	  }
-	}
-      });
-      // }
+	});
+      }
       break;
     case SET_CAPTION:
       frame.setTitle(getTextValue());
@@ -242,7 +242,7 @@ public class NativeCommand {
       break;
     case BUY_PRODUCT:
       try {
-	launchPurchase(textValue);
+	launchPurchase("com.sometrik.formtest.coin");
       } catch (IabAsyncInProgressException e) {
 	e.printStackTrace();
 	System.out.println("Error on launchPurchase with message: " + e.getMessage());
