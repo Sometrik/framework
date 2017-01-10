@@ -49,7 +49,7 @@ public class FWTable extends TableLayout implements NativeCommandHandler {
   }
 
   @Override
-  public void addOption(int position, String text) {
+  public void addOption(long optionId, String text) {
   }
 
   @Override

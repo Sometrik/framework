@@ -1,7 +1,5 @@
 package com.sometrik.framework;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,10 +11,8 @@ import com.android.trivialdrivesample.util.Inventory;
 import com.android.trivialdrivesample.util.Purchase;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
-import android.content.SharedPreferences;
 import android.text.Editable;
 import android.text.Html;
 import android.text.InputType;
@@ -27,6 +23,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -158,7 +157,18 @@ public class NativeCommand {
       //add listener
       view.addChild(click);
       break;
-
+      
+    case CREATE_CHECKBOX:
+      CheckBox checkbox = new CheckBox(frame);
+      checkbox.setId(childInternalId);
+      view.addChild(checkbox);
+      checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
+	@Override
+	public void onCheckedChanged(CompoundButton box, boolean isChecked) {
+	  
+	}
+      });
+      break;
     case CREATE_NATIVE_OPENGL_VIEW:
       NativeSurface surface = frame.createNativeOpenGLView(childInternalId);
       surface.showView();

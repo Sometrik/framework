@@ -38,7 +38,7 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
   }
 
   @Override
-  public void addOption(int position, String text) {
+  public void addOption(long optionId, String text) {
     System.out.println("Native Surface couldn't handle command");
   }
 
