@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.example.android.trivialdrivesample.util.IabHelper;
+import com.example.android.trivialdrivesample.util.IabHelper.IabAsyncInProgressException;
 import com.example.android.trivialdrivesample.util.IabResult;
 import com.example.android.trivialdrivesample.util.Inventory;
 import com.example.android.trivialdrivesample.util.Purchase;
@@ -240,7 +241,12 @@ public class NativeCommand {
       view.removeChild(childInternalId);
       break;
     case BUY_PRODUCT:
-    	launchPurchase(textValue);
+      try {
+	launchPurchase(textValue);
+      } catch (IabAsyncInProgressException e) {
+	e.printStackTrace();
+	System.out.println("Error on launchPurchase with message: " + e.getMessage());
+      }
     default:
       System.out.println("Message couldn't be handled");
       break;
@@ -433,24 +439,24 @@ public class NativeCommand {
 
     System.out.println("message dialog created");
   }
-  
-  private void launchPurchase(final String productId){
-  	//Sku = product id from google account
-  	frame.getPurchaseHelper().launchPurchaseFlow(frame, productId, IabHelper.ITEM_TYPE_INAPP, 1, new IabHelper.OnIabPurchaseFinishedListener(){
 
-			@Override
-			public void onIabPurchaseFinished(IabResult result, Purchase info) {
-				if (result.isSuccess()){
-					System.out.println("Purchase of product id " + productId + " completed");
-		  		FrameWork.onPurchaseEvent(info.getPurchaseTime() / 1000.0, info.getSku(), true);
-					//TODO
-				} else {
-					System.out.println("Purchase of product id " + productId + " failed");
-					//TODO
-				}
-			}
-  		
-  	}, "");
+  private void launchPurchase(final String productId) throws IabAsyncInProgressException {
+    // Sku = product id from google account
+    frame.getPurchaseHelper().launchPurchaseFlow(frame, productId, IabHelper.ITEM_TYPE_INAPP, null, 1, new IabHelper.OnIabPurchaseFinishedListener() {
+
+      @Override
+      public void onIabPurchaseFinished(IabResult result, Purchase info) {
+	if (result.isSuccess()) {
+	  System.out.println("Purchase of product id " + productId + " completed");
+	  FrameWork.onPurchaseEvent(info.getPurchaseTime() / 1000.0, info.getSku(), true);
+	  // TODO
+	} else {
+	  System.out.println("Purchase of product id " + productId + " failed");
+	  // TODO
+	}
+      }
+
+    }, "");
   }
   
   private void sendInventory(Inventory inventory){
