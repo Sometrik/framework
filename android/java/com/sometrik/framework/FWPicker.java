@@ -1,5 +1,6 @@
 package com.sometrik.framework;
 
+import java.util.ArrayList;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
@@ -13,7 +14,7 @@ public class FWPicker extends Spinner implements NativeCommandHandler {
   
   private Context context;
   private ArrayAdapter<String> adapter;
-  private TreeMap<Long, String> valueMap;
+  private ArrayList<Integer> idList;
   private final int id;
   
   private native void pickerOptionSelected(double timestamp, int id, int position);
@@ -21,15 +22,15 @@ public class FWPicker extends Spinner implements NativeCommandHandler {
   public FWPicker(Context context) {
     super(context);
     adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item);
-    valueMap = new TreeMap<Long, String>();
+    idList = new ArrayList<Integer>();
     id = getId();
     this.context = context;
     
     setOnItemSelectedListener(new OnItemSelectedListener() {
 
       @Override
-      public void onItemSelected(AdapterView<?> arg0, View arg1, int position, long arg3) {
-	pickerOptionSelected(System.currentTimeMillis() / 1000.0, id, position);
+      public void onItemSelected(AdapterView<?> view, View arg1, int position, long itemId) {
+	pickerOptionSelected(System.currentTimeMillis() / 1000.0, id, idList.get(position));
       }
 
       @Override
@@ -58,12 +59,9 @@ public class FWPicker extends Spinner implements NativeCommandHandler {
   }
 
   @Override
-  public void addOption(long optionId, String text) {
-    adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item);
-    valueMap.put(optionId, text);
-    for(Entry<Long, String> entry : valueMap.entrySet()) {
-	adapter.add(entry.getValue());
-    }
+  public void addOption(int optionId, String text) {
+    idList.add(optionId);
+    adapter.add(text);
     setAdapter(adapter);
   }
 
