@@ -27,7 +27,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -35,6 +34,7 @@ import android.widget.PopupMenu;
 import android.widget.PopupMenu.OnMenuItemClickListener;
 import android.widget.ScrollView;
 import android.widget.Switch;
+import android.widget.TableLayout;
 import android.widget.TextView;
 
 public class NativeCommand {
@@ -294,7 +294,7 @@ public class NativeCommand {
   private FWLayout createLinearLayout() {
     FWLayout layout = new FWLayout(frame);
     LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-    params.weight = 0;
+    params.weight = 1.0f;
     params.gravity = Gravity.FILL;
     layout.setBaselineAligned(false);
     layout.setLayoutParams(params);
@@ -326,9 +326,11 @@ public class NativeCommand {
     final EditText editText = new EditText(frame);
     editText.setId(getChildInternalId());
     editText.setText(getTextValue());
-    ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT);
+    TableLayout.LayoutParams params = new TableLayout.LayoutParams(TableLayout.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT);
+    params.weight = 1.0f;
+    params.gravity = Gravity.FILL;
     editText.setLayoutParams(params);
-    editText.setMinimumWidth(400000 / (int) frame.getScreenWidth());
+    editText.setMinimumWidth(120000 / (int) frame.getScreenWidth());
     if (isSet(FLAG_PASSWORD) && isSet(FLAG_NUMERIC)){
       editText.setInputType(InputType.TYPE_NUMBER_VARIATION_PASSWORD);
     } else if (isSet(FLAG_PASSWORD)) {
@@ -357,7 +359,9 @@ public class NativeCommand {
   private TextView createTextView() {
     TextView textView = new TextView(frame);
     textView.setId(getChildInternalId());
-    ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT);
+    TableLayout.LayoutParams params = new TableLayout.LayoutParams(TableLayout.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT);
+    params.weight = 1.0f;
+    params.gravity = Gravity.FILL;
     textView.setLayoutParams(params);
     
     if (isSet(FLAG_HYPERLINK)) {
