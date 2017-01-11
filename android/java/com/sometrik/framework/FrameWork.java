@@ -54,6 +54,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   private IabHelper purchaseHelper;
   private static final int RESULT_SETTINGS = 1;
   private Inventory inventory;
+  private DisplayMetrics displayMetrics;
   
   private boolean drawMode = false;
 
@@ -101,7 +102,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
     linear.setId(-1);
 
     // Init for screen settings
-    getDisplayMetrics();
+    setupDisplayMetrics();
 
     // Set up classes
     settings = new Settings(this);
@@ -140,7 +141,6 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   }
 
   private void initNative() {    
-    DisplayMetrics displayMetrics = getDisplayMetrics();
     System.out.println("Display scale: " + displayMetrics.scaledDensity);
     float xSize = displayMetrics.widthPixels / displayMetrics.scaledDensity;
     float ySize = displayMetrics.heightPixels / displayMetrics.scaledDensity;
@@ -148,12 +148,12 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   }
 
   // Get screen settings
-  public DisplayMetrics getDisplayMetrics() {
-    DisplayMetrics displaymetrics = new DisplayMetrics();
-    getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
-    screenHeight = displaymetrics.heightPixels;
-    screenWidth = displaymetrics.widthPixels;
-    return displaymetrics;
+  public DisplayMetrics setupDisplayMetrics() {
+    displayMetrics = new DisplayMetrics();
+    getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+    screenHeight = displayMetrics.heightPixels;
+    screenWidth = displayMetrics.widthPixels;
+    return displayMetrics;
   }
   
   public void setSharedPreferences(String textValue){
