@@ -18,10 +18,12 @@ import android.text.Html;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -289,8 +291,13 @@ public class NativeCommand {
     menu.getMenu().add(Menu.NONE, optionId, Menu.NONE, optionText);
   }
   
-  private FWLayout createLinearLayout(){
+  private FWLayout createLinearLayout() {
     FWLayout layout = new FWLayout(frame);
+    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+    params.weight = 0;
+    params.gravity = Gravity.FILL;
+    layout.setBaselineAligned(false);
+    layout.setLayoutParams(params);
     layout.setId(getChildInternalId());
     FrameWork.addToViewList(layout);
     if (getValue() == 2) {
@@ -319,6 +326,8 @@ public class NativeCommand {
     final EditText editText = new EditText(frame);
     editText.setId(getChildInternalId());
     editText.setText(getTextValue());
+    ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT);
+    editText.setLayoutParams(params);
     editText.setMinimumWidth(400000 / (int) frame.getScreenWidth());
     if (isSet(FLAG_PASSWORD) && isSet(FLAG_NUMERIC)){
       editText.setInputType(InputType.TYPE_NUMBER_VARIATION_PASSWORD);
@@ -348,6 +357,9 @@ public class NativeCommand {
   private TextView createTextView() {
     TextView textView = new TextView(frame);
     textView.setId(getChildInternalId());
+    ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT);
+    textView.setLayoutParams(params);
+    
     if (isSet(FLAG_HYPERLINK)) {
       textView.setMovementMethod(LinkMovementMethod.getInstance());
       String text = "<a href='" + textValue2 + "'>" + textValue + "</a>";
