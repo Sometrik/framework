@@ -1,11 +1,11 @@
 #ifndef _TEXTFIELD_H_
 #define _TEXTFIELD_H_
 
-#include <Element.h>
+#include <InputElement.h>
 #include <Command.h>
 #include <ValueEvent.h>
 
-class TextField : public Element {
+class TextField : public InputElement {
  public:
  TextField() { }
 
@@ -18,6 +18,7 @@ class TextField : public Element {
 
   void onValueEvent(ValueEvent & ev) override {
     value = ev.getTextValue();
+    notify(value);
   }
 
   const std::string & getValue() { return value; }
