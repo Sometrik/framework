@@ -162,8 +162,13 @@ public class NativeCommand {
       
     case CREATE_SWITCH:
       Switch click = new Switch(frame);
-      // TODO
-      //add listener
+      click.setId(childInternalId);
+      if (textValue != "") {
+	  click.setTextOn(textValue);
+	  if (textValue2 == "") click.setTextOff(textValue);
+      }
+      if (textValue2 != "") click.setTextOff(textValue2);
+      // TODO: add listener
       view.addChild(click);
       break;
 
