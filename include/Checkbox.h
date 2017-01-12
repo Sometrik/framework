@@ -9,11 +9,12 @@
 
 class Checkbox : public Element {
  public:
-  Checkbox() { }
+  Checkbox(const std::string & _label) : label(_label){ }
 
   void initialize(FWPlatform * _platform) override {
     Element::initialize(_platform);
     Command c(Command::CREATE_CHECKBOX, getParentInternalId(), getInternalId());
+    c.setTextValue(label);
     sendCommand(c);
   }
 
@@ -29,6 +30,7 @@ class Checkbox : public Element {
 
  private:
   bool checked = false;
+  std::string label;
 };
 
 #endif
