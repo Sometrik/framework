@@ -17,6 +17,14 @@ class Checkbox : public Element {
     sendCommand(c);
   }
 
+  void onValueEvent(ValueEvent & ev) override {
+    if (ev.getValue() == 0){
+      checked = false;
+    } else {
+      checked = true;
+    }
+  }
+
   bool isChecked() { return checked; }
 
  private:
