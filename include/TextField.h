@@ -13,7 +13,7 @@ class TextField : public Element {
     Element::initialize(_platform);
     Command c(Command::CREATE_TEXTFIELD, getParentInternalId(), getInternalId());
     c.setLayoutWeight(getLayoutWeight());
-    sendCommand();
+    sendCommand(c);
   }
 
   void onValueEvent(ValueEvent & ev) override {
