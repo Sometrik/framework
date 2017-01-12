@@ -78,7 +78,9 @@ class Command {
   int getWidth(){ return width; }
   void setHeight(int _height) { height = _height; }
   int getHeight() { return height; }
-
+  void setLayoutWeight(int _layout_weight) { layout_weight = _layout_weight; }
+  int getLayoutWeight() const { return layout_weight; }
+  
   void setFlags(unsigned int _flags) { flags = _flags; }
   unsigned int getFlags() const { return flags; }
 
@@ -88,7 +90,7 @@ class Command {
   int value;
   std::string key;
   std::string textValue, textValue2;
-  int width = 0, height = 0;
+  int width = 0, height = 0, layout_weight = 0;
   unsigned int flags = 0;
 };
 

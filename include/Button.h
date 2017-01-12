@@ -18,6 +18,7 @@ class Button : public UIElement {
     Element::initialize(_platform);
     Command c(Command::CREATE_BUTTON, getParentInternalId(), getInternalId());
     c.setTextValue(label);
+    c.setLayoutWeight(getLayoutWeight());
     sendCommand(c);
   }
 

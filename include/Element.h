@@ -126,6 +126,7 @@ protected:
   int internal_id = 0, id = 0;
   std::string name;
   std::vector<std::shared_ptr<Element> > children;
+  int layout_weight = 0;
   unsigned int flags;
 };
 

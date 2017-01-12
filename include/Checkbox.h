@@ -15,6 +15,7 @@ class Checkbox : public Element {
     Element::initialize(_platform);
     Command c(Command::CREATE_CHECKBOX, getParentInternalId(), getInternalId());
     c.setTextValue(label);
+    c.setLayoutWeight(getLayoutWeight());
     sendCommand(c);
   }
 

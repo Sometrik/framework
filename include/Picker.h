@@ -11,7 +11,9 @@ class Picker : public Element {
   
   void initialize(FWPlatform * _platform) override {
     Element::initialize(_platform);
-    sendCommand(Command(Command::CREATE_PICKER, getParentInternalId(), getInternalId()));
+    Command c(Command::CREATE_PICKER, getParentInternalId(), getInternalId());
+    c.setLayoutWeight(getLayoutWeight());
+    sendCommand(c);
     for (auto & o : options) {
       initializeOption(o);
     }
