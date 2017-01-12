@@ -93,7 +93,6 @@ public class NativeCommand {
     SET_VALUE, //Sets value of textfields.
     SET_LABEL, //this sets label for buttons and labels.
     SET_ATTRIBUTE,
-    SET_CAPTION,
     UPDATE_PREFERENCE,
     ADD_OPTION,
     QUIT_APP,
@@ -243,9 +242,6 @@ public class NativeCommand {
 	  }
 	});
       }
-      break;
-    case SET_CAPTION:
-      frame.setTitle(getTextValue());
       break;
     case LAUNCH_BROWSER:
       frame.launchBrowser(getTextValue());
