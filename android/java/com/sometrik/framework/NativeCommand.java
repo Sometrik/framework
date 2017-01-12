@@ -80,6 +80,7 @@ public class NativeCommand {
     CREATE_RADIO_GROUP,
     CREATE_SEPARATOR,
     CREATE_SLIDER,
+    CREATE_SCROLLVIEW,
     SET_USER_ID,
     DELETE_ELEMENT,
     SHOW_VIEW,

@@ -28,6 +28,7 @@ class Command {
     CREATE_RADIO_GROUP,
     CREATE_SEPARATOR,
     CREATE_SLIDER,
+    CREATE_SCROLLVIEW,
     SET_USER_ID, // Sets the user assignable id of element
     DELETE_ELEMENT,
     SHOW_VIEW,
