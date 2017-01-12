@@ -1,15 +1,14 @@
 #ifndef _CHECKBOX_H_
 #define _CHECKBOX_H_
 
-#include <Element.h>
+#include <InputElement.h>
 
 #include <Command.h>
-#include <CommandEvent.h>
 #include <FWPlatform.h>
 
-class Checkbox : public Element {
+class Checkbox : public InputElement {
  public:
-  Checkbox(const std::string & _label) : label(_label){ }
+  Checkbox(const std::string & _label) : label(_label) { }
 
   void initialize(FWPlatform * _platform) override {
     Element::initialize(_platform);
@@ -20,17 +19,14 @@ class Checkbox : public Element {
   }
 
   void onValueEvent(ValueEvent & ev) override {
-    if (ev.getValue() == 0){
-      checked = false;
-    } else {
-      checked = true;
-    }
+    value = ev.getValue() != 0;
+    notify(value);
   }
 
-  bool isChecked() { return checked; }
+  bool isChecked() { return value; }
 
  private:
-  bool checked = false;
+  bool value = false;
   std::string label;
 };
 
