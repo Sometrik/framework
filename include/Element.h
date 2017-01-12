@@ -47,6 +47,9 @@ class Element : public EventHandler {
 
   unsigned int getFlags() const { return flags; }
 
+  void setLayoutWeight(int w) { layout_weight = w; }
+  int getLayoutWeight() const { return layout_weight; }
+
   FWPlatform & getPlatform() { return *platform; }
   const FWPlatform & getPlatform() const { return *platform; }
 
