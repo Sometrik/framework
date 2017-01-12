@@ -39,7 +39,7 @@ VBO::clear() {
     glDeleteBuffers(1, &indexVbo);
     indexVbo = 0;    
   }
-  num_indices = num_elements = 0;
+  num_indices = num_vertices = 0;
   data_uploaded = indices_uploaded = false;
 }
 
@@ -119,7 +119,7 @@ VBO::upload(DataType type, const void * ptr, size_t size) {
   case VBO::ARCS_3D: stride = sizeof(arc_data_3d_s); break;
   }
   
-  num_elements = size / stride;
+  num_vertices = size / stride;
   if (hasVertexArrayObjects()) {
     if (!vao) glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
@@ -159,10 +159,10 @@ VBO::draw(DrawType type) {
   }
   if (base_instance_size) {
     assert(!num_indices);
-    glDrawArraysInstanced(getGLDrawType(type), 0, base_instance_size, num_elements);
+    glDrawArraysInstanced(getGLDrawType(type), 0, base_instance_size, num_vertices);
   } else if (!num_indices) {
-    // cerr << "drawing A: " << num_elements << endl;
-    glDrawArrays(getGLDrawType(type), 0, num_elements);
+    // cerr << "drawing A: " << num_vertices << endl;
+    glDrawArrays(getGLDrawType(type), 0, num_vertices);
   } else {
     assert(indices_uploaded);
     // cerr << "drawing B: " << num_indices << endl;
