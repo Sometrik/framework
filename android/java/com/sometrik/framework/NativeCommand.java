@@ -71,6 +71,7 @@ public class NativeCommand {
     CREATE_PICKER, // called Spinner in Android
     CREATE_LINEAR_LAYOUT,
     CREATE_TABLE_LAYOUT,
+    CREATE_AUTO_COLUMN_LAYOUT,
     CREATE_TEXTFIELD,
     CREATE_TEXTLABEL,
     CREATE_DIALOG, // For future
@@ -133,7 +134,12 @@ public class NativeCommand {
       System.out.println("creating formView " + getChildInternalId());
       createFormView();
       break;
-      
+
+    case CREATE_SCROLLVIEW:
+      FWLayout layout = createLinearLayout(); // FIXME
+      view.addChild(layout);
+      break;
+
     case CREATE_LINEAR_LAYOUT:
       FWLayout layout = createLinearLayout();
       view.addChild(layout);
@@ -310,7 +316,7 @@ public class NativeCommand {
     FrameWork.addToViewList(layout);
     if (getValue() == 2) {
 	layout.setOrientation(LinearLayout.HORIZONTAL);
-    } else if (getValue() == 1) {
+    } else {
 	layout.setOrientation(LinearLayout.VERTICAL);
     }
     return layout;

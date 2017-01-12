@@ -19,6 +19,7 @@ class Command {
     CREATE_PICKER, // called Spinner in Android
     CREATE_LINEAR_LAYOUT,
     CREATE_TABLE_LAYOUT,
+    CREATE_AUTO_COLUMN_LAYOUT,
     CREATE_TEXTFIELD,
     CREATE_TEXTLABEL,
     CREATE_DIALOG, // For future
