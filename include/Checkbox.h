@@ -23,7 +23,7 @@ class Checkbox : public InputElement {
     notify(value);
   }
 
-  bool isChecked() { return value; }
+  bool getValue() const { return value; }
 
  private:
   bool value = false;
