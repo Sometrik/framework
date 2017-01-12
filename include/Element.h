@@ -55,7 +55,6 @@ class Element : public EventHandler {
   Element & operator= (const Element & other) = delete;
 
   virtual void initialize(FWPlatform * _platform);
-  virtual void initializeContent() { }
   
   virtual void show() { }
   virtual int showModal() { return 0; }
@@ -65,9 +64,8 @@ class Element : public EventHandler {
 
   Element & addChild(const std::shared_ptr<Element> & element) {
     element->parent = this;
-    element->initialize(platform);
-    children.push_back(element);
-    element->initializeContent();
+    children.push_back(element);      
+    if (isInitialized()) element->initialize(platform);
     return *element;
   }
   Element & addChild(const std::string & text);
