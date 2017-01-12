@@ -94,7 +94,7 @@ class VBO {
   void ring(float outer_radius, float inner_radus, unsigned int n, float dx = 0, float dy = 0);
 
   unsigned int getNumIndices() const { return num_indices; }
-  unsigned int getNumElements() const { return num_elements; }
+  unsigned int getNumVertices() const { return num_vertices; }
 
   void setBaseInstanceSize(unsigned int n) { base_instance_size = n; }
 
@@ -119,7 +119,7 @@ class VBO {
   DrawType default_draw_type = NONE;
   DataType data_type = T2F_N3F_V3F;
   int stride = 0;
-  unsigned int num_indices = 0, num_elements = 0, base_instance_size = 0;
+  unsigned int num_indices = 0, num_vertices = 0, base_instance_size = 0;
   bool is_dynamic;
   bool data_uploaded = false, indices_uploaded = false;
 
