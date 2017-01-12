@@ -163,6 +163,9 @@ public class NativeCommand {
     case CREATE_CHECKBOX:
       CheckBox checkbox = new CheckBox(frame);
       checkbox.setId(childInternalId);
+      if (textValue != ""){
+	checkbox.setText(textValue);
+      }
       view.addChild(checkbox);
       checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
 	@Override
@@ -320,6 +323,7 @@ public class NativeCommand {
     button.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View arg0) {
+	System.out.println("Java: my button was clicked with id " + getChildInternalId());
 	frame.buttonClicked(System.currentTimeMillis() / 1000.0, getChildInternalId());
       }
     });
