@@ -159,15 +159,15 @@ public class NativeCommand {
       //add listener
       view.addChild(click);
       break;
-      
+
     case CREATE_CHECKBOX:
-      CheckBox checkbox = new CheckBox(frame);
-      checkbox.setId(childInternalId);
-      if (textValue != ""){
-	checkbox.setText(textValue);
+      CheckBox checkBox = new CheckBox(frame);
+      checkBox.setId(childInternalId);
+      if (textValue != "") {
+	checkBox.setText(textValue);
       }
-      view.addChild(checkbox);
-      checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
+      view.addChild(checkBox);
+      checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 	@Override
 	public void onCheckedChanged(CompoundButton box, boolean isChecked) {
 	  if (isChecked) {
