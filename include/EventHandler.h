@@ -1,7 +1,7 @@
 #ifndef _EVENTHANDLER_H_
 #define _EVENTHANDLER_H_
 
-#include <Bindable.h>
+#include <Notifier.h>
 
 class Event;
 class TouchEvent;
@@ -39,7 +39,7 @@ class LeaveWorkspaceEvent;
 class MultiTouchEvent;
 class LoadEvent;
 
-class EventHandler : public Bindable {
+class EventHandler : public Notifier {
  public:
   EventHandler() { }
 
