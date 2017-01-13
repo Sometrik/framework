@@ -182,11 +182,7 @@ public class NativeCommand {
       checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 	@Override
 	public void onCheckedChanged(CompoundButton box, boolean isChecked) {
-	  if (isChecked) {
-	    frame.intChangedEvent(System.currentTimeMillis() / 1000.0, childInternalId, 1);
-	  } else {
-	    frame.intChangedEvent(System.currentTimeMillis() / 1000.0, childInternalId, 0);
-	  }
+	  frame.intChangedEvent(System.currentTimeMillis() / 1000.0, childInternalId, isChecked ? 1 : 0);	  
 	}
       });
       break;
