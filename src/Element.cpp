@@ -19,7 +19,7 @@ Element::initialize(FWPlatform * _platform) {
     platform = _platform;
     internal_id = platform->getNextInternalId();
     for (auto & c : getChildren()){
-      initialize(_platform);
+      c->initialize(_platform);
     }
   }
 }
