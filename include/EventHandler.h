@@ -1,6 +1,8 @@
 #ifndef _EVENTHANDLER_H_
 #define _EVENTHANDLER_H_
 
+#include <Bindable.h>
+
 class Event;
 class TouchEvent;
 class CommandEvent;
@@ -37,10 +39,9 @@ class LeaveWorkspaceEvent;
 class MultiTouchEvent;
 class LoadEvent;
 
-class EventHandler {
+class EventHandler : public Bindable {
  public:
   EventHandler() { }
-  virtual ~EventHandler() { }
 
   virtual void onEvent(Event & ev) { }
   virtual void onDrawEvent(DrawEvent & ev) { }
