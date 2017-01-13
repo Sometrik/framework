@@ -446,11 +446,6 @@ void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, job
    platform->queueEvent(platform->getInternalId(), ev);
  }
 
-void Java_com_sometrik_framework_FrameWork_buttonClicked(JNIEnv* env, jobject thiz, double timestamp, jint id) {
-  TouchEvent ev(timestamp, TouchEvent::ACTION_CLICK);
-  platform->queueEvent(id, ev);
-}
-
 void Java_com_sometrik_framework_FrameWork_nativeOnResume(JNIEnv* env, jobject thiz, double timestamp, int appId) {
   SysEvent ev(timestamp, SysEvent::RESUME);
   platform->queueEvent(appId, ev);

@@ -335,7 +335,7 @@ public class NativeCommand {
       @Override
       public void onClick(View arg0) {
 	System.out.println("Java: my button was clicked with id " + getChildInternalId());
-	frame.buttonClicked(System.currentTimeMillis() / 1000.0, getChildInternalId());
+	frame.intChangedEvent(System.currentTimeMillis() / 1000.0, getChildInternalId(), 1);
       }
     });
     return button;

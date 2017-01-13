@@ -3,6 +3,7 @@
 
 #include <UIElement.h>
 
+#include <ValueEvent.h>
 #include <Command.h>
 #include <CommandEvent.h>
 #include <TouchEvent.h>
@@ -35,13 +36,15 @@ class Button : public UIElement {
       setTouched(false);
       ev.setHandled();
       ev.requestRedraw();
-    } else if (ev.getType() == TouchEvent::ACTION_CLICK) {
-      notify();
-      CommandEvent ev2(ev.getTimestamp(), getId());
-      ev2.dispatch(*this);
     }
   }
 
+  void onValueEvent(ValueEvent & ev) override {
+    notify();
+    CommandEvent ev2(ev.getTimestamp(), getId());
+    ev2.dispatch(*this);
+  }
+  
   std::shared_ptr<canvas::Texture> drawContent() override {
     auto context = getPlatform().createContextFactory()->createContext(width, height, canvas::InternalFormat::RGBA8);
 

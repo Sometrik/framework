@@ -6,7 +6,7 @@
 class TouchEvent : public Event {
 public:
   enum Type {
-    ACTION_DOWN, ACTION_DRAG, ACTION_UP, ACTION_CLICK
+    ACTION_DOWN, ACTION_DRAG, ACTION_UP
   };
  TouchEvent(double _timestamp, Type _type, float _x, float _y, long long _identifier)
    : Event(_timestamp), type(_type), x(_x), y(_y), identifier(_identifier), flush(false) { }
