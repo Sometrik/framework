@@ -534,4 +534,10 @@ public class FrameWork extends Activity implements NativeCommandHandler {
     
   }
 
+  @Override
+  public void setValue(String v) { }
+
+  @Override
+  public void setValue(int v) { }
+
 }

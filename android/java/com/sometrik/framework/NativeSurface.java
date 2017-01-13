@@ -98,4 +98,9 @@ public class NativeSurface extends SurfaceView implements NativeCommandHandler {
     
   }
 
+  @Override
+  public void setValue(String v) { }
+
+  @Override
+  public void setValue(int v) { }
 }

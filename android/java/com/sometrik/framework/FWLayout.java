@@ -54,4 +54,10 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
     }
     System.out.println("Child " + id + " wasn't found and wasn't removed");
   }
+
+  @Override
+  public void setValue(String v) { }
+
+  @Override
+  public void setValue(int v) { }
 }
