@@ -90,8 +90,9 @@ public class NativeCommand {
     SHOW_ACTION_SHEET,
     LAUNCH_BROWSER,
     POST_NOTIFICATION,
-    SET_VALUE, //Sets value of textfields.
-    SET_LABEL, //this sets label for buttons and labels.
+    SET_INT_VALUE, // Sets value of radio groups, checkboxes and pickers
+    SET_TEXT_VALUE, // Sets value of textfields and labels
+    SET_LABEL, // Sets label for buttons and checkboxes
     SET_ATTRIBUTE,
     UPDATE_PREFERENCE,
     ADD_OPTION,
@@ -242,6 +243,12 @@ public class NativeCommand {
 	  }
 	});
       }
+      break;
+    case SET_INT_VALUE:
+      view.setValue(getValue());
+      break;
+    case SET_TEXT_VALUE:
+      view.setValue(getTextValue());
       break;
     case LAUNCH_BROWSER:
       frame.launchBrowser(getTextValue());
