@@ -3,8 +3,6 @@
 
 #include <EventHandler.h>
 
-#include <string>
-
 class FWPlatform;
 class FWApplication;
 class Command;
@@ -109,6 +107,11 @@ class Element : public EventHandler {
       return 0;
     }
   }
+
+  void call() override { call(true); }
+  void call(bool t) override { call(t ? 1 : 0); }
+  void call(int i) override { }
+  void call(const std::string & s) override { }
   
   void showMessageDialog(const std::string & title, const std::string & text);
   std::string showInputDialog(const std::string & title, const std::string & text);
