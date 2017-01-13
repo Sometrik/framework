@@ -36,6 +36,7 @@ class Button : public UIElement {
       ev.setHandled();
       ev.requestRedraw();
     } else if (ev.getType() == TouchEvent::ACTION_CLICK) {
+      notify();
       CommandEvent ev2(ev.getTimestamp(), getId());
       ev2.dispatch(*this);
     }
@@ -70,6 +71,10 @@ class Button : public UIElement {
       clearTexture();
     }
   }
+
+  void call() override { sendCommand(Command(Command::SET_INT_VALUE, getInternalId())); }
+  void call(bool t) override { call(); }
+  void call(const std::string & s) override { call(); }
 
  private:
   std::string label;
