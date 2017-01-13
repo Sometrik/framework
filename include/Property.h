@@ -7,14 +7,12 @@ class PropertyBase : public Notifier {
  public:
   PropertyBase() { }
 
-  void call() override { }
-
   virtual std::string getStringValue() const = 0;
   virtual bool getBoolValue() const = 0;
 
   void set(bool t) { call(t); }
   void set(int i) { call(i); }
-  void set(const std::string & s) { call(i); }
+  void set(const std::string & s) { call(s); }
 };
 
 template<class T>
@@ -31,7 +29,7 @@ class Property : public PropertyBase {
   }
 
   Property & operator=(const T & _other) {
-    data = T;
+    data = _other;
     notify(data);
     return *this;
   }
@@ -39,6 +37,7 @@ class Property : public PropertyBase {
   T & get() { return data; }
   const T & get() const { return data; }
 
+  void call() override { }
   void call(bool t) override { assignBoundVar(data, t); }
   void call(int i) override { assignBoundVar(data, i); }
   void call(const std::string & s) { assignBoundVar(data, s); }
@@ -63,6 +62,7 @@ class NullProperty : public PropertyBase {
  public:
   NullProperty() { }
 
+  void call() override { }
   void call(bool t) override { }
   void call(int i) override { }
   void call(const std::string & s) { }
