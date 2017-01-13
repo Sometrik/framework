@@ -135,8 +135,8 @@ public class NativeCommand {
       break;
 
     case CREATE_SCROLLVIEW:
-      FWLayout layout = createLinearLayout(); // FIXME
-      view.addChild(layout);
+      FWLayout scrollLayout = createLinearLayout(); // FIXME
+      view.addChild(scrollLayout);
       break;
 
     case CREATE_LINEAR_LAYOUT:
