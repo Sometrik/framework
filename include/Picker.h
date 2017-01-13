@@ -33,6 +33,16 @@ class Picker : public Element {
     value = ev.getValue();
   }
 
+  void call() override { call(value); }
+  void call(bool t) override { call(t ? value : 0); }
+  void call(int i) override {
+    value = i;
+    Command c(Command::SET_INT_VALUE, getInternalId());
+    c.setValue(value);
+    sendCommand(c);
+  }
+  void call(const std::string & s) override { }
+
  protected:
   void initializeOption(const std::pair<int, std::string> & o) {
     Command c(Command::ADD_OPTION, getInternalId(), 0);
