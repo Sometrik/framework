@@ -43,6 +43,11 @@ class EventHandler : public Notifier {
  public:
   EventHandler() { }
 
+  void call() override { call(true); }
+  void call(bool t) override { call(t ? 1 : 0); }
+  void call(int i) override { }
+  void call(const std::string & s) override { }
+
   virtual void onEvent(Event & ev) { }
   virtual void onDrawEvent(DrawEvent & ev) { }
   virtual void onUpdateEvent(UpdateEvent & ev) { }
