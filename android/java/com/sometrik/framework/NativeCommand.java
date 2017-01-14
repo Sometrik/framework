@@ -64,16 +64,18 @@ public class NativeCommand {
     CREATE_PLATFORM,
     CREATE_APPLICATION,
     CREATE_FORMVIEW,
-    CREATE_NATIVE_OPENGL_VIEW,
-    CREATE_GRIDVIEW,
+    CREATE_OPENGL_VIEW,
+    CREATE_TEXTFIELD, // For viewing single value
+    CREATE_LISTVIEW, // For viewing lists
+    CREATE_GRIDVIEW, // For viewing tables
     CREATE_BUTTON,
     CREATE_SWITCH,
     CREATE_PICKER, // called Spinner in Android
     CREATE_LINEAR_LAYOUT,
     CREATE_TABLE_LAYOUT,
     CREATE_AUTO_COLUMN_LAYOUT,
-    CREATE_TEXTFIELD,
-    CREATE_TEXTLABEL,
+    CREATE_HEADING_TEXT,
+    CREATE_TEXT,
     CREATE_DIALOG, // For future
     CREATE_IMAGE_ELEMENT,
     CREATE_ACTION_SHEET,
@@ -82,7 +84,6 @@ public class NativeCommand {
     CREATE_SEPARATOR,
     CREATE_SLIDER,
     CREATE_SCROLLVIEW,
-    SET_USER_ID,
     DELETE_ELEMENT,
     SHOW_VIEW,
     SHOW_MESSAGE_DIALOG,
@@ -91,7 +92,7 @@ public class NativeCommand {
     LAUNCH_BROWSER,
     POST_NOTIFICATION,
     SET_INT_VALUE, // Sets value of radio groups, checkboxes and pickers
-    SET_TEXT_VALUE, // Sets value of textfields and labels
+    SET_TEXT_VALUE, // Sets value of textfields, labels and images
     SET_LABEL, // Sets label for buttons and checkboxes
     SET_ATTRIBUTE,
     UPDATE_PREFERENCE,
@@ -186,7 +187,7 @@ public class NativeCommand {
 	}
       });
       break;
-    case CREATE_NATIVE_OPENGL_VIEW:
+    case CREATE_OPENGL_VIEW:
       NativeSurface surface = frame.createNativeOpenGLView(childInternalId);
       surface.showView();
       break;
@@ -196,7 +197,8 @@ public class NativeCommand {
       view.addChild(editText);
       break;
 
-    case CREATE_TEXTLABEL:
+    case CREATE_HEADING_TEXT:
+    case CREATE_TEXT:
       TextView textView = createTextView();
       view.addChild(textView);
       break;
