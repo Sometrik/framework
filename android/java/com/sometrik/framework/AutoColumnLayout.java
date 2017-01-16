@@ -7,7 +7,7 @@ import android.content.res.Configuration;
 import android.view.View;
 import android.widget.LinearLayout;
 
-public class AutoColumnLayout extends LinearLayout {
+public class AutoColumnLayout extends LinearLayout implements NativeCommandHandler {
   
   //For small view AutoLayout puts views vertically
   //For big view Autolayout groups 2 views next to each other
@@ -63,6 +63,32 @@ public class AutoColumnLayout extends LinearLayout {
    } else {
      return false;
    }
+  }
+
+  @Override
+  public void removeChild(int id) {
+    // TODO Auto-generated method stub
+    
+  }
+
+  @Override
+  public void addOption(int optionId, String text) {
+    System.out.println("AutoColumnLayout couldn't handle command");
+  }
+
+  @Override
+  public void setValue(String v) {
+    System.out.println("AutoColumnLayout couldn't handle command");
+  }
+
+  @Override
+  public void setValue(int v) {
+    System.out.println("AutoColumnLayout couldn't handle command");
+  }
+
+  @Override
+  public int getElementId() {
+    return getId();
   }
   
 
