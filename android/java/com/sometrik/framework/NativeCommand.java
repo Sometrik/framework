@@ -94,7 +94,7 @@ public class NativeCommand {
     SET_INT_VALUE, // Sets value of radio groups, checkboxes and pickers
     SET_TEXT_VALUE, // Sets value of textfields, labels and images
     SET_LABEL, // Sets label for buttons and checkboxes
-    SET_ATTRIBUTE,
+    SET_ENABLED,
     UPDATE_PREFERENCE,
     ADD_OPTION,
     QUIT_APP,
@@ -212,8 +212,6 @@ public class NativeCommand {
       view.addChild(textView);
       break;
 
-    case SET_ATTRIBUTE:
-      break;
     case CREATE_IMAGE_ELEMENT:
       ImageView imageView = new ImageView(frame);
       imageView.setId(getChildInternalId());
