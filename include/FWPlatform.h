@@ -74,7 +74,7 @@ class FWPlatform : public Element {
   void sendCommand(const Command & command) override {
     if (command.getType() == Command::SHOW_VIEW) {
       setActiveView(command.getInternalId());
-    } else if (!activeViewId && (command.getType() == Command::CREATE_FORMVIEW || command.getType() == Command::CREATE_NATIVE_OPENGL_VIEW)) {
+    } else if (!activeViewId && (command.getType() == Command::CREATE_FORMVIEW || command.getType() == Command::CREATE_OPENGL_VIEW)) {
       setActiveView(command.getChildInternalId());
     }
   }
