@@ -2,6 +2,7 @@ package com.sometrik.framework;
 
 import android.content.Context;
 import android.view.View;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 public class FWRadioGroup extends RadioGroup implements NativeCommandHandler {
@@ -33,8 +34,10 @@ public class FWRadioGroup extends RadioGroup implements NativeCommandHandler {
 
   @Override
   public void addOption(int optionId, String text) {
-    // TODO Auto-generated method stub
-    
+    RadioButton button = new RadioButton(context);
+    button.setId(optionId);
+    button.setText(text);
+    addView(button);
   }
 
   @Override
