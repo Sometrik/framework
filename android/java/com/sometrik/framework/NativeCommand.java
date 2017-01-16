@@ -146,6 +146,9 @@ public class NativeCommand {
       view.addChild(layout);
       break;
       
+    case CREATE_AUTO_COLUMN_LAYOUT:
+      
+      break;
     case CREATE_TABLE_LAYOUT:
       FWTable table = createTableLayout();
       view.addChild(table);
