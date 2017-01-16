@@ -137,7 +137,7 @@ public class NativeCommand {
       break;
 
     case CREATE_SCROLLVIEW:
-      FWLayout scrollView = createLinearLayout(); // FIXME
+      ScrollView scrollView = new ScrollView(frame);
       view.addChild(scrollView);
       break;
 
