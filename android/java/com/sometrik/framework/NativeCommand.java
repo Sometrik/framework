@@ -147,7 +147,8 @@ public class NativeCommand {
       break;
       
     case CREATE_AUTO_COLUMN_LAYOUT:
-      
+      AutoColumnLayout autoLayout = new AutoColumnLayout(frame);
+      view.addChild(autoLayout);
       break;
     case CREATE_TABLE_LAYOUT:
       FWTable table = createTableLayout();
