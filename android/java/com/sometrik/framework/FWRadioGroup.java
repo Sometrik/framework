@@ -16,20 +16,17 @@ public class FWRadioGroup extends RadioGroup implements NativeCommandHandler {
 
   @Override
   public void addChild(View view) {
-    // TODO Auto-generated method stub
-    
+    System.out.println("FWRadioGroup couldn't handle command");
   }
 
   @Override
   public void removeChild(int id) {
-    // TODO Auto-generated method stub
-    
+    System.out.println("FWRadioGroup couldn't handle command");
   }
 
   @Override
   public void showView() {
-    // TODO Auto-generated method stub
-    
+    System.out.println("FWRadioGroup couldn't handle command");
   }
 
   @Override
@@ -42,14 +39,12 @@ public class FWRadioGroup extends RadioGroup implements NativeCommandHandler {
 
   @Override
   public void setValue(String v) {
-    // TODO Auto-generated method stub
-    
+    System.out.println("FWRadioGroup couldn't handle command");
   }
 
   @Override
   public void setValue(int v) {
-    // TODO Auto-generated method stub
-    
+    System.out.println("FWRadioGroup couldn't handle command");
   }
 
   @Override
