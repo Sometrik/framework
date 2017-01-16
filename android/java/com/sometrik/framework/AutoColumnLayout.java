@@ -3,6 +3,7 @@ package com.sometrik.framework;
 import java.util.ArrayList;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.view.View;
 import android.widget.LinearLayout;
 
@@ -55,8 +56,13 @@ public class AutoColumnLayout extends LinearLayout {
   }
 
   private boolean checkForBigView(){
-    //TODO
-    return false;
+    //TODO Truly detect screen size
+   int orientation =  frame.getResources().getConfiguration().orientation;
+   if (orientation == Configuration.ORIENTATION_PORTRAIT){
+     return true;
+   } else {
+     return false;
+   }
   }
   
 
