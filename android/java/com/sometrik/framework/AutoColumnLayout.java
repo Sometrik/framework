@@ -67,8 +67,15 @@ public class AutoColumnLayout extends LinearLayout implements NativeCommandHandl
 
   @Override
   public void removeChild(int id) {
-    // TODO Auto-generated method stub
-    
+    for (int i = 0; i < getChildCount(); i++) {
+      View v = getChildAt(i);
+      if (v.getId() == id) {
+	removeView(v);
+	System.out.println("Child " + id + " removed succesfully");
+	return;
+      }
+    }
+    System.out.println("Child " + id + " wasn't found and wasn't removed");
   }
 
   @Override
