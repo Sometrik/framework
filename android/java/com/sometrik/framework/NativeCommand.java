@@ -200,7 +200,12 @@ public class NativeCommand {
       EditText editText = createEditText();
       view.addChild(editText);
       break;
-
+      
+    case CREATE_RADIO_GROUP:
+      FWRadioGroup radioGroup = new FWRadioGroup(frame);
+      radioGroup.setId(childInternalId);
+      break;
+      
     case CREATE_HEADING_TEXT:
     case CREATE_TEXT:
       TextView textView = createTextView();
