@@ -89,7 +89,6 @@ public:
   }
 
   std::shared_ptr<HTTPClientFactory> createHTTPClientFactory() const override {
-    auto env = getJNIEnv();
     return std::make_shared<AndroidClientFactory>(clientCache);
   }
   void createFBO(int flags) { }
@@ -97,7 +96,6 @@ public:
 
 #ifdef HAS_SOUNDCANVAS
   std::shared_ptr<SoundCanvas> createSoundCanvas() const override {
-    auto env = getJNIEnv();
     return std::make_shared<AndroidSoundCanvas>(soundCache);
   }
 #endif
@@ -140,7 +138,6 @@ private:
   std::shared_ptr<canvas::AndroidCache> canvasCache;
   std::shared_ptr<AndroidClientCache> clientCache;
   std::shared_ptr<AndroidSoundCache> soundCache;
-//  AndroidSoundCache * soundCache;
 
   ANativeWindow * window = 0;
   JavaVM * gJavaVM = 0;
