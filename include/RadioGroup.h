@@ -1,17 +1,17 @@
-#ifndef _PICKER_H_
-#define _PICKER_H_
+#ifndef _RADIOGROUP_H_
+#define _RADIOGROUP_H_
 
 #include <Element.h>
 #include <Command.h>
 #include <ValueEvent.h>
 
-class Picker : public Element {
+class RadioGroup : public Element {
  public:
-  Picker() { }
+  RadioGroup() { }
   
   void initialize(FWPlatform * _platform) override {
     Element::initialize(_platform);
-    Command c(Command::CREATE_PICKER, getParentInternalId(), getInternalId());
+    Command c(Command::CREATE_RADIO_GROUP, getParentInternalId(), getInternalId());
     c.setLayoutWeight(getLayoutWeight());
     sendCommand(c);
     for (auto & o : options) {

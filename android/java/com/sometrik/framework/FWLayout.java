@@ -22,14 +22,9 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
   }
   
   @Override
-  public void showView(){
-    ViewParent vp = getParent();
+  public void showView() {
     System.out.println("showing " + getId());
-    if (vp == null){
-      frame.setCurrentView(this);
-    } else {
-      frame.setCurrentView((View)vp);
-    }
+    frame.setCurrentView(this);
   }
  
   @Override
@@ -54,4 +49,10 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
     }
     System.out.println("Child " + id + " wasn't found and wasn't removed");
   }
+
+  @Override
+  public void setValue(String v) { }
+
+  @Override
+  public void setValue(int v) { }
 }

@@ -11,7 +11,7 @@ class TextLabel : public Element {
 
   void initialize(FWPlatform * _platform) override {
     Element::initialize(_platform);
-    Command c(Command::CREATE_TEXTLABEL, getParentInternalId(), getInternalId());
+    Command c(Command::CREATE_TEXT, getParentInternalId(), getInternalId());
     c.setTextValue(text);
     c.setTextValue2(url);
     c.setFlags(getFlags());

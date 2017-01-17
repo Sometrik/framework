@@ -71,4 +71,14 @@ public class FWPicker extends Spinner implements NativeCommandHandler {
     System.out.println("Picker couldn't handle remove element");
     // TODO Auto-generated method stub
   }
+
+  @Override
+  public void setValue(String v) {
+
+  }
+
+  @Override
+  public void setValue(int v) {
+
+  }
 }

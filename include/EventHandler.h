@@ -1,6 +1,8 @@
 #ifndef _EVENTHANDLER_H_
 #define _EVENTHANDLER_H_
 
+#include <Notifier.h>
+
 class Event;
 class TouchEvent;
 class CommandEvent;
@@ -37,10 +39,14 @@ class LeaveWorkspaceEvent;
 class MultiTouchEvent;
 class LoadEvent;
 
-class EventHandler {
+class EventHandler : public Notifier {
  public:
   EventHandler() { }
-  virtual ~EventHandler() { }
+
+  void call() override { call(true); }
+  void call(bool t) override { call(t ? 1 : 0); }
+  void call(int i) override { }
+  void call(const std::string & s) override { }
 
   virtual void onEvent(Event & ev) { }
   virtual void onDrawEvent(DrawEvent & ev) { }

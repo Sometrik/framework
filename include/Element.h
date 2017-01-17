@@ -3,36 +3,6 @@
 
 #include <EventHandler.h>
 
-#include <shims.h>
-#include <vector>
-
-class Bind {
- public:
-  Bind() { }
-  virtual ~Bind() { }
-  
-  Bind(const Bind & other) = delete;
-  Bind & operator =(const Bind & other) = delete;
-
-  virtual void call(bool t) = 0;
-  virtual void call(const std::string & s) = 0;  
-};
-
-template<class T>
-class PointerBind : public Bind {
- public:
-  PointerBind(T * _ptr) : ptr(_ptr) { }
-
-  void call(bool t) override { assignBoundVar(*ptr, t); }
-  void call(const std::string & s) override { assignBoundVar(*ptr, s); }
-
- private:
-  T * ptr;
-};
-
-#include <memory>
-#include <string>
-
 class FWPlatform;
 class FWApplication;
 class Command;
@@ -144,15 +114,8 @@ class Element : public EventHandler {
   Element * getParent() { return parent; }
   const Element * getParent() const { return parent; }
 
-  template<class T>
-  Element & bind(T * arg) {
-    bound_objects.push_back(std::make_shared<PointerBind<T> >(arg));
-    return *this;
-  }
-
 protected:  
   bool isInitialized() const { return internal_id != 0; }
-  std::vector<std::shared_ptr<Bind> > & getBoundObjects() { return bound_objects; }
 
  private:
   FWPlatform * platform = 0;
@@ -162,7 +125,6 @@ protected:
   std::vector<std::shared_ptr<Element> > children;
   int layout_weight = 0;
   unsigned int flags; // initialized in constructor
-  std::vector<std::shared_ptr<Bind> > bound_objects;
 };
 
 #endif

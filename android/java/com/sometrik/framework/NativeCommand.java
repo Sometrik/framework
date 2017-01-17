@@ -64,16 +64,18 @@ public class NativeCommand {
     CREATE_PLATFORM,
     CREATE_APPLICATION,
     CREATE_FORMVIEW,
-    CREATE_NATIVE_OPENGL_VIEW,
-    CREATE_GRIDVIEW,
+    CREATE_OPENGL_VIEW,
+    CREATE_TEXTFIELD, // For viewing single value
+    CREATE_LISTVIEW, // For viewing lists
+    CREATE_GRIDVIEW, // For viewing tables
     CREATE_BUTTON,
     CREATE_SWITCH,
     CREATE_PICKER, // called Spinner in Android
     CREATE_LINEAR_LAYOUT,
     CREATE_TABLE_LAYOUT,
     CREATE_AUTO_COLUMN_LAYOUT,
-    CREATE_TEXTFIELD,
-    CREATE_TEXTLABEL,
+    CREATE_HEADING_TEXT,
+    CREATE_TEXT,
     CREATE_DIALOG, // For future
     CREATE_IMAGE_ELEMENT,
     CREATE_ACTION_SHEET,
@@ -82,7 +84,6 @@ public class NativeCommand {
     CREATE_SEPARATOR,
     CREATE_SLIDER,
     CREATE_SCROLLVIEW,
-    SET_USER_ID,
     DELETE_ELEMENT,
     SHOW_VIEW,
     SHOW_MESSAGE_DIALOG,
@@ -90,9 +91,10 @@ public class NativeCommand {
     SHOW_ACTION_SHEET,
     LAUNCH_BROWSER,
     POST_NOTIFICATION,
-    SET_VALUE, //Sets value of textfields.
-    SET_LABEL, //this sets label for buttons and labels.
-    SET_ATTRIBUTE,
+    SET_INT_VALUE, // Sets value of radio groups, checkboxes and pickers
+    SET_TEXT_VALUE, // Sets value of textfields, labels and images
+    SET_LABEL, // Sets label for buttons and checkboxes
+    SET_ENABLED,
     UPDATE_PREFERENCE,
     ADD_OPTION,
     QUIT_APP,
@@ -135,8 +137,8 @@ public class NativeCommand {
       break;
 
     case CREATE_SCROLLVIEW:
-      FWLayout scrollLayout = createLinearLayout(); // FIXME
-      view.addChild(scrollLayout);
+      ScrollView scrollView = new ScrollView(frame);
+      view.addChild(scrollView);
       break;
 
     case CREATE_LINEAR_LAYOUT:
@@ -144,6 +146,10 @@ public class NativeCommand {
       view.addChild(layout);
       break;
       
+    case CREATE_AUTO_COLUMN_LAYOUT:
+      AutoColumnLayout autoLayout = new AutoColumnLayout(frame);
+      view.addChild(autoLayout);
+      break;
     case CREATE_TABLE_LAYOUT:
       FWTable table = createTableLayout();
       view.addChild(table);
@@ -181,15 +187,11 @@ public class NativeCommand {
       checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 	@Override
 	public void onCheckedChanged(CompoundButton box, boolean isChecked) {
-	  if (isChecked) {
-	    frame.intChangedEvent(System.currentTimeMillis() / 1000.0, childInternalId, 1);
-	  } else {
-	    frame.intChangedEvent(System.currentTimeMillis() / 1000.0, childInternalId, 0);
-	  }
+	  frame.intChangedEvent(System.currentTimeMillis() / 1000.0, childInternalId, isChecked ? 1 : 0);	  
 	}
       });
       break;
-    case CREATE_NATIVE_OPENGL_VIEW:
+    case CREATE_OPENGL_VIEW:
       NativeSurface surface = frame.createNativeOpenGLView(childInternalId);
       surface.showView();
       break;
@@ -198,14 +200,18 @@ public class NativeCommand {
       EditText editText = createEditText();
       view.addChild(editText);
       break;
-
-    case CREATE_TEXTLABEL:
+      
+    case CREATE_RADIO_GROUP:
+      FWRadioGroup radioGroup = new FWRadioGroup(frame);
+      radioGroup.setId(childInternalId);
+      break;
+      
+    case CREATE_HEADING_TEXT:
+    case CREATE_TEXT:
       TextView textView = createTextView();
       view.addChild(textView);
       break;
 
-    case SET_ATTRIBUTE:
-      break;
     case CREATE_IMAGE_ELEMENT:
       ImageView imageView = new ImageView(frame);
       imageView.setId(getChildInternalId());
@@ -242,6 +248,12 @@ public class NativeCommand {
 	  }
 	});
       }
+      break;
+    case SET_INT_VALUE:
+      view.setValue(getValue());
+      break;
+    case SET_TEXT_VALUE:
+      view.setValue(getTextValue());
       break;
     case LAUNCH_BROWSER:
       frame.launchBrowser(getTextValue());
@@ -332,7 +344,7 @@ public class NativeCommand {
       @Override
       public void onClick(View arg0) {
 	System.out.println("Java: my button was clicked with id " + getChildInternalId());
-	frame.buttonClicked(System.currentTimeMillis() / 1000.0, getChildInternalId());
+	frame.intChangedEvent(System.currentTimeMillis() / 1000.0, getChildInternalId(), 1);
       }
     });
     return button;

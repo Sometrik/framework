@@ -71,4 +71,9 @@ public class FWTable extends TableLayout implements NativeCommandHandler {
 
   }
 
+  @Override
+  public void setValue(String v) { }
+
+  @Override
+  public void setValue(int v) { }
 }

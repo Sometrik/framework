@@ -6,13 +6,6 @@
 class InputElement : public Element {
  public:
   InputElement() { }
-
-  template<class T>
-  void notify(T arg) {
-    for (auto & o : getBoundObjects()) {
-      o->call(arg);
-    }
-  }
 };
 
 #endif
