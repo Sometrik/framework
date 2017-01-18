@@ -26,8 +26,11 @@ class Element : public EventHandler {
 
   Element & addChild(const std::shared_ptr<Element> & element) {
     element->parent = this;
-    children.push_back(element);      
-    if (isInitialized()) element->initialize(platform);
+    children.push_back(element);
+
+    if (isInitialized()) {
+      element->initialize(platform);
+    }
     return *element;
   }  
   Element & addChild(const std::string & text);
@@ -115,8 +118,7 @@ class Element : public EventHandler {
   Element * getParent() { return parent; }
   const Element * getParent() const { return parent; }
 
-protected:  
-  bool isInitialized() const { return internal_id != 0; }
+  bool isInitialized() const { return platform != 0; }
 
  private:
   FWPlatform * platform = 0;

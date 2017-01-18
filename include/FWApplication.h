@@ -15,6 +15,7 @@ public:
 
   void initialize(FWPlatform * _platform) override {
     Element::initialize(_platform);
+    getLogger().println("Vittustna");
     Command c(Command::CREATE_APPLICATION, getParentInternalId(), getInternalId());
     c.setFlags(iap_public_key.empty() ? 0 : 128);
     c.setTextValue(name);

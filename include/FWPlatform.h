@@ -35,11 +35,6 @@ class FWPlatform : public Element {
   
   FWPlatform(float _display_scale);
   
-  void initialize(FWPlatform * _platform) override {
-    Element::initialize(_platform);
-    sendCommand(Command(Command::CREATE_PLATFORM, getParentInternalId(), getInternalId()));
-    initializeChildren();
-  }
   
   virtual std::string getBundleFilename(const char * filename) = 0;
   virtual std::string getLocalFilename(const char * filename, FileType type) = 0;

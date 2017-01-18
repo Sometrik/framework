@@ -92,6 +92,8 @@ PosixThread::entryPoint(void * pthis) {
 FWPlatform::FWPlatform(float _display_scale) : display_scale(_display_scale) {
   StringUtils::initialize();
   initialize(this);
+  sendCommand(Command(Command::CREATE_PLATFORM, getParentInternalId(), getInternalId()));
+  initializeChildren();
 }
 
 std::shared_ptr<PlatformThread>
