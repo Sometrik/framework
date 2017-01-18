@@ -76,13 +76,12 @@ public:
     return std::shared_ptr<canvas::ContextFactory>(new canvas::CairoContextFactory);
   }
 
-  void sendCommand(const Command & command) override {
-    FWPlatform::sendCommand(command);
+  void sendCommand2(const Command & command) override {
     switch (command.getType()) {
-    case Command::SET_CAPTION:
-      SDL_WM_SetCaption(command.getTextValue().c_str(),
-			command.getTextValue().c_str());
-      break;
+    // case Command::SET_CAPTION:
+    //   SDL_WM_SetCaption(command.getTextValue().c_str(),
+    // 			command.getTextValue().c_str());
+    //   break;
     case Command::SHOW_MESSAGE_DIALOG:
 #if 0
       SDL_ShowSimpleMessageBox( SDL_MESSAGEBOX_INFORMATION,
