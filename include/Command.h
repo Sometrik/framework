@@ -11,6 +11,7 @@ class Command {
   enum Type {
     CREATE_PLATFORM = 0,
     CREATE_APPLICATION,
+    CREATE_BASICVIEW,
     CREATE_FORMVIEW,
     CREATE_OPENGL_VIEW,
     CREATE_TEXTFIELD, // For viewing single value
