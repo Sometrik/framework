@@ -143,7 +143,7 @@ public class NativeCommand {
       FrameWork.addToViewList(scrollView);
       view.addChild(scrollView);
       break;
-      
+    case CREATE_BASICVIEW:
     case CREATE_LINEAR_LAYOUT:
       FWLayout layout = createLinearLayout();
       view.addChild(layout);
