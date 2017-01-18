@@ -160,7 +160,7 @@ public class NativeCommand {
       break;
 
     case CREATE_BUTTON:
-      Button button = createButton();
+      FWButton button = createButton();
       view.addChild(button);
       break;
 
