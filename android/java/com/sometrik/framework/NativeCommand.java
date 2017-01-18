@@ -152,6 +152,7 @@ public class NativeCommand {
     case CREATE_AUTO_COLUMN_LAYOUT:
       AutoColumnLayout autoLayout = new AutoColumnLayout(frame);
       autoLayout.setId(getChildInternalId());
+      FrameWork.addToViewList(autoLayout);
       view.addChild(autoLayout);
       break;
     case CREATE_TABLE_LAYOUT:
@@ -160,7 +161,7 @@ public class NativeCommand {
       break;
 
     case CREATE_BUTTON:
-      Button button = createButton();
+      FWButton button = createButton();
       view.addChild(button);
       break;
 
@@ -182,18 +183,19 @@ public class NativeCommand {
       break;
 
     case CREATE_CHECKBOX:
-      CheckBox checkBox = new CheckBox(frame);
+      FWCheckBox checkBox = new FWCheckBox(frame);
       checkBox.setId(childInternalId);
       if (textValue != "") {
 	checkBox.setText(textValue);
       }
-      view.addChild(checkBox);
       checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 	@Override
 	public void onCheckedChanged(CompoundButton box, boolean isChecked) {
 	  frame.intChangedEvent(System.currentTimeMillis() / 1000.0, childInternalId, isChecked ? 1 : 0);	  
 	}
       });
+      FrameWork.addToViewList(checkBox);
+      view.addChild(checkBox);
       break;
     case CREATE_OPENGL_VIEW:
       NativeSurface surface = frame.createNativeOpenGLView(childInternalId);
