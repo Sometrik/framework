@@ -6,13 +6,11 @@ import android.widget.ScrollView;
 
 public class FWScrollView extends ScrollView implements NativeCommandHandler {
 
-  Context context;
   FrameWork frame;
   
-  public FWScrollView(Context context) {
-    super(context);
-    this.context = context;
-    frame = (FrameWork)context;
+  public FWScrollView(FrameWork frameWork) {
+    super(frameWork);
+    this.frame = frameWork;
   }
 
   @Override

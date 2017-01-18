@@ -8,13 +8,11 @@ import android.widget.RadioGroup;
 
 public class FWRadioGroup extends RadioGroup implements NativeCommandHandler {
   
-  private Context context;
   private FrameWork frame;
   
-  public FWRadioGroup(Context context){
-    super(context);
-    this.context = context;
-    frame = (FrameWork)context;
+  public FWRadioGroup(FrameWork frameWork){
+    super(frameWork);
+    this.frame = frameWork;
 
     setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener(){
       @Override
@@ -41,7 +39,7 @@ public class FWRadioGroup extends RadioGroup implements NativeCommandHandler {
 
   @Override
   public void addOption(int optionId, String text) {
-    RadioButton button = new RadioButton(context);
+    RadioButton button = new RadioButton(frame);
     button.setId(optionId);
     button.setText(text);
     addView(button);

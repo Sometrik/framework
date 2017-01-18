@@ -7,13 +7,11 @@ import android.widget.LinearLayout;
 
 public class FWLayout extends LinearLayout implements NativeCommandHandler {
   
-  private Context context;
   private FrameWork frame;
   
-  public FWLayout(Context context) {
-    super(context);
-    this.context = context;
-    this.frame = (FrameWork)context;
+  public FWLayout(FrameWork frameWork) {
+    super(frameWork);
+    this.frame = frameWork;
   }
 
   @Override

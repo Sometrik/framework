@@ -18,10 +18,9 @@ public class AutoColumnLayout extends LinearLayout implements NativeCommandHandl
   private Context context;
   private FrameWork frame;
   
-  public AutoColumnLayout(Context context){
-    super(context);
-    this.context = context;
-    frame = (FrameWork)context;
+  public AutoColumnLayout(FrameWork frameWork){
+    super(frameWork);
+    frame = frameWork;
     viewList = new ArrayList<View>();
     setOrientation(LinearLayout.VERTICAL);
   }

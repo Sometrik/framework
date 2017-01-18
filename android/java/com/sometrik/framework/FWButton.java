@@ -6,11 +6,11 @@ import android.widget.Button;
 
 public class FWButton extends Button implements NativeCommandHandler {
 
-  Context context;
+  FrameWork frame;
   
-  public FWButton(Context context) {
-    super(context);
-    this.context = context;
+  public FWButton(FrameWork frameWork) {
+    super(frameWork);
+    this.frame = frameWork;
     
   }
 

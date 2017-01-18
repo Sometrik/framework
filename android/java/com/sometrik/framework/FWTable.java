@@ -15,11 +15,11 @@ public class FWTable extends TableLayout implements NativeCommandHandler {
   ArrayList<TableRow> rowList;
   ArrayList<View> dataList;
   
-  public FWTable(Context context) {
-    super(context);
-    context = (FrameWork)context;
+  public FWTable(FrameWork frameWork) {
+    super(frameWork);
+    frame = frameWork;
     rowList = new ArrayList<TableRow>();
-    rowList.add(new TableRow(context));
+    rowList.add(new TableRow(frame));
     dataList = new ArrayList<View>();
   }
   

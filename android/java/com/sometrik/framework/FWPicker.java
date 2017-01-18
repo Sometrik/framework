@@ -12,20 +12,18 @@ import android.widget.Spinner;
 
 public class FWPicker extends Spinner implements NativeCommandHandler {
   
-  private Context context;
   private FrameWork frame;
   private ArrayAdapter<String> adapter;
   private ArrayList<Integer> idList;
   private final int id;
   
 
-  public FWPicker(Context context) {
-    super(context);
-    adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item);
+  public FWPicker(FrameWork frameWork) {
+    super(frameWork);
+    adapter = new ArrayAdapter<String>(frame, android.R.layout.simple_spinner_item);
     idList = new ArrayList<Integer>();
     id = getId();
-    this.context = context;
-    this.frame = (FrameWork)context;
+    this.frame = frameWork;
     
     setOnItemSelectedListener(new OnItemSelectedListener() {
 
