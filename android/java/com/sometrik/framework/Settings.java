@@ -32,7 +32,7 @@ public class Settings extends PreferenceFragment {
 
   public Settings(Context context) {
     this.context = context;
-    menuList = new ArrayList<>();
+    menuList = new ArrayList<MenuItem>();
   }
 
   @Override

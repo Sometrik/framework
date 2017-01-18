@@ -81,4 +81,9 @@ public class FWPicker extends Spinner implements NativeCommandHandler {
   public void setValue(int v) {
 
   }
+
+  @Override
+  public void setEnabled(Boolean enabled) {
+    setEnabled(enabled);
+  }
 }

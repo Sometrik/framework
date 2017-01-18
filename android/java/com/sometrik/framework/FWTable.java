@@ -50,6 +50,7 @@ public class FWTable extends TableLayout implements NativeCommandHandler {
 
   @Override
   public void addOption(int optionId, String text) {
+    System.out.println("FWTable couldn't handle command");
   }
 
   @Override
@@ -72,8 +73,17 @@ public class FWTable extends TableLayout implements NativeCommandHandler {
   }
 
   @Override
-  public void setValue(String v) { }
+  public void setValue(String v) {
+    System.out.println("FWTable couldn't handle command");
+  }
 
   @Override
-  public void setValue(int v) { }
+  public void setValue(int v) {
+    System.out.println("FWTable couldn't handle command");
+  }
+
+  @Override
+  public void setEnabled(Boolean enabled) {
+    System.out.println("FWTable couldn't handle command");
+  }
 }

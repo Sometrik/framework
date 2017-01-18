@@ -129,6 +129,10 @@ public class NativeCommand {
 
     System.out.println("Processing message " + command + " id: " + internalId + " Child id: " + getChildInternalId());
 
+    if (view == null){
+      System.out.println("View was null");
+      return;
+    }
     switch (command) {
 
     case CREATE_FORMVIEW:
@@ -341,7 +345,7 @@ public class NativeCommand {
     Button button = new Button(frame);
     button.setId(getInternalId());
     button.setText(getTextValue());
-
+   
     button.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View arg0) {

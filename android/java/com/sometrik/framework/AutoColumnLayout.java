@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.view.View;
+import android.widget.GridLayout;
+import android.widget.GridLayout.Spec;
 import android.widget.LinearLayout;
 
 public class AutoColumnLayout extends LinearLayout implements NativeCommandHandler {
@@ -35,24 +37,34 @@ public class AutoColumnLayout extends LinearLayout implements NativeCommandHandl
   
   private void buildAutoLayout(Boolean bigView) {
     
-    if (bigView) {
-      for (int i = 0; i < viewList.size(); i++) {
-	LinearLayout layout = new LinearLayout(context);
-	layout.setOrientation(LinearLayout.HORIZONTAL);
-	layout.addView(viewList.get(i));
+    GridLayout layout = new GridLayout(context);
 
-	if (viewList.size() - 1 > i) {
-	  layout.addView(viewList.get(i + 1));
-	  i++;
-	}
-	addView(layout);
-      }
+    Spec rowSpan = GridLayout.spec(GridLayout.UNDEFINED, 2);
+    Spec colspan = GridLayout.spec(GridLayout.UNDEFINED, 3);
+    GridLayout.LayoutParams gridParam = new GridLayout.LayoutParams(rowSpan, colspan);
 
-    } else {
-      for (View view : viewList) {
-	addView(view);
-      }
+    for (int i = 0; i < viewList.size(); i++){
+      layout.addView(viewList.get(i), gridParam);
     }
+    
+//    if (bigView) {
+//      for (int i = 0; i < viewList.size(); i++) {
+//	LinearLayout layout = new LinearLayout(context);
+//	layout.setOrientation(LinearLayout.HORIZONTAL);
+//	layout.addView(viewList.get(i));
+//
+//	if (viewList.size() - 1 > i) {
+//	  layout.addView(viewList.get(i + 1));
+//	  i++;
+//	}
+//	addView(layout);
+//      }
+//
+//    } else {
+//      for (View view : viewList) {
+//	addView(view);
+//      }
+//    }
   }
 
   private boolean checkForBigView(){
@@ -96,6 +108,11 @@ public class AutoColumnLayout extends LinearLayout implements NativeCommandHandl
   @Override
   public int getElementId() {
     return getId();
+  }
+
+  @Override
+  public void setEnabled(Boolean enabled) {
+    System.out.println("AutoColumnLayout couldn't handle command");
   }
   
 

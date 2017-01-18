@@ -93,7 +93,7 @@ public class NativeSurface extends SurfaceView implements NativeCommandHandler {
 
   @Override
   public void removeChild(int id) {
-    System.out.println("surface couldn't handle remove element");
+    System.out.println("FrameWork couldn't handle addOption");
     // TODO Auto-generated method stub
     
   }
@@ -103,4 +103,9 @@ public class NativeSurface extends SurfaceView implements NativeCommandHandler {
 
   @Override
   public void setValue(int v) { }
+
+  @Override
+  public void setEnabled(Boolean enabled) {
+    System.out.println("FrameWork couldn't handle command");
+  }
 }
