@@ -29,7 +29,7 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
  
   @Override
   public void addChild(View view) {
-    addView((View)view);
+    addView(view);
   }
 
   @Override
