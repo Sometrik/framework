@@ -20,7 +20,8 @@ class Element : public EventHandler {
   
   virtual void show() { }
   virtual int showModal() { return 0; }
-  virtual void sendCommand(const Command & command);
+
+  void sendCommand(const Command & command);
 
   void onEvent(Event & ev) override;
 

@@ -34,7 +34,7 @@ void
 Element::sendCommand(const Command & command){
   assert(this != platform);
   assert(platform);
-  platform->sendCommand(command);
+  platform->sendCommand2(command);
 }
 
 Element &

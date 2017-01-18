@@ -65,10 +65,15 @@ AndroidPlatform::convertToByteArray(const std::string & s) {
 }
 
 void
-AndroidPlatform::sendCommand(const Command & command) {
+AndroidPlatform::sendCommand2(const Command & command) {
   getLogger().println("sending command");
-  FWPlatform::sendCommand(command);
-
+  
+  if (command.getType() == Command::SHOW_VIEW) {
+    setActiveView(command.getInternalId());
+  } else if (!activeViewId && (command.getType() == Command::CREATE_FORMVIEW || command.getType() == Command::CREATE_OPENGL_VIEW)) {
+    setActiveView(command.getChildInternalId());
+  }
+  
   auto env = getJNIEnv();
   int commandTypeId = int(command.getType());
   auto textValue = command.getTextValue();

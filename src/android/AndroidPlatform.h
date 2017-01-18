@@ -69,6 +69,8 @@ class AndroidPlatform: public FWPlatform {
 public:
   AndroidPlatform(JNIEnv * _env, jobject _mgr, jobject _framework, float _display_scale) :
       FWPlatform(_display_scale), javaCache(JavaCache(_env)) {
+    sendCommand2(Command(Command::CREATE_PLATFORM, getParentInternalId(), getInternalId()));
+
     framework = _env->NewGlobalRef(_framework);
     mgr = _env->NewGlobalRef(_mgr);
     canvasCache = std::make_shared<canvas::AndroidCache>(_env, _mgr);
@@ -103,7 +105,7 @@ public:
   std::shared_ptr<Logger> createLogger(const std::string & name) const override {
     return std::make_shared<AndroidLogger>(name);
   }
-  void sendCommand(const Command & command) override;
+  void sendCommand2(const Command & command) override;
   bool initializeRenderer(int opengl_es_version, ANativeWindow * _window);
   void deinitializeRenderer();
   void startThread();

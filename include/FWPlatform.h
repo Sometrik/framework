@@ -51,7 +51,7 @@ class FWPlatform : public Element {
     Command c(Command::UPDATE_PREFERENCE, 0);
     c.setKey(key);
     c.setTextValue(value);
-    sendCommand(c);
+    sendCommand2(c);
   }
   
 #ifdef HAS_SOUNDCANVAS
@@ -67,14 +67,8 @@ class FWPlatform : public Element {
     activeViewId = id;
   }
   
-  void sendCommand(const Command & command) override {
-    if (command.getType() == Command::SHOW_VIEW) {
-      setActiveView(command.getInternalId());
-    } else if (!activeViewId && (command.getType() == Command::CREATE_FORMVIEW || command.getType() == Command::CREATE_OPENGL_VIEW)) {
-      setActiveView(command.getChildInternalId());
-    }
-  }
-
+  virtual void sendCommand2(const Command & command) = 0;
+  
   void postEvent(int internal_id, Event & ev) {
     Element * e = 0;
     if (!internal_id) {
@@ -112,7 +106,7 @@ class FWPlatform : public Element {
 
   void exit() {
     Command c(Command::QUIT_APP, getInternalId());
-    sendCommand(c);
+    sendCommand2(c);
   }
 
   std::shared_ptr<PlatformThread> run(std::shared_ptr<Runnable> runnable);
