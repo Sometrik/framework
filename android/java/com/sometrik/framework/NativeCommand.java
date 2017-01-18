@@ -348,8 +348,8 @@ public class NativeCommand {
     return layout;
   }
 
-  private Button createButton() {
-    Button button = new Button(frame);
+  private FWButton createButton() {
+    FWButton button = new FWButton(frame);
     button.setId(getInternalId());
     button.setText(getTextValue());
    
