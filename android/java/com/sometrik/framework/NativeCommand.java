@@ -134,11 +134,7 @@ public class NativeCommand {
   public void apply(NativeCommandHandler view) {
 
     System.out.println("Processing message " + command + " id: " + internalId + " Child id: " + getChildInternalId());
-
-    if (view == null){
-      System.out.println("View was null");
-      return;
-    }
+    
     switch (command) {
 
     case CREATE_FORMVIEW:
@@ -147,7 +143,7 @@ public class NativeCommand {
       FrameWork.addToViewList(scrollView);
       view.addChild(scrollView);
       break;
-      
+    case CREATE_BASICVIEW:
     case CREATE_LINEAR_LAYOUT:
       FWLayout layout = createLinearLayout();
       view.addChild(layout);
