@@ -138,6 +138,7 @@ public class NativeCommand {
 
     case CREATE_SCROLLVIEW:
       ScrollView scrollView = new ScrollView(frame);
+      scrollView.setId(getChildInternalId());
       view.addChild(scrollView);
       break;
 
@@ -148,6 +149,7 @@ public class NativeCommand {
       
     case CREATE_AUTO_COLUMN_LAYOUT:
       AutoColumnLayout autoLayout = new AutoColumnLayout(frame);
+      autoLayout.setId(getChildInternalId());
       view.addChild(autoLayout);
       break;
     case CREATE_TABLE_LAYOUT:
