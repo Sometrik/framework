@@ -152,6 +152,7 @@ public class NativeCommand {
     case CREATE_AUTO_COLUMN_LAYOUT:
       AutoColumnLayout autoLayout = new AutoColumnLayout(frame);
       autoLayout.setId(getChildInternalId());
+      FrameWork.addToViewList(autoLayout);
       view.addChild(autoLayout);
       break;
     case CREATE_TABLE_LAYOUT:
