@@ -142,16 +142,12 @@ public class NativeCommand {
     switch (command) {
 
     case CREATE_FORMVIEW:
-      System.out.println("creating formView " + getChildInternalId());
-      createFormView();
-      break;
-
-    case CREATE_SCROLLVIEW:
       FWScrollView scrollView = new FWScrollView(frame);
       scrollView.setId(getChildInternalId());
+      FrameWork.addToViewList(scrollView);
       view.addChild(scrollView);
       break;
-
+      
     case CREATE_LINEAR_LAYOUT:
       FWLayout layout = createLinearLayout();
       view.addChild(layout);
@@ -427,14 +423,6 @@ public class NativeCommand {
       textView.setText(textValue);
     }
     return textView;
-  }
-  
-  private void createFormView(){
-    FWLayout layout = new FWLayout(frame);
-    layout.setId(getChildInternalId());
-    FrameWork.views.put(getChildInternalId(), layout);
-    ScrollView scrollView = new ScrollView(frame);
-    scrollView.addView(layout);
   }
 
  // Create dialog with user text input
