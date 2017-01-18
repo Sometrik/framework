@@ -147,7 +147,7 @@ public class NativeCommand {
       break;
 
     case CREATE_SCROLLVIEW:
-      ScrollView scrollView = new ScrollView(frame);
+      FWScrollView scrollView = new FWScrollView(frame);
       scrollView.setId(getChildInternalId());
       view.addChild(scrollView);
       break;
