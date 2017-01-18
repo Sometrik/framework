@@ -203,7 +203,7 @@ public class NativeCommand {
       break;
 
     case CREATE_TEXTFIELD:
-      EditText editText = createEditText();
+      FWEditText editText = createEditText();
       view.addChild(editText);
       break;
     case CREATE_RADIO_GROUP:
@@ -371,8 +371,8 @@ public class NativeCommand {
     return button;
   }
   
-  private EditText createEditText(){
-    final EditText editText = new EditText(frame);
+  private FWEditText createEditText(){
+    final FWEditText editText = new FWEditText(frame);
     editText.setId(getChildInternalId());
     editText.setText(getTextValue());
     TableLayout.LayoutParams params = new TableLayout.LayoutParams(TableLayout.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT);
@@ -394,6 +394,7 @@ public class NativeCommand {
       public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
       public void onTextChanged(CharSequence s, int start, int before, int count) {}
    });
+    FrameWork.addToViewList(editText);
     return editText;
   }
   
