@@ -18,7 +18,8 @@ OpenGLView::initialize(FWPlatform * _platform) {
   logical_width = int(_platform->getDisplayWidth() / _platform->getDisplayScale());
   logical_height = int(_platform->getDisplayHeight() / _platform->getDisplayScale());
   actual_width = _platform->getDisplayWidth();
-  actual_height = _platform->getDisplayHeight();    
+  actual_height = _platform->getDisplayHeight();
+  initializeChildren();
 }
 
 void

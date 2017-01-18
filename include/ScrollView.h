@@ -11,6 +11,7 @@ class ScrollView : public Element {
   void initialize(FWPlatform * _platform) override {
     Element::initialize(_platform);
     sendCommand(Command(Command::CREATE_SCROLLVIEW, getParentInternalId(), getInternalId()));
+    initializeChildren();
   }
 };
 

@@ -16,6 +16,7 @@ class Element : public EventHandler {
   Element & operator= (const Element & other) = delete;
 
   virtual void initialize(FWPlatform * _platform);
+  void initializeChildren();
   
   virtual void show() { }
   virtual int showModal() { return 0; }
@@ -28,7 +29,7 @@ class Element : public EventHandler {
     children.push_back(element);      
     if (isInitialized()) element->initialize(platform);
     return *element;
-  }
+  }  
   Element & addChild(const std::string & text);
   LinearLayout & addHorizontalLayout();
   LinearLayout & addVerticalLayout();

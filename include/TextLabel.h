@@ -16,6 +16,7 @@ class TextLabel : public Element {
     c.setTextValue2(url);
     c.setFlags(getFlags());
     sendCommand(c);
+    initializeChildren();
   }
 
  private:

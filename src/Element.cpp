@@ -18,15 +18,22 @@ Element::initialize(FWPlatform * _platform) {
   if (_platform) {
     platform = _platform;
     internal_id = platform->getNextInternalId();
+  }
+}
+
+void
+Element::initializeChildren() {
+  if (isInitialized()) {
     for (auto & c : getChildren()){
       c->initialize(_platform);
-    }
+    }    
   }
 }
 
 void
 Element::sendCommand(const Command & command){
   assert(this != platform);
+  assert(platform);
   platform->sendCommand(command);
 }
 

@@ -11,6 +11,7 @@ class TableLayout : public Element {
   void initialize(FWPlatform * _platform) override {
     Element::initialize(_platform);
     sendCommand(Command(Command::CREATE_TABLE_LAYOUT, getParentInternalId(), getInternalId()));
+    initializeChildren();
   }
 };
 

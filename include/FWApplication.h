@@ -20,6 +20,7 @@ public:
     c.setTextValue(name);
     c.setTextValue2(iap_public_key);
     sendCommand(c);
+    initializeChildren();
   }
 
   void launchBrowser(const std::string & input_url) {

@@ -38,6 +38,7 @@ class FWPlatform : public Element {
   void initialize(FWPlatform * _platform) override {
     Element::initialize(_platform);
     sendCommand(Command(Command::CREATE_PLATFORM, getParentInternalId(), getInternalId()));
+    initializeChildren();
   }
   
   virtual std::string getBundleFilename(const char * filename) = 0;

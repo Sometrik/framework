@@ -21,6 +21,7 @@ class Button : public UIElement {
     c.setTextValue(label);
     c.setLayoutWeight(getLayoutWeight());
     sendCommand(c);
+    initializeChildren();
   }
 
   void onTouchEvent(TouchEvent & ev) override {

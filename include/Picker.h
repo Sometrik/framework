@@ -17,6 +17,7 @@ class Picker : public Element {
     for (auto & o : options) {
       initializeOption(o);
     }
+    initializeChildren();
   }
 
   void addOption(int id, const std::string & name) {
