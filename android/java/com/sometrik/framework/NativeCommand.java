@@ -261,6 +261,13 @@ public class NativeCommand {
     case SET_TEXT_VALUE:
       view.setValue(getTextValue());
       break;
+    case SET_ENABLED:
+      if (value > 0){
+	view.setEnabled(true);
+      } else {
+	view.setEnabled(false);
+      }
+      break;
     case LAUNCH_BROWSER:
       frame.launchBrowser(getTextValue());
       break;
