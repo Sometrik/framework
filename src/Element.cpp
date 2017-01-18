@@ -25,7 +25,7 @@ void
 Element::initializeChildren() {
   if (isInitialized()) {
     for (auto & c : getChildren()){
-      c->initialize(_platform);
+      c->initialize(platform);
     }    
   }
 }
