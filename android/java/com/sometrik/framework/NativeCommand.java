@@ -1,5 +1,8 @@
 package com.sometrik.framework;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +16,9 @@ import com.android.trivialdrivesample.util.Purchase;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
+import android.content.res.AssetManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.text.Editable;
 import android.text.Html;
 import android.text.InputType;
@@ -218,10 +224,8 @@ public class NativeCommand {
       break;
 
     case CREATE_IMAGE_ELEMENT:
-      ImageView imageView = new ImageView(frame);
-      imageView.setId(getChildInternalId());
-      // Missing image set
-      // imageView.setImageBitmap();
+      ImageView imageView = createImageView();
+      view.addChild(imageView);
       break;
       
     case SHOW_VIEW:
@@ -323,6 +327,22 @@ public class NativeCommand {
     table.setColumnCount(value);
     FrameWork.addToViewList(table);
     return table;
+  }
+  
+  private ImageView createImageView() {
+    ImageView imageView = new ImageView(frame);
+    imageView.setId(childInternalId);
+    try {
+      InputStream is = frame.getAssets().open(textValue);
+      Bitmap bitmap = BitmapFactory.decodeStream(is);
+      imageView.setImageBitmap(bitmap);
+      return imageView;
+    } catch (IOException e) {
+      e.printStackTrace();
+      System.out.println("error loading asset file to imageView");
+      System.exit(1);
+    }
+    return null;
   }
   
   private FWLayout createLinearLayout() {
