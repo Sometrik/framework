@@ -305,6 +305,11 @@ void* AndroidPlatform::threadStartCallback(void *myself) {
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "About to start thread 2");
 
   AndroidPlatform * aplatform = (AndroidPlatform*) myself;
+  if (aplatform->isInitialized()){
+    __android_log_print(ANDROID_LOG_INFO, "Sometrik", "aplatform is initialized");
+  } else {
+    __android_log_print(ANDROID_LOG_INFO, "Sometrik", "aplatform isn't initialized");
+  }
 
   JNIEnv * env;
   aplatform->getJavaVM()->AttachCurrentThread(&env, NULL);
