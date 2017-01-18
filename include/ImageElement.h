@@ -10,7 +10,7 @@ class ImageElement : public Element {
 
   void initialize(FWPlatform * _platform) override {
     Element::initialize(_platform);
-    Command c(Command::CREATE_IMAGE_ELEMENT, getParentInternalId(), getInternalId());
+    Command c(Command::CREATE_IMAGEVIEW, getParentInternalId(), getInternalId());
     c.setTextValue(filename);
     c.setLayoutWeight(getLayoutWeight());
     sendCommand(c);
