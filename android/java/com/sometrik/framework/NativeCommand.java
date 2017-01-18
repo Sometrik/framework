@@ -84,12 +84,13 @@ public class NativeCommand {
     CREATE_HEADING_TEXT,
     CREATE_TEXT,
     CREATE_DIALOG, // For future
-    CREATE_IMAGE_ELEMENT,
+    CREATE_IMAGEVIEW,
     CREATE_ACTION_SHEET,
     CREATE_CHECKBOX,
     CREATE_RADIO_GROUP,
     CREATE_SEPARATOR,
     CREATE_SLIDER,
+    CREATE_ACTIONBAR,
     DELETE_ELEMENT,
     SHOW_VIEW,
     SHOW_MESSAGE_DIALOG,
@@ -217,7 +218,7 @@ public class NativeCommand {
       view.addChild(textView);
       break;
 
-    case CREATE_IMAGE_ELEMENT:
+    case CREATE_IMAGEVIEW,
       ImageView imageView = createImageView();
       view.addChild(imageView);
       break;
