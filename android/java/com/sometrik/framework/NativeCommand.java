@@ -206,7 +206,6 @@ public class NativeCommand {
       EditText editText = createEditText();
       view.addChild(editText);
       break;
-      
     case CREATE_RADIO_GROUP:
       FWRadioGroup radioGroup = new FWRadioGroup(frame);
       radioGroup.setId(childInternalId);
@@ -324,11 +323,6 @@ public class NativeCommand {
     table.setColumnCount(value);
     FrameWork.addToViewList(table);
     return table;
-  }
-  
-  private void addOption(int menuId, int optionId, String optionText){
-    PopupMenu menu = menuList.get(menuId);
-    menu.getMenu().add(Menu.NONE, optionId, Menu.NONE, optionText);
   }
   
   private FWLayout createLinearLayout() {
