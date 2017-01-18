@@ -70,7 +70,7 @@ AndroidPlatform::sendCommand2(const Command & command) {
   
   if (command.getType() == Command::SHOW_VIEW) {
     setActiveView(command.getInternalId());
-  } else if (!activeViewId && (command.getType() == Command::CREATE_FORMVIEW || command.getType() == Command::CREATE_OPENGL_VIEW)) {
+  } else if (!getActiveViewId() && (command.getType() == Command::CREATE_FORMVIEW || command.getType() == Command::CREATE_OPENGL_VIEW)) {
     setActiveView(command.getChildInternalId());
   }
   
@@ -408,15 +408,11 @@ void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, job
     AAssetManager* manager = AAssetManager_fromJava(env, assetManager);
     android_fopen_set_asset_manager(manager);
 
-    platform = new AndroidPlatform(env, assetManager, thiz, displayScale);
+    platform = new AndroidPlatform(env, assetManager, thiz, displayScale, gJavaVM);
     platform->setDisplayWidth(screenWidth);
     platform->setDisplayHeight(screenHeight);
   
     start_thread = true;
-  }
-
-  if (gJavaVM) {
-    platform->setJavaVM(gJavaVM);
   }
 
   if (start_thread) {

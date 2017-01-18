@@ -67,14 +67,15 @@ private:
 
 class AndroidPlatform: public FWPlatform {
 public:
-  AndroidPlatform(JNIEnv * _env, jobject _mgr, jobject _framework, float _display_scale) :
+  AndroidPlatform(JNIEnv * _env, jobject _mgr, jobject _framework, float _display_scale, JavaVM * _javaVM) :
       FWPlatform(_display_scale), javaCache(JavaCache(_env)) {
-    sendCommand2(Command(Command::CREATE_PLATFORM, getParentInternalId(), getInternalId()));
 
+    setJavaVM(_javaVM);
     framework = _env->NewGlobalRef(_framework);
     mgr = _env->NewGlobalRef(_mgr);
     canvasCache = std::make_shared<canvas::AndroidCache>(_env, _mgr);
     clientCache = std::make_shared<AndroidClientCache>(_env);
+    sendCommand2(Command(Command::CREATE_PLATFORM, getParentInternalId(), getInternalId()));
 
 #ifdef HAS_SOUNDCANVAS
     soundCache = std::make_shared<AndroidSoundCache>(_env, _mgr);
