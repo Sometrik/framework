@@ -14,7 +14,6 @@ class ImageElement : public Element {
     c.setTextValue(filename);
     c.setLayoutWeight(getLayoutWeight());
     sendCommand(c);
-    initializeChildren();
   }
 
  private:

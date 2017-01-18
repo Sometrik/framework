@@ -11,7 +11,6 @@ class AutoColumnLayout : public Element {
   void initialize(FWPlatform * _platform) override {
     Element::initialize(_platform);
     sendCommand(Command(Command::CREATE_AUTO_COLUMN_LAYOUT, getParentInternalId(), getInternalId()));
-    initializeChildren();
   }
 };
 

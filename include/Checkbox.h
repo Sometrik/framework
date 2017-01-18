@@ -16,7 +16,6 @@ class Checkbox : public InputElement {
     c.setTextValue(label);
     c.setLayoutWeight(getLayoutWeight());
     sendCommand(c);
-    initializeChildren();
   }
 
   void onValueEvent(ValueEvent & ev) override {

@@ -30,6 +30,7 @@ class Element : public EventHandler {
 
     if (isInitialized()) {
       element->initialize(platform);
+      element->initializeChildren();
     }
     return *element;
   }  

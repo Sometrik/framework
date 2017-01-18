@@ -14,7 +14,6 @@ class TextField : public InputElement {
     Command c(Command::CREATE_TEXTFIELD, getParentInternalId(), getInternalId());
     c.setLayoutWeight(getLayoutWeight());
     sendCommand(c);
-    initializeChildren();
   }
 
   void onValueEvent(ValueEvent & ev) override {

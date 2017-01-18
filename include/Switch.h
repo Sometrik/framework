@@ -18,7 +18,6 @@ class Switch : public InputElement {
     c.setTextValue(label2);
     c.setLayoutWeight(getLayoutWeight());
     sendCommand(c);
-    initializeChildren();
   }
 
   void onValueEvent(ValueEvent & ev) override {
