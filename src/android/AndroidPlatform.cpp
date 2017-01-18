@@ -391,9 +391,6 @@ void Java_com_sometrik_framework_FrameWork_touchEvent(JNIEnv* env, jobject thiz,
   }
 }
 
-void Java_com_sometrik_framework_MyGLRenderer_onInitElement(JNIEnv* env, jobject thiz, double timestamp, int viewId) {
-}
-
 void Java_com_sometrik_framework_FrameWork_onUpdate(JNIEnv* env, jclass clazz, double timestamp, int viewId) {
   UpdateEvent ev(timestamp);
   platform->queueEvent(viewId, ev);
@@ -401,7 +398,6 @@ void Java_com_sometrik_framework_FrameWork_onUpdate(JNIEnv* env, jclass clazz, d
 
 static JavaVM * gJavaVM = 0;
 void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, jobject assetManager, float screenWidth, float screenHeight, float displayScale) {
-  bool start_thread = false;
   if (!platform) {
     __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Creating Platform");
 
@@ -411,14 +407,11 @@ void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, job
     platform = new AndroidPlatform(env, assetManager, thiz, displayScale, gJavaVM);
     platform->setDisplayWidth(screenWidth);
     platform->setDisplayHeight(screenHeight);
-  
-    start_thread = true;
-  }
 
-  if (start_thread) {
     platform->startThread();
+
+    __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Init end");
   }
-  __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Init end");
 }
 
   void Java_com_sometrik_framework_FrameWork_nativeSetSurface(JNIEnv* env, jobject thiz, jobject surface, int surfaceId, int gl_version) {
