@@ -2,16 +2,26 @@ package com.sometrik.framework;
 
 import android.content.Context;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 public class FWRadioGroup extends RadioGroup implements NativeCommandHandler {
   
   private Context context;
+  private FrameWork frame;
   
   public FWRadioGroup(Context context){
     super(context);
     this.context = context;
+    frame = (FrameWork)context;
+
+    setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener(){
+      @Override
+      public void onCheckedChanged(RadioGroup group, int checkedId) {
+	frame.intChangedEvent(System.currentTimeMillis() / 1000.0, checkedId, 1);
+      }
+    });
   }
 
   @Override
