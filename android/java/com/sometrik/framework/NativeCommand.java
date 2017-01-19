@@ -261,7 +261,7 @@ public class NativeCommand {
       view.setValue(getValue());
       break;
     case SET_TEXT_VALUE:
-      view.setValue(getTextValue());
+      view.setValue(textValue);
       break;
     case SET_ENABLED:
       view.setEnabled(value != 0);
@@ -359,7 +359,7 @@ public class NativeCommand {
 
   private FWButton createButton() {
     FWButton button = new FWButton(frame);
-    button.setId(getInternalId());
+    button.setId(getChildInternalId());
     button.setText(getTextValue());
    
     button.setOnClickListener(new OnClickListener() {
@@ -369,6 +369,7 @@ public class NativeCommand {
 	frame.intChangedEvent(System.currentTimeMillis() / 1000.0, getChildInternalId(), 1);
       }
     });
+    FrameWork.addToViewList(button);
     return button;
   }
   
@@ -402,7 +403,7 @@ public class NativeCommand {
   private FWPicker createSpinner(){
     FWPicker picker = new FWPicker(frame);
     picker.setId(getChildInternalId());
-    FrameWork.views.put(getChildInternalId(), picker);
+    FrameWork.addToViewList(picker);
     
     return picker;
   }
