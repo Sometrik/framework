@@ -70,9 +70,8 @@ public:
  AndroidPlatform(JNIEnv * _env, jobject _mgr, jobject _framework, float _display_scale, JavaVM * _javaVM)
    : FWPlatform(_display_scale),
     javaCache(JavaCache(_env)),
-    gJavaVM(_gJavaVM) {
+    gJavaVM(_javaVM) {
       
-    setJavaVM(_javaVM);
     framework = _env->NewGlobalRef(_framework);
     mgr = _env->NewGlobalRef(_mgr);
     canvasCache = std::make_shared<canvas::AndroidCache>(_env, _mgr);
