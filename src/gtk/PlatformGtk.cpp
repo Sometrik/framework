@@ -124,7 +124,7 @@ public:
 	gtk_header_bar_set_title((GtkHeaderBar*)header, "Moi!");
 	gtk_header_bar_set_subtitle((GtkHeaderBar*)header, "Aliotsikko");
 	gtk_header_bar_set_show_close_button((GtkHeaderBar*)header, 1);
-
+	gtk_header_bar_set_decoration_layout((GtkHeaderBar*)header, "close");
 	auto button = gtk_button_new_with_label("back");
 	g_signal_connect(button, "clicked", G_CALLBACK(on_back_button), this);
 	gtk_header_bar_pack_start((GtkHeaderBar*)header, button);
