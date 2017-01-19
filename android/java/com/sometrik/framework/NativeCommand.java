@@ -92,12 +92,12 @@ public class NativeCommand {
     CREATE_SLIDER,
     CREATE_ACTIONBAR,
     DELETE_ELEMENT,
-    SHOW_VIEW,
     SHOW_MESSAGE_DIALOG,
     SHOW_INPUT_DIALOG,
     SHOW_ACTION_SHEET,
     LAUNCH_BROWSER,
     POST_NOTIFICATION,
+    HISTORY_GO_BACK,
     SET_INT_VALUE, // Sets value of radio groups, checkboxes and pickers
     SET_TEXT_VALUE, // Sets value of textfields, labels and images
     SET_LABEL, // Sets label for buttons and checkboxes
@@ -223,10 +223,11 @@ public class NativeCommand {
       view.addChild(imageView);
       break;
       
-    case SHOW_VIEW:
-    	frame.disableDraw();
-      view.showView();
-      break;
+    // case SHOW_VIEW:
+    // 	frame.disableDraw();
+    //   view.showView();
+    //   break;
+      
     case ADD_OPTION:
       // Forward Command to FWPicker
       view.addOption(getValue(), getTextValue());
