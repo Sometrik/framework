@@ -177,6 +177,10 @@ public class FrameWork extends Activity implements NativeCommandHandler {
     setContentView(view);
   }
   
+  public int getCurrentViewId() {
+    return currentView;
+  }
+  
   private void createFormView(int id){
     FWLayout layout = new FWLayout(this);
     layout.setId(id);
