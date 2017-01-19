@@ -67,9 +67,11 @@ private:
 
 class AndroidPlatform: public FWPlatform {
 public:
-  AndroidPlatform(JNIEnv * _env, jobject _mgr, jobject _framework, float _display_scale, JavaVM * _javaVM) :
-      FWPlatform(_display_scale), javaCache(JavaCache(_env)) {
-
+ AndroidPlatform(JNIEnv * _env, jobject _mgr, jobject _framework, float _display_scale, JavaVM * _javaVM)
+   : FWPlatform(_display_scale),
+    javaCache(JavaCache(_env)),
+    gJavaVM(_gJavaVM) {
+      
     setJavaVM(_javaVM);
     framework = _env->NewGlobalRef(_framework);
     mgr = _env->NewGlobalRef(_mgr);
@@ -82,7 +84,6 @@ public:
 #endif
   }
   
-  void setJavaVM(JavaVM * _gJavaVM) { gJavaVM = _gJavaVM; }
   JavaVM * getJavaVM() { return gJavaVM; }
 
   std::string getBundleFilename(const char * filename) override;
