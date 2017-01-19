@@ -13,6 +13,8 @@
 #include <UpdateEvent.h>
 #include <ResizeEvent.h>
 #include <TimerEvent.h>
+#include <ValueEvent.h>
+#include <CommandEvent.h>
 
 #include <gtk/gtk.h>
 
@@ -33,7 +35,7 @@ public:
   }
 
   void pushEvent(const Event & ev) override {
-    
+    assert(0);
   }
   
   string getLocalFilename(const char * fn, FileType type) override {
@@ -50,9 +52,7 @@ public:
   }
 
   void sendCommand2(const Command & command) override {
-    if (command.getType() == Command::SHOW_VIEW) {
-      setActiveView(command.getInternalId());
-    } else if (!getActiveViewId() && (command.getType() == Command::CREATE_FORMVIEW || command.getType() == Command::CREATE_OPENGL_VIEW)) {
+    if (!getActiveViewId() && (command.getType() == Command::CREATE_FORMVIEW || command.getType() == Command::CREATE_OPENGL_VIEW)) {
       setActiveView(command.getChildInternalId());
     }
     
@@ -64,6 +64,7 @@ public:
     case Command::CREATE_APPLICATION: {
       cerr << "creating stack\n";
       stack = gtk_stack_new();
+      gtk_stack_set_transition_type((GtkStack*)stack, GTK_STACK_TRANSITION_TYPE_SLIDE_LEFT_RIGHT);
       // ignore parent id
       addView(0, command.getChildInternalId(), stack);
       assert(window);
@@ -73,6 +74,7 @@ public:
       
     case Command::CREATE_TEXTFIELD: {
       auto textfield = gtk_entry_new();
+      g_signal_connect(textfield, "changed", G_CALLBACK(send_text_value), this);
       addView(command, textfield);
     }
       break;
@@ -85,6 +87,7 @@ public:
       
     case Command::CREATE_BUTTON: {
       auto button = gtk_button_new_with_label(command.getTextValue().c_str());
+      g_signal_connect(button, "clicked", G_CALLBACK(send_int_value), this);
       addView(command, button);
     }
       break;
@@ -121,6 +124,11 @@ public:
 	gtk_header_bar_set_title((GtkHeaderBar*)header, "Moi!");
 	gtk_header_bar_set_subtitle((GtkHeaderBar*)header, "Aliotsikko");
 	gtk_header_bar_set_show_close_button((GtkHeaderBar*)header, 1);
+
+	auto button = gtk_button_new_with_label("back");
+	g_signal_connect(button, "clicked", G_CALLBACK(on_back_button), this);
+	gtk_header_bar_pack_start((GtkHeaderBar*)header, button);
+
 	gtk_widget_show(header);
 	gtk_window_set_titlebar(GTK_WINDOW(window), header);
       }
@@ -139,17 +147,42 @@ public:
       addView(command, image);
     }
       break;
-      
-    case Command::SET_INT_VALUE:
+
+    case Command::HISTORY_GO_BACK: {
+      int id = popViewHistory();
+      if (id) {
+	auto view = views_by_id[id];
+	if (view) {
+	  setActiveView(id);
+	  gtk_stack_set_visible_child((GtkStack*)stack, view);
+	}
+      }
+    }
       break;
       
-    case Command::SET_TEXT_VALUE:
-      // gtk_label_set_text(label, str)
+    case Command::SET_INT_VALUE: {
+      auto view = views_by_id[command.getInternalId()];
+      if (gtk_widget_get_parent(view) == stack) {
+	addToHistory(getActiveViewId());
+	setActiveView(command.getInternalId());
+	gtk_stack_set_visible_child((GtkStack*)stack, view);
+      } else {
+	assert(0);
+      }
+    }
+      break;
+      
+    case Command::SET_TEXT_VALUE: {
+      auto view = views_by_id[command.getInternalId()];
+      if (GTK_IS_LABEL(view)) {
+	gtk_label_set_text((GtkLabel*)view, command.getTextValue().c_str());
+      }
+    }
       break;
 
     case Command::SET_ENABLED: {
       auto view = views_by_id[command.getInternalId()];
-      gtk_widget_set_sensitive(view, command.getValue() ? 1 : 0);
+      if (view) gtk_widget_set_sensitive(view, command.getValue() ? 1 : 0);
       break;
     }
       
@@ -230,6 +263,18 @@ public:
   void addView(const Command & c, GtkWidget * widget) {
     addView(c.getInternalId(), c.getChildInternalId(), widget);
   }
+
+  int getId(GtkWidget * widget) const {
+    for (auto v : views_by_id) {
+      if (v.second == widget) return v.first;
+    }
+    return 0;
+  }
+
+protected:
+  static void send_int_value(GtkWidget * widget, gpointer data);
+  static void send_text_value(GtkWidget * widget, gpointer data);
+  static void on_back_button(GtkWidget * widget, gpointer data);
   
 private:
   GtkApplication * app = nullptr;
@@ -239,6 +284,42 @@ private:
   unordered_map<int, GtkWidget *> views_by_id;
   bool initial_view_shown = false;
 };
+
+void
+PlatformGtk::send_int_value(GtkWidget * widget, gpointer data) {
+  PlatformGtk * platform = (PlatformGtk*)data;
+  int id = platform->getId(widget);
+  assert(id);
+  if (id) {
+    cerr << "int value: id = " << id << endl;
+    ValueEvent ev(platform->getTime(), 1);
+    platform->postEvent(id, ev);
+  }
+}
+
+void
+PlatformGtk::send_text_value(GtkWidget * widget, gpointer data) {
+  PlatformGtk * platform = (PlatformGtk*)data;
+  int id = platform->getId(widget);
+  assert(id);
+  if (id) {
+    string s;
+    if (GTK_IS_ENTRY(widget)) {
+      s = gtk_entry_get_text((GtkEntry*)widget);
+    } else {
+      cerr << "unknown text source\n";
+    }
+    cerr << "text value: id = " << id << ", text = " << s << endl;
+    ValueEvent ev(platform->getTime(), s);
+    platform->postEvent(id, ev);
+  }
+}
+
+void
+PlatformGtk::on_back_button(GtkWidget * widget, gpointer data) {
+  PlatformGtk * platform = (PlatformGtk*)data;
+  platform->sendCommand2(Command(Command::HISTORY_GO_BACK, 0));  
+}
 
 static void activate(GtkApplication * app, gpointer user_data) {
   cerr << "activate\n";
