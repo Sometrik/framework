@@ -20,10 +20,10 @@ public class FWPicker extends Spinner implements NativeCommandHandler {
 
   public FWPicker(FrameWork frameWork) {
     super(frameWork);
+    this.frame = frameWork;
     adapter = new ArrayAdapter<String>(frame, android.R.layout.simple_spinner_item);
     idList = new ArrayList<Integer>();
     id = getId();
-    this.frame = frameWork;
     
     setOnItemSelectedListener(new OnItemSelectedListener() {
 
