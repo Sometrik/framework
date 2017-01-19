@@ -532,13 +532,13 @@ public class NativeCommand {
 
     }, "");
   }
-  
-  private void sendInventory(Inventory inventory){
-  	List <Purchase> purchaseList = inventory.getAllPurchases();
-  	System.out.println("getting purchase history. Purchase list size: " + purchaseList.size());
-  	for (Purchase purchase : inventory.getAllPurchases()){
-  		FrameWork.onPurchaseEvent(purchase.getPurchaseTime() / 1000.0, purchase.getSku(), false);
-  	}
+
+  private void sendInventory(Inventory inventory) {
+    List<Purchase> purchaseList = inventory.getAllPurchases();
+    System.out.println("getting purchase history. Purchase list size: " + purchaseList.size());
+    for (Purchase purchase : inventory.getAllPurchases()) {
+      FrameWork.onPurchaseEvent(purchase.getPurchaseTime() / 1000.0, purchase.getSku(), false);
+    }
   }
   
   private Boolean isSet(int flag) {
