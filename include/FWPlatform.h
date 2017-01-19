@@ -122,6 +122,19 @@ class FWPlatform : public Element {
 
   double getTime() const;
 
+  void addToHistory(int view_internal_id) {
+    view_history.push_back(view_internal_id);
+  }
+
+  int popViewHistory() {
+    int id = 0;
+    if (!view_history.empty()) {
+      id = view_history.back();
+      view_history.pop_back();
+    }
+    return id;    
+  }
+
  protected:
   Logger & getLogger() {
     if (!logger.get()) {
@@ -154,6 +167,7 @@ class FWPlatform : public Element {
   int activeViewId = 0;
 
   std::list<std::shared_ptr<PlatformThread> > threads;
+  std::vector<int> view_history;
   size_t num_running_threads = 0;
 };
 
