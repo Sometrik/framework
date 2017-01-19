@@ -1,7 +1,11 @@
 package com.sometrik.framework;
 
+import com.sometrik.formtest.R;
+
 import android.content.Context;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 
 public class FWButton extends Button implements NativeCommandHandler {
@@ -33,6 +37,9 @@ public class FWButton extends Button implements NativeCommandHandler {
   @Override
   public void setValue(String v) {
     setText(v);
+    //FIXME Debug animation
+    Animation shake = AnimationUtils.loadAnimation(frame, R.anim.shake);
+    startAnimation(shake);
   }
   
   @Override
