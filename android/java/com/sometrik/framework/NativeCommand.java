@@ -103,6 +103,8 @@ public class NativeCommand {
     SET_TEXT_VALUE, // Sets value of textfields, labels and images
     SET_LABEL, // Sets label for buttons and checkboxes
     SET_ENABLED,
+    SET_STYLE,
+    SET_ERROR,
     UPDATE_PREFERENCE,
     ADD_OPTION,
     QUIT_APP,
@@ -266,6 +268,12 @@ public class NativeCommand {
       break;
     case SET_ENABLED:
       view.setEnabled(value != 0);
+      break;
+    case SET_STYLE:
+      view.setStyle(textValue, textValue2)
+      break;
+    case SET_ERROR:
+      view.setError(textValue);
       break;
     case LAUNCH_BROWSER:
       frame.launchBrowser(getTextValue());

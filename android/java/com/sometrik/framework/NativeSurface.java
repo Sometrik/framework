@@ -99,10 +99,20 @@ public class NativeSurface extends SurfaceView implements NativeCommandHandler {
   }
 
   @Override
-  public void setValue(int v) { }
+  public void setValue(int v) {
+    framework.setCurrentView(this);
+    drawTimer = new DrawTimer(getId());
+    timer.scheduleAtFixedRate(drawTimer, UPDATE_FREQUENCY, UPDATE_FREQUENCY);
+  }
 
   @Override
   public void setEnabled(Boolean enabled) {
     System.out.println("FrameWork couldn't handle command");
   }
+
+  @Override
+  public void setStyle(String key, String value) { }
+
+  @Override
+  public void setError(String error) { }
 }

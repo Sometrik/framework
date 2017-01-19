@@ -61,4 +61,9 @@ public class FWButton extends Button implements NativeCommandHandler {
     System.out.println("FWButton couldn't handle command");
   }
 
+  @Override
+  public void setStyle(String key, String value) { }
+
+  @Override
+  public void setError(String error) { }
 }

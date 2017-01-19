@@ -53,8 +53,13 @@ public class FWScrollView extends ScrollView implements NativeCommandHandler {
   }
 
   @Override
+  public void setStyle(String key, String value) { }
+
+  @Override
+  public void setError(String error) { }
+
+  @Override
   public int getElementId() {
     return getId();
   }
-
 }

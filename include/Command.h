@@ -44,7 +44,9 @@ class Command {
     SET_INT_VALUE, // Sets value of radio groups, checkboxes and pickers
     SET_TEXT_VALUE, // Sets value of textfields and labels
     SET_LABEL, // Sets label for buttons and checkboxes
-    SET_ENABLED, 
+    SET_ENABLED,
+    SET_STYLE,
+    SET_ERROR,
     UPDATE_PREFERENCE,
     ADD_OPTION,
     QUIT_APP,

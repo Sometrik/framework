@@ -116,5 +116,9 @@ public class AutoColumnLayout extends LinearLayout implements NativeCommandHandl
     System.out.println("AutoColumnLayout couldn't handle command");
   }
   
+  @Override
+  public void setStyle(String key, String value) { }
 
+  @Override
+  public void setError(String error) { }
 }

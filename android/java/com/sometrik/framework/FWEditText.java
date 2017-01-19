@@ -44,6 +44,16 @@ public class FWEditText extends EditText implements NativeCommandHandler {
   }
 
   @Override
+  public void setStyle(String key, String value) {
+
+  }
+
+  @Override
+  public void setError(String error) {
+    setError(error);
+  }
+  
+  @Override
   public int getElementId() {
     return getId();
   }

@@ -547,5 +547,9 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   public void setEnabled(Boolean enabled) {
     System.out.println("FrameWork couldn't handle addOption");
   }
+  @Override
+  public void setStyle(String key, String value) { }
 
+  @Override
+  public void setError(String error) { }
 }

@@ -9,6 +9,8 @@ public interface NativeCommandHandler {
   public void setValue(String v);
   public void setValue(int v);
   public void setEnabled(Boolean enabled);
+  public void setStyle(String key, String value);
+  public void setError(String error);
   
   public int getElementId();
 }
