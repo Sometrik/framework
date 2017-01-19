@@ -6,6 +6,7 @@ import android.content.Context;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.animation.RotateAnimation;
 import android.widget.Button;
 
 public class FWButton extends Button implements NativeCommandHandler {
@@ -38,8 +39,11 @@ public class FWButton extends Button implements NativeCommandHandler {
   public void setValue(String v) {
     setText(v);
     //FIXME Debug animation
-    Animation shake = AnimationUtils.loadAnimation(frame, R.anim.shake);
-    startAnimation(shake);
+    RotateAnimation r = new RotateAnimation(-5f, 5f,50,50); 
+    r.setDuration(100);
+    r.setRepeatCount(10);
+    r.setRepeatMode(RotateAnimation.REVERSE);
+    startAnimation(r);
   }
   
   @Override
