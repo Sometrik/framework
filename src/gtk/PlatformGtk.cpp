@@ -104,6 +104,13 @@ public:
       addView(command, label);
     }
       break;
+
+#if 0
+    case Command::CREATE_LINK: {
+      auto link = gtk_link_button_new_with_label(uri, label);
+    };
+      break;
+#endif
       
     case Command::CREATE_LINEAR_LAYOUT: {
       auto box = gtk_box_new(command.getValue() == 1 ? GTK_ORIENTATION_VERTICAL : GTK_ORIENTATION_HORIZONTAL, 5); // FIXME: spacing
@@ -125,11 +132,14 @@ public:
 	gtk_header_bar_set_subtitle((GtkHeaderBar*)header, "Aliotsikko");
 	gtk_header_bar_set_show_close_button((GtkHeaderBar*)header, 1);
 	gtk_header_bar_set_decoration_layout((GtkHeaderBar*)header, "close");
-	auto button = gtk_button_new_with_label("back");
-	g_signal_connect(button, "clicked", G_CALLBACK(on_back_button), this);
-	gtk_header_bar_pack_start((GtkHeaderBar*)header, button);
-
-	gtk_widget_show(header);
+	// auto button = gtk_button_new_with_label("back");
+	auto previous = gtk_button_new_from_icon_name("go-previous", GTK_ICON_SIZE_BUTTON);
+	auto next = gtk_button_new_from_icon_name("go-next", GTK_ICON_SIZE_BUTTON);
+	g_signal_connect(previous, "clicked", G_CALLBACK(on_previous_button), this);
+	g_signal_connect(next, "clicked", G_CALLBACK(on_next_button), this);
+	gtk_header_bar_pack_start((GtkHeaderBar*)header, previous);
+	gtk_header_bar_pack_start((GtkHeaderBar*)header, next);
+	gtk_widget_show_all(header);
 	gtk_window_set_titlebar(GTK_WINDOW(window), header);
       }
     }
@@ -148,11 +158,19 @@ public:
     }
       break;
 
-    case Command::HISTORY_GO_BACK: {
-      int id = popViewHistory();
+    case Command::HISTORY_GO_BACK:
+    case Command::HISTORY_GO_FORWARD: {
+      int id;
+      if (command.getType() == Command::HISTORY_GO_BACK) {
+	id = popViewBackHistory();
+      } else {
+	id = popViewForwardHistory();
+      }
       if (id) {
+	cerr << "id = " << id << endl;
 	auto view = views_by_id[id];
 	if (view) {
+	  cerr << "found view\n";
 	  setActiveView(id);
 	  gtk_stack_set_visible_child((GtkStack*)stack, view);
 	}
@@ -194,14 +212,15 @@ public:
       
     case Command::CREATE_FORMVIEW: {
       cerr << "creating formview\n";
-      auto box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5); // FIXME: spacing
+      auto scroll = gtk_scrolled_window_new(0, 0);
+      // auto box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5); // FIXME: spacing
       
-      addView(0, command.getChildInternalId(), box);
+      addView(0, command.getChildInternalId(), scroll);
       string s = "form" + to_string(command.getChildInternalId());
-      gtk_stack_add_named((GtkStack *)stack, box, s.c_str());
+      gtk_stack_add_named((GtkStack *)stack, scroll, s.c_str());
 
       if (!initial_view_shown) {
-	gtk_stack_set_visible_child((GtkStack*)stack, box);
+	gtk_stack_set_visible_child((GtkStack*)stack, scroll);
 	gtk_widget_show_all(window);
 	initial_view_shown = true;
       }
@@ -274,7 +293,8 @@ public:
 protected:
   static void send_int_value(GtkWidget * widget, gpointer data);
   static void send_text_value(GtkWidget * widget, gpointer data);
-  static void on_back_button(GtkWidget * widget, gpointer data);
+  static void on_previous_button(GtkWidget * widget, gpointer data);
+  static void on_next_button(GtkWidget * widget, gpointer data);
   
 private:
   GtkApplication * app = nullptr;
@@ -316,9 +336,16 @@ PlatformGtk::send_text_value(GtkWidget * widget, gpointer data) {
 }
 
 void
-PlatformGtk::on_back_button(GtkWidget * widget, gpointer data) {
+PlatformGtk::on_previous_button(GtkWidget * widget, gpointer data) {
   PlatformGtk * platform = (PlatformGtk*)data;
   platform->sendCommand2(Command(Command::HISTORY_GO_BACK, 0));  
+}
+
+void
+PlatformGtk::on_next_button(GtkWidget * widget, gpointer data) {
+  cerr << "got next\n";
+  PlatformGtk * platform = (PlatformGtk*)data;
+  platform->sendCommand2(Command(Command::HISTORY_GO_FORWARD, 0));  
 }
 
 static void activate(GtkApplication * app, gpointer user_data) {
