@@ -34,12 +34,12 @@ class Command {
     CREATE_SLIDER,
     CREATE_ACTIONBAR,
     DELETE_ELEMENT,
-    SHOW_VIEW,
     SHOW_MESSAGE_DIALOG,
     SHOW_INPUT_DIALOG,
     SHOW_ACTION_SHEET,
     LAUNCH_BROWSER,
     POST_NOTIFICATION,
+    HISTORY_GO_BACK,
     SET_INT_VALUE, // Sets value of radio groups, checkboxes and pickers
     SET_TEXT_VALUE, // Sets value of textfields and labels
     SET_LABEL, // Sets label for buttons and checkboxes
@@ -91,7 +91,7 @@ class Command {
  private:
   Type commandType;
   int internalId, childInternalId;
-  int value;
+  int value = 0;
   std::string key;
   std::string textValue, textValue2;
   int width = 0, height = 0, layout_weight = 0;
