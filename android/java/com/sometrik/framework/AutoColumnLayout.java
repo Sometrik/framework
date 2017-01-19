@@ -4,7 +4,9 @@ import java.util.ArrayList;
 
 import android.content.Context;
 import android.content.res.Configuration;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.GridLayout;
 import android.widget.GridLayout.Spec;
 import android.widget.LinearLayout;
@@ -15,55 +17,34 @@ public class AutoColumnLayout extends LinearLayout implements NativeCommandHandl
   //For big view Autolayout groups 2 views next to each other
   
   private ArrayList<View> viewList;
-  private Context context;
   private FrameWork frame;
+  private GridLayout layout;
+  GridLayout.LayoutParams gridParam;
+  LinearLayout.LayoutParams childParams;
   
   public AutoColumnLayout(FrameWork frameWork){
     super(frameWork);
     frame = frameWork;
     viewList = new ArrayList<View>();
     setOrientation(LinearLayout.VERTICAL);
+    layout = new GridLayout(frame);
+
+    childParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+    childParams.weight = 1.0f;
+    childParams.gravity = Gravity.FILL;
+
+    layout.setColumnCount(2);
+    layout.setRowCount(5);
+    GridLayout.LayoutParams param = new GridLayout.LayoutParams();
+    param.height = LayoutParams.WRAP_CONTENT;
+    param.width = LayoutParams.MATCH_PARENT;
+    layout.setLayoutParams(param);
+    addView(layout);
   }
   
   public void addChild(View view){
-    viewList.add(view);
-  }
-  
-  public void showView(){
-    buildAutoLayout(checkForBigView());
-    frame.setContentView(this);
-  }
-  
-  private void buildAutoLayout(Boolean bigView) {
-    
-    GridLayout layout = new GridLayout(context);
-
-    Spec rowSpan = GridLayout.spec(GridLayout.UNDEFINED, 2);
-    Spec colspan = GridLayout.spec(GridLayout.UNDEFINED, 3);
-    GridLayout.LayoutParams gridParam = new GridLayout.LayoutParams(rowSpan, colspan);
-
-    for (int i = 0; i < viewList.size(); i++){
-      layout.addView(viewList.get(i), gridParam);
-    }
-    
-//    if (bigView) {
-//      for (int i = 0; i < viewList.size(); i++) {
-//	LinearLayout layout = new LinearLayout(context);
-//	layout.setOrientation(LinearLayout.HORIZONTAL);
-//	layout.addView(viewList.get(i));
-//
-//	if (viewList.size() - 1 > i) {
-//	  layout.addView(viewList.get(i + 1));
-//	  i++;
-//	}
-//	addView(layout);
-//      }
-//
-//    } else {
-//      for (View view : viewList) {
-//	addView(view);
-//      }
-//    }
+    layout.setLayoutParams(childParams);
+    layout.addView(view);
   }
 
   private boolean checkForBigView(){
@@ -102,7 +83,8 @@ public class AutoColumnLayout extends LinearLayout implements NativeCommandHandl
   @Override
   public void setValue(int v) {
     if (v > 0){
-      frame.setCurrentView(this);
+//      buildAutoLayout(checkForBigView());
+      frame.setContentView(this);
     }
   }
 
