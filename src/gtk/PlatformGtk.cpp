@@ -29,6 +29,7 @@ class PlatformGtk : public FWPlatform {
 public:
   PlatformGtk() : FWPlatform(1.0f) {
     CurlClientFactory::globalInit();
+    sendCommand2(Command(Command::CREATE_PLATFORM, getParentInternalId(), getInternalId()));
   }
 
   void pushEvent(const Event & ev) override {
@@ -65,13 +66,8 @@ public:
       stack = gtk_stack_new();
       // ignore parent id
       addView(0, command.getChildInternalId(), stack);
-      assert(window_box);
-#if 0
-      gtk_container_add(GTK_CONTAINER(window_box), stack);
-#else
-      gtk_box_pack_end((GtkBox*)window_box, stack, 1, 1, 0);
-#endif
-      gtk_widget_show_all(window_box);
+      assert(window);
+      gtk_container_add(GTK_CONTAINER(window), stack);
     }
       break;
       
@@ -124,12 +120,9 @@ public:
 	header = gtk_header_bar_new();
 	gtk_header_bar_set_title((GtkHeaderBar*)header, "Moi!");
 	gtk_header_bar_set_subtitle((GtkHeaderBar*)header, "Aliotsikko");
-	addView(0, command.getChildInternalId(), header);
-#if 0
-	gtk_container_add(GTK_CONTAINER(window_box), header);
-#else
-	gtk_box_pack_end((GtkBox*)window_box, header, 0, 0, 0);
-#endif
+	gtk_header_bar_set_show_close_button((GtkHeaderBar*)header, 1);
+	gtk_widget_show(header);
+	gtk_window_set_titlebar(GTK_WINDOW(window), header);
       }
     }
       break;
@@ -173,7 +166,12 @@ public:
       addView(0, command.getChildInternalId(), box);
       string s = "form" + to_string(command.getChildInternalId());
       gtk_stack_add_named((GtkStack *)stack, box, s.c_str());
-      gtk_stack_set_visible_child((GtkStack*)stack, box); // FIXME
+
+      if (!initial_view_shown) {
+	gtk_stack_set_visible_child((GtkStack*)stack, box);
+	gtk_widget_show_all(window);
+	initial_view_shown = true;
+      }
     }
       break;
 
@@ -212,15 +210,11 @@ public:
     window = gtk_application_window_new (app);
     gtk_window_set_title (GTK_WINDOW (window), "Window");
     gtk_window_set_default_size (GTK_WINDOW (window), width, height);
-    window_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
-    gtk_box_set_homogeneous((GtkBox*)window_box, false);
-    gtk_container_add(GTK_CONTAINER(window), window_box);	
-    gtk_widget_show_all(window);
   }
 
   void addView(int parent_id, int id, GtkWidget * widget) {
     assert(widget);
-    gtk_widget_show(widget);
+    if (initial_view_shown) gtk_widget_show(widget);
     if (parent_id) {
       auto parent = (GtkContainer *)views_by_id[parent_id];
       assert(parent);
@@ -240,10 +234,10 @@ public:
 private:
   GtkApplication * app = nullptr;
   GtkWidget * window = nullptr;
-  GtkWidget * window_box = nullptr;
   GtkWidget * header = nullptr;
   GtkWidget * stack = nullptr;
   unordered_map<int, GtkWidget *> views_by_id;
+  bool initial_view_shown = false;
 };
 
 static void activate(GtkApplication * app, gpointer user_data) {
