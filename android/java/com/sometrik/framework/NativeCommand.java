@@ -146,7 +146,7 @@ public class NativeCommand {
       if (view == null){
 	System.out.println("view was null");
 	if (frame.getCurrentViewId() == 0){
-	  scrollView.showView();
+	  scrollView.setValue(1);
 	}
       } else {
 	view.addChild(scrollView);
@@ -208,13 +208,13 @@ public class NativeCommand {
       break;
     case CREATE_OPENGL_VIEW:
       NativeSurface surface = frame.createNativeOpenGLView(childInternalId);
-      surface.showView();
       break;
 
     case CREATE_TEXTFIELD:
       FWEditText editText = createEditText();
       view.addChild(editText);
       break;
+      
     case CREATE_RADIO_GROUP:
       FWRadioGroup radioGroup = new FWRadioGroup(frame);
       radioGroup.setId(childInternalId);
@@ -230,11 +230,6 @@ public class NativeCommand {
       ImageView imageView = createImageView();
       view.addChild(imageView);
       break;
-      
-    // case SHOW_VIEW:
-    // 	frame.disableDraw();
-    //   view.showView();
-    //   break;
       
     case ADD_OPTION:
       // Forward Command to FWPicker
@@ -297,7 +292,7 @@ public class NativeCommand {
       break;
     case BUY_PRODUCT:
       try {
-	launchPurchase("com.sometrik.formtest.coin");
+	launchPurchase(textValue);
       } catch (IabAsyncInProgressException e) {
 	e.printStackTrace();
 	System.out.println("Error on launchPurchase with message: " + e.getMessage());

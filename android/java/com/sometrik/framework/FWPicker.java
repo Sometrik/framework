@@ -40,12 +40,7 @@ public class FWPicker extends Spinner implements NativeCommandHandler {
 
   public void handleCommand(NativeCommand command) {
   }
-
-  @Override
-  public void showView() {
-    System.out.println("Picker couldn't handle showView");
-  }
-
+  
   @Override
   public int getElementId() {
     return getId();

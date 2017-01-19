@@ -31,12 +31,7 @@ public class FWRadioGroup extends RadioGroup implements NativeCommandHandler {
   public void removeChild(int id) {
     System.out.println("FWRadioGroup couldn't handle command");
   }
-
-  @Override
-  public void showView() {
-    System.out.println("FWRadioGroup couldn't handle command");
-  }
-
+  
   @Override
   public void addOption(int optionId, String text) {
     RadioButton button = new RadioButton(frame);

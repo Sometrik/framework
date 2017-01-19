@@ -517,9 +517,6 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   }
 
   @Override
-  public void showView() {
-  }
-  @Override
   public int getElementId() {
     return appId;
   }

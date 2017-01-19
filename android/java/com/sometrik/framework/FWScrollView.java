@@ -29,12 +29,7 @@ public class FWScrollView extends ScrollView implements NativeCommandHandler {
       }
     }
   }
-
-  @Override
-  public void showView() {
-    frame.setCurrentView(this);
-  }
-
+  
   @Override
   public void addOption(int optionId, String text) {
     System.out.println("FWScrollView couldn't handle command");
@@ -47,7 +42,9 @@ public class FWScrollView extends ScrollView implements NativeCommandHandler {
 
   @Override
   public void setValue(int v) {
-    System.out.println("FWScrollView couldn't handle command");
+    if (v > 0){
+      frame.setCurrentView(this);
+    }
   }
 
   @Override

@@ -21,14 +21,7 @@ public class NativeSurface extends SurfaceView implements NativeCommandHandler {
     timer = new Timer();
     System.out.println("Native Surface constructor complete");
   }
-
-  @Override
-  public void showView() {
-    framework.setCurrentView(this);
-    drawTimer = new DrawTimer(getId());
-    timer.scheduleAtFixedRate(drawTimer, UPDATE_FREQUENCY, UPDATE_FREQUENCY);
-  }
-
+  
   class DrawTimer extends TimerTask {
 
     int viewId;
@@ -99,7 +92,11 @@ public class NativeSurface extends SurfaceView implements NativeCommandHandler {
   }
 
   @Override
-  public void setValue(String v) { }
+  public void setValue(String v) {
+    framework.setCurrentView(this);
+    drawTimer = new DrawTimer(getId());
+    timer.scheduleAtFixedRate(drawTimer, UPDATE_FREQUENCY, UPDATE_FREQUENCY);
+  }
 
   @Override
   public void setValue(int v) { }

@@ -134,14 +134,15 @@ class FWPlatform : public Element {
     }
     return id;    
   }
-
- protected:
   Logger & getLogger() {
     if (!logger.get()) {
       logger = createLogger("Framework");
     }
     return *logger;
   }
+
+ protected:
+
 
 #ifdef HAS_SOUNDCANVAS
   virtual std::shared_ptr<SoundCanvas> createSoundCanvas() const {

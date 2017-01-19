@@ -101,7 +101,9 @@ public class AutoColumnLayout extends LinearLayout implements NativeCommandHandl
 
   @Override
   public void setValue(int v) {
-    System.out.println("AutoColumnLayout couldn't handle command");
+    if (v > 0){
+      frame.setCurrentView(this);
+    }
   }
 
   @Override

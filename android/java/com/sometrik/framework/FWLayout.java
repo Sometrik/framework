@@ -18,12 +18,6 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
   public int getElementId() {
     return getId();
   }
-  
-  @Override
-  public void showView() {
-    System.out.println("showing " + getId());
-    frame.setCurrentView(this);
-  }
  
   @Override
   public void addChild(View view) {
@@ -55,7 +49,9 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
 
   @Override
   public void setValue(int v) {
-    System.out.println("FWLayout couldn't handle command");
+    if (v > 0){
+      frame.setCurrentView(this);
+    }
   }
 
   @Override

@@ -42,12 +42,7 @@ public class FWTable extends TableLayout implements NativeCommandHandler {
     row.addView(view);
     dataList.add(view);
   }
-
-  @Override
-  public void showView() {
-    frame.setCurrentView(this);
-  }
-
+  
   @Override
   public void addOption(int optionId, String text) {
     System.out.println("FWTable couldn't handle command");
