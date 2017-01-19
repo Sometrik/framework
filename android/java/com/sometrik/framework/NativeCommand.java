@@ -218,7 +218,7 @@ public class NativeCommand {
       view.addChild(textView);
       break;
 
-    case CREATE_IMAGEVIEW,
+    case CREATE_IMAGEVIEW:
       ImageView imageView = createImageView();
       view.addChild(imageView);
       break;
