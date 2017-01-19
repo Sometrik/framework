@@ -213,8 +213,8 @@ public:
     case Command::CREATE_FORMVIEW: {
       cerr << "creating formview\n";
       auto scroll = gtk_scrolled_window_new(0, 0);
-      // auto box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5); // FIXME: spacing
-      
+      gtk_scrolled_window_set_policy((GtkScrolledWindow*)scroll,
+				     GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
       addView(0, command.getChildInternalId(), scroll);
       string s = "form" + to_string(command.getChildInternalId());
       gtk_stack_add_named((GtkStack *)stack, scroll, s.c_str());
