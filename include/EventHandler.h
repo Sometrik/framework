@@ -41,8 +41,6 @@ class LoadEvent;
 
 class EventHandler : public Notifier {
  public:
-  EventHandler() { }
-
   void call() override { call(true); }
   void call(bool t) override { call(t ? 1 : 0); }
   void call(int i) override { }

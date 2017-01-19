@@ -24,8 +24,6 @@ class BoundPtr : public Bindable {
 
 class Notifier : public Bindable {
  public:
-  Notifier() { }
-  
   template<class T>
   Notifier & bind(T * arg) {
     return bind(std::make_shared<BoundPtr<T> >(arg));

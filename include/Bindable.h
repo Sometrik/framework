@@ -5,8 +5,8 @@
 
 class Bindable {
  public:
-  Bindable() { }
-  virtual ~Bindable() { }
+  Bindable() = default;
+  virtual ~Bindable() = default;
   
   Bindable(const Bindable & other) = delete;
   Bindable & operator =(const Bindable & other) = delete;
