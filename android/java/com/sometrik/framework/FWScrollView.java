@@ -15,7 +15,9 @@ public class FWScrollView extends ScrollView implements NativeCommandHandler {
 
   @Override
   public void addChild(View view) {
-    addChild(view);
+    System.out.println("Stack overflow?");
+    addView(view);
+    System.out.println("Stack overflow");
   }
 
   @Override
