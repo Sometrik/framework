@@ -68,9 +68,7 @@ void
 AndroidPlatform::sendCommand2(const Command & command) {
   getLogger().println("sending command");
   
-  if (command.getType() == Command::SHOW_VIEW) {
-    setActiveView(command.getInternalId());
-  } else if (!getActiveViewId() && (command.getType() == Command::CREATE_FORMVIEW || command.getType() == Command::CREATE_OPENGL_VIEW)) {
+  if (!getActiveViewId() && (command.getType() == Command::CREATE_FORMVIEW || command.getType() == Command::CREATE_OPENGL_VIEW)) {
     setActiveView(command.getChildInternalId());
   }
   
