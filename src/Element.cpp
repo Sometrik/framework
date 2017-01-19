@@ -5,9 +5,6 @@
 #include <Command.h>
 #include <FWApplication.h>
 
-#include <SysEvent.h>
-#include <OpenGLInitEvent.h>
-
 #include <cassert>
 
 using namespace std;
@@ -19,12 +16,14 @@ Element::initialize(FWPlatform * _platform) {
     platform = _platform;
     internal_id = platform->getNextInternalId();
   }
+  assert(isInitialized());
 }
 
 void
 Element::initializeChildren() {
+  assert(isInitialized());
   if (isInitialized()) {
-    for (auto & c : getChildren()){
+    for (auto & c : getChildren()) {
       c->initialize(platform);
       c->initializeChildren();
     }    
@@ -32,8 +31,7 @@ Element::initializeChildren() {
 }
 
 void
-Element::sendCommand(const Command & command){
-  assert(this != platform);
+Element::sendCommand(const Command & command) {
   assert(platform);
   platform->sendCommand2(command);
 }
