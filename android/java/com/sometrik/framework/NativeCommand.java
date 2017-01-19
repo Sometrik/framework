@@ -142,7 +142,15 @@ public class NativeCommand {
       FWScrollView scrollView = new FWScrollView(frame);
       scrollView.setId(getChildInternalId());
       FrameWork.addToViewList(scrollView);
-      view.addChild(scrollView);
+      
+      if (view == null){
+	System.out.println("view was null");
+	if (frame.getCurrentViewId() == 0){
+	  scrollView.showView();
+	}
+      } else {
+	view.addChild(scrollView);
+      }
       break;
     case CREATE_BASICVIEW:
     case CREATE_LINEAR_LAYOUT:
