@@ -19,6 +19,11 @@ class UIElement : public Element {
  public:
   UIElement() { }
 
+  bool isA(const std::string & className) override {
+    if (className == "UIElement") return true;
+    return Element::isA(className);
+  }
+
   void setX(float _x) { x = _x; }
   void setY(float _y) { y = _y; }
   void setWidth(float _width) { width = _width; }

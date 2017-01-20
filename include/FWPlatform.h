@@ -34,7 +34,11 @@ class FWPlatform : public Element {
   };
   
   FWPlatform(float _display_scale);
-  
+
+  bool isA(const std::string & className) override {
+    if (className == "FWPlatform") return true;
+    return Element::isA(className);
+  }
   
   virtual std::string getBundleFilename(const char * filename) = 0;
   virtual std::string getLocalFilename(const char * filename, FileType type) = 0;

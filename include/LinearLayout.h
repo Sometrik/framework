@@ -11,6 +11,12 @@ class LinearLayout : public Element {
  public:
   LinearLayout(int _direction) : direction(_direction) { }
 
+  bool isA(const std::string & className) override {
+    if (className == "LinearLayout") return true;
+    return Element::isA(className);
+  }
+
+ protected:
   void initialize(FWPlatform * _platform) override {
     Element::initialize(_platform);
     Command c(Command::CREATE_LINEAR_LAYOUT, getParentInternalId(), getInternalId());

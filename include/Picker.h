@@ -8,15 +8,10 @@
 class Picker : public Element {
  public:
   Picker() { }
-  
-  void initialize(FWPlatform * _platform) override {
-    Element::initialize(_platform);
-    Command c(Command::CREATE_PICKER, getParentInternalId(), getInternalId());
-    c.setLayoutWeight(getLayoutWeight());
-    sendCommand(c);
-    for (auto & o : options) {
-      initializeOption(o);
-    }
+
+  bool isA(const std::string & className) override {
+    if (className == "Picker") return true;
+    return Element::isA(className);
   }
 
   void addOption(int id, const std::string & name) {
@@ -45,6 +40,16 @@ class Picker : public Element {
   void call(const std::string & s) override { }
 
  protected:
+  void initialize(FWPlatform * _platform) override {
+    Element::initialize(_platform);
+    Command c(Command::CREATE_PICKER, getParentInternalId(), getInternalId());
+    c.setLayoutWeight(getLayoutWeight());
+    sendCommand(c);
+    for (auto & o : options) {
+      initializeOption(o);
+    }
+  }
+
   void initializeOption(const std::pair<int, std::string> & o) {
     Command c(Command::ADD_OPTION, getInternalId(), 0);
     c.setValue(o.first);

@@ -11,7 +11,10 @@ class OpenGLView : public FWViewBase {
  public:
   OpenGLView(int _id = 0) : FWViewBase(_id) { }
 
-  void initialize(FWPlatform * _platform) override;
+  bool isA(const std::string & className) override {
+    if (className == "OpenGLView") return true;
+    return FWViewBase::isA(className);
+  }
 
   void onResizeEvent(ResizeEvent & ev) override;
   
@@ -25,6 +28,7 @@ class OpenGLView : public FWViewBase {
 #endif
 
  protected:
+  void initialize(FWPlatform * _platform) override;
   void checkGLError();
 
  private:

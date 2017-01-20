@@ -6,6 +6,11 @@
 class InputElement : public Element {
  public:
   InputElement() { }
+
+  bool isA(const std::string & className) override {
+    if (className == "InputElement") return true;
+    return Element::isA(className);
+  }
 };
 
 #endif

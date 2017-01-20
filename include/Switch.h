@@ -11,13 +11,9 @@ class Switch : public InputElement {
   Switch(const std::string & _label) : label(_label) { }
   Switch(const std::string & _label, const std::string & _label2) : label(_label), label2(_label2) { }
 
-  void initialize(FWPlatform * _platform) override {
-    Element::initialize(_platform);
-    Command c(Command::CREATE_SWITCH, getParentInternalId(), getInternalId());
-    c.setTextValue(label);
-    c.setTextValue(label2);
-    c.setLayoutWeight(getLayoutWeight());
-    sendCommand(c);
+  bool isA(const std::string & className) override {
+    if (className == "Switch") return true;
+    return InputElement::isA(className);
   }
 
   void onValueEvent(ValueEvent & ev) override {
@@ -26,6 +22,16 @@ class Switch : public InputElement {
   }
 
   bool getValue() const { return value; }
+
+ protected:
+  void initialize(FWPlatform * _platform) override {
+    Element::initialize(_platform);
+    Command c(Command::CREATE_SWITCH, getParentInternalId(), getInternalId());
+    c.setTextValue(label);
+    c.setTextValue(label2);
+    c.setLayoutWeight(getLayoutWeight());
+    sendCommand(c);
+  }
 
  private:
   bool value = false;

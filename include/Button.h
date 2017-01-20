@@ -15,12 +15,9 @@ class Button : public UIElement {
  public:
   Button(const std::string & _label) : label(_label) { }
 
-  void initialize(FWPlatform * _platform) override {
-    Element::initialize(_platform);
-    Command c(Command::CREATE_BUTTON, getParentInternalId(), getInternalId());
-    c.setTextValue(label);
-    c.setLayoutWeight(getLayoutWeight());
-    sendCommand(c);
+  bool isA(const std::string & className) override {
+    if (className == "Button") return true;
+    return UIElement::isA(className);
   }
 
   void onTouchEvent(TouchEvent & ev) override {
@@ -78,6 +75,15 @@ class Button : public UIElement {
   void call() override { sendCommand(Command(Command::SET_INT_VALUE, getInternalId())); }
   void call(bool t) override { call(); }
   void call(const std::string & s) override { call(); }
+
+ protected: 
+  void initialize(FWPlatform * _platform) override {
+    Element::initialize(_platform);
+    Command c(Command::CREATE_BUTTON, getParentInternalId(), getInternalId());
+    c.setTextValue(label);
+    c.setLayoutWeight(getLayoutWeight());
+    sendCommand(c);
+  }
 
  private:
   std::string label;

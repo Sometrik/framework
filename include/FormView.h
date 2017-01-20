@@ -7,10 +7,19 @@
 class FormView : public FWViewBase {
  public:
   FormView(int _id = 0) : FWViewBase(_id) { }
+  FormView(const std::string & label, int _id = 0) : FWViewBase(label, _id) { }
 
+  bool isA(const std::string & className) override {
+    if (className == "FormView") return true;
+    return Element::isA(className);
+  }
+
+ protected:
   void initialize(FWPlatform * _platform) override {
     FWViewBase::initialize(_platform);
-    sendCommand(Command(Command::CREATE_FORMVIEW, getParentInternalId(), getInternalId()));
+    Command c(Command::CREATE_FORMVIEW, getParentInternalId(), getInternalId());
+    c.setTextValue(getLabel());
+    sendCommand(c);
   }
 };
 

@@ -10,12 +10,9 @@ class Checkbox : public InputElement {
  public:
   Checkbox(const std::string & _label) : label(_label) { }
 
-  void initialize(FWPlatform * _platform) override {
-    Element::initialize(_platform);
-    Command c(Command::CREATE_CHECKBOX, getParentInternalId(), getInternalId());
-    c.setTextValue(label);
-    c.setLayoutWeight(getLayoutWeight());
-    sendCommand(c);
+  bool isA(const std::string & className) override {
+    if (className == "Checkbox") return true;
+    return InputElement::isA(className);
   }
 
   void onValueEvent(ValueEvent & ev) override {
@@ -34,6 +31,15 @@ class Checkbox : public InputElement {
   }
 
   bool getValue() const { return value; }
+
+ protected:
+  void initialize(FWPlatform * _platform) override {
+    Element::initialize(_platform);
+    Command c(Command::CREATE_CHECKBOX, getParentInternalId(), getInternalId());
+    c.setTextValue(label);
+    c.setLayoutWeight(getLayoutWeight());
+    sendCommand(c);
+  }
 
  private:
   bool value = false;
