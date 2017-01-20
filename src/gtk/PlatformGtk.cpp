@@ -138,7 +138,8 @@ public:
       break;
 	
     case Command::CREATE_TABLE_LAYOUT: {
-      auto layout = gtk_grid_new();
+      auto layout = gtk_table_new(1, command.getValue(), false);
+      gtk_table_set_homogeneous((GtkTable*)layout, false);
       addView(command, layout);
     }
       break;
@@ -329,6 +330,20 @@ public:
 	gtk_box_pack_start((GtkBox*)parent, widget, 0, 0, 5);
       } else if (GTK_IS_FLOW_BOX(parent)) {
 	gtk_flow_box_insert((GtkFlowBox*)parent, widget, -1);
+      } else if (GTK_IS_TABLE(parent)) {
+	unsigned int n = getChildCount(parent);
+	unsigned int rows, columns;
+	gtk_table_get_size((GtkTable*)parent, &rows, &columns);
+	if (n == rows * columns) {
+	  gtk_table_resize((GtkTable*)parent, rows + 1, columns);
+	}
+	unsigned int row = n / columns;
+	unsigned int col = n % columns;
+	cerr << "n = " << n << ", size = " << rows << "x" << columns << ", pos = (" << row << " " << col << ")\n";
+	gtk_table_attach_defaults((GtkTable*)parent, widget,
+				  col, col + 1,
+				  row, row + 1
+				  );
       } else {
 	gtk_container_add(parent, widget);
       }
@@ -350,6 +365,8 @@ public:
 protected:
   static string getTextProperty(gpointer object, const char * key);
   static string getTextProperty(GtkContainer * c, GtkWidget * w, const char * key);
+
+  static size_t getChildCount(GtkContainer * widget);
   
   static void send_int_value(GtkWidget * widget, gpointer data);
   static void send_text_value(GtkWidget * widget, gpointer data);
@@ -387,6 +404,16 @@ PlatformGtk::getTextProperty(GtkContainer * c, GtkWidget * w, const char * key) 
     g_free(strval);
   }
   return s;
+}
+
+size_t
+PlatformGtk::getChildCount(GtkContainer * widget) {
+  size_t n = 0;
+  if (GTK_IS_CONTAINER(widget)) {
+    auto children = gtk_container_get_children(GTK_CONTAINER(widget));
+    n = g_list_length(children);
+  }
+  return n;
 }
 
 void
