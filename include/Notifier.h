@@ -22,11 +22,29 @@ class BoundPtr : public Bindable {
   T * ptr;
 };
 
+class BoundVoidFunc : public Bindable {
+ public:
+  BoundVoidFunc(std::function<void ()> const & _func) : func(_func) { }
+
+  void call() override { func(); }
+  void call(bool t) override { func(); }
+  void call(int i) override { func(); }
+  void call(const std::string & s) override { func(); }
+
+ private:
+  std::function<void (void)> const & func;
+};
+
 class Notifier : public Bindable {
  public:
   template<class T>
   Notifier & bind(T * arg) {
     return bind(std::make_shared<BoundPtr<T> >(arg));
+  }
+
+  template<class T>
+  Notifier & bind(std::function<void ()> const & arg) {
+    return bind(std::make_shared<BoundVoidFunc>(arg));
   }
   
   Notifier & bind(const std::shared_ptr<Bindable> & bindable) {
