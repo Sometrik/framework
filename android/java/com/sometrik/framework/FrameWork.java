@@ -29,6 +29,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
+import android.transition.TransitionManager;
 import android.util.DisplayMetrics;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -39,6 +40,10 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceHolder.Callback;
 import android.view.View;
 import android.view.View.OnTouchListener;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.RotateAnimation;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -172,9 +177,32 @@ public class FrameWork extends Activity implements NativeCommandHandler {
     startActivity(browserIntent);
   }
 
-  public void setCurrentView(View view) {
-    currentView = view.getId();
-    setContentView(view);
+  public void setCurrentView(final View view) {
+    if (currentView != 0) {
+      AlphaAnimation r = new AlphaAnimation(1f, 0f);
+      r.setDuration(200);
+      r.setAnimationListener(new Animation.AnimationListener() {
+        @Override
+        public void onAnimationStart(Animation animation) { }
+
+        @Override
+        public void onAnimationEnd(Animation animation) {
+          currentView = view.getId();
+          setContentView(view);
+          AlphaAnimation q = new AlphaAnimation(0f, 1f);
+          q.setDuration(200);
+          view.startAnimation(q);
+        }
+
+        @Override
+        public void onAnimationRepeat(Animation animation) { }
+      });
+      View sadas = (View) FrameWork.views.get(currentView);
+      sadas.startAnimation(r);
+    } else {
+      currentView = view.getId();
+      setContentView(view);
+    }
   }
   
   public int getCurrentViewId() {
