@@ -263,6 +263,7 @@ public:
     case Command::CREATE_FORMVIEW: {
       cerr << "creating formview\n";
       auto sw = gtk_scrolled_window_new(0, 0);
+      gtk_container_set_border_width((GtkContainer*)sw, 10);
       gtk_scrolled_window_set_policy((GtkScrolledWindow*)sw,
 				     GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
       addView(0, command.getChildInternalId(), sw);
