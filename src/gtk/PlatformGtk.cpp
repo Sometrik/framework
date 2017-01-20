@@ -80,8 +80,20 @@ public:
       break;
 
     case Command::CREATE_PICKER: {
-      auto picker = gtk_combo_box_new();
+      auto picker = gtk_combo_box_text_new();
       addView(command, picker);
+    }
+      break;
+
+    case Command::ADD_OPTION: {
+      auto view = views_by_id[command.getInternalId()];
+      if (view) {
+	if (GTK_IS_COMBO_BOX_TEXT(view)) {
+	  string id = to_string(command.getValue());
+	  gtk_combo_box_text_append((GtkComboBoxText*)view,
+				    id.c_str(), command.getTextValue().c_str());
+	}
+      }
     }
       break;
       
@@ -98,9 +110,16 @@ public:
     }
       break;
       
-    case Command::CREATE_TEXT:
+    case Command::CREATE_TEXT: {
+      auto label = gtk_label_new(command.getTextValue().c_str());
+      gtk_label_set_line_wrap((GtkLabel*)label, true);
+      addView(command, label);
+    }
+      break;
+      
     case Command::CREATE_HEADING_TEXT: {
       auto label = gtk_label_new(command.getTextValue().c_str());
+      gtk_label_set_line_wrap((GtkLabel*)label, true);
       addView(command, label);
     }
       break;
@@ -124,21 +143,34 @@ public:
     }
       break;
 
+    case Command::CREATE_AUTO_COLUMN_LAYOUT: {
+      auto layout = gtk_flow_box_new();
+      gtk_flow_box_set_homogeneous((GtkFlowBox*)layout, false);
+      gtk_orientable_set_orientation((GtkOrientable*)layout, GTK_ORIENTATION_HORIZONTAL);
+      gtk_flow_box_set_selection_mode((GtkFlowBox*)layout, GTK_SELECTION_NONE);
+      addView(command, layout);
+    }
+      break;
+
     case Command::CREATE_ACTIONBAR: {
       if (!header) {
 	cerr << "creating actionbar\n";
 	header = gtk_header_bar_new();
-	gtk_header_bar_set_title((GtkHeaderBar*)header, "Moi!");
-	gtk_header_bar_set_subtitle((GtkHeaderBar*)header, "Aliotsikko");
+	gtk_header_bar_set_title((GtkHeaderBar*)header, "App");
 	gtk_header_bar_set_show_close_button((GtkHeaderBar*)header, 1);
 	gtk_header_bar_set_decoration_layout((GtkHeaderBar*)header, "close");
-	// auto button = gtk_button_new_with_label("back");
+
+	auto box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+	gtk_style_context_add_class(gtk_widget_get_style_context(box), "linked");
 	auto previous = gtk_button_new_from_icon_name("go-previous", GTK_ICON_SIZE_BUTTON);
 	auto next = gtk_button_new_from_icon_name("go-next", GTK_ICON_SIZE_BUTTON);
 	g_signal_connect(previous, "clicked", G_CALLBACK(on_previous_button), this);
 	g_signal_connect(next, "clicked", G_CALLBACK(on_next_button), this);
-	gtk_header_bar_pack_start((GtkHeaderBar*)header, previous);
-	gtk_header_bar_pack_start((GtkHeaderBar*)header, next);
+	gtk_box_pack_start((GtkBox*)box, previous, 0, 0, 0);
+	gtk_box_pack_start((GtkBox*)box, next, 0, 0, 0);
+	
+	gtk_header_bar_pack_start((GtkHeaderBar*)header, box);
+	
 	gtk_widget_show_all(header);
 	gtk_window_set_titlebar(GTK_WINDOW(window), header);
       }
@@ -173,6 +205,8 @@ public:
 	  cerr << "found view\n";
 	  setActiveView(id);
 	  gtk_stack_set_visible_child((GtkStack*)stack, view);
+	  string title = getTextProperty((GtkContainer*)stack, view, "title");
+	  gtk_header_bar_set_subtitle((GtkHeaderBar*)header, title.c_str());
 	}
       }
     }
@@ -184,6 +218,8 @@ public:
 	addToHistory(getActiveViewId());
 	setActiveView(command.getInternalId());
 	gtk_stack_set_visible_child((GtkStack*)stack, view);
+	string title = getTextProperty((GtkContainer*)stack, view, "title");
+	gtk_header_bar_set_subtitle((GtkHeaderBar*)header, title.c_str());
       } else {
 	assert(0);
       }
@@ -201,8 +237,21 @@ public:
     case Command::SET_ENABLED: {
       auto view = views_by_id[command.getInternalId()];
       if (view) gtk_widget_set_sensitive(view, command.getValue() ? 1 : 0);
-      break;
     }
+      break;
+
+    case Command::SET_ERROR: {
+      auto view = views_by_id[command.getInternalId()];
+      if (view) {
+	auto context = gtk_widget_get_style_context(view);
+	if (command.getValue() != 0) {
+	  gtk_style_context_add_class(context, "error");
+	} else {
+	  gtk_style_context_remove_class(context, "error");
+	}
+      }
+    }
+      break;
       
     case Command::SHOW_MESSAGE_DIALOG:
       break;
@@ -212,15 +261,21 @@ public:
       
     case Command::CREATE_FORMVIEW: {
       cerr << "creating formview\n";
-      auto scroll = gtk_scrolled_window_new(0, 0);
-      gtk_scrolled_window_set_policy((GtkScrolledWindow*)scroll,
+      auto sw = gtk_scrolled_window_new(0, 0);
+      gtk_scrolled_window_set_policy((GtkScrolledWindow*)sw,
 				     GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
-      addView(0, command.getChildInternalId(), scroll);
+      addView(0, command.getChildInternalId(), sw);
       string s = "form" + to_string(command.getChildInternalId());
-      gtk_stack_add_named((GtkStack *)stack, scroll, s.c_str());
+      auto & title = command.getTextValue();
+      if (title.empty()) {
+	gtk_stack_add_named((GtkStack *)stack, sw, s.c_str());
+      } else {
+	gtk_stack_add_titled((GtkStack *)stack, sw, s.c_str(), title.c_str());
+      }
 
       if (!initial_view_shown) {
-	gtk_stack_set_visible_child((GtkStack*)stack, scroll);
+	gtk_header_bar_set_subtitle((GtkHeaderBar*)header, title.c_str());
+	gtk_stack_set_visible_child((GtkStack*)stack, sw);
 	gtk_widget_show_all(window);
 	initial_view_shown = true;
       }
@@ -272,6 +327,8 @@ public:
       assert(parent);
       if (GTK_IS_BOX(parent)) {
 	gtk_box_pack_start((GtkBox*)parent, widget, 0, 0, 5);
+      } else if (GTK_IS_FLOW_BOX(parent)) {
+	gtk_flow_box_insert((GtkFlowBox*)parent, widget, -1);
       } else {
 	gtk_container_add(parent, widget);
       }
@@ -291,6 +348,9 @@ public:
   }
 
 protected:
+  static string getTextProperty(gpointer object, const char * key);
+  static string getTextProperty(GtkContainer * c, GtkWidget * w, const char * key);
+  
   static void send_int_value(GtkWidget * widget, gpointer data);
   static void send_text_value(GtkWidget * widget, gpointer data);
   static void on_previous_button(GtkWidget * widget, gpointer data);
@@ -304,6 +364,30 @@ private:
   unordered_map<int, GtkWidget *> views_by_id;
   bool initial_view_shown = false;
 };
+
+string
+PlatformGtk::getTextProperty(gpointer object, const char * key) {
+  gchar * strval = 0;
+  g_object_get(object, key, &strval, NULL);
+  string s;
+  if (strval) {
+    s = strval;
+    g_free(strval);
+  }
+  return s;
+}
+
+string
+PlatformGtk::getTextProperty(GtkContainer * c, GtkWidget * w, const char * key) {
+  gchar * strval = 0;
+  gtk_container_child_get(c, w, key, &strval, NULL);
+  string s;
+  if (strval) {
+    s = strval;
+    g_free(strval);
+  }
+  return s;
+}
 
 void
 PlatformGtk::send_int_value(GtkWidget * widget, gpointer data) {
