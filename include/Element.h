@@ -2,6 +2,7 @@
 #define _ELEMENT_H_
 
 #include <EventHandler.h>
+#include <Selection.h>
 
 class FWPlatform;
 class FWApplication;
@@ -14,13 +15,17 @@ class Element : public EventHandler {
 
   Element(const Element & other) = delete;
   Element & operator= (const Element & other) = delete;
-
-  virtual void initialize(FWPlatform * _platform);
-  void initializeChildren();
   
   virtual void show() { }
+  virtual void hide() { }
+    
+  virtual bool isA(const std::string & className) {
+    return className == "Element";
+  }
+  
   virtual int showModal() { return 0; }
 
+  void style(const std::string & key, const std::string & value);
   void sendCommand(const Command & command);
 
   void onEvent(Event & ev) override;
@@ -66,48 +71,36 @@ class Element : public EventHandler {
 
   std::vector<std::shared_ptr<Element> > & getChildren() { return children; }
 
-  const Element * getElementByInternalId(int _internal_id) const {
-    if (_internal_id == internal_id) {
-      return this;
-    } else {
-      for (auto & c : children) {
-	const Element * e = c->getElementByInternalId(_internal_id);
-	if (e) return e;
+  Selection getChildByInternalId(int _internal_id) {
+    for (auto & c : children) {
+      if (c->getInternalId() == _internal_id) {
+	return Selection(c);
+      } else {
+	Selection s = c->getChildByInternalId(_internal_id);
+	if (!s.empty()) return s;
       }
-      return 0;
     }
+    return Selection();
   }
 
-  Element * getElementByInternalId(int _internal_id) {
+  Selection getChildById(int _id) {
+    for (auto & c : children) {
+      if (c->getId() == _id) {
+	return Selection(c);
+      } else {
+	Selection s = c->getChildById(_id);
+	if (!s.empty()) return s;
+      }
+    }
+    return Selection();
+  }
+
+  Element * getElementByInternalId(int _internal_id) { // internal use only
     if (_internal_id == internal_id) {
       return this;
     } else {
       for (auto & c : children) {
 	Element * e = c->getElementByInternalId(_internal_id);
-	if (e) return e;
-      }
-      return 0;
-    }
-  }
-
-  const Element * getElementById(int _id) const {
-    if (_id == id) {
-      return this;
-    } else {
-      for (auto & c : children) {
-	const Element * e = c->getElementById(_id);
-	if (e) return e;
-      }
-      return 0;
-    }
-  }
-
-  Element * getElementById(int _id) {
-    if (_id == id) {
-      return this;
-    } else {
-      for (auto & c : children) {
-	Element * e = c->getElementById(_id);
 	if (e) return e;
       }
       return 0;
@@ -121,6 +114,10 @@ class Element : public EventHandler {
   const Element * getParent() const { return parent; }
 
   bool isInitialized() const { return platform != 0; }
+
+ protected:
+  virtual void initialize(FWPlatform * _platform);
+  void initializeChildren();
 
  private:
   FWPlatform * platform = 0;
