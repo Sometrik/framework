@@ -2,12 +2,12 @@
 #include <EventHandler.h>
 
 void
-TouchEvent::dispatch(EventHandler & element) {
+TouchEvent::dispatch(EventHandler & evh) {
   if (!isHandled()) {
-    element.onTouchEvent(*this);
+    evh.onTouchEvent(*this);
     if (isHandled() && !handler) {
-      handler = &element;
+      handler = &evh;
     }
   }
-  Event::dispatch(element);
+  Event::dispatch(evh);
 }
