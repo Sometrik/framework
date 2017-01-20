@@ -270,7 +270,7 @@ public class NativeCommand {
       view.setEnabled(value != 0);
       break;
     case SET_STYLE:
-      view.setStyle(textValue, textValue2)
+      view.setStyle(textValue, textValue2);
       break;
     case SET_ERROR:
       view.setError(textValue);
