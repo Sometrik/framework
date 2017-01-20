@@ -31,6 +31,14 @@ Element::initializeChildren() {
 }
 
 void
+Element::style(const std::string & key, const std::string & value) {
+  Command c(Command::SET_STYLE, getInternalId());
+  c.setTextValue(key);
+  c.setTextValue2(value);
+  sendCommand(c);
+}
+  
+void
 Element::sendCommand(const Command & command) {
   assert(platform);
   platform->sendCommand2(command);
