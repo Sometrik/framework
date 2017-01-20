@@ -6,7 +6,7 @@
 
 class TableLayout : public Element {
  public:
-  TableLayout(int _direction) : direction(_direction) { }
+  TableLayout(int _num_columns) : num_columns(_num_columns) { }
 
   bool isA(const std::string & className) override {
     if (className == "TableLayout") return true;
@@ -16,8 +16,13 @@ class TableLayout : public Element {
  protected:
   void initialize(FWPlatform * _platform) override {
     Element::initialize(_platform);
-    sendCommand(Command(Command::CREATE_TABLE_LAYOUT, getParentInternalId(), getInternalId()));
+    Command c(Command::CREATE_TABLE_LAYOUT, getParentInternalId(), getInternalId());
+    c.setValue(num_columns);
+    sendCommand(c);
   }
+
+ private:
+  int num_columns;
 };
 
 #endif
