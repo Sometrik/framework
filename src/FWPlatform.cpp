@@ -9,6 +9,8 @@
 #include <iostream>
 #include <unistd.h>
 #include <sys/time.h>
+#include <typeinfo>
+#include <sstream>
 
 using namespace std;
 
@@ -149,4 +151,16 @@ FWPlatform::getTime() const {
     t = (double)tv.tv_sec + tv.tv_usec / 1000000.0;
   }
   return t;
+}
+
+void
+FWPlatform::postEvent(int internal_id, Event & ev) {
+  assert(internal_id);
+  Element * e = getElementByInternalId(internal_id);
+  if (e) ev.dispatch(*e);
+  else {
+    std::ostringstream s;
+    s << "Failed to dispatch event " << typeid(ev).name() << " id: " << internal_id;
+    getLogger().println(s.str());
+  }
 }

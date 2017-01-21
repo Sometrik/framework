@@ -13,7 +13,6 @@
 #include <SoundCanvas.h>
 #endif
 
-#include <sstream>
 #include <string>
 #include <memory>
 #include <list>
@@ -73,21 +72,7 @@ class FWPlatform : public Element {
   
   virtual void sendCommand2(const Command & command) = 0;
   
-  void postEvent(int internal_id, Event & ev) {
-    Element * e = 0;
-    if (!internal_id) {
-      auto ptr = getFirstChild();
-      e = ptr.get();
-    } else {
-      e = getElementByInternalId(internal_id);
-    }
-    if (e) ev.dispatch(*e);
-    else {
-      std::ostringstream s;
-      s << "Failed to dispatch event " << typeid(ev).name() << " id: " << internal_id;
-      getLogger().println(s.str());
-    }
-  }
+  void postEvent(int internal_id, Event & ev);
   
   const std::shared_ptr<PrimitiveRenderer> & getRenderer() { return renderer; }
   void setRenderer(const std::shared_ptr<PrimitiveRenderer> & _renderer) { renderer = _renderer; }
