@@ -31,6 +31,18 @@ Element::initializeChildren() {
 }
 
 void
+Element::setError(bool t) {
+  if ((t && !has_error) || (!t && has_error)) {
+    has_error = t;
+    cerr << "setting error to " << has_error << endl;
+    Command c(Command::SET_ERROR, getInternalId());
+    c.setValue(t ? 1 : 0);
+    if (t) c.setTextValue("Arvo ei kelpaa!");
+    sendCommand(c);
+  }
+}
+
+void
 Element::style(const std::string & key, const std::string & value) {
   Command c(Command::SET_STYLE, getInternalId());
   c.setTextValue(key);

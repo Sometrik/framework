@@ -21,9 +21,11 @@ class Element : public EventHandler {
     
   virtual bool isA(const std::string & className) {
     return className == "Element";
-  }
+  }  
   
   virtual int showModal() { return 0; }
+
+  void setError(bool t) override;
 
   void style(const std::string & key, const std::string & value);
   void sendCommand(const Command & command);
@@ -127,6 +129,7 @@ class Element : public EventHandler {
   std::vector<std::shared_ptr<Element> > children;
   int layout_weight = 0;
   unsigned int flags; // initialized in constructor
+  bool has_error = false;
 };
 
 #endif
