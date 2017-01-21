@@ -20,14 +20,15 @@ class Checkbox : public InputElement {
     notify(value);
   }
 
-  void call(bool t) override {
+  bool call(bool t) override {
     value = t;
     Command c(Command::SET_INT_VALUE, getParentInternalId(), getInternalId());
     c.setValue(value);
     sendCommand(c);
+    return true;
   }
-  void call(const std::string & s) override {
-    call(!s.empty() && s != "0" && s != "false");
+  bool call(const std::string & s) override {
+    return call(!s.empty() && s != "0" && s != "false");
   }
 
   bool getValue() const { return value; }

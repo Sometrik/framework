@@ -29,15 +29,18 @@ class Picker : public Element {
     notify(value);
   }
 
-  void call() override { call(value); }
-  void call(bool t) override { call(t ? value : 0); }
-  void call(int i) override {
+  bool call() override { return call(value); }
+  bool call(bool t) override { return call(t ? value : 0); }
+  bool call(int i) override {
     value = i;
     Command c(Command::SET_INT_VALUE, getInternalId());
     c.setValue(value);
     sendCommand(c);
+    return true;
   }
-  void call(const std::string & s) override { }
+  bool call(const std::string & s) override {
+    return true;
+  }
 
  protected:
   void initialize(FWPlatform * _platform) override {

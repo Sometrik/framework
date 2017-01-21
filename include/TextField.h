@@ -19,12 +19,13 @@ class TextField : public InputElement {
     notify(value);
   }
 
-  void call(bool t) override { call(t ? "true" : "false"); }
-  void call(const std::string & s) override {
+  bool call(bool t) override { return call(t ? "true" : "false"); }
+  bool call(const std::string & s) override {
     value = s;
     Command c(Command::SET_TEXT_VALUE, getParentInternalId(), getInternalId());
     c.setTextValue(value);
     sendCommand(c);
+    return true;
   }
 
   const std::string & getValue() { return value; }

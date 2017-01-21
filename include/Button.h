@@ -72,9 +72,13 @@ class Button : public UIElement {
     }
   }
 
-  void call() override { sendCommand(Command(Command::SET_INT_VALUE, getInternalId())); }
-  void call(bool t) override { call(); }
-  void call(const std::string & s) override { call(); }
+  bool call() override {
+    sendCommand(Command(Command::SET_INT_VALUE, getInternalId()));
+    return true;
+  }
+  bool call(bool t) override { return call(); }
+  bool call(int i) override { return call(); }
+  bool call(const std::string & s) override { return call(); }
 
  protected: 
   void initialize(FWPlatform * _platform) override {

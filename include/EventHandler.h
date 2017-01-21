@@ -41,16 +41,17 @@ class LoadEvent;
 
 class EventHandler : public Notifier {
  public:
-  void call() override { call(true); }
-  void call(bool t) override { call(t ? 1 : 0); }
-  void call(int i) override { }
-  void call(const std::string & s) override { }
+  bool call() override { return call(true); }
+  bool call(bool t) override { return call(t ? 1 : 0); }
+  bool call(int i) override { return true; }
+  bool call(const std::string & s) override { return true; }
 
   virtual void onEvent(Event & ev) { }
   virtual void onDrawEvent(DrawEvent & ev) { }
   virtual void onUpdateEvent(UpdateEvent & ev) { }
   virtual void onCommandEvent(CommandEvent & ev) { }
   virtual void onTouchEvent(TouchEvent & ev) { }
+  virtual void onScrollEvent(ScrollEvent & ev) { }
   virtual void onPurchaseEvent(PurchaseEvent & ev) { }
   virtual void onSysEvent(SysEvent & ev) { }
   virtual void onResizeEvent(ResizeEvent & ev) { }
@@ -82,7 +83,6 @@ class EventHandler : public Notifier {
   virtual void handleMouseDragEvent(MouseEvent & ev) { }
   virtual void handleMouseScrollEvent(MouseEvent & ev) { }
   virtual void handleMouseEvent(MouseEvent & ev) { }
-  virtual void handleScrollEvent(ScrollEvent & ev) { }
   virtual void handleImageRequestEvent(ImageRequestEvent & ev) { }
   virtual void handleImageEvent(ImageEvent & ev) { }
   virtual void handleVisiblePostsEvent(VisiblePostsEvent & ev) { }

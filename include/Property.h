@@ -37,10 +37,10 @@ class Property : public PropertyBase {
   T & get() { return data; }
   const T & get() const { return data; }
 
-  void call() override { }
-  void call(bool t) override { assignBoundVar(data, t); }
-  void call(int i) override { assignBoundVar(data, i); }
-  void call(const std::string & s) { assignBoundVar(data, s); }
+  bool call() override { return true; }
+  bool call(bool t) override { assignBoundVar(data, t); return true; }
+  bool call(int i) override { assignBoundVar(data, i); return true; }
+  bool call(const std::string & s) { assignBoundVar(data, s); return true; }
   
   std::string getStringValue() const override {
     std::string s;
@@ -62,10 +62,10 @@ class NullProperty : public PropertyBase {
  public:
   NullProperty() { }
 
-  void call() override { }
-  void call(bool t) override { }
-  void call(int i) override { }
-  void call(const std::string & s) { }
+  bool call() override { return false; }
+  bool call(bool t) override { return false; }
+  bool call(int i) override { return false; }
+  bool call(const std::string & s) { return false; }
 
   std::string getStringValue() const override { return ""; }
   bool getBoolValue() const override { return false; }

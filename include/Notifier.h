@@ -13,10 +13,10 @@ class BoundPtr : public Bindable {
  public:
   BoundPtr(T * _ptr) : ptr(_ptr) { }
 
-  void call() override { call(true); }
-  void call(bool t) override { assignBoundVar(*ptr, t); }
-  void call(int i) override { assignBoundVar(*ptr, i); }
-  void call(const std::string & s) override { assignBoundVar(*ptr, s); }
+  bool call() override { return call(true); }
+  bool call(bool t) override { assignBoundVar(*ptr, t); return true; }
+  bool call(int i) override { assignBoundVar(*ptr, i); return true; }
+  bool call(const std::string & s) override { assignBoundVar(*ptr, s); return true; }
 
  private:
   T * ptr;
@@ -24,15 +24,41 @@ class BoundPtr : public Bindable {
 
 class BoundVoidFunc : public Bindable {
  public:
-  BoundVoidFunc(std::function<void ()> const & _func) : func(_func) { }
+  BoundVoidFunc(std::function<bool ()> const & _func) : func(_func) { }
 
-  void call() override { func(); }
-  void call(bool t) override { func(); }
-  void call(int i) override { func(); }
-  void call(const std::string & s) override { func(); }
+  bool call() override { return func(); }
+  bool call(bool t) override { return func(); }
+  bool call(int i) override { return func(); }
+  bool call(const std::string & s) override { return func(); }
 
  private:
-  std::function<void (void)> const & func;
+  std::function<bool (void)> const & func;
+};
+
+template<class T>
+class BoundFunc : public Bindable {
+ public:
+  BoundFunc(const std::function<bool (T)> & _func) : func(_func) { }
+
+  bool call() override { return call(true); }
+  bool call(bool t) override {
+    T value;
+    assignBoundVar(value, t);
+    return func(value);
+  }
+  bool call(int i) override {
+    T value;
+    assignBoundVar(value, i);
+    return func(value);
+  }
+  bool call(const std::string & s) override {
+    T value;
+    assignBoundVar(value, s);
+    return func(value);
+  }
+
+ private:
+  std::function<bool (T)> func;
 };
 
 class Notifier : public Bindable {
@@ -42,11 +68,16 @@ class Notifier : public Bindable {
     return bind(std::make_shared<BoundPtr<T> >(arg));
   }
 
-  template<class T>
-  Notifier & bind(std::function<void ()> const & arg) {
+#if 0
+  Notifier & bindFunc(std::function<bool ()> & arg) {
     return bind(std::make_shared<BoundVoidFunc>(arg));
   }
-  
+#endif
+
+  Notifier & bindFunc(const std::function<bool (std::string)> & arg) {
+    return bind(std::make_shared<BoundFunc<std::string> >(arg));
+  }
+
   Notifier & bind(const std::shared_ptr<Bindable> & bindable) {
     bound_objects.push_back(bindable);
     return *this;
@@ -57,17 +88,29 @@ class Notifier : public Bindable {
     return bound_objects;
   }
 
+  virtual void setError(bool t) { }
+
   void notify() {
+    bool e = false;
     for (auto & o : getBoundObjects()) {
-      o->call();
+      if (!o->call()) {
+	e = true;
+	break;
+      }
     }
+    setError(e);
   }
 
   template<class T>
   void notify(T arg) {
+    bool e = false;
     for (auto & o : getBoundObjects()) {
-      o->call(arg);
+      if (!o->call(arg)) {
+	e = true;
+	break;
+      }
     }
+    setError(e);
   }
 
  private:
