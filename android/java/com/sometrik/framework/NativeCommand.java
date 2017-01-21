@@ -273,7 +273,7 @@ public class NativeCommand {
       view.setStyle(textValue, textValue2);
       break;
     case SET_ERROR:
-      view.setError(textValue);
+      view.setError(value != 0, textValue);
       break;
     case LAUNCH_BROWSER:
       frame.launchBrowser(getTextValue());

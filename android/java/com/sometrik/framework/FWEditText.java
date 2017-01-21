@@ -49,8 +49,8 @@ public class FWEditText extends EditText implements NativeCommandHandler {
   }
 
   @Override
-  public void setError(String error) {
-    setError(error);
+  public void setError(boolean hasError, String errorText) {
+    setError(hasError ? errorText : null);
   }
   
   @Override
