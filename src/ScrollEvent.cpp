@@ -1,4 +1,4 @@
-#include <ui/ScrollEvent.h>
+#include <ScrollEvent.h>
 #include <EventHandler.h>
 
 void
