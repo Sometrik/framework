@@ -68,12 +68,12 @@ public:
     return s + fn;
   }
   
-  std::shared_ptr<HTTPClientFactory> createHTTPClientFactory() const override {
-    return std::make_shared<CurlClientFactory>();
+  std::unique_ptr<HTTPClientFactory> createHTTPClientFactory() const override {
+    return std::unique_ptr<HTTPClientFactory>(new CurlClientFactory);
   }
     
-  std::shared_ptr<canvas::ContextFactory> createContextFactory() const override {
-    return std::shared_ptr<canvas::ContextFactory>(new canvas::CairoContextFactory);
+  std::unique_ptr<canvas::ContextFactory> createContextFactory() const override {
+    return std::unique_ptr<canvas::ContextFactory>(new canvas::CairoContextFactory);
   }
 
   void sendCommand2(const Command & command) override {

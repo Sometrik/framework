@@ -41,8 +41,8 @@ class FWPlatform : public Element {
   
   virtual std::string getBundleFilename(const char * filename) = 0;
   virtual std::string getLocalFilename(const char * filename, FileType type) = 0;
-  virtual std::shared_ptr<canvas::ContextFactory> createContextFactory() const = 0;
-  virtual std::shared_ptr<HTTPClientFactory> createHTTPClientFactory() const = 0;
+  virtual std::unique_ptr<canvas::ContextFactory> createContextFactory() const = 0;
+  virtual std::unique_ptr<HTTPClientFactory> createHTTPClientFactory() const = 0;
   virtual void pushEvent(const Event & ev) = 0;
   virtual void setCursor(const std::string & cursor) { }
 

@@ -87,12 +87,12 @@ public:
 
   std::string getBundleFilename(const char * filename) override;
   std::string getLocalFilename(const char * filename, FileType type) override;
-  std::shared_ptr<canvas::ContextFactory> createContextFactory() const override {
-    return std::make_shared<canvas::AndroidContextFactory>(mgr, canvasCache, getDisplayScale());
+  std::unique_ptr<canvas::ContextFactory> createContextFactory() const override {
+    return std::unique_ptr<canvas::ContextFactory>(new canvas::AndroidContextFactory>(mgr, canvasCache, getDisplayScale()));
   }
 
-  std::shared_ptr<HTTPClientFactory> createHTTPClientFactory() const override {
-    return std::make_shared<AndroidClientFactory>(clientCache);
+  std::unique_ptr<HTTPClientFactory> createHTTPClientFactory() const override {
+    return std::unique_ptr<HTTPClientFactory>(new AndroidClientFactory(clientCache));
   }
   void createFBO(int flags) { }
   std::string showTextEntryDialog(const std::string & title, const std::string & message) { return ""; }
