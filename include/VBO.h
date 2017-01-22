@@ -17,16 +17,12 @@ struct vbo_data_s {
   glm::vec3 position;
 };
 
-struct vbo_color_s {
-  unsigned char r, g, b, a;
-};
-
 struct billboard_data_s {
   glm::vec3 center_pos;
   glm::uint32 offset;
   glm::uint32 corner_pos;  
   glm::uint32 tex;
-  vbo_color_s color1, color2;
+  glm::uint32 color1, color2;
 };
 
 struct line_data_s {
