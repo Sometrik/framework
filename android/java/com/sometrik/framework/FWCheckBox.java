@@ -44,7 +44,7 @@ public class FWCheckBox extends CheckBox implements NativeCommandHandler {
 
   @Override
   public void setViewEnabled(Boolean enabled) {
-    setViewEnabled(enabled);
+    setEnabled(enabled);
   }
 
   @Override
