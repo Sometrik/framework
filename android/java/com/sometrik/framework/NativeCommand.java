@@ -183,14 +183,7 @@ public class NativeCommand {
       break;
       
     case CREATE_SWITCH:
-      Switch click = new Switch(frame);
-      click.setId(childInternalId);
-      if (textValue != "") {
-	  click.setTextOn(textValue);
-	  if (textValue2 == "") click.setTextOff(textValue);
-      }
-      if (textValue2 != "") click.setTextOff(textValue2);
-      // TODO: add listener
+      FWSwitch click = createSwitch();
       view.addChild(click);
       break;
 
@@ -331,6 +324,17 @@ public class NativeCommand {
     table.setColumnCount(value);
     FrameWork.addToViewList(table);
     return table;
+  }
+  
+  private FWSwitch createSwitch() {
+    FWSwitch click = new FWSwitch(frame);
+    click.setId(childInternalId);
+    if (textValue != "") {
+     click.setText(textValue); 
+    }
+    FrameWork.addToViewList(click);
+    // TODO: add listener
+    return click;
   }
   
   private ImageView createImageView() {
