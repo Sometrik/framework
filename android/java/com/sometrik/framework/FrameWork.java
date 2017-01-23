@@ -369,6 +369,10 @@ public class FrameWork extends Activity implements NativeCommandHandler {
       System.out.println("KeyEvent. KeyCode: " + keycode + " ViewId: " + findViewById(android.R.id.content).getRootView().getId());
       menuPressed(System.currentTimeMillis() / 1000.0, currentView);
       return true;
+    case KeyEvent.KEYCODE_BACK:
+      System.out.println("KeyEvent. KeyCode: " + keycode + " ViewId: " + findViewById(android.R.id.content).getRootView().getId());
+      keyPressed(System.currentTimeMillis() / 1000.0, e.getKeyCode(), currentView);
+      return true;
     default:
       System.out.println("KeyEvent. KeyCode: " + keycode + " ViewId: " + findViewById(android.R.id.content).getRootView().getId());
       keyPressed(System.currentTimeMillis() / 1000.0, e.getKeyCode(), currentView);
