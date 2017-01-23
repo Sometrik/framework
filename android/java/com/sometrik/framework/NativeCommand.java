@@ -225,7 +225,7 @@ public class NativeCommand {
       
     case CREATE_HEADING_TEXT:
     case CREATE_TEXT:
-      TextView textView = createTextView();
+      FWTextView textView = createTextView();
       view.addChild(textView);
       break;
 
@@ -417,8 +417,8 @@ public class NativeCommand {
     return picker;
   }
 
-  private TextView createTextView() {
-    TextView textView = new TextView(frame);
+  private FWTextView createTextView() {
+    FWTextView textView = new FWTextView(frame);
     textView.setId(getChildInternalId());
     TableLayout.LayoutParams params = new TableLayout.LayoutParams(TableLayout.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT);
     params.weight = 1.0f;
@@ -432,6 +432,7 @@ public class NativeCommand {
     } else {
       textView.setText(textValue);
     }
+    FrameWork.addToViewList(textView);
     return textView;
   }
 
