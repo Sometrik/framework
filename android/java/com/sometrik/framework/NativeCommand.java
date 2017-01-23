@@ -386,10 +386,6 @@ public class NativeCommand {
     final FWEditText editText = new FWEditText(frame);
     editText.setId(getChildInternalId());
     editText.setText(getTextValue());
-    TableLayout.LayoutParams params = new TableLayout.LayoutParams(TableLayout.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT);
-    params.weight = 1.0f;
-    params.gravity = Gravity.FILL;
-    editText.setLayoutParams(params);
     editText.setMinimumWidth(120000 / (int) frame.getScreenWidth());
     if (isSet(FLAG_PASSWORD) && isSet(FLAG_NUMERIC)){
       editText.setInputType(InputType.TYPE_NUMBER_VARIATION_PASSWORD);
@@ -420,10 +416,6 @@ public class NativeCommand {
   private FWTextView createTextView() {
     FWTextView textView = new FWTextView(frame);
     textView.setId(getChildInternalId());
-    TableLayout.LayoutParams params = new TableLayout.LayoutParams(TableLayout.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT);
-    params.weight = 1.0f;
-    params.gravity = Gravity.FILL;
-    textView.setLayoutParams(params);
     
     if (isSet(FLAG_HYPERLINK)) {
       textView.setMovementMethod(LinkMovementMethod.getInstance());
