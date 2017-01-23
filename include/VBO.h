@@ -26,24 +26,24 @@ struct billboard_data_s {
 };
 
 struct line_data_s {
-  unsigned char r, g, b, a;
+  glm::uint32 color;
   glm::vec3 position;
   glm::uint32 other_dir;
   glm::uint32 node_size;
 };
 
 struct arc_data_2d_s {
-  unsigned char r, g, b, a;
+  glm::uint32 color;
   glm::vec2 position;
 };
 
 struct arc_data_3d_s {
-  unsigned char r, g, b, a;
+  glm::uint32 color;
   glm::vec3 position, normal;
 };
 
 struct node_billboard_vbo_s {
-  unsigned char r, g, b, a; // 0
+  glm::uint32 color; // 0
   glm::vec3 center_pos; // 4
   glm::uint32 node_size; // 16
   short texture, pow; // 20
