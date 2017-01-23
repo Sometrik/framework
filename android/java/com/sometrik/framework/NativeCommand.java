@@ -73,6 +73,7 @@ public class NativeCommand {
     CREATE_FORMVIEW,
     CREATE_OPENGL_VIEW,
     CREATE_TEXTFIELD, // For viewing single value
+    CREATE_TEXTVIEW, // For viewing multiline text
     CREATE_LISTVIEW, // For viewing lists
     CREATE_GRIDVIEW, // For viewing tables
     CREATE_BUTTON,
@@ -206,6 +207,7 @@ public class NativeCommand {
       NativeSurface surface = frame.createNativeOpenGLView(childInternalId);
       break;
 
+    case CREATE_TEXTVIEW:
     case CREATE_TEXTFIELD:
       FWEditText editText = createEditText();
       view.addChild(editText);
