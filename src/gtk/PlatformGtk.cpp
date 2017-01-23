@@ -53,7 +53,7 @@ public:
 
   void sendCommand2(const Command & command) override {
     if (!getActiveViewId() && (command.getType() == Command::CREATE_FORMVIEW || command.getType() == Command::CREATE_OPENGL_VIEW)) {
-      setActiveView(command.getChildInternalId());
+      setActiveViewId(command.getChildInternalId());
     }
     
     switch (command.getType()) {
@@ -204,7 +204,7 @@ public:
 	auto view = views_by_id[id];
 	if (view) {
 	  cerr << "found view\n";
-	  setActiveView(id);
+	  setActiveViewId(id);
 	  gtk_stack_set_visible_child((GtkStack*)stack, view);
 	  string title = getTextProperty((GtkContainer*)stack, view, "title");
 	  gtk_header_bar_set_subtitle((GtkHeaderBar*)header, title.c_str());
@@ -217,7 +217,7 @@ public:
       auto view = views_by_id[command.getInternalId()];
       if (gtk_widget_get_parent(view) == stack) {
 	addToHistory(getActiveViewId());
-	setActiveView(command.getInternalId());
+	setActiveViewId(command.getInternalId());
 	gtk_stack_set_visible_child((GtkStack*)stack, view);
 	string title = getTextProperty((GtkContainer*)stack, view, "title");
 	gtk_header_bar_set_subtitle((GtkHeaderBar*)header, title.c_str());
