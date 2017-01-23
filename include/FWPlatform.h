@@ -66,7 +66,7 @@ class FWPlatform : public Element {
   }
 #endif
 
-  void setActiveView(int id) {
+  void setActiveViewId(int id) {
     activeViewId = id;
   }
   
