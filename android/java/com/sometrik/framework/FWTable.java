@@ -7,11 +7,12 @@ import android.view.View;
 import android.view.ViewParent;
 import android.widget.TableLayout;
 import android.widget.TableRow;
+import android.widget.TextView;
 
 public class FWTable extends TableLayout implements NativeCommandHandler {
   
   FrameWork frame;
-  int columnCount = 1;
+  int columnCount = 4;
   ArrayList<TableRow> rowList;
   ArrayList<View> dataList;
   
@@ -24,9 +25,10 @@ public class FWTable extends TableLayout implements NativeCommandHandler {
   }
   
   private TableRow getCurrentRow(){
-    if (dataList.size() / columnCount > rowList.size()){
+    if (dataList.size() / columnCount > rowList.size()) {
       TableRow row = new TableRow(frame);
       rowList.add(row);
+      addView(row);
       return row;
     } else {
       return rowList.get(rowList.size() - 1);
