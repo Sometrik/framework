@@ -106,7 +106,7 @@ public class NativeSurface extends SurfaceView implements NativeCommandHandler {
   }
 
   @Override
-  public void setEnabled(Boolean enabled) {
+  public void setViewEnabled(Boolean enabled) {
     System.out.println("FrameWork couldn't handle command");
   }
 

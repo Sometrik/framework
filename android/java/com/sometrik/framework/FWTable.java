@@ -78,7 +78,7 @@ public class FWTable extends TableLayout implements NativeCommandHandler {
   }
 
   @Override
-  public void setEnabled(Boolean enabled) {
+  public void setViewEnabled(Boolean enabled) {
     System.out.println("FWTable couldn't handle command");
   }
 

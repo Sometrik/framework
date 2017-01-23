@@ -267,7 +267,7 @@ public class NativeCommand {
       view.setValue(textValue);
       break;
     case SET_ENABLED:
-      view.setEnabled(value != 0);
+      view.setViewEnabled(value != 0);
       break;
     case SET_STYLE:
       view.setStyle(textValue, textValue2);

@@ -55,7 +55,7 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
   }
 
   @Override
-  public void setEnabled(Boolean enabled) {
+  public void setViewEnabled(Boolean enabled) {
     System.out.println("FWLayout couldn't handle command");
   }
 

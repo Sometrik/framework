@@ -39,8 +39,8 @@ public class FWEditText extends EditText implements NativeCommandHandler {
   }
 
   @Override
-  public void setEnabled(Boolean enabled) {
-    setEnabled(enabled);
+  public void setViewEnabled(Boolean enabled) {
+    setViewEnabled(enabled);
   }
 
   @Override

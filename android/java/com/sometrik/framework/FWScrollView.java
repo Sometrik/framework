@@ -46,7 +46,7 @@ public class FWScrollView extends ScrollView implements NativeCommandHandler {
   }
 
   @Override
-  public void setEnabled(Boolean enabled) {
+  public void setViewEnabled(Boolean enabled) {
     System.out.println("FWScrollView couldn't handle command");
   }
 

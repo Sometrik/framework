@@ -125,7 +125,7 @@ public class AutoColumnLayout extends LinearLayout implements NativeCommandHandl
   }
 
   @Override
-  public void setEnabled(Boolean enabled) {
+  public void setViewEnabled(Boolean enabled) {
     System.out.println("AutoColumnLayout couldn't handle command");
   }
   
