@@ -69,7 +69,7 @@ AndroidPlatform::sendCommand2(const Command & command) {
   getLogger().println("sending command");
   
   if (!getActiveViewId() && (command.getType() == Command::CREATE_FORMVIEW || command.getType() == Command::CREATE_OPENGL_VIEW)) {
-    setActiveView(command.getChildInternalId());
+    setActiveViewId(command.getChildInternalId());
   }
   
   auto env = getJNIEnv();
@@ -360,8 +360,22 @@ void Java_com_sometrik_framework_FrameWork_menuPressed(JNIEnv* env, jobject thiz
 }
 
 void Java_com_sometrik_framework_FrameWork_keyPressed(JNIEnv* env, jobject thiz, double timestamp, int keyId, int viewId) {
-  CommandEvent ce(timestamp, keyId);
-  platform->queueEvent(viewId, ce);
+  if (keyId == 4) {
+    int poppedView = platform->popViewBackHistory();
+    if (poppedView != 0) {
+      Command co(Command::SET_INT_VALUE, poppedView);
+      co.setValue(1);
+      platform->sendCommand2(co);
+    } else {
+      Command co(Command::QUIT_APP, poppedView);
+      platform->sendCommand2(co);
+      //TODO
+      // Wrong Thread
+    }
+  } else {
+    CommandEvent ce(timestamp, keyId);
+    platform->queueEvent(viewId, ce);
+  }
 }
 
 void Java_com_sometrik_framework_FrameWork_touchEvent(JNIEnv* env, jobject thiz, int viewId, int mode, int fingerIndex, long time, float x, float y) {
@@ -474,8 +488,19 @@ void Java_com_sometrik_framework_FrameWork_textChangedEvent(JNIEnv* env, jobject
 }
 
 void Java_com_sometrik_framework_FrameWork_intChangedEvent(JNIEnv* env, jobject thiz, double timestamp, jint id, jint changedInt){
+  __android_log_print(ANDROID_LOG_INFO, "Sometrik", "textChangedEvent: %u", changedInt);
   ValueEvent ev(timestamp, changedInt);
   platform->queueEvent(id, ev);
+}
+
+void Java_com_sometrik_framework_FrameWork_setNativeActiveView(JNIEnv* env, jobject thiz, double timestamp, jint activeView) {
+  __android_log_print(ANDROID_LOG_INFO, "Sometrik", "setActivewView: %u", activeView);
+  if (platform->getActiveViewId() != 0) {
+    platform->addToHistory(platform->getActiveViewId());
+  }
+  platform->setActiveViewId(activeView);
+  //TODO
+  // Wrong thread. Send event instead
 }
 
 void Java_com_sometrik_framework_FrameWork_OnPurchaseEvent(JNIEnv* env, jclass clazz, double timestamp, jstring productId, bool newPurchase){

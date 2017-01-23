@@ -9,6 +9,7 @@ import com.android.trivialdrivesample.util.IabResult;
 import com.android.trivialdrivesample.util.Inventory;
 
 import android.R.bool;
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
@@ -91,6 +92,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   public native void nativeOnStop(double timestamp, int appId);
   public native void nativeOnStart(double timestamp, int appId);
   public native void nativeOnDestroy(double timestamp, int appId);
+  private native void setNativeActiveView(double timestamp, int activeView);
   public static native void onPurchaseEvent(double purchaseTime, String orderId, Boolean newPurchase);
   public static native void onResize(double timestamp, float width, float height, int viewId);
   public static native void onUpdate(double timestamp, int viewId);
@@ -100,7 +102,9 @@ public class FrameWork extends Activity implements NativeCommandHandler {
     super.onCreate(savedInstanceState);
 
     // You can disable status bar with this
-    this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+//    this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+    ActionBar ab = getActionBar();
+    ab.setTitle("Esitietolomake");
     
     LinearLayout linear = new LinearLayout(this);
     linear.setId(-1);
@@ -203,6 +207,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
       currentView = view.getId();
       setContentView(view);
     }
+    setNativeActiveView(System.currentTimeMillis() / 1000.0, view.getId());
   }
   
   public int getCurrentViewId() {
