@@ -18,33 +18,64 @@ public class AutoColumnLayout extends LinearLayout implements NativeCommandHandl
   
   private ArrayList<View> viewList;
   private FrameWork frame;
-  private GridLayout layout;
-  GridLayout.LayoutParams gridParam;
-  LinearLayout.LayoutParams childParams;
+  private int maxColumns;
+  private LayoutParams params;
   
   public AutoColumnLayout(FrameWork frameWork){
     super(frameWork);
     frame = frameWork;
     viewList = new ArrayList<View>();
     setOrientation(LinearLayout.VERTICAL);
-    layout = new GridLayout(frame);
-
-    childParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-    childParams.weight = 1.0f;
-    childParams.gravity = Gravity.FILL;
-
-    layout.setColumnCount(2);
-    layout.setRowCount(5);
-    GridLayout.LayoutParams param = new GridLayout.LayoutParams();
-    param.height = LayoutParams.WRAP_CONTENT;
-    param.width = LayoutParams.MATCH_PARENT;
-    layout.setLayoutParams(param);
-    addView(layout);
+    
+    
   }
   
+  private void buildAutoLayout(){
+    
+    ArrayList<LinearLayout> rowList = new ArrayList<LinearLayout>();
+    LinearLayout row = new LinearLayout(frame);
+    rowList.add(row);
+    int columnCounter = 0;
+    
+    while (true) { 
+      LinearLayout column = new LinearLayout(frame);
+      fillColumn(column);
+      row.addView(column);
+      columnCounter++;
+      if (viewList.size() == 0){
+	break;
+      } else if (columnCounter >= maxColumns){
+	row = new LinearLayout(frame);
+	rowList.add(row);
+      }
+    }
+    
+    for (LinearLayout rowFromList : rowList){
+      addView(rowFromList);
+    }
+  }
+  
+  private Boolean fillColumn(LinearLayout column) {
+    int counter = 0;
+    while (true) {
+      column.addView(viewList.get(counter));
+      counter ++;
+      if (counter >= 3 || viewList.size() - counter == 0 ){
+	for (int i = 0; i < counter; i++){
+	  viewList.remove(0);
+	}
+	break;
+      }
+    }
+    if (counter >= 3) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   public void addChild(View view){
-    layout.setLayoutParams(childParams);
-    layout.addView(view);
+    viewList.add(view);
   }
 
   private boolean checkForBigView(){
@@ -83,7 +114,7 @@ public class AutoColumnLayout extends LinearLayout implements NativeCommandHandl
   @Override
   public void setValue(int v) {
     if (v > 0){
-//      buildAutoLayout(checkForBigView());
+      buildAutoLayout();
       frame.setContentView(this);
     }
   }
