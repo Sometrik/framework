@@ -79,6 +79,12 @@ public:
     }
       break;
 
+    case Command::CREATE_TEXTVIEW: {
+      auto textview = gtk_text_view_new();
+      addView(command, textview);
+    }
+      break;
+
     case Command::CREATE_PICKER: {
       auto picker = gtk_combo_box_text_new();
       addView(command, picker);
@@ -180,6 +186,8 @@ public:
 
     case Command::CREATE_SWITCH: {
       auto s = gtk_switch_new();
+      g_signal_connect(s, "notify::active", G_CALLBACK(send_bool_value), this);
+
       addView(command, s);
     }
       break;
@@ -221,6 +229,8 @@ public:
 	gtk_stack_set_visible_child((GtkStack*)stack, view);
 	string title = getTextProperty((GtkContainer*)stack, view, "title");
 	gtk_header_bar_set_subtitle((GtkHeaderBar*)header, title.c_str());
+      } else if (GTK_IS_SWITCH(view)) {
+	gtk_switch_set_active((GtkSwitch*)view, command.getValue() ? true : false);
       } else {
 	assert(0);
       }
@@ -370,6 +380,7 @@ protected:
   static size_t getChildCount(GtkContainer * widget);
   
   static void send_int_value(GtkWidget * widget, gpointer data);
+  static void send_bool_value(GtkWidget * widget, GParamSpec *pspec, gpointer data);
   static void send_text_value(GtkWidget * widget, gpointer data);
   static void on_previous_button(GtkWidget * widget, gpointer data);
   static void on_next_button(GtkWidget * widget, gpointer data);
@@ -430,6 +441,24 @@ PlatformGtk::send_int_value(GtkWidget * widget, gpointer data) {
 }
 
 void
+PlatformGtk::send_bool_value(GtkWidget * widget, GParamSpec *pspec, gpointer data) {
+  PlatformGtk * platform = (PlatformGtk*)data;
+  int id = platform->getId(widget);
+  assert(id);
+  if (id) {
+    bool v;
+    if (GTK_IS_SWITCH(widget)) {
+      v = gtk_switch_get_active(GTK_SWITCH(widget));
+    } else {
+      assert(0);
+    }
+    cerr << "bool value: id = " << id << ", v = " << v << endl;
+    ValueEvent ev(platform->getTime(), v ? 1 : 0);
+    platform->postEvent(id, ev);
+  }
+}
+
+void
 PlatformGtk::send_text_value(GtkWidget * widget, gpointer data) {
   PlatformGtk * platform = (PlatformGtk*)data;
   int id = platform->getId(widget);
@@ -439,7 +468,7 @@ PlatformGtk::send_text_value(GtkWidget * widget, gpointer data) {
     if (GTK_IS_ENTRY(widget)) {
       s = gtk_entry_get_text((GtkEntry*)widget);
     } else {
-      cerr << "unknown text source\n";
+      assert(0);
     }
     cerr << "text value: id = " << id << ", text = " << s << endl;
     ValueEvent ev(platform->getTime(), s);
