@@ -332,8 +332,17 @@ public class NativeCommand {
     if (textValue != "") {
      click.setText(textValue); 
     }
+    click.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+      @Override
+      public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+	if (isChecked) {
+	  frame.intChangedEvent(System.currentTimeMillis() / 1000.0, buttonView.getId(), 1);
+	} else {
+	  frame.intChangedEvent(System.currentTimeMillis() / 1000.0, buttonView.getId(), 0);
+	}
+      }
+    });
     FrameWork.addToViewList(click);
-    // TODO: add listener
     return click;
   }
   
