@@ -5,7 +5,6 @@
 #include <Event.h>
 #include <Command.h>
 #include <Logger.h>
-#include <PrimitiveRenderer.h>
 #include <FWDefs.h>
 #include <FWPreferences.h>
 
@@ -73,9 +72,6 @@ class FWPlatform : public Element {
   virtual void sendCommand2(const Command & command) = 0;
   
   void postEvent(int internal_id, Event & ev);
-  
-  const std::shared_ptr<PrimitiveRenderer> & getRenderer() { return renderer; }
-  void setRenderer(const std::shared_ptr<PrimitiveRenderer> & _renderer) { renderer = _renderer; }
     
   int getNextInternalId() { return nextInternalId++; }
   
@@ -165,7 +161,6 @@ class FWPlatform : public Element {
   std::shared_ptr<SoundCanvas> soundCanvas;
 #endif
   std::shared_ptr<Logger> logger;
-  std::shared_ptr<PrimitiveRenderer> renderer;
   int nextInternalId = 1;
   int activeViewId = 0;
 

@@ -6,6 +6,7 @@
 #include <SysEvent.h>
 #include <StringUtils.h>
 
+#include <cassert>
 #include <iostream>
 #include <unistd.h>
 #include <sys/time.h>
