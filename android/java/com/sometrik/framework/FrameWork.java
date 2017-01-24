@@ -5,10 +5,8 @@ import java.util.HashMap;
 import com.android.trivialdrivesample.util.IabException;
 import com.android.trivialdrivesample.util.IabHelper;
 import com.android.trivialdrivesample.util.IabHelper.IabAsyncInProgressException;
-import com.android.trivialdrivesample.util.IabResult;
 import com.android.trivialdrivesample.util.Inventory;
 
-import android.R.bool;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ActivityManager;
@@ -30,7 +28,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
-import android.transition.TransitionManager;
 import android.util.DisplayMetrics;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -43,9 +40,7 @@ import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
-import android.view.animation.RotateAnimation;
-import android.view.ViewGroup;
-import android.view.Window;
+import android.view.animation.TranslateAnimation;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -185,20 +180,22 @@ public class FrameWork extends Activity implements NativeCommandHandler {
       AlphaAnimation r = new AlphaAnimation(1f, 0f);
       r.setDuration(200);
       r.setAnimationListener(new Animation.AnimationListener() {
-        @Override
-        public void onAnimationStart(Animation animation) { }
+	@Override
+	public void onAnimationStart(Animation animation) {
+	}
 
-        @Override
-        public void onAnimationEnd(Animation animation) {
-          currentView = view.getId();
-          setContentView(view);
-          AlphaAnimation q = new AlphaAnimation(0f, 1f);
-          q.setDuration(200);
-          view.startAnimation(q);
-        }
+	@Override
+	public void onAnimationEnd(Animation animation) {
+	  currentView = view.getId();
+	  setContentView(view);
+	  AlphaAnimation q = new AlphaAnimation(0f, 1f);
+	  q.setDuration(200);
+	  view.startAnimation(q);
+	}
 
-        @Override
-        public void onAnimationRepeat(Animation animation) { }
+	@Override
+	public void onAnimationRepeat(Animation animation) {
+	}
       });
       View sadas = (View) FrameWork.views.get(currentView);
       sadas.startAnimation(r);
@@ -211,12 +208,6 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   
   public int getCurrentViewId() {
     return currentView;
-  }
-  
-  private void createFormView(int id){
-    FWLayout layout = new FWLayout(this);
-    layout.setId(id);
-    views.put(id, layout);
   }
 
   public NativeSurface createNativeOpenGLView(final int id) {
@@ -367,7 +358,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   public boolean onKeyDown(int keycode, KeyEvent e) {
     System.out.println("KeyEvent. KeyCode: " + keycode + " ViewId: " + findViewById(android.R.id.content).getRootView().getId());
     keyPressed(System.currentTimeMillis() / 1000.0, e.getKeyCode(), currentView);
-    return super.onKeyDown(keycode, e);
+    return true;
   }
 
   private void createOptionsDialog(final int[] idArray, String[] names) {
