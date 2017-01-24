@@ -354,11 +354,6 @@ void Java_com_sometrik_framework_FrameWork_onResize(JNIEnv* env, jclass clazz, d
   platform->queueEvent(viewId, ev);
 }
 
-void Java_com_sometrik_framework_FrameWork_menuPressed(JNIEnv* env, jobject thiz, double timestamp, int viewId) {
-  CommandEvent ce(timestamp, FW_ID_MENU);
-  platform->queueEvent(platform->getActiveViewId(), ce);
-}
-
 void Java_com_sometrik_framework_FrameWork_keyPressed(JNIEnv* env, jobject thiz, double timestamp, int keyId, int viewId) {
   if (keyId == 4) {
     int poppedView = platform->popViewBackHistory();
@@ -372,6 +367,9 @@ void Java_com_sometrik_framework_FrameWork_keyPressed(JNIEnv* env, jobject thiz,
       //TODO
       // Wrong Thread
     }
+  } else if (keyId == 82) {
+    CommandEvent ce(timestamp, FW_ID_MENU);
+    platform->queueEvent(platform->getActiveViewId(), ce);
   } else {
     CommandEvent ce(timestamp, keyId);
     platform->queueEvent(viewId, ce);

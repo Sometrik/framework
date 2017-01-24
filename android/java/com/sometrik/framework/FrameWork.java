@@ -81,7 +81,6 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   public native void endModal(double timestamp, int value, byte[] textValue);
   public native void textChangedEvent(double timestamp, int id, String text);
   public native void intChangedEvent(double timestamp, int id, int changedInt);
-  public native void menuPressed(double timestamp, int viewId);
   public native void keyPressed(double timestamp, int keyId, int viewId);
   public native void touchEvent(int viewId, int mode, int fingerIndex, long time, float x, float y);
   public native void onInit(AssetManager assetManager, float xSize, float ySize, float displayScale);
@@ -360,33 +359,16 @@ public class FrameWork extends Activity implements NativeCommandHandler {
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
-
     System.out.println("onCreateOptionsMenu");
-//    menuPressed(System.currentTimeMillis() / 1000.0);
-    // getMenuInflater().inflate(R.menu.settings, menu);
     return true;
   }
 
   @Override
   public boolean onKeyDown(int keycode, KeyEvent e) {
-    switch (keycode) {
-    case KeyEvent.KEYCODE_MENU:
-      System.out.println("KeyEvent. KeyCode: " + keycode + " ViewId: " + findViewById(android.R.id.content).getRootView().getId());
-      menuPressed(System.currentTimeMillis() / 1000.0, currentView);
-      return true;
-    case KeyEvent.KEYCODE_BACK:
-      System.out.println("KeyEvent. KeyCode: " + keycode + " ViewId: " + findViewById(android.R.id.content).getRootView().getId());
-      keyPressed(System.currentTimeMillis() / 1000.0, e.getKeyCode(), currentView);
-      return true;
-    default:
-      System.out.println("KeyEvent. KeyCode: " + keycode + " ViewId: " + findViewById(android.R.id.content).getRootView().getId());
-      keyPressed(System.currentTimeMillis() / 1000.0, e.getKeyCode(), currentView);
-      break;
-    }
-
+    System.out.println("KeyEvent. KeyCode: " + keycode + " ViewId: " + findViewById(android.R.id.content).getRootView().getId());
+    keyPressed(System.currentTimeMillis() / 1000.0, e.getKeyCode(), currentView);
     return super.onKeyDown(keycode, e);
   }
-  
 
   private void createOptionsDialog(final int[] idArray, String[] names) {
 
