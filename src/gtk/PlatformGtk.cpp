@@ -264,7 +264,18 @@ public:
     }
       break;
       
-    case Command::SHOW_MESSAGE_DIALOG:
+    case Command::SHOW_MESSAGE_DIALOG: {
+      GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
+      auto dialog = gtk_message_dialog_new((GtkWindow*)window,
+					   flags,
+					   GTK_MESSAGE_ERROR,
+					   GTK_BUTTONS_CLOSE,
+					   "%s",
+					   command.getTextValue2().c_str()
+					   );
+      gtk_dialog_run (GTK_DIALOG (dialog));
+      gtk_widget_destroy (dialog);
+    }
       break;
       
     case Command::CREATE_TIMER:
