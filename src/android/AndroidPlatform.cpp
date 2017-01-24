@@ -364,7 +364,7 @@ void Java_com_sometrik_framework_FrameWork_keyPressed(JNIEnv* env, jobject thiz,
     int poppedView = platform->popViewBackHistory();
     if (poppedView != 0) {
       Command co(Command::SET_INT_VALUE, poppedView);
-      co.setValue(1);
+      co.setValue(2);
       platform->sendCommand2(co);
     } else {
       Command co(Command::QUIT_APP, poppedView);
@@ -493,9 +493,9 @@ void Java_com_sometrik_framework_FrameWork_intChangedEvent(JNIEnv* env, jobject 
   platform->queueEvent(id, ev);
 }
 
-void Java_com_sometrik_framework_FrameWork_setNativeActiveView(JNIEnv* env, jobject thiz, double timestamp, jint activeView) {
+void Java_com_sometrik_framework_FrameWork_setNativeActiveView(JNIEnv* env, jobject thiz, double timestamp, jint activeView, bool recordHistory) {
   __android_log_print(ANDROID_LOG_INFO, "Sometrik", "setActivewView: %u", activeView);
-  if (platform->getActiveViewId() != 0) {
+  if (platform->getActiveViewId() != 0 && recordHistory) {
     platform->addToHistory(platform->getActiveViewId());
   }
   platform->setActiveViewId(activeView);
