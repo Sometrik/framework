@@ -5,7 +5,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import com.android.trivialdrivesample.util.IabHelper;
 import com.android.trivialdrivesample.util.IabHelper.IabAsyncInProgressException;
@@ -429,6 +432,7 @@ public class NativeCommand {
     // editText.setMinimumWidth(120000 / (int) frame.getScreenWidth());
     editText.setVerticalScrollBarEnabled(true);
     editText.setMovementMethod(new ScrollingMovementMethod());
+    editText.addDelayedChangeListener(getChildInternalId());
     FrameWork.addToViewList(editText);
     return editText;
   }
