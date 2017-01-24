@@ -24,6 +24,7 @@ import android.text.Html;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
+import android.text.method.ScrollingMovementMethod;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -208,8 +209,12 @@ public class NativeCommand {
       break;
 
     case CREATE_TEXTVIEW:
+      FWEditText editTextView = createEditText(true);
+      view.addChild(editTextView);
+      break;
+      
     case CREATE_TEXTFIELD:
-      FWEditText editText = createEditText();
+      FWEditText editText = createEditText(false);
       view.addChild(editText);
       break;
       
@@ -393,7 +398,7 @@ public class NativeCommand {
     return button;
   }
   
-  private FWEditText createEditText(){
+  private FWEditText createEditText(boolean scrollable){
     final FWEditText editText = new FWEditText(frame);
     editText.setId(getChildInternalId());
     editText.setText(getTextValue());
@@ -412,6 +417,11 @@ public class NativeCommand {
       public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
       public void onTextChanged(CharSequence s, int start, int before, int count) {}
    });
+    
+    if (scrollable){
+      editText.setVerticalScrollBarEnabled(true);
+      editText.setMovementMethod(new ScrollingMovementMethod());
+    }
     FrameWork.addToViewList(editText);
     return editText;
   }
@@ -435,6 +445,7 @@ public class NativeCommand {
     } else {
       textView.setText(textValue);
     }
+    
     FrameWork.addToViewList(textView);
     return textView;
   }
