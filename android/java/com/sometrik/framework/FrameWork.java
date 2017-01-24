@@ -56,6 +56,8 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   private static final int RESULT_SETTINGS = 1;
   private Inventory inventory;
   private DisplayMetrics displayMetrics;
+  private boolean nativeInitialized = false;
+  private View currentlyShowingView;
   
   private boolean drawMode = false;
 
@@ -94,20 +96,20 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    
+    System.out.println("onCreate called");
 
     // You can disable status bar with this
 //    this.requestWindowFeature(Window.FEATURE_NO_TITLE);
     ActionBar ab = getActionBar();
     ab.setTitle("Esitietolomake");
-    
-    LinearLayout linear = new LinearLayout(this);
-    linear.setId(-1);
+   
+//    if (currentlyShowingView != null){
+//      setContentView(currentlyShowingView);
+//    }
 
     // Init for screen settings
     setupDisplayMetrics();
-
-    // Set up classes
-    settings = new Settings(this);
 
     mainHandler = new Handler() {
 
@@ -120,7 +122,11 @@ public class FrameWork extends Activity implements NativeCommandHandler {
 
     };
 
-    initNative();
+//    if (!nativeInitialized){
+      System.out.println("initing native on onCreate");
+      initNative();
+      nativeInitialized = true;
+//    }
   }
 
   public Boolean initializePurchaseHelper(String key, IabHelper.OnIabSetupFinishedListener listener) {
@@ -192,6 +198,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
 	@Override
 	public void onAnimationEnd(Animation animation) {
 	  currentView = view.getId();
+	  currentlyShowingView = view;
 	    setContentView(view);
 	  TranslateAnimation q;
 	  if (recordHistory) {
@@ -211,6 +218,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
       sadas.startAnimation(r);
     } else {
       currentView = view.getId();
+      currentlyShowingView = view;
       setContentView(view);
     }
     setNativeActiveView(System.currentTimeMillis() / 1000.0, view.getId(), recordHistory);
@@ -463,12 +471,14 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   @Override
   public void onConfigurationChanged(Configuration newConfig) {
 
-    super.onConfigurationChanged(newConfig);
-
+    // super.onConfigurationChanged(newConfig);
+    System.out.println("onConfigChange");
     if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
       System.out.println("Orientation conf portrait");
+      onResize(System.currentTimeMillis() / 1000.0, screenHeight, screenHeight, currentView);
     } else if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
       System.out.println("Orientation conf landscape");
+      onResize(System.currentTimeMillis() / 1000.0, screenHeight, screenHeight, currentView);
     }
   }
   
@@ -479,11 +489,13 @@ public class FrameWork extends Activity implements NativeCommandHandler {
     // savedInstanceState.putInt(STATE_LEVEL, mCurrentLevel);
 
     // Always call the superclass so it can save the view hierarchy state
+    System.out.println("onSaveInstanceState");
     super.onSaveInstanceState(savedInstanceState);
   }
 
   public void onRestoreInstanceState(Bundle savedInstanceState) {
     // Always call the superclass so it can restore the view hierarchy
+    System.out.println("onRestoreInstanceState");
     super.onRestoreInstanceState(savedInstanceState);
 
     // Restore state members from saved instance
@@ -495,36 +507,37 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   @Override 
   public void onResume(){
     super.onResume();
-    nativeOnResume(System.currentTimeMillis() / 1000.0, appId);
+//    nativeOnResume(System.currentTimeMillis() / 1000.0, appId);
   }
   @Override 
   public void onPause(){
     super.onPause();
-    nativeOnPause(System.currentTimeMillis() / 1000.0, appId);
+//    nativeOnPause(System.currentTimeMillis() / 1000.0, appId);
   }
   @Override 
   public void onStop(){
     super.onStop();
-    nativeOnStop(System.currentTimeMillis() / 1000.0, appId);
+//    nativeOnStop(System.currentTimeMillis() / 1000.0, appId);
   }
   @Override 
   public void onStart(){
     super.onStart();
-    nativeOnStart(System.currentTimeMillis() / 1000.0, appId);
+//    nativeOnStart(System.currentTimeMillis() / 1000.0, appId);
   }
   @Override 
   public void onDestroy(){
+    System.out.println("onDestroy called");
     super.onDestroy();
-    if (purchaseHelper != null){
-    	try {
-	  purchaseHelper.dispose();
-	} catch (IabAsyncInProgressException e) {
-	  e.printStackTrace();
-	  System.out.println("Error in disposing purchaseHelper with message: " + e.getMessage());
-	}
-    }
-  	purchaseHelper = null;
-    nativeOnDestroy(System.currentTimeMillis() / 1000.0, appId);
+//    if (purchaseHelper != null){
+//    	try {
+//	  purchaseHelper.dispose();
+//	} catch (IabAsyncInProgressException e) {
+//	  e.printStackTrace();
+//	  System.out.println("Error in disposing purchaseHelper with message: " + e.getMessage());
+//	}
+//    }
+//  	purchaseHelper = null;
+//    nativeOnDestroy(System.currentTimeMillis() / 1000.0, appId);
   }
   
   public IabHelper getPurchaseHelper(){

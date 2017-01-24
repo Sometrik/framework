@@ -408,7 +408,7 @@ void Java_com_sometrik_framework_FrameWork_onUpdate(JNIEnv* env, jclass clazz, d
 
 static JavaVM * gJavaVM = 0;
 void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, jobject assetManager, float screenWidth, float screenHeight, float displayScale) {
-  if (!platform) {
+//  if (!platform) {
     __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Creating Platform");
 
     AAssetManager* manager = AAssetManager_fromJava(env, assetManager);
@@ -421,7 +421,7 @@ void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, job
     platform->startThread();
 
     __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Init end");
-  }
+//  }
 }
 
   void Java_com_sometrik_framework_FrameWork_nativeSetSurface(JNIEnv* env, jobject thiz, jobject surface, int surfaceId, int gl_version) {
