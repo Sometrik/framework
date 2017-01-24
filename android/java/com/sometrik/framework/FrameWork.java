@@ -175,9 +175,14 @@ public class FrameWork extends Activity implements NativeCommandHandler {
     startActivity(browserIntent);
   }
 
-  public void setCurrentView(final View view, boolean recordHistory) {
+  public void setCurrentView(final View view, final boolean recordHistory) {
     if (currentView != 0) {
-      AlphaAnimation r = new AlphaAnimation(1f, 0f);
+      TranslateAnimation r;
+      if (recordHistory){
+	r = new TranslateAnimation(0, -1000, 0, 0);
+      } else {
+	r = new TranslateAnimation(0, 1000, 0, 0);
+      }
       r.setDuration(200);
       r.setAnimationListener(new Animation.AnimationListener() {
 	@Override
@@ -187,8 +192,13 @@ public class FrameWork extends Activity implements NativeCommandHandler {
 	@Override
 	public void onAnimationEnd(Animation animation) {
 	  currentView = view.getId();
-	  setContentView(view);
-	  AlphaAnimation q = new AlphaAnimation(0f, 1f);
+	    setContentView(view);
+	  TranslateAnimation q;
+	  if (recordHistory) {
+	    q = new TranslateAnimation(1000, 0, 0, 0);
+	  } else {
+	    q = new TranslateAnimation(-1000, 0, 0, 0);
+	  }
 	  q.setDuration(200);
 	  view.startAnimation(q);
 	}
