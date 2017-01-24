@@ -44,13 +44,15 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
 
   @Override
   public void setValue(String v) {
-    frame.setCurrentView(this);
+    System.out.println("FWLayout couldn't handle command");
   }
 
   @Override
   public void setValue(int v) {
-    if (v > 0){
-      frame.setCurrentView(this);
+    if (v == 1){
+      frame.setCurrentView(this, true);
+    } else if (v == 2){
+      frame.setCurrentView(this, false);
     }
   }
 

@@ -92,7 +92,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   public native void nativeOnStop(double timestamp, int appId);
   public native void nativeOnStart(double timestamp, int appId);
   public native void nativeOnDestroy(double timestamp, int appId);
-  private native void setNativeActiveView(double timestamp, int activeView);
+  private native void setNativeActiveView(double timestamp, int activeView, Boolean recordHistory);
   public static native void onPurchaseEvent(double purchaseTime, String orderId, Boolean newPurchase);
   public static native void onResize(double timestamp, float width, float height, int viewId);
   public static native void onUpdate(double timestamp, int viewId);
@@ -181,7 +181,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
     startActivity(browserIntent);
   }
 
-  public void setCurrentView(final View view) {
+  public void setCurrentView(final View view, boolean recordHistory) {
     if (currentView != 0) {
       AlphaAnimation r = new AlphaAnimation(1f, 0f);
       r.setDuration(200);
@@ -207,7 +207,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
       currentView = view.getId();
       setContentView(view);
     }
-    setNativeActiveView(System.currentTimeMillis() / 1000.0, view.getId());
+    setNativeActiveView(System.currentTimeMillis() / 1000.0, view.getId(), recordHistory);
   }
   
   public int getCurrentViewId() {

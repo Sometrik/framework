@@ -40,8 +40,10 @@ public class FWScrollView extends ScrollView implements NativeCommandHandler {
 
   @Override
   public void setValue(int v) {
-    if (v > 0){
-      frame.setCurrentView(this);
+    if (v == 1){
+      frame.setCurrentView(this, true);
+    } else if (v == 2){
+      frame.setCurrentView(this, false);
     }
   }
 
