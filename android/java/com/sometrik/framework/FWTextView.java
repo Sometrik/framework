@@ -1,6 +1,7 @@
 package com.sometrik.framework;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.view.View;
 import android.widget.TextView;
 
@@ -45,13 +46,14 @@ public class FWTextView extends TextView implements NativeCommandHandler {
 
   @Override
   public void setStyle(String key, String value) {
-    // TODO
+    //TODO
+    System.out.println("FWTextView couldn't handle command");
   }
 
   @Override
   public void setError(boolean hasError, String errorText) {
-    // TODO Auto-generated method stub
-    
+    //TODO
+    System.out.println("FWTextView couldn't handle command");
   }
 
   @Override
