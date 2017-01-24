@@ -209,12 +209,12 @@ public class NativeCommand {
       break;
 
     case CREATE_TEXTVIEW:
-      FWEditText editTextView = createEditText(true);
+      FWEditText editTextView = createBigEditText();
       view.addChild(editTextView);
       break;
       
     case CREATE_TEXTFIELD:
-      FWEditText editText = createEditText(false);
+      FWEditText editText = createEditText();
       view.addChild(editText);
       break;
       
@@ -398,7 +398,7 @@ public class NativeCommand {
     return button;
   }
   
-  private FWEditText createEditText(boolean scrollable){
+  private FWEditText createEditText(){
     final FWEditText editText = new FWEditText(frame);
     editText.setId(getChildInternalId());
     editText.setText(getTextValue());
@@ -417,15 +417,22 @@ public class NativeCommand {
       public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
       public void onTextChanged(CharSequence s, int start, int before, int count) {}
    });
-    
-    if (scrollable){
-      editText.setVerticalScrollBarEnabled(true);
-      editText.setMovementMethod(new ScrollingMovementMethod());
-    }
     FrameWork.addToViewList(editText);
     return editText;
   }
   
+
+  private FWEditText createBigEditText() {
+    final FWEditText editText = new FWEditText(frame);
+    editText.setId(getChildInternalId());
+    editText.setText(getTextValue());
+    // editText.setMinimumWidth(120000 / (int) frame.getScreenWidth());
+    editText.setVerticalScrollBarEnabled(true);
+    editText.setMovementMethod(new ScrollingMovementMethod());
+    FrameWork.addToViewList(editText);
+    return editText;
+  }
+
   private FWPicker createSpinner(){
     FWPicker picker = new FWPicker(frame);
     picker.setId(getChildInternalId());
