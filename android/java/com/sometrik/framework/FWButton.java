@@ -1,7 +1,5 @@
 package com.sometrik.framework;
 
-import com.sometrik.formtest.R;
-
 import android.content.Context;
 import android.view.View;
 import android.view.animation.Animation;

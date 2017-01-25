@@ -24,6 +24,7 @@ import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.PointF;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -56,7 +57,6 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   private static final int RESULT_SETTINGS = 1;
   private Inventory inventory;
   private DisplayMetrics displayMetrics;
-  private boolean nativeInitialized = false;
   private View currentlyShowingView;
   
   private boolean drawMode = false;
@@ -92,9 +92,23 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   public static native void onPurchaseEvent(double purchaseTime, String orderId, boolean newPurchase);
   public static native void onResize(double timestamp, float width, float height, int viewId);
   public static native void onUpdate(double timestamp, int viewId);
-
+  
   @Override
   protected void onCreate(Bundle savedInstanceState) {
+    
+    // Set default theme for the app. Commented default themes are dark versions
+    if (Build.VERSION.SDK_INT <= 10) {
+      // this.setTheme(android.R.style.Theme);
+      this.setTheme(android.R.style.Theme_Light);
+    } else if (Build.VERSION.SDK_INT >= 21) {
+      // this.setTheme(android.R.style.Theme_Material);
+      this.setTheme(android.R.style.Theme_Material_Light);
+    } else {
+      // this.setTheme(android.R.style.Theme_DeviceDefault);
+      // this.setTheme(android.R.style.Theme_Holo);
+      this.setTheme(android.R.style.Theme_Holo_Light);
+    }
+    
     super.onCreate(savedInstanceState);
     
     System.out.println("onCreate called");
@@ -104,10 +118,6 @@ public class FrameWork extends Activity implements NativeCommandHandler {
     ActionBar ab = getActionBar();
     ab.setTitle("Esitietolomake");
    
-//    if (currentlyShowingView != null){
-//      setContentView(currentlyShowingView);
-//    }
-
     // Init for screen settings
     setupDisplayMetrics();
 
@@ -122,11 +132,8 @@ public class FrameWork extends Activity implements NativeCommandHandler {
 
     };
 
-//    if (!nativeInitialized){
       System.out.println("initing native on onCreate");
       initNative();
-      nativeInitialized = true;
-//    }
   }
 
   public Boolean initializePurchaseHelper(String key, IabHelper.OnIabSetupFinishedListener listener) {
@@ -480,64 +487,55 @@ public class FrameWork extends Activity implements NativeCommandHandler {
       System.out.println("Orientation conf landscape");
       onResize(System.currentTimeMillis() / 1000.0, screenHeight, screenHeight, currentView);
     }
+    super.onConfigurationChanged(newConfig);
   }
   
   @Override
   public void onSaveInstanceState(Bundle savedInstanceState) {
-    // Save the user's current game state
-    // savedInstanceState.putInt(STATE_SCORE, mCurrentScore);
-    // savedInstanceState.putInt(STATE_LEVEL, mCurrentLevel);
-
-    // Always call the superclass so it can save the view hierarchy state
     System.out.println("onSaveInstanceState");
     super.onSaveInstanceState(savedInstanceState);
   }
 
   public void onRestoreInstanceState(Bundle savedInstanceState) {
-    // Always call the superclass so it can restore the view hierarchy
     System.out.println("onRestoreInstanceState");
     super.onRestoreInstanceState(savedInstanceState);
-
-    // Restore state members from saved instance
-    // mCurrentScore = savedInstanceState.getInt(STATE_SCORE);
-    // mCurrentLevel = savedInstanceState.getInt(STATE_LEVEL);
   }
   
   
   @Override 
   public void onResume(){
     super.onResume();
-//    nativeOnResume(System.currentTimeMillis() / 1000.0, appId);
+    nativeOnResume(System.currentTimeMillis() / 1000.0, appId);
   }
   @Override 
   public void onPause(){
     super.onPause();
-//    nativeOnPause(System.currentTimeMillis() / 1000.0, appId);
+    nativeOnPause(System.currentTimeMillis() / 1000.0, appId);
   }
   @Override 
   public void onStop(){
     super.onStop();
-//    nativeOnStop(System.currentTimeMillis() / 1000.0, appId);
+    nativeOnStop(System.currentTimeMillis() / 1000.0, appId);
   }
   @Override 
   public void onStart(){
     super.onStart();
-//    nativeOnStart(System.currentTimeMillis() / 1000.0, appId);
+    nativeOnStart(System.currentTimeMillis() / 1000.0, appId);
   }
   @Override 
   public void onDestroy(){
     System.out.println("onDestroy called");
     super.onDestroy();
-//    if (purchaseHelper != null){
-//    	try {
-//	  purchaseHelper.dispose();
-//	} catch (IabAsyncInProgressException e) {
-//	  e.printStackTrace();
-//	  System.out.println("Error in disposing purchaseHelper with message: " + e.getMessage());
-//	}
-//    }
-//  	purchaseHelper = null;
-//    nativeOnDestroy(System.currentTimeMillis() / 1000.0, appId);
+    if (purchaseHelper != null){
+    	try {
+	  purchaseHelper.dispose();
+	} catch (IabAsyncInProgressException e) {
+	  e.printStackTrace();
+	  System.out.println("Error in disposing purchaseHelper with message: " + e.getMessage());
+	}
+    }
+  	purchaseHelper = null;
+    nativeOnDestroy(System.currentTimeMillis() / 1000.0, appId);
   }
   
   public IabHelper getPurchaseHelper(){
