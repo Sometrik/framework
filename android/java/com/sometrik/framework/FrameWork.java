@@ -525,7 +525,12 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   @Override 
   public void onDestroy(){
     System.out.println("onDestroy called");
-    super.onDestroy();
+
+    // It's important to destroy native before the activity, since
+    // native stuff may wish to use Framework functionality in their
+    // destructors
+    
+    nativeOnDestroy(System.currentTimeMillis() / 1000.0, appId);
     if (purchaseHelper != null){
     	try {
 	  purchaseHelper.dispose();
@@ -534,8 +539,8 @@ public class FrameWork extends Activity implements NativeCommandHandler {
 	  System.out.println("Error in disposing purchaseHelper with message: " + e.getMessage());
 	}
     }
-  	purchaseHelper = null;
-    nativeOnDestroy(System.currentTimeMillis() / 1000.0, appId);
+    purchaseHelper = null;
+    super.onDestroy();
   }
   
   public IabHelper getPurchaseHelper(){
