@@ -24,6 +24,7 @@ import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.PointF;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -94,6 +95,20 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   
   @Override
   protected void onCreate(Bundle savedInstanceState) {
+    
+    // Set default theme for the app. Commented default themes are dark versions
+    if (Build.VERSION.SDK_INT <= 10) {
+      // this.setTheme(android.R.style.Theme);
+      this.setTheme(android.R.style.Theme_Light);
+    } else if (Build.VERSION.SDK_INT >= 21) {
+      // this.setTheme(android.R.style.Theme_Material);
+      this.setTheme(android.R.style.Theme_Material_Light);
+    } else {
+      // this.setTheme(android.R.style.Theme_DeviceDefault);
+      // this.setTheme(android.R.style.Theme_Holo);
+      this.setTheme(android.R.style.Theme_Holo_Light);
+    }
+    
     super.onCreate(savedInstanceState);
     
     System.out.println("onCreate called");
