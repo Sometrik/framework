@@ -18,6 +18,7 @@
 
 #include <cstdio>
 #include <cstdlib>
+#include <cassert>
 
 using namespace std;
 
@@ -77,6 +78,10 @@ public:
   }
 
   void sendCommand2(const Command & command) override {
+    if (!getActiveViewId() && (command.getType() == Command::CREATE_FORMVIEW || command.getType() == Command::CREATE_OPENGL_VIEW)) {
+      setActiveViewId(command.getChildInternalId());
+    }
+
     switch (command.getType()) {
     // case Command::SET_CAPTION:
     //   SDL_WM_SetCaption(command.getTextValue().c_str(),
