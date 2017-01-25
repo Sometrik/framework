@@ -2,6 +2,7 @@
 #define _OPENGLVIEW_H_
 
 #include <FWViewBase.h>
+#include <PrimitiveRenderer.h>
 
 #define FBO_COLOR	1
 #define FBO_DEPTH	2
@@ -27,12 +28,16 @@ class OpenGLView : public FWViewBase {
   void createFBO(int flags) { }
 #endif
 
+  const std::shared_ptr<PrimitiveRenderer> & getRenderer() { return renderer; }
+  void setRenderer(const std::shared_ptr<PrimitiveRenderer> & _renderer) { renderer = _renderer; }
+ 
  protected:
   void initialize(FWPlatform * _platform) override;
   void checkGLError();
 
  private:
   int logical_width = 0, logical_height = 0, actual_width = 0, actual_height = 0;
+  std::shared_ptr<PrimitiveRenderer> renderer;
 };
 
 #endif
