@@ -29,6 +29,8 @@ class Selection {
     
   bool empty() const { return data.empty(); }
   size_t size() const { return data.size(); }
+
+  Element & front() { return *(data.front()); }
   
  private:
   std::vector<std::shared_ptr<Element> > data;
