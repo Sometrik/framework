@@ -170,15 +170,15 @@ public class FrameWork extends Activity implements NativeCommandHandler {
     screenWidth = displayMetrics.widthPixels;
     return displayMetrics;
   }
-  
-  public void setSharedPreferences(String textValue){
+
+  public void setSharedPreferences(String textValue) {
     prefs = getSharedPreferences(textValue, Context.MODE_PRIVATE);
     editor = prefs.edit();
   }
-  
-  public SharedPreferences.Editor getPreferencesEditor(){ return editor; }
 
-  public static void addToViewList(NativeCommandHandler view){
+  public SharedPreferences.Editor getPreferencesEditor() { return editor; }
+
+  public static void addToViewList(NativeCommandHandler view) {
     System.out.println(view.getElementId() + " added to view list");
     views.put(view.getElementId(), view);
   }
@@ -231,9 +231,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
     setNativeActiveView(System.currentTimeMillis() / 1000.0, view.getId(), recordHistory);
   }
   
-  public int getCurrentViewId() {
-    return currentView;
-  }
+  public int getCurrentViewId() { return currentView; }
 
   public NativeSurface createNativeOpenGLView(final int id) {
     final ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
@@ -293,21 +291,6 @@ public class FrameWork extends Activity implements NativeCommandHandler {
     notificationManager.notify(0, notif);
 
   }
-
-  //Code to show user preferences on screen. Might be useful later
-  private void showUserSettings() {
-//    setContentView(R.layout.activity_main);
-    System.out.println("showSettings called");
-    SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
-    StringBuilder builder = new StringBuilder();
-    builder.append("\n Username: " + sharedPrefs.getString("prefUsername", "NULL"));
-    builder.append("\n Send report:" + sharedPrefs.getBoolean("prefSendReport", false));
-    builder.append("\n Sync Frequency: " + sharedPrefs.getString("prefSyncFrequency", "NULL"));
-//    TextView settingsTextView = (TextView) findViewById(R.id.textUserSettings);
-//    settingsTextView.setText(builder.toString());
-  }
-
-  private static PointF touchScreenStartPtArr[] = new PointF[10];
 
   //Screen touchevent listener. Will send information to MyGLSurfaceView messagehandler
   private class MyOnTouchListener implements OnTouchListener {
@@ -396,39 +379,13 @@ public class FrameWork extends Activity implements NativeCommandHandler {
 
 	System.out.println("item selected: " + item);
 	System.out.println("item id: " + idArray[item]);
-
-	optionSelected(idArray[item]);
+//	optionSelected(idArray[item]);
 
       }
     });
 
     AlertDialog alert = builder.create();
     alert.show();
-  }
-  
-  //Called after option was selected from ActionSheet. Currently creates settings view
-  private void optionSelected(int id) {
-
-  }
-
-  //Listener for built in menu options. Propably removable
-  @Override
-  public boolean onOptionsItemSelected(MenuItem item) {
-    switch (item.getItemId()) {
-
-//    case R.id.menu_settings:
-//
-//      getFragmentManager().beginTransaction().replace(android.R.id.content, new MyPreferenceFragment()).commit();
-//
-//      break;
-//
-//    case 1:
-//      startActivity(new Intent(this, Settings.class));
-//      break;
-
-    }
-
-    return true;
   }
   
   public float getScreenWidth(){
@@ -438,10 +395,6 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   public void setAppId(int id){
     this.appId = id;
   }
-  
-  public boolean getDrawMode(){ return drawMode; }
-  
-  public void disableDraw(){ drawMode = false; }
 
   // returns database path
   public String getDBPath(String dbName) {
@@ -522,31 +475,31 @@ public class FrameWork extends Activity implements NativeCommandHandler {
     super.onStart();
     nativeOnStart(System.currentTimeMillis() / 1000.0, appId);
   }
-  @Override 
-  public void onDestroy(){
+
+  @Override
+  public void onDestroy() {
     System.out.println("onDestroy called");
 
     // It's important to destroy native before the activity, since
     // native stuff may wish to use Framework functionality in their
     // destructors
-    
+
     nativeOnDestroy(System.currentTimeMillis() / 1000.0, appId);
-    if (purchaseHelper != null){
-    	try {
-	  purchaseHelper.dispose();
-	} catch (IabAsyncInProgressException e) {
-	  e.printStackTrace();
-	  System.out.println("Error in disposing purchaseHelper with message: " + e.getMessage());
-	}
+    if (purchaseHelper != null) {
+      try {
+	purchaseHelper.dispose();
+      } catch (IabAsyncInProgressException e) {
+	e.printStackTrace();
+	System.out.println("Error in disposing purchaseHelper with message: " + e.getMessage());
+      }
     }
     purchaseHelper = null;
     super.onDestroy();
   }
-  
-  public IabHelper getPurchaseHelper(){
-  	return purchaseHelper;
-  }
 
+  public IabHelper getPurchaseHelper() {
+    return purchaseHelper;
+  }
 
   //Load JNI. Framework references to make file.
   static {
