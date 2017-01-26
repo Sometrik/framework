@@ -356,7 +356,10 @@ public class NativeCommand {
     FWSwitch click = new FWSwitch(frame);
     click.setId(childInternalId);
     if (textValue != "") {
-     click.setText(textValue); 
+      click.setTextOn(textValue);
+    }
+    if (textValue2 != "") {
+      click.setTextOff(textValue2);
     }
     click.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
       @Override
