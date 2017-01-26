@@ -477,11 +477,14 @@ void Java_com_sometrik_framework_FrameWork_nativeOnDestroy(JNIEnv* env, jobject 
   delete platform;
 }
   
-void Java_com_sometrik_framework_FrameWork_textChangedEvent(JNIEnv* env, jobject thiz, double timestamp, jint id, jstring jtext) {
-  const char * text = env->GetStringUTFChars(jtext, 0);
-  __android_log_print(ANDROID_LOG_INFO, "Sometrik", "textChangedEvent: %s", text);
+void Java_com_sometrik_framework_FrameWork_textChangedEvent(JNIEnv* env, jobject thiz, double timestamp, jint id, jbyteArray jarray) {
+  string text;
+  if (jarray) {
+    jbyte* content_array = env->GetByteArrayElements(jarray, NULL);
+    text = string((const char *) content_array, env->GetArrayLength(jarray));
+    env->ReleaseByteArrayElements(jarray, content_array, JNI_ABORT);
+  }
   ValueEvent ev(timestamp, text);
-  env->ReleaseStringUTFChars(jtext, text);
   platform->queueEvent(id, ev);
 }
 

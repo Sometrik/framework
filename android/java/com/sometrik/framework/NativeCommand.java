@@ -435,7 +435,9 @@ public class NativeCommand {
     }
     editText.addTextChangedListener(new TextWatcher() {
       public void afterTextChanged(Editable editable) {
-	frame.textChangedEvent(System.currentTimeMillis() / 1000.0, getChildInternalId(), editable.toString());
+	String inputText = editable.toString();
+	byte[] b = inputText.getBytes(Charset.forName("UTF-8"));
+	frame.textChangedEvent(System.currentTimeMillis() / 1000.0, getChildInternalId(), b);
       }
       public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
       public void onTextChanged(CharSequence s, int start, int before, int count) {}
