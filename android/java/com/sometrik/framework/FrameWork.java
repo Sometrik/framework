@@ -505,6 +505,11 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   static {
     System.loadLibrary("framework");
   }
+  
+  public static void handleNativeException(Throwable error){
+    error.printStackTrace();
+    System.out.println("error cause: " + error.getCause());
+  }
 
   @Override
   public int getElementId() {
