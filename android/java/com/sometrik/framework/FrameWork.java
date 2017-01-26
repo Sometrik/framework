@@ -1,6 +1,7 @@
 package com.sometrik.framework;
 
 import java.util.HashMap;
+import java.util.Locale;
 
 import com.android.trivialdrivesample.util.IabException;
 import com.android.trivialdrivesample.util.IabHelper;
@@ -60,9 +61,9 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   private View currentlyShowingView;
   
   private boolean drawMode = false;
-
-  private Settings settings;
-
+  
+  private Locale defaultLocale;
+  
   private float screenHeight;
   private float screenWidth;
   public Handler mainHandler;
@@ -109,7 +110,11 @@ public class FrameWork extends Activity implements NativeCommandHandler {
       this.setTheme(android.R.style.Theme_Holo_Light);
     }
     
+    defaultLocale = Locale.getDefault();
+    System.out.println("Users preferred locale: " + defaultLocale.getCountry() + " Language: " + defaultLocale.getLanguage());
+    
     super.onCreate(savedInstanceState);
+    
     
     System.out.println("onCreate called");
 
@@ -430,6 +435,12 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   
   @Override
   public void onConfigurationChanged(Configuration newConfig) {
+
+    Locale locale = getResources().getConfiguration().locale;
+    System.out.println("Users locale: " + defaultLocale.getCountry() + " Language: " + defaultLocale.getLanguage());
+    if (locale.getLanguage() != defaultLocale.getLanguage()) {
+      System.out.println("Language change spotted");
+    }
 
     // super.onConfigurationChanged(newConfig);
     System.out.println("onConfigChange");
