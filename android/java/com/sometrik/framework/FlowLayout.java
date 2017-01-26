@@ -1,6 +1,6 @@
 package com.sometrik.framework;
 
-import com.sometrik.formtest.R;
+import com.sometrik.vapu.R;
 
 import android.content.Context;
 import android.content.res.TypedArray;

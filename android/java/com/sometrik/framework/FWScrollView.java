@@ -2,6 +2,8 @@ package com.sometrik.framework;
 
 import android.content.Context;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
 public class FWScrollView extends ScrollView implements NativeCommandHandler {
@@ -11,6 +13,9 @@ public class FWScrollView extends ScrollView implements NativeCommandHandler {
   public FWScrollView(FrameWork frameWork) {
     super(frameWork);
     this.frame = frameWork;
+    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+    this.setLayoutParams(params);
+    this.setFillViewport(true);
   }
 
   @Override

@@ -38,6 +38,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
@@ -167,8 +168,23 @@ public class NativeCommand {
       break;
       
     case CREATE_AUTO_COLUMN_LAYOUT:
-      FlowLayout autoLayout = new FlowLayout(frame, null);
+      final FWGridView autoLayout = new FWGridView(frame);
       autoLayout.setId(getChildInternalId());
+      autoLayout.setColumnWidth(200);
+      autoLayout.setNumColumns(GridView.AUTO_FIT);
+      autoLayout.setVerticalSpacing(0);
+      autoLayout.setHorizontalSpacing(0);
+      autoLayout.setStretchMode(GridView.STRETCH_COLUMN_WIDTH);
+      final FWAdapter adapteri = new FWAdapter(frame, new ArrayList<View>());
+      autoLayout.post(new Runnable() {
+	    public void run() {
+	      autoLayout.setAdapter(adapteri);
+	      autoLayout.setupAdapter(adapteri);
+	    }
+	});
+//      autoLayout.setAdapter(adapteri);
+//      FlowLayout autoLayout = new FlowLayout(frame, null);
+//      autoLayout.setId(getChildInternalId());
       FrameWork.addToViewList(autoLayout);
       view.addChild(autoLayout);
       break;
@@ -370,7 +386,7 @@ public class NativeCommand {
   
   private FWLayout createLinearLayout() {
     FWLayout layout = new FWLayout(frame);
-    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
     params.weight = 1.0f;
     params.gravity = Gravity.FILL;
     layout.setBaselineAligned(false);
