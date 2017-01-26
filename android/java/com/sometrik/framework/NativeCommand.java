@@ -316,7 +316,8 @@ public class NativeCommand {
       frame.getPreferencesEditor().apply();
       break;
     case DELETE_ELEMENT:
-      view.removeChild(childInternalId);
+      FrameWork.views.remove(childInternalId);
+      ((ViewGroup) view).removeViewAt(childInternalId);
       break;
     case BUY_PRODUCT:
       try {

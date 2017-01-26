@@ -22,16 +22,6 @@ public class FWScrollView extends ScrollView implements NativeCommandHandler {
   public void addChild(View view) {
     addView(view);
   }
-
-  @Override
-  public void removeChild(int id) {
-    View view = getChildAt(0);
-    if (view != null){
-      if (view.getId() == id){
-        this.removeChild(0);
-      }
-    }
-  }
   
   @Override
   public void addOption(int optionId, String text) {

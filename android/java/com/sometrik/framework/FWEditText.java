@@ -65,11 +65,6 @@ public class FWEditText extends EditText implements NativeCommandHandler {
   public void addChild(View view) {
     System.out.println("FWEditText couldn't handle command");
   }
-
-  @Override
-  public void removeChild(int id) {
-    System.out.println("FWEditText couldn't handle command");
-  }
   
   @Override
   public void addOption(int optionId, String text) {

@@ -30,19 +30,6 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
   }
 
   @Override
-  public void removeChild(int id) {
-    for (int i = 0; i < getChildCount(); i++) {
-      View v = getChildAt(i);
-      if (v.getId() == id) {
-	removeView(v);
-	System.out.println("Child " + id + " removed succesfully");
-	return;
-      }
-    }
-    System.out.println("Child " + id + " wasn't found and wasn't removed");
-  }
-
-  @Override
   public void setValue(String v) {
     System.out.println("FWLayout couldn't handle command");
   }

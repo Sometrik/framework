@@ -192,11 +192,15 @@ public class FrameWork extends Activity implements NativeCommandHandler {
     Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
     startActivity(browserIntent);
   }
+  
+  public void removeViewFromList(int viewId){
+    FrameWork.views.remove(viewId);
+  }
 
   public void setCurrentView(final View view, final boolean recordHistory) {
     if (currentView != 0) {
       TranslateAnimation r;
-      if (recordHistory){
+      if (recordHistory) {
 	r = new TranslateAnimation(0, -1000, 0, 0);
       } else {
 	r = new TranslateAnimation(0, 1000, 0, 0);
@@ -211,7 +215,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
 	public void onAnimationEnd(Animation animation) {
 	  currentView = view.getId();
 	  currentlyShowingView = view;
-	    setContentView(view);
+	  setContentView(view);
 	  TranslateAnimation q;
 	  if (recordHistory) {
 	    q = new TranslateAnimation(1000, 0, 0, 0);
@@ -534,11 +538,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   public void addOption(int optionId, String text) {
     System.out.println("FrameWork couldn't handle addOption");
   }
-  @Override
-  public void removeChild(int id) {
-    System.out.println("FrameWork couldn't handle addOption");
-  }
-
+  
   @Override
   public void setValue(String v) {
     System.out.println("FrameWork couldn't handle addOption"); 

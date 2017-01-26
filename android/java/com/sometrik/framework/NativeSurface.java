@@ -85,13 +85,6 @@ public class NativeSurface extends SurfaceView implements NativeCommandHandler {
   }
 
   @Override
-  public void removeChild(int id) {
-    System.out.println("FrameWork couldn't handle addOption");
-    // TODO Auto-generated method stub
-    
-  }
-
-  @Override
   public void setValue(String v) {
     framework.setCurrentView(this, true);
     drawTimer = new DrawTimer(getId());

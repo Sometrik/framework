@@ -17,11 +17,6 @@ public class FWCheckBox extends CheckBox implements NativeCommandHandler {
   public void addChild(View view) {
     System.out.println("FWCheckBox couldn't handle command");
   }
-
-  @Override
-  public void removeChild(int id) {
-    System.out.println("FWCheckBox couldn't handle command");
-  }
   
   @Override
   public void addOption(int optionId, String text) {

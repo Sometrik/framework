@@ -19,11 +19,6 @@ public class FWSwitch extends Switch implements NativeCommandHandler {
   }
 
   @Override
-  public void removeChild(int id) {
-    System.out.println("FWSwitch coulnd't handle Command");
-  }
-
-  @Override
   public void addOption(int optionId, String text) {
     System.out.println("FWSwitch coulnd't handle Command");
   }

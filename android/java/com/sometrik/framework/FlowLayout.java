@@ -171,19 +171,6 @@ public class FlowLayout extends ViewGroup implements NativeCommandHandler {
   }
 
   @Override
-  public void removeChild(int id) {
-    for (int i = 0; i < getChildCount(); i++) {
-      View v = getChildAt(i);
-      if (v.getId() == id) {
-	removeView(v);
-	System.out.println("Child " + id + " removed succesfully");
-	return;
-      }
-    }
-    System.out.println("Child " + id + " wasn't found and wasn't removed");
-  }
-
-  @Override
   public void addOption(int optionId, String text) {
     System.out.println("FlowLayout coulnd't handle command");
   }

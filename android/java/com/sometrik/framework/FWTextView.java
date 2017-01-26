@@ -18,12 +18,7 @@ public class FWTextView extends TextView implements NativeCommandHandler {
   public void addChild(View view) {
     System.out.println("FWTextView couldn't handle command");
   }
-
-  @Override
-  public void removeChild(int id) {
-    System.out.println("FWTextView couldn't handle command");
-  }
-
+  
   @Override
   public void addOption(int optionId, String text) {
     System.out.println("FWTextView couldn't handle command");

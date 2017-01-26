@@ -24,11 +24,6 @@ public class FWButton extends Button implements NativeCommandHandler {
   }
   
   @Override
-  public void removeChild(int id) {
-    System.out.println("FWButton couldn't handle command");
-  }
-
-  @Override
   public void addOption(int optionId, String text) {
     System.out.println("FWButton couldn't handle command");
   }

@@ -50,11 +50,6 @@ public class FWGridView extends GridView implements NativeCommandHandler {
   }
 
   @Override
-  public void removeChild(int id) {
-    System.out.println("FWGridView couldn't handle command");
-  }
-
-  @Override
   public void addOption(int optionId, String text) {
     System.out.println("FWGridView couldn't handle command");
   }
