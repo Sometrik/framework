@@ -47,12 +47,9 @@ public class FWAdapter extends ArrayAdapter<View> {
       System.out.println("creating new abin");
       DisplayMetrics displaymetrics = new DisplayMetrics();
       int dp = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 35, displaymetrics );
-//      ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-      AbsListView.LayoutParams params = new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp);
+      AbsListView.LayoutParams params = new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 130);
 	view = viewList.get(position);
 	view.setLayoutParams(params);
-//	view.setLayoutParams(new AbsListView.LayoutParams(GridView.AUTO_FIT,GridView.AUTO_FIT));
-//	view.setPadding(8, 8, 8, 8);
     } else {
 	System.out.println("recycle abin");
 	view = convertView;
