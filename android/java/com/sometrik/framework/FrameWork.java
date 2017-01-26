@@ -73,7 +73,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   private AlertDialog alert;
   private float windowYcoords;
   public static HashMap<Integer, NativeCommandHandler> views = new HashMap<Integer, NativeCommandHandler>();
-  public static int appId = 0;
+  private int appId = 0;
   private int currentView = 0;
 
   public native void endModal(double timestamp, int value, byte[] textValue);
@@ -401,9 +401,8 @@ public class FrameWork extends Activity implements NativeCommandHandler {
     return screenWidth;
   }
   
-  public void setAppId(int id){
-    this.appId = id;
-  }
+  public void setAppId(int id){ this.appId = id; }
+  public int getAppId(){ return appId; }
 
   // returns database path
   public String getDBPath(String dbName) {

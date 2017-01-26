@@ -573,7 +573,7 @@ public class NativeCommand {
       public void onIabPurchaseFinished(IabResult result, Purchase info) {
 	if (result.isSuccess()) {
 	  System.out.println("Purchase of product id " + productId + " completed");
-	  FrameWork.onPurchaseEvent(System.currentTimeMillis() / 1000.0, FrameWork.appId, info.getSku(), true, info.getPurchaseTime() / 1000.0);
+	  FrameWork.onPurchaseEvent(System.currentTimeMillis() / 1000.0, frame.getAppId(), info.getSku(), true, info.getPurchaseTime() / 1000.0);
 	  // TODO
 	} else {
 	  System.out.println("Purchase of product id " + productId + " failed");
@@ -588,7 +588,7 @@ public class NativeCommand {
     List<Purchase> purchaseList = inventory.getAllPurchases();
     System.out.println("getting purchase history. Purchase list size: " + purchaseList.size());
     for (Purchase purchase : inventory.getAllPurchases()) {
-      FrameWork.onPurchaseEvent(System.currentTimeMillis() / 1000.0, FrameWork.appId, purchase.getSku(), false, purchase.getPurchaseTime() / 1000.0);
+      FrameWork.onPurchaseEvent(System.currentTimeMillis() / 1000.0, frame.getAppId(), purchase.getSku(), false, purchase.getPurchaseTime() / 1000.0);
     }
   }
   
