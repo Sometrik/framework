@@ -16,6 +16,7 @@ import com.android.trivialdrivesample.util.IabResult;
 import com.android.trivialdrivesample.util.Inventory;
 import com.android.trivialdrivesample.util.Purchase;
 
+import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
@@ -305,6 +306,11 @@ public class NativeCommand {
       break;
     case CREATE_ACTION_SHEET:
       createActionSheet();
+      break;
+    case CREATE_ACTIONBAR:
+      //TODO not everything is set
+      ActionBar ab = frame.getActionBar();
+      ab.setTitle(textValue);
       break;
     case QUIT_APP:
       // TODO
