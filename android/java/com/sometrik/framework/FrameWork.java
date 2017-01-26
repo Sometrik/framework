@@ -73,7 +73,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   private AlertDialog alert;
   private float windowYcoords;
   public static HashMap<Integer, NativeCommandHandler> views = new HashMap<Integer, NativeCommandHandler>();
-  private int appId = 0;
+  public static int appId = 0;
   private int currentView = 0;
 
   public native void endModal(double timestamp, int value, byte[] textValue);
@@ -90,7 +90,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   public native void nativeOnStart(double timestamp, int appId);
   public native void nativeOnDestroy(double timestamp, int appId);
   private native void setNativeActiveView(double timestamp, int activeView, boolean recordHistory);
-  public static native void onPurchaseEvent(double purchaseTime, String orderId, boolean newPurchase);
+  public static native void onPurchaseEvent(double timestamp, int applicationId, String orderId, boolean newPurchase, double purchaseTime);
   public static native void onResize(double timestamp, float width, float height, int viewId);
   public static native void onUpdate(double timestamp, int viewId);
   

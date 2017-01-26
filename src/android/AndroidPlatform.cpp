@@ -501,12 +501,12 @@ void Java_com_sometrik_framework_FrameWork_setNativeActiveView(JNIEnv* env, jobj
   // Wrong thread. Send event instead
 }
 
-void Java_com_sometrik_framework_FrameWork_OnPurchaseEvent(JNIEnv* env, jclass clazz, double timestamp, jstring productId, bool newPurchase){
+void Java_com_sometrik_framework_FrameWork_OnPurchaseEvent(JNIEnv* env, jclass clazz, double timestamp, jint applicationId, jstring productId, bool newPurchase, double purchaseTime){
   const char * cstring = env->GetStringUTFChars(productId, 0);
-  //PurchaseEvent Type not used yet //TODO
+  //PurchaseEvent Type not used yet. PurchaseTime is not sent //TODO
   PurchaseEvent ev(timestamp, cstring, PurchaseEvent::PURCHASE_STATUS, newPurchase);
  //Id not used. Sent to 0 //TODO
-  platform->queueEvent(0, ev);
+  platform->queueEvent(applicationId, ev);
   env->ReleaseStringUTFChars(productId, cstring);
 }
 
