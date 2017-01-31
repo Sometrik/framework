@@ -13,8 +13,17 @@ void
 Runnable::start(PlatformThread * _thread) {
   assert(_thread);
   thread = _thread;
-  run();
-  SysEvent ev(0.0, SysEvent::THREAD_TERMINATED);
+  try {
+    run();
+  } catch (exception & e) {
+    cerr << "thread died after exception\n";
+
+    SysEvent ev(0.0, SysEvent::THREAD_TERMINATED);
+    ev.setThread(thread);
+    postEvent(ev);
+    throw e;
+  }
+  SysEvent ev(getPlatform().getTime(), SysEvent::THREAD_TERMINATED);
   ev.setThread(thread);
   postEvent(ev);
 }
