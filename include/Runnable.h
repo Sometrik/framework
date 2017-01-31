@@ -5,6 +5,7 @@
 
 #include <string>
 #include <EventQueue.h>
+#include <FWPlatform.h>
 
 class PlatformThread;
 class Event;
