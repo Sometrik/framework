@@ -3,6 +3,7 @@ package com.sometrik.framework;
 import java.util.ArrayList;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewParent;
 import android.widget.TableLayout;
@@ -20,12 +21,15 @@ public class FWTable extends TableLayout implements NativeCommandHandler {
     super(frameWork);
     frame = frameWork;
     rowList = new ArrayList<TableRow>();
-    rowList.add(new TableRow(frame));
+    TableRow firstRow = new TableRow(frame);
+    rowList.add(firstRow);
+    addView(firstRow);
     dataList = new ArrayList<View>();
   }
   
   private TableRow getCurrentRow(){
-    if (dataList.size() / columnCount > rowList.size()) {
+    if ((dataList.size() + 1) / columnCount > rowList.size()) {
+      Log.d("table", "New Row");
       TableRow row = new TableRow(frame);
       rowList.add(row);
       addView(row);
@@ -40,9 +44,9 @@ public class FWTable extends TableLayout implements NativeCommandHandler {
 
   @Override
   public void addChild(View view) {
+    dataList.add(view);
     TableRow row = getCurrentRow();
     row.addView(view);
-    dataList.add(view);
   }
   
   @Override
