@@ -476,6 +476,13 @@ void Java_com_sometrik_framework_FrameWork_nativeOnDestroy(JNIEnv* env, jobject 
   platform->joinThread();
   delete platform;
 }
+void Java_com_sometrik_framework_FrameWork_languageChanged(JNIEnv* env, jobject thiz, double timestamp, int appId, jstring language) {
+  const char * clanguage = env->GetStringUTFChars(language, NULL);
+  SysEvent ev(timestamp, SysEvent::LANGUAGE_CHANGED);
+  ev.setTextValue(clanguage);
+  platform->queueEvent(appId, ev);
+  env->ReleaseStringUTFChars(language, clanguage);
+}
   
 void Java_com_sometrik_framework_FrameWork_textChangedEvent(JNIEnv* env, jobject thiz, double timestamp, jint id, jbyteArray jarray) {
   string text;

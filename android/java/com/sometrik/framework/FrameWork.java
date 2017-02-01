@@ -91,6 +91,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   public native void nativeOnStart(double timestamp, int appId);
   public native void nativeOnDestroy(double timestamp, int appId);
   private native void setNativeActiveView(double timestamp, int activeView, boolean recordHistory);
+  private native void languageChanged(double timestamp, int appId, String language);
   public static native void onPurchaseEvent(double timestamp, int applicationId, String orderId, boolean newPurchase, double purchaseTime);
   public static native void onResize(double timestamp, float width, float height, int viewId);
   public static native void onUpdate(double timestamp, int viewId);
@@ -118,7 +119,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
     System.out.println("Users preferred locale: " + defaultLocale.getCountry() + " Language: " + defaultLocale.getLanguage());
     
     // You can disable status bar with this
-    this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+//    this.requestWindowFeature(Window.FEATURE_NO_TITLE);
    
     // Init for screen settings
     setupDisplayMetrics();
@@ -437,9 +438,11 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   public void onConfigurationChanged(Configuration newConfig) {
 
     Locale locale = getResources().getConfiguration().locale;
-    System.out.println("Users locale: " + defaultLocale.getCountry() + " Language: " + defaultLocale.getLanguage());
     if (locale.getLanguage() != defaultLocale.getLanguage()) {
       System.out.println("Language change spotted");
+      System.out.println("Previous locale: " + defaultLocale.getCountry() + " Language: " + defaultLocale.getLanguage());
+      System.out.println("New locale: " + locale.getCountry() + " Language: " + locale.getLanguage());
+      languageChanged(System.currentTimeMillis() / 1000.0, appId, locale.getLanguage());
     }
 
     // super.onConfigurationChanged(newConfig);
