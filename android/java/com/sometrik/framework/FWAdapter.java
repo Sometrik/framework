@@ -29,7 +29,6 @@ public class FWAdapter extends ArrayAdapter<View> {
 
   @Override
   public int getCount() {
-	System.out.println("getCount called with count of: " + viewList.size());
     return viewList.size();
   }
 
@@ -40,20 +39,11 @@ public class FWAdapter extends ArrayAdapter<View> {
 
   @Override
   public View getView(int position, View convertView, ViewGroup parent) {
-
-	System.out.println("Abina: size: " + viewList.size() + " position: " + position);
-    View view;
-    if (convertView == null) {  
-      System.out.println("creating new abin");
-      DisplayMetrics displaymetrics = new DisplayMetrics();
-      int dp = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 35, displaymetrics );
-      AbsListView.LayoutParams params = new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 130);
-	view = viewList.get(position);
-	view.setLayoutParams(params);
-    } else {
-	System.out.println("recycle abin");
-	view = convertView;
-    }
+    DisplayMetrics displaymetrics = new DisplayMetrics();
+    int dp = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 35, displaymetrics);
+    AbsListView.LayoutParams params = new AbsListView.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, 130);
+    View view = viewList.get(position);
+    view.setLayoutParams(params);
     return view;
   }
   
