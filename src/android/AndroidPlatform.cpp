@@ -505,6 +505,12 @@ void Java_com_sometrik_framework_FrameWork_intChangedEvent(JNIEnv* env, jobject 
   platform->queueEvent(id, ev);
 }
 
+void Java_com_sometrik_framework_FrameWork_timerEvent(JNIEnv* env, jobject thiz, double timestamp, jint viewId, jint timerId){
+  __android_log_print(ANDROID_LOG_INFO, "Sometrik", "textChangedEvent: %u", changedInt);
+  TimerEvent ev(timestamp, timerId);
+  platform->queueEvent(viewId, ev);
+}
+
 void Java_com_sometrik_framework_FrameWork_setNativeActiveView(JNIEnv* env, jobject thiz, double timestamp, jint activeView, bool recordHistory) {
   __android_log_print(ANDROID_LOG_INFO, "Sometrik", "setActivewView: %u", activeView);
   if (platform->getActiveViewId() != 0 && recordHistory) {

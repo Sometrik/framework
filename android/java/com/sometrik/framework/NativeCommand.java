@@ -209,6 +209,15 @@ public class NativeCommand {
       FWSwitch click = createSwitch();
       view.addChild(click);
       break;
+      
+    case CREATE_TIMER:
+      Timer timer = new Timer();
+      timer.schedule((new TimerTask(){
+	@Override
+	public void run() {
+	  FrameWork.timerEvent(System.currentTimeMillis() / 1000, internalId, childInternalId);
+	}
+      }), value, value);
 
     case CREATE_CHECKBOX:
       FWCheckBox checkBox = new FWCheckBox(frame);

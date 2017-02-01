@@ -99,6 +99,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   public static native void onPurchaseEvent(double timestamp, int applicationId, String orderId, boolean newPurchase, double purchaseTime);
   public static native void onResize(double timestamp, float width, float height, int viewId);
   public static native void onUpdate(double timestamp, int viewId);
+  public static native void timerEvent(double timestamp, int viewId, int timerId);
   
   @Override
   protected void onCreate(Bundle savedInstanceState) {
