@@ -17,7 +17,8 @@ public:
     DESTROY, // Called just before the app is destroyed
     MEMORY_WARNING,
     THREAD_TERMINATED,
-    END_MODAL
+    END_MODAL,
+    LANGUAGE_CHANGED
   };
  SysEvent(double _timestamp, Type _type) : Event(_timestamp), type(_type) { }
 
