@@ -40,6 +40,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceHolder.Callback;
 import android.view.View;
 import android.view.View.OnTouchListener;
+import android.view.Window;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
@@ -96,7 +97,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   
   @Override
   protected void onCreate(Bundle savedInstanceState) {
-    
+    System.out.println("onCreate called");
     // Set default theme for the app. Commented default themes are dark versions
     if (Build.VERSION.SDK_INT <= 10) {
       // this.setTheme(android.R.style.Theme);
@@ -109,19 +110,15 @@ public class FrameWork extends Activity implements NativeCommandHandler {
       // this.setTheme(android.R.style.Theme_Holo);
       this.setTheme(android.R.style.Theme_Holo_Light);
     }
+    super.onCreate(savedInstanceState);
+    
+
     
     defaultLocale = Locale.getDefault();
     System.out.println("Users preferred locale: " + defaultLocale.getCountry() + " Language: " + defaultLocale.getLanguage());
     
-    super.onCreate(savedInstanceState);
-    
-    
-    System.out.println("onCreate called");
-
     // You can disable status bar with this
-//    this.requestWindowFeature(Window.FEATURE_NO_TITLE);
-    ActionBar ab = getActionBar();
-    ab.setTitle("Esitietolomake");
+    this.requestWindowFeature(Window.FEATURE_NO_TITLE);
    
     // Init for screen settings
     setupDisplayMetrics();
@@ -488,6 +485,11 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   public void onStart(){
     super.onStart();
     nativeOnStart(System.currentTimeMillis() / 1000.0, appId);
+  }
+  @Override
+  public void onLowMemory(){
+    super.onLowMemory();
+    //Todo
   }
 
   @Override
