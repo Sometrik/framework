@@ -35,6 +35,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -135,10 +136,10 @@ public class NativeCommand {
     this.flags = flags;
 
     if (textValue != null) {
-	this.textValue = new String(textValue, Charset.forName("UTF-8"));
+	this.textValue = new String(textValue, frame.getCharset());
     }
     if (textValue2 != null) {
-	this.textValue2 = new String(textValue2, Charset.forName("UTF-8"));
+	this.textValue2 = new String(textValue2, frame.getCharset());
     }
   }
   
@@ -442,7 +443,7 @@ public class NativeCommand {
     editText.addTextChangedListener(new TextWatcher() {
       public void afterTextChanged(Editable editable) {
 	String inputText = editable.toString();
-	byte[] b = inputText.getBytes(Charset.forName("UTF-8"));
+	byte[] b = inputText.getBytes(frame.getCharset());
 	frame.textChangedEvent(System.currentTimeMillis() / 1000.0, getChildInternalId(), b);
       }
       public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -525,7 +526,7 @@ public class NativeCommand {
     builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
       public void onClick(DialogInterface dialog, int id) {
 	String inputText = String.valueOf(input.getText());
-	byte[] b = inputText.getBytes(Charset.forName("UTF-8"));
+	byte[] b = inputText.getBytes(frame.getCharset());
 	frame.endModal(System.currentTimeMillis() / 1000.0, 1, b);
 	dialog.cancel();
       }

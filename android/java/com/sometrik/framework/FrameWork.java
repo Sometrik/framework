@@ -1,5 +1,6 @@
 package com.sometrik.framework;
 
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Locale;
 
@@ -60,6 +61,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   private Inventory inventory;
   private DisplayMetrics displayMetrics;
   private View currentlyShowingView;
+  private Charset utf8_charset;
   
   private boolean drawMode = false;
   
@@ -113,8 +115,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
     }
     super.onCreate(savedInstanceState);
     
-
-    
+    utf8_charset = Charset.forName("UTF-8");
     defaultLocale = Locale.getDefault();
     System.out.println("Users preferred locale: " + defaultLocale.getCountry() + " Language: " + defaultLocale.getLanguage());
     
@@ -528,6 +529,9 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   public static void handleNativeException(Throwable error){
     error.printStackTrace();
     System.out.println("error cause: " + error.getCause());
+  }
+  public Charset getCharset(){
+    return utf8_charset;
   }
 
   @Override
