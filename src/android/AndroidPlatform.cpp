@@ -483,6 +483,10 @@ void Java_com_sometrik_framework_FrameWork_languageChanged(JNIEnv* env, jobject 
   platform->queueEvent(appId, ev);
   env->ReleaseStringUTFChars(language, clanguage);
 }
+void Java_com_sometrik_framework_FrameWork_memoryWarning(JNIEnv* env, jobject thiz, double timestamp, int appId) {
+  SysEvent ev(timestamp, SysEvent::MEMORY_WARNING);
+  platform->queueEvent(appId, ev);
+}
   
 void Java_com_sometrik_framework_FrameWork_textChangedEvent(JNIEnv* env, jobject thiz, double timestamp, jint id, jbyteArray jarray) {
   string text;

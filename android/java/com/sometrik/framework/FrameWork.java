@@ -32,6 +32,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -94,6 +95,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   public native void nativeOnDestroy(double timestamp, int appId);
   private native void setNativeActiveView(double timestamp, int activeView, boolean recordHistory);
   private native void languageChanged(double timestamp, int appId, String language);
+  private native void memoryWarning(double timestamp, int appId);
   public static native void onPurchaseEvent(double timestamp, int applicationId, String orderId, boolean newPurchase, double purchaseTime);
   public static native void onResize(double timestamp, float width, float height, int viewId);
   public static native void onUpdate(double timestamp, int viewId);
@@ -492,8 +494,9 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   }
   @Override
   public void onLowMemory(){
+    Log.d("Framework", "Low Memory Detected");
     super.onLowMemory();
-    //Todo
+    memoryWarning(System.currentTimeMillis() / 1000.0, appId);
   }
 
   @Override
