@@ -460,6 +460,18 @@ public class FrameWork extends Activity implements NativeCommandHandler {
     super.onConfigurationChanged(newConfig);
   }
   
+  public int measureViewLength(View view){
+    Log.d("measuring", "Measure Debug");
+    int widthMeasureSpec = View.MeasureSpec.makeMeasureSpec((int) screenWidth, View.MeasureSpec.AT_MOST);
+    Log.d("measuring", "Measure Debug");
+    int heightMeasureSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+    Log.d("measuring", "Measure Debug");
+    view.measure(widthMeasureSpec, heightMeasureSpec);
+    Log.d("measuring", "Measure Debug");
+    return view.getMeasuredHeight();
+  }
+
+  
   @Override
   public void onSaveInstanceState(Bundle savedInstanceState) {
     System.out.println("onSaveInstanceState");
