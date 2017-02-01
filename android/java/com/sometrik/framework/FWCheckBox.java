@@ -1,7 +1,10 @@
 package com.sometrik.framework;
 
 import android.content.Context;
+import android.text.TextUtils.TruncateAt;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.CheckBox;
 
 public class FWCheckBox extends CheckBox implements NativeCommandHandler {
@@ -11,6 +14,12 @@ public class FWCheckBox extends CheckBox implements NativeCommandHandler {
   public FWCheckBox(FrameWork frameWork) {
     super(frameWork);
     this.frame = frameWork;
+//    this.setMaxLines(1);
+//    this.setEllipsize(TruncateAt.MARQUEE);
+//    this.setHorizontallyScrolling(true);
+    
+    ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+    this.setLayoutParams(params);
   }
 
   @Override

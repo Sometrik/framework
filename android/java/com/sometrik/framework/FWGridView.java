@@ -21,7 +21,7 @@ public class FWGridView extends GridView implements NativeCommandHandler {
   public FWGridView(FrameWork frame) {
     super(frame);
     this.frame = frame;
-    GridView.LayoutParams params = new GridView.LayoutParams(GridView.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+    GridView.LayoutParams params = new GridView.LayoutParams(GridView.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
     this.setLayoutParams(params);
     preCreationViewList = new ArrayList<View>();
     
@@ -48,7 +48,7 @@ public class FWGridView extends GridView implements NativeCommandHandler {
       setAdapter(adapter);
     }
   }
-
+  
   @Override
   public void addOption(int optionId, String text) {
     System.out.println("FWGridView couldn't handle command");

@@ -172,11 +172,11 @@ public class NativeCommand {
     case CREATE_AUTO_COLUMN_LAYOUT:
       final FWGridView autoLayout = new FWGridView(frame);
       autoLayout.setId(getChildInternalId());
-      autoLayout.setColumnWidth(200);
+//      autoLayout.setColumnWidth(200);
       autoLayout.setNumColumns(GridView.AUTO_FIT);
-      autoLayout.setVerticalSpacing(0);
-      autoLayout.setHorizontalSpacing(0);
-      autoLayout.setStretchMode(GridView.STRETCH_COLUMN_WIDTH);
+//      autoLayout.setVerticalSpacing(0);
+//      autoLayout.setHorizontalSpacing(0);
+//      autoLayout.setStretchMode(GridView.STRETCH_COLUMN_WIDTH);
       final FWAdapter adapteri = new FWAdapter(frame, new ArrayList<View>());
       autoLayout.post(new Runnable() {
 	    public void run() {
