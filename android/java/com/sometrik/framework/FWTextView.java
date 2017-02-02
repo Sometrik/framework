@@ -12,7 +12,6 @@ public class FWTextView extends TextView implements NativeCommandHandler {
   public FWTextView(FrameWork frame) {
     super(frame);
     this.frame = frame;
-    this.setMaxLines(1);
   }
 
   @Override
