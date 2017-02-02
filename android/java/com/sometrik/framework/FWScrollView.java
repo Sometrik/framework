@@ -57,4 +57,10 @@ public class FWScrollView extends ScrollView implements NativeCommandHandler {
   public int getElementId() {
     return getId();
   }
+
+  @Override
+  public void onScreenOrientationChange(boolean isLandscape) {
+    // TODO Auto-generated method stub
+    
+  }
 }

@@ -101,4 +101,10 @@ public class FWEditText extends EditText implements NativeCommandHandler {
     return getId();
   }
 
+  @Override
+  public void onScreenOrientationChange(boolean isLandscape) {
+    // TODO Auto-generated method stub
+    
+  }
+
 }

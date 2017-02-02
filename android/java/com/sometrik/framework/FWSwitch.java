@@ -57,4 +57,10 @@ public class FWSwitch extends Switch implements NativeCommandHandler {
     return getId();
   }
 
+  @Override
+  public void onScreenOrientationChange(boolean isLandscape) {
+    // TODO Auto-generated method stub
+    
+  }
+
 }

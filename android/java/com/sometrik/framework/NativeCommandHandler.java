@@ -3,6 +3,7 @@ package com.sometrik.framework;
 import android.view.View;
 
 public interface NativeCommandHandler {
+  public void onScreenOrientationChange(boolean isLandscape);
   public void addChild(View view);
   public void addOption(int optionId, String text);
   public void setValue(String v);

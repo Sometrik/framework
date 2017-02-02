@@ -59,4 +59,11 @@ public class FWButton extends Button implements NativeCommandHandler {
 
   @Override
   public void setError(boolean hasError, String errorText) { }
+
+
+  @Override
+  public void onScreenOrientationChange(boolean isLandscape) {
+    // TODO Auto-generated method stub
+    
+  }
 }

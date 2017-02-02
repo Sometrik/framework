@@ -87,6 +87,12 @@ public class FWGridView extends GridView implements NativeCommandHandler {
   public int getElementId() {
     return getId();
   }
+
+  @Override
+  public void onScreenOrientationChange(boolean isLandscape) {
+    // TODO Auto-generated method stub
+    
+  }
   
   
 

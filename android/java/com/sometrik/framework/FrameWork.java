@@ -451,14 +451,21 @@ public class FrameWork extends Activity implements NativeCommandHandler {
 
     // super.onConfigurationChanged(newConfig);
     System.out.println("onConfigChange");
+    boolean isLandscape = false;
     if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
       System.out.println("Orientation conf portrait");
+      isLandscape = false;
       onResize(System.currentTimeMillis() / 1000.0, screenHeight, screenHeight, currentView);
     } else if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
       System.out.println("Orientation conf landscape");
+      isLandscape = true;
       onResize(System.currentTimeMillis() / 1000.0, screenHeight, screenHeight, currentView);
     }
     super.onConfigurationChanged(newConfig);
+    
+    for (NativeCommandHandler handler : views.values()){
+      handler.onScreenOrientationChange(isLandscape);
+    }
   }
   
   public int measureViewLength(View view){
@@ -584,4 +591,9 @@ public class FrameWork extends Activity implements NativeCommandHandler {
 
   @Override
   public void setError(boolean hasError, String errorText) { }
+  @Override
+  public void onScreenOrientationChange(boolean isLandscape) {
+    // TODO Auto-generated method stub
+    
+  }
 }

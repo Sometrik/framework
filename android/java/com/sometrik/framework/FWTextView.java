@@ -56,4 +56,10 @@ public class FWTextView extends TextView implements NativeCommandHandler {
     return getId();
   }
 
+  @Override
+  public void onScreenOrientationChange(boolean isLandscape) {
+    // TODO Auto-generated method stub
+    
+  }
+
 }
