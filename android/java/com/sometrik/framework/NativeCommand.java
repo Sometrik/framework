@@ -171,7 +171,7 @@ public class NativeCommand {
       break;
       
     case CREATE_AUTO_COLUMN_LAYOUT:{
-      FWTable auto  = createTableLayout(true);
+      FlowLayout auto  = new FlowLayout(frame, null);
       auto.setId(getChildInternalId());
       FrameWork.addToViewList(auto);
       view.addChild(auto);
@@ -425,7 +425,9 @@ public class NativeCommand {
       @Override
       public void onClick(View arg0) {
 	System.out.println("Java: my button was clicked with id " + getChildInternalId());
-	frame.intChangedEvent(System.currentTimeMillis() / 1000.0, getChildInternalId(), 1);
+	if (!FrameWork.transitionAnimation) {
+	  frame.intChangedEvent(System.currentTimeMillis() / 1000.0, getChildInternalId(), 1);
+	}
       }
     });
     FrameWork.addToViewList(button);

@@ -42,6 +42,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceHolder.Callback;
 import android.view.View;
 import android.view.View.OnTouchListener;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
@@ -79,6 +80,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   public static HashMap<Integer, NativeCommandHandler> views = new HashMap<Integer, NativeCommandHandler>();
   private int appId = 0;
   private int currentView = 0;
+  public static boolean transitionAnimation = false;
 
   public native void endModal(double timestamp, int value, byte[] textValue);
   public native void textChangedEvent(double timestamp, int id, byte[] textValue);
@@ -211,6 +213,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
       r.setAnimationListener(new Animation.AnimationListener() {
 	@Override
 	public void onAnimationStart(Animation animation) {
+	 transitionAnimation = true;
 	}
 
 	@Override
@@ -224,6 +227,14 @@ public class FrameWork extends Activity implements NativeCommandHandler {
 	  } else {
 	    q = new TranslateAnimation(-1000, 0, 0, 0);
 	  }
+	  q.setAnimationListener(new Animation.AnimationListener(){
+	    @Override
+	    public void onAnimationEnd(Animation animation) { transitionAnimation = false; }
+	    @Override
+	    public void onAnimationRepeat(Animation animation) {  }
+	    @Override
+	    public void onAnimationStart(Animation animation) { }
+	  });
 	  q.setDuration(200);
 	  view.startAnimation(q);
 	}
@@ -376,7 +387,9 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   @Override
   public boolean onKeyDown(int keycode, KeyEvent e) {
     System.out.println("KeyEvent. KeyCode: " + keycode + " ViewId: " + findViewById(android.R.id.content).getRootView().getId());
-    keyPressed(System.currentTimeMillis() / 1000.0, e.getKeyCode(), currentView);
+    if (!transitionAnimation){
+      keyPressed(System.currentTimeMillis() / 1000.0, e.getKeyCode(), currentView);
+    }
     return true;
   }
 
