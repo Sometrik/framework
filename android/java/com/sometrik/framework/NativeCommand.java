@@ -26,6 +26,7 @@ import android.graphics.BitmapFactory;
 import android.text.Editable;
 import android.text.Html;
 import android.text.InputType;
+import android.text.TextUtils.TruncateAt;
 import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
 import android.text.method.ScrollingMovementMethod;
@@ -169,29 +170,15 @@ public class NativeCommand {
       view.addChild(layout);
       break;
       
-    case CREATE_AUTO_COLUMN_LAYOUT:
-      final FWGridView autoLayout = new FWGridView(frame);
-      autoLayout.setId(getChildInternalId());
-//      autoLayout.setColumnWidth(200);
-      autoLayout.setNumColumns(GridView.AUTO_FIT);
-//      autoLayout.setVerticalSpacing(0);
-//      autoLayout.setHorizontalSpacing(0);
-//      autoLayout.setStretchMode(GridView.STRETCH_COLUMN_WIDTH);
-      final FWAdapter adapteri = new FWAdapter(frame, new ArrayList<View>());
-      autoLayout.post(new Runnable() {
-	    public void run() {
-	      autoLayout.setAdapter(adapteri);
-	      autoLayout.setupAdapter(adapteri);
-	    }
-	});
-//      autoLayout.setAdapter(adapteri);
-//      FlowLayout autoLayout = new FlowLayout(frame, null);
-//      autoLayout.setId(getChildInternalId());
-      FrameWork.addToViewList(autoLayout);
-      view.addChild(autoLayout);
+    case CREATE_AUTO_COLUMN_LAYOUT:{
+      FWTable auto  = createTableLayout(true);
+      auto.setId(getChildInternalId());
+      FrameWork.addToViewList(auto);
+      view.addChild(auto);
+    }
       break;
     case CREATE_TABLE_LAYOUT:
-      FWTable table = createTableLayout();
+      FWTable table = createTableLayout(false);
       view.addChild(table);
       break;
 
@@ -361,10 +348,16 @@ public class NativeCommand {
     menuList.add(menu);
   }
   
-  private FWTable createTableLayout(){
+  private FWTable createTableLayout(boolean autoSize){
     FWTable table = new FWTable(frame);
     table.setId(getChildInternalId());
-    table.setColumnCount(value);
+    if (autoSize){
+      table.setAutoSize(true);
+    } else {
+      table.setColumnCount(value);
+    }
+    table.setStretchAllColumns(true);
+    table.setShrinkAllColumns(true);
     FrameWork.addToViewList(table);
     return table;
   }
@@ -406,10 +399,10 @@ public class NativeCommand {
   
   private FWLayout createLinearLayout() {
     FWLayout layout = new FWLayout(frame);
-    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-    params.weight = 1.0f;
-    params.gravity = Gravity.FILL;
-    layout.setBaselineAligned(false);
+    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+//    params.weight = 1.0f;
+//    params.gravity = Gravity.FILL;
+//    layout.setBaselineAligned(false);
     layout.setLayoutParams(params);
     layout.setId(getChildInternalId());
     FrameWork.addToViewList(layout);
@@ -425,7 +418,9 @@ public class NativeCommand {
     FWButton button = new FWButton(frame);
     button.setId(getChildInternalId());
     button.setText(getTextValue());
-   
+    ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+    button.setLayoutParams(params);
+
     button.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View arg0) {
@@ -486,6 +481,7 @@ public class NativeCommand {
   private FWTextView createTextView() {
     FWTextView textView = new FWTextView(frame);
     textView.setId(getChildInternalId());
+    textView.setEllipsize(TruncateAt.MARQUEE);
     
     if (isSet(FLAG_HYPERLINK)) {
       textView.setMovementMethod(LinkMovementMethod.getInstance());
