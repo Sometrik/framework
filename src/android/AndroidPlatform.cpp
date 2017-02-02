@@ -20,6 +20,7 @@
 
 #include <TouchEvent.h>
 #include <PurchaseEvent.h>
+#include <TimerEvent.h>
 #include <ValueEvent.h>
 #include <SysEvent.h>
 #include <CommandEvent.h>
@@ -506,7 +507,6 @@ void Java_com_sometrik_framework_FrameWork_intChangedEvent(JNIEnv* env, jobject 
 }
 
 void Java_com_sometrik_framework_FrameWork_timerEvent(JNIEnv* env, jobject thiz, double timestamp, jint viewId, jint timerId){
-  __android_log_print(ANDROID_LOG_INFO, "Sometrik", "textChangedEvent: %u", changedInt);
   TimerEvent ev(timestamp, timerId);
   platform->queueEvent(viewId, ev);
 }
