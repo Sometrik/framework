@@ -14,12 +14,6 @@ public class FWCheckBox extends CheckBox implements NativeCommandHandler {
   public FWCheckBox(FrameWork frameWork) {
     super(frameWork);
     this.frame = frameWork;
-//    this.setMaxLines(1);
-//    this.setEllipsize(TruncateAt.MARQUEE);
-//    this.setHorizontallyScrolling(true);
-    
-    ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-    this.setLayoutParams(params);
   }
 
   @Override
