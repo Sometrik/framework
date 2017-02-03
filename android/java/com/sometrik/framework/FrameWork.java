@@ -474,6 +474,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
       isLandscape = true;
       onResize(System.currentTimeMillis() / 1000.0, screenHeight, screenHeight, currentView);
     }
+    displayMetrics = setupDisplayMetrics();
     super.onConfigurationChanged(newConfig);
     
     for (NativeCommandHandler handler : views.values()){
