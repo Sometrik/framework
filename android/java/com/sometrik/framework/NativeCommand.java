@@ -116,6 +116,7 @@ public class NativeCommand {
     SET_ERROR,
     UPDATE_PREFERENCE,
     ADD_OPTION,
+    ADD_COLUMN,
     QUIT_APP,
 
     // Timers
