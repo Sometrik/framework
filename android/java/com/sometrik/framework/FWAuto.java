@@ -48,7 +48,6 @@ public class FWAuto extends LinearLayout implements NativeCommandHandler {
       }
       
       if (remainder > 0){
-	Log.d("auto", "Aaaaa " + remainder);
 	newLayout.addView(copyViewList.get(0));
 	copyViewList.remove(0);
 	remainder = remainder - 1;
@@ -61,8 +60,10 @@ public class FWAuto extends LinearLayout implements NativeCommandHandler {
 
   @Override
   public void onScreenOrientationChange(boolean isLandscape) {
-    // TODO Auto-generated method stub
-
+    resetLayout();
+    int columns = measureColumnCount();
+    buildAuto(columns);
+    invalidate();
   }
   
   private void resetLayout(){
