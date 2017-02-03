@@ -172,7 +172,7 @@ public class NativeCommand {
       break;
       
     case CREATE_AUTO_COLUMN_LAYOUT:{
-      FlowLayout auto  = new FlowLayout(frame, null);
+      FWAuto auto  = new FWAuto(frame);
       auto.setId(getChildInternalId());
       FrameWork.addToViewList(auto);
       view.addChild(auto);
