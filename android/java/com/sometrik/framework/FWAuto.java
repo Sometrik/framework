@@ -28,6 +28,10 @@ public class FWAuto extends LinearLayout implements NativeCommandHandler {
   private void buildAuto(int columns){
     
     ArrayList<View> copyViewList = new ArrayList<View>();
+
+    int remainder = viewList.size() % columns;
+    Log.d("auto", "remainder: " + remainder);
+    
     for (View view : viewList){
       copyViewList.add(view);
     }
@@ -42,8 +46,17 @@ public class FWAuto extends LinearLayout implements NativeCommandHandler {
 	newLayout.addView(copyViewList.get(0));
 	copyViewList.remove(0);
       }
+      
+      if (remainder > 0){
+	Log.d("auto", "Aaaaa " + remainder);
+	newLayout.addView(copyViewList.get(0));
+	copyViewList.remove(0);
+	remainder = remainder - 1;
+      }
+      
       addView(newLayout);
     }
+    
   }
 
   @Override
@@ -77,11 +90,12 @@ public class FWAuto extends LinearLayout implements NativeCommandHandler {
   }
   
   private int measureColumnCount(){
-    
+
     int columns = 1;
-    while (true){
+    while (true) {
+      Log.d("auto", "checking to fit " + columns + 1);
       buildAuto(columns + 1);
-      if (!canFitColumns()){
+      if (!canFitColumns() || columns >= viewList.size()) {
 	Log.d("auto", "cant fit anymore. Returning " + columns);
 	break;
       } else {
