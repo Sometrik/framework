@@ -18,8 +18,10 @@
 
 #include <gtk/gtk.h>
 
+#include <unordered_map>
 #include <cstdio>
 #include <cstdlib>
+#include <cassert>
 
 using namespace std;
 
