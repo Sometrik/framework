@@ -450,11 +450,13 @@ public class NativeCommand {
   }
   
   private FWEditText createEditText(){
+    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+    
     final FWEditText editText = new FWEditText(frame);
     editText.setId(getChildInternalId());
     editText.setText(getTextValue());
     editText.setSingleLine();
-    editText.setMinimumWidth(120000 / (int) frame.getScreenWidth());
+    editText.setLayoutParams(params);
     if (isSet(FLAG_PASSWORD) && isSet(FLAG_NUMERIC)){
       editText.setInputType(InputType.TYPE_NUMBER_VARIATION_PASSWORD);
     } else if (isSet(FLAG_PASSWORD)) {
@@ -480,7 +482,8 @@ public class NativeCommand {
     final FWEditText editText = new FWEditText(frame);
     editText.setId(getChildInternalId());
     editText.setText(getTextValue());
-    // editText.setMinimumWidth(120000 / (int) frame.getScreenWidth());
+    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+    editText.setLayoutParams(params);
     editText.setVerticalScrollBarEnabled(true);
     editText.setMovementMethod(new ScrollingMovementMethod());
     editText.addDelayedChangeListener(getChildInternalId());
@@ -499,7 +502,7 @@ public class NativeCommand {
   private FWTextView createTextView() {
     FWTextView textView = new FWTextView(frame);
     textView.setId(getChildInternalId());
-    textView.setSingleLine();
+//    textView.setSingleLine();
     if (isSet(FLAG_HYPERLINK)) {
       textView.setMovementMethod(LinkMovementMethod.getInstance());
       String text = "<a href='" + textValue2 + "'>" + textValue + "</a>";
