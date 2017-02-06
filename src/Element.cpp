@@ -57,7 +57,12 @@ Element::sendCommand(const Command & command) {
 }
 
 Element &
-Element::addChild(const std::string & text) {
+Element::addHeading(const std::string & text) {
+  return addChild(make_shared<HeadingText>(text));
+}
+
+Element &
+Element::addText(const std::string & text) {
   return addChild(make_shared<TextLabel>(text));
 }
 

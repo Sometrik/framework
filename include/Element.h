@@ -42,7 +42,8 @@ class Element : public EventHandler {
     }
     return *element;
   }  
-  Element & addChild(const std::string & text);
+  Element & addHeading(const std::string & text);
+  Element & addText(const std::string & text);
   LinearLayout & addHorizontalLayout();
   LinearLayout & addVerticalLayout();
 
