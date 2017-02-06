@@ -7,7 +7,7 @@
 
 class TextField : public InputElement {
  public:
- TextField() { }
+ TextField(int _flags = 0) : flags(_flags) {  }
 
   bool isA(const std::string & className) override {
     if (className == "TextField") return true;
@@ -35,11 +35,13 @@ class TextField : public InputElement {
     Element::initialize(_platform);
     Command c(Command::CREATE_TEXTFIELD, getParentInternalId(), getInternalId());
     c.setLayoutWeight(getLayoutWeight());
+    c.setFlags(flags);
     sendCommand(c);
   }
 
  private:
   std::string value;
+  int flags;
 };
 
 #endif
