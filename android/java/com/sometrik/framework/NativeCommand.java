@@ -241,17 +241,7 @@ public class NativeCommand {
       }), value, value);
 
     case CREATE_CHECKBOX:
-      FWCheckBox checkBox = new FWCheckBox(frame);
-      checkBox.setId(childInternalId);
-      if (textValue != "") {
-	checkBox.setText(textValue);
-      }
-      checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-	@Override
-	public void onCheckedChanged(CompoundButton box, boolean isChecked) {
-	  frame.intChangedEvent(System.currentTimeMillis() / 1000.0, childInternalId, isChecked ? 1 : 0);	  
-	}
-      });
+      FWCheckBox checkBox = createCheckBox();
       FrameWork.addToViewList(checkBox);
       view.addChild(checkBox);
       break;
@@ -523,6 +513,22 @@ public class NativeCommand {
     FrameWork.addToViewList(picker);
     
     return picker;
+  }
+  
+  private FWCheckBox createCheckBox() {
+    FWCheckBox checkBox = new FWCheckBox(frame);
+    checkBox.setPadding(0, 0, 10, 0);
+    checkBox.setId(childInternalId);
+    if (textValue != "") {
+      checkBox.setText(textValue);
+    }
+    checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+      @Override
+      public void onCheckedChanged(CompoundButton box, boolean isChecked) {
+	frame.intChangedEvent(System.currentTimeMillis() / 1000.0, childInternalId, isChecked ? 1 : 0);
+      }
+    });
+    return checkBox;
   }
 
   private FWTextView createTextView() {
