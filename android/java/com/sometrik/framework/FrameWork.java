@@ -227,7 +227,8 @@ public class FrameWork extends Activity implements NativeCommandHandler {
 	  } else {
 	    q = new TranslateAnimation(-1000, 0, 0, 0);
 	  }
-	  q.setAnimationListener(new Animation.AnimationListener(){
+	  setNativeActiveView(System.currentTimeMillis() / 1000.0, view.getId(), recordHistory);
+	  q.setAnimationListener(new Animation.AnimationListener() {
 	    @Override
 	    public void onAnimationEnd(Animation animation) { transitionAnimation = false; }
 	    @Override
@@ -249,8 +250,8 @@ public class FrameWork extends Activity implements NativeCommandHandler {
       currentView = view.getId();
       currentlyShowingView = view;
       setContentView(view);
+      setNativeActiveView(System.currentTimeMillis() / 1000.0, view.getId(), false);
     }
-    setNativeActiveView(System.currentTimeMillis() / 1000.0, view.getId(), recordHistory);
   }
   
   public int getCurrentViewId() { return currentView; }
@@ -544,16 +545,16 @@ public class FrameWork extends Activity implements NativeCommandHandler {
     // native stuff may wish to use Framework functionality in their
     // destructors
 
-    nativeOnDestroy(System.currentTimeMillis() / 1000.0, appId);
-    if (purchaseHelper != null) {
-      try {
-	purchaseHelper.dispose();
-      } catch (IabAsyncInProgressException e) {
-	e.printStackTrace();
-	System.out.println("Error in disposing purchaseHelper with message: " + e.getMessage());
-      }
-    }
-    purchaseHelper = null;
+//    nativeOnDestroy(System.currentTimeMillis() / 1000.0, appId);
+//    if (purchaseHelper != null) {
+//      try {
+//	purchaseHelper.dispose();
+//      } catch (IabAsyncInProgressException e) {
+//	e.printStackTrace();
+//	System.out.println("Error in disposing purchaseHelper with message: " + e.getMessage());
+//      }
+//    }
+//    purchaseHelper = null;
     super.onDestroy();
   }
 
