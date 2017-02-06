@@ -158,4 +158,11 @@ public class FWAuto extends LinearLayout implements NativeCommandHandler {
     return getId();
   }
 
+
+  @Override
+  public void addData(int rowNumber, int columnNumber, String text) {
+    // TODO Auto-generated method stub
+    
+  }
+
 }

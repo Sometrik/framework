@@ -66,4 +66,9 @@ public class FWRadioGroup extends RadioGroup implements NativeCommandHandler {
     // TODO Auto-generated method stub
     
   }
+
+  @Override
+  public void addData(int rowNumber, int columnNumber, String text) {
+    System.out.println("FWRadioGroup couldn't handle command");
+  }
 }

@@ -93,6 +93,11 @@ public class FWGridView extends GridView implements NativeCommandHandler {
     // TODO Auto-generated method stub
     
   }
+
+  @Override
+  public void addData(int rowNumber, int columnNumber, String text) {
+    System.out.println("FWGridView couldn't handle command");
+  }
   
   
 

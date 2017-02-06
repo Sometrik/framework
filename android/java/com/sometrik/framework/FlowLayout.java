@@ -215,4 +215,10 @@ public class FlowLayout extends ViewGroup implements NativeCommandHandler {
     // TODO Auto-generated method stub
     
   }
+
+  @Override
+  public void addData(int rowNumber, int columnNumber, String text) {
+    // TODO Auto-generated method stub
+    
+  }
 }

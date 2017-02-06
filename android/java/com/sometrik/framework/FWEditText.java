@@ -107,4 +107,9 @@ public class FWEditText extends EditText implements NativeCommandHandler {
     
   }
 
+  @Override
+  public void addData(int rowNumber, int columnNumber, String text) {
+    System.out.println("FWEditText couldn't handle command");
+  }
+
 }

@@ -118,4 +118,9 @@ public class NativeSurface extends SurfaceView implements NativeCommandHandler {
     // TODO Auto-generated method stub
     
   }
+
+  @Override
+  public void addData(int rowNumber, int columnNumber, String text) {
+    System.out.println("Native Surface couldn't handle command");
+  }
 }

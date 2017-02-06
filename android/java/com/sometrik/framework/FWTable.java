@@ -134,4 +134,9 @@ public class FWTable extends TableLayout implements NativeCommandHandler {
   public void onScreenOrientationChange(boolean isLandscape) {
     resizeAutoSize();
   }
+
+  @Override
+  public void addData(int rowNumber, int columnNumber, String text) {
+    System.out.println("FWTable couldn't handle command");
+  }
 }

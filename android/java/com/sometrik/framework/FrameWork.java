@@ -126,7 +126,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
     
     // You can disable status bar with this
 //    this.requestWindowFeature(Window.FEATURE_NO_TITLE);
-   
+    
     // Init for screen settings
     setupDisplayMetrics();
 
@@ -613,6 +613,11 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   public void setError(boolean hasError, String errorText) { }
   @Override
   public void onScreenOrientationChange(boolean isLandscape) {
+    // TODO Auto-generated method stub
+    
+  }
+  @Override
+  public void addData(int rowNumber, int columnNumber, String text) {
     // TODO Auto-generated method stub
     
   }

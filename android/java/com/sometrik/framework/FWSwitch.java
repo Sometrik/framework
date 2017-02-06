@@ -63,4 +63,9 @@ public class FWSwitch extends Switch implements NativeCommandHandler {
     
   }
 
+  @Override
+  public void addData(int rowNumber, int columnNumber, String text) {
+    System.out.println("FWSwitch coulnd't handle Command");
+  }
+
 }

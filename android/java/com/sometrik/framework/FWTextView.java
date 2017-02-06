@@ -62,4 +62,9 @@ public class FWTextView extends TextView implements NativeCommandHandler {
     
   }
 
+  @Override
+  public void addData(int rowNumber, int columnNumber, String text) {
+    System.out.println("FWTextView couldn't handle command");
+  }
+
 }

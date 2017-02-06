@@ -61,4 +61,9 @@ public class FWCheckBox extends CheckBox implements NativeCommandHandler {
     // TODO Auto-generated method stub
     
   }
+
+  @Override
+  public void addData(int rowNumber, int columnNumber, String text) {
+    System.out.println("FWCheckBox couldn't handle command");
+  }
 }

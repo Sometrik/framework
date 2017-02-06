@@ -66,4 +66,10 @@ public class FWButton extends Button implements NativeCommandHandler {
     // TODO Auto-generated method stub
     
   }
+
+
+  @Override
+  public void addData(int rowNumber, int columnNumber, String text) {
+    System.out.println("FWButton couldn't handle command");
+  }
 }

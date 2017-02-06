@@ -26,7 +26,7 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
 
   @Override
   public void addOption(int optionId, String text) {
-    System.out.println("Native Surface couldn't handle command");
+    System.out.println("FWLayout couldn't handle command");
   }
 
   @Override
@@ -57,5 +57,10 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
   @Override
   public void onScreenOrientationChange(boolean isLandscape) {
     invalidate();
+  }
+
+  @Override
+  public void addData(int rowNumber, int columnNumber, String text) {
+    System.out.println("FWLayout couldn't handle command");
   }
 }

@@ -62,4 +62,9 @@ public class FWScrollView extends ScrollView implements NativeCommandHandler {
   public void onScreenOrientationChange(boolean isLandscape) {
     invalidate();
   }
+
+  @Override
+  public void addData(int rowNumber, int columnNumber, String text) {
+    System.out.println("FWScrollView couldn't handle command");
+  }
 }
