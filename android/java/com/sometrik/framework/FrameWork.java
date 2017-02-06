@@ -512,21 +512,25 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   
   @Override 
   public void onResume(){
+    Log.d("Framework", "onResume");
     super.onResume();
     nativeOnResume(System.currentTimeMillis() / 1000.0, appId);
   }
   @Override 
   public void onPause(){
+    Log.d("Framework", "onPause");
     super.onPause();
     nativeOnPause(System.currentTimeMillis() / 1000.0, appId);
   }
   @Override 
   public void onStop(){
+    Log.d("Framework", "onStop");
     super.onStop();
     nativeOnStop(System.currentTimeMillis() / 1000.0, appId);
   }
   @Override 
   public void onStart(){
+    Log.d("Framework", "onStart");
     super.onStart();
     nativeOnStart(System.currentTimeMillis() / 1000.0, appId);
   }
@@ -545,17 +549,18 @@ public class FrameWork extends Activity implements NativeCommandHandler {
     // native stuff may wish to use Framework functionality in their
     // destructors
 
-//    nativeOnDestroy(System.currentTimeMillis() / 1000.0, appId);
-//    if (purchaseHelper != null) {
-//      try {
-//	purchaseHelper.dispose();
-//      } catch (IabAsyncInProgressException e) {
-//	e.printStackTrace();
-//	System.out.println("Error in disposing purchaseHelper with message: " + e.getMessage());
-//      }
-//    }
-//    purchaseHelper = null;
+    nativeOnDestroy(System.currentTimeMillis() / 1000.0, appId);
+    if (purchaseHelper != null) {
+      try {
+	purchaseHelper.dispose();
+      } catch (IabAsyncInProgressException e) {
+	e.printStackTrace();
+	System.out.println("Error in disposing purchaseHelper with message: " + e.getMessage());
+      }
+    }
+    purchaseHelper = null;
     super.onDestroy();
+    System.exit(0);
   }
 
   public IabHelper getPurchaseHelper() {
