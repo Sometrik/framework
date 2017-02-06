@@ -475,6 +475,7 @@ public class NativeCommand {
     final FWEditText editText = new FWEditText(frame);
     editText.setId(getChildInternalId());
     editText.setText(getTextValue());
+    editText.setMinWidth(80);
     editText.setSingleLine();
    
     if (isSet(FLAG_PASSWORD) && isSet(FLAG_NUMERIC)){
