@@ -84,11 +84,17 @@ class Command {
   void setKey(const std::string & _key) { key = _key; }
 
   void setWidth(int _width){ width = _width; }
-  int getWidth(){ return width; }
+  int getWidth() { return width; }
   void setHeight(int _height) { height = _height; }
   int getHeight() { return height; }
   void setLayoutWeight(int _layout_weight) { layout_weight = _layout_weight; }
   int getLayoutWeight() const { return layout_weight; }
+
+  void setRow(int r) { row = r; }
+  int getRow() const { return row; }
+
+  void setColumn(int c) { column = c; }
+  int getColumn() const { return column; }
   
   void setFlags(unsigned int _flags) { flags = _flags; }
   unsigned int getFlags() const { return flags; }
@@ -99,6 +105,7 @@ class Command {
   int value = 0;
   std::string key;
   std::string textValue, textValue2;
+  int row = 0, column = 0;
   int width = 0, height = 0, layout_weight = 0;
   unsigned int flags = 0;
 };
