@@ -179,7 +179,7 @@ public class NativeCommand {
     switch (command) {
 
     case CREATE_FORMVIEW:
-      FWScrollView scrollView = new FWScrollView(frame);
+      FWScrollView scrollView = new FWScrollView(frame, textValue);
       scrollView.setId(getChildInternalId());
       scrollView.setPadding(10, 10, 10, 10);
       FrameWork.addToViewList(scrollView);
@@ -500,6 +500,9 @@ public class NativeCommand {
 
   private FWEditText createBigEditText() {
     final FWEditText editText = new FWEditText(frame);
+    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+    editText.setMinLines(4);
+    editText.setLayoutParams(params);
     editText.setId(getChildInternalId());
     editText.setText(getTextValue());
     editText.setVerticalScrollBarEnabled(true);
