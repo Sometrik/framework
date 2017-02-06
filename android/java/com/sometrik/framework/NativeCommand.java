@@ -16,6 +16,7 @@ import com.android.trivialdrivesample.util.IabResult;
 import com.android.trivialdrivesample.util.Inventory;
 import com.android.trivialdrivesample.util.Purchase;
 
+import android.R.style;
 import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -67,6 +68,8 @@ public class NativeCommand {
   private String key;
   private FrameWork frame;
   private ArrayList<PopupMenu> menuList = new ArrayList<PopupMenu>();
+  private int rowNumber = 0;
+  private int columnNumber = 0;
   
 
   private final int FLAG_PADDING_LEFT = 1;
@@ -131,6 +134,25 @@ public class NativeCommand {
     BUY_PRODUCT,
     LIST_PURCHASES,
     CONSUME_PURCHASE
+  }
+
+  public NativeCommand(FrameWork frame, int messageTypeId, int internalId, int childInternalId, int value, byte[] textValue, byte[] textValue2, int flags, int rowNumber, int columnNumber){
+
+    this.frame = frame;
+    command = CommandType.values()[messageTypeId];
+    this.internalId = internalId;
+    this.childInternalId = childInternalId;
+    this.value = value;
+    this.flags = flags;
+    this.rowNumber = rowNumber;
+    this.columnNumber = columnNumber;
+
+    if (textValue != null) {
+	this.textValue = new String(textValue, frame.getCharset());
+    }
+    if (textValue2 != null) {
+	this.textValue2 = new String(textValue2, frame.getCharset());
+    }
   }
   
   public NativeCommand(FrameWork frame, int messageTypeId, int internalId, int childInternalId, int value, byte[] textValue, byte[] textValue2, int flags){
@@ -203,9 +225,10 @@ public class NativeCommand {
       break;
       
     case CREATE_GRIDVIEW:
-      FWLayout vvvlayout = createDebugResultsScreen();
-      FrameWork.addToViewList(vvvlayout);
-      view.addChild(vvvlayout);
+      //TODO
+      //Fix from being debug status
+      FWLayout debugList = createDebugResultsScreen();
+      view.addChild(debugList);
       break;
       
     case CREATE_TIMER:
@@ -292,10 +315,16 @@ public class NativeCommand {
       view.setValue(getValue());
       break;
     case SET_TEXT_VALUE:
-      if (view != null){
-	      view.setValue(textValue);
+      if (view != null) {
+	view.setValue(textValue);
       } else {
 	Log.d("Command", "View null on set Text");
+	NativeCommandHandler list = FrameWork.views.get(9);
+	if (list == null) {
+	  Log.d("Command", "Yes list was null");
+	}
+	list.addData(rowNumber, columnNumber, textValue);
+//	addDataToDebugList(rowNumber, columnNumber, textValue);
       }
       break;
     case SET_ENABLED:
@@ -455,6 +484,7 @@ public class NativeCommand {
     editText.setId(getChildInternalId());
     editText.setText(getTextValue());
     editText.setSingleLine();
+   
     if (isSet(FLAG_PASSWORD) && isSet(FLAG_NUMERIC)){
       editText.setInputType(InputType.TYPE_NUMBER_VARIATION_PASSWORD);
     } else if (isSet(FLAG_PASSWORD)) {
@@ -613,40 +643,19 @@ public class NativeCommand {
     titleLayout.addView(createDebugTextView("Jono"));
     mainLayout.addView(titleLayout);
     
-    
     ScrollView scrollView = new ScrollView(frame);
 
-    ListView dataLayout = new ListView(frame);
-    dataLayout.setLayoutParams(params2);
-//    scrollView.addView(dataLayout);
-    mainLayout.addView(dataLayout);
-
-    ArrayList<String> stringList = new ArrayList<String>();
-    stringList.add("mikko");
-    stringList.add("100km");
-    stringList.add("Nyt");
-    stringList.add("180m");
-
-    FWAdapter adapter = new FWAdapter(frame, null);
-    for (int i = 0; i < 20; i++){
-      adapter.addItem(stringList);
-    }
-
-    dataLayout.setAdapter(adapter);
+    FWList list = new FWList(frame, new FWAdapter(frame, null));
+    list.setId(childInternalId);
+    frame.addToViewList(list);
+    list.setLayoutParams(params2);
+    mainLayout.addView(list);
     
     return mainLayout;
   }
   
-  private LinearLayout createDebugDataView(){
-    LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-    LinearLayout titleLayout2 = new LinearLayout(frame);
-    titleLayout2.setLayoutParams(params2);
-    titleLayout2.setOrientation(LinearLayout.HORIZONTAL);
-    titleLayout2.addView(createDebugTextView("Mikko"));
-    titleLayout2.addView(createDebugTextView("120 Km"));
-    titleLayout2.addView(createDebugTextView("Nyt"));
-    titleLayout2.addView(createDebugTextView("180 m"));
-    return titleLayout2;
+  private void addDataToDebugList(int rowNumber, int columnNumber, String text){
+    Log.d("Data", "rowNumber: " + rowNumber + " columnNumber: " + columnNumber + " Text: " + text);
   }
   
   private TextView createDebugTextView(String text){
