@@ -46,6 +46,9 @@ class Command {
     SET_TEXT_VALUE, // Sets value of textfields and labels
     SET_LABEL, // Sets label for buttons and checkboxes
     SET_ENABLED,
+    SET_READONLY,
+    SET_VISIBILITY,
+    SET_SHAPE, // Specifies the number of rows and columns in a GridView
     SET_STYLE,
     SET_ERROR,
     UPDATE_PREFERENCE,
