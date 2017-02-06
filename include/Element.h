@@ -7,7 +7,6 @@
 class FWPlatform;
 class FWApplication;
 class Command;
-class LinearLayout;
 
 class Element : public EventHandler {
  public:
@@ -44,8 +43,8 @@ class Element : public EventHandler {
   }  
   Element & addHeading(const std::string & text);
   Element & addText(const std::string & text);
-  LinearLayout & addHorizontalLayout();
-  LinearLayout & addVerticalLayout();
+  Element & addHorizontalLayout();
+  Element & addVerticalLayout();
 
   int getId() const { return id; }
   void setId(int _id) { id = _id; }

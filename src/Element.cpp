@@ -1,5 +1,6 @@
 #include <Element.h>
 #include <FWPlatform.h>
+#include <HeadingText.h>
 #include <TextLabel.h>
 #include <LinearLayout.h>
 #include <Command.h>
@@ -66,12 +67,12 @@ Element::addText(const std::string & text) {
   return addChild(make_shared<TextLabel>(text));
 }
 
-LinearLayout &
+Element &
 Element::addHorizontalLayout() {
   return addChild(make_shared<LinearLayout>(FW_HORIZONTAL));
 }
 
-LinearLayout &
+Element &
 Element::addVerticalLayout() {
   return addChild(make_shared<LinearLayout>(FW_VERTICAL));
 }
