@@ -37,6 +37,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -44,6 +45,8 @@ import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.PopupMenu.OnMenuItemClickListener;
 import android.widget.ScrollView;
@@ -196,6 +199,12 @@ public class NativeCommand {
     case CREATE_SWITCH:
       FWSwitch click = createSwitch();
       view.addChild(click);
+      break;
+      
+    case CREATE_GRIDVIEW:
+      FWLayout vvvlayout = createDebugResultsScreen();
+      FrameWork.addToViewList(vvvlayout);
+      view.addChild(vvvlayout);
       break;
       
     case CREATE_TIMER:
@@ -580,6 +589,69 @@ public class NativeCommand {
     alert.show();
 
     System.out.println("message dialog created");
+  }
+  
+  private FWLayout createDebugResultsScreen(){
+    FWLayout mainLayout = new FWLayout(frame);
+    mainLayout.setOrientation(LinearLayout.VERTICAL);
+    
+    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+    mainLayout.setLayoutParams(params);
+    params.weight = 1;
+    
+    LinearLayout titleLayout = new LinearLayout(frame);
+    LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+    titleLayout.setLayoutParams(params2);
+    titleLayout.setOrientation(LinearLayout.HORIZONTAL);
+    titleLayout.addView(createDebugTextView("Nimi"));
+    titleLayout.addView(createDebugTextView("Etäisyys"));
+    titleLayout.addView(createDebugTextView("Auki"));
+    titleLayout.addView(createDebugTextView("Jono"));
+    mainLayout.addView(titleLayout);
+    
+    
+    ScrollView scrollView = new ScrollView(frame);
+
+    ListView dataLayout = new ListView(frame);
+    dataLayout.setLayoutParams(params2);
+//    scrollView.addView(dataLayout);
+    mainLayout.addView(dataLayout);
+
+    ArrayList<String> stringList = new ArrayList<String>();
+    stringList.add("mikko");
+    stringList.add("100km");
+    stringList.add("Nyt");
+    stringList.add("180m");
+
+    FWAdapter adapter = new FWAdapter(frame, null);
+    for (int i = 0; i < 20; i++){
+      adapter.addItem(stringList);
+    }
+
+    dataLayout.setAdapter(adapter);
+    
+    return mainLayout;
+  }
+  
+  private LinearLayout createDebugDataView(){
+    LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+    LinearLayout titleLayout2 = new LinearLayout(frame);
+    titleLayout2.setLayoutParams(params2);
+    titleLayout2.setOrientation(LinearLayout.HORIZONTAL);
+    titleLayout2.addView(createDebugTextView("Mikko"));
+    titleLayout2.addView(createDebugTextView("120 Km"));
+    titleLayout2.addView(createDebugTextView("Nyt"));
+    titleLayout2.addView(createDebugTextView("180 m"));
+    return titleLayout2;
+  }
+  
+  private TextView createDebugTextView(String text){
+    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+    params.weight = 1;
+    TextView titleView = new TextView(frame);
+    titleView.setText(text);
+    titleView.setLayoutParams(params);
+    return titleView;
   }
 
   private void launchPurchase(final String productId) throws IabAsyncInProgressException {
