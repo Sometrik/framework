@@ -34,15 +34,27 @@ class TextView : public InputElement {
     }
   }
 
+  void setEnabled(bool _enabled){
+    enabled = _enabled;
+    if (isInitialized()){
+      Command c(Command::SET_ENABLED, getInternalId());
+      c.setValue(enabled ? 1 : 0);
+      sendCommand(c);
+    }
+  }
+
  protected:
   void initialize(FWPlatform * _platform) override {
     Element::initialize(_platform);
     Command c(Command::CREATE_TEXTVIEW, getParentInternalId(), getInternalId());
     c.setLayoutWeight(getLayoutWeight());
     sendCommand(c);
+
     if (!value.empty()) {
       sendValue();
     }
+
+    setEnabled(enabled);
   }
 
   void sendValue() {
@@ -53,6 +65,7 @@ class TextView : public InputElement {
   
  private:
   std::string value;
+  bool enabled = true;
 };
 
 #endif
