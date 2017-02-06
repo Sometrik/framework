@@ -25,9 +25,17 @@ public class FWAdapter extends ArrayAdapter<View> {
 //    this.viewList = viewList;
     this.dataList = new ArrayList<AdapterData>();
   }
+
+  public ArrayList<String> getDataRow(int rowId) {
+    if (dataList.size() >= rowId + 1) {
+      return dataList.get(rowId).dataList;
+    }
+    Log.d("adapter", "no row found");
+    return null;
+  }
   
   public void addItem(View view){
-    viewList.add(view);
+//    viewList.add(view);
   }
   public void addItem(ArrayList<String> cellItems){
     dataList.add(new AdapterData(cellItems));
