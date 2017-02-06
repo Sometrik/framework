@@ -275,7 +275,7 @@ public:
       } else if (GTK_IS_TREE_VIEW(view)) {
 
       } else {
-	assert(0);
+	
       }
     }
       break;
