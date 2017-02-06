@@ -267,6 +267,13 @@ public:
       auto view = views_by_id[command.getInternalId()];
       if (GTK_IS_LABEL(view)) {
 	gtk_label_set_text((GtkLabel*)view, command.getTextValue().c_str());
+      } else if (GTK_IS_TEXT_VIEW(view)) {
+	cerr << "setting text value\n";
+	auto buffer = gtk_text_view_get_buffer((GtkTextView*)view);
+	gtk_text_buffer_set_text(buffer, command.getTextValue().c_str(),
+				 command.getTextValue().size());
+      } else {
+	assert(0);
       }
     }
       break;
