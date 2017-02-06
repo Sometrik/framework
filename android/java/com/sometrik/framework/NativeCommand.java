@@ -450,13 +450,11 @@ public class NativeCommand {
   }
   
   private FWEditText createEditText(){
-    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
     
     final FWEditText editText = new FWEditText(frame);
     editText.setId(getChildInternalId());
     editText.setText(getTextValue());
     editText.setSingleLine();
-    editText.setLayoutParams(params);
     if (isSet(FLAG_PASSWORD) && isSet(FLAG_NUMERIC)){
       editText.setInputType(InputType.TYPE_NUMBER_VARIATION_PASSWORD);
     } else if (isSet(FLAG_PASSWORD)) {
@@ -482,8 +480,6 @@ public class NativeCommand {
     final FWEditText editText = new FWEditText(frame);
     editText.setId(getChildInternalId());
     editText.setText(getTextValue());
-    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-    editText.setLayoutParams(params);
     editText.setVerticalScrollBarEnabled(true);
     editText.setMovementMethod(new ScrollingMovementMethod());
     editText.addDelayedChangeListener(getChildInternalId());
