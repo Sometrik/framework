@@ -31,6 +31,18 @@ class GridView : public Element {
     }
   }
 
+  void setValue(int row, int column, const std::string & value) {
+    Command c(Command::SET_TEXT_VALUE, getInternalId());
+    c.setRow(row);
+    c.setColumn(column);
+    c.setTextValue(value);
+    if (isInitialized()) {
+      sendCommand(c);
+    } else {
+      waiting_commands.push_back(c);
+    }
+  }
+
  protected:
   void initializeColumn(const GridViewColumn & col) {
     Command c(Command::ADD_COLUMN, getInternalId());
@@ -44,10 +56,15 @@ class GridView : public Element {
     for (auto & c : columns) {
       initializeColumn(c);
     }
+    for (auto & c : waiting_commands) {
+      sendCommand(c);
+    }
+    waiting_commands.clear();
   }
 
  private:
   std::vector<GridViewColumn> columns;
+  std::vector<Command> waiting_commands;
 };
 
 #endif
