@@ -106,6 +106,7 @@ public:
 
     case Command::CREATE_PICKER: {
       auto picker = gtk_combo_box_text_new();
+      g_signal_connect(picker, "changed", G_CALLBACK(send_combo_value), this);
       addView(command, picker);
     }
       break;
@@ -114,9 +115,13 @@ public:
       auto view = views_by_id[command.getInternalId()];
       if (view) {
 	if (GTK_IS_COMBO_BOX_TEXT(view)) {
+	  auto av = gtk_combo_box_text_get_active_text((GtkComboBoxText*)view);
 	  string id = to_string(command.getValue());
 	  gtk_combo_box_text_append((GtkComboBoxText*)view,
 				    id.c_str(), command.getTextValue().c_str());
+	  if (!av) {
+	    gtk_combo_box_set_active((GtkComboBox*)view, 0);
+	  }		      
 	}
       }
     }
@@ -131,6 +136,8 @@ public:
       
     case Command::CREATE_CHECKBOX: {
       auto cb = gtk_check_button_new_with_label(command.getTextValue().c_str());
+      g_signal_connect(cb, "toggled", G_CALLBACK(send_toggled_value), this);
+
       addView(command, cb);
     }
       break;
@@ -411,6 +418,8 @@ protected:
   
   static void send_int_value(GtkWidget * widget, gpointer data);
   static void send_bool_value(GtkWidget * widget, GParamSpec *pspec, gpointer data);
+  static void send_toggled_value(GtkWidget * widget, gpointer user_data);
+  static void send_combo_value(GtkWidget * widget, gpointer data);
   static void send_text_value(GtkWidget * widget, gpointer data);
   static void on_previous_button(GtkWidget * widget, gpointer data);
   static void on_next_button(GtkWidget * widget, gpointer data);
@@ -489,6 +498,39 @@ PlatformGtk::send_bool_value(GtkWidget * widget, GParamSpec *pspec, gpointer dat
 }
 
 void
+PlatformGtk::send_combo_value(GtkWidget * widget, gpointer data) {
+  PlatformGtk * platform = (PlatformGtk*)data;
+  int id = platform->getId(widget);
+  assert(id);
+  if (id) {
+    string v0 = gtk_combo_box_text_get_active_text((GtkComboBoxText*)widget);
+    cerr << "combo value: id = " << id << ", v = " << v0 << endl;
+    int v = atoi(v0.c_str());
+    ValueEvent ev(platform->getTime(), v ? 1 : 0);
+    platform->postEvent(id, ev);
+  }
+}
+
+void
+PlatformGtk::send_toggled_value(GtkWidget * widget, gpointer data) {
+  PlatformGtk * platform = (PlatformGtk*)data;
+  int id = platform->getId(widget);
+  assert(id);
+  if (id) {
+    bool v;
+    if (GTK_IS_CHECK_BUTTON(widget)) {
+      gtk_toggle_button_get_active((GtkToggleButton*)widget);
+      v = gtk_toggle_button_get_active((GtkToggleButton*)widget);
+    } else {
+      assert(0);
+    }
+    cerr << "toggled value: id = " << id << ", v = " << v << endl;
+    ValueEvent ev(platform->getTime(), v ? 1 : 0);
+    platform->postEvent(id, ev);
+  }
+}
+
+void
 PlatformGtk::send_text_value(GtkWidget * widget, gpointer data) {
   PlatformGtk * platform = (PlatformGtk*)data;
   int id = platform->getId(widget);
@@ -529,7 +571,6 @@ static void activate(GtkApplication * app, gpointer user_data) {
 
 int main (int argc, char *argv[]) {
   GtkApplication * app;
-  int status;
 
   PlatformGtk platform;  
   platform.setDisplayWidth(width);
@@ -539,9 +580,9 @@ int main (int argc, char *argv[]) {
   
   app = gtk_application_new("com.sometrik.test", G_APPLICATION_FLAGS_NONE); // FIXME: add correct name
   g_signal_connect (app, "activate", G_CALLBACK (activate), &platform);
-  status = g_application_run (G_APPLICATION (app), argc, argv);
+  int status = g_application_run (G_APPLICATION (app), argc, argv);
   g_object_unref (app);
-
+  
 #if 0
   SysEvent ev(platform.getTime(), SysEvent::DESTROY);
   platform.postEvent(application->getInternalId(), ev);
