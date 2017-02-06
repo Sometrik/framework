@@ -10,7 +10,11 @@ class Command;
 
 class Element : public EventHandler {
  public:
-  Element(int _id = 0, unsigned int _flags = 0) : id(_id), flags(_flags) { }
+  Element(int _id = 0, unsigned int _flags = 0)
+    : internal_id(getNextInternalId()),
+    id(_id),
+    flags(_flags)
+    { }
 
   Element(const Element & other) = delete;
   Element & operator= (const Element & other) = delete;
@@ -122,14 +126,18 @@ class Element : public EventHandler {
   void initializeChildren();
 
  private:
+  static int getNextInternalId() { return nextInternalId++; }
+
   FWPlatform * platform = 0;
   Element * parent = 0;
-  int internal_id = 0, id = 0;
+  int internal_id, id = 0;
   std::string name;
   std::vector<std::shared_ptr<Element> > children;
   int layout_weight = 0;
   unsigned int flags; // initialized in constructor
   bool has_error = false;
+
+  static int nextInternalId;
 };
 
 #endif

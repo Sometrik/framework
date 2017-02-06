@@ -10,12 +10,13 @@
 
 using namespace std;
 
+int Element::nextInternalId = 1;
+
 void
 Element::initialize(FWPlatform * _platform) {
   assert(_platform);
   if (_platform) {
     platform = _platform;
-    internal_id = platform->getNextInternalId();
   }
   assert(isInitialized());
 }

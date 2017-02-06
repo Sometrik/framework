@@ -72,9 +72,7 @@ class FWPlatform : public Element {
   virtual void sendCommand2(const Command & command) = 0;
   
   void postEvent(int internal_id, Event & ev);
-    
-  int getNextInternalId() { return nextInternalId++; }
-  
+      
   void setDisplayWidth(int w) { display_width = w; }
   void setDisplayHeight(int h) { display_height = h; }
 
@@ -161,7 +159,6 @@ class FWPlatform : public Element {
   std::shared_ptr<SoundCanvas> soundCanvas;
 #endif
   std::shared_ptr<Logger> logger;
-  int nextInternalId = 1;
   int activeViewId = 0;
 
   std::list<std::shared_ptr<PlatformThread> > threads;
