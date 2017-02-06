@@ -23,7 +23,7 @@ public class FWTable extends TableLayout implements NativeCommandHandler {
   public FWTable(FrameWork frameWork) {
     super(frameWork);
     frame = frameWork;
-    params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+    params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
     setLayoutParams(params);
     rowList = new ArrayList<TableRow>();
     TableRow firstRow = new TableRow(frame);
@@ -39,8 +39,8 @@ public class FWTable extends TableLayout implements NativeCommandHandler {
       TableRow row = rowList.get(rowList.size() - 1);
       Log.d("table", "Row Size Check. Before: " + frame.measureViewWidth(row));
       Log.d("table", "Row Size Check. New: " + frame.measureViewWidth(view));
-      Log.d("table", "Row Size Check. Screen Size: " + frame.getScreenWidth() / 2);
-      if (frame.measureViewWidth(row) + frame.measureViewWidth(view) > frame.getScreenWidth() / 2) {
+      Log.d("table", "Row Size Check. Screen Size: " + frame.getScreenWidth());
+      if (frame.measureViewWidth(row) + frame.measureViewWidth(view) > (frame.getScreenWidth())) {
 	Log.d("table", "Too big yo");
 	return createNewRow();
       } else {
@@ -64,12 +64,32 @@ public class FWTable extends TableLayout implements NativeCommandHandler {
     return row;
   }
   
+  public void resizeAutoSize(){
+    if (autoSize){
+      Log.d("table", "Resizing autoSize table");
+      
+      for (TableRow row : rowList){
+	row.removeAllViews();
+      }
+      this.removeAllViews();
+      rowList = new ArrayList<TableRow>();
+      TableRow firstRow = new TableRow(frame);
+      firstRow.setLayoutParams(params);
+      rowList.add(firstRow);
+      for (View view : dataList) {
+	TableRow row = getCurrentRow(view);
+	row.addView(view);
+      }
+    }
+  }
+  
   public void setAutoSize(boolean enabled){
     autoSize = enabled;
   }
   
   public void setColumnCount(int columnCount) { this.columnCount = columnCount; };
 
+ 
 
   @Override
   public void addChild(View view) {
@@ -109,4 +129,9 @@ public class FWTable extends TableLayout implements NativeCommandHandler {
 
   @Override
   public void setError(boolean hasError, String errorText) { }
+
+  @Override
+  public void onScreenOrientationChange(boolean isLandscape) {
+    resizeAutoSize();
+  }
 }
