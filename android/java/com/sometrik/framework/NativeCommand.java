@@ -181,6 +181,7 @@ public class NativeCommand {
     case CREATE_FORMVIEW:
       FWScrollView scrollView = new FWScrollView(frame);
       scrollView.setId(getChildInternalId());
+      scrollView.setPadding(10, 10, 10, 10);
       FrameWork.addToViewList(scrollView);
       
       if (view == null){
