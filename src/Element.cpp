@@ -68,16 +68,12 @@ Element::addText(const std::string & text) {
 
 LinearLayout &
 Element::addHorizontalLayout() {
-  auto l = make_shared<LinearLayout>(FW_HORIZONTAL);
-  addChild(l);
-  return *l;
+  return addChild(make_shared<LinearLayout>(FW_HORIZONTAL));
 }
 
 LinearLayout &
 Element::addVerticalLayout() {
-  auto l = make_shared<LinearLayout>(FW_VERTICAL);
-  addChild(l);
-  return *l;
+  return addChild(make_shared<LinearLayout>(FW_VERTICAL));
 }
 
 void
