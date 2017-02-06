@@ -30,6 +30,7 @@ import android.text.TextUtils.TruncateAt;
 import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
 import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -291,7 +292,11 @@ public class NativeCommand {
       view.setValue(getValue());
       break;
     case SET_TEXT_VALUE:
-      view.setValue(textValue);
+      if (view != null){
+	      view.setValue(textValue);
+      } else {
+	Log.d("Command", "View null on set Text");
+      }
       break;
     case SET_ENABLED:
       view.setViewEnabled(value != 0);
@@ -448,6 +453,7 @@ public class NativeCommand {
     final FWEditText editText = new FWEditText(frame);
     editText.setId(getChildInternalId());
     editText.setText(getTextValue());
+    editText.setSingleLine();
     editText.setMinimumWidth(120000 / (int) frame.getScreenWidth());
     if (isSet(FLAG_PASSWORD) && isSet(FLAG_NUMERIC)){
       editText.setInputType(InputType.TYPE_NUMBER_VARIATION_PASSWORD);
@@ -493,8 +499,7 @@ public class NativeCommand {
   private FWTextView createTextView() {
     FWTextView textView = new FWTextView(frame);
     textView.setId(getChildInternalId());
-    textView.setEllipsize(TruncateAt.MARQUEE);
-    
+    textView.setSingleLine();
     if (isSet(FLAG_HYPERLINK)) {
       textView.setMovementMethod(LinkMovementMethod.getInstance());
       String text = "<a href='" + textValue2 + "'>" + textValue + "</a>";
