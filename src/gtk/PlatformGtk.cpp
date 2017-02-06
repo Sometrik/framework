@@ -272,6 +272,8 @@ public:
 	auto buffer = gtk_text_view_get_buffer((GtkTextView*)view);
 	gtk_text_buffer_set_text(buffer, command.getTextValue().c_str(),
 				 command.getTextValue().size());
+      } else if (GTK_IS_TREE_VIEW(view)) {
+
       } else {
 	assert(0);
       }
