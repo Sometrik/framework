@@ -67,8 +67,6 @@ AndroidPlatform::convertToByteArray(const std::string & s) {
 
 void
 AndroidPlatform::sendCommand2(const Command & command) {
-  getLogger().println("sending command");
-  
   if (!getActiveViewId() && (command.getType() == Command::CREATE_FORMVIEW || command.getType() == Command::CREATE_OPENGL_VIEW)) {
     setActiveViewId(command.getChildInternalId());
   }
@@ -81,7 +79,13 @@ AndroidPlatform::sendCommand2(const Command & command) {
   if (!textValue.empty()) jtextValue = convertToByteArray(textValue);
   if (!textValue2.empty()) jtextValue2 = convertToByteArray(textValue2);
   
-  jobject jcommand = env->NewObject(javaCache.nativeCommandClass, javaCache.nativeCommandConstructor, framework, commandTypeId, command.getInternalId(), command.getChildInternalId(), command.getValue(), jtextValue, jtextValue2, command.getFlags());
+  // SET_TEXT_VALUE check and new listcommand constructor should be refactored. ListView creation needs work
+  jobject jcommand;
+  if (command.getType() == Command::SET_TEXT_VALUE && command.getInternalId() == 0){
+    jcommand = env->NewObject(javaCache.nativeCommandClass, javaCache.nativeListCommandConstructor, framework, commandTypeId, command.getInternalId(), command.getChildInternalId(), command.getValue(), jtextValue, jtextValue2, command.getFlags(), command.getRow(), command.getColumn());
+    } else {
+    jcommand = env->NewObject(javaCache.nativeCommandClass, javaCache.nativeCommandConstructor, framework, commandTypeId, command.getInternalId(), command.getChildInternalId(), command.getValue(), jtextValue, jtextValue2, command.getFlags());
+  }
   env->CallStaticVoidMethod(javaCache.frameworkClass, javaCache.sendCommandMethod, framework, jcommand);
   
   env->DeleteLocalRef(jcommand);
