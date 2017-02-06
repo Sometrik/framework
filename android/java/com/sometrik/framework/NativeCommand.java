@@ -24,6 +24,7 @@ import android.content.DialogInterface.OnCancelListener;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Typeface;
 import android.text.Editable;
 import android.text.Html;
 import android.text.InputType;
@@ -668,6 +669,7 @@ public class NativeCommand {
     LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
     params.weight = 1;
     TextView titleView = new TextView(frame);
+    titleView.setTypeface(null, Typeface.BOLD);
     titleView.setText(text);
     titleView.setLayoutParams(params);
     return titleView;
