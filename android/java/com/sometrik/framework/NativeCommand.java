@@ -661,6 +661,16 @@ public class NativeCommand {
     return mainLayout;
   }
   
+  private TextView createDebugTextView(String text){
+    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+    params.weight = 1;
+    TextView titleView = new TextView(frame);
+    titleView.setTypeface(null, Typeface.BOLD);
+    titleView.setText(text);
+    titleView.setLayoutParams(params);
+    return titleView;
+  }
+
   private void launchPurchase(final String productId) throws IabAsyncInProgressException {
     // Sku = product id from google account
     frame.getPurchaseHelper().launchPurchaseFlow(frame, productId, IabHelper.ITEM_TYPE_INAPP, null, 1, new IabHelper.OnIabPurchaseFinishedListener() {
