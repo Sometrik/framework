@@ -254,6 +254,11 @@ public class FrameWork extends Activity implements NativeCommandHandler {
     }
   }
   
+  public void setCurrentView(final View view, final boolean recordHistory, String title) {
+    getActionBar().setTitle(title);
+    setCurrentView(view, recordHistory);
+  }
+  
   public int getCurrentViewId() { return currentView; }
 
   public NativeSurface createNativeOpenGLView(final int id) {
@@ -291,6 +296,10 @@ public class FrameWork extends Activity implements NativeCommandHandler {
     }
     System.out.println("native surface created");
     return surfaceView;
+  }
+  
+  public void setActionBarTitle(String title){
+
   }
 
  // TODO: Add icon and sound

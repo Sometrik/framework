@@ -9,13 +9,16 @@ import android.widget.ScrollView;
 public class FWScrollView extends ScrollView implements NativeCommandHandler {
 
   FrameWork frame;
+  private String title;
   
-  public FWScrollView(FrameWork frameWork) {
+  public FWScrollView(FrameWork frameWork, String title) {
     super(frameWork);
     this.frame = frameWork;
+    this.title = title;
     LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
     this.setLayoutParams(params);
     this.setFillViewport(true);
+    frame.getActionBar().setTitle(title);
   }
 
   @Override
@@ -36,9 +39,9 @@ public class FWScrollView extends ScrollView implements NativeCommandHandler {
   @Override
   public void setValue(int v) {
     if (v == 1){
-      frame.setCurrentView(this, true);
+      frame.setCurrentView(this, true, title);
     } else if (v == 2){
-      frame.setCurrentView(this, false);
+      frame.setCurrentView(this, false, title);
     }
   }
 
