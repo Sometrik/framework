@@ -87,6 +87,23 @@ public:
     }
       break;
 
+    case Command::CREATE_GRIDVIEW: {
+      auto store = gtk_tree_store_new(4, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
+      auto gridview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(store));
+      addView(command, gridview);
+    }
+      break;
+
+    case Command::ADD_COLUMN: {
+      auto view = views_by_id[command.getInternalId()];
+      if (view) {
+	auto column = gtk_tree_view_column_new();
+	gtk_tree_view_column_set_title((GtkTreeViewColumn*)column, command.getTextValue().c_str());
+	int i = gtk_tree_view_append_column((GtkTreeView*)view, column);
+      }
+    }
+      break;
+
     case Command::CREATE_PICKER: {
       auto picker = gtk_combo_box_text_new();
       addView(command, picker);
