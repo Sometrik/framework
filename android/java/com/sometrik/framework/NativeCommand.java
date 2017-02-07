@@ -40,6 +40,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -69,8 +70,8 @@ public class NativeCommand {
   private String key;
   private FrameWork frame;
   private ArrayList<PopupMenu> menuList = new ArrayList<PopupMenu>();
-  private int rowNumber = 0;
-  private int columnNumber = 0;
+  private int rowNumber = -1;
+  private int columnNumber = -1;
   
 
   private final int FLAG_PADDING_LEFT = 1;
@@ -319,16 +320,10 @@ public class NativeCommand {
       view.setValue(getValue());
       break;
     case SET_TEXT_VALUE:
-      if (view != null) {
-	view.setValue(textValue);
+      if (rowNumber != -1 && columnNumber != -1){
+	view.addData(rowNumber, columnNumber, textValue);
       } else {
-	Log.d("Command", "View null on set Text");
-	NativeCommandHandler list = FrameWork.views.get(9);
-	if (list == null) {
-	  Log.d("Command", "Yes list was null");
-	}
-	list.addData(rowNumber, columnNumber, textValue);
-//	addDataToDebugList(rowNumber, columnNumber, textValue);
+	view.setValue(textValue);
       }
       break;
     case SET_ENABLED:
@@ -401,6 +396,7 @@ public class NativeCommand {
     if (autoSize){
       table.setAutoSize(true);
     } else {
+      Log.d("table", "ALERT " + value);
       table.setColumnCount(value);
     }
     table.setStretchAllColumns(true);
@@ -478,7 +474,7 @@ public class NativeCommand {
     FWButton button = new FWButton(frame);
     button.setId(getChildInternalId());
     button.setText(getTextValue());
-    ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+    ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
     button.setLayoutParams(params);
 
     button.setOnClickListener(new OnClickListener() {
@@ -501,7 +497,8 @@ public class NativeCommand {
     editText.setText(getTextValue());
     editText.setMinWidth(80);
     editText.setSingleLine();
-   
+    editText.setImeOptions(EditorInfo.IME_ACTION_DONE);
+    
     if (isSet(FLAG_PASSWORD) && isSet(FLAG_NUMERIC)){
       editText.setInputType(InputType.TYPE_NUMBER_VARIATION_PASSWORD);
     } else if (isSet(FLAG_PASSWORD)) {
