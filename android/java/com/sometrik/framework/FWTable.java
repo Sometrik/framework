@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
+import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -17,13 +18,16 @@ public class FWTable extends TableLayout implements NativeCommandHandler {
   int columnCount = 4;
   ArrayList<TableRow> rowList;
   ArrayList<View> dataList;
-  ViewGroup.LayoutParams params;
+  LinearLayout.LayoutParams params;
+  TableRow.LayoutParams rowChildParams;
   boolean autoSize = false;
   
   public FWTable(FrameWork frameWork) {
     super(frameWork);
     frame = frameWork;
-    params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+    rowChildParams = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT);
+    params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+    params.weight = 1;
     setLayoutParams(params);
     rowList = new ArrayList<TableRow>();
     TableRow firstRow = new TableRow(frame);
@@ -93,10 +97,10 @@ public class FWTable extends TableLayout implements NativeCommandHandler {
 
   @Override
   public void addChild(View view) {
+    view.setLayoutParams(rowChildParams);
     dataList.add(view);
     TableRow row = getCurrentRow(view);
     row.addView(view);
-    Log.d("table", "Ellipsis Full Row: " + frame.measureViewWidth(row));
   }
   
   @Override
