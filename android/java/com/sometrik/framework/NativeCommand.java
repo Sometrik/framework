@@ -245,7 +245,7 @@ public class NativeCommand {
 	  FrameWork.timerEvent(System.currentTimeMillis() / 1000, internalId, childInternalId);
 	}
       }), value, value);
-
+      break;
     case CREATE_CHECKBOX:
       FWCheckBox checkBox = createCheckBox();
       FrameWork.addToViewList(checkBox);
@@ -271,8 +271,11 @@ public class NativeCommand {
       break;
       
     case CREATE_HEADING_TEXT:
+      FWTextView headingText = createTextView(true);
+      view.addChild(headingText);
+      break;
     case CREATE_TEXT:
-      FWTextView textView = createTextView();
+      FWTextView textView = createTextView(false);
       view.addChild(textView);
       break;
 
@@ -541,10 +544,12 @@ public class NativeCommand {
     return checkBox;
   }
 
-  private FWTextView createTextView() {
+  private FWTextView createTextView(boolean bolded) {
     FWTextView textView = new FWTextView(frame);
     textView.setId(getChildInternalId());
-//    textView.setSingleLine();
+    if (bolded) {
+      textView.setTypeface(null, Typeface.BOLD);
+    }
     if (isSet(FLAG_HYPERLINK)) {
       textView.setMovementMethod(LinkMovementMethod.getInstance());
       String text = "<a href='" + textValue2 + "'>" + textValue + "</a>";
@@ -552,7 +557,7 @@ public class NativeCommand {
     } else {
       textView.setText(textValue);
     }
-    
+
     FrameWork.addToViewList(textView);
     return textView;
   }
