@@ -81,9 +81,9 @@ AndroidPlatform::sendCommand2(const Command & command) {
   
   // SET_TEXT_VALUE check and new listcommand constructor should be refactored. ListView creation needs work
   jobject jcommand;
-  if (command.getType() == Command::SET_TEXT_VALUE && command.getInternalId() == 9){
+  if (command.getType() == Command::SET_TEXT_DATA) {
     jcommand = env->NewObject(javaCache.nativeCommandClass, javaCache.nativeListCommandConstructor, framework, commandTypeId, command.getInternalId(), command.getChildInternalId(), command.getValue(), jtextValue, jtextValue2, command.getFlags(), command.getRow(), command.getColumn());
-    } else {
+  } else {
     jcommand = env->NewObject(javaCache.nativeCommandClass, javaCache.nativeCommandConstructor, framework, commandTypeId, command.getInternalId(), command.getChildInternalId(), command.getValue(), jtextValue, jtextValue2, command.getFlags());
   }
   env->CallStaticVoidMethod(javaCache.frameworkClass, javaCache.sendCommandMethod, framework, jcommand);

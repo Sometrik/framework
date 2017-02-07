@@ -45,6 +45,8 @@ class Command {
     CLEAR, // Clears the contents of GridView
     SET_INT_VALUE, // Sets value of radio groups, checkboxes and pickers
     SET_TEXT_VALUE, // Sets value of textfields and labels
+    SET_INT_DATA,
+    SET_TEXT_DATA, // Sets the cell value of GridView
     SET_LABEL, // Sets label for buttons and checkboxes
     SET_ENABLED,
     SET_READONLY,
@@ -52,6 +54,7 @@ class Command {
     SET_SHAPE, // Specifies the number of rows and columns in a GridView
     SET_STYLE,
     SET_ERROR,
+    FLUSH_VIEW, // Flushes GridView content
     UPDATE_PREFERENCE,
     ADD_OPTION,
     ADD_COLUMN,

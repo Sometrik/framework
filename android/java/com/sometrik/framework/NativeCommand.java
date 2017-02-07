@@ -120,6 +120,8 @@ public class NativeCommand {
     CLEAR, // Clears the contents of GridView
     SET_INT_VALUE, // Sets value of radio groups, checkboxes and pickers
     SET_TEXT_VALUE, // Sets value of textfields, labels and images
+    SET_INT_DATA,
+    SET_TEXT_DATA, // Sets the cell value of GridView
     SET_LABEL, // Sets label for buttons and checkboxes
     SET_ENABLED,
     SET_READONLY,
@@ -127,6 +129,7 @@ public class NativeCommand {
     SET_SHAPE, // Specifies the number of rows and columns in a GridView
     SET_STYLE,
     SET_ERROR,
+    FLUSH_VIEW, // Flushes GridView content
     UPDATE_PREFERENCE,
     ADD_OPTION,
     ADD_COLUMN,
@@ -320,11 +323,10 @@ public class NativeCommand {
       view.setValue(getValue());
       break;
     case SET_TEXT_VALUE:
-      if (rowNumber != -1 && columnNumber != -1){
-	view.addData(rowNumber, columnNumber, textValue);
-      } else {
-	view.setValue(textValue);
-      }
+      view.setValue(textValue);
+      break;
+    case SET_TEXT_DATA:
+      view.addData(rowNumber, columnNumber, textValue);
       break;
     case SET_ENABLED:
       view.setViewEnabled(value != 0);

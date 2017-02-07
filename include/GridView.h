@@ -32,7 +32,7 @@ class GridView : public Element {
   }
 
   void setValue(int row, int column, const std::string & value) {
-    Command c(Command::SET_TEXT_VALUE, getInternalId());
+    Command c(Command::SET_TEXT_DATA, getInternalId());
     c.setRow(row);
     c.setColumn(column);
     c.setTextValue(value);

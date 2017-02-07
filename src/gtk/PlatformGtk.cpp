@@ -299,6 +299,24 @@ public:
     }
       break;
 
+    case Command::SET_TEXT_DATA: {
+      auto view = views_by_id[command.getInternalId()];
+      if (GTK_IS_TREE_VIEW(view)) {
+	auto model = gtk_tree_view_get_model((GtkTreeView*)view);
+	GtkTreeIter iter;
+	if (!gtk_tree_model_iter_nth_child(model, &iter, 0, command.getRow())) {
+	  gtk_tree_store_append((GtkTreeStore*)model, &iter, NULL);
+	}
+	gtk_tree_store_set((GtkTreeStore*)model, &iter,
+			   command.getColumn(),
+			   command.getTextValue().c_str(),
+			   -1);
+      } else {
+	assert(0);
+      }
+    }
+      break;
+      
     case Command::CLEAR: {
       auto view = views_by_id[command.getInternalId()];
       if (GTK_IS_TREE_VIEW(view)) {
