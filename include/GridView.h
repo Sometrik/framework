@@ -43,6 +43,10 @@ class GridView : public Element {
     }
   }
 
+  void flush() {
+    sendCommand(Command(Command::FLUSH_VIEW, getInternalId()));
+  }
+
   void clear() {
     waiting_commands.clear();
     if (isInitialized()) {
