@@ -156,7 +156,9 @@ public:
       break;
       
     case Command::CREATE_HEADING_TEXT: {
-      auto label = gtk_label_new(command.getTextValue().c_str());
+      string s = "<b>" + command.getTextValue() + "</b>";
+      auto label = gtk_label_new(0);
+      gtk_label_set_markup(GTK_LABEL(label), s.c_str());
       gtk_label_set_line_wrap((GtkLabel*)label, true);
       addView(command, label);
     }
@@ -256,7 +258,9 @@ public:
     case Command::SET_INT_VALUE: {
       auto view = views_by_id[command.getInternalId()];
       if (gtk_widget_get_parent(view) == stack) {
-	addToHistory(getActiveViewId());
+	if (command.getValue() != 2) {
+	  addToHistory(getActiveViewId());
+	}
 	setActiveViewId(command.getInternalId());
 	gtk_stack_set_visible_child((GtkStack*)stack, view);
 	string title = getTextProperty((GtkContainer*)stack, view, "title");
