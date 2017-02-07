@@ -151,6 +151,7 @@ public:
     case Command::CREATE_TEXT: {
       auto label = gtk_label_new(command.getTextValue().c_str());
       gtk_label_set_line_wrap((GtkLabel*)label, true);
+      gtk_label_set_yalign((GtkLabel*)label, 0.0f);
       addView(command, label);
     }
       break;
@@ -424,10 +425,13 @@ public:
 	unsigned int row = n / columns;
 	unsigned int col = n % columns;
 	cerr << "n = " << n << ", size = " << rows << "x" << columns << ", pos = (" << row << " " << col << ")\n";
-	gtk_table_attach_defaults((GtkTable*)parent, widget,
-				  col, col + 1,
-				  row, row + 1
-				  );
+	gtk_table_attach((GtkTable*)parent, widget,
+			 col, col + 1,
+			 row, row + 1,
+			 GtkAttachOptions(GTK_EXPAND | GTK_FILL),
+			 GtkAttachOptions(GTK_SHRINK),
+			 0, 0
+			 );
       } else {
 	gtk_container_add(parent, widget);
       }
