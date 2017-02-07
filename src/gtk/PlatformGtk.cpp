@@ -88,7 +88,7 @@ public:
       break;
 
     case Command::CREATE_GRIDVIEW: {
-      auto store = gtk_tree_store_new(4, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
+      auto store = gtk_tree_store_new(5, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
       auto gridview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(store));
       addView(command, gridview);
     }
@@ -97,9 +97,15 @@ public:
     case Command::ADD_COLUMN: {
       auto view = views_by_id[command.getInternalId()];
       if (view) {
-	auto column = gtk_tree_view_column_new();
-	gtk_tree_view_column_set_title((GtkTreeViewColumn*)column, command.getTextValue().c_str());
-	int i = gtk_tree_view_append_column((GtkTreeView*)view, column);
+	// auto column = gtk_tree_view_column_new();
+	// gtk_tree_view_column_set_title((GtkTreeViewColumn*)column, command.getTextValue().c_str());
+	// int i = gtk_tree_view_append_column((GtkTreeView*)view, column);
+	int i = gtk_tree_view_get_n_columns((GtkTreeView*)view);
+	gtk_tree_view_insert_column_with_attributes((GtkTreeView*)view,
+						    -1,
+						    command.getTextValue().c_str(),
+						    gtk_cell_renderer_text_new(),
+						    "text", i, 0);
       }
     }
       break;
@@ -258,7 +264,7 @@ public:
       } else if (GTK_IS_SWITCH(view)) {
 	gtk_switch_set_active((GtkSwitch*)view, command.getValue() ? true : false);
       } else {
-	assert(0);
+	cerr << "got spurious int value\n";
       }
     }
       break;
@@ -273,13 +279,30 @@ public:
 	gtk_text_buffer_set_text(buffer, command.getTextValue().c_str(),
 				 command.getTextValue().size());
       } else if (GTK_IS_TREE_VIEW(view)) {
-
+	auto model = gtk_tree_view_get_model((GtkTreeView*)view);
+	GtkTreeIter iter;
+	if (!gtk_tree_model_iter_nth_child(model, &iter, 0, command.getRow())) {
+	  gtk_tree_store_append((GtkTreeStore*)model, &iter, NULL);
+	}
+	gtk_tree_store_set((GtkTreeStore*)model, &iter,
+			   command.getColumn(),
+			   command.getTextValue().c_str(),
+			   -1);
       } else {
-	
+	assert(0);
       }
     }
       break;
 
+    case Command::CLEAR: {
+      auto view = views_by_id[command.getInternalId()];
+      if (GTK_IS_TREE_VIEW(view)) {
+	auto model = gtk_tree_view_get_model((GtkTreeView*)view);
+	gtk_tree_store_clear((GtkTreeStore*)model);
+      }
+    }
+      break;
+    
     case Command::SET_ENABLED: {
       auto view = views_by_id[command.getInternalId()];
       if (view) gtk_widget_set_sensitive(view, command.getValue() ? 1 : 0);
