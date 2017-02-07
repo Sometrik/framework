@@ -69,13 +69,13 @@ Element::addText(const std::string & text) {
 }
 
 Element &
-Element::addHorizontalLayout() {
-  return addChild(make_shared<LinearLayout>(FW_HORIZONTAL));
+Element::addHorizontalLayout(int _id) {
+  return addChild(make_shared<LinearLayout>(FW_HORIZONTAL, _id));
 }
 
 Element &
-Element::addVerticalLayout() {
-  return addChild(make_shared<LinearLayout>(FW_VERTICAL));
+Element::addVerticalLayout(int _id) {
+  return addChild(make_shared<LinearLayout>(FW_VERTICAL, _id));
 }
 
 void
@@ -120,3 +120,13 @@ Element::getApplication() const {
   return dynamic_cast<const FWApplication&>(*p);
 }
 
+void
+Element::removeChild(Element * child) {
+  for (auto it = children.begin(); it != children.end(); it++) {
+    if (it->get() == child) {
+      sendCommand(Command(Command::DELETE_ELEMENT, getInternalId(), child->getInternalId()));
+      children.erase(it);
+      return;
+    }
+  }
+}

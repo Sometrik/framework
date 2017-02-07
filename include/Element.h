@@ -47,8 +47,8 @@ class Element : public EventHandler {
   }  
   Element & addHeading(const std::string & text);
   Element & addText(const std::string & text);
-  Element & addHorizontalLayout();
-  Element & addVerticalLayout();
+  Element & addHorizontalLayout(int _id = 0);
+  Element & addVerticalLayout(int _id = 0);
 
   int getId() const { return id; }
   void setId(int _id) { id = _id; }
@@ -136,6 +136,8 @@ class Element : public EventHandler {
 
   bool isInitialized() const { return platform != 0; }
 
+  void removeChild(Element * c);
+		   
  protected:
   virtual void initialize(FWPlatform * _platform);
   void initializeChildren();
