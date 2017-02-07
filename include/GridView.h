@@ -43,6 +43,13 @@ class GridView : public Element {
     }
   }
 
+  void clear() {
+    waiting_commands.clear();
+    if (isInitialized()) {
+      sendCommand(Command(Command::CLEAR, getInternalId()));
+    }
+  }
+
  protected:
   void initializeColumn(const GridViewColumn & col) {
     Command c(Command::ADD_COLUMN, getInternalId());
