@@ -68,14 +68,16 @@ class Notifier : public Bindable {
     return bind(std::make_shared<BoundPtr<T> >(arg));
   }
 
-#if 0
-  Notifier & bindFunc(std::function<bool ()> & arg) {
+  Notifier & bindFunc(const std::function<bool ()> & arg) {
     return bind(std::make_shared<BoundVoidFunc>(arg));
   }
-#endif
 
   Notifier & bindFunc(const std::function<bool (std::string)> & arg) {
     return bind(std::make_shared<BoundFunc<std::string> >(arg));
+  }
+
+  Notifier & bindFunc(const std::function<bool (bool)> & arg) {
+    return bind(std::make_shared<BoundFunc<bool> >(arg));
   }
 
   Notifier & bind(const std::shared_ptr<Bindable> & bindable) {
