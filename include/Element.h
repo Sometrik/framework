@@ -77,6 +77,21 @@ class Element : public EventHandler {
 
   std::vector<std::shared_ptr<Element> > & getChildren() { return children; }
 
+  Selection find(const std::string & q) {
+    Selection s;
+    find(q, s);
+    return s;
+  }
+
+  void find(const std::string & q, Selection & s) {
+    for (auto & c : children) {
+      if (c->isA(q)) {
+	s.add(c);
+      }
+      c->find(q, s);
+    }
+  }
+  
   Selection getChildByInternalId(int _internal_id) {
     for (auto & c : children) {
       if (c->getInternalId() == _internal_id) {
