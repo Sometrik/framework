@@ -362,17 +362,7 @@ public class NativeCommand {
       frame.getPreferencesEditor().apply();
       break;
     case DELETE_ELEMENT:
-      FrameWork.views.remove(childInternalId);
-      view.addData(1, 1, "ttt");
-      ViewGroup group = (ViewGroup) view;
-      int childCount = group.getChildCount();
-      for (int i = 0; i < childCount; i++) {
-	View piip = group.getChildAt(i);
-	if (piip.getId() == childInternalId) {
-	  ((ViewGroup) view).removeViewAt(i);
-	  break;
-	}
-      }
+      deleteElement(view, childInternalId);
       break;
     case BUY_PRODUCT:
       try {
@@ -431,6 +421,19 @@ public class NativeCommand {
     });
     FrameWork.addToViewList(click);
     return click;
+  }
+  
+  private void deleteElement(NativeCommandHandler parent, int childId) {
+    FrameWork.views.remove(childInternalId);
+    ViewGroup group = (ViewGroup) parent;
+    int childCount = group.getChildCount();
+    for (int i = 0; i < childCount; i++) {
+      View view = group.getChildAt(i);
+      if (view.getId() == childInternalId) {
+	((ViewGroup) parent).removeViewAt(i);
+	break;
+      }
+    }
   }
   
   private ImageView createImageView() {
