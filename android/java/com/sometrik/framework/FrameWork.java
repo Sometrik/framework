@@ -47,6 +47,7 @@ import android.view.Window;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -203,11 +204,18 @@ public class FrameWork extends Activity implements NativeCommandHandler {
 
   public void setCurrentView(final View view, final boolean recordHistory) {
     if (currentView != 0) {
+
+      View focusedView = this.getCurrentFocus();
+      if (focusedView != null) {
+	InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+	imm.hideSoftInputFromWindow(focusedView.getWindowToken(), 0);
+      }
+      
       TranslateAnimation r;
       if (recordHistory) {
-	r = new TranslateAnimation(0, -1000, 0, 0);
+	r = new TranslateAnimation(0, -2000, 0, 0);
       } else {
-	r = new TranslateAnimation(0, 1000, 0, 0);
+	r = new TranslateAnimation(0, 2000, 0, 0);
       }
       r.setDuration(200);
       r.setAnimationListener(new Animation.AnimationListener() {
@@ -223,9 +231,9 @@ public class FrameWork extends Activity implements NativeCommandHandler {
 	  setContentView(view);
 	  TranslateAnimation q;
 	  if (recordHistory) {
-	    q = new TranslateAnimation(1000, 0, 0, 0);
+	    q = new TranslateAnimation(2000, 0, 0, 0);
 	  } else {
-	    q = new TranslateAnimation(-1000, 0, 0, 0);
+	    q = new TranslateAnimation(-2000, 0, 0, 0);
 	  }
 	  setNativeActiveView(System.currentTimeMillis() / 1000.0, view.getId(), recordHistory);
 	  q.setAnimationListener(new Animation.AnimationListener() {
