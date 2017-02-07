@@ -363,7 +363,16 @@ public class NativeCommand {
       break;
     case DELETE_ELEMENT:
       FrameWork.views.remove(childInternalId);
-      ((ViewGroup) view).removeViewAt(childInternalId);
+      view.addData(1, 1, "ttt");
+      ViewGroup group = (ViewGroup) view;
+      int childCount = group.getChildCount();
+      for (int i = 0; i < childCount; i++) {
+	View piip = group.getChildAt(i);
+	if (piip.getId() == childInternalId) {
+	  ((ViewGroup) view).removeViewAt(i);
+	  break;
+	}
+      }
       break;
     case BUY_PRODUCT:
       try {
