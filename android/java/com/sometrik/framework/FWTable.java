@@ -25,7 +25,7 @@ public class FWTable extends TableLayout implements NativeCommandHandler {
   public FWTable(FrameWork frameWork) {
     super(frameWork);
     frame = frameWork;
-    rowChildParams = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT);
+    rowChildParams = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT);
     params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
     params.weight = 1;
     setLayoutParams(params);
@@ -50,12 +50,19 @@ public class FWTable extends TableLayout implements NativeCommandHandler {
       } else {
 	return rowList.get(rowList.size() - 1);
       }
-    } else {
-      if ((dataList.size() + 1) / columnCount > rowList.size()) {
+    } else if (dataList.size() != 0){
+      double mathi = (double)(dataList.size()) / (double)columnCount;
+      Log.d("table", "Alert. Datalist size: " + (dataList.size() ));
+      Log.d("table", "Alert. BLaag : " + ((dataList.size()) / columnCount));
+      Log.d("table", "Alert. rowList size: " + rowList.size());
+      Log.d("table", "Alert. mathi: " + mathi);
+      if (mathi > rowList.size()) {
 	return createNewRow();
       } else {
 	return rowList.get(rowList.size() - 1);
       }
+    } else {
+	return rowList.get(rowList.size() - 1);
     }
   }
   
