@@ -21,7 +21,12 @@ Selection::hide() {
 
 Selection &
 Selection::remove() {
-  // TODO: remove selected elements
+  for (auto & e : data) {
+    Element * p = e->getParent();
+    if (p) {
+      p->removeChild(e.get());
+    }
+  }
   data.clear();
   return *this;
 }
