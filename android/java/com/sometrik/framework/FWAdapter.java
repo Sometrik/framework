@@ -50,6 +50,11 @@ public class FWAdapter extends ArrayAdapter<View> {
   public long getItemId(int arg0) {
     return 0;
   }
+  
+  @Override
+  public void clear(){
+    dataList = new ArrayList<AdapterData>();
+  }
 
   @Override
   public View getView(int position, View convertView, ViewGroup parent) {
