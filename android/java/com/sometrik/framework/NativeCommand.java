@@ -230,6 +230,11 @@ public class NativeCommand {
       view.addChild(click);
       break;
       
+    case CLEAR:
+      //FWList clears list on 0
+      view.setValue(0);
+      break;
+      
     case CREATE_GRIDVIEW:
       //TODO
       //Fix from being debug status
@@ -680,7 +685,7 @@ public class NativeCommand {
 
     FWList list = new FWList(frame, new FWAdapter(frame, null));
     list.setId(childInternalId);
-    frame.addToViewList(list);
+    FrameWork.addToViewList(list);
     list.setLayoutParams(params2);
     mainLayout.addView(list);
     

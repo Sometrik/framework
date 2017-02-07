@@ -59,8 +59,9 @@ public class FWList extends ListView implements NativeCommandHandler{
 
   @Override
   public void setValue(int v) {
-    // TODO Auto-generated method stub
-    
+    if (v == 0){
+      adapter.clear();
+    }
   }
 
   @Override
