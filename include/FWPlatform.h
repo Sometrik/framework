@@ -103,7 +103,7 @@ class FWPlatform : public Element {
     return std::make_shared<BasicLogger>(name);
   }
 
-  double getTime() const;
+  virtual double getTime() const;
 
   void addToHistory(int view_internal_id) {
     view_back_history.push_back(view_internal_id);
