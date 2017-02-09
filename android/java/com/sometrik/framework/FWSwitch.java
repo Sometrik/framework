@@ -68,4 +68,12 @@ public class FWSwitch extends Switch implements NativeCommandHandler {
     System.out.println("FWSwitch coulnd't handle Command");
   }
 
+  @Override
+  public void setViewVisibility(boolean visibility) {
+    if (visibility){
+      this.setVisibility(VISIBLE);
+    } else {
+      this.setVisibility(INVISIBLE);
+    }
+  }
 }

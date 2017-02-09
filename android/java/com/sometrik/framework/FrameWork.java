@@ -638,4 +638,9 @@ public class FrameWork extends Activity implements NativeCommandHandler {
     // TODO Auto-generated method stub
     
   }
+  
+  @Override
+  public void setViewVisibility(boolean visibility) {
+
+  }
 }

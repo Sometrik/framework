@@ -328,6 +328,13 @@ public class NativeCommand {
     case SET_TEXT_DATA:
       view.addData(rowNumber, columnNumber, textValue);
       break;
+    case SET_VISIBILITY:
+      if (value == 0){
+	view.setViewVisibility(false);
+      } else {
+	view.setViewVisibility(true);
+      }
+      break;
     case SET_ENABLED:
       view.setViewEnabled(value != 0);
       break;

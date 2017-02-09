@@ -66,4 +66,13 @@ public class FWCheckBox extends CheckBox implements NativeCommandHandler {
   public void addData(int rowNumber, int columnNumber, String text) {
     System.out.println("FWCheckBox couldn't handle command");
   }
+
+  @Override
+  public void setViewVisibility(boolean visibility) {
+    if (visibility){
+      this.setVisibility(VISIBLE);
+    } else {
+      this.setVisibility(INVISIBLE);
+    }
+  }
 }

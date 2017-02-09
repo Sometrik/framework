@@ -67,4 +67,12 @@ public class FWTextView extends TextView implements NativeCommandHandler {
     System.out.println("FWTextView couldn't handle command");
   }
 
+  @Override
+  public void setViewVisibility(boolean visibility) {
+    if (visibility){
+      this.setVisibility(VISIBLE);
+    } else {
+      this.setVisibility(INVISIBLE);
+    }
+  }
 }

@@ -10,6 +10,7 @@ public interface NativeCommandHandler {
   public void setValue(String v);
   public void setValue(int v);
   public void setViewEnabled(Boolean enabled);
+  public void setViewVisibility(boolean visible);
   public void setStyle(String key, String value);
   public void setError(boolean hasError, String errorText);
   

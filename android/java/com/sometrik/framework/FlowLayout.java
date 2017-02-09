@@ -221,4 +221,13 @@ public class FlowLayout extends ViewGroup implements NativeCommandHandler {
     // TODO Auto-generated method stub
     
   }
+  
+  @Override
+  public void setViewVisibility(boolean visibility) {
+    if (visibility){
+      this.setVisibility(VISIBLE);
+    } else {
+      this.setVisibility(INVISIBLE);
+    }
+  }
 }

@@ -63,4 +63,13 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
   public void addData(int rowNumber, int columnNumber, String text) {
     System.out.println("FWLayout couldn't handle command");
   }
+
+  @Override
+  public void setViewVisibility(boolean visibility) {
+    if (visibility){
+      this.setVisibility(VISIBLE);
+    } else {
+      this.setVisibility(INVISIBLE);
+    }
+  }
 }
