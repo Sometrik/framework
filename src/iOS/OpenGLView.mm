@@ -10,6 +10,8 @@
 #include <ResizeEvent.h>
 #include <DrawEvent.h>
 #include <EventQueue.h>
+#include "GL.h"
+#include <FilenameConverter.h>
 
 #include <ContextQuartz2D.h>
 
@@ -130,19 +132,22 @@ public:
     return r;
   }
 #endif
-  std::shared_ptr<canvas::ContextFactory> createContextFactory() const override {
-    std::shared_ptr<canvas::FilenameConverter> ptr(new canvas::BundleFilenameConverter);
-    return std::make_shared<canvas::Quartz2DContextFactory>(getDisplayScale(), ptr);
+  std::unique_ptr<canvas::ContextFactory> createContextFactory() const override {
+    // std::shared_ptr<canvas::FilenameConverter> ptr(new canvas::BundleFilenameConverter);
+    return std::unique_ptr<canvas::Quartz2DContextFactory>(new canvas::Quartz2DContextFactory(getDisplayScale(), new canvas::BundleFilenameConverter));
   }
-  std::shared_ptr<HTTPClientFactory> createHTTPClientFactory() const override {
+  std::unique_ptr<HTTPClientFactory> createHTTPClientFactory() const override {
 #ifdef USE_CURL
-    return std::make_shared<CurlClientFactory>();
+    return std::unique_ptr<CurlClientFactory>(new CurlClientFactory);
 #else
-    return std::make_shared<iOSClientFactory>();
+    return std::make_shared<iOSClientFactory>(new iOSClientFactory);
 #endif
   }
-  void sendCommand(const Command & command) override {
-    FWPlatform::sendCommand(command);
+  void sendCommand2(const Command & command) override {
+    if (!getActiveViewId() && (command.getType() == Command::CREATE_FORMVIEW || command.getType() == Command::CREATE_OPENGL_VIEW)) {
+      setActiveViewId(command.getChildInternalId());
+    }
+
     switch (command.getType()) {
       case Command::LAUNCH_BROWSER:
       {
@@ -152,9 +157,6 @@ public:
         [[UIApplication sharedApplication] openURL:url];
         // no need to release anything
       }
-      case Command::REQUEST_REDRAW:
-        [controller requestUpdate];
-        break;
       default:
         break;
     }
@@ -389,7 +391,7 @@ extern FWApplication * applicationMain();
 	_platform->addChild(std::shared_ptr<Element>(_esContext));
       
 	OpenGLInitEvent ev(_platform->getTime(), self->_opengl_version, true);
-	_platform->postEvent(_platform->getActiveViewId(), ev);
+	_platform->postEvent(_esContext->getInternalId(), ev);
 
         [self drawView: nil];
         // m_timestamp = CACurrentMediaTime();
