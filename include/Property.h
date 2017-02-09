@@ -65,7 +65,7 @@ class NullProperty : public PropertyBase {
   bool call() override { return false; }
   bool call(bool t) override { return false; }
   bool call(int i) override { return false; }
-  bool call(const std::string & s) { return false; }
+  bool call(const std::string & s) override { return false; }
 
   std::string getStringValue() const override { return ""; }
   bool getBoolValue() const override { return false; }
