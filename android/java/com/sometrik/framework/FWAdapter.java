@@ -18,6 +18,7 @@ public class FWAdapter extends ArrayAdapter<View> {
 
   private List<View> viewList;
   private ArrayList<AdapterData> dataList;
+  private AdapterData columnData;
   private FrameWork frame;
   private LinearLayout.LayoutParams listItemParams;
   
@@ -25,6 +26,7 @@ public class FWAdapter extends ArrayAdapter<View> {
     super(context, 0, viewList);
     this.frame = (FrameWork) context;
     dataList = new ArrayList<AdapterData>();
+    columnData = new AdapterData(new ArrayList<String>());
     listItemParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT);
     listItemParams.weight = 1;
     listItemParams.leftMargin = 2;
@@ -40,6 +42,10 @@ public class FWAdapter extends ArrayAdapter<View> {
   
   public void addItem(ArrayList<String> cellItems){
     dataList.add(new AdapterData(cellItems));
+  }
+  
+  public void addColumn(String columnText){
+    columnData.addString(columnText);
   }
 
   @Override
@@ -63,8 +69,8 @@ public class FWAdapter extends ArrayAdapter<View> {
     LinearLayout layout = new LinearLayout(frame);
 
     AdapterData data = dataList.get(position);
-    
-    for (int i = 0; i < data.getSize(); i++){
+
+    for (int i = 0; i < data.getSize(); i++) {
       TextView txtFirst = new TextView(frame);
       txtFirst.setLayoutParams(listItemParams);
       layout.addView(txtFirst);
@@ -77,9 +83,14 @@ public class FWAdapter extends ArrayAdapter<View> {
   public class AdapterData {
 
     private ArrayList<String> stringList;
+    private boolean columnData = false;
 
     public AdapterData(ArrayList<String> stringList) {
       this.stringList = stringList;
+    }
+    
+    public void addString(String text){
+      stringList.add(text);
     }
 
     public int getSize() {
@@ -87,12 +98,15 @@ public class FWAdapter extends ArrayAdapter<View> {
     }
 
     public String getData(int position) {
-
       if (position < stringList.size()) {
 	return stringList.get(position);
       } else {
 	return stringList.get(0);
       }
+    }
+    
+    public ArrayList<String> getList(){
+      return stringList;
     }
 
   }
