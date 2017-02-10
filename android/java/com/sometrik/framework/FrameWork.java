@@ -499,6 +499,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
       System.out.println("Previous locale: " + defaultLocale.getCountry() + " Language: " + defaultLocale.getLanguage());
       System.out.println("New locale: " + locale.getCountry() + " Language: " + locale.getLanguage());
       languageChanged(System.currentTimeMillis() / 1000.0, appId, locale.getLanguage());
+      defaultLocale = locale;
     }
 
     // super.onConfigurationChanged(newConfig);
