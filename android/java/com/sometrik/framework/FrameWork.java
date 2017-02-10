@@ -9,6 +9,8 @@ import com.android.trivialdrivesample.util.IabHelper;
 import com.android.trivialdrivesample.util.IabHelper.IabAsyncInProgressException;
 import com.android.trivialdrivesample.util.Inventory;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ActivityManager;
@@ -151,6 +153,19 @@ public class FrameWork extends Activity implements NativeCommandHandler {
     purchaseHelper = new IabHelper(this, key);
     purchaseHelper.startSetup(listener);
     return true;
+  }
+  
+  private String getUserGoogleAccountEmail() {
+    AccountManager manager = AccountManager.get(this);
+    Account[] accounts = manager.getAccounts();
+    String gmail = "";
+    for (Account account : accounts) {
+      if (account.type.equalsIgnoreCase("com.google")) {
+	gmail = account.name;
+	break;
+      }
+    }
+    return gmail;
   }
 
   public Inventory getPurchaseHelperInventory() {
