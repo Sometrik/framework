@@ -101,6 +101,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   private native void setNativeActiveView(double timestamp, int activeView, boolean recordHistory);
   private native void languageChanged(double timestamp, int appId, String language);
   private native void memoryWarning(double timestamp, int appId);
+  private native void setMobileAccount(String email, String language, String country);
   public static native void onPurchaseEvent(double timestamp, int applicationId, String orderId, boolean newPurchase, double purchaseTime);
   public static native void onResize(double timestamp, float width, float height, int viewId);
   public static native void onUpdate(double timestamp, int viewId);
@@ -143,9 +144,9 @@ public class FrameWork extends Activity implements NativeCommandHandler {
       }
 
     };
-
-      System.out.println("initing native on onCreate");
-      initNative();
+    System.out.println("initing native on onCreate");
+    initNative();
+    setMobileAccount(getUserGoogleAccountEmail(), defaultLocale.getLanguage(), defaultLocale.getCountry());
   }
 
   public Boolean initializePurchaseHelper(String key, IabHelper.OnIabSetupFinishedListener listener) {
@@ -156,14 +157,19 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   }
   
   private String getUserGoogleAccountEmail() {
+    Log.d("accountFinder", "Checking for user Google Account");
     AccountManager manager = AccountManager.get(this);
     Account[] accounts = manager.getAccounts();
     String gmail = "";
     for (Account account : accounts) {
       if (account.type.equalsIgnoreCase("com.google")) {
 	gmail = account.name;
+	Log.d("accountFinder", "Google Account found: " + gmail);
 	break;
       }
+    }
+    if (gmail == "") {
+      Log.d("accountFinder", "No user Google Account found");
     }
     return gmail;
   }
