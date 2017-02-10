@@ -6,8 +6,8 @@ import java.util.List;
 import com.sometrik.vapu.R;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -50,6 +50,9 @@ public class FWAdapter extends ArrayAdapter<View> {
 
   @Override
   public int getCount() {
+    if (columnData.getSize() != 0){
+      return dataList.size() + 1;
+    }
     return dataList.size();
   }
 
@@ -67,17 +70,37 @@ public class FWAdapter extends ArrayAdapter<View> {
   public View getView(int position, View convertView, ViewGroup parent) {
 
     LinearLayout layout = new LinearLayout(frame);
+    AdapterData data;
+    if (position == 0){
+      data = columnData;
 
-    AdapterData data = dataList.get(position);
+      for (int i = 0; i < data.getSize(); i++) {
+	TextView txtFirst = new TextView(frame);
+	txtFirst.setLayoutParams(listItemParams);
+	txtFirst.setTypeface(null, Typeface.BOLD);
+	layout.addView(txtFirst);
+	txtFirst.setText(data.getData(i));
+      }
 
-    for (int i = 0; i < data.getSize(); i++) {
-      TextView txtFirst = new TextView(frame);
-      txtFirst.setLayoutParams(listItemParams);
-      layout.addView(txtFirst);
-      txtFirst.setText(data.getData(i));
+      return layout;
+
+    } else {
+      if (columnData.getSize() != 0) {
+	data = dataList.get(position + 1);
+      } else {
+	data = dataList.get(position);
+      }
+
+      for (int i = 0; i < data.getSize(); i++) {
+	TextView txtFirst = new TextView(frame);
+	txtFirst.setLayoutParams(listItemParams);
+	layout.addView(txtFirst);
+	txtFirst.setText(data.getData(i));
+      }
+
+      return layout;
     }
-
-    return layout;
+    
   }
   
   public class AdapterData {

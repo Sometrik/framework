@@ -47,8 +47,7 @@ public class FWList extends ListView implements NativeCommandHandler{
 
   @Override
   public void addOption(int optionId, String text) {
-    // TODO Auto-generated method stub
-    
+    adapter.addColumn(text);
   }
 
   @Override

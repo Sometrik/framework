@@ -242,7 +242,10 @@ public class NativeCommand {
     case CREATE_GRIDVIEW:
       //TODO
       //Fix from being debug status
-      FWLayout debugList = createDebugResultsScreen();
+//      FWLayout debugList = createDebugResultsScreen();
+      FWList debugList = new FWList(frame, new FWAdapter(frame, null));
+      debugList.setId(childInternalId);
+      FrameWork.addToViewList(debugList);
       view.addChild(debugList);
       break;
       
@@ -295,6 +298,9 @@ public class NativeCommand {
       
     case ADD_OPTION:
       // Forward Command to FWPicker
+      view.addOption(getValue(), getTextValue());
+      break;
+    case ADD_COLUMN:
       view.addOption(getValue(), getTextValue());
       break;
     case POST_NOTIFICATION:
@@ -683,6 +689,7 @@ public class NativeCommand {
     titleLayout.setOrientation(LinearLayout.HORIZONTAL);
     titleLayout.addView(createDebugTextView("Nimi"));
     titleLayout.addView(createDebugTextView("Etäisyys"));
+    titleLayout.addView(createDebugTextView("Kunta"));
     titleLayout.addView(createDebugTextView("Auki"));
     titleLayout.addView(createDebugTextView("Jono"));
     mainLayout.addView(titleLayout);
