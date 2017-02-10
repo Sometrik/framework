@@ -320,14 +320,21 @@ void* AndroidPlatform::threadStartCallback(void *myself) {
   }
 
   JNIEnv * env;
+  __android_log_print(ANDROID_LOG_INFO, "Sometrik", "Piip");
   aplatform->getJavaVM()->AttachCurrentThread(&env, NULL);
+  __android_log_print(ANDROID_LOG_INFO, "Sometrik", "Piip");
 
   FWApplication * application = applicationMain();
+  __android_log_print(ANDROID_LOG_INFO, "Sometrik", "Piip");
   aplatform->addChild(std::shared_ptr<Element>(application));
+  __android_log_print(ANDROID_LOG_INFO, "Sometrik", "Piip");
 
   aplatform->renderLoop();
+  __android_log_print(ANDROID_LOG_INFO, "Sometrik", "Piip");
   aplatform->deinitializeRenderer();
+  __android_log_print(ANDROID_LOG_INFO, "Sometrik", "Piip");
   aplatform->getJavaVM()->DetachCurrentThread();
+  __android_log_print(ANDROID_LOG_INFO, "Sometrik", "Piip");
   
   return 0;
 }
@@ -427,6 +434,20 @@ void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, job
 
     __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Init end");
   }
+}
+
+void
+Java_com_sometrik_framework_FrameWork_setMobileAccount(JNIEnv* env, jobject thiz, jstring jemail, jstring jlanguage, jstring jcountry) {
+  const char * email = env->GetStringUTFChars(jemail, NULL);
+  const char * language = env->GetStringUTFChars(jlanguage, NULL);
+  const char * country = env->GetStringUTFChars(jcountry, NULL);
+
+  MobileAccount account = MobileAccount(email, language, country);
+  platform->setMobileAccount(&account);
+
+  env->ReleaseStringUTFChars(jlanguage, language);
+  env->ReleaseStringUTFChars(jemail, email);
+  env->ReleaseStringUTFChars(jcountry, country);
 }
 
   void Java_com_sometrik_framework_FrameWork_nativeSetSurface(JNIEnv* env, jobject thiz, jobject surface, int surfaceId, int gl_version) {

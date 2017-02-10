@@ -7,6 +7,7 @@
 #include <Logger.h>
 #include <FWDefs.h>
 #include <FWPreferences.h>
+#include <MobileAccount.h>
 
 #ifdef HAS_SOUNDCANVAS
 #include <SoundCanvas.h>
@@ -130,6 +131,8 @@ class FWPlatform : public Element {
     return id;    
   }
   
+  void setMobileAccount(MobileAccount * _account) { account = _account; }
+
   Logger & getLogger() {
     if (!logger.get()) {
       logger = createLogger("Framework");
@@ -153,6 +156,7 @@ class FWPlatform : public Element {
   FWPreferences preferences;
   int modal_result_value = 0;
   std::string modal_result_text;
+  MobileAccount * account = 0;
     
  private:
 #ifdef HAS_SOUNDCANVAS
