@@ -419,14 +419,25 @@ void Java_com_sometrik_framework_FrameWork_onUpdate(JNIEnv* env, jclass clazz, d
 }
 
 static JavaVM * gJavaVM = 0;
-void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, jobject assetManager, float screenWidth, float screenHeight, float displayScale) {
+void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, jobject assetManager, float screenWidth, float screenHeight, float displayScale, jstring jemail, jstring jlanguage, jstring jcountry) {
   if (!platform) {
     __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Creating Platform");
+
+
+    const char * email = env->GetStringUTFChars(jemail, NULL);
+    const char * language = env->GetStringUTFChars(jlanguage, NULL);
+    const char * country = env->GetStringUTFChars(jcountry, NULL);
+
+    MobileAccount account = MobileAccount(email, language, country);
+
+    env->ReleaseStringUTFChars(jlanguage, language);
+    env->ReleaseStringUTFChars(jemail, email);
+    env->ReleaseStringUTFChars(jcountry, country);
 
     AAssetManager* manager = AAssetManager_fromJava(env, assetManager);
     android_fopen_set_asset_manager(manager);
 
-    platform = new AndroidPlatform(env, assetManager, thiz, displayScale, gJavaVM);
+    platform = new AndroidPlatform(env, assetManager, thiz, displayScale, gJavaVM, &account);
     platform->setDisplayWidth(screenWidth);
     platform->setDisplayHeight(screenHeight);
 
@@ -434,20 +445,6 @@ void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, job
 
     __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Init end");
   }
-}
-
-void
-Java_com_sometrik_framework_FrameWork_setMobileAccount(JNIEnv* env, jobject thiz, jstring jemail, jstring jlanguage, jstring jcountry) {
-  const char * email = env->GetStringUTFChars(jemail, NULL);
-  const char * language = env->GetStringUTFChars(jlanguage, NULL);
-  const char * country = env->GetStringUTFChars(jcountry, NULL);
-
-  MobileAccount account = MobileAccount(email, language, country);
-  platform->setMobileAccount(&account);
-
-  env->ReleaseStringUTFChars(jlanguage, language);
-  env->ReleaseStringUTFChars(jemail, email);
-  env->ReleaseStringUTFChars(jcountry, country);
 }
 
   void Java_com_sometrik_framework_FrameWork_nativeSetSurface(JNIEnv* env, jobject thiz, jobject surface, int surfaceId, int gl_version) {

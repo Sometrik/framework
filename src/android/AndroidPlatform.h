@@ -67,8 +67,9 @@ private:
 
 class AndroidPlatform: public FWPlatform {
 public:
- AndroidPlatform(JNIEnv * _env, jobject _mgr, jobject _framework, float _display_scale, JavaVM * _javaVM)
+ AndroidPlatform(JNIEnv * _env, jobject _mgr, jobject _framework, float _display_scale, JavaVM * _javaVM, MobileAccount * _account)
    : FWPlatform(_display_scale),
+     account(_account),
     javaCache(JavaCache(_env)),
     gJavaVM(_javaVM) {
       
@@ -142,6 +143,7 @@ private:
   std::shared_ptr<AndroidClientCache> clientCache;
   std::shared_ptr<AndroidSoundCache> soundCache;
 
+  MobileAccount * account;
   ANativeWindow * window = 0;
   JavaVM * gJavaVM = 0;
   jobject mgr;

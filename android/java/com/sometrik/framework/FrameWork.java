@@ -90,7 +90,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   public native void intChangedEvent(double timestamp, int id, int changedInt);
   public native void keyPressed(double timestamp, int keyId, int viewId);
   public native void touchEvent(int viewId, int mode, int fingerIndex, long time, float x, float y);
-  public native void onInit(AssetManager assetManager, float xSize, float ySize, float displayScale);
+  public native void onInit(AssetManager assetManager, float xSize, float ySize, float displayScale, String email, String language, String country);
   public native void nativeSetSurface(Surface surface, int surfaceId, int gl_version);
   public native void nativeSurfaceDestroyed(double timestamp, int surfaceId, int gl_version);
   public native void nativeOnResume(double timestamp, int appId);
@@ -101,7 +101,6 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   private native void setNativeActiveView(double timestamp, int activeView, boolean recordHistory);
   private native void languageChanged(double timestamp, int appId, String language);
   private native void memoryWarning(double timestamp, int appId);
-  private native void setMobileAccount(String email, String language, String country);
   public static native void onPurchaseEvent(double timestamp, int applicationId, String orderId, boolean newPurchase, double purchaseTime);
   public static native void onResize(double timestamp, float width, float height, int viewId);
   public static native void onUpdate(double timestamp, int viewId);
@@ -146,7 +145,6 @@ public class FrameWork extends Activity implements NativeCommandHandler {
     };
     System.out.println("initing native on onCreate");
     initNative();
-    setMobileAccount(getUserGoogleAccountEmail(), defaultLocale.getLanguage(), defaultLocale.getCountry());
   }
 
   public Boolean initializePurchaseHelper(String key, IabHelper.OnIabSetupFinishedListener listener) {
@@ -190,7 +188,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
     System.out.println("Display scale: " + displayMetrics.scaledDensity);
     float xSize = displayMetrics.widthPixels / displayMetrics.scaledDensity;
     float ySize = displayMetrics.heightPixels / displayMetrics.scaledDensity;
-    onInit(getAssets(), xSize, ySize, displayMetrics.scaledDensity);
+    onInit(getAssets(), xSize, ySize, displayMetrics.scaledDensity, getUserGoogleAccountEmail(), defaultLocale.getLanguage(), defaultLocale.getCountry());
   }
 
   // Get screen settings
