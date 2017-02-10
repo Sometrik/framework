@@ -131,7 +131,7 @@ class FWPlatform : public Element {
     return id;    
   }
   
-  void setMobileAccount(MobileAccount * _account) { account = _account; }
+  MobileAccount & getMobileAccount();
 
   Logger & getLogger() {
     if (!logger.get()) {
@@ -156,7 +156,6 @@ class FWPlatform : public Element {
   FWPreferences preferences;
   int modal_result_value = 0;
   std::string modal_result_text;
-  MobileAccount * account = 0;
     
  private:
 #ifdef HAS_SOUNDCANVAS
