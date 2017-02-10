@@ -44,7 +44,9 @@ class GridView : public Element {
   }
 
   void flush() {
-    sendCommand(Command(Command::FLUSH_VIEW, getInternalId()));
+    if (isInitialized()) {
+      sendCommand(Command(Command::FLUSH_VIEW, getInternalId()));
+    }
   }
 
   void clear() {
