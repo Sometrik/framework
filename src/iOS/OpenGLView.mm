@@ -516,7 +516,7 @@ extern FWApplication * applicationMain();
   [EAGLContext setCurrentContext:self->context];
   double t = [[NSProcessInfo processInfo] systemUptime];
   SysEvent ev(t, SysEvent::DESTROY);
-  _platform->postEvent(0, ev);
+  _platform->postEvent(_esContext->getInternalId(), ev);
   delete _esContext;
 }
 
@@ -604,7 +604,7 @@ extern FWApplication * applicationMain();
 {
   double t = [[NSProcessInfo processInfo] systemUptime];
   SysEvent ev(t, SysEvent::MEMORY_WARNING);
-  _platform->postEvent(0, ev);
+  _platform->postEvent(_esContext->getInternalId(), ev);
 }
 
 #if 0
