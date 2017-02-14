@@ -75,7 +75,16 @@ class Element : public EventHandler {
     }
   }
 
+  std::shared_ptr<Element> getLastChild() const {
+    if (!children.empty()) {
+      return children.back();
+    } else {
+      return std::shared_ptr<Element>(0);
+    }
+  }
+
   std::vector<std::shared_ptr<Element> > & getChildren() { return children; }
+  const std::vector<std::shared_ptr<Element> > & getChildren() const { return children; }
 
   Selection find(const std::string & q) {
     Selection s;
@@ -133,7 +142,7 @@ class Element : public EventHandler {
 
   Element * getParent() { return parent; }
   const Element * getParent() const { return parent; }
-
+  size_t size() const { return children.size(); }
   bool isInitialized() const { return platform != 0; }
 
   void removeChild(Element * c);
@@ -148,7 +157,6 @@ class Element : public EventHandler {
   FWPlatform * platform = 0;
   Element * parent = 0;
   int internal_id, id = 0;
-  std::string name;
   std::vector<std::shared_ptr<Element> > children;
   int layout_weight = 0;
   unsigned int flags; // initialized in constructor
