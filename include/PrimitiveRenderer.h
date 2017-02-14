@@ -11,9 +11,7 @@
 #define STENCIL_BUFFER_BIT		4
 #define DEPTH_STENCIL_BUFFER_BIT	8
 
-namespace canvas {
-  class Texture;
-};
+class Texture;
 class FWPlatform;
 class Sprite;
 
@@ -28,7 +26,7 @@ class PrimitiveRenderer {
   PrimitiveRenderer(float _display_scale) : display_scale(_display_scale) { };
   virtual ~PrimitiveRenderer() { }
 
-  virtual void renderTexturedWindow(VBO & vbo, const canvas::Texture & texture, const glm::mat4 & mat, float alpha = 1.0f) { }
+  virtual void renderTexturedWindow(VBO & vbo, const Texture & texture, const glm::mat4 & mat, float alpha = 1.0f) { }
   virtual void drawSprite(const Sprite & sprite, const glm::mat4 & projMat, const glm::mat4 & mvMat) { }
   virtual void initialize(FWPlatform & platform) { }
 
@@ -75,7 +73,7 @@ class PrimitiveRenderer {
   void cullFace(bool t);
   void setLineWidth(float w);
   void setCompositionMode(CompositionMode mode);
-  void bind(const canvas::Texture & texture);
+  void bind(const Texture & texture);
   void bind(const VBO & vbo);
   void use(const gpufw::shader_program & program);
   const char * getGLSLVersion() const;

@@ -135,7 +135,7 @@ PrimitiveRenderer::initializeBase() {
 
   if (is_modern) {
     VBO::setHasVertexArrayObjects(true);
-    canvas::OpenGLTexture::setHasTexStorage(true);
+    OpenGLTexture::setHasTexStorage(true);
   }
   
   assert(has_rgb565);
@@ -209,7 +209,7 @@ PrimitiveRenderer::setLineWidth(float w) {
 }
 
 void
-PrimitiveRenderer::bind(const canvas::Texture & texture) {
+PrimitiveRenderer::bind(const Texture & texture) {
   int id = texture.getTextureId();
   if (!id) {
     cerr << "trying to bind zero tex" << endl;
