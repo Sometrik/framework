@@ -3,37 +3,7 @@
 #include <Image.h>
 #include <Surface.h>
 
-#define GL_GLEXT_PROTOTYPES
-
-#if defined __APPLE__
-#include <OpenGLES/ES3/gl.h>
-#include <OpenGLES/ES3/glext.h>
-#elif (defined GL_ES)
-#include <GLES3/gl3.h>
-#include <EGL/egl.h>
-#include <EGL/eglext.h>
-#else
-#define GL_GLEXT_PROTOTYPES
-
-#ifdef _WIN32
-#include <GL/glew.h>
-#include <windows.h>
-#endif
-
-#ifdef __ANDROID__
-#include <GLES3/gl3.h>
-#include <GLES3/gl3ext.h>
-#else
-#include <GL/gl.h>
-
-#ifdef _WIN32
-#include "glext.h"
-#else
-#include <GL/glext.h>
-#endif
-#endif
-
-#endif
+#include <GL.h>
 
 #if defined __APPLE__ || defined __ANDROID__
 #ifndef GL_COMPRESSED_RGB_S3TC_DXT1_EXT
@@ -191,6 +161,7 @@ OpenGLTexture::updateData(const ImageData & image, unsigned int x, unsigned int 
   if (!texture_id) {
     initialize = true;
     glGenTextures(1, &texture_id);
+    assert(texture_id >= 1);
     // cerr << "created texture id " << texture_id << " (total = " << total_textures << ")" << endl;
     if (texture_id >= 1) total_textures++;    
   }
