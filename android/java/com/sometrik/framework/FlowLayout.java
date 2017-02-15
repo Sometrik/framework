@@ -1,7 +1,5 @@
 package com.sometrik.framework;
 
-import com.sometrik.vapu.R;
-
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -20,12 +18,12 @@ public class FlowLayout extends ViewGroup implements NativeCommandHandler {
     super(context, attrs);
     frame = (FrameWork)context;
 
-    TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.FlowLayout);
+//    TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.FlowLayout);
     try {
-      mHorizontalSpacing = a.getDimensionPixelSize(R.styleable.FlowLayout_horizontalSpacing, 0);
-      mVerticalSpacing = a.getDimensionPixelSize(R.styleable.FlowLayout_verticalSpacing, 0);
+//      mHorizontalSpacing = a.getDimensionPixelSize(R.styleable.FlowLayout_horizontalSpacing, 0);
+//      mVerticalSpacing = a.getDimensionPixelSize(R.styleable.FlowLayout_verticalSpacing, 0);
     } finally {
-      a.recycle();
+//      a.recycle();
     }
 
     mPaint = new Paint();
@@ -151,12 +149,12 @@ public class FlowLayout extends ViewGroup implements NativeCommandHandler {
 
     public LayoutParams(Context context, AttributeSet attrs) {
       super(context, attrs);
-      TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.FlowLayout_LayoutParams);
+//      TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.FlowLayout_LayoutParams);
       try {
-	horizontalSpacing = a.getDimensionPixelSize(R.styleable.FlowLayout_LayoutParams_layout_horizontalSpacing, -1);
-	breakLine = a.getBoolean(R.styleable.FlowLayout_LayoutParams_layout_breakLine, false);
+//	horizontalSpacing = a.getDimensionPixelSize(R.styleable.FlowLayout_LayoutParams_layout_horizontalSpacing, -1);
+//	breakLine = a.getBoolean(R.styleable.FlowLayout_LayoutParams_layout_breakLine, false);
       } finally {
-	a.recycle();
+//	a.recycle();
       }
     }
 
