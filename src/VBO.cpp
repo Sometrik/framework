@@ -176,13 +176,13 @@ VBO::quad2d(float x1, float y1,
 	    float x2, float y2,
 	    float x3, float y3,
 	    float x4, float y4) {
-  default_draw_type = TRIANGLE_FAN;
+  default_draw_type = TRIANGLE_STRIP;
   std::unique_ptr<vbo_data_s[]> data(new vbo_data_s[4]);
   std::unique_ptr<unsigned int[]> indices(new unsigned int[4]);
   data[0] = { glm::vec2(0, 0), glm::vec3(0, 0, 1), glm::vec3(x1, y1, 0) };
   data[1] = { glm::vec2(0, 1), glm::vec3(0, 0, 1), glm::vec3(x2, y2, 0) };
-  data[2] = { glm::vec2(1, 1), glm::vec3(0, 0, 1), glm::vec3(x3, y3, 0) };
-  data[3] = { glm::vec2(1, 0), glm::vec3(0, 0, 1), glm::vec3(x4, y4, 0) };
+  data[2] = { glm::vec2(1, 0), glm::vec3(0, 0, 1), glm::vec3(x4, y4, 0) };
+  data[3] = { glm::vec2(1, 1), glm::vec3(0, 0, 1), glm::vec3(x3, y3, 0) };
   upload(T2F_N3F_V3F, data.get(), 4 * sizeof(vbo_data_s));
   indices[0] = 0;
   indices[1] = 1;
