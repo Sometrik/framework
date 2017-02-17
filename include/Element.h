@@ -35,6 +35,17 @@ class Element : public EventHandler {
 
   void onEvent(Event & ev) override;
 
+  Element & insertChild(const std::shared_ptr<Element> & element) {
+    element->parent = this;
+    children.insert(children.begin(), element);
+
+    if (isInitialized()) {
+      element->initialize(platform);
+      element->initializeChildren();
+    }
+    return *element;
+  }  
+
   Element & addChild(const std::shared_ptr<Element> & element) {
     element->parent = this;
     children.push_back(element);
@@ -45,6 +56,7 @@ class Element : public EventHandler {
     }
     return *element;
   }  
+    
   Element & addHeading(const std::string & text);
   Element & addText(const std::string & text);
   Element & addHorizontalLayout(int _id = 0);
