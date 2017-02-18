@@ -9,7 +9,15 @@ public:
    : Event(_timestamp), opengl_version(_opengl_version), is_opengl_es(_is_opengl_es) { }
 
   Event * dup() const override { return new OpenGLInitEvent(*this); }
-  void dispatch(EventHandler & element) override;
+  void dispatch(EventHandler & element) override {
+    if (!isHandled()) {
+      element.onOpenGLInitEvent(*this);
+      if (isHandled() && !handler) {
+	handler = &element;
+      }
+    }
+    Event::dispatch(element);
+  }
   bool isBroadcast() const override { return true; }
 
   int getOpenGLVersion() const { return opengl_version; }
