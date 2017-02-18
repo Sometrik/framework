@@ -9,7 +9,15 @@ public:
    : Event(_timestamp), logical_width(_logical_width), logical_height(_logical_height), actual_width(_actual_width), actual_height(_actual_height) { }
 
   Event * dup() const override { return new ResizeEvent(*this); }
-  void dispatch(EventHandler & element) override;
+  void dispatch(EventHandler & element) override {
+    if (!isHandled()) {
+      element.onResizeEvent(*this);
+      if (isHandled() && !handler) {
+	handler = &element;
+      }
+    }
+    Event::dispatch(element);
+  }
   bool isBroadcast() const override { return true; }
 
   int getLogicalWidth() const { return logical_width; }
