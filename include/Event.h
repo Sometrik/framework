@@ -24,12 +24,14 @@ class Event {
   
   bool isHandled() const { return is_handled; }
   bool isRedrawNeeded() const { return redraw_needed; }
+  bool isStopped() const { return is_stopped; }
 
   bool needUpdateLayout() const { return update_layout_needed; }
 
   void setHandled(bool t = true) { is_handled = t; }
   void requestRedraw() { redraw_needed = true; }
   void updateLayout() { update_layout_needed = true; }
+  void stop() { is_stopped = true; }
 
   bool needUpdate() const { return redraw_needed; }
   void update() { redraw_needed = true; }
@@ -44,7 +46,7 @@ class Event {
 
  private:
   double timestamp;
-  bool is_handled = false;
+  bool is_handled = false, is_stopped = false;
   bool redraw_needed = false;
   bool update_layout_needed = false;
 };
