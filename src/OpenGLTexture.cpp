@@ -48,10 +48,10 @@ OpenGLTexture::OpenGLTexture(Surface & surface)
   updateData(image->getData(), 0, 0);
 }
 
-OpenGLTexture::OpenGLTexture(unsigned int _logical_width, unsigned int _logical_height, const ImageData & image, FilterMode min_filter, FilterMode mag_filter, unsigned int mipmap_levels)
+OpenGLTexture::OpenGLTexture(unsigned int _logical_width, unsigned int _logical_height, const ImageData & image, FilterMode _min_filter, FilterMode _mag_filter, unsigned int _mipmap_levels)
   : Texture(_logical_width, _logical_height,
 	    image.getWidth(), image.getHeight(),
-	    min_filter, mag_filter, image.getInternalFormat(), mipmap_levels)
+	    _min_filter, _mag_filter, image.getInternalFormat(), _mipmap_levels)
 {
   assert(getInternalFormat());
   assert(getLogicalWidth() > 0);
