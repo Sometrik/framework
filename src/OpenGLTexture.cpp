@@ -151,6 +151,7 @@ OpenGLTexture::updateTextureData(const ImageData & image, unsigned int x, unsign
 
 void
 OpenGLTexture::updateData(const ImageData & image, unsigned int x, unsigned int y) {
+  assert(image.getInternalFormat() != canvas::NO_FORMAT);
   if (!global_init) {
     global_init = true;
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
