@@ -598,7 +598,9 @@ public class FrameWork extends Activity implements NativeCommandHandler {
 
   //Load JNI. Framework references to make file.
   static {
+    System.out.println("Loading native library");
     System.loadLibrary("framework");
+    System.out.println("native library loaded");
   }
   
   public static void handleNativeException(Throwable error){
