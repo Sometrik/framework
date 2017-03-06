@@ -4,14 +4,15 @@
 #include <string>
 #include <sstream>
 
-  template <typename T>
-  std::string to_string(T value) {
+namespace std {
+  template <typename T> inline
+   std::string to_string(T value) {
       std::ostringstream os ;
       os << value ;
       return os.str() ;
   }
 
-  float
+  inline float
   stof(std::string value){
     const char * cstring = value.c_str();
     float f;
@@ -19,7 +20,7 @@
     return f;
   }
 
-  int
+  inline int
   stoi(std::string value){
     std::stringstream buffer(value);
     int i;
@@ -27,7 +28,7 @@
     return i;
   }
 
-  double
+  inline double
   stod(std::string value){
     std::stringstream buffer(value);
     double d;
@@ -35,6 +36,21 @@
     return d;
   }
 
+  inline long
+  stoll(std::string value){
+    std::stringstream buffer(value);
+    long l;
+    buffer >> l;
+    return l;
+  }
+
+  inline unsigned long stoull(std::string value) {
+  std::stringstream buffer(value);
+  unsigned long l;
+  buffer >> l;
+  return l;
+}
+};
 
 
 
