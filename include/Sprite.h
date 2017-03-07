@@ -8,8 +8,8 @@
 
 class Sprite {
  public:
-  Sprite();
-  virtual ~Sprite();
+  Sprite() { }
+  virtual ~Sprite() = default;
   
   const std::shared_ptr<Texture> & getTexture() const { return texture; }
   void setTexture(const std::shared_ptr<Texture> & _texture) { texture = _texture; }
