@@ -179,18 +179,18 @@ VBO::quad2d(float x1, float y1,
 	    float x3, float y3,
 	    float x4, float y4) {
   default_draw_type = TRIANGLE_STRIP;
-  std::unique_ptr<vbo_data_s[]> data(new vbo_data_s[4]);
-  std::unique_ptr<unsigned short[]> indices(new unsigned short[4]);
+  vbo_data_s data[4];
+  unsigned short indices[4];
   data[0] = { glm::vec2(0, 0), glm::vec3(0, 0, 1), glm::vec3(x1, y1, 0) };
   data[1] = { glm::vec2(0, 1), glm::vec3(0, 0, 1), glm::vec3(x2, y2, 0) };
   data[2] = { glm::vec2(1, 0), glm::vec3(0, 0, 1), glm::vec3(x4, y4, 0) };
   data[3] = { glm::vec2(1, 1), glm::vec3(0, 0, 1), glm::vec3(x3, y3, 0) };
-  upload(T2F_N3F_V3F, data.get(), 4 * sizeof(vbo_data_s));
+  upload(T2F_N3F_V3F, &data[0], 4 * sizeof(vbo_data_s));
   indices[0] = 0;
   indices[1] = 1;
   indices[2] = 2;
   indices[3] = 3;
-  uploadIndexArray(indices.get(), 4 * sizeof(unsigned short));
+  uploadIndexArray(&indices[0], 4 * sizeof(unsigned short));
 }
 
 void
@@ -199,18 +199,18 @@ VBO::quad2d(float x1, float y1, float tx1, float ty1,
 	    float x3, float y3, float tx3, float ty3,
 	    float x4, float y4, float tx4, float ty4) {
   default_draw_type = TRIANGLE_FAN;
-  std::unique_ptr<vbo_data_s[]> data(new vbo_data_s[4]);
-  std::unique_ptr<unsigned short[]> indices(new unsigned short[4]);
+  vbo_data_s data[4];
+  unsigned short indices[4];
   data[0] = { glm::vec2(tx1, ty1), glm::vec3(0, 0, 1), glm::vec3(x1, y1, 0) };
   data[1] = { glm::vec2(tx2, ty2), glm::vec3(0, 0, 1), glm::vec3(x2, y2, 0) };
   data[2] = { glm::vec2(tx3, ty3), glm::vec3(0, 0, 1), glm::vec3(x3, y3, 0) };
   data[3] = { glm::vec2(tx4, ty4), glm::vec3(0, 0, 1), glm::vec3(x4, y4, 0) };
-  upload(T2F_N3F_V3F, data.get(), 4 * sizeof(vbo_data_s));
+  upload(T2F_N3F_V3F, &data[0], 4 * sizeof(vbo_data_s));
   indices[0] = 0;
   indices[1] = 1;
   indices[2] = 2;
   indices[3] = 3;
-  uploadIndexArray(indices.get(), 4 * sizeof(unsigned short));
+  uploadIndexArray(&indices[0], 4 * sizeof(unsigned short));
 }
 
 void
