@@ -229,7 +229,7 @@ AndroidPlatform::renderLoop() {
     for (auto & ev : evs) {
       if (dynamic_cast<UpdateEvent*>(ev.second.get())) {
 	if (update_sent) {
-	  getLogger().println("skipping update event!");
+	  // getLogger().println("skipping update event!");
 	  continue;
 	} else update_sent = true;
       }
@@ -247,7 +247,6 @@ AndroidPlatform::renderLoop() {
     }
 
     if (canDraw && surface && redraw) {
-      __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "I Wanna draw");
       DrawEvent dev(getTime());
       postEvent(getActiveViewId(), dev);
       
