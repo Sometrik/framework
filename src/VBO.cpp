@@ -134,7 +134,7 @@ VBO::upload(DataType type, const void * ptr, size_t size) {
 }
 
 void
-VBO::uploadIndices(const void * ptr, size_t size) {
+VBO::uploadIndexArray(const void * ptr, size_t size) {
   assert(size > 0);
 
   if (hasVertexArrayObjects()) {
@@ -190,7 +190,7 @@ VBO::quad2d(float x1, float y1,
   indices[1] = 1;
   indices[2] = 2;
   indices[3] = 3;
-  uploadIndices(indices.get(), 4 * sizeof(unsigned short));
+  uploadIndexArray(indices.get(), 4 * sizeof(unsigned short));
 }
 
 void
@@ -210,7 +210,7 @@ VBO::quad2d(float x1, float y1, float tx1, float ty1,
   indices[1] = 1;
   indices[2] = 2;
   indices[3] = 3;
-  uploadIndices(indices.get(), 4 * sizeof(unsigned short));
+  uploadIndexArray(indices.get(), 4 * sizeof(unsigned short));
 }
 
 void
@@ -240,7 +240,7 @@ VBO::sphere(float radius, unsigned int u, unsigned int v) {
     }
   }
   
-  uploadIndices(indices.get(), in * sizeof(unsigned short));
+  uploadIndexArray(indices.get(), in * sizeof(unsigned short));
   upload(T2F_N3F_V3F, data.get(), vn * sizeof(vbo_data_s));  
 }
 
@@ -272,5 +272,5 @@ VBO::ring(float outer_radius, float inner_radius, unsigned int n, float dx, floa
   cerr << "vbo ring vn = " << vn << ", in = " << in << endl;
   
   upload(T2F_N3F_V3F, data.get(), vn * sizeof(vbo_data_s));  
-  uploadIndices(indices.get(), in * sizeof(unsigned short));
+  uploadIndexArray(indices.get(), in * sizeof(unsigned short));
 }
