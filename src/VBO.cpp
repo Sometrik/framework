@@ -143,7 +143,7 @@ VBO::uploadIndices(const void * ptr, size_t size) {
     glBindVertexArray(vao);
   }
   if (!indexVbo) glGenBuffers(1, &indexVbo);
-  num_indices = size / 4;
+  num_indices = size / sizeof(unsigned short);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexVbo);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, ptr, is_dynamic ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
   
@@ -168,7 +168,7 @@ VBO::draw(DrawType type) {
   } else {
     assert(indices_uploaded);
     // cerr << "drawing B: " << num_indices << endl;
-    glDrawElements(getGLDrawType(type), num_indices, GL_UNSIGNED_INT, 0);
+    glDrawElements(getGLDrawType(type), num_indices, GL_UNSIGNED_SHORT, 0);
   }
   // glBindVertexArray(0);  
 }
@@ -180,7 +180,7 @@ VBO::quad2d(float x1, float y1,
 	    float x4, float y4) {
   default_draw_type = TRIANGLE_STRIP;
   std::unique_ptr<vbo_data_s[]> data(new vbo_data_s[4]);
-  std::unique_ptr<unsigned int[]> indices(new unsigned int[4]);
+  std::unique_ptr<unsigned short[]> indices(new unsigned short[4]);
   data[0] = { glm::vec2(0, 0), glm::vec3(0, 0, 1), glm::vec3(x1, y1, 0) };
   data[1] = { glm::vec2(0, 1), glm::vec3(0, 0, 1), glm::vec3(x2, y2, 0) };
   data[2] = { glm::vec2(1, 0), glm::vec3(0, 0, 1), glm::vec3(x4, y4, 0) };
@@ -190,7 +190,7 @@ VBO::quad2d(float x1, float y1,
   indices[1] = 1;
   indices[2] = 2;
   indices[3] = 3;
-  uploadIndices(indices.get(), 4 * sizeof(unsigned int));
+  uploadIndices(indices.get(), 4 * sizeof(unsigned short));
 }
 
 void
@@ -200,7 +200,7 @@ VBO::quad2d(float x1, float y1, float tx1, float ty1,
 	    float x4, float y4, float tx4, float ty4) {
   default_draw_type = TRIANGLE_FAN;
   std::unique_ptr<vbo_data_s[]> data(new vbo_data_s[4]);
-  std::unique_ptr<unsigned int[]> indices(new unsigned int[4]);
+  std::unique_ptr<unsigned short[]> indices(new unsigned short[4]);
   data[0] = { glm::vec2(tx1, ty1), glm::vec3(0, 0, 1), glm::vec3(x1, y1, 0) };
   data[1] = { glm::vec2(tx2, ty2), glm::vec3(0, 0, 1), glm::vec3(x2, y2, 0) };
   data[2] = { glm::vec2(tx3, ty3), glm::vec3(0, 0, 1), glm::vec3(x3, y3, 0) };
@@ -210,7 +210,7 @@ VBO::quad2d(float x1, float y1, float tx1, float ty1,
   indices[1] = 1;
   indices[2] = 2;
   indices[3] = 3;
-  uploadIndices(indices.get(), 4 * sizeof(unsigned int));
+  uploadIndices(indices.get(), 4 * sizeof(unsigned short));
 }
 
 void
@@ -218,7 +218,7 @@ VBO::sphere(float radius, unsigned int u, unsigned int v) {
   default_draw_type = TRIANGLES;
   
   std::unique_ptr<vbo_data_s[]> data(new vbo_data_s[u * v]);
-  std::unique_ptr<unsigned int[]> indices(new unsigned int[6 * u * v]);
+  std::unique_ptr<unsigned short[]> indices(new unsigned short[6 * u * v]);
   
   unsigned int in = 0, vn = 0;
   for (unsigned int i = 0; i < u; i++) {
@@ -240,7 +240,7 @@ VBO::sphere(float radius, unsigned int u, unsigned int v) {
     }
   }
   
-  uploadIndices(indices.get(), in * sizeof(unsigned int));
+  uploadIndices(indices.get(), in * sizeof(unsigned short));
   upload(T2F_N3F_V3F, data.get(), vn * sizeof(vbo_data_s));  
 }
 
@@ -249,7 +249,7 @@ VBO::ring(float outer_radius, float inner_radius, unsigned int n, float dx, floa
   default_draw_type = TRIANGLE_STRIP;
   
   std::unique_ptr<vbo_data_s[]> data(new vbo_data_s[2 * n]);
-  std::unique_ptr<unsigned int[]> indices(new unsigned int[2 * n]);
+  std::unique_ptr<unsigned short[]> indices(new unsigned short[2 * n]);
     
   unsigned int vn = 0, in = 0;
   for (unsigned int i = 0; i < n; i++) {
@@ -272,5 +272,5 @@ VBO::ring(float outer_radius, float inner_radius, unsigned int n, float dx, floa
   cerr << "vbo ring vn = " << vn << ", in = " << in << endl;
   
   upload(T2F_N3F_V3F, data.get(), vn * sizeof(vbo_data_s));  
-  uploadIndices(indices.get(), in * sizeof(unsigned int));
+  uploadIndices(indices.get(), in * sizeof(unsigned short));
 }
