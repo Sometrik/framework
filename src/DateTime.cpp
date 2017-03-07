@@ -332,8 +332,10 @@ DateTime::getTimeUTC() const {
   tt.tm_wday = 0;
   tt.tm_yday = 0;
   tt.tm_isdst = -1;
-#ifdef WIN32
+#if defined WIN32
   return _mkgmtime(&tt);
+#elif defined __ANDROID__
+  return 0;
 #else
   return timegm(&tt);
 #endif
