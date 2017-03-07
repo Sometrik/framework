@@ -604,6 +604,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   }
   
   public static void handleNativeException(Throwable error){
+    System.out.println("handling error");
     error.printStackTrace();
     System.out.println("error cause: " + error.getCause());
   }
