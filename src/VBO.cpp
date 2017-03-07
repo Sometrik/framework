@@ -134,7 +134,7 @@ VBO::upload(DataType type, const void * ptr, size_t size) {
 }
 
 void
-VBO::uploadIndexArray(const void * ptr, size_t size) {
+VBO::uploadIndexArray(const unsigned short * ptr, size_t n) {
   assert(size > 0);
 
   if (hasVertexArrayObjects()) {
@@ -143,9 +143,9 @@ VBO::uploadIndexArray(const void * ptr, size_t size) {
     glBindVertexArray(vao);
   }
   if (!indexVbo) glGenBuffers(1, &indexVbo);
-  num_indices = size / sizeof(unsigned short);
+  num_indices = n;
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexVbo);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, ptr, is_dynamic ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, n * sizeof(unsigned short), ptr, is_dynamic ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
   
   indices_uploaded = true;
 }
@@ -190,7 +190,7 @@ VBO::quad2d(float x1, float y1,
   indices[1] = 1;
   indices[2] = 2;
   indices[3] = 3;
-  uploadIndexArray(&indices[0], 4 * sizeof(unsigned short));
+  uploadIndexArray(&indices[0], 4);
 }
 
 void
@@ -210,7 +210,7 @@ VBO::quad2d(float x1, float y1, float tx1, float ty1,
   indices[1] = 1;
   indices[2] = 2;
   indices[3] = 3;
-  uploadIndexArray(&indices[0], 4 * sizeof(unsigned short));
+  uploadIndexArray(&indices[0], 4);
 }
 
 void
@@ -240,7 +240,7 @@ VBO::sphere(float radius, unsigned int u, unsigned int v) {
     }
   }
   
-  uploadIndexArray(indices.get(), in * sizeof(unsigned short));
+  uploadIndexArray(indices.get(), in);
   upload(T2F_N3F_V3F, data.get(), vn * sizeof(vbo_data_s));  
 }
 
@@ -272,5 +272,5 @@ VBO::ring(float outer_radius, float inner_radius, unsigned int n, float dx, floa
   cerr << "vbo ring vn = " << vn << ", in = " << in << endl;
   
   upload(T2F_N3F_V3F, data.get(), vn * sizeof(vbo_data_s));  
-  uploadIndexArray(indices.get(), in * sizeof(unsigned short));
+  uploadIndexArray(indices.get(), in);
 }
