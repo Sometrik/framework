@@ -122,6 +122,7 @@ VBO::upload(DataType type, const void * ptr, size_t size) {
   num_vertices = size / stride;
   if (hasVertexArrayObjects()) {
     if (!vao) glGenVertexArrays(1, &vao);
+    assert(vao);
     glBindVertexArray(vao);
   }
   if (!vbo) glGenBuffers(1, &vbo);
@@ -138,6 +139,7 @@ VBO::uploadIndices(const void * ptr, size_t size) {
 
   if (hasVertexArrayObjects()) {
     if (!vao) glGenVertexArrays(1, &vao);
+    assert(vao);
     glBindVertexArray(vao);
   }
   if (!indexVbo) glGenBuffers(1, &indexVbo);
