@@ -48,10 +48,10 @@ OpenGLTexture::OpenGLTexture(Surface & surface)
   updateData(image->getData(), 0, 0);
 }
 
-OpenGLTexture::OpenGLTexture(unsigned int _logical_width, unsigned int _logical_height, const ImageData & image, FilterMode _min_filter, FilterMode _mag_filter, unsigned int _mipmap_levels)
+OpenGLTexture::OpenGLTexture(unsigned int _logical_width, unsigned int _logical_height, const ImageData & image, FilterMode _min_filter, FilterMode _mag_filter, unsigned int _mipmap_levels, canvas::InternalFormat target_format)
   : Texture(_logical_width, _logical_height,
 	    image.getWidth(), image.getHeight(),
-	    _min_filter, _mag_filter, image.getInternalFormat(), _mipmap_levels)
+	    _min_filter, _mag_filter, target_format ? target_format : image.getInternalFormat(), _mipmap_levels)
 {
   assert(getInternalFormat());
   assert(getLogicalWidth() > 0);
@@ -241,9 +241,9 @@ OpenGLTexture::createTexture(Surface & surface) {
 }
 
 std::unique_ptr<Texture>
-OpenGLTexture::createTexture(Image & image, FilterMode min_filter, FilterMode mag_filter, unsigned int mipmap_levels) {
+OpenGLTexture::createTexture(Image & image, FilterMode min_filter, FilterMode mag_filter, unsigned int mipmap_levels, canvas::InternalFormat target_format) {
   auto & data = image.getData();
   unsigned int lw = (unsigned int)(data.getWidth() / image.getDisplayScale());
   unsigned int lh = (unsigned int)(data.getHeight() / image.getDisplayScale());
-  return std::unique_ptr<Texture>(new OpenGLTexture(lw, lh, data, min_filter, mag_filter, mipmap_levels));
+  return std::unique_ptr<Texture>(new OpenGLTexture(lw, lh, data, min_filter, mag_filter, mipmap_levels, target_format));
 }

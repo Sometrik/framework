@@ -3,6 +3,8 @@
 
 #include <Texture.h>
 
+#include <InternalFormat.h>
+
 #include <memory>
 #include <vector>
 #include <cstddef>
@@ -26,7 +28,7 @@ class OpenGLTexture : public Texture {
   }
   
   OpenGLTexture(canvas::Surface & surface);
-  OpenGLTexture(unsigned int _logical_width, unsigned int _logical_height, const canvas::ImageData & image, canvas::FilterMode min_filter, canvas::FilterMode mag_filter, unsigned int mipmap_levels);
+  OpenGLTexture(unsigned int _logical_width, unsigned int _logical_height, const canvas::ImageData & image, canvas::FilterMode min_filter, canvas::FilterMode mag_filter, unsigned int mipmap_levels, canvas::InternalFormat target_format = canvas::NO_FORMAT);
   
   unsigned int getTextureId() const override { return texture_id; }
   
@@ -38,7 +40,7 @@ class OpenGLTexture : public Texture {
   static void releaseTextures();
   static std::unique_ptr<Texture> createTexture(unsigned int _logical_width, unsigned int _logical_height, unsigned int _actual_width, unsigned int _actual_height, canvas::FilterMode min_filter, canvas::FilterMode mag_filter, canvas::InternalFormat _internal_format, unsigned int mipmap_levels = 8);
   static std::unique_ptr<Texture> createTexture(canvas::Surface & surface);
-  static std::unique_ptr<Texture> createTexture(canvas::Image & image, canvas::FilterMode min_filter = canvas::NEAREST, canvas::FilterMode mag_filter = canvas::NEAREST, unsigned int mipmap_levels = 8);
+  static std::unique_ptr<Texture> createTexture(canvas::Image & image, canvas::FilterMode min_filter = canvas::NEAREST, canvas::FilterMode mag_filter = canvas::NEAREST, unsigned int mipmap_levels = 1, canvas::InternalFormat target_format = canvas::NO_FORMAT);
   
   static bool hasTexStorage() { return has_tex_storage; }
   static void setHasTexStorage(bool t) { has_tex_storage = t; }
