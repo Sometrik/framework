@@ -135,7 +135,7 @@ VBO::upload(DataType type, const void * ptr, size_t size) {
 
 void
 VBO::uploadIndexArray(const unsigned short * ptr, size_t n) {
-  assert(size > 0);
+  assert(n);
 
   if (hasVertexArrayObjects()) {
     if (!vao) glGenVertexArrays(1, &vao);
