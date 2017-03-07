@@ -55,8 +55,11 @@ class VBO {
  public:
   enum DataType { T2F_N3F_V3F = 1, NODE_BILLBOARDS, BILLBOARDS, EDGES, ARCS_2D, ARCS_3D };
   enum DrawType { NONE = 0, POINTS, LINES, TRIANGLES, TRIANGLE_STRIP, TRIANGLE_FAN };
-
+  
   VBO(bool _is_dynamic = true) : is_dynamic(_is_dynamic) { }
+  VBO(const VBO & other) = delete;
+  VBO & operator=(const VBO & other) = delete;
+  
   virtual ~VBO();
 
   bool isDefined() const {
