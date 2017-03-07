@@ -5,7 +5,6 @@
 
 #include <string.h>
 #include <android/log.h>
-#include "Menu.h"
 #include <jni.h>
 #include <android/asset_manager.h>
 #include <android/asset_manager_jni.h>
