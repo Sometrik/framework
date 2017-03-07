@@ -27,6 +27,7 @@ static set<int> readCompressedFormats() {
 
 static set<string> readExtensions() {
   set<string> r;
+#if 0
   GLint numExtensions;
   glGetIntegerv(GL_NUM_EXTENSIONS, &numExtensions);
   if (numExtensions > 0) {
@@ -35,6 +36,16 @@ static set<string> readExtensions() {
       r.insert((const char *)e);
     }
   }
+#else
+  auto es = glGetString(GL_EXTENSIONS);
+  assert(es);
+  if (es) {
+    auto ev = StringUtils::split(string((const char *)es), ' ');
+    for (auto & e : ev) {
+      r.insert(e);
+    }
+  }
+#endif
   return r;
 }
 
