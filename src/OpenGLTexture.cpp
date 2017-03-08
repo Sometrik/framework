@@ -135,7 +135,7 @@ OpenGLTexture::updateTextureData(const ImageData & image, unsigned int x, unsign
     } else if (hasTexStorage() || is_data_initialized) {
       glTexSubImage2D(GL_TEXTURE_2D, level, x, y, current_width, current_height, fd.format, fd.type, image.getData() + offset);
     } else {
-      glTexImage2D(GL_TEXTURE_2D, level, fd.internalFormat, current_width, current_height, 0, fd.format, fd.type, image.getData() + offset);
+      glTexImage2D(GL_TEXTURE_2D, level, fd.format, current_width, current_height, 0, fd.format, fd.type, image.getData() + offset);
       filled = true;
     }
     
