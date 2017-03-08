@@ -107,6 +107,9 @@ class VBO {
   static bool hasVertexArrayObjects() { return has_vertex_array_objects; }
   static void setHasVertexArrayObjects(bool t) { has_vertex_array_objects = t; }
 
+  static bool hasInstancing() { return has_instancing; }
+  static void setHasInstancing(bool t) { has_instancing = t; }
+
  protected:
   DataType getDataType() const { return data_type; }
   int getStride() const { return stride; }
@@ -122,7 +125,7 @@ class VBO {
   bool is_dynamic;
   bool data_uploaded = false, indices_uploaded = false;
 
-  static bool has_vertex_array_objects;
+  static bool has_vertex_array_objects, has_instancing;
 };
 
 #endif

@@ -7,6 +7,7 @@
 using namespace std;
 
 bool VBO::has_vertex_array_objects = false;
+bool VBO::has_instancing = false;
 
 static GLenum getGLDrawType(VBO::DrawType type) {
   switch (type) {
@@ -60,12 +61,14 @@ VBO::setPointers() const {
     glVertexAttribPointer(4, 1, GL_INT, GL_FALSE, getStride(), (void *)(24)); // node_id
     glVertexAttribPointer(5, 1, GL_FLOAT, GL_FALSE, getStride(), (void *)(28)); // aspect_ratio
 
-    glVertexAttribDivisor(0, 1);
-    glVertexAttribDivisor(1, 1);
-    glVertexAttribDivisor(2, 1);
-    glVertexAttribDivisor(3, 1);
-    glVertexAttribDivisor(4, 1);
-    glVertexAttribDivisor(5, 1);
+    if (has_instancing) {
+      glVertexAttribDivisor(0, 1);
+      glVertexAttribDivisor(1, 1);
+      glVertexAttribDivisor(2, 1);
+      glVertexAttribDivisor(3, 1);
+      glVertexAttribDivisor(4, 1);
+      glVertexAttribDivisor(5, 1);
+    }
     n_arrays = 6;
     break;
   case BILLBOARDS:
