@@ -145,6 +145,8 @@ PrimitiveRenderer::initializeBase() {
   }
 
   if (is_modern) {
+    // has_instancing = true;
+    // VBO::setHasInstancing(true);
     VBO::setHasVertexArrayObjects(true);
     OpenGLTexture::setHasTexStorage(true);
   }
