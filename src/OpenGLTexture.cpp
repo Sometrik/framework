@@ -28,7 +28,6 @@ using namespace canvas;
 
 size_t OpenGLTexture::total_textures = 0;
 vector<unsigned int> OpenGLTexture::freed_textures;
-bool OpenGLTexture::global_init = false;
 bool OpenGLTexture::has_tex_storage = false;
 
 struct format_description_s {
@@ -152,10 +151,6 @@ OpenGLTexture::updateTextureData(const ImageData & image, unsigned int x, unsign
 void
 OpenGLTexture::updateData(const ImageData & image, unsigned int x, unsigned int y) {
   assert(image.getInternalFormat() != canvas::NO_FORMAT);
-  if (!global_init) {
-    global_init = true;
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-  }
 
   releaseTextures();
 

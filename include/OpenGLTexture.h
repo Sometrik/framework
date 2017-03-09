@@ -54,7 +54,6 @@ class OpenGLTexture : public Texture {
   
   static size_t total_textures;
   static std::vector<unsigned int> freed_textures;
-  static bool global_init;
   static bool has_tex_storage;
 };
 
