@@ -27,6 +27,7 @@ static set<int> readCompressedFormats() {
 
 static set<string> readExtensions() {
   set<string> r;
+#if 0
   GLint numExtensions;
   glGetIntegerv(GL_NUM_EXTENSIONS, &numExtensions);
   if (numExtensions > 0) {
@@ -35,6 +36,16 @@ static set<string> readExtensions() {
       r.insert((const char *)e);
     }
   }
+#else
+  auto es = glGetString(GL_EXTENSIONS);
+  assert(es);
+  if (es) {
+    auto ev = StringUtils::split(string((const char *)es), ' ');
+    for (auto & e : ev) {
+      r.insert(e);
+    }
+  }
+#endif
   return r;
 }
 
@@ -134,6 +145,8 @@ PrimitiveRenderer::initializeBase() {
   }
 
   if (is_modern) {
+    // has_instancing = true;
+    // VBO::setHasInstancing(true);
     VBO::setHasVertexArrayObjects(true);
     OpenGLTexture::setHasTexStorage(true);
   }
@@ -317,14 +330,18 @@ PrimitiveRenderer::viewport(unsigned int x, unsigned int y, unsigned int w, unsi
 void
 PrimitiveRenderer::pushGroupMarker(const char * name) { 
 #ifdef GL_ES
-  glPushGroupMarkerEXT(0, name);
+  if (is_es3) {
+    glPushGroupMarkerEXT(0, name);
+  }
 #endif
 }
 
 void
 PrimitiveRenderer::popGroupMarker() {
 #ifdef GL_ES
-  glPopGroupMarkerEXT();
+  if (is_es3) {
+    glPopGroupMarkerEXT();
+  }
 #endif
 }
 

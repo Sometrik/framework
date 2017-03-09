@@ -2,6 +2,9 @@
 #define _VALUEEVENT_H_
 
 #include <Event.h>
+
+#include <EventHandler.h>
+
 #include <string>
 
 class ValueEvent : public Event {
@@ -12,7 +15,15 @@ public:
     : Event(_timestamp), value(_value) { }
 
   Event * dup() const override { return new ValueEvent(*this); }
-  void dispatch(EventHandler & element) override;
+  void dispatch(EventHandler & element) override {
+    if (!isHandled()) {
+      element.onValueEvent(*this);
+      if (isHandled() && !handler) {
+	handler = &element;
+      }
+    }
+    Event::dispatch(element);
+  }
 
   const std::string & getTextValue() const { return text; }
   int getValue() const { return value; }

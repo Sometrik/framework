@@ -55,8 +55,11 @@ class VBO {
  public:
   enum DataType { T2F_N3F_V3F = 1, NODE_BILLBOARDS, BILLBOARDS, EDGES, ARCS_2D, ARCS_3D };
   enum DrawType { NONE = 0, POINTS, LINES, TRIANGLES, TRIANGLE_STRIP, TRIANGLE_FAN };
-
+  
   VBO(bool _is_dynamic = true) : is_dynamic(_is_dynamic) { }
+  VBO(const VBO & other) = delete;
+  VBO & operator=(const VBO & other) = delete;
+  
   virtual ~VBO();
 
   bool isDefined() const {
@@ -71,7 +74,7 @@ class VBO {
   unsigned int getIndexBufferId() const { return indexVbo; }
 
   void upload(DataType type, const void * ptr, size_t size);
-  void uploadIndices(const void * ptr, size_t size);
+  void uploadIndexArray(const unsigned short * ptr, size_t n);
   void clear();
   
   void setDrawType(DrawType type) { default_draw_type = type; }
@@ -104,6 +107,9 @@ class VBO {
   static bool hasVertexArrayObjects() { return has_vertex_array_objects; }
   static void setHasVertexArrayObjects(bool t) { has_vertex_array_objects = t; }
 
+  static bool hasInstancing() { return has_instancing; }
+  static void setHasInstancing(bool t) { has_instancing = t; }
+
  protected:
   DataType getDataType() const { return data_type; }
   int getStride() const { return stride; }
@@ -119,7 +125,7 @@ class VBO {
   bool is_dynamic;
   bool data_uploaded = false, indices_uploaded = false;
 
-  static bool has_vertex_array_objects;
+  static bool has_vertex_array_objects, has_instancing;
 };
 
 #endif

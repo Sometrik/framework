@@ -5,6 +5,8 @@
 #include <ResizeEvent.h>
 #include <FWApplication.h>
 
+#include <OpenGLInitEvent.h>
+
 #include <sstream>
 
 #include <GL.h>
@@ -31,6 +33,11 @@ OpenGLView::onResizeEvent(ResizeEvent & ev) {
   actual_height = ev.getActualHeight();
   ev.requestRedraw();
   ev.setHandled();
+}
+
+void
+OpenGLView::onOpenGLInitEvent(OpenGLInitEvent & ev) {
+  glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 }
 
 void

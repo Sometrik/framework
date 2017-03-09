@@ -11,7 +11,6 @@ import com.android.trivialdrivesample.util.Inventory;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
@@ -26,32 +25,25 @@ import android.content.pm.ConfigurationInfo;
 import android.content.res.AssetManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
-import android.graphics.PointF;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceHolder.Callback;
 import android.view.View;
 import android.view.View.OnTouchListener;
-import android.view.ViewGroup;
-import android.view.Window;
-import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 public class FrameWork extends Activity implements NativeCommandHandler {
@@ -606,10 +598,13 @@ public class FrameWork extends Activity implements NativeCommandHandler {
 
   //Load JNI. Framework references to make file.
   static {
+    System.out.println("Loading native library");
     System.loadLibrary("framework");
+    System.out.println("native library loaded");
   }
   
   public static void handleNativeException(Throwable error){
+    System.out.println("handling error");
     error.printStackTrace();
     System.out.println("error cause: " + error.getCause());
   }

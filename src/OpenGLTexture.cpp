@@ -28,7 +28,6 @@ using namespace canvas;
 
 size_t OpenGLTexture::total_textures = 0;
 vector<unsigned int> OpenGLTexture::freed_textures;
-bool OpenGLTexture::global_init = false;
 bool OpenGLTexture::has_tex_storage = false;
 
 struct format_description_s {
@@ -48,10 +47,10 @@ OpenGLTexture::OpenGLTexture(Surface & surface)
   updateData(image->getData(), 0, 0);
 }
 
-OpenGLTexture::OpenGLTexture(unsigned int _logical_width, unsigned int _logical_height, const ImageData & image)
+OpenGLTexture::OpenGLTexture(unsigned int _logical_width, unsigned int _logical_height, const ImageData & image, FilterMode _min_filter, FilterMode _mag_filter, unsigned int _mipmap_levels, canvas::InternalFormat target_format)
   : Texture(_logical_width, _logical_height,
 	    image.getWidth(), image.getHeight(),
-	    NEAREST, NEAREST, image.getInternalFormat(), 1)
+	    _min_filter, _mag_filter, target_format ? target_format : image.getInternalFormat(), _mipmap_levels)
 {
   assert(getInternalFormat());
   assert(getLogicalWidth() > 0);
@@ -59,6 +58,7 @@ OpenGLTexture::OpenGLTexture(unsigned int _logical_width, unsigned int _logical_
   assert(getActualWidth() > 0);
   assert(getActualHeight() > 0);
   updateData(image, 0, 0);
+  generateMipmaps();
 }
 
 static format_description_s getFormatDescription(InternalFormat internal_format) {
@@ -134,7 +134,7 @@ OpenGLTexture::updateTextureData(const ImageData & image, unsigned int x, unsign
     } else if (hasTexStorage() || is_data_initialized) {
       glTexSubImage2D(GL_TEXTURE_2D, level, x, y, current_width, current_height, fd.format, fd.type, image.getData() + offset);
     } else {
-      glTexImage2D(GL_TEXTURE_2D, level, fd.internalFormat, current_width, current_height, 0, fd.format, fd.type, image.getData() + offset);
+      glTexImage2D(GL_TEXTURE_2D, level, fd.format, current_width, current_height, 0, fd.format, fd.type, image.getData() + offset);
       filled = true;
     }
     
@@ -150,10 +150,7 @@ OpenGLTexture::updateTextureData(const ImageData & image, unsigned int x, unsign
 
 void
 OpenGLTexture::updateData(const ImageData & image, unsigned int x, unsigned int y) {
-  if (!global_init) {
-    global_init = true;
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-  }
+  assert(image.getInternalFormat() != canvas::NO_FORMAT);
 
   releaseTextures();
 
@@ -239,9 +236,9 @@ OpenGLTexture::createTexture(Surface & surface) {
 }
 
 std::unique_ptr<Texture>
-OpenGLTexture::createTexture(Image & image) {
+OpenGLTexture::createTexture(Image & image, FilterMode min_filter, FilterMode mag_filter, unsigned int mipmap_levels, canvas::InternalFormat target_format) {
   auto & data = image.getData();
-  unsigned int lw = (unsigned int)(data.getWidth() * image.getDisplayScale());
-  unsigned int lh = (unsigned int)(data.getHeight() * image.getDisplayScale());
-  return std::unique_ptr<Texture>(new OpenGLTexture(lw, lh, data));
+  unsigned int lw = (unsigned int)(data.getWidth() / image.getDisplayScale());
+  unsigned int lh = (unsigned int)(data.getHeight() / image.getDisplayScale());
+  return std::unique_ptr<Texture>(new OpenGLTexture(lw, lh, data, min_filter, mag_filter, mipmap_levels, target_format));
 }

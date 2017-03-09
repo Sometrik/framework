@@ -23,7 +23,15 @@ public:
  SysEvent(double _timestamp, Type _type) : Event(_timestamp), type(_type) { }
 
   Event * dup() const override { return new SysEvent(*this); }
-  void dispatch(EventHandler & element) override;
+  void dispatch(EventHandler & element) override {
+    if (!isHandled()) {
+      element.onSysEvent(*this);
+      if (isHandled() && !handler) {
+	handler = &element;
+      }
+    }
+    // Do not call super class.
+  }
   bool isBroadcast() const override { return true; }
 
   void setValue(int _value) { value = _value; }

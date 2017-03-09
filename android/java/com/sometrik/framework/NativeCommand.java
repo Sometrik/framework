@@ -1,11 +1,8 @@
 package com.sometrik.framework;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -16,46 +13,32 @@ import com.android.trivialdrivesample.util.IabResult;
 import com.android.trivialdrivesample.util.Inventory;
 import com.android.trivialdrivesample.util.Purchase;
 
-import android.R.style;
 import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
-import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.text.Editable;
 import android.text.Html;
 import android.text.InputType;
-import android.text.TextUtils.TruncateAt;
 import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.view.inputmethod.EditorInfo;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
-import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.PopupMenu.OnMenuItemClickListener;
 import android.widget.ScrollView;
-import android.widget.Switch;
-import android.widget.TableLayout;
 import android.widget.TextView;
 
 public class NativeCommand {
@@ -264,7 +247,7 @@ public class NativeCommand {
       view.addChild(checkBox);
       break;
     case CREATE_OPENGL_VIEW:
-      NativeSurface surface = frame.createNativeOpenGLView(childInternalId);
+      frame.createNativeOpenGLView(childInternalId);
       break;
 
     case CREATE_TEXTVIEW:
@@ -675,46 +658,6 @@ public class NativeCommand {
     System.out.println("message dialog created");
   }
   
-  private FWLayout createDebugResultsScreen(){
-    FWLayout mainLayout = new FWLayout(frame);
-    mainLayout.setOrientation(LinearLayout.VERTICAL);
-    
-    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-    mainLayout.setLayoutParams(params);
-    params.weight = 1;
-    
-    LinearLayout titleLayout = new LinearLayout(frame);
-    LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-    titleLayout.setLayoutParams(params2);
-    titleLayout.setOrientation(LinearLayout.HORIZONTAL);
-    titleLayout.addView(createDebugTextView("Nimi"));
-    titleLayout.addView(createDebugTextView("Etäisyys"));
-    titleLayout.addView(createDebugTextView("Kunta"));
-    titleLayout.addView(createDebugTextView("Auki"));
-    titleLayout.addView(createDebugTextView("Jono"));
-    mainLayout.addView(titleLayout);
-    
-    ScrollView scrollView = new ScrollView(frame);
-
-    FWList list = new FWList(frame, new FWAdapter(frame, null));
-    list.setId(childInternalId);
-    FrameWork.addToViewList(list);
-    list.setLayoutParams(params2);
-    mainLayout.addView(list);
-    
-    return mainLayout;
-  }
-  
-  private TextView createDebugTextView(String text){
-    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-    params.weight = 1;
-    TextView titleView = new TextView(frame);
-    titleView.setTypeface(null, Typeface.BOLD);
-    titleView.setText(text);
-    titleView.setLayoutParams(params);
-    return titleView;
-  }
-
   private void launchPurchase(final String productId) throws IabAsyncInProgressException {
     // Sku = product id from google account
     frame.getPurchaseHelper().launchPurchaseFlow(frame, productId, IabHelper.ITEM_TYPE_INAPP, null, 1, new IabHelper.OnIabPurchaseFinishedListener() {

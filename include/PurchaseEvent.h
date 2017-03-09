@@ -3,6 +3,8 @@
 
 #include <Event.h>
 
+#include <EventHandler.h>
+
 #include <string>
 
 class PurchaseEvent : public Event {
@@ -13,7 +15,15 @@ public:
  PurchaseEvent(double _timestamp, const char * _productId, Type _type, bool _newPurchase) : Event(_timestamp), type(_type), newPurchase(_newPurchase), productId(_productId) { }
 
   Event * dup() const override { return new PurchaseEvent(*this); }
-  void dispatch(EventHandler & element) override;
+  void dispatch(EventHandler & element) override {
+    if (!isHandled()) {
+      element.onPurchaseEvent(*this);
+      if (isHandled() && !handler) {
+	handler = &element;
+      }
+    }
+    Event::dispatch(element);
+  }
   bool isBroadcast() const override { return true; }
   
   Type getType() const { return type; }

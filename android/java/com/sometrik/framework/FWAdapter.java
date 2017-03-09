@@ -3,8 +3,6 @@ package com.sometrik.framework;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.sometrik.vapu.R;
-
 import android.content.Context;
 import android.graphics.Typeface;
 import android.util.Log;

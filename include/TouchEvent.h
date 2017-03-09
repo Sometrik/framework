@@ -14,7 +14,15 @@ public:
    : Event(_timestamp), type(_type), x(0), y(0), identifier(0), flush(_flush) { }
 
   Event * dup() const override { return new TouchEvent(*this); }
-  void dispatch(EventHandler & element) override;
+  void dispatch(EventHandler & evh) override {
+    if (!isHandled()) {
+      evh.onTouchEvent(*this);
+      if (isHandled() && !handler) {
+	handler = &evh;
+      }
+    }
+    Event::dispatch(evh);
+  }
   bool isBroadcast() const override { return true; }
   
   Type getType() const { return type; }
