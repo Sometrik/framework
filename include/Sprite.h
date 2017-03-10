@@ -4,10 +4,12 @@
 #include <memory>
 #include <glm/glm.hpp>
 
+class Texture;
+
 class Sprite {
  public:
-  Sprite();
-  virtual ~Sprite();
+  Sprite() { }
+  virtual ~Sprite() { }
   
   const std::shared_ptr<Texture> & getTexture() const { return texture; }
   void setTexture(const std::shared_ptr<Texture> & _texture) { texture = _texture; }
