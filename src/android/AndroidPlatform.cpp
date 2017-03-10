@@ -239,9 +239,14 @@ AndroidPlatform::renderLoop() {
       postEvent(ev.first, *ev.second.get());
       
       auto ev2 = dynamic_cast<SysEvent*>(ev.second.get());
-      if (ev2 && (ev2->getType() == SysEvent::END_MODAL || ev2->getType() == SysEvent::DESTROY)) {
-        getLogger().println("exiting loop after SysEvent");
-	exit_loop = true;
+      if (ev2) {
+        if (ev2->getType() == SysEvent::END_MODAL) {
+          getLogger().println("exiting loop after SysEvent::END_MODAL");
+          exit_loop = true;
+        } else if (ev2->getType() == SysEvent::DESTROY) {
+          getLogger().println("exiting loop after SysEvent::DESTROY");
+          exit_loop = true;
+        }
       }
 
       if (ev.second.get()->isRedrawNeeded()) {
@@ -479,14 +484,13 @@ void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, job
  }
 
  void Java_com_sometrik_framework_FrameWork_endModal(JNIEnv* env, jobject thiz, double timestamp, int value, jbyteArray jarray) {
-   __android_log_print(ANDROID_LOG_INFO, "Sometrik", "endModal");
    string text;
    if (jarray) {
      jbyte* content_array = env->GetByteArrayElements(jarray, NULL);
      text = string((const char *)content_array, env->GetArrayLength(jarray));
      env->ReleaseByteArrayElements(jarray, content_array, JNI_ABORT);
    }
-   __android_log_print(ANDROID_LOG_INFO, "Sometrik", "endModal: %d %s", value, text.c_str());
+   __android_log_print(ANDROID_LOG_INFO, "Sometrik", "native endModal: %d %s", value, text.c_str());
    SysEvent ev(timestamp, SysEvent::END_MODAL);
    ev.setValue(value);
    ev.setTextValue(text);
