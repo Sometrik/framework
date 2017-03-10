@@ -94,7 +94,9 @@ AndroidPlatform::sendCommand2(const Command & command) {
   if (command.getType() == Command::SHOW_MESSAGE_DIALOG || command.getType() == Command::SHOW_INPUT_DIALOG || command.getType() == Command::SHOW_ACTION_SHEET) {
     modal_result_value = 0;
     modal_result_text = "";
+    __android_log_print(ANDROID_LOG_INFO, "Sometrik", "starting modal run loop");
     renderLoop();
+    __android_log_print(ANDROID_LOG_INFO, "Sometrik", "ending modal run loop");
   }
 }
 
@@ -238,6 +240,7 @@ AndroidPlatform::renderLoop() {
       
       auto ev2 = dynamic_cast<SysEvent*>(ev.second.get());
       if (ev2 && (ev2->getType() == SysEvent::END_MODAL || ev2->getType() == SysEvent::DESTROY)) {
+        getLogger().println("exiting loop after SysEvent");
 	exit_loop = true;
       }
 
@@ -318,21 +321,13 @@ void* AndroidPlatform::threadStartCallback(void *myself) {
   }
 
   JNIEnv * env;
-  __android_log_print(ANDROID_LOG_INFO, "Sometrik", "Piip");
   aplatform->getJavaVM()->AttachCurrentThread(&env, NULL);
-  __android_log_print(ANDROID_LOG_INFO, "Sometrik", "Piip");
-
   FWApplication * application = applicationMain();
-  __android_log_print(ANDROID_LOG_INFO, "Sometrik", "Piip");
   aplatform->addChild(std::shared_ptr<Element>(application));
-  __android_log_print(ANDROID_LOG_INFO, "Sometrik", "Piip");
-
   aplatform->renderLoop();
-  __android_log_print(ANDROID_LOG_INFO, "Sometrik", "Piip");
+  __android_log_print(ANDROID_LOG_INFO, "Sometrik", "Application is exiting");
   aplatform->deinitializeRenderer();
-  __android_log_print(ANDROID_LOG_INFO, "Sometrik", "Piip");
   aplatform->getJavaVM()->DetachCurrentThread();
-  __android_log_print(ANDROID_LOG_INFO, "Sometrik", "Piip");
   
   return 0;
 }
