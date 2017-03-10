@@ -83,6 +83,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   public native void intChangedEvent(double timestamp, int id, int changedInt);
   public native void keyPressed(double timestamp, int keyId, int viewId);
   public native void touchEvent(int viewId, int mode, int fingerIndex, double timestamp, float x, float y);
+  public native void flushTouchEvent(double timestamp, int viewId, int mode);
   public native void onInit(AssetManager assetManager, float xSize, float ySize, float displayScale, String email, String language, String country);
   public native void nativeSetSurface(Surface surface, int surfaceId, int gl_version);
   public native void nativeSurfaceDestroyed(double timestamp, int surfaceId, int gl_version);
@@ -374,15 +375,11 @@ public class FrameWork extends Activity implements NativeCommandHandler {
 
       //Touch event of screen touch-down for the first finger
       case MotionEvent.ACTION_DOWN:
-	
-//	System.out.println("Liike alkoi: " + event.getX() + " " + event.getY() + " - id: " + event.getActionIndex() + " time: " + System.currentTimeMillis());
-	touchEvent(viewId, 1, event.getActionIndex(), System.currentTimeMillis() / 1000.0, (int) event.getX(), (int) (event.getRawY() + windowYcoords));
-
-	break;
 	//Touch event of screen touch-down after the first touch
       case MotionEvent.ACTION_POINTER_DOWN:
 //	System.out.println("Liike alkoi: " + event.getX() + " " + event.getY() + " - id: " + event.getActionIndex());
 	touchEvent(viewId, 1, event.getActionIndex(), System.currentTimeMillis() / 1000.0, (int) event.getX(), (int) (event.getRawY() + windowYcoords));
+	flushTouchEvent(System.currentTimeMillis() / 1000.0, viewId, 1);
 	break;
 
 	//Touch event of finger moving
@@ -395,12 +392,14 @@ public class FrameWork extends Activity implements NativeCommandHandler {
 
 	      touchEvent(viewId, 2, pointerId, System.currentTimeMillis() / 1000.0, (int) event.getX(), (int) (event.getRawY() + windowYcoords));
 	}
+	flushTouchEvent(System.currentTimeMillis() / 1000.0, viewId, 2);
 	break;
 	//touch event of first finger being removed from the screen
       case MotionEvent.ACTION_UP:
 	//touch event of fingers other than the first leaving the screen
       case MotionEvent.ACTION_POINTER_UP:
 	  touchEvent(viewId, 3, event.getActionIndex(), System.currentTimeMillis() / 1000.0, (int) event.getX(), (int) (event.getRawY() + windowYcoords));
+  	  flushTouchEvent(System.currentTimeMillis() / 1000.0, viewId, 3);
 	break;
       }
       return true;

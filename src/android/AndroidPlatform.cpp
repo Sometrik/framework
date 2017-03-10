@@ -411,6 +411,29 @@ void Java_com_sometrik_framework_FrameWork_touchEvent(JNIEnv* env, jobject thiz,
   }
 }
 
+void Java_com_sometrik_framework_FrameWork_flushTouchEvent(JNIEnv* env, jobject thiz, double timestamp, int viewId, int mode) {
+  switch (mode) {
+  case 1:
+    {
+      TouchEvent ev(timestamp, TouchEvent::ACTION_DOWN, true);
+      platform->queueEvent(viewId, ev);
+    }
+    break;
+  case 2:
+    {
+      TouchEvent ev(timestamp, TouchEvent::ACTION_DRAG, true);
+      platform->queueEvent(viewId, ev);
+    }
+    break;
+  case 3:
+    {
+      TouchEvent ev(timestamp, TouchEvent::ACTION_UP, true);
+      platform->queueEvent(viewId, ev);
+    }
+    break;
+  }
+}
+
 void Java_com_sometrik_framework_FrameWork_onUpdate(JNIEnv* env, jclass clazz, double timestamp, int viewId) {
   UpdateEvent ev(timestamp);
   platform->queueEvent(viewId, ev);
