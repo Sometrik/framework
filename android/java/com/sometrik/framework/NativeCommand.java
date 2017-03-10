@@ -31,6 +31,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.inputmethod.EditorInfo;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -347,6 +348,7 @@ public class NativeCommand {
       break;
     case CREATE_ACTIONBAR:
       //TODO not everything is set
+      frame.requestWindowFeature(Window.FEATURE_ACTION_BAR);
       ActionBar ab = frame.getActionBar();
       ab.setTitle(textValue);
       break;

@@ -40,6 +40,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceHolder.Callback;
 import android.view.View;
 import android.view.View.OnTouchListener;
+import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.InputMethodManager;
@@ -120,7 +121,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
     System.out.println("Users preferred locale: " + defaultLocale.getCountry() + " Language: " + defaultLocale.getLanguage());
     
     // You can disable status bar with this
-//    this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+    this.requestWindowFeature(Window.FEATURE_NO_TITLE);
     
     // Init for screen settings
     setupDisplayMetrics();
@@ -392,7 +393,6 @@ public class FrameWork extends Activity implements NativeCommandHandler {
 	  pointerIndex = i;
 	  int pointerId = event.getPointerId(pointerIndex);
 
-	     System.out.println("finger move. FingerId: " + pointerId);
 	      touchEvent(viewId, 2, pointerId, System.currentTimeMillis(), (int) event.getX(), (int) (event.getRawY() + windowYcoords));
 	}
 	break;
