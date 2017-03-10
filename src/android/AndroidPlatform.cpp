@@ -386,25 +386,25 @@ void Java_com_sometrik_framework_FrameWork_keyPressed(JNIEnv* env, jobject thiz,
   }
 }
 
-void Java_com_sometrik_framework_FrameWork_touchEvent(JNIEnv* env, jobject thiz, int viewId, int mode, int fingerIndex, long time, float x, float y) {
+void Java_com_sometrik_framework_FrameWork_touchEvent(JNIEnv* env, jobject thiz, int viewId, int mode, int fingerIndex, double timestamp, float x, float y) {
   x /= platform->getDisplayScale();
   y /= platform->getDisplayScale();
   switch (mode) {
   case 1:
     {
-      TouchEvent ev(time / 1000.0, TouchEvent::ACTION_DOWN, x, y, fingerIndex);
+      TouchEvent ev(timestamp, TouchEvent::ACTION_DOWN, x, y, fingerIndex);
       platform->queueEvent(viewId, ev);
     }
     break;
   case 2:
     {
-      TouchEvent ev(time / 1000.0, TouchEvent::ACTION_DRAG, x, y, fingerIndex);
+      TouchEvent ev(timestamp, TouchEvent::ACTION_DRAG, x, y, fingerIndex);
       platform->queueEvent(viewId, ev);
     }
     break;
   case 3:
     {
-      TouchEvent ev(time / 1000.0, TouchEvent::ACTION_UP, x, y, fingerIndex);
+      TouchEvent ev(timestamp, TouchEvent::ACTION_UP, x, y, fingerIndex);
       platform->queueEvent(viewId, ev);
     }
     break;
