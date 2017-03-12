@@ -65,7 +65,7 @@ static format_description_s getFormatDescription(InternalFormat internal_format)
   switch (internal_format) {
   case NO_FORMAT: return { 0, 0, 0 };
   case R8: return { GL_R8, GL_RED, GL_UNSIGNED_BYTE };
-  case RG8: return { GL_RG8, GL_RG, GL_UNSIGNED_BYTE };
+  case RG8: return { GL_RG8, GL_RG, GL_UNSIGNED_BYTE }; // not valid for ES2
   case RGB565: return { GL_RGB565, GL_RGB, GL_UNSIGNED_SHORT_5_6_5 };
   case RGBA4: return { GL_RGBA4, GL_RGBA, GL_UNSIGNED_SHORT_4_4_4_4 };
   case RGBA8: 
@@ -92,9 +92,9 @@ static format_description_s getFormatDescription(InternalFormat internal_format)
   case RGB_ETC1: return { GL_COMPRESSED_RGB8_ETC2, GL_RGB, 0 };
   case RGB_DXT1: return { GL_COMPRESSED_RGB_S3TC_DXT1_EXT, GL_RGB, 0 };
   case RGBA_DXT5: return { GL_COMPRESSED_RGBA_S3TC_DXT5_EXT, GL_RGBA, 0 };
-  case LUMINANCE_ALPHA: return { GL_RG8, GL_RG, GL_UNSIGNED_BYTE };
+  case LUMINANCE_ALPHA: return { GL_RG8, GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE };
   case LA44: // pack luminance and alpha to single byte
-    return { GL_R8, GL_RED, GL_UNSIGNED_BYTE };
+    return { GL_R8, GL_LUMINANCE, GL_UNSIGNED_BYTE };
   case R32F: return { GL_R32F, GL_RED, GL_FLOAT };
   default:
     break;
