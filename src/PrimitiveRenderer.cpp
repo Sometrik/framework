@@ -113,8 +113,6 @@ PrimitiveRenderer::initializeBase() {
 
   // EXT_texture_rg : RED and RG modes
 
-  bool is_modern = false;
-
   const char * version_str = (const char *)glGetString(GL_VERSION);
   if (version_str) { 
     // OpenGL ES 3.0 Apple A7 GPU - 75.9.3
@@ -145,8 +143,8 @@ PrimitiveRenderer::initializeBase() {
   }
 
   if (is_modern) {
-    // has_instancing = true;
-    // VBO::setHasInstancing(true);
+    has_instancing = true;
+    VBO::setHasInstancing(true);
     VBO::setHasVertexArrayObjects(true);
     OpenGLTexture::setHasTexStorage(true);
   }

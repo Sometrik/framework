@@ -44,6 +44,7 @@ class PrimitiveRenderer {
   bool hasRGTC() const { return has_rgtc; }
   bool hasRGB565() const { return has_rgb565; }
   bool hasInstancing() const { return has_instancing; }
+  bool isModern() const { return is_modern; }
 
   float getDisplayScale() const { return display_scale; }
   void setDisplayScale(float f) { display_scale = f; }
@@ -96,7 +97,7 @@ class PrimitiveRenderer {
   glm::ivec2 current_display_size;
   float display_scale = 1.0f;
   int current_texture_2d = 0, current_vertex_array = 0, current_program = 0;
-  bool is_es3 = false, has_instancing = false;
+  bool is_modern = false, is_es3 = false, has_instancing = false;
   unsigned int screen_width = 0, screen_height = 0, actual_screen_width = 0, actual_screen_height = 0;
   glm::vec3 clear_color;
 };
