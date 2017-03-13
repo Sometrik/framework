@@ -292,7 +292,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
     surfaceView.setLayoutParams(new FrameLayout.LayoutParams((int)screenWidth, (int)screenHeight));
     surfaceView.setOnTouchListener(new MyOnTouchListener(this, id));
     SurfaceHolder holder = surfaceView.getHolder();
-    holder.setFixedSize((int)screenWidth, (int)screenHeight);
+//    holder.setFixedSize((int)screenWidth, (int)screenHeight);
 	holder.addCallback(new Callback() {
       public void surfaceDestroyed(SurfaceHolder holder) {
 	System.out.println("surfaceDestroyed");
@@ -302,8 +302,10 @@ public class FrameWork extends Activity implements NativeCommandHandler {
       public void surfaceCreated(SurfaceHolder holder) { }
 
       public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-	System.out.println("setting native surface");
+	System.out.println("setting native surface. Width: " + width + " height: " + height);
+	System.out.println("screen width: " + screenWidth + " screenHeight: " + screenHeight);
 	nativeSetSurface(holder.getSurface(), id, gl_version);
+	onResize(System.currentTimeMillis() / 1000.0, width, height, currentView);
 	System.out.println("native surface has been set");
       }
     });
@@ -491,19 +493,19 @@ public class FrameWork extends Activity implements NativeCommandHandler {
       defaultLocale = locale;
     }
 
+    displayMetrics = setupDisplayMetrics();
     // super.onConfigurationChanged(newConfig);
     System.out.println("onConfigChange");
     boolean isLandscape = false;
     if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
       System.out.println("Orientation conf portrait");
       isLandscape = false;
-      onResize(System.currentTimeMillis() / 1000.0, screenHeight, screenHeight, currentView);
+      onResize(System.currentTimeMillis() / 1000.0, screenWidth, screenHeight, currentView);
     } else if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
       System.out.println("Orientation conf landscape");
       isLandscape = true;
-      onResize(System.currentTimeMillis() / 1000.0, screenHeight, screenHeight, currentView);
+      onResize(System.currentTimeMillis() / 1000.0, screenWidth, screenHeight, currentView);
     }
-    displayMetrics = setupDisplayMetrics();
     super.onConfigurationChanged(newConfig);
     
     for (NativeCommandHandler handler : views.values()){
