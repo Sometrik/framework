@@ -36,7 +36,7 @@ public:
   }
 
   JNIEnv * getJNIEnv() {
-    __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Canvas getJNIENv called");
+    __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "cache getJNIENv called");
     if (javaVM == NULL){
       __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "VM is null");
     }
