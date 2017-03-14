@@ -123,7 +123,7 @@ public:
   }
 
   void pushEvent(const Event & ev) {
-    queueEvent(0, ev);
+    queueEvent(getInternalId(), ev);
   }
 
   void onOpenGLInitEvent(OpenGLInitEvent & _ev) override;
