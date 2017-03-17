@@ -104,8 +104,8 @@ public:
   }
 #endif
 
-  std::shared_ptr<Logger> createLogger(const std::string & name) const override {
-    return std::make_shared<AndroidLogger>(name);
+  std::unique_ptr<Logger> createLogger(const std::string & name) const override {
+    return std::unique_ptr<Logger>(new AndroidLogger(name));
   }
   void sendCommand2(const Command & command) override;
   bool initializeRenderer(int opengl_es_version, ANativeWindow * _window);

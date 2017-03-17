@@ -100,8 +100,8 @@ class FWPlatform : public Element {
   void terminateThreads();
   void disconnectThreads();
 
-  virtual std::shared_ptr<Logger> createLogger(const std::string & name) const {
-    return std::make_shared<BasicLogger>(name);
+  virtual std::unique_ptr<Logger> createLogger(const std::string & name) const {
+    return std::unique_ptr<Logger>(new BasicLogger(name));
   }
 
   virtual double getTime() const;
