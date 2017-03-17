@@ -39,11 +39,6 @@ Runnable::getThread() const {
   assert(thread);
   return *thread;
 }
-
-void
-Runnable::logMessage(const char * message) {
-  getThread().logMessage(message);
-}
   
 FWPlatform &
 Runnable::getPlatform() {

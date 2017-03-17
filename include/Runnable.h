@@ -27,10 +27,7 @@ class Runnable : public EventHandler {
   void sendEvent(const Event & ev) {
     event_queue.push(0, ev);
   }
-    
-  void logMessage(const std::string & message) { logMessage(message.c_str()); }
-  void logMessage(const char * message);
-    
+        
  protected:
   FWPlatform & getPlatform();
   const FWPlatform & getPlatform() const;
