@@ -3,9 +3,11 @@
 
 #include "EventHandler.h"
 
-#include <string>
 #include <EventQueue.h>
 #include <FWPlatform.h>
+#include <Mutex.h>
+
+#include <string>
 
 class PlatformThread;
 class Event;
@@ -27,6 +29,8 @@ class Runnable : public EventHandler {
   void sendEvent(const Event & ev) {
     event_queue.push(0, ev);
   }
+
+  bool isRunning() const;
         
  protected:
   FWPlatform & getPlatform();
@@ -38,6 +42,8 @@ class Runnable : public EventHandler {
 
  private:
   PlatformThread * thread = 0;
+  bool is_running = false;
+  mutable Mutex mutex;
 };
 
 #endif
