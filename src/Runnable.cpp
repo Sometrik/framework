@@ -5,7 +5,6 @@
 #include <SysEvent.h>
 
 #include <cassert>
-#include <iostream>
 
 using namespace std;
 
@@ -16,12 +15,7 @@ Runnable::start(PlatformThread * _thread) {
   try {
     run();
   } catch (exception & e) {
-    cerr << "thread died after exception\n";
-
-    SysEvent ev(0.0, SysEvent::THREAD_TERMINATED);
-    ev.setThread(thread);
-    postEvent(ev);
-    throw e;
+    getPlatform().getLogger().println("Runnable: received an exception: " + string(e.what()));
   }
   SysEvent ev(getPlatform().getTime(), SysEvent::THREAD_TERMINATED);
   ev.setThread(thread);
