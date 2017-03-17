@@ -140,8 +140,9 @@ class FWPlatform : public Element {
     return *logger;
   }
 
- protected:
+  void dumpThreads() const;
 
+ protected:
 
 #ifdef HAS_SOUNDCANVAS
   virtual std::shared_ptr<SoundCanvas> createSoundCanvas() const {

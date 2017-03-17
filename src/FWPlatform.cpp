@@ -131,14 +131,17 @@ FWPlatform::disconnectThreads() {
 void
 FWPlatform::onSysEvent(SysEvent & ev) {
   if (ev.getType() == SysEvent::THREAD_TERMINATED) {
+    bool is_affected = false;
     for (auto it = threads.begin(); it != threads.end(); it++) {
       PlatformThread * thread = it->get();
       if (thread == ev.getThread()) {
 	threads.erase(it);
 	num_running_threads--;
+	is_affected = true;
 	break;
       }
     }
+    assert(is_affected);
   }
 }
 
@@ -163,5 +166,14 @@ FWPlatform::postEvent(int internal_id, Event & ev) {
     std::ostringstream s;
     s << "Failed to dispatch event " << typeid(ev).name() << " id: " << internal_id;
     getLogger().println(s.str());
+  }
+}
+
+void
+FWPlatform::dumpThreads() const {
+  cerr << "threads:\n";
+  for (auto & t : threads) {
+    auto & r = t->getRunnable();
+    cerr << "  " << typeid(r).name() << endl;
   }
 }
