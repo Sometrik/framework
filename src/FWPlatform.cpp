@@ -44,10 +44,6 @@ public:
     // platform = 0;
   }
 
-  void logMessage(const char * message) override {
-    // wxLogMessage(wxString::FromUTF8(message));
-  }
-
   // void postEventToThread(Event & event) {
   //   event.dispatch(getRunnable());
   // }

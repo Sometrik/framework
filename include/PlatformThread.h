@@ -20,7 +20,6 @@ class PlatformThread {
   virtual void sendEventFromThread(const Event & ev) = 0;
   virtual void terminate() = 0;
   virtual void disconnect() = 0;
-  virtual void logMessage(const char * message) = 0;
   virtual void sleep(float t) = 0;
   virtual void alert(const char * message) { }
   
