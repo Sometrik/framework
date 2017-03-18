@@ -83,7 +83,6 @@ class FWPlatform : public Element {
   int getActiveViewId() const { return activeViewId; }
 
   virtual void createFBO(int flags) { }
-  virtual std::string showTextEntryDialog(const std::string & title, const std::string & message) = 0;
 
   int getModalResultValue() const { return modal_result_value; }
   const std::string & getModalResultText() const { return modal_result_text; }

@@ -411,10 +411,6 @@ public:
     return s + filename;
   }
 
-  std::string showTextEntryDialog(const std::string & title, const std::string & message) override {
-    return "";
-  }
-
   void activate(GtkApplication * _app) {
     app = _app;
         

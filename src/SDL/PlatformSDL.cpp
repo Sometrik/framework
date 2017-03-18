@@ -215,8 +215,6 @@ public:
     }
   }
 
-  std::string showTextEntryDialog(const std::string & title, const std::string & message) override { return ""; }
-
 private:
   bool button_pressed = false;
   int mouse_x = 0, mouse_y = 0;
