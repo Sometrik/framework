@@ -42,7 +42,7 @@ class Runnable : public EventHandler {
 
  private:
   PlatformThread * thread = 0;
-  bool is_running = false;
+  bool is_running = true;
   mutable Mutex mutex;
 };
 

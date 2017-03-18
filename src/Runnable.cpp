@@ -12,10 +12,6 @@ void
 Runnable::start(PlatformThread * _thread) {
   assert(_thread);
   thread = _thread;
-  {
-    MutexLocker l(mutex);
-    is_running = true;
-  }
   try {
     run();
   } catch (exception & e) {
