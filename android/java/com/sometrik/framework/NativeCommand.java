@@ -601,12 +601,12 @@ public class NativeCommand {
     });
 
     // Negative button listener
- //   builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
- //     public void onClick(DialogInterface dialog, int id) {
-//	frame.endModal(System.currentTimeMillis() / 1000.0, 0, null);
-//	dialog.cancel();
-//      }
-//    });
+    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+      public void onClick(DialogInterface dialog, int id) {
+	frame.endModal(System.currentTimeMillis() / 1000.0, 0, null);
+	dialog.dismiss();
+      }
+    });
 
     // Positive button listener
     builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
