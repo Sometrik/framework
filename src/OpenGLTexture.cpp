@@ -64,7 +64,7 @@ OpenGLTexture::OpenGLTexture(unsigned int _logical_width, unsigned int _logical_
 static format_description_s getFormatDescription(InternalFormat internal_format) {
   switch (internal_format) {
   case NO_FORMAT: return { 0, 0, 0 };
-  case R8: return { GL_R8, GL_RED, GL_UNSIGNED_BYTE };
+  case R8: return { GL_R8, GL_LUMINANCE, GL_UNSIGNED_BYTE };
   case RG8: return { GL_RG8, GL_RG, GL_UNSIGNED_BYTE }; // not valid for ES2
   case RGB565: return { GL_RGB565, GL_RGB, GL_UNSIGNED_SHORT_5_6_5 };
   case RGBA4: return { GL_RGBA4, GL_RGBA, GL_UNSIGNED_SHORT_4_4_4_4 };
