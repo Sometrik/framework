@@ -61,7 +61,7 @@ FNDEF(void, glColorPointer, (GLint size, GLenum type, GLsizei stride, const GLvo
 //FNDEF(void, glDisable, (GLenum cap));
 FNDEF(void, glDisableClientState, (GLenum array));
 //FNDEF(void, glDrawArrays, (GLenum mode, GLint first, GLsizei count));
-FNDEF(void, glEnable, (GLenum cap));
+//FNDEF(void, glEnable, (GLenum cap));
 FNDEF(void, glEnableClientState, (GLenum array));
 FNDEF(void, glFrustumx, (GLfixed left, GLfixed right, GLfixed bottom, GLfixed top, GLfixed zNear, GLfixed zFar));
 //FNDEF(GLenum, glGetError, (void));
@@ -81,6 +81,14 @@ FNDEF(void, glTranslatex, (GLfixed x, GLfixed y, GLfixed z));
 FNDEF(void, glVertexPointer, (GLint size, GLenum type, GLsizei stride, const GLvoid *pointer));
 //FNDEF(void, glViewport, (GLint x, GLint y, GLsizei width, GLsizei height));
 //FNDEF(void, glBindBuffer, (GLenum target, GLuint buffer));
+FNDEF(void, glBindVertexArray, (GLuint array));
+FNDEF(void, glInvalidateFramebuffer, (GLenum target, GLsizei numAttachments, const GLenum *attachments));
+FNDEF(void, glDeleteVertexArrays, (GLsizei n, const GLuint *arrays));
+FNDEF(void, glDrawArraysInstanced, (GLenum mode, GLint first, GLsizei count, GLsizei primcount));
+FNDEF(void, glGenVertexArrays, (GLsizei n, GLuint *arrays));
+FNDEF(void, glVertexAttribDivisor, (GLuint index, GLuint divisor));
+FNDEF(void, glTexStorage2D, (GLenum target, GLsizei levels, GLenum internalformat, GLsizei width, GLsizei height));
+
 
 
 #undef FN
@@ -115,7 +123,7 @@ FNDEF(void, glVertexPointer, (GLint size, GLenum type, GLsizei stride, const GLv
 //#define glDisable               FNPTR(glDisable)
 #define glDisableClientState    FNPTR(glDisableClientState)
 //#define glDrawArrays            FNPTR(glDrawArrays)
-#define glEnable                FNPTR(glEnable)
+//#define glEnable                FNPTR(glEnable)
 #define glEnableClientState     FNPTR(glEnableClientState)
 #define glFrustumx              FNPTR(glFrustumx)
 #define glGetError              FNPTR(glGetError)
@@ -135,6 +143,13 @@ FNDEF(void, glVertexPointer, (GLint size, GLenum type, GLsizei stride, const GLv
 #define glVertexPointer         FNPTR(glVertexPointer)
 //#define glViewport              FNPTR(glViewport)
 //#define glBindBuffer            FNPTR(glBindBuffer)
+#define glBindVertexArray       FNPTR(glBindVertexArray)
+#define glInvalidateFramebuffer       FNPTR(glInvalidateFramebuffer)
+#define glDeleteVertexArrays       FNPTR(glDeleteVertexArrays)
+#define glDrawArraysInstanced       FNPTR(glDrawArraysInstanced)
+#define glGenVertexArrays       FNPTR(glGenVertexArrays)
+#define glVertexAttribDivisor       FNPTR(glVertexAttribDivisor)
+#define glTexStorage2D       FNPTR(glTexStorage2D)
 
 #endif // !IMPORTGL_NO_FNPTR_DEFS
 

@@ -104,7 +104,7 @@ int importGLInit()
 //    IMPORT_FUNC(glDisable);
     IMPORT_FUNC(glDisableClientState);
 //    IMPORT_FUNC(glDrawArrays);
-    IMPORT_FUNC(glEnable);
+//    IMPORT_FUNC(glEnable);
     IMPORT_FUNC(glEnableClientState);
     IMPORT_FUNC(glFrustumx);
     IMPORT_FUNC(glLightxv);
@@ -123,6 +123,13 @@ int importGLInit()
     IMPORT_FUNC(glVertexPointer);
 //    IMPORT_FUNC(glViewport);
 //    IMPORT_FUNC(glBindBuffer);
+    IMPORT_FUNC(glBindVertexArray);
+    IMPORT_FUNC(glInvalidateFramebuffer);
+    IMPORT_FUNC(glDeleteVertexArrays);
+    IMPORT_FUNC(glDrawArraysInstanced);
+    IMPORT_FUNC(glGenVertexArrays);
+    IMPORT_FUNC(glVertexAttribDivisor);
+    IMPORT_FUNC(glTexStorage2D);
 
 #endif /* DISABLE_IMPORTGL */
 
