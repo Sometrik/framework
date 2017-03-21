@@ -46,9 +46,9 @@ int importGLInit()
 #undef IMPORT_FUNC
 
 #ifdef WIN32
-    sGLESDLL = LoadLibrary(_T("libGLES_CM.dll"));
+    sGLESDLL = LoadLibrary(_T("lGLESv2"));
     if (sGLESDLL == NULL)
-        sGLESDLL = LoadLibrary(_T("libGLES_CL.dll"));
+        sGLESDLL = LoadLibrary(_T("lGLESv2"));
     if (sGLESDLL == NULL)
         return 0;   // Cannot find OpenGL ES Common or Common Lite DLL.
 
@@ -65,7 +65,9 @@ int importGLInit()
 
 #ifdef LINUX
 #ifdef __ANDROID__
-    sGLESSO = dlopen("libGLESv1_CM.so", RTLD_NOW);
+//    sGLESSO = dlopen("libGLESv3_CM.so", RTLD_NOW);
+//    sGLESSO = dlopen("libGLESv3.so", RTLD_NOW);
+    sGLESSO = dlopen("libGLESv3", RTLD_NOW);
 #else /* !__ANDROID__ */
     sGLESSO = dlopen("libGLES_CM.so", RTLD_NOW);
     if (sGLESSO == NULL)
@@ -80,49 +82,6 @@ int importGLInit()
         *((void **)&FNPTR(funcName)) = procAddress; } while (0)
 #endif // LINUX
 
-#ifndef __ANDROID__
-    IMPORT_FUNC(eglChooseConfig);
-    IMPORT_FUNC(eglCreateContext);
-    IMPORT_FUNC(eglCreateWindowSurface);
-    IMPORT_FUNC(eglDestroyContext);
-    IMPORT_FUNC(eglDestroySurface);
-    IMPORT_FUNC(eglGetConfigAttrib);
-    IMPORT_FUNC(eglGetConfigs);
-    IMPORT_FUNC(eglGetDisplay);
-    IMPORT_FUNC(eglGetError);
-    IMPORT_FUNC(eglInitialize);
-    IMPORT_FUNC(eglMakeCurrent);
-    IMPORT_FUNC(eglSwapBuffers);
-    IMPORT_FUNC(eglTerminate);
-#endif /* !__ANDROID__ */
-
-//    IMPORT_FUNC(glBlendFunc);
-//    IMPORT_FUNC(glClear);
-    IMPORT_FUNC(glClearColorx);
-    IMPORT_FUNC(glColor4x);
-    IMPORT_FUNC(glColorPointer);
-//    IMPORT_FUNC(glDisable);
-    IMPORT_FUNC(glDisableClientState);
-//    IMPORT_FUNC(glDrawArrays);
-//    IMPORT_FUNC(glEnable);
-    IMPORT_FUNC(glEnableClientState);
-    IMPORT_FUNC(glFrustumx);
-    IMPORT_FUNC(glLightxv);
-    IMPORT_FUNC(glLoadIdentity);
-    IMPORT_FUNC(glMaterialx);
-    IMPORT_FUNC(glMaterialxv);
-    IMPORT_FUNC(glMatrixMode);
-    IMPORT_FUNC(glMultMatrixx);
-    IMPORT_FUNC(glNormalPointer);
-    IMPORT_FUNC(glPopMatrix);
-    IMPORT_FUNC(glPushMatrix);
-    IMPORT_FUNC(glRotatex);
-    IMPORT_FUNC(glScalex);
-    IMPORT_FUNC(glShadeModel);
-    IMPORT_FUNC(glTranslatex);
-    IMPORT_FUNC(glVertexPointer);
-//    IMPORT_FUNC(glViewport);
-//    IMPORT_FUNC(glBindBuffer);
     IMPORT_FUNC(glBindVertexArray);
     IMPORT_FUNC(glInvalidateFramebuffer);
     IMPORT_FUNC(glDeleteVertexArrays);
