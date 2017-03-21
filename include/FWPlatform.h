@@ -17,9 +17,12 @@
 #include <memory>
 #include <list>
 
+#ifndef NO_CANVAS
 namespace canvas {
   class ContextFactory;
 };
+#endif
+
 class HTTPClientFactory;
 class Runnable;
 class PlatformThread;
@@ -41,7 +44,9 @@ class FWPlatform : public Element {
   
   virtual std::string getBundleFilename(const char * filename) = 0;
   virtual std::string getLocalFilename(const char * filename, FileType type) = 0;
+#ifndef NO_CANVAS
   virtual std::unique_ptr<canvas::ContextFactory> createContextFactory() const = 0;
+#endif
   virtual std::unique_ptr<HTTPClientFactory> createHTTPClientFactory() const = 0;
   virtual void pushEvent(const Event & ev) = 0;
   virtual void setCursor(const std::string & cursor) { }
