@@ -88,6 +88,7 @@ int importGLInit()
     IMPORT_FUNC(glDrawArraysInstanced);
     IMPORT_FUNC(glGenVertexArrays);
     IMPORT_FUNC(glVertexAttribDivisor);
+    //This should propably be something different
     IMPORT_FUNC(glTexStorage2D);
 
 #endif /* DISABLE_IMPORTGL */
