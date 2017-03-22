@@ -6,6 +6,15 @@
 
 using namespace std;
 
+
+#ifndef GL_HALF_FLOAT
+#define GL_HALF_FLOAT 0
+#endif
+
+#ifndef GL_INT_2_10_10_10_REV
+#define GL_INT_2_10_10_10_REV 0
+#endif
+
 bool VBO::has_vertex_array_objects = false;
 bool VBO::has_instancing = false;
 

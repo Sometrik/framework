@@ -4,6 +4,7 @@
 #include <Texture.h>
 
 #include <InternalFormat.h>
+#include <GL.h>
 
 #include <memory>
 #include <vector>
