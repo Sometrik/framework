@@ -43,7 +43,7 @@ public class NativeSurface extends SurfaceView implements NativeCommandHandler {
     
     float width = w;
     float height = h;
-    FrameWork.onResize(System.currentTimeMillis() / 1000.0, width, height, getId());
+//    FrameWork.onResize(System.currentTimeMillis() / 1000.0, width, height, getId());
     
   }
 
