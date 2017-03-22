@@ -82,14 +82,110 @@ int importGLInit()
         *((void **)&FNPTR(funcName)) = procAddress; } while (0)
 #endif // LINUX
 
-    IMPORT_FUNC(glBindVertexArray);
-    IMPORT_FUNC(glInvalidateFramebuffer);
-    IMPORT_FUNC(glDeleteVertexArrays);
-    IMPORT_FUNC(glDrawArraysInstanced);
-    IMPORT_FUNC(glGenVertexArrays);
-    IMPORT_FUNC(glVertexAttribDivisor);
-    //This should propably be something different
-    IMPORT_FUNC(glTexStorage2D);
+#ifndef __ANDROID__
+  IMPORT_FUNC(eglChooseConfig);
+  IMPORT_FUNC(eglCreateContext);
+  IMPORT_FUNC(eglCreateWindowSurface);
+  IMPORT_FUNC(eglDestroyContext);
+  IMPORT_FUNC(eglDestroySurface);
+  IMPORT_FUNC(eglGetConfigAttrib);
+  IMPORT_FUNC(eglGetConfigs);
+  IMPORT_FUNC(eglGetDisplay);
+  IMPORT_FUNC(eglGetError);
+  IMPORT_FUNC(eglInitialize);
+  IMPORT_FUNC(eglMakeCurrent);
+  IMPORT_FUNC(eglSwapBuffers);
+  IMPORT_FUNC(eglTerminate);
+#endif /* !__ANDROID__ */
+
+  IMPORT_FUNC(glBlendFunc);
+  IMPORT_FUNC(glClear);
+//  IMPORT_FUNC(glClearColorx);
+  IMPORT_FUNC(glColor4x);
+  IMPORT_FUNC(glColorPointer);
+  IMPORT_FUNC(glDisable);
+  IMPORT_FUNC(glDisableClientState);
+  IMPORT_FUNC(glDrawArrays);
+  IMPORT_FUNC(glEnable);
+  IMPORT_FUNC(glEnableClientState);
+  IMPORT_FUNC(glFrustumx);
+  IMPORT_FUNC(glGetError);
+  IMPORT_FUNC(glLightxv);
+  IMPORT_FUNC(glLoadIdentity);
+  IMPORT_FUNC(glMaterialx);
+  IMPORT_FUNC(glMaterialxv);
+  IMPORT_FUNC(glMatrixMode);
+  IMPORT_FUNC(glMultMatrixx);
+  IMPORT_FUNC(glNormalPointer);
+  IMPORT_FUNC(glPopMatrix);
+  IMPORT_FUNC(glPushMatrix);
+  IMPORT_FUNC(glRotatex);
+  IMPORT_FUNC(glScalex);
+  IMPORT_FUNC(glShadeModel);
+  IMPORT_FUNC(glTranslatex);
+  IMPORT_FUNC(glVertexPointer);
+  IMPORT_FUNC(glViewport);
+  IMPORT_FUNC(glAttachShader);
+  IMPORT_FUNC(glBindAttribLocation);
+  IMPORT_FUNC(glActiveTexture);
+  IMPORT_FUNC(glBindBuffer);
+  IMPORT_FUNC(glBindTexture);
+  IMPORT_FUNC(glBufferData);
+  IMPORT_FUNC(glColorMask);
+  IMPORT_FUNC(glCompileShader);
+  IMPORT_FUNC(glCompressedTexImage2D);
+  IMPORT_FUNC(glCompressedTexSubImage2D);
+  IMPORT_FUNC(glCreateProgram);
+  IMPORT_FUNC(glCreateShader);
+  IMPORT_FUNC(glDeleteTextures);
+  IMPORT_FUNC(glDrawElements);
+  IMPORT_FUNC(glDisableVertexAttribArray);
+  IMPORT_FUNC(glEnableVertexAttribArray);
+  IMPORT_FUNC(glGenBuffers);
+  IMPORT_FUNC(glDepthMask);
+  IMPORT_FUNC(glDetachShader);
+  IMPORT_FUNC(glGetProgramInfoLog);
+  IMPORT_FUNC(glGetProgramiv);
+  IMPORT_FUNC(glGetShaderInfoLog);
+  IMPORT_FUNC(glGenerateMipmap);
+  IMPORT_FUNC(glGenTextures);
+  IMPORT_FUNC(glGetIntegerv);
+  IMPORT_FUNC(glGetString);
+  IMPORT_FUNC(glLineWidth);
+  IMPORT_FUNC(glClearColor);
+  IMPORT_FUNC(glDeleteBuffers);
+  IMPORT_FUNC(glDeleteProgram);
+  IMPORT_FUNC(glDeleteShader);
+  IMPORT_FUNC(glGetShaderiv);
+  IMPORT_FUNC(glGetUniformLocation);
+  IMPORT_FUNC(glLinkProgram);
+  IMPORT_FUNC(glPixelStorei);
+  IMPORT_FUNC(glPolygonOffset);
+  IMPORT_FUNC(glShaderSource);
+  IMPORT_FUNC(glStencilFuncSeparate);
+  IMPORT_FUNC(glStencilMask);
+  IMPORT_FUNC(glStencilOpSeparate);
+  IMPORT_FUNC(glUniform1f);
+  IMPORT_FUNC(glUniform1i);
+  IMPORT_FUNC(glUniform2iv);
+  IMPORT_FUNC(glUniform3fv);
+  IMPORT_FUNC(glUniform4fv);
+  IMPORT_FUNC(glUniformMatrix4fv);
+  IMPORT_FUNC(glUseProgram);
+  IMPORT_FUNC(glVertexAttribPointer);
+  IMPORT_FUNC(glTexImage2D);
+  IMPORT_FUNC(glTexParameterf);
+  IMPORT_FUNC(glTexSubImage2D);
+  IMPORT_FUNC(glTexParameteri);
+
+  //GL 3
+  IMPORT_FUNC(glBindVertexArray);
+  IMPORT_FUNC(glInvalidateFramebuffer);
+  IMPORT_FUNC(glDeleteVertexArrays);
+  IMPORT_FUNC(glDrawArraysInstanced);
+  IMPORT_FUNC(glGenVertexArrays);
+  IMPORT_FUNC(glVertexAttribDivisor);
+  IMPORT_FUNC(glTexStorage2D);
 
 #endif /* DISABLE_IMPORTGL */
 
