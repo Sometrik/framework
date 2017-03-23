@@ -35,8 +35,8 @@ public:
     nativeCommandClass = (jclass) env->NewGlobalRef(env->FindClass("com/sometrik/framework/NativeCommand"));
     frameworkClass = (jclass) env->NewGlobalRef(env->FindClass("com/sometrik/framework/FrameWork"));
     systemClass = (jclass) env->NewGlobalRef(env->FindClass("java/lang/System"));
-    fileClass = (jclass) env->NewGlobalRef(env->FindClass("java/io/File"));
-    contextWrapperClass (jclass) env->NewGlobalRef(env->FindClass("android/content/ContextWrapper"));
+    fileClass = env->FindClass("java/io/File");
+    contextWrapperClass  env->FindClass("android/content/ContextWrapper");
 
     loadPrefsValueMethod = env->GetMethodID(frameworkClass, "addToPrefs", "(Ljava/lang/String;Ljava/lang/String;)V");
     nativeCommandConstructor = env->GetMethodID(nativeCommandClass, "<init>", "(Lcom/sometrik/framework/FrameWork;IIII[B[BI)V");
@@ -44,6 +44,9 @@ public:
     sendCommandMethod = env->GetStaticMethodID(frameworkClass, "sendMessage", "(Lcom/sometrik/framework/FrameWork;Lcom/sometrik/framework/NativeCommand;)V");
     getDatabasePathMethod = env->GetMethodID(contextWrapperClass, "getDatabasePath", "(Ljava/lang/String;)Ljava/io/File;");
     getPathMethod = env->GetMethodID(fileClass, "getPath", "(Ljava/lang/String;)Ljava/lang/String;");
+
+    env->DeleteLocalRef(fileClass);
+    env->DeleteLocalRef(contextWrapperClass);
 
     if (env->ExceptionCheck()){
 
@@ -81,6 +84,8 @@ public:
   jmethodID nativeCommandConstructor;
   jmethodID nativeListCommandConstructor;
   jmethodID sendCommandMethod;
+  jmethodID getDatabasePathMethod;
+  jmethodID getPathMethod;
 
 private:
   JavaVM * javaVM;
