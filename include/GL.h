@@ -4,11 +4,7 @@
 #if defined __APPLE__
 #include <OpenGLES/ES2/gl.h>
 #include <OpenGLES/ES2/glext.h>
-#elif __ANDROID__
-#include <GLES2/gl2.h>
-#include <GLES2/gl2ext.h>
-#include <EGL/egl.h>
-#include <EGL/eglext.h>
+#elif defined __ANDROID__
 #include <importgl.h>
 #else
 //#define GL_GLEXT_PROTOTYPES
@@ -17,11 +13,6 @@
 #include <GL/glew.h>
 #include <windows.h>
 #endif
-
-#ifdef __ANDROID__
-#include <importgl.h>
-#else
-#include <GL/gl.h>
 
 #ifdef _WIN32
 #include "../system/win32/glext.h"
