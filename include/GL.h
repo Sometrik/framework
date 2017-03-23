@@ -7,12 +7,14 @@
 #elif defined __ANDROID__
 #include <importgl.h>
 #else
-//#define GL_GLEXT_PROTOTYPES
+#define GL_GLEXT_PROTOTYPES
 
 #ifdef WIN32
 #include <GL/glew.h>
 #include <windows.h>
 #endif
+
+#include <GL/gl.h>
 
 #ifdef _WIN32
 #include "../system/win32/glext.h"
