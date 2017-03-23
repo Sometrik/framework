@@ -44,12 +44,19 @@ namespace std {
     return l;
   }
 
-  inline unsigned long stoull(std::string value) {
+  inline unsigned long long stoull(std::string value) {
   std::stringstream buffer(value);
-  unsigned long l;
+  unsigned long long l;
   buffer >> l;
   return l;
 }
+
+  inline long long atoll(const char * value) {
+    std::stringstream buffer(value);
+    long long l;
+    buffer >> l;
+    return l;
+  }
 };
 
 
