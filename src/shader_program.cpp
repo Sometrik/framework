@@ -29,6 +29,7 @@ shader_program::loadShaders(const char * glsl_version, const char * filename) {
     size_t n = fread(b, 1, 256, in);
     shader_text += string(b, n);
   }
+  fclose(in);
 #else
   std::ifstream t(filename);
   std::stringstream buffer;
