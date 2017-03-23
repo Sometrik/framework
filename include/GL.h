@@ -21,7 +21,6 @@
 #else
 #include <GL/glext.h>
 #endif
-#endif
 
 #endif
 
