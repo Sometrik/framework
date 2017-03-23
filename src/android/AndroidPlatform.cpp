@@ -2,7 +2,8 @@
  * Copyright (C) Sometrik oy 2015
  *
  */
-
+//#undef GL_GLES_PROTOTYPES
+#include <dlfcn.h>
 #include <string.h>
 #include <android/log.h>
 #include <jni.h>
@@ -21,8 +22,9 @@
 #include <android/native_window_jni.h>
 #include <android/native_window.h>
 #include <EGL/egl.h>
-
 #include <EventQueue.h>
+#include <GL.h>
+
 
 class JavaCache {
 
@@ -33,11 +35,15 @@ public:
     nativeCommandClass = (jclass) env->NewGlobalRef(env->FindClass("com/sometrik/framework/NativeCommand"));
     frameworkClass = (jclass) env->NewGlobalRef(env->FindClass("com/sometrik/framework/FrameWork"));
     systemClass = (jclass) env->NewGlobalRef(env->FindClass("java/lang/System"));
+    fileClass = (jclass) env->NewGlobalRef(env->FindClass("java/io/File"));
+    contextWrapperClass (jclass) env->NewGlobalRef(env->FindClass("android/content/ContextWrapper"));
 
     loadPrefsValueMethod = env->GetMethodID(frameworkClass, "addToPrefs", "(Ljava/lang/String;Ljava/lang/String;)V");
     nativeCommandConstructor = env->GetMethodID(nativeCommandClass, "<init>", "(Lcom/sometrik/framework/FrameWork;IIII[B[BI)V");
     nativeListCommandConstructor = env->GetMethodID(nativeCommandClass, "<init>", "(Lcom/sometrik/framework/FrameWork;IIII[B[BIII)V");
     sendCommandMethod = env->GetStaticMethodID(frameworkClass, "sendMessage", "(Lcom/sometrik/framework/FrameWork;Lcom/sometrik/framework/NativeCommand;)V");
+    getDatabasePathMethod = env->GetMethodID(contextWrapperClass, "getDatabasePath", "(Ljava/lang/String;)Ljava/io/File;");
+    getPathMethod = env->GetMethodID(fileClass, "getPath", "(Ljava/lang/String;)Ljava/lang/String;");
 
     if (env->ExceptionCheck()){
 
@@ -201,6 +207,7 @@ std::string AndroidPlatform::getLocalFilename(const char * filename, FileType ty
   std::string result;
   switch (type) {
   case DATABASE:
+    //put database here
   case CACHE_DATABASE:
     return "";
   case NORMAL:
@@ -421,10 +428,16 @@ AndroidPlatform::renderLoop() {
   getLogger().println("Looping Louie is out");
 }
 
-void
-AndroidPlatform::onOpenGLInitEvent(OpenGLInitEvent & _ev) {
-  auto & ev = dynamic_cast<AndroidOpenGLInitEvent&>(_ev);
+void AndroidPlatform::onOpenGLInitEvent(OpenGLInitEvent & _ev) {
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "platform OpenGLInitEvent");
+  if (_ev.getOpenGLVersion() < 3) {
+    int results = importGLInit();
+    __android_log_print(ANDROID_LOG_INFO, "Sometrik", "importResult = %u", results);
+  } else {
+    int results = importGLInit();
+    __android_log_print(ANDROID_LOG_INFO, "Sometrik", "importResult = %u", results);
+  }
+  auto & ev = dynamic_cast<AndroidOpenGLInitEvent&>(_ev);
   if (ev.getWindow()) {
     initializeRenderer(ev.getOpenGLVersion(), ev.getWindow());
     ev.requestRedraw();
