@@ -8,10 +8,6 @@ extern "C" {
 
 
 #include <GLES2/gl2.h>
-// #ifndef __ANDROID__
-// #include <jni.h>
-// #endif /* !__ANDROID__ */
-
 /* Dynamically fetches pointers to the egl & gl functions.
  * Should be called once on application initialization.
  * Returns non-zero on success and 0 on failure.
