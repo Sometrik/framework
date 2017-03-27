@@ -26,25 +26,25 @@
 
 #if defined __APPLE__ || defined __ANDROID__
 #ifndef GL_RED
-#define GL_RED 0
+#define GL_RED 0x8D94
 #endif
 #ifndef GL_R8
-#define GL_R8 0
+#define GL_R8 0x8229
 #endif
 #ifndef GL_R32F
-#define GL_R32F 0
+#define GL_R32F 0x8815
 #endif
 #ifndef GL_RG8
-#define GL_RG8 0
+#define GL_RG8 0x822B
 #endif
 #ifndef GL_RG
-#define GL_RG 0
+#define GL_RG 0x8227
 #endif
 #ifndef GL_RGB8
-#define GL_RGB8 0
+#define GL_RGB8 0x8051
 #endif
 #ifndef GL_RGBA8
-#define GL_RGBA8 0
+#define GL_RGBA8 0x8058
 #endif
 #ifndef GL_COMPRESSED_RGB8_ETC2
 #define GL_COMPRESSED_RGB8_ETC2 0
