@@ -157,6 +157,8 @@ PrimitiveRenderer::initializeBase() {
   cerr << "Maximum texture size is " << max_texture_size << endl;
 
   // MAX_VERTEX_TEXTURE_IMAGE_UNITS => how many textures a vertex shader can read
+
+  clear_color = glm::vec3(0.0, 0.0, 0.0);
 }
 
 void
