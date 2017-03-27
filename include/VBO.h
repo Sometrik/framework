@@ -28,8 +28,8 @@ struct billboard_data_s {
 struct line_data_s {
   glm::uint32 color;
   glm::vec3 position;
-  glm::uint32 other_dir;
-  glm::uint32 node_size;
+  glm::vec3 other_dir;
+  glm::vec2 node_size;
 };
 
 struct arc_data_2d_s {
