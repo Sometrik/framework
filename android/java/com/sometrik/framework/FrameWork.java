@@ -335,15 +335,15 @@ public class FrameWork extends Activity implements NativeCommandHandler {
 
     Notification.Builder builder = new Notification.Builder(this);
 
-//    builder.setContentTitle(title);
-//    builder.setContentText(text);
-////    builder.setSmallIcon(R.drawable.picture);
-//    builder.setContentIntent(pIntent);
-//    builder.setAutoCancel(true);
-//
-//    Notification notif = builder.build();
-//    NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-//    notificationManager.notify(0, notif);
+    builder.setContentTitle(title);
+    builder.setContentText(text);
+//    builder.setSmallIcon(R.drawable.picture);
+    builder.setContentIntent(pIntent);
+    builder.setAutoCancel(true);
+    
+    Notification notif = builder.getNotification();
+    NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+    notificationManager.notify(0, notif);
 
   }
 
