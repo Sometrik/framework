@@ -49,13 +49,6 @@ namespace std {
   unsigned long long l;
   buffer >> l;
   return l;
-}
-
-  inline long long atoll(const char * value) {
-    std::stringstream buffer(value);
-    long long l;
-    buffer >> l;
-    return l;
   }
 };
 
