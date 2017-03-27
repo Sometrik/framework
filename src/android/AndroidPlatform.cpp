@@ -43,7 +43,7 @@ public:
     nativeListCommandConstructor = env->GetMethodID(nativeCommandClass, "<init>", "(Lcom/sometrik/framework/FrameWork;IIII[B[BIII)V");
     sendCommandMethod = env->GetStaticMethodID(frameworkClass, "sendMessage", "(Lcom/sometrik/framework/FrameWork;Lcom/sometrik/framework/NativeCommand;)V");
     getDatabasePathMethod = env->GetMethodID(contextWrapperClass, "getDatabasePath", "(Ljava/lang/String;)Ljava/io/File;");
-    getPathMethod = env->GetMethodID(fileClass, "getPath", "(Ljava/lang/String;)Ljava/lang/String;");
+    getPathMethod = env->GetMethodID(fileClass, "getPath", "()Ljava/lang/String;");
 
     env->DeleteLocalRef(fileClass);
     env->DeleteLocalRef(contextWrapperClass);
