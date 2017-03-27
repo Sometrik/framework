@@ -19,9 +19,9 @@ struct vbo_data_s {
 
 struct billboard_data_s {
   glm::vec3 center_pos;
-  glm::uint32 offset;
-  glm::uint32 corner_pos;  
-  glm::uint32 tex;
+  glm::vec2 offset;
+  glm::vec2 corner_pos;  
+  glm::vec2 tex;
   glm::uint32 color1, color2;
 };
 
