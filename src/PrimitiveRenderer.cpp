@@ -159,6 +159,18 @@ PrimitiveRenderer::initializeBase() {
   // MAX_VERTEX_TEXTURE_IMAGE_UNITS => how many textures a vertex shader can read
 
   clear_color = glm::vec3(0.0, 0.0, 0.0);
+  blend_enabled = false;
+  depth_test_enabled = false;
+  current_depth_mask = true;
+  stencil_test_enabled = false;
+  current_stencil_mask = 0xff;
+  cull_face_enabled = false;
+  current_line_width = 1.0f;
+  current_red_mask = current_green_mask = current_blue_mask = current_alpha_mask = true;
+  current_composition_mode = COPY;
+  current_texture_2d = 0;
+  current_vertex_array = 0;
+  current_program = 0;  
 }
 
 void
