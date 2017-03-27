@@ -61,6 +61,12 @@
 #ifndef GL_COMPRESSED_RG_RGTC2
 #define GL_COMPRESSED_RG_RGTC2 0x8DBD
 #endif
+#ifndef GL_HALF_FLOAT
+#define GL_HALF_FLOAT 0
+#endif
+#ifndef GL_INT_2_10_10_10_REV
+#define GL_INT_2_10_10_10_REV 0
+#endif
 #endif
 
 
