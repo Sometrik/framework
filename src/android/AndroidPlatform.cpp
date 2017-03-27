@@ -35,8 +35,8 @@ public:
     nativeCommandClass = (jclass) env->NewGlobalRef(env->FindClass("com/sometrik/framework/NativeCommand"));
     frameworkClass = (jclass) env->NewGlobalRef(env->FindClass("com/sometrik/framework/FrameWork"));
     systemClass = (jclass) env->NewGlobalRef(env->FindClass("java/lang/System"));
-    fileClass = env->FindClass("java/io/File");
-    contextWrapperClass  env->FindClass("android/content/ContextWrapper");
+    jclass fileClass = env->FindClass("java/io/File");
+    jclass contextWrapperClass = env->FindClass("android/content/ContextWrapper");
 
     loadPrefsValueMethod = env->GetMethodID(frameworkClass, "addToPrefs", "(Ljava/lang/String;Ljava/lang/String;)V");
     nativeCommandConstructor = env->GetMethodID(nativeCommandClass, "<init>", "(Lcom/sometrik/framework/FrameWork;IIII[B[BI)V");
@@ -207,12 +207,24 @@ std::string AndroidPlatform::getBundleFilename(const char * filename) {
 std::string AndroidPlatform::getLocalFilename(const char * filename, FileType type) {
 
   auto env = getJNIEnv();
+
 //  jstring path;
 //  jstring jfilename;
   std::string result;
   switch (type) {
-  case DATABASE:
+  case DATABASE:{
+
+    jstring jfilename = env->NewStringUTF(filename);
+    jobject file = env->CallObjectMethod(framework, javaCache.getDatabasePathMethod, jfilename);
+    jstring jdatabasePath = (jstring)env->CallObjectMethod(file, javaCache.getPathMethod);
+    std::string databasePath = env->GetStringUTFChars(jdatabasePath, NULL);
+    env->DeleteLocalRef(jfilename);
+    env->DeleteLocalRef(jdatabasePath);
+    env->DeleteLocalRef(file);
+
     //put database here
+    break;
+  }
   case CACHE_DATABASE:
     return "";
   case NORMAL:
