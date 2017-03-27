@@ -654,10 +654,12 @@ void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, job
 
   void Java_com_sometrik_framework_FrameWork_nativeSetSurface(JNIEnv* env, jobject thiz, jobject surface, int surfaceId, int gl_version) {
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "setting native surface on androidPlatform");
-  ANativeWindow * window = 0;
-  if (surface != 0) window = ANativeWindow_fromSurface(env, surface);
-  AndroidOpenGLInitEvent ev(platform->getTime(), gl_version, true, window);
-  platform->queueEvent(platform->getInternalId(), ev);
+  if (surface != 0) {
+    ANativeWindow * window = 0;
+    window = ANativeWindow_fromSurface(env, surface);
+    AndroidOpenGLInitEvent ev(platform->getTime(), gl_version, true, window);
+    platform->queueEvent(platform->getInternalId(), ev);
+  }
 }
 
 
