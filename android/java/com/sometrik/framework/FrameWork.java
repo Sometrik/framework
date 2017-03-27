@@ -296,10 +296,6 @@ public class FrameWork extends Activity implements NativeCommandHandler {
 	holder.addCallback(new Callback() {
       public void surfaceDestroyed(SurfaceHolder holder) {
 	System.out.println("surfaceDestroyed");
-	if (currentView == id) {
-	  System.out.println("resetting currentView id");
-	  currentView = 0;
-	}
 	nativeSurfaceDestroyed(System.currentTimeMillis() / 1000.0, id, gl_version);
       }
 
