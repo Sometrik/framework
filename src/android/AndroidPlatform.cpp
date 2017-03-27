@@ -280,6 +280,7 @@ AndroidPlatform::sendCommand2(const Command & command) {
 
 bool
 AndroidPlatform::initializeRenderer(int opengl_es_version, ANativeWindow * _window) {
+  canDraw = true;
   window = _window;
 
   if (window) {
@@ -363,6 +364,7 @@ AndroidPlatform::initializeRenderer(int opengl_es_version, ANativeWindow * _wind
 
 void
 AndroidPlatform::deinitializeRenderer() {
+  canDraw = false;
 
   if (display) {
     eglMakeCurrent(display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
@@ -458,11 +460,7 @@ void AndroidPlatform::onOpenGLInitEvent(OpenGLInitEvent & _ev) {
   if (ev.getWindow()) {
     initializeRenderer(ev.getOpenGLVersion(), ev.getWindow());
     ev.requestRedraw();
-    canDraw = true;
     FWPlatform::onOpenGLInitEvent(_ev);
-  } else {
-    deinitializeRenderer();
-    canDraw = false;
   }
 }
 
@@ -665,8 +663,7 @@ void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, job
 
  void Java_com_sometrik_framework_FrameWork_nativeSurfaceDestroyed(JNIEnv* env, jobject thiz, int surfaceId, int gl_version) {
    __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "native surface destroyed on androidPlatform");
-  AndroidOpenGLInitEvent ev(platform->getTime(), gl_version, true, 0);
-  platform->queueEvent(platform->getInternalId(), ev);
+   platform->deinitializeRenderer();  
  }
 
  void Java_com_sometrik_framework_FrameWork_endModal(JNIEnv* env, jobject thiz, double timestamp, int value, jbyteArray jarray) {
