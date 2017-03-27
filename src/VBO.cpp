@@ -74,17 +74,17 @@ VBO::setPointers() const {
   case BILLBOARDS:
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, getStride(), (void *)(0 * sizeof(float)));
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, getStride(), (void *)(3 * sizeof(float)));
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, getStride(), (void *)(4 * sizeof(float)));
-    glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, getStride(), (void *)(5 * sizeof(float)));
-    glVertexAttribPointer(4, 4, GL_UNSIGNED_BYTE, GL_TRUE, getStride(), (void *)(6 * sizeof(float)));
-    glVertexAttribPointer(5, 4, GL_UNSIGNED_BYTE, GL_TRUE, getStride(), (void *)(7 * sizeof(float)));
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, getStride(), (void *)(5 * sizeof(float)));
+    glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, getStride(), (void *)(7 * sizeof(float)));
+    glVertexAttribPointer(4, 4, GL_UNSIGNED_BYTE, GL_TRUE, getStride(), (void *)(9 * sizeof(float)));
+    glVertexAttribPointer(5, 4, GL_UNSIGNED_BYTE, GL_TRUE, getStride(), (void *)(10 * sizeof(float)));
     n_arrays = 6;
     break;
   case EDGES:
     glVertexAttribPointer(0, 4, GL_UNSIGNED_BYTE, GL_TRUE, getStride(), (void *)(0 * sizeof(float)));
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, getStride(), (void *)(1 * sizeof(float)));
-    glVertexAttribPointer(2, 4, GL_FLOAT, GL_TRUE, getStride(), (void *)(4 * sizeof(float)));
-    glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, getStride(), (void *)(5 * sizeof(float)));
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, getStride(), (void *)(4 * sizeof(float)));
+    glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, getStride(), (void *)(7 * sizeof(float)));
     n_arrays = 4;
     break;
   case ARCS_2D:
