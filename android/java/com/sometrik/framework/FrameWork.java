@@ -130,7 +130,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
     mainHandler = new Handler() {
 
       public void handleMessage(Message msg) {
-
+	
 	NativeCommand command = (NativeCommand) msg.obj;
 	command.apply(FrameWork.views.get(command.getInternalId()));
 
@@ -296,7 +296,11 @@ public class FrameWork extends Activity implements NativeCommandHandler {
 	holder.addCallback(new Callback() {
       public void surfaceDestroyed(SurfaceHolder holder) {
 	System.out.println("surfaceDestroyed");
-      	nativeSurfaceDestroyed(System.currentTimeMillis() / 1000.0, id, gl_version);
+	if (currentView == id) {
+	  System.out.println("resetting currentView id");
+	  currentView = 0;
+	}
+	nativeSurfaceDestroyed(System.currentTimeMillis() / 1000.0, id, gl_version);
       }
 
       public void surfaceCreated(SurfaceHolder holder) { }
