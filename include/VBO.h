@@ -42,18 +42,28 @@ struct arc_data_3d_s {
   glm::vec3 position, normal;
 };
 
-struct node_billboard_vbo_s {
+struct node_billboard2_vbo_s {
   glm::uint32 color; // 0
   glm::vec3 center_pos; // 4
-  glm::uint32 node_size; // 16
-  short texture, pow; // 20
+  unsigned short texture, pow; // 20
+  
+  float node_size_x, node_size_y;
+  unsigned char aspect_ratio, offset, dummy1, dummy2;
+};
+
+struct node_billboard3_vbo_s {
+  glm::uint32 color; // 0
+  glm::vec3 center_pos; // 4
+  unsigned short texture, pow; // 16
+  
+  glm::uint32 node_size; // 20
   int node_id;
   float aspect_ratio;
 };
 
 class VBO {
  public:
-  enum DataType { T2F_N3F_V3F = 1, NODE_BILLBOARDS, BILLBOARDS, EDGES, ARCS_2D, ARCS_3D };
+  enum DataType { T2F_N3F_V3F = 1, NODE_BILLBOARDS2, NODE_BILLBOARDS3, BILLBOARDS, EDGES, ARCS_2D, ARCS_3D };
   enum DrawType { NONE = 0, POINTS, LINES, TRIANGLES, TRIANGLE_STRIP, TRIANGLE_FAN };
   
   VBO(bool _is_dynamic = true) : is_dynamic(_is_dynamic) { }

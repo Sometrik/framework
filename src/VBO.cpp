@@ -53,11 +53,21 @@ VBO::setPointers() const {
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, getStride(), (void *)(5 * sizeof(float)));
     n_arrays = 2;
     break;
-  case NODE_BILLBOARDS:
+  case NODE_BILLBOARDS2:
     glVertexAttribPointer(0, 4, GL_UNSIGNED_BYTE, GL_TRUE, getStride(), (void *)(0)); // color
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, getStride(), (void *)(4)); // center position
-    glVertexAttribPointer(2, 2, GL_HALF_FLOAT, GL_FALSE, getStride(), (void *)(16)); // size
-    glVertexAttribPointer(3, 2, GL_UNSIGNED_SHORT, GL_FALSE, getStride(), (void *)(20)); // texture / power
+    glVertexAttribPointer(2, 2, GL_UNSIGNED_SHORT, GL_FALSE, getStride(), (void *)(16)); // texture / power
+    
+    glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, getStride(), (void *)(20)); // size
+    glVertexAttribPointer(4, 1, GL_UNSIGNED_BYTE, GL_FALSE, getStride(), (void *)(28)); // aspect_ratio
+    n_arrays = 5;
+    break;
+  case NODE_BILLBOARDS3:
+    glVertexAttribPointer(0, 4, GL_UNSIGNED_BYTE, GL_TRUE, getStride(), (void *)(0)); // color
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, getStride(), (void *)(4)); // center position
+    glVertexAttribPointer(2, 2, GL_UNSIGNED_SHORT, GL_FALSE, getStride(), (void *)(16)); // texture / power
+    
+    glVertexAttribPointer(3, 2, GL_HALF_FLOAT, GL_FALSE, getStride(), (void *)(20)); // size
     glVertexAttribPointer(4, 1, GL_INT, GL_FALSE, getStride(), (void *)(24)); // node_id
     glVertexAttribPointer(5, 1, GL_FLOAT, GL_FALSE, getStride(), (void *)(28)); // aspect_ratio
 
@@ -115,7 +125,8 @@ VBO::upload(DataType type, const void * ptr, size_t size) {
   data_type = type;
   switch (type) {
   case VBO::T2F_N3F_V3F: stride = 8 * sizeof(float); break;
-  case VBO::NODE_BILLBOARDS: stride = sizeof(node_billboard_vbo_s); break; // ?
+  case VBO::NODE_BILLBOARDS2: stride = sizeof(node_billboard2_vbo_s); break;
+  case VBO::NODE_BILLBOARDS3: stride = sizeof(node_billboard3_vbo_s); break;
   case VBO::BILLBOARDS: stride = sizeof(billboard_data_s); break;
   case VBO::EDGES: stride = sizeof(line_data_s); break;
   case VBO::ARCS_2D: stride = sizeof(arc_data_2d_s); break;
