@@ -59,7 +59,7 @@ VBO::setPointers() const {
     glVertexAttribPointer(2, 2, GL_UNSIGNED_SHORT, GL_FALSE, getStride(), (void *)(16)); // texture / power
     
     glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, getStride(), (void *)(20)); // size
-    glVertexAttribPointer(4, 1, GL_UNSIGNED_BYTE, GL_FALSE, getStride(), (void *)(28)); // aspect_ratio
+    glVertexAttribPointer(4, 4, GL_UNSIGNED_BYTE, GL_FALSE, getStride(), (void *)(28)); // aspect_ratio
     n_arrays = 5;
     break;
   case NODE_BILLBOARDS3:
