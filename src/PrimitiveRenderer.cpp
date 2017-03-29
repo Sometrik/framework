@@ -149,8 +149,6 @@ PrimitiveRenderer::initializeBase() {
     OpenGLTexture::setHasTexStorage(true);
   }
   
-  assert(has_rgb565);
-
   int ii;
   glGetIntegerv(GL_MAX_TEXTURE_SIZE, &ii);
   max_texture_size = ii;
