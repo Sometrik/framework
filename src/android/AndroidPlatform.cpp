@@ -217,13 +217,15 @@ std::string AndroidPlatform::getLocalFilename(const char * filename, FileType ty
     jstring jfilename = env->NewStringUTF(filename);
     jobject file = env->CallObjectMethod(framework, javaCache.getDatabasePathMethod, jfilename);
     jstring jdatabasePath = (jstring)env->CallObjectMethod(file, javaCache.getPathMethod);
-    std::string databasePath = env->GetStringUTFChars(jdatabasePath, NULL);
+    const char * cdatabasePath = env->GetStringUTFChars(jdatabasePath, JNI_FALSE);
+    std::string databasePath = std::string(cdatabasePath);
     env->DeleteLocalRef(jfilename);
+    env->ReleaseStringUTFChars(jdatabasePath, cdatabasePath);
     env->DeleteLocalRef(jdatabasePath);
     env->DeleteLocalRef(file);
 
     //put database here
-    break;
+    return databasePath;
   }
   case CACHE_DATABASE:
     return "";
