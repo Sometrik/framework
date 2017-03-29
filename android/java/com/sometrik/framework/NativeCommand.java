@@ -28,6 +28,7 @@ import android.text.method.LinkMovementMethod;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.SurfaceView;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -426,14 +427,18 @@ public class NativeCommand {
   
   private void deleteElement(NativeCommandHandler parent, int childId) {
     FrameWork.views.remove(childInternalId);
-    ViewGroup group = (ViewGroup) parent;
-    int childCount = group.getChildCount();
-    for (int i = 0; i < childCount; i++) {
-      View view = group.getChildAt(i);
-      if (view.getId() == childInternalId) {
-	((ViewGroup) parent).removeViewAt(i);
-	break;
+    if (parent instanceof ViewGroup) {
+      ViewGroup group = (ViewGroup) parent;
+      int childCount = group.getChildCount();
+      for (int i = 0; i < childCount; i++) {
+	View view = group.getChildAt(i);
+	if (view.getId() == childInternalId) {
+	  ((ViewGroup) parent).removeViewAt(i);
+	  break;
+	}
       }
+    } else {
+      System.out.println("Deletion parent was not an instance of ViewGroup");
     }
   }
   
