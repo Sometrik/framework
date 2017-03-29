@@ -534,6 +534,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
     super.onSaveInstanceState(savedInstanceState);
   }
 
+  @Override
   public void onRestoreInstanceState(Bundle savedInstanceState) {
     System.out.println("onRestoreInstanceState");
     super.onRestoreInstanceState(savedInstanceState);
