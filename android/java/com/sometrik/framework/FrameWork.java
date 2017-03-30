@@ -379,7 +379,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
       case MotionEvent.ACTION_DOWN:
 	//Touch event of screen touch-down after the first touch
       case MotionEvent.ACTION_POINTER_DOWN:
-//	System.out.println("Liike alkoi: " + event.getX() + " " + event.getY() + " - id: " + event.getActionIndex());
+	System.out.println("Liike alkoi: " + event.getX() + " " + event.getY() + " - id: " + event.getActionIndex());
 	touchEvent(viewId, 1, event.getActionIndex(), System.currentTimeMillis() / 1000.0, (int) event.getX(), (int) (event.getY() + windowYcoords));
 	flushTouchEvent(System.currentTimeMillis() / 1000.0, viewId, 1);
 	break;
@@ -389,10 +389,8 @@ public class FrameWork extends Activity implements NativeCommandHandler {
 
 	int pointerCount = event.getPointerCount();
 	for (int i = 0; i < pointerCount; i++) {
-	  pointerIndex = i;
-	  int pointerId = event.getPointerId(pointerIndex);
-
-	      touchEvent(viewId, 2, pointerId, System.currentTimeMillis() / 1000.0, (int) event.getX(), (int) (event.getY() + windowYcoords));
+	  System.out.println("Liike: " + event.getX(i) + " " + event.getY(i) + " - id: " + i);
+	      touchEvent(viewId, 2, i, System.currentTimeMillis() / 1000.0, (int) event.getX(), (int) (event.getY()));
 	}
 	flushTouchEvent(System.currentTimeMillis() / 1000.0, viewId, 2);
 	break;
