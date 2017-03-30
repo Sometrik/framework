@@ -379,8 +379,8 @@ public class FrameWork extends Activity implements NativeCommandHandler {
       case MotionEvent.ACTION_DOWN:
 	//Touch event of screen touch-down after the first touch
       case MotionEvent.ACTION_POINTER_DOWN:
-	System.out.println("Liike alkoi: " + event.getX() + " " + event.getY() + " - id: " + event.getActionIndex());
-	touchEvent(viewId, 1, event.getActionIndex(), System.currentTimeMillis() / 1000.0, (int) event.getX(), (int) (event.getY() + windowYcoords));
+	System.out.println("Liike alkoi: " + event.getX(event.getActionIndex()) + " " + event.getY(event.getActionIndex()) + " - id: " + event.getActionIndex());
+	touchEvent(viewId, 1, event.getActionIndex(), System.currentTimeMillis() / 1000.0, (int) event.getX(event.getActionIndex()), (int) (event.getY(event.getActionIndex()) + windowYcoords));
 	flushTouchEvent(System.currentTimeMillis() / 1000.0, viewId, 1);
 	break;
 
@@ -398,7 +398,8 @@ public class FrameWork extends Activity implements NativeCommandHandler {
       case MotionEvent.ACTION_UP:
 	//touch event of fingers other than the first leaving the screen
       case MotionEvent.ACTION_POINTER_UP:
-	  touchEvent(viewId, 3, event.getActionIndex(), System.currentTimeMillis() / 1000.0, (int) event.getX(), (int) (event.getY() + windowYcoords));
+	System.out.println("Liike loppui: " + event.getX(event.getActionIndex()) + " " + event.getY(event.getActionIndex()) + " - id: " + event.getActionIndex());
+	  touchEvent(viewId, 3, event.getActionIndex(), System.currentTimeMillis() / 1000.0, (int) event.getX(event.getActionIndex()), (int) (event.getY(event.getActionIndex()) + windowYcoords));
   	  flushTouchEvent(System.currentTimeMillis() / 1000.0, viewId, 3);
 	break;
       }
