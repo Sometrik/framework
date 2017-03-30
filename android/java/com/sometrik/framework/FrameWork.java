@@ -380,17 +380,16 @@ public class FrameWork extends Activity implements NativeCommandHandler {
 	//Touch event of screen touch-down after the first touch
       case MotionEvent.ACTION_POINTER_DOWN:
 	System.out.println("Liike alkoi: " + event.getX(event.getActionIndex()) + " " + event.getY(event.getActionIndex()) + " - id: " + event.getActionIndex());
-	touchEvent(viewId, 1, event.getActionIndex(), System.currentTimeMillis() / 1000.0, (int) event.getX(event.getActionIndex()), (int) (event.getY(event.getActionIndex()) + windowYcoords));
+	touchEvent(viewId, 1, event.getActionIndex(), System.currentTimeMillis() / 1000.0, (int) event.getX(event.getActionIndex()), (int) (event.getY(event.getActionIndex())));
 	flushTouchEvent(System.currentTimeMillis() / 1000.0, viewId, 1);
 	break;
 
 	//Touch event of finger moving
       case MotionEvent.ACTION_MOVE:
-
 	int pointerCount = event.getPointerCount();
 	for (int i = 0; i < pointerCount; i++) {
 	  System.out.println("Liike: " + event.getX(i) + " " + event.getY(i) + " - id: " + i);
-	      touchEvent(viewId, 2, i, System.currentTimeMillis() / 1000.0, (int) event.getX(), (int) (event.getY()));
+	      touchEvent(viewId, 2, i, System.currentTimeMillis() / 1000.0, (int) event.getX(i), (int) (event.getY(i)));
 	}
 	flushTouchEvent(System.currentTimeMillis() / 1000.0, viewId, 2);
 	break;
@@ -399,7 +398,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
 	//touch event of fingers other than the first leaving the screen
       case MotionEvent.ACTION_POINTER_UP:
 	System.out.println("Liike loppui: " + event.getX(event.getActionIndex()) + " " + event.getY(event.getActionIndex()) + " - id: " + event.getActionIndex());
-	  touchEvent(viewId, 3, event.getActionIndex(), System.currentTimeMillis() / 1000.0, (int) event.getX(event.getActionIndex()), (int) (event.getY(event.getActionIndex()) + windowYcoords));
+	  touchEvent(viewId, 3, event.getActionIndex(), System.currentTimeMillis() / 1000.0, (int) event.getX(event.getActionIndex()), (int) (event.getY(event.getActionIndex())));
   	  flushTouchEvent(System.currentTimeMillis() / 1000.0, viewId, 3);
 	break;
       }
