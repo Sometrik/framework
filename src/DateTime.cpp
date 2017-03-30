@@ -335,7 +335,8 @@ DateTime::getTimeUTC() const {
 #if defined WIN32
   return _mkgmtime(&tt);
 #elif defined __ANDROID__
-  return 0;
+  //this needs to be changed
+  return mktime(&tt);
 #else
   return timegm(&tt);
 #endif
