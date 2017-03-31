@@ -267,6 +267,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
       });
       View sadas = (View) FrameWork.views.get(currentView);
       sadas.startAnimation(r);
+      
     } else {
       currentView = view.getId();
       currentlyShowingView = view;
@@ -276,7 +277,9 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   }
   
   public void setCurrentView(final View view, final boolean recordHistory, String title) {
-    getActionBar().setTitle(title);
+    if (getActionBar() != null){
+      getActionBar().setTitle(title);
+    }
     setCurrentView(view, recordHistory);
   }
   
@@ -388,7 +391,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
       case MotionEvent.ACTION_MOVE:
 	int pointerCount = event.getPointerCount();
 	for (int i = 0; i < pointerCount; i++) {
-	  System.out.println("Liike: " + event.getX(i) + " " + event.getY(i) + " - id: " + i);
+//	  System.out.println("Liike: " + event.getX(i) + " " + event.getY(i) + " - id: " + i);
 	      touchEvent(viewId, 2, i, System.currentTimeMillis() / 1000.0, (int) event.getX(i), (int) (event.getY(i)));
 	}
 	flushTouchEvent(System.currentTimeMillis() / 1000.0, viewId, 2);
