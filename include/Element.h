@@ -16,8 +16,8 @@ class Element : public EventHandler {
     flags(_flags)
     { }
 
-  Element(const Element & other) = delete;
-  Element & operator= (const Element & other) = delete;
+  Element(const Element & other);
+  Element & operator= (const Element & other);
   
   virtual void show() { }
   virtual void hide() { }
