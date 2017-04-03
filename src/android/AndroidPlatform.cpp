@@ -207,6 +207,7 @@ std::string AndroidPlatform::getBundleFilename(const char * filename) {
 std::string AndroidPlatform::getLocalFilename(const char * filename, FileType type) {
 
   auto env = getJNIEnv();
+  __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "getLocalFilename");
 
 //  jstring path;
 //  jstring jfilename;
@@ -214,6 +215,7 @@ std::string AndroidPlatform::getLocalFilename(const char * filename, FileType ty
   switch (type) {
   case DATABASE:{
 
+    __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "getting database path");
     jstring jfilename = env->NewStringUTF(filename);
     jobject file = env->CallObjectMethod(framework, javaCache.getDatabasePathMethod, jfilename);
     jstring jdatabasePath = (jstring)env->CallObjectMethod(file, javaCache.getPathMethod);
@@ -428,6 +430,9 @@ AndroidPlatform::renderLoop() {
         } else if (ev2->getType() == SysEvent::DESTROY) {
           getLogger().println("exiting loop after SysEvent::DESTROY");
           exit_loop = true;
+        } else if (ev2->getType() == SysEvent::PAUSE) {
+          getLogger().println("exiting loop after SysEvent::PAUSE");
+          exit_loop = true;
         }
       }
 
@@ -571,8 +576,8 @@ void Java_com_sometrik_framework_FrameWork_keyPressed(JNIEnv* env, jobject thiz,
 }
 
 void Java_com_sometrik_framework_FrameWork_touchEvent(JNIEnv* env, jobject thiz, int viewId, int mode, int fingerIndex, double timestamp, float x, float y) {
-  x /= platform->getDisplayScale();
-  y /= platform->getDisplayScale();
+//  x /= platform->getDisplayScale();
+//  y /= platform->getDisplayScale();
   switch (mode) {
   case 1:
     {
