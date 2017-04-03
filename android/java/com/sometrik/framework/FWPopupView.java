@@ -7,12 +7,12 @@ import android.widget.PopupWindow;
 public class FWPopupView extends PopupWindow implements NativeCommandHandler {
 
   FrameWork frame;
-  View parentView;
+  int parentViewId;
   int id;
   
-  public FWPopupView(FrameWork frame, View parentView, int id){
+  public FWPopupView(FrameWork frame, int parentViewId, int id){
     this.frame = frame;
-    this.parentView = parentView;
+    this.parentViewId = parentViewId;
     this.id = id;
   }
 
@@ -44,9 +44,15 @@ public class FWPopupView extends PopupWindow implements NativeCommandHandler {
 
   @Override
   public void setValue(int v) {
-    if (v == 1){
-      showAtLocation(parentView, Gravity.CENTER, 0, 0);
-    } else if (v <= 0){
+    if (v == 1) {
+      System.out.println("Trying to show FWPopupView on parentViewId " + parentViewId);
+      View view = (View)frame.views.get(parentViewId);
+      if (view == null) {
+	System.out.println("view was null");
+	return;
+      }
+      showAtLocation(view, Gravity.CENTER, 0, 0);
+    } else if (v <= 0) {
       dismiss();
     }
   }
@@ -54,7 +60,7 @@ public class FWPopupView extends PopupWindow implements NativeCommandHandler {
   @Override
   public void setViewEnabled(Boolean enabled) {
     if (enabled){
-      showAtLocation(parentView, Gravity.CENTER, 0, 0);
+      showAtLocation((View)frame.views.get(parentViewId), Gravity.CENTER, 0, 0);
     } else {
       dismiss();
     }
@@ -63,7 +69,7 @@ public class FWPopupView extends PopupWindow implements NativeCommandHandler {
   @Override
     public void setViewVisibility(boolean visible) {
     if (visible){
-      showAtLocation(parentView, Gravity.CENTER, 0, 0);
+      showAtLocation((View)frame.views.get(parentViewId), Gravity.CENTER, 0, 0);
     } else {
       dismiss();
     }
