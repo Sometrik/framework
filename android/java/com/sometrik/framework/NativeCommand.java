@@ -28,7 +28,6 @@ import android.text.method.LinkMovementMethod;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.SurfaceView;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -40,8 +39,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.PopupMenu.OnMenuItemClickListener;
-import android.widget.ScrollView;
-import android.widget.TextView;
+import android.widget.PopupWindow;
 
 public class NativeCommand {
 
@@ -344,6 +342,10 @@ public class NativeCommand {
     case SHOW_INPUT_DIALOG:
       showInputDialog(textValue, textValue2);
       break;
+    case CREATE_DIALOG:
+      FWPopupView popView = createDialogView();
+      FrameWork.addToViewList(popView);
+      break;
     case CREATE_ACTION_SHEET:
       createActionSheet();
       break;
@@ -626,6 +628,11 @@ public class NativeCommand {
     // Create and show the alert
     AlertDialog alert = builder.create();
     alert.show();
+  }
+  
+  private FWPopupView createDialogView(){
+    FWPopupView window = new FWPopupView(frame, internalId, childInternalId);
+    return window;
   }
 
   // create Message dialog
