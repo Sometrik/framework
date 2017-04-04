@@ -1,5 +1,6 @@
 package com.sometrik.framework;
 
+import android.R;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,9 @@ public class FWPopupView extends PopupWindow implements NativeCommandHandler {
     this.id = id;
     setWidth(ViewGroup.LayoutParams.WRAP_CONTENT);
     setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
+    
+    //Default: Set background color as light rather than dark
+    this.setBackgroundDrawable(frame.getResources().getDrawable(R.drawable.screen_background_light));
   }
 
   @Override
