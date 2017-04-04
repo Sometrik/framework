@@ -2,8 +2,11 @@
 #define _BASICPLATFORM_H_
 
 #include <FWPlatform.h>
-#include <Context.h>
 #include <CurlClient.h>
+
+#ifndef NO_CANVAS
+#include <Context.h>
+#endif
 
 class BasicPlatform : public FWPlatform {
  public:
