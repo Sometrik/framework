@@ -2,6 +2,7 @@ package com.sometrik.framework;
 
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.PopupWindow;
 
 public class FWPopupView extends PopupWindow implements NativeCommandHandler {
@@ -10,10 +11,13 @@ public class FWPopupView extends PopupWindow implements NativeCommandHandler {
   int parentViewId;
   int id;
   
-  public FWPopupView(FrameWork frame, int parentViewId, int id){
+  public FWPopupView(FrameWork frame, int parentViewId, int id) {
+    super(frame);
     this.frame = frame;
     this.parentViewId = parentViewId;
     this.id = id;
+    setWidth(ViewGroup.LayoutParams.WRAP_CONTENT);
+    setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
   }
 
   @Override
@@ -25,6 +29,8 @@ public class FWPopupView extends PopupWindow implements NativeCommandHandler {
   public void addChild(View view) {
     System.out.println("setting new contentView for popupView");
     this.setContentView(view);
+    //Some default padding
+    view.setPadding(20, 20, 20, 20);
   }
 
   @Override
