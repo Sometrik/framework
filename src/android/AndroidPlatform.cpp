@@ -116,7 +116,7 @@ public:
   std::string getBundleFilename(const char * filename) override;
   std::string getLocalFilename(const char * filename, FileType type) override;
   std::unique_ptr<canvas::ContextFactory> createContextFactory() const override {
-    return std::unique_ptr<canvas::ContextFactory>(new canvas::AndroidContextFactory(mgr, canvasCache, getDisplayScale()));
+    return std::unique_ptr<canvas::ContextFactory>(new canvas::AndroidContextFactory(getJNIEnv(), mgr, canvasCache, getDisplayScale()));
   }
 
   std::unique_ptr<HTTPClientFactory> createHTTPClientFactory() const override {
