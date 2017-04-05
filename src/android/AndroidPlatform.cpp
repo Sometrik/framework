@@ -105,6 +105,7 @@ public:
     clientCache = std::make_shared<AndroidClientCache>(_env);
     sendCommand2(Command(Command::CREATE_PLATFORM, getParentInternalId(), getInternalId()));
 
+
 #ifdef HAS_SOUNDCANVAS
     soundCache = std::make_shared<AndroidSoundCache>(_env, _mgr);
 #endif
@@ -160,6 +161,7 @@ public:
 private:
   pthread_t _threadId;
   JavaCache javaCache;
+  std::string databasePath;
 
   EGLDisplay display = 0;
   EGLSurface surface = 0;
@@ -206,7 +208,7 @@ std::string AndroidPlatform::getBundleFilename(const char * filename) {
 
 std::string AndroidPlatform::getLocalFilename(const char * filename, FileType type) {
 
-  auto env = getJNIEnv();
+//  auto env = javaCache.getJNIEnv();
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "getLocalFilename");
 
 //  jstring path;
@@ -215,23 +217,27 @@ std::string AndroidPlatform::getLocalFilename(const char * filename, FileType ty
   switch (type) {
   case DATABASE:{
 
-    __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "getting database path");
-    jstring jfilename = env->NewStringUTF(filename);
-    jobject file = env->CallObjectMethod(framework, javaCache.getDatabasePathMethod, jfilename);
-    jstring jdatabasePath = (jstring)env->CallObjectMethod(file, javaCache.getPathMethod);
-    const char * cdatabasePath = env->GetStringUTFChars(jdatabasePath, JNI_FALSE);
-    std::string databasePath = std::string(cdatabasePath);
-    env->DeleteLocalRef(jfilename);
-    env->ReleaseStringUTFChars(jdatabasePath, cdatabasePath);
-    env->DeleteLocalRef(jdatabasePath);
-    env->DeleteLocalRef(file);
+//    __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "getting database path");
+//    jstring jfilename = env->NewStringUTF(filename);
+//    jobject file = env->CallObjectMethod(framework, javaCache.getDatabasePathMethod, jfilename);
+//    jstring jdatabasePath = (jstring)env->CallObjectMethod(file, javaCache.getPathMethod);
+//    const char * cdatabasePath = env->GetStringUTFChars(jdatabasePath, JNI_FALSE);
+//    std::string databasePath = std::string(cdatabasePath);
+//    env->DeleteLocalRef(jfilename);
+//    env->ReleaseStringUTFChars(jdatabasePath, cdatabasePath);
+//    env->DeleteLocalRef(jdatabasePath);
+//    env->DeleteLocalRef(file);
+//    __android_log_print(ANDROID_LOG_INFO, "Sometrik", "database path = %s", databasePath.c_str());
 
     //put database here
+    databasePath = "/data/data/com.sometrik.kraphio/databases/" + std::string(filename);
     return databasePath;
   }
   case CACHE_DATABASE:
+    __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "case: cache_database");
     return "";
   case NORMAL:
+    __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "case: normal");
     return "";
   }
   return "";
@@ -499,6 +505,8 @@ AndroidPlatform::onSysEvent(SysEvent & ev) {
     //TODO
     break;
   case SysEvent::THREAD_TERMINATED:
+    __android_log_print(ANDROID_LOG_INFO, "Sometrik", "THREAD_TERMINATED");
+
     //TODO
     break;
   }
@@ -515,6 +523,7 @@ void* AndroidPlatform::threadStartCallback(void *myself) {
   }
 
   JNIEnv * env;
+  __android_log_print(ANDROID_LOG_INFO, "Sometrik", "attaching JVM");
   aplatform->getJavaVM()->AttachCurrentThread(&env, NULL);
   FWApplication * application = applicationMain();
   aplatform->addChild(std::shared_ptr<Element>(application));
@@ -576,8 +585,8 @@ void Java_com_sometrik_framework_FrameWork_keyPressed(JNIEnv* env, jobject thiz,
 }
 
 void Java_com_sometrik_framework_FrameWork_touchEvent(JNIEnv* env, jobject thiz, int viewId, int mode, int fingerIndex, double timestamp, float x, float y) {
-//  x /= platform->getDisplayScale();
-//  y /= platform->getDisplayScale();
+  x /= platform->getDisplayScale();
+  y /= platform->getDisplayScale();
   switch (mode) {
   case 1:
     {
