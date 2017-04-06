@@ -631,7 +631,7 @@ public class NativeCommand {
   }
   
   private FWPopupView createDialogView(){
-    FWPopupView window = new FWPopupView(frame, internalId, childInternalId);
+    FWPopupView window = new FWPopupView(frame, childInternalId);
     return window;
   }
 
