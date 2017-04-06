@@ -11,6 +11,7 @@ import com.android.trivialdrivesample.util.Inventory;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
@@ -32,6 +33,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MotionEvent;
@@ -41,6 +43,7 @@ import android.view.SurfaceHolder.Callback;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.Window;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.InputMethodManager;
@@ -84,7 +87,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   public native void keyPressed(double timestamp, int keyId, int viewId);
   public native void touchEvent(int viewId, int mode, int fingerIndex, double timestamp, float x, float y);
   public native void flushTouchEvent(double timestamp, int viewId, int mode);
-  public native void onInit(AssetManager assetManager, float xSize, float ySize, float displayScale, String email, String language, String country);
+  public native void onInit(AssetManager assetManager, int xSize, int ySize, float displayScale, String email, String language, String country);
   public native void nativeSetSurface(Surface surface, int surfaceId, int gl_version);
   public native void nativeSurfaceDestroyed(double timestamp, int surfaceId, int gl_version);
   public native void nativeOnResume(double timestamp, int appId);
@@ -180,8 +183,13 @@ public class FrameWork extends Activity implements NativeCommandHandler {
 
   private void initNative() {    
     System.out.println("Display scale: " + displayMetrics.scaledDensity);
-    float xSize = displayMetrics.widthPixels / displayMetrics.scaledDensity;
-    float ySize = displayMetrics.heightPixels / displayMetrics.scaledDensity;
+//    float xSize = displayMetrics.widthPixels / displayMetrics.scaledDensity;
+//    float ySize = displayMetrics.heightPixels / displayMetrics.scaledDensity;
+//    Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+//    display.getRealMetrics(displayMetrics);
+    int xSize = displayMetrics.widthPixels;
+    int ySize = displayMetrics.heightPixels;
+    System.out.println("oninit w: " + xSize + " h:" + ySize);
     onInit(getAssets(), xSize, ySize, displayMetrics.scaledDensity, getUserGoogleAccountEmail(), defaultLocale.getLanguage(), defaultLocale.getCountry());
   }
 
@@ -191,6 +199,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
     getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
     screenHeight = displayMetrics.heightPixels;
     screenWidth = displayMetrics.widthPixels;
+    
     return displayMetrics;
   }
 
@@ -302,12 +311,13 @@ public class FrameWork extends Activity implements NativeCommandHandler {
 	nativeSurfaceDestroyed(System.currentTimeMillis() / 1000.0, id, gl_version);
       }
 
-      public void surfaceCreated(SurfaceHolder holder) { }
+      public void surfaceCreated(SurfaceHolder holder) {
+	nativeSetSurface(holder.getSurface(), id, gl_version);
+	}
 
       public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
 	System.out.println("setting native surface. Width: " + width + " height: " + height);
-	System.out.println("screen width: " + screenWidth + " screenHeight: " + screenHeight);
-	nativeSetSurface(holder.getSurface(), id, gl_version);
+	System.out.println("ONRESIZE screen width: " + screenWidth + " screenHeight: " + screenHeight);
 	onResize(System.currentTimeMillis() / 1000.0, width, height, currentView);
 	System.out.println("native surface has been set");
       }
@@ -490,8 +500,8 @@ public class FrameWork extends Activity implements NativeCommandHandler {
       defaultLocale = locale;
     }
 
+    super.onConfigurationChanged(newConfig);
     displayMetrics = setupDisplayMetrics();
-    // super.onConfigurationChanged(newConfig);
     System.out.println("onConfigChange");
     boolean isLandscape = false;
     if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
