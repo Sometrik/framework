@@ -559,8 +559,8 @@ static AndroidPlatform * platform = 0;
 extern "C" {
 
 void Java_com_sometrik_framework_FrameWork_onResize(JNIEnv* env, jclass clazz, double timestamp, float x, float y, int viewId) {
-  platform->setDisplayWidth(x);
-  platform->setDisplayHeight(y);
+  platform->setActualDisplayWidth(x);
+  platform->setActualDisplayHeight(y);
 
   ResizeEvent ev(timestamp, x / platform->getDisplayScale(), y / platform->getDisplayScale(), x, y);
   platform->queueEvent(viewId, ev);
@@ -642,9 +642,11 @@ void Java_com_sometrik_framework_FrameWork_onUpdate(JNIEnv* env, jclass clazz, d
 }
 
 static JavaVM * gJavaVM = 0;
-void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, jobject assetManager, float screenWidth, float screenHeight, float displayScale, jstring jemail, jstring jlanguage, jstring jcountry) {
+void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, jobject assetManager, int screenWidth, int screenHeight, float displayScale, jstring jemail, jstring jlanguage, jstring jcountry) {
   if (!platform) {
     __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Creating Platform");
+    __android_log_print(ANDROID_LOG_INFO, "onInit", "oninit screenWidth: %d", screenWidth);
+    __android_log_print(ANDROID_LOG_INFO, "onInit", "oninit screenHeight: %d", screenHeight);
 
 
     const char * email = env->GetStringUTFChars(jemail, NULL);
@@ -661,8 +663,8 @@ void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, job
     android_fopen_set_asset_manager(manager);
 
     platform = new AndroidPlatform(env, assetManager, thiz, displayScale, gJavaVM, &account);
-    platform->setDisplayWidth(screenWidth);
-    platform->setDisplayHeight(screenHeight);
+    platform->setActualDisplayWidth(screenWidth);
+    platform->setActualDisplayHeight(screenHeight);
 
     platform->startThread();
 
