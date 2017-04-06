@@ -538,7 +538,7 @@ void* AndroidPlatform::threadStartCallback(void *myself) {
   aplatform->renderLoop();
   __android_log_print(ANDROID_LOG_INFO, "Sometrik", "Application is exiting");
   aplatform->deinitializeRenderer();
-//  aplatform->getJavaVM()->DetachCurrentThread();
+  aplatform->gJavaVM->DetachCurrentThread();
   
   return 0;
 }
