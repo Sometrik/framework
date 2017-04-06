@@ -367,10 +367,6 @@ public class FrameWork extends Activity implements NativeCommandHandler {
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-      // On touchesBegin(), touchesEnded(), touchesMoved(), Different
-      // fingers (pointerId)
-      Message msg;
-      int[] intArray;
 
       int action = event.getAction() & MotionEvent.ACTION_MASK;
       int pointerIndex = (event.getAction() & MotionEvent.ACTION_POINTER_INDEX_MASK) >> MotionEvent.ACTION_POINTER_INDEX_SHIFT;
@@ -382,8 +378,8 @@ public class FrameWork extends Activity implements NativeCommandHandler {
       case MotionEvent.ACTION_DOWN:
 	//Touch event of screen touch-down after the first touch
       case MotionEvent.ACTION_POINTER_DOWN:
-	System.out.println("Liike alkoi: " + event.getX(event.getActionIndex()) + " " + event.getY(event.getActionIndex()) + " - id: " + event.getActionIndex());
-	touchEvent(viewId, 1, event.getActionIndex(), System.currentTimeMillis() / 1000.0, (int) event.getX(event.getActionIndex()), (int) (event.getY(event.getActionIndex())));
+	System.out.println("Liike alkoi: " + event.getX(event.getActionIndex()) + " " + event.getY(event.getActionIndex()) + " - id: " + fingerId);
+	touchEvent(viewId, 1, fingerId, System.currentTimeMillis() / 1000.0, (int) event.getX(event.getActionIndex()), (int) (event.getY(event.getActionIndex())));
 	flushTouchEvent(System.currentTimeMillis() / 1000.0, viewId, 1);
 	break;
 
@@ -391,17 +387,17 @@ public class FrameWork extends Activity implements NativeCommandHandler {
       case MotionEvent.ACTION_MOVE:
 	int pointerCount = event.getPointerCount();
 	for (int i = 0; i < pointerCount; i++) {
-//	  System.out.println("Liike: " + event.getX(i) + " " + event.getY(i) + " - id: " + i);
-	      touchEvent(viewId, 2, i, System.currentTimeMillis() / 1000.0, (int) event.getX(i), (int) (event.getY(i)));
+	  // System.out.println("Liike: " + event.getX(i) + " " + event.getY(i) + " - id: " + i);
+	  touchEvent(viewId, 2, i, System.currentTimeMillis() / 1000.0, (int) event.getX(i), (int) (event.getY(i)));
 	}
 	flushTouchEvent(System.currentTimeMillis() / 1000.0, viewId, 2);
 	break;
-	//touch event of first finger being removed from the screen
+      // touch event of first finger being removed from the screen
       case MotionEvent.ACTION_UP:
-	//touch event of fingers other than the first leaving the screen
+	// touch event of fingers other than the first leaving the screen
       case MotionEvent.ACTION_POINTER_UP:
-	System.out.println("Liike loppui: " + event.getX(event.getActionIndex()) + " " + event.getY(event.getActionIndex()) + " - id: " + event.getActionIndex());
-	  touchEvent(viewId, 3, event.getActionIndex(), System.currentTimeMillis() / 1000.0, (int) event.getX(event.getActionIndex()), (int) (event.getY(event.getActionIndex())));
+	System.out.println("Liike loppui POINTER_UP: " + event.getX(event.getActionIndex()) + " " + event.getY(event.getActionIndex()) + " - id: " + fingerId);
+	  touchEvent(viewId, 3, fingerId, System.currentTimeMillis() / 1000.0, (int) event.getX(event.getActionIndex()), (int) (event.getY(event.getActionIndex())));
   	  flushTouchEvent(System.currentTimeMillis() / 1000.0, viewId, 3);
 	break;
       }
@@ -507,6 +503,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
       isLandscape = true;
       onResize(System.currentTimeMillis() / 1000.0, screenWidth, screenHeight, currentView);
     }
+    
     super.onConfigurationChanged(newConfig);
     
     for (NativeCommandHandler handler : views.values()){
