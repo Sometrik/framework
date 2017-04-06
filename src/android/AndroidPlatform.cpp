@@ -29,8 +29,8 @@
 class JavaCache {
 
 public:
-  JavaCache(JNIEnv * env) {
-    env->GetJavaVM(&javaVM);
+  JavaCache(JNIEnv * _env, JavaVM * _javaVM) : env(_env), javaVM(_javaVM) {
+//    env->GetJavaVM(&javaVM);
 
     nativeCommandClass = (jclass) env->NewGlobalRef(env->FindClass("com/sometrik/framework/NativeCommand"));
     frameworkClass = (jclass) env->NewGlobalRef(env->FindClass("com/sometrik/framework/FrameWork"));
@@ -54,23 +54,23 @@ public:
   }
 
   ~JavaCache() {
-    JNIEnv * env = getJNIEnv();
       env->DeleteGlobalRef(nativeCommandClass);
       env->DeleteGlobalRef(frameworkClass);
   }
 
-  JNIEnv * getJNIEnv() {
-    __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "cache getJNIENv called");
-    if (javaVM == NULL){
-      __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "VM is null");
-    }
 
-    JNIEnv *Myenv = NULL;
-    javaVM->GetEnv((void**)&Myenv, JNI_VERSION_1_6);
-    if (Myenv == NULL){
-       __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Env is null");
-     }
-    return Myenv;
+    JavaVM * getJavaVM() { return javaVM; }
+
+  JNIEnv * createJNIEnv(){
+    JNIEnv * env = 0;
+    JavaVMAttachArgs args;
+    args.version = JNI_VERSION_1_6; // choose your JNI version
+    args.name = NULL; // you might want to give the java thread a name
+    args.group = NULL; // you might want to assign the java thread to a ThreadGroup
+    __android_log_print(ANDROID_LOG_INFO, "Sometrik", "attaching JVM (platform)");
+    javaVM->AttachCurrentThread(&env, &args);
+
+    return env;
   }
 
   jclass nativeCommandClass;
@@ -89,6 +89,7 @@ public:
 
 private:
   JavaVM * javaVM;
+  JNIEnv * env;
 };
 
 class AndroidPlatform: public FWPlatform {
@@ -96,8 +97,8 @@ public:
  AndroidPlatform(JNIEnv * _env, jobject _mgr, jobject _framework, float _display_scale, JavaVM * _javaVM, MobileAccount * _account)
    : FWPlatform(_display_scale),
      account(_account),
-    javaCache(JavaCache(_env)),
-    gJavaVM(_javaVM) {
+    javaCache(JavaCache(_env, _javaVM)),
+    gJavaVM(_javaVM){
       
     framework = _env->NewGlobalRef(_framework);
     mgr = _env->NewGlobalRef(_mgr);
@@ -110,13 +111,11 @@ public:
     soundCache = std::make_shared<AndroidSoundCache>(_env, _mgr);
 #endif
   }
-  
-  JavaVM * getJavaVM() { return gJavaVM; }
 
   std::string getBundleFilename(const char * filename) override;
   std::string getLocalFilename(const char * filename, FileType type) override;
   std::unique_ptr<canvas::ContextFactory> createContextFactory() const override {
-    return std::unique_ptr<canvas::ContextFactory>(new canvas::AndroidContextFactory(getJNIEnv(), mgr, canvasCache, getDisplayScale()));
+    return std::unique_ptr<canvas::ContextFactory>(new canvas::AndroidContextFactory(mgr, canvasCache, getDisplayScale()));
   }
 
   std::unique_ptr<HTTPClientFactory> createHTTPClientFactory() const override {
@@ -141,8 +140,7 @@ public:
   void renderLoop();
   static void* threadStartCallback(void *myself);
 
-  JNIEnv* getJNIEnv() const;
-//  JavaCache getJavaCache() const { return &javaCache; }
+  JNIEnv* getEnv();
 
   void queueEvent(int internal_id, const Event & ev) {
     eventqueue.push(internal_id, ev);
@@ -159,8 +157,8 @@ public:
   jbyteArray convertToByteArray(const std::string & s);
 
 private:
-  pthread_t _threadId;
   JavaCache javaCache;
+  pthread_t _threadId;
   std::string databasePath;
 
   EGLDisplay display = 0;
@@ -173,6 +171,7 @@ private:
   MobileAccount * account;
   ANativeWindow * window = 0;
   JavaVM * gJavaVM = 0;
+  JNIEnv * stored_env = 0;
   jobject mgr;
   jobject framework;
   jobject handler;
@@ -208,7 +207,7 @@ std::string AndroidPlatform::getBundleFilename(const char * filename) {
 
 std::string AndroidPlatform::getLocalFilename(const char * filename, FileType type) {
 
-//  auto env = javaCache.getJNIEnv();
+//  auto env = javaCache.getEnv();
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "getLocalFilename");
 
 //  jstring path;
@@ -245,7 +244,7 @@ std::string AndroidPlatform::getLocalFilename(const char * filename, FileType ty
 
 jbyteArray
 AndroidPlatform::convertToByteArray(const std::string & s) {
-  auto env = getJNIEnv();
+  auto env = getEnv();
   const jbyte * pNativeMessage = reinterpret_cast<const jbyte*>(s.c_str());
   jbyteArray bytes = env->NewByteArray(s.size());
   env->SetByteArrayRegion(bytes, 0, s.size(), pNativeMessage);
@@ -258,7 +257,7 @@ AndroidPlatform::sendCommand2(const Command & command) {
     setActiveViewId(command.getChildInternalId());
   }
   
-  auto env = getJNIEnv();
+  auto env = getEnv();
   int commandTypeId = int(command.getType());
   auto textValue = command.getTextValue();
   auto textValue2 = command.getTextValue2();
@@ -522,32 +521,37 @@ void* AndroidPlatform::threadStartCallback(void *myself) {
     __android_log_print(ANDROID_LOG_INFO, "Sometrik", "aplatform isn't initialized");
   }
 
-  JNIEnv * env;
-  __android_log_print(ANDROID_LOG_INFO, "Sometrik", "attaching JVM");
-  aplatform->getJavaVM()->AttachCurrentThread(&env, NULL);
+
+  JavaVMAttachArgs args;
+  args.version = JNI_VERSION_1_6; // choose your JNI version
+  args.name = NULL; // you might want to give the java thread a name
+  args.group = NULL; // you might want to assign the java thread to a ThreadGroup
+
+  __android_log_print(ANDROID_LOG_INFO, "Sometrik", "attaching JVM1");
+  JNIEnv * env = aplatform->getEnv();
+  JNIEnv * myEnv = 0;
+  __android_log_print(ANDROID_LOG_INFO, "Sometrik", "attaching JVM2");
+      aplatform->gJavaVM->AttachCurrentThread(&myEnv, &args);
+//  aplatform->javaCache.getJavaVM()->AttachCurrentThread(&env, NULL);
   FWApplication * application = applicationMain();
   aplatform->addChild(std::shared_ptr<Element>(application));
   aplatform->renderLoop();
   __android_log_print(ANDROID_LOG_INFO, "Sometrik", "Application is exiting");
   aplatform->deinitializeRenderer();
-  aplatform->getJavaVM()->DetachCurrentThread();
+//  aplatform->getJavaVM()->DetachCurrentThread();
   
   return 0;
 }
 
-JNIEnv *
-AndroidPlatform::getJNIEnv() const {
-  if (gJavaVM == NULL) {
-    __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "JavaVM is null");
-    return NULL;
+JNIEnv * AndroidPlatform::getEnv() {
+  if (gJavaVM->GetEnv((void**)&stored_env, JNI_VERSION_1_6) != NULL) {
+    __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "returning old env");
+    return stored_env;
+  } else {
+    __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "creating new env");
+    stored_env = javaCache.createJNIEnv();
+    return stored_env;
   }
-
-  JNIEnv * Myenv = NULL;
-  gJavaVM->GetEnv((void**)&Myenv, JNI_VERSION_1_6);
-  if (Myenv == NULL) {
-    __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Env is null");
-  }
-  return Myenv;
 }
 
 static AndroidPlatform * platform = 0;
@@ -570,10 +574,10 @@ void Java_com_sometrik_framework_FrameWork_keyPressed(JNIEnv* env, jobject thiz,
       co.setValue(2);
       platform->sendCommand2(co);
     } else {
-      Command co(Command::QUIT_APP, poppedView);
-      platform->sendCommand2(co);
       //TODO
       // Wrong Thread
+      Command co(Command::QUIT_APP, poppedView);
+      platform->sendCommand2(co);
     }
   } else if (keyId == 82) {
     CommandEvent ce(timestamp, FW_ID_MENU);
