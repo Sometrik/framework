@@ -17,10 +17,10 @@ void
 OpenGLView::initialize(FWPlatform * _platform) {
   FWViewBase::initialize(_platform);
   sendCommand(Command(Command::CREATE_OPENGL_VIEW, getParentInternalId(), getInternalId()));
-  logical_width = int(_platform->getDisplayWidth() / _platform->getDisplayScale());
-  logical_height = int(_platform->getDisplayHeight() / _platform->getDisplayScale());
-  actual_width = _platform->getDisplayWidth();
-  actual_height = _platform->getDisplayHeight();
+  logical_width = int(_platform->getActualDisplayWidth() / _platform->getDisplayScale());
+  logical_height = int(_platform->getActualDisplayHeight() / _platform->getDisplayScale());
+  actual_width = _platform->getActualDisplayWidth();
+  actual_height = _platform->getActualDisplayHeight();
   initializeChildren();
 }
 

@@ -79,11 +79,11 @@ class FWPlatform : public Element {
   
   void postEvent(int internal_id, Event & ev);
       
-  void setDisplayWidth(int w) { display_width = w; }
-  void setDisplayHeight(int h) { display_height = h; }
+  void setActualDisplayWidth(int w) { actual_display_width = w; }
+  void setActualDisplayHeight(int h) { actual_display_height = h; }
 
-  int getDisplayWidth() const { return display_width; }
-  int getDisplayHeight() const { return display_height; }
+  int getActualDisplayWidth() const { return actual_display_width; }
+  int getActualDisplayHeight() const { return actual_display_height; }
   float getDisplayScale() const { return display_scale; }
   int getActiveViewId() const { return activeViewId; }
 
@@ -156,7 +156,7 @@ class FWPlatform : public Element {
 
   virtual std::shared_ptr<PlatformThread> run2(std::shared_ptr<Runnable> & runnable);
 
-  int display_width = 0, display_height = 0;
+  int actual_display_width = 0, actual_display_height = 0;
   float display_scale = 1.0f;
   FWPreferences preferences;
   int modal_result_value = 0;
