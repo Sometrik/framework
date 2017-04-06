@@ -545,7 +545,6 @@ void* AndroidPlatform::threadStartCallback(void *myself) {
 
 JNIEnv * AndroidPlatform::getEnv() {
   if (gJavaVM->GetEnv((void**)&stored_env, JNI_VERSION_1_6) != NULL) {
-    __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "returning old env");
     return stored_env;
   } else {
     __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "creating new env");
