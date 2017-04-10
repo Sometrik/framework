@@ -36,10 +36,10 @@ namespace std {
     return d;
   }
 
-  inline long
+  inline long long
   stoll(std::string value){
     std::stringstream buffer(value);
-    long l;
+    long long l;
     buffer >> l;
     return l;
   }
