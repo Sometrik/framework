@@ -11,7 +11,6 @@ import com.android.trivialdrivesample.util.Inventory;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
@@ -25,6 +24,7 @@ import android.content.SharedPreferences;
 import android.content.pm.ConfigurationInfo;
 import android.content.res.AssetManager;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
@@ -88,7 +88,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   public native void touchEvent(int viewId, int mode, int fingerIndex, double timestamp, float x, float y);
   public native void flushTouchEvent(double timestamp, int viewId, int mode);
   public native void onInit(AssetManager assetManager, int xSize, int ySize, float displayScale, String email, String language, String country);
-  public native void nativeSetSurface(Surface surface, int surfaceId, int gl_version);
+  public native void nativeSetSurface(Surface surface, int surfaceId, int gl_version, int width, int height);
   public native void nativeSurfaceDestroyed(double timestamp, int surfaceId, int gl_version);
   public native void nativeOnResume(double timestamp, int appId);
   public native void nativeOnPause(double timestamp, int appId);
@@ -196,10 +196,17 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   // Get screen settings
   public DisplayMetrics setupDisplayMetrics() {
     displayMetrics = new DisplayMetrics();
-    getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-    screenHeight = displayMetrics.heightPixels;
+    Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+    display.getRealMetrics(displayMetrics);
     screenWidth = displayMetrics.widthPixels;
+    screenHeight = displayMetrics.heightPixels;
     
+    Resources resources = getResources();
+    int resourceId = resources.getIdentifier( "status_bar_height", "dimen", "android" );
+    int statusHeight = ( resourceId > 0 ) ? resources.getDimensionPixelSize( resourceId ) : 0;
+    System.out.println("statusHeight: " + statusHeight);
+    screenHeight -= statusHeight;
+
     return displayMetrics;
   }
 
@@ -304,7 +311,6 @@ public class FrameWork extends Activity implements NativeCommandHandler {
     surfaceView.setLayoutParams(new FrameLayout.LayoutParams((int)screenWidth, (int)screenHeight));
     surfaceView.setOnTouchListener(new MyOnTouchListener(this, id));
     SurfaceHolder holder = surfaceView.getHolder();
-//    holder.setFixedSize((int)screenWidth, (int)screenHeight);
 	holder.addCallback(new Callback() {
       public void surfaceDestroyed(SurfaceHolder holder) {
 	System.out.println("surfaceDestroyed");
@@ -312,13 +318,13 @@ public class FrameWork extends Activity implements NativeCommandHandler {
       }
 
       public void surfaceCreated(SurfaceHolder holder) {
-	nativeSetSurface(holder.getSurface(), id, gl_version);
+	System.out.println("surfaceCreated. Width: " + screenWidth + " height: " + screenHeight + " id: " + id);
+	nativeSetSurface(holder.getSurface(), id, gl_version, (int)screenWidth, (int)screenHeight);
 	}
 
       public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-	System.out.println("setting native surface. Width: " + width + " height: " + height);
-	System.out.println("ONRESIZE screen width: " + screenWidth + " screenHeight: " + screenHeight);
-	onResize(System.currentTimeMillis() / 1000.0, width, height, currentView);
+	System.out.println("nativeSurfaceChanged. Width: " + width + " height: " + height + " id: " + id);
+	onResize(System.currentTimeMillis() / 1000.0, width, height, id);
 	System.out.println("native surface has been set");
       }
     });
@@ -508,10 +514,12 @@ public class FrameWork extends Activity implements NativeCommandHandler {
       System.out.println("Orientation conf portrait");
       isLandscape = false;
       onResize(System.currentTimeMillis() / 1000.0, screenWidth, screenHeight, currentView);
+      System.out.println("Orientation conf portrait. SWidth: " + screenWidth + " SHeight: " + screenHeight + " currentView: " + currentView);
     } else if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
       System.out.println("Orientation conf landscape");
       isLandscape = true;
       onResize(System.currentTimeMillis() / 1000.0, screenWidth, screenHeight, currentView);
+      System.out.println("Orientation conf landscape. SWidth: " + screenWidth + " SHeight: " + screenHeight + " currentView: " + currentView);
     }
     
     super.onConfigurationChanged(newConfig);
