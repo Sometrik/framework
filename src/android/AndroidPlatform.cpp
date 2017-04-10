@@ -101,7 +101,7 @@ public:
     gJavaVM(_javaVM){
       
     framework = _env->NewGlobalRef(_framework);
-    mgr = _env->NewGlobalRef(_mgr);
+    asset_manager = AAssetManager_fromJava(_env, _mgr);
     canvasCache = std::make_shared<canvas::AndroidCache>(_env, _mgr);
     clientCache = std::make_shared<AndroidClientCache>(_env);
     sendCommand2(Command(Command::CREATE_PLATFORM, getParentInternalId(), getInternalId()));
@@ -115,8 +115,9 @@ public:
   std::string getBundleFilename(const char * filename) override;
   std::string getLocalFilename(const char * filename, FileType type) override;
   std::unique_ptr<canvas::ContextFactory> createContextFactory() const override {
-    return std::unique_ptr<canvas::ContextFactory>(new canvas::AndroidContextFactory(mgr, canvasCache, getDisplayScale()));
+    return std::unique_ptr<canvas::ContextFactory>(new canvas::AndroidContextFactory(asset_manager, canvasCache, getDisplayScale()));
   }
+
 
   std::unique_ptr<HTTPClientFactory> createHTTPClientFactory() const override {
     return std::unique_ptr<HTTPClientFactory>(new AndroidClientFactory(clientCache));
@@ -172,7 +173,7 @@ private:
   ANativeWindow * window = 0;
   JavaVM * gJavaVM = 0;
   JNIEnv * stored_env = 0;
-  jobject mgr;
+  AAssetManager * asset_manager;
   jobject framework;
   jobject handler;
   EventQueue eventqueue;
