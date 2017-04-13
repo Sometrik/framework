@@ -1,0 +1,52 @@
+
+
+		Profiling library
+		
+#pull this to a git folder. It needs to be referenced in android.mk		
+https://github.com/richq/android-ndk-profiler
+
+		Makefile Changes
+		
+		
+LOCAL_CFLAGS := -pg -DNDK_PROFILE -fno-omit-frame-pointer
+LOCAL_STATIC_LIBRARIES += android-ndk-profiler
+
+#this one presumes android-ndk-profiler is in the same Git folder.
+NDK_MODULE_PATH += $(LOCAL_PATH)../../android-ndk-profiler
+
+#this needs to be at the end
+$(call import-add-path,C:/users/user/git/android-ndk-profiler)
+$(call import-module,android-ndk-profiler/jni)
+
+
+		Code Changes
+
+#add extern declarations
+extern "C" void monstartup( char const * );
+extern "C" void moncleanup();
+
+#add monstartup to a good startup spot like init
+ monstartup("framework.so");
+
+#add moncleanup to a good end spot like onDestroy
+ moncleanup();
+ 
+ 
+		Pulling gmon.out
+		
+#in cmd navigate to Android SDK platform tools location.
+\android-sdk-windows\platform-tools
+
+#pull file from sdcard
+adb pull /sdcard/gmon.out
+
+
+
+		Running gprof
+		
+#navigate to Android NDK\toolchains and find androideabi-gprof.exe
+\android-ndk-r10e\toolchains\arm-linux-androideabi-4.9\prebuilt\windows-x86_64\bin
+
+#run gprof. First parameter is our_library.so and second is the gmon.out file. possible to add < textfile.txt so that output can be exported
+arm-linux-androideabi-gprof my_library.so my_gmon.out
+arm-linux-androideabi-gprof C:\Usersuser\git\project\libs\armeabi-v7a\libframework.so \android-sdk-windows\platform-tools\gmon.out
