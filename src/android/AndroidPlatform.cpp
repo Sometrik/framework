@@ -545,7 +545,7 @@ void* AndroidPlatform::threadStartCallback(void *myself) {
 }
 
 JNIEnv * AndroidPlatform::getEnv() {
-  if (gJavaVM->GetEnv((void**)&stored_env, JNI_VERSION_1_6) != NULL) {
+  if (gJavaVM->GetEnv((void**)&stored_env, JNI_VERSION_1_6) != 0) {
     return stored_env;
   } else {
     __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "creating new env");
@@ -556,6 +556,10 @@ JNIEnv * AndroidPlatform::getEnv() {
 
 static AndroidPlatform * platform = 0;
 
+#ifdef PROFILING
+extern "C" void monstartup( char const * );
+extern "C" void moncleanup();
+#endif
 extern "C" {
 
 void Java_com_sometrik_framework_FrameWork_onResize(JNIEnv* env, jclass clazz, double timestamp, float x, float y, int viewId) {
@@ -667,6 +671,10 @@ void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, job
     platform->setActualDisplayHeight(screenHeight);
 
     platform->startThread();
+//    setenv("CPUPROFILE", "/data/data/com.sometrik.kraphio/files/gmon.out", 1);
+#ifdef PROFILING
+    monstartup("framework.so");
+#endif
 
     __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Init end");
   }
@@ -683,9 +691,6 @@ void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, job
     platform->queueEvent(platform->getInternalId(), ev);
 
   }
-
-//  ResizeEvent ev2(0.0, width / platform->getDisplayScale(), height / platform->getDisplayScale(), width, height);
-//  platform->queueEvent(surfaceId, ev2);
 }
 
 
@@ -728,6 +733,9 @@ void Java_com_sometrik_framework_FrameWork_nativeOnDestroy(JNIEnv* env, jobject 
   SysEvent ev(timestamp, SysEvent::DESTROY);
   platform->queueEvent(appId, ev);
   platform->joinThread();
+#ifdef PROFILING
+  moncleanup();
+#endif
   delete platform;
 }
 void Java_com_sometrik_framework_FrameWork_languageChanged(JNIEnv* env, jobject thiz, double timestamp, int appId, jstring language) {
@@ -786,11 +794,6 @@ void Java_com_sometrik_framework_FrameWork_OnPurchaseEvent(JNIEnv* env, jclass c
 jint JNI_OnLoad(JavaVM *vm, void *reserved) {
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "JNI_Onload on AndroidPlatform");
   gJavaVM = vm;
-  if (gJavaVM == NULL){
-    __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "problem on load. JavaVm is null");
-
-  }
-
   return JNI_VERSION_1_6;
 }
 }
