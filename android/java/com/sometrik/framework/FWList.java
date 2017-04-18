@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import android.content.Context;
 import android.util.Log;
 import android.view.View;
+import android.widget.ExpandableListView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 public class FWList extends ListView implements NativeCommandHandler{
 
@@ -47,13 +49,16 @@ public class FWList extends ListView implements NativeCommandHandler{
 
   @Override
   public void addOption(int optionId, String text) {
-    adapter.addColumn(text);
+    if (optionId == 0){
+      adapter.addColumn(text);
+    } else {
+      Log.d("FWList", "adding header to row " + optionId);
+      adapter.addSectionHeader(optionId, text);
+    }
   }
 
   @Override
   public void setValue(String v) {
-    // TODO Auto-generated method stub
-    
   }
 
   @Override

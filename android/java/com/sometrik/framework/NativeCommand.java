@@ -231,6 +231,13 @@ public class NativeCommand {
       FrameWork.addToViewList(debugList);
       view.addChild(debugList);
       break;
+    case CREATE_LISTVIEW:
+      
+      FWList listView = new FWList(frame, new FWAdapter(frame, null));
+      listView.setId(childInternalId);
+      FrameWork.addToViewList(listView);
+      view.addChild(listView);
+      break;
       
     case CREATE_TIMER:
       Timer timer = new Timer();
