@@ -22,6 +22,7 @@ public class FWAdapter extends ArrayAdapter<View> {
   private HashMap<Integer, String> sectionHeaders;
   private ArrayList<Integer> sectionHeaderRows;
   private FrameWork frame;
+  private int addedHeaders = 0;
   private LinearLayout.LayoutParams listItemParams;
   
   public FWAdapter(Context context, List<View> viewList) {
@@ -37,12 +38,14 @@ public class FWAdapter extends ArrayAdapter<View> {
   }
 
   public ArrayList<String> getDataRow(int rowId) {
-    if (dataList.size() >= rowId) {
-//      AdapterData data = dataList.get(rowId - 1);
-//      if (data.dataType.equals("section")){
-//	getDataRow(rowId + 1);
-//      }
-      return dataList.get(rowId - 1).stringList;
+    int headersBeforeCounter = 0;
+    for (Integer beforeHeaders : sectionHeaderRows) {
+      if (beforeHeaders <= rowId) {
+	headersBeforeCounter++;
+      }
+    }
+    if (dataList.size() >= rowId - headersBeforeCounter) {
+      return dataList.get(rowId - 1 - headersBeforeCounter).stringList;
     }
     Log.d("adapter", "no row found");
     return null;
@@ -67,7 +70,8 @@ public class FWAdapter extends ArrayAdapter<View> {
   @Override
   public int getCount() {
     if (columnData.getSize() != 0){
-      return dataList.size() + 1;
+      int sectionSize = sectionHeaders.size();
+      return dataList.size() + 1 + sectionSize;
     }
     return dataList.size();
   }
@@ -106,7 +110,7 @@ public class FWAdapter extends ArrayAdapter<View> {
       if (columnData.getSize() != 0) {
 	Log.d("adapter", "trying to get from index: " + (position - 1));
 	for (Integer sectionRow : sectionHeaderRows) {
-	  if (position - 1 == sectionRow) {
+	  if (position - 1 == sectionRow - 1) {
 	    Log.d("adapter", "sectionRow found");
 	    String sectionText = sectionHeaders.get(sectionRow);
 	    TextView section = new TextView(frame);
@@ -114,10 +118,11 @@ public class FWAdapter extends ArrayAdapter<View> {
 	    section.setTypeface(null, Typeface.BOLD);
 	    layout.addView(section);
 	    section.setText(sectionText);
+	    addedHeaders++;
 	    return layout;
 	  }
 	}
-	data = dataList.get(position - 1);
+	data = dataList.get(position - 1 - addedHeaders);
       } else {
 	data = dataList.get(position);
       }
