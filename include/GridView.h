@@ -26,9 +26,10 @@ class GridView : public Element {
 
   void addColumn(const std::string & name) {
     columns.push_back(GridViewColumn(name));
-    if (isInitialized()) {
-      initializeColumn(columns.back());
-    }
+    auto & col = columns.back();
+    Command c(Command::ADD_COLUMN, getInternalId());
+    c.setTextValue(col.getName());
+    sendCommand(c);    
   }
 
   void setValue(int row, int column, const std::string & value) {
@@ -36,48 +37,24 @@ class GridView : public Element {
     c.setRow(row);
     c.setColumn(column);
     c.setTextValue(value);
-    if (isInitialized()) {
-      sendCommand(c);
-    } else {
-      waiting_commands.push_back(c);
-    }
+    sendCommand(c);    
   }
 
   void flush() {
-    if (isInitialized()) {
-      sendCommand(Command(Command::FLUSH_VIEW, getInternalId()));
-    }
+    sendCommand(Command(Command::FLUSH_VIEW, getInternalId()));    
   }
 
   void clear() {
-    waiting_commands.clear();
-    if (isInitialized()) {
-      sendCommand(Command(Command::CLEAR, getInternalId()));
-    }
+    sendCommand(Command(Command::CLEAR, getInternalId()));    
   }
 
- protected:
-  void initializeColumn(const GridViewColumn & col) {
-    Command c(Command::ADD_COLUMN, getInternalId());
-    c.setTextValue(col.getName());
-    sendCommand(c);    
-  }
-  
-  void initialize(FWPlatform * _platform) override {
-    Element::initialize(_platform);
+ protected: 
+  void create() override {
     sendCommand(Command(Command::CREATE_GRIDVIEW, getParentInternalId(), getInternalId()));
-    for (auto & c : columns) {
-      initializeColumn(c);
-    }
-    for (auto & c : waiting_commands) {
-      sendCommand(c);
-    }
-    waiting_commands.clear();
   }
 
  private:
   std::vector<GridViewColumn> columns;
-  std::vector<Command> waiting_commands;
 };
 
 #endif
