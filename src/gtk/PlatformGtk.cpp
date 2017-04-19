@@ -627,8 +627,8 @@ int main (int argc, char *argv[]) {
   GtkApplication * app;
 
   PlatformGtk platform;  
-  platform.setDisplayWidth(width);
-  platform.setDisplayHeight(height);
+  platform.setActualDisplayWidth(width);
+  platform.setActualDisplayHeight(height);
 
   cerr << "creating application\n";
   
