@@ -11,6 +11,7 @@ import com.android.trivialdrivesample.util.Inventory;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
@@ -66,8 +67,9 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   
   private boolean drawMode = false;
   
-  private Locale defaultLocale;
+  public ActionBar actionBar;
   
+  private Locale defaultLocale;
   private float screenHeight;
   private float screenWidth;
   public Handler mainHandler;
@@ -116,7 +118,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
     } else {
       // this.setTheme(android.R.style.Theme_DeviceDefault);
       // this.setTheme(android.R.style.Theme_Holo);
-      this.setTheme(android.R.style.Theme_Holo_Light);
+      this.setTheme(android.R.style.Theme_Holo);
     }
     super.onCreate(savedInstanceState);
     
@@ -124,8 +126,9 @@ public class FrameWork extends Activity implements NativeCommandHandler {
     defaultLocale = Locale.getDefault();
     System.out.println("Users preferred locale: " + defaultLocale.getCountry() + " Language: " + defaultLocale.getLanguage());
     
-    // You can disable status bar with this
-    this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+    // ActionBar is hidden by default with this
+    actionBar = getActionBar();
+    actionBar.hide();
     
     // Init for screen settings
     setupDisplayMetrics();

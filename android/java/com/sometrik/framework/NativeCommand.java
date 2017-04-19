@@ -27,6 +27,7 @@ import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -358,9 +359,11 @@ public class NativeCommand {
       break;
     case CREATE_ACTIONBAR:
       //TODO not everything is set
-      frame.requestWindowFeature(Window.FEATURE_ACTION_BAR);
-      ActionBar ab = frame.getActionBar();
+      ActionBar ab = frame.actionBar;
+      System.out.println("bar text: " + textValue);
+      ab.setDisplayShowTitleEnabled(true);
       ab.setTitle(textValue);
+      ab.show();
       break;
     case QUIT_APP:
       // TODO
@@ -469,7 +472,7 @@ public class NativeCommand {
   
   private FWLayout createLinearLayout() {
     FWLayout layout = new FWLayout(frame);
-    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
 //    params.weight = 1.0f;
 //    params.gravity = Gravity.FILL;
 //    layout.setBaselineAligned(false);
@@ -490,6 +493,7 @@ public class NativeCommand {
     button.setText(getTextValue());
     LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
     params.weight = 1;
+    params.gravity = Gravity.BOTTOM;
     button.setLayoutParams(params);
 
     button.setOnClickListener(new OnClickListener() {
