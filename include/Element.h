@@ -3,10 +3,10 @@
 
 #include <EventHandler.h>
 #include <Selection.h>
+#include <Command.h>
 
 class FWPlatform;
 class FWApplication;
-class Command;
 
 class Element : public EventHandler {
  public:
@@ -160,6 +160,8 @@ class Element : public EventHandler {
   void removeChild(Element * c);
 		   
  protected:
+
+  virtual void create() { }
   virtual void initialize(FWPlatform * _platform);
   void initializeChildren();
 
@@ -173,6 +175,7 @@ class Element : public EventHandler {
   int layout_weight = 0;
   unsigned int flags; // initialized in constructor
   bool has_error = false;
+  std::vector<Command> pendingCommands;
 
   static int nextInternalId;
 };

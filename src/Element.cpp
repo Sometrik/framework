@@ -3,7 +3,6 @@
 #include <HeadingText.h>
 #include <TextLabel.h>
 #include <LinearLayout.h>
-#include <Command.h>
 #include <FWApplication.h>
 
 #include <cassert>
@@ -17,6 +16,11 @@ Element::initialize(FWPlatform * _platform) {
   assert(_platform);
   if (_platform) {
     platform = _platform;
+    create();
+    for (auto & c : pendingCommands){
+      sendCommand(c);
+    }
+    pendingCommands.clear();
   }
   assert(isInitialized());
 }
@@ -46,6 +50,7 @@ Element::setError(bool t) {
 
 void
 Element::style(const std::string & key, const std::string & value) {
+
   Command c(Command::SET_STYLE, getInternalId());
   c.setTextValue(key);
   c.setTextValue2(value);
@@ -54,8 +59,11 @@ Element::style(const std::string & key, const std::string & value) {
   
 void
 Element::sendCommand(const Command & command) {
-  assert(platform);
-  platform->sendCommand2(command);
+  if (platform){
+    platform->sendCommand2(command);
+  } else {
+    pendingCommands.push_back(command);
+  }
 }
 
 Element &

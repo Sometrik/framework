@@ -11,13 +11,6 @@ class LinearLayout : public Element {
  public:
   LinearLayout(int _direction, int _id) : Element(_id), direction(_direction) { }
 
-  void
-  setStyle(const char * key, const char * value){
-    Command c(Command::SET_STYLE, getInternalId());
-    c.setTextValue(key);
-    c.setTextValue2(value);
-    additionalInitCommands.push_back(c);
-  }
 
   bool isA(const std::string & className) override {
     if (className == "LinearLayout") return true;
@@ -25,21 +18,14 @@ class LinearLayout : public Element {
   }
 
  protected:
-  void initialize(FWPlatform * _platform) override {
-    Element::initialize(_platform);
+  void create() override {
     Command c(Command::CREATE_LINEAR_LAYOUT, getParentInternalId(), getInternalId());
     c.setValue(direction);
     sendCommand(c);
-
-    for (int i = 0; i < additionalInitCommands.size(); i++){
-      sendCommand(additionalInitCommands.at(i));
-    }
   }
 			       
  private:
   int direction = FW_VERTICAL;
-  std::vector<Command> additionalInitCommands;
-
 };
 
 #endif
