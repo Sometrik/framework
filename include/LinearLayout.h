@@ -12,18 +12,10 @@ class LinearLayout : public Element {
   LinearLayout(int _direction, int _id) : Element(_id), direction(_direction) { }
 
   void
-  setGravity(const char * gravity){
+  setStyle(const char * key, const char * value){
     Command c(Command::SET_STYLE, getInternalId());
-    c.setTextValue("gravity");
-    if (gravity == "bottom"){
-      c.setTextValue2("bottom");
-    } else if (gravity == "top"){
-      c.setTextValue2("top");
-    } else if (gravity == "left"){
-      c.setTextValue2("left");
-    } else if (gravity == "right"){
-      c.setTextValue2("right");
-    }
+    c.setTextValue(key);
+    c.setTextValue2(value);
     additionalInitCommands.push_back(c);
   }
 
