@@ -62,6 +62,7 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
       } else if (value.equals("right")){
 	params.gravity = Gravity.RIGHT;
       }
+      setLayoutParams(params);
     }
   }
 
