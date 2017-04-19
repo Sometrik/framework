@@ -9,6 +9,7 @@
 class ActionBar : public Element {
  public:
   ActionBar() { }
+  ActionBar(const char * _title) : title(_title) { }
 
   bool isA(const std::string & className) override {
     if (className == "ActionBar") return true;
@@ -19,8 +20,11 @@ class ActionBar : public Element {
   void initialize(FWPlatform * _platform) override {
     Element::initialize(_platform);
     Command c(Command::CREATE_ACTIONBAR, getParentInternalId(), getInternalId());
+    c.setTextValue(title);
     sendCommand(c);
   }
+
+  const char * title;
 };
 
 #endif
