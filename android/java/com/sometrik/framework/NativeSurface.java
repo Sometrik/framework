@@ -38,7 +38,7 @@ public class NativeSurface extends SurfaceView implements NativeCommandHandler {
 
   @Override
   protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-    super.onSizeChanged(w, h, oldw, oldh);
+//    super.onSizeChanged(w, h, oldw, oldh);
     System.out.println("NativeSurface onSizeChanged called");
     
     float width = w;
