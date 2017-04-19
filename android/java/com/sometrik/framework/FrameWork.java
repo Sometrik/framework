@@ -197,7 +197,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   public DisplayMetrics setupDisplayMetrics() {
     displayMetrics = new DisplayMetrics();
     Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
-    display.getRealMetrics(displayMetrics);
+    display.getMetrics(displayMetrics);
     screenWidth = displayMetrics.widthPixels;
     screenHeight = displayMetrics.heightPixels;
     
@@ -232,6 +232,10 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   }
 
   public void setCurrentView(final View view, final boolean recordHistory) {
+    if (currentView == view.getId()){
+      System.out.println("view already set");
+      return;
+    }
     if (currentView != 0) {
 
       View focusedView = this.getCurrentFocus();
@@ -318,6 +322,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
       }
 
       public void surfaceCreated(SurfaceHolder holder) {
+	setupDisplayMetrics();
 	System.out.println("surfaceCreated. Width: " + screenWidth + " height: " + screenHeight + " id: " + id);
 	nativeSetSurface(holder.getSurface(), id, gl_version, (int)screenWidth, (int)screenHeight);
 	}
