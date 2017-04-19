@@ -1,6 +1,7 @@
 package com.sometrik.framework;
 
 import android.content.Context;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewParent;
 import android.widget.LinearLayout;
@@ -49,7 +50,20 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
   }
 
   @Override
-  public void setStyle(String key, String value) { }
+  public void setStyle(String key, String value) {
+    if (key.equals("gravity")){
+	LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
+      if (value.equals("bottom")){
+	params.gravity = Gravity.BOTTOM;
+      } else if (value.equals("top")){
+	params.gravity = Gravity.TOP;
+      } else if (value.equals("left")){
+	params.gravity = Gravity.LEFT;
+      } else if (value.equals("right")){
+	params.gravity = Gravity.RIGHT;
+      }
+    }
+  }
 
   @Override
   public void setError(boolean hasError, String errorText) { }
