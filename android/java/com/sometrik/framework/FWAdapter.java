@@ -19,7 +19,6 @@ public class FWAdapter extends ArrayAdapter<View> {
   private List<View> viewList;
   private ArrayList<AdapterData> dataList;
   private AdapterData columnData;
-  private HashMap<Integer, String> sectionHeaders;
   private ArrayList<Integer> sectionHeaderRows;
   private FrameWork frame;
   private int addedHeaders = 0;
@@ -33,19 +32,16 @@ public class FWAdapter extends ArrayAdapter<View> {
     listItemParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT);
     listItemParams.weight = 1;
     listItemParams.leftMargin = 2;
-    sectionHeaders = new HashMap<Integer, String>();
     sectionHeaderRows = new ArrayList<Integer>();
   }
 
   public ArrayList<String> getDataRow(int rowId) {
-    int headersBeforeCounter = 0;
-    for (Integer beforeHeaders : sectionHeaderRows) {
-      if (beforeHeaders <= rowId) {
-	headersBeforeCounter++;
+    if (dataList.size() >= rowId) {
+      AdapterData data = dataList.get(rowId - 1);
+      if (data.dataType.equals("section")){
+	return null;
       }
-    }
-    if (dataList.size() >= rowId - headersBeforeCounter) {
-      return dataList.get(rowId - 1 - headersBeforeCounter).stringList;
+      return data.stringList;
     }
     Log.d("adapter", "no row found");
     return null;
@@ -60,18 +56,15 @@ public class FWAdapter extends ArrayAdapter<View> {
   }
   
   public void addSectionHeader(int row, String sectionHeader){
-    sectionHeaders.put(row, sectionHeader);
     sectionHeaderRows.add(row);
-//    ArrayList<String> emptyList = new ArrayList<String>();
-//    emptyList.add("nothing");
-//    dataList.add(new AdapterData("sectionHeader"));
+    dataList.add(new AdapterData(sectionHeader));
+    System.out.println("section added. Datalist size: " + dataList.size());
   }
 
   @Override
   public int getCount() {
     if (columnData.getSize() != 0){
-      int sectionSize = sectionHeaders.size();
-      return dataList.size() + 1 + sectionSize;
+      return dataList.size() + 1;
     }
     return dataList.size();
   }
@@ -112,17 +105,23 @@ public class FWAdapter extends ArrayAdapter<View> {
 	for (Integer sectionRow : sectionHeaderRows) {
 	  if (position - 1 == sectionRow - 1) {
 	    Log.d("adapter", "sectionRow found");
-	    String sectionText = sectionHeaders.get(sectionRow);
+//	    String sectionText = sectionHeaders.get(sectionRow);
+		data = dataList.get(position - 1);
+		String sectionText = data.getData(0);
+		Log.d("adapter", "section text: " + sectionText);
 	    TextView section = new TextView(frame);
 	    section.setLayoutParams(listItemParams);
 	    section.setTypeface(null, Typeface.BOLD);
 	    layout.addView(section);
 	    section.setText(sectionText);
-	    addedHeaders++;
+//	    addedHeaders++;
 	    return layout;
 	  }
 	}
-	data = dataList.get(position - 1 - addedHeaders);
+	data = dataList.get(position - 1);
+//	if (dataList.size() == position){
+//	    addedHeaders = 0;
+//	}
       } else {
 	data = dataList.get(position);
       }
@@ -151,6 +150,8 @@ public class FWAdapter extends ArrayAdapter<View> {
     }
     public AdapterData(String sectionTitle) {
       dataType = "section";
+      stringList = new ArrayList<String>();
+      stringList.add(sectionTitle);
     }
     
     public void addString(String text){
