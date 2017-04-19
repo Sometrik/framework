@@ -488,7 +488,8 @@ public class NativeCommand {
     FWButton button = new FWButton(frame);
     button.setId(getChildInternalId());
     button.setText(getTextValue());
-    ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+    params.weight = 1;
     button.setLayoutParams(params);
 
     button.setOnClickListener(new OnClickListener() {
