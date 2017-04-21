@@ -33,6 +33,10 @@ class ListLayout : public Element {
   }
 
  protected: 
+  void create() override {
+    sendCommand(Command(Command::CREATE_GRIDVIEW, getParentInternalId(), getInternalId()));
+  }
+
   void initialize(FWPlatform * _platform) override {
     Element::initialize(_platform);
     Command c(Command::CREATE_LISTVIEW, getParentInternalId(), getInternalId());
