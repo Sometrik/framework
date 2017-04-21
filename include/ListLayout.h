@@ -17,8 +17,7 @@ class ListLayout : public Element {
 
   void addColumn(const char * name) {
     Command c(Command::ADD_COLUMN, getInternalId());
-    c.setValue(columnNumber);
-    c.setTextValue(title);
+    c.setTextValue(name);
     sendCommand(c);
   }
 
@@ -26,7 +25,7 @@ class ListLayout : public Element {
     Command c(Command::SET_TEXT_DATA, getInternalId());
     c.setRow(row);
     c.setColumn(column);
-    c.setTextValue(text);
+    c.setTextValue(value);
     sendCommand(c);
   }
 
