@@ -87,7 +87,8 @@ public:
     }
       break;
 
-    case Command::CREATE_GRIDVIEW: {
+    case Command::CREATE_GRIDVIEW:
+    case Command::CREATE_LISTVIEW: {
       auto store = gtk_tree_store_new(5, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
       auto gridview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(store));
       addView(command, gridview);
@@ -312,7 +313,7 @@ public:
 			   command.getTextValue().c_str(),
 			   -1);
       } else {
-	assert(0);
+	cerr << "unable to set data\n";
       }
     }
       break;
@@ -378,7 +379,9 @@ public:
       }
 
       if (!initial_view_shown) {
-	gtk_header_bar_set_subtitle((GtkHeaderBar*)header, title.c_str());
+	if (header) {
+	  gtk_header_bar_set_subtitle((GtkHeaderBar*)header, title.c_str());
+	}
 	gtk_stack_set_visible_child((GtkStack*)stack, sw);
 	gtk_widget_show_all(window);
 	initial_view_shown = true;
