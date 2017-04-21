@@ -370,6 +370,10 @@ public class NativeCommand {
       ab.setTitle(textValue);
       ab.show();
       break;
+    case FLUSH_VIEW:
+      View viewConversion = (View)view;
+      viewConversion.invalidate();
+      break;
     case QUIT_APP:
       // TODO
       frame.finish();
