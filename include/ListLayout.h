@@ -10,15 +10,19 @@ class ListLayout : public Element {
  public:
   ListLayout() { }
 
-  void
-  addColumn(const char * title, int columnNumber) {
+  bool isA(const std::string & className) override {
+    if (className == "ListLayout") return true;
+    return Element::isA(className);
+  }
+
+  void addColumn(const char * name) {
     Command c(Command::ADD_COLUMN, getInternalId());
     c.setValue(columnNumber);
     c.setTextValue(title);
     sendCommand(c);
   }
 
-  void addData(const char * text, int row, int column) {
+  void addData(int row, int column, const char * value) {
     Command c(Command::SET_TEXT_DATA, getInternalId());
     c.setRow(row);
     c.setColumn(column);
@@ -26,10 +30,18 @@ class ListLayout : public Element {
     sendCommand(c);
   }
 
-  void addHeaderBar(int row, const char * text){
+  void addHeaderBar(int row, const char * text) {
     Command c(Command::ADD_COLUMN, getInternalId(), text);
     c.setValue(row);
     sendCommand(c);
+  }
+
+  void flush() {
+    sendCommand(Command(Command::FLUSH_VIEW, getInternalId()));
+  }
+
+  void clear() {
+    sendCommand(Command(Command::CLEAR, getInternalId()));
   }
 
  protected: 
