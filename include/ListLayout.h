@@ -15,7 +15,7 @@ class ListLayout : public Element {
     Command c(Command::ADD_COLUMN, getInternalId());
     c.setValue(columnNumber);
     c.setTextValue(title);
-    additionalInitCommands.push_back(c);
+    sendCommand(c);
   }
 
   void addData(const char * text, int row, int column) {
@@ -23,13 +23,13 @@ class ListLayout : public Element {
     c.setRow(row);
     c.setColumn(column);
     c.setTextValue(text);
-    additionalInitCommands.push_back(c);
+    sendCommand(c);
   }
 
   void addHeaderBar(int row, const char * text){
     Command c(Command::ADD_COLUMN, getInternalId(), text);
     c.setValue(row);
-    additionalInitCommands.push_back(c);
+    sendCommand(c);
   }
 
  protected: 
@@ -38,15 +38,9 @@ class ListLayout : public Element {
     Command c(Command::CREATE_LISTVIEW, getParentInternalId(), getInternalId());
     c.setLayoutWeight(getLayoutWeight());
     sendCommand(c);
-
-    for (int i = 0; i < additionalInitCommands.size(); i++){
-      sendCommand(additionalInitCommands.at(i));
-    }
-
   }
 
  private:
-  std::vector<Command> additionalInitCommands;
 };
 
 #endif
