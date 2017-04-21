@@ -130,6 +130,10 @@ public class FWAdapter extends ArrayAdapter<View> {
       } else {
 	data = dataList.get(position);
       }
+      
+      if (data == null) {
+	Log.d("adapter", "no data on position " + position);
+      }
 
       for (int i = 0; i < data.getSize(); i++) {
 	    Log.d("adapter", "looping throud data " + i);
