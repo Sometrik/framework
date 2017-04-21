@@ -8,6 +8,7 @@ import com.android.trivialdrivesample.util.IabException;
 import com.android.trivialdrivesample.util.IabHelper;
 import com.android.trivialdrivesample.util.IabHelper.IabAsyncInProgressException;
 import com.android.trivialdrivesample.util.Inventory;
+import com.sometrik.lister.R;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -37,6 +38,7 @@ import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.SurfaceHolder;
@@ -431,6 +433,8 @@ public class FrameWork extends Activity implements NativeCommandHandler {
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
+    menu.add(0, 1, 0, "Settings").setIcon(android.R.drawable.ic_menu_manage).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+
     System.out.println("onCreateOptionsMenu");
     return true;
   }
