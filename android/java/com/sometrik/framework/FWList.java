@@ -31,7 +31,7 @@ public class FWList extends ListView implements NativeCommandHandler{
       Log.d("FWList", "creating new row");
       dataRow = new ArrayList<String>();
       dataRow.add(text);
-      adapter.addItem(dataRow);
+      adapter.addItem(row, dataRow);
     }
   }
 
