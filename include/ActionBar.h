@@ -24,7 +24,8 @@ class ActionBar : public Element {
     sendCommand(c);
   }
 
-  const char * title;
+ private:
+  std::string title;
 };
 
 #endif
