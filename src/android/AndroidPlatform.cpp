@@ -762,7 +762,7 @@ void Java_com_sometrik_framework_FrameWork_textChangedEvent(JNIEnv* env, jobject
 }
 
 void Java_com_sometrik_framework_FrameWork_intChangedEvent(JNIEnv* env, jobject thiz, double timestamp, jint id, jint changedInt){
-  __android_log_print(ANDROID_LOG_INFO, "Sometrik", "textChangedEvent: %u", changedInt);
+  __android_log_print(ANDROID_LOG_INFO, "Sometrik", "intChangedEvent: %u", changedInt);
   ValueEvent ev(timestamp, changedInt);
   platform->queueEvent(id, ev);
 }
