@@ -60,13 +60,16 @@ class Button : public UIElement {
   bool call(int i) override { return call(); }
   bool call(const std::string & s) override { return call(); }
 
- protected: 
-  void initialize(FWPlatform * _platform) override {
-    Element::initialize(_platform);
+protected:
+  void create() override {
     Command c(Command::CREATE_BUTTON, getParentInternalId(), getInternalId());
     c.setTextValue(label);
     c.setLayoutWeight(getLayoutWeight());
     sendCommand(c);
+  }
+
+  void initialize(FWPlatform * _platform) override {
+    Element::initialize(_platform);
   }
 
  private:
