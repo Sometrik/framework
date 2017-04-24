@@ -91,6 +91,7 @@ public:
     case Command::CREATE_LISTVIEW: {
       auto store = gtk_tree_store_new(5, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
       auto gridview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(store));
+      g_signal_connect(gridview, "cursor-changed", G_CALLBACK(send_selection_value), this);
       addView(command, gridview);
     }
       break;
@@ -478,6 +479,7 @@ protected:
   static void send_toggled_value(GtkWidget * widget, gpointer user_data);
   static void send_combo_value(GtkWidget * widget, gpointer data);
   static void send_text_value(GtkWidget * widget, gpointer data);
+  static void send_selection_value(GtkWidget * widget, gpointer data);
   static void on_previous_button(GtkWidget * widget, gpointer data);
   static void on_next_button(GtkWidget * widget, gpointer data);
   
@@ -602,6 +604,29 @@ PlatformGtk::send_text_value(GtkWidget * widget, gpointer data) {
     cerr << "text value: id = " << id << ", text = " << s << endl;
     ValueEvent ev(platform->getTime(), s);
     platform->postEvent(id, ev);
+  }
+}
+
+void
+PlatformGtk::send_selection_value(GtkWidget * widget, gpointer data) {
+  // auto widget = gtk_tree_selection_get_tree_view(selection);
+  PlatformGtk * platform = (PlatformGtk*)data;
+  assert(GTK_IS_TREE_VIEW(widget));
+  auto treeview = (GtkTreeView*)widget;
+  auto selection = gtk_tree_view_get_selection(treeview);
+  int id = platform->getId(widget);
+  assert(id);
+  if (id) {
+    GtkTreeModel * model;
+    GList * l = gtk_tree_selection_get_selected_rows(selection, &model);
+    auto path = (GtkTreePath*)l->data;
+    auto i = gtk_tree_path_get_indices(path);
+    cerr << "selection = " << *i << endl;
+
+    ValueEvent ev(platform->getTime(), *i);
+    platform->postEvent(id, ev);
+
+    g_list_free_full(l, (GDestroyNotify)gtk_tree_path_free);
   }
 }
 
