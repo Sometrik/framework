@@ -364,6 +364,7 @@ public class NativeCommand {
       break;
     case CREATE_ACTIONBAR:
       FWActionBar ab = new FWActionBar(frame, textValue, childInternalId);
+      frame.actionBar = ab;
       FrameWork.addToViewList(ab);
       break;
     case FLUSH_VIEW:
