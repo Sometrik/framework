@@ -548,7 +548,6 @@ JNIEnv * AndroidPlatform::getEnv() {
   if (gJavaVM->GetEnv((void**)&stored_env, JNI_VERSION_1_6) != 0) {
     return stored_env;
   } else {
-    __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "creating new env");
     stored_env = javaCache.createJNIEnv();
     return stored_env;
   }
