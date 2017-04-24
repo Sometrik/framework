@@ -16,9 +16,16 @@ class ActionBar : public Element {
     return Element::isA(className);
   }
 
+  void addOption(int id, const std::string & name) {
+    Command c(Command::ADD_OPTION, getInternalId());
+    c.setValue(id);
+    c.setTextValue(name);
+    sendCommand(c);
+  }
+
  protected:
-  void initialize(FWPlatform * _platform) override {
-    Element::initialize(_platform);
+
+  void create() override {
     Command c(Command::CREATE_ACTIONBAR, getParentInternalId(), getInternalId());
     c.setTextValue(title);
     sendCommand(c);
