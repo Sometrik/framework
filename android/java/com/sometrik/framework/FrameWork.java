@@ -8,7 +8,6 @@ import com.android.trivialdrivesample.util.IabException;
 import com.android.trivialdrivesample.util.IabHelper;
 import com.android.trivialdrivesample.util.IabHelper.IabAsyncInProgressException;
 import com.android.trivialdrivesample.util.Inventory;
-import com.sometrik.lister.R;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;

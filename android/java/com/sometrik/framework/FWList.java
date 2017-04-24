@@ -2,13 +2,11 @@ package com.sometrik.framework;
 
 import java.util.ArrayList;
 
-import android.content.Context;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ExpandableListView;
 import android.widget.ListView;
-import android.widget.TextView;
 
 public class FWList extends ListView implements NativeCommandHandler{
 
