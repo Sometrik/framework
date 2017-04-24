@@ -15,13 +15,13 @@ class ListView : public Element {
     return Element::isA(className);
   }
 
-  void addColumn(const char * name) {
+  void addColumn(const std::string & name) {
     Command c(Command::ADD_COLUMN, getInternalId());
     c.setTextValue(name);
     sendCommand(c);
   }
 
-  void addData(int row, int column, const char * value) {
+  void setValue(int row, int column, const std::string & value) {
     Command c(Command::SET_TEXT_DATA, getInternalId());
     c.setRow(row);
     c.setColumn(column);
@@ -49,12 +49,6 @@ class ListView : public Element {
     c.setLayoutWeight(getLayoutWeight());
     sendCommand(c);
   }
-
-  void initialize(FWPlatform * _platform) override {
-    Element::initialize(_platform);
-  }
-
- private:
 };
 
 #endif
