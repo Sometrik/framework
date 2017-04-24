@@ -1,9 +1,7 @@
 package com.sometrik.framework;
 
-import android.content.Context;
+import android.graphics.Typeface;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.view.animation.RotateAnimation;
 import android.widget.Button;
 
@@ -55,7 +53,17 @@ public class FWButton extends Button implements NativeCommandHandler {
   }
 
   @Override
-  public void setStyle(String key, String value) { }
+  public void setStyle(String key, String value) {
+    if (key.equals("textsize")){
+      if (value.equals("small")){
+	this.setTextAppearance(frame, android.R.style.TextAppearance_DeviceDefault_Small);
+      } else if (value.equals("medium")){
+	this.setTextAppearance(frame, android.R.style.TextAppearance_DeviceDefault_Medium);
+      } else if (value.equals("large")){
+	this.setTextAppearance(frame, android.R.style.TextAppearance_DeviceDefault_Large);
+      }
+    }
+  }
 
   @Override
   public void setError(boolean hasError, String errorText) { }
