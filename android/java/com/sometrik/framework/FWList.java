@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import android.content.Context;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ExpandableListView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -14,11 +15,20 @@ public class FWList extends ListView implements NativeCommandHandler{
   private FrameWork frame;
   private FWAdapter adapter;
   
-  public FWList(FrameWork frame, FWAdapter adapter) {
+  public FWList(final FrameWork frame, FWAdapter adapter) {
     super(frame);
     this.frame = frame;
     this.adapter = adapter;
     setAdapter(adapter);
+    setOnItemClickListener(new OnItemClickListener(){
+
+      @Override
+      public void onItemClick(AdapterView<?> parent, View view, int position, long rowId) {
+	System.out.println("itemClick detected " + position);
+	frame.intChangedEvent(System.currentTimeMillis() / 1000.0, getElementId(), position);
+      }
+      
+    });
   }
   
   public void addData(int row, int column, String text){
