@@ -54,7 +54,7 @@ public class FWButton extends Button implements NativeCommandHandler {
 
   @Override
   public void setStyle(String key, String value) {
-    if (key.equals("textsize")){
+    if (key.equals("font-size")){
       if (value.equals("small")){
 	this.setTextAppearance(frame, android.R.style.TextAppearance_DeviceDefault_Small);
       } else if (value.equals("medium")){
