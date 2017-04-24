@@ -68,7 +68,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   
   private boolean drawMode = false;
   
-  public ActionBar actionBar;
+  public FWActionBar actionBar;
   
   private Locale defaultLocale;
   private float screenHeight;
@@ -128,8 +128,9 @@ public class FrameWork extends Activity implements NativeCommandHandler {
     System.out.println("Users preferred locale: " + defaultLocale.getCountry() + " Language: " + defaultLocale.getLanguage());
     
     // ActionBar is hidden by default with this
-    actionBar = getActionBar();
-    actionBar.hide();
+//    actionBar = getActionBar();
+//    actionBar.hide();
+    getActionBar().hide();
     
     // Init for screen settings
     setupDisplayMetrics();
@@ -296,7 +297,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
       currentView = view.getId();
       currentlyShowingView = view;
       setContentView(view);
-      setNativeActiveView(System.currentTimeMillis() / 1000.0, view.getId(), false);
+      setNativeActiveView(System.currentTimeMillis() / 1000.0, view.getId(), recordHistory);
 //    }
   }
   
@@ -433,7 +434,6 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
     menu.add(0, 1, 0, "Settings").setIcon(android.R.drawable.ic_menu_manage).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-
     System.out.println("onCreateOptionsMenu");
     return true;
   }

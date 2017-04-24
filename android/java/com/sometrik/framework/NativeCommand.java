@@ -363,12 +363,8 @@ public class NativeCommand {
       createActionSheet();
       break;
     case CREATE_ACTIONBAR:
-      //TODO not everything is set
-      ActionBar ab = frame.actionBar;
-      System.out.println("bar text: " + textValue);
-      ab.setDisplayShowTitleEnabled(true);
-      ab.setTitle(textValue);
-      ab.show();
+      FWActionBar ab = new FWActionBar(frame, textValue, childInternalId);
+      FrameWork.addToViewList(ab);
       break;
     case FLUSH_VIEW:
       View viewConversion = (View)view;
