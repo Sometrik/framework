@@ -444,6 +444,12 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   }
 
   @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    intChangedEvent(System.currentTimeMillis() / 1000.0, actionBar.getElementId(), item.getItemId());
+    return super.onOptionsItemSelected(item);
+  }
+
+  @Override
   public boolean onKeyDown(int keycode, KeyEvent e) {
     System.out.println("KeyEvent. KeyCode: " + keycode + " ViewId: " + findViewById(android.R.id.content).getRootView().getId());
     if (!transitionAnimation){
