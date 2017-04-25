@@ -255,26 +255,80 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
 
   @Override
   public Object getGroup(int arg0) {
+    Log.d("adapter", "getGroup");
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
   public int getGroupCount() {
+    if (columnData.getSize() != 0){
+      return dataList.size() + 1;
+    }
+    return dataList.size();
+  }
+
+  @Override
+  public long getGroupId(int groupPosition) {
     // TODO Auto-generated method stub
     return 0;
   }
 
   @Override
-  public long getGroupId(int arg0) {
-    // TODO Auto-generated method stub
-    return 0;
-  }
+  public View getGroupView(int position, boolean arg1, View arg2, ViewGroup arg3) {
+    Log.d("adapter", "GetGroupView position: " + position);
+    LinearLayout layout = new LinearLayout(frame);
+    AdapterData data;
+    if (position == 0){
+      data = columnData;
 
-  @Override
-  public View getGroupView(int arg0, boolean arg1, View arg2, ViewGroup arg3) {
-    // TODO Auto-generated method stub
-    return null;
+      for (int i = 0; i < data.getSize(); i++) {
+	TextView txtFirst = new TextView(frame);
+	txtFirst.setLayoutParams(listItemParams);
+	txtFirst.setTypeface(null, Typeface.BOLD);
+	layout.addView(txtFirst);
+	txtFirst.setText(data.getData(i));
+      }
+
+      return layout;
+
+    } else {
+      Log.d("adapter", "dataKList.size: " + dataList.size());
+      if (columnData.getSize() != 0) {
+	Log.d("adapter", "trying to get from index: " + (position));
+	for (Integer sectionRow : sectionHeaderRows) {
+	  if (position == sectionRow) {
+	    Log.d("adapter", "sectionRow found");
+		data = dataList.get(position);
+		String sectionText = data.getData(0);
+		Log.d("adapter", "section text: " + sectionText);
+	    TextView section = new TextView(frame);
+	    section.setLayoutParams(listItemParams);
+	    section.setTypeface(null, Typeface.BOLD);
+	    layout.addView(section);
+	    section.setText(sectionText);
+	    return layout;
+	  }
+	}
+	data = dataList.get(position);
+      } else {
+	data = dataList.get(position);
+      }
+      
+      if (data == null) {
+	Log.d("adapter", "no data on position " + position);
+      }
+
+      for (int i = 0; i < data.getSize(); i++) {
+	    Log.d("adapter", "looping throud data " + i);
+	TextView txtFirst = new TextView(frame);
+	txtFirst.setLayoutParams(listItemParams);
+	layout.addView(txtFirst);
+	txtFirst.setText(data.getData(i));
+      }
+
+      return layout;
+    }
   }
 
   @Override
