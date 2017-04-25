@@ -51,12 +51,17 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
       return data.stringList;
     } else {
       AdapterData sheetData = dataList.get(sheet);
-      AdapterData data = sheetData.getChild(row);
-      if (data == null) {
-	Log.d("adapter", "no row found");
-	return null;
+      if (sheetData.getChildren().size() != 0) {
+	AdapterData data = sheetData.getChild(row);
+	if (data == null) {
+	  Log.d("adapter", "no row found");
+	  return null;
+	} else {
+	  Log.d("adapter", "row found");
+	  return data.stringList;
+	}
       } else {
-	return data.stringList;
+	return null;
       }
     }
   }
@@ -318,10 +323,12 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
     
     public AdapterData(ArrayList<String> stringList) {
       this.stringList = stringList;
+      children = new ArrayList<AdapterData>();
     }
     public AdapterData(String sectionTitle) {
       dataType = "section";
       stringList = new ArrayList<String>();
+      children = new ArrayList<AdapterData>();
       stringList.add(sectionTitle);
     }
     
@@ -346,6 +353,7 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
     }
     
     public AdapterData getChild(int row){
+      System.out.println("getChild on AdpaterData");
       if (row >= children.size()){
 	row = children.size() - 1;
       }
