@@ -330,7 +330,7 @@ public class NativeCommand {
       view.setValue(textValue);
       break;
     case SET_TEXT_DATA:
-      view.addData(textValue, rowNumber, columnNumber, value);
+      view.addData(textValue, rowNumber, columnNumber, sheet);
       break;
     case SET_VISIBILITY:
       if (value == 0){
