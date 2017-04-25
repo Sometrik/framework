@@ -5,10 +5,11 @@ import java.util.ArrayList;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ListView;
 
-public class FWList extends ListView implements NativeCommandHandler{
+public class FWList extends ExpandableListView implements NativeCommandHandler{
 
   private FrameWork frame;
   private FWAdapter adapter;
@@ -17,7 +18,7 @@ public class FWList extends ListView implements NativeCommandHandler{
     super(frame);
     this.frame = frame;
     this.adapter = adapter;
-    setAdapter(adapter);
+    this.setAdapter((ExpandableListAdapter)adapter);
     setOnItemClickListener(new OnItemClickListener(){
 
       @Override
