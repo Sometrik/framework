@@ -21,10 +21,11 @@ class ListView : public Element {
     sendCommand(c);
   }
 
-  void setValue(int row, int column, const std::string & value) {
+  void setValue(const std::string & value, int row, int column, int sheet = 0) {
     Command c(Command::SET_TEXT_DATA, getInternalId());
     c.setRow(row);
     c.setColumn(column);
+    c.setSheet(sheet);
     c.setTextValue(value);
     sendCommand(c);
   }
