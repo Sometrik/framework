@@ -435,9 +435,11 @@ public class FrameWork extends Activity implements NativeCommandHandler {
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
-    ArrayList<ActionBarItem> itemList = actionBar.getItemList();
-    for (ActionBarItem item : itemList) {
-      menu.add(0, item.id, 0, item.name).setIcon(android.R.drawable.ic_menu_manage).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+    if (actionBar != null) {
+      ArrayList<ActionBarItem> itemList = actionBar.getItemList();
+      for (ActionBarItem item : itemList) {
+	menu.add(0, item.id, 0, item.name).setIcon(android.R.drawable.ic_menu_manage).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+      }
     }
     System.out.println("onCreateOptionsMenu");
     return true;
@@ -689,7 +691,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
     
   }
   @Override
-  public void addData(int rowNumber, int columnNumber, String text) {
+  public void addData(String text, int row, int column, int sheet) {
     // TODO Auto-generated method stub
     
   }

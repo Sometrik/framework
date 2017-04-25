@@ -11,10 +11,11 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ExpandableListAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-public class FWAdapter extends ArrayAdapter<View> {
+public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapter {
 
   private List<View> viewList;
 //  private ArrayList<AdapterData> dataList;
@@ -183,6 +184,84 @@ public class FWAdapter extends ArrayAdapter<View> {
       return stringList;
     }
 
+  }
+
+  @Override
+  public Object getChild(int groupPosition, int childPosition) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public long getChildId(int groupPosition, int childPosition) {
+    // TODO Auto-generated method stub
+    return 0;
+  }
+
+  @Override
+  public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public int getChildrenCount(int groupPosition) {
+    // TODO Auto-generated method stub
+    return 0;
+  }
+
+  @Override
+  public long getCombinedChildId(long groupId, long childId) {
+    // TODO Auto-generated method stub
+    return 0;
+  }
+
+  @Override
+  public long getCombinedGroupId(long arg0) {
+    // TODO Auto-generated method stub
+    return 0;
+  }
+
+  @Override
+  public Object getGroup(int arg0) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public int getGroupCount() {
+    // TODO Auto-generated method stub
+    return 0;
+  }
+
+  @Override
+  public long getGroupId(int arg0) {
+    // TODO Auto-generated method stub
+    return 0;
+  }
+
+  @Override
+  public View getGroupView(int arg0, boolean arg1, View arg2, ViewGroup arg3) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public boolean isChildSelectable(int arg0, int arg1) {
+    // TODO Auto-generated method stub
+    return false;
+  }
+
+  @Override
+  public void onGroupCollapsed(int arg0) {
+    // TODO Auto-generated method stub
+    
+  }
+
+  @Override
+  public void onGroupExpanded(int arg0) {
+    // TODO Auto-generated method stub
+    
   }
 }
 

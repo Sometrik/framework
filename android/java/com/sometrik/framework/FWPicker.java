@@ -87,7 +87,7 @@ public class FWPicker extends Spinner implements NativeCommandHandler {
   }
 
   @Override
-  public void addData(int rowNumber, int columnNumber, String text) {
+  public void addData(String text, int row, int column, int sheet) {
     System.out.println("Picker couldn't handle command");
   }
   

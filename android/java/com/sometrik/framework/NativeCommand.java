@@ -56,6 +56,7 @@ public class NativeCommand {
   private ArrayList<PopupMenu> menuList = new ArrayList<PopupMenu>();
   private int rowNumber = -1;
   private int columnNumber = -1;
+  private int sheet = 0;
   
 
   private final int FLAG_PADDING_LEFT = 1;
@@ -129,7 +130,7 @@ public class NativeCommand {
     CONSUME_PURCHASE
   }
 
-  public NativeCommand(FrameWork frame, int messageTypeId, int internalId, int childInternalId, int value, byte[] textValue, byte[] textValue2, int flags, int rowNumber, int columnNumber){
+  public NativeCommand(FrameWork frame, int messageTypeId, int internalId, int childInternalId, int value, byte[] textValue, byte[] textValue2, int flags, int row, int column, int sheet){
 
     this.frame = frame;
     command = CommandType.values()[messageTypeId];
@@ -137,8 +138,9 @@ public class NativeCommand {
     this.childInternalId = childInternalId;
     this.value = value;
     this.flags = flags;
-    this.rowNumber = rowNumber;
-    this.columnNumber = columnNumber;
+    this.rowNumber = row;
+    this.columnNumber = column;
+    this.sheet = sheet;
 
     if (textValue != null) {
 	this.textValue = new String(textValue, frame.getCharset());
@@ -328,7 +330,7 @@ public class NativeCommand {
       view.setValue(textValue);
       break;
     case SET_TEXT_DATA:
-      view.addData(rowNumber, columnNumber, textValue);
+      view.addData(textValue, rowNumber, columnNumber, value);
       break;
     case SET_VISIBILITY:
       if (value == 0){

@@ -75,7 +75,7 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
   }
 
   @Override
-  public void addData(int rowNumber, int columnNumber, String text) {
+  public void addData(String text, int row, int column, int sheet) {
     System.out.println("FWLayout couldn't handle command");
   }
 
