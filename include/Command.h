@@ -103,6 +103,10 @@ class Command {
   void setColumn(int c) { column = c; }
   int getColumn() const { return column; }
   
+
+  void setSheet(int s) { sheet = s; }
+  int getSheet() const { return sheet; }
+
   void setFlags(unsigned int _flags) { flags = _flags; }
   unsigned int getFlags() const { return flags; }
 
@@ -112,7 +116,7 @@ class Command {
   int value = 0;
   std::string key;
   std::string textValue, textValue2;
-  int row = 0, column = 0;
+  int row = 0, column = 0, sheet = 0;
   int width = 0, height = 0, layout_weight = 0;
   unsigned int flags = 0;
 };
