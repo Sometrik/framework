@@ -154,6 +154,7 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
     private ArrayList<String> stringList;
     private boolean columnData = false;
     private String dataType = "data";
+    private ArrayList<AdapterData> children;
     
     public AdapterData(ArrayList<String> stringList) {
       this.stringList = stringList;
@@ -171,6 +172,10 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
     public int getSize() {
       return stringList.size();
     }
+    
+    public void addChild(AdapterData data){
+      children.add(data);
+    }
 
     public String getData(int position) {
       if (position < stringList.size()) {
@@ -178,6 +183,17 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
       } else {
 	return stringList.get(0);
       }
+    }
+    
+    public AdapterData getChild(int row){
+      if (row >= children.size()){
+	row = children.size() - 1;
+      }
+      return children.get(row);
+    }
+    
+    public ArrayList<AdapterData> getChildren() {
+      return children;
     }
     
     public ArrayList<String> getList(){
