@@ -164,59 +164,6 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
     
   }
   
-  public class AdapterData {
-
-    private ArrayList<String> stringList;
-    private boolean columnData = false;
-    private String dataType = "data";
-    private ArrayList<AdapterData> children;
-    
-    public AdapterData(ArrayList<String> stringList) {
-      this.stringList = stringList;
-    }
-    public AdapterData(String sectionTitle) {
-      dataType = "section";
-      stringList = new ArrayList<String>();
-      stringList.add(sectionTitle);
-    }
-    
-    public void addString(String text){
-      stringList.add(text);
-    }
-
-    public int getSize() {
-      return stringList.size();
-    }
-    
-    public void addChild(int row, AdapterData data){
-      children.add(row, data);
-    }
-
-    public String getData(int position) {
-      if (position < stringList.size()) {
-	return stringList.get(position);
-      } else {
-	return stringList.get(0);
-      }
-    }
-    
-    public AdapterData getChild(int row){
-      if (row >= children.size()){
-	row = children.size() - 1;
-      }
-      return children.get(row);
-    }
-    
-    public ArrayList<AdapterData> getChildren() {
-      return children;
-    }
-    
-    public ArrayList<String> getList(){
-      return stringList;
-    }
-
-  }
-
   @Override
   public Object getChild(int groupPosition, int childPosition) {
     // TODO Auto-generated method stub
@@ -231,14 +178,25 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
 
   @Override
   public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
-    // TODO Auto-generated method stub
-    return null;
+    Log.d("adapter", "GetChildView position: " + groupPosition + " childPosition: " + childPosition);
+    AdapterData sheetData = dataList.get(groupPosition);
+    AdapterData childData = sheetData.getChild(childPosition);
+    LinearLayout layout = new LinearLayout(frame);
+    
+    for (int i = 0; i < childData.getSize(); i++) {
+      Log.d("adapter", "looping throud data " + i);
+      TextView txtFirst = new TextView(frame);
+      txtFirst.setLayoutParams(listItemParams);
+      layout.addView(txtFirst);
+      txtFirst.setText(childData.getData(i));
+    }
+    return layout;
   }
 
   @Override
   public int getChildrenCount(int groupPosition) {
-    // TODO Auto-generated method stub
-    return 0;
+    AdapterData sheetData = dataList.get(groupPosition);
+    return sheetData.getChildren().size();
   }
 
   @Override
@@ -348,6 +306,62 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
     // TODO Auto-generated method stub
     
   }
+  
+  
+
+  public class AdapterData {
+
+    private ArrayList<String> stringList;
+    private boolean columnData = false;
+    private String dataType = "data";
+    private ArrayList<AdapterData> children;
+    
+    public AdapterData(ArrayList<String> stringList) {
+      this.stringList = stringList;
+    }
+    public AdapterData(String sectionTitle) {
+      dataType = "section";
+      stringList = new ArrayList<String>();
+      stringList.add(sectionTitle);
+    }
+    
+    public void addString(String text){
+      stringList.add(text);
+    }
+
+    public int getSize() {
+      return stringList.size();
+    }
+    
+    public void addChild(int row, AdapterData data){
+      children.add(row, data);
+    }
+
+    public String getData(int position) {
+      if (position < stringList.size()) {
+	return stringList.get(position);
+      } else {
+	return stringList.get(0);
+      }
+    }
+    
+    public AdapterData getChild(int row){
+      if (row >= children.size()){
+	row = children.size() - 1;
+      }
+      return children.get(row);
+    }
+    
+    public ArrayList<AdapterData> getChildren() {
+      return children;
+    }
+    
+    public ArrayList<String> getList(){
+      return stringList;
+    }
+
+  }
+
 }
 
 
