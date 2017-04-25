@@ -38,23 +38,38 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
     sectionHeaderRows = new ArrayList<Integer>();
   }
 
-  public ArrayList<String> getDataRow(int rowId) {
-    // if (dataList.size() >= rowId) {
-    AdapterData data = dataList.get(rowId);
-    if (data == null) {
-      Log.d("adapter", "no row found");
-      return null;
+  public ArrayList<String> getDataRow(int row, int sheet) {
+    if (sheet == 0) {
+      AdapterData data = dataList.get(row);
+      if (data == null) {
+	Log.d("adapter", "no row found");
+	return null;
+      }
+      if (data.dataType.equals("section")) {
+	return null;
+      }
+      return data.stringList;
+    } else {
+      AdapterData sheetData = dataList.get(sheet);
+      AdapterData data = sheetData.getChild(row);
+      if (data == null) {
+	Log.d("adapter", "no row found");
+	return null;
+      } else {
+	return data.stringList;
+      }
     }
-    if (data.dataType.equals("section")) {
-      return null;
-    }
-    return data.stringList;
-    // }
   }
   
-  public void addItem(int row, ArrayList<String> cellItems){
-    Log.d("adapter",  "adding new dataList to row " + row);
-    dataList.put(row, new AdapterData(cellItems));
+  public void addItem(int row, int sheet, ArrayList<String> cellItems){
+    Log.d("adapter",  "adding new dataList to row: " + row + " sheet: " + sheet);
+    if (sheet == 0){
+      dataList.put(row, new AdapterData(cellItems));
+      return;
+    } else {
+      AdapterData sheetData = dataList.get(sheet);
+      sheetData.addChild(row, new AdapterData(cellItems));
+    }
   }
   
   public void addColumn(String columnText){
@@ -173,8 +188,8 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
       return stringList.size();
     }
     
-    public void addChild(AdapterData data){
-      children.add(data);
+    public void addChild(int row, AdapterData data){
+      children.add(row, data);
     }
 
     public String getData(int position) {

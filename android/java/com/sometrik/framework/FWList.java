@@ -33,7 +33,7 @@ public class FWList extends ExpandableListView implements NativeCommandHandler{
   @Override
   public void addData(String text, int row, int column, int sheet){
     Log.d("FWList", "adding data for row " + row + " column " + column);
-    ArrayList<String> dataRow = adapter.getDataRow(row);
+    ArrayList<String> dataRow = adapter.getDataRow(row, sheet);
     if (dataRow != null){
       Log.d("FWList", "row found adding data");
       dataRow.add(column, text);
@@ -41,7 +41,7 @@ public class FWList extends ExpandableListView implements NativeCommandHandler{
       Log.d("FWList", "creating new row");
       dataRow = new ArrayList<String>();
       dataRow.add(text);
-      adapter.addItem(row, dataRow);
+      adapter.addItem(row, sheet, dataRow);
     }
   }
 
