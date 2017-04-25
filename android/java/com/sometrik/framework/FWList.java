@@ -8,7 +8,7 @@ import android.widget.AdapterView;
 import android.widget.ExpandableListView;
 import android.widget.ListView;
 
-public class FWList extends ExpandableListView implements NativeCommandHandler{
+public class FWList extends ListView implements NativeCommandHandler{
 
   private FrameWork frame;
   private FWAdapter adapter;
@@ -17,7 +17,7 @@ public class FWList extends ExpandableListView implements NativeCommandHandler{
     super(frame);
     this.frame = frame;
     this.adapter = adapter;
-//    setAdapter(adapter);
+    setAdapter(adapter);
     setOnItemClickListener(new OnItemClickListener(){
 
       @Override
@@ -29,6 +29,7 @@ public class FWList extends ExpandableListView implements NativeCommandHandler{
     });
   }
   
+  @Override
   public void addData(String text, int row, int column, int sheet){
     Log.d("FWList", "adding data for row " + row + " column " + column);
     ArrayList<String> dataRow = adapter.getDataRow(row);
