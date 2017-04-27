@@ -130,11 +130,9 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
 	Log.d("adapter", "trying to get from index: " + (position));
 	for (Integer sectionRow : sectionHeaderRows) {
 	  if (position == sectionRow) {
-	    Log.d("adapter", "sectionRow found");
 //	    String sectionText = sectionHeaders.get(sectionRow);
 		data = dataList.get(position);
 		String sectionText = data.getData(0);
-		Log.d("adapter", "section text: " + sectionText);
 	    TextView section = new TextView(frame);
 	    section.setLayoutParams(listItemParams);
 	    section.setTypeface(null, Typeface.BOLD);
@@ -157,7 +155,6 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
       }
 
       for (int i = 0; i < data.getSize(); i++) {
-	    Log.d("adapter", "looping throud data " + i);
 	TextView txtFirst = new TextView(frame);
 	txtFirst.setLayoutParams(listItemParams);
 	layout.addView(txtFirst);
@@ -200,6 +197,9 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
 
   @Override
   public int getChildrenCount(int groupPosition) {
+    if (groupPosition == 0){
+      return 0;
+    }
     AdapterData sheetData = dataList.get(groupPosition);
     return sheetData.getChildren().size();
   }
@@ -211,7 +211,7 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
   }
 
   @Override
-  public long getCombinedGroupId(long arg0) {
+  public long getCombinedGroupId(long groupId) {
     // TODO Auto-generated method stub
     return 0;
   }
@@ -295,9 +295,8 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
   }
 
   @Override
-  public boolean isChildSelectable(int arg0, int arg1) {
-    // TODO Auto-generated method stub
-    return false;
+  public boolean isChildSelectable(int groupPosition, int childPosition) {
+    return true;
   }
 
   @Override
