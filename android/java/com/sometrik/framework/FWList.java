@@ -20,10 +20,9 @@ public class FWList extends ExpandableListView implements NativeCommandHandler{
     this.adapter = adapter;
     this.setAdapter((ExpandableListAdapter)adapter);
     setOnGroupClickListener(new OnGroupClickListener(){
-      
       @Override
       public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
-	System.out.println("itemClick detected " + groupPosition);
+	System.out.println("groupClick detected " + groupPosition);
 	if (groupPosition == 0) {
 	  System.out.println("column title clicked. ignoring");
 	} else {
@@ -32,7 +31,13 @@ public class FWList extends ExpandableListView implements NativeCommandHandler{
 	}
 	return false;
       }
-
+    });
+    setOnChildClickListener(new OnChildClickListener(){
+      @Override
+      public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+	System.out.println("childClick detected group: " + groupPosition + " child: " + childPosition);
+	return false;
+      }
     });
   }
 
