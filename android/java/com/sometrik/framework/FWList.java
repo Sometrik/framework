@@ -19,17 +19,23 @@ public class FWList extends ExpandableListView implements NativeCommandHandler{
     this.frame = frame;
     this.adapter = adapter;
     this.setAdapter((ExpandableListAdapter)adapter);
-    setOnItemClickListener(new OnItemClickListener(){
-
-      @Override
-      public void onItemClick(AdapterView<?> parent, View view, int position, long rowId) {
-	System.out.println("itemClick detected " + position);
-	frame.intChangedEvent(System.currentTimeMillis() / 1000.0, getElementId(), position);
-      }
+    setOnGroupClickListener(new OnGroupClickListener(){
       
+      @Override
+      public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
+	System.out.println("itemClick detected " + groupPosition);
+	if (groupPosition == 0) {
+	  System.out.println("column title clicked. ignoring");
+	} else {
+	  System.out.println("row clicked. Sending intChangedEvent of " + (groupPosition - 1));
+	  frame.intChangedEvent(System.currentTimeMillis() / 1000.0, getElementId(), groupPosition - 1);
+	}
+	return false;
+      }
+
     });
   }
-  
+
   @Override
   public void addData(String text, int row, int column, int sheet){
     Log.d("FWList", "adding data for row " + row + " column " + column + " sheet " + sheet);
