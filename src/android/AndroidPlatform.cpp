@@ -462,7 +462,7 @@ AndroidPlatform::renderLoop() {
 
 void AndroidPlatform::onOpenGLInitEvent(OpenGLInitEvent & _ev) {
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "platform OpenGLInitEvent");
-  if (_ev.getOpenGLVersion() < 3) {
+  if (_ev.getOpenGLVersion() < 190000) {
     int results = importGLInit();
     __android_log_print(ANDROID_LOG_INFO, "Sometrik", "opengl 2 importResult = %u", results);
   } else {
