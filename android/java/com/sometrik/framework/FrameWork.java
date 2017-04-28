@@ -315,7 +315,13 @@ public class FrameWork extends Activity implements NativeCommandHandler {
   public NativeSurface createNativeOpenGLView(final int id) {
     final ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
     final ConfigurationInfo configurationInfo = activityManager.getDeviceConfigurationInfo();
-    final int gl_version = configurationInfo.reqGlEsVersion;    
+    int getGLVersion = configurationInfo.reqGlEsVersion;
+    final int gl_version;
+    if (getGLVersion == 196609 || getGLVersion == 196610 || getGLVersion == 196611 || getGLVersion == 196608){
+      gl_version = 3;
+    } else {
+      gl_version = 2;
+    }
     System.out.println("about to create native surface. gl_version: " + gl_version);
     NativeSurface surfaceView = new NativeSurface(this);
     surfaceView.setId(id);
@@ -325,7 +331,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
 	holder.addCallback(new Callback() {
       public void surfaceDestroyed(SurfaceHolder holder) {
 	System.out.println("surfaceDestroyed");
-	nativeSurfaceDestroyed(System.currentTimeMillis() / 1000.0, id, gl_version);
+	nativeSurfaceDestroyed(System.currentTimeMillis() / 1000.0, id, 3);
       }
 
       public void surfaceCreated(SurfaceHolder holder) {
