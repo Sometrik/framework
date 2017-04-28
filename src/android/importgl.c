@@ -21,9 +21,9 @@ int importGLInit()
 
 //    sGLESSO = dlopen("libGLESv3_CM.so", RTLD_NOW);
     sGLESSO = dlopen("libGLESv3.so", RTLD_NOW);
-    int es3 = 0;
+    int es3 = 1;
     if (sGLESSO == NULL) {
-      es3 = 1;
+      es3 = 0;
       sGLESSO = dlopen("libGLESv2.so", RTLD_NOW);
       if (sGLESSO == NULL) {
         return 0;   // Cannot find OpenGL ES Common or Common Lite SO.
@@ -107,7 +107,7 @@ int importGLInit()
   IMPORT_FUNC(glVertexAttribDivisor);
   IMPORT_FUNC(glTexStorage2D);
 
-    return result;
+    return result + es3;
 }
 
 
