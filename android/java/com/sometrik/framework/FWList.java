@@ -14,11 +14,12 @@ public class FWList extends ExpandableListView implements NativeCommandHandler{
   private FrameWork frame;
   private FWAdapter adapter;
   
-  public FWList(final FrameWork frame, FWAdapter adapter) {
+  public FWList(final FrameWork frame, final FWAdapter adapter) {
     super(frame);
     this.frame = frame;
     this.adapter = adapter;
     this.setAdapter((ExpandableListAdapter)adapter);
+    this.setGroupIndicator(frame.getResources().getDrawable(android.R.drawable.ic_menu_more));
     setOnGroupClickListener(new OnGroupClickListener(){
       @Override
       public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
@@ -28,7 +29,7 @@ public class FWList extends ExpandableListView implements NativeCommandHandler{
 	} else {
 	  System.out.println("row clicked. Sending intChangedEvent of " + (groupPosition - 1));
 	  frame.intChangedEvent(System.currentTimeMillis() / 1000.0, getElementId(), groupPosition - 1);
-	}
+  	}
 	return false;
       }
     });
@@ -37,6 +38,21 @@ public class FWList extends ExpandableListView implements NativeCommandHandler{
       public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
 	System.out.println("childClick detected group: " + groupPosition + " child: " + childPosition);
 	return false;
+      }
+    });
+
+    //This collapses all other than the chosen group
+    setOnGroupExpandListener(new OnGroupExpandListener() {
+      @Override
+      public void onGroupExpand(int groupPosition) {
+	for (int i = 0; i < adapter.getGroupCount(); i++) {
+	  if (i != groupPosition) {
+	    if (isGroupExpanded(i)) {
+	      collapseGroup(i);
+	    }
+	  }
+	}
+	Log.d("adapterExpansion", "expansionStuff done");
       }
     });
   }

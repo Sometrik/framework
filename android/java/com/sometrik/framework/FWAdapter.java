@@ -220,9 +220,9 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
   }
 
   @Override
-  public Object getGroup(int arg0) {
+  public Object getGroup(int groupPosition) {
     Log.d("adapter", "getGroup");
-    // TODO Auto-generated method stub
+    
     return null;
   }
 
@@ -305,13 +305,13 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
   }
 
   @Override
-  public void onGroupCollapsed(int arg0) {
+  public void onGroupCollapsed(int groupPosition) {
     // TODO Auto-generated method stub
     
   }
 
   @Override
-  public void onGroupExpanded(int arg0) {
+  public void onGroupExpanded(int groupPosition) {
     // TODO Auto-generated method stub
     
   }
