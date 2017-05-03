@@ -34,7 +34,7 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
     columnData = new AdapterData(new ArrayList<String>());
     listItemParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT);
     listItemParams.weight = 1;
-    listItemParams.leftMargin = 2;
+    listItemParams.leftMargin = 50;
     sectionHeaderRows = new ArrayList<Integer>();
   }
 
@@ -253,6 +253,7 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
 	txtFirst.setLayoutParams(listItemParams);
 	txtFirst.setTypeface(null, Typeface.BOLD);
 	layout.addView(txtFirst);
+	layout.setBackgroundColor(0xFF777777);
 	txtFirst.setText(data.getData(i));
       }
 
@@ -289,6 +290,7 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
 	    Log.d("adapter", "looping throud data " + i);
 	TextView txtFirst = new TextView(frame);
 	txtFirst.setLayoutParams(listItemParams);
+	layout.setBackgroundColor(0xFF777777);
 	layout.addView(txtFirst);
 	txtFirst.setText(data.getData(i));
       }
