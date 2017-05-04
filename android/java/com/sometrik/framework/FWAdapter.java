@@ -7,12 +7,15 @@ import java.util.Map;
 
 import android.content.Context;
 import android.graphics.Typeface;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ExpandableListAdapter;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapter {
@@ -32,7 +35,7 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
 //    dataList = new ArrayList<AdapterData>();
     dataList = new HashMap<Integer, AdapterData>();
     columnData = new AdapterData(new ArrayList<String>());
-    listItemParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT);
+    listItemParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT);
     listItemParams.weight = 1;
     listItemParams.leftMargin = 50;
     sectionHeaderRows = new ArrayList<Integer>();
@@ -185,17 +188,29 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
   public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
     Log.d("adapter", "GetChildView position: " + groupPosition + " childPosition: " + childPosition);
     AdapterData sheetData = dataList.get(groupPosition);
-    AdapterData childData = sheetData.getChild(childPosition);
-    LinearLayout layout = new LinearLayout(frame);
-    
-    for (int i = 0; i < childData.getSize(); i++) {
-      Log.d("adapter", "looping throud data " + i);
-      TextView txtFirst = new TextView(frame);
-      txtFirst.setLayoutParams(listItemParams);
-      layout.addView(txtFirst);
-      txtFirst.setText(childData.getData(i));
+    ArrayList<AdapterData> children = sheetData.getChildren();
+    ScrollView scrollView = new ScrollView(frame);
+    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+    params.gravity = Gravity.FILL;
+    scrollView.setLayoutParams(params);
+    LinearLayout expandLayout = new LinearLayout(frame);
+    expandLayout.setOrientation(LinearLayout.VERTICAL);
+    expandLayout.setLayoutParams(params);
+    scrollView.addView(expandLayout);
+
+    for (int i = 0; i < children.size(); i++) {
+      AdapterData childData = sheetData.getChild(i);
+      LinearLayout layout = new LinearLayout(frame);
+      for (int i2 = 0; i2 < childData.getSize(); i2++) {
+	TextView txtFirst = new TextView(frame);
+	txtFirst.setLayoutParams(listItemParams);
+	layout.addView(txtFirst);
+	txtFirst.setText(childData.getData(i2));
+      }
+      expandLayout.addView(layout);
     }
-    return layout;
+
+    return scrollView;
   }
 
   @Override
@@ -204,7 +219,11 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
       return 0;
     }
     AdapterData sheetData = dataList.get(groupPosition);
-    return sheetData.getChildren().size();
+    if (sheetData.getChildren().size() > 0){
+      return 1;
+    } else {
+      return 0;
+    }
   }
 
   @Override
@@ -312,7 +331,6 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
 
   @Override
   public void onGroupExpanded(int groupPosition) {
-    // TODO Auto-generated method stub
     
   }
   
