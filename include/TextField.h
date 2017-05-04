@@ -31,12 +31,15 @@ class TextField : public InputElement {
   const std::string & getValue() { return value; }
 
  protected:
-  void initialize(FWPlatform * _platform) override {
-    Element::initialize(_platform);
+
+  void create() override {
     Command c(Command::CREATE_TEXTFIELD, getParentInternalId(), getInternalId());
     c.setLayoutWeight(getLayoutWeight());
-    c.setFlags(getFlags());
     sendCommand(c);
+  }
+
+  void initialize(FWPlatform * _platform) override {
+    Element::initialize(_platform);
   }
 
  private:
