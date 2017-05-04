@@ -235,14 +235,13 @@ public class NativeCommand {
       view.addChild(debugList);
       break;
     case CREATE_LISTVIEW:
-      
       FWList listView = new FWList(frame, new FWAdapter(frame, null));
-    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
-    params.weight = 3.0f;
-    params.gravity = Gravity.FILL;
-//    layout.setBaselineAligned(false);
+    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+//    params.weight = 1.0f;
+//    params.gravity = Gravity.BOTTOM;
     listView.setLayoutParams(params);
       listView.setId(childInternalId);
+//      listView.setNestedScrollingEnabled(false);
       FrameWork.addToViewList(listView);
       view.addChild(listView);
       break;
@@ -481,7 +480,7 @@ public class NativeCommand {
   private FWLayout createLinearLayout() {
     FWLayout layout = new FWLayout(frame);
     LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-//    params.weight = 1.0f;
+    params.weight = 1.0f;
 //    params.gravity = Gravity.FILL;
 //    layout.setBaselineAligned(false);
     layout.setLayoutParams(params);
@@ -499,9 +498,9 @@ public class NativeCommand {
     FWButton button = new FWButton(frame);
     button.setId(getChildInternalId());
     button.setText(getTextValue());
-    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-    params.weight = 1;
-    params.gravity = Gravity.BOTTOM;
+    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+//    params.weight = 1;
+//    params.gravity = Gravity.BOTTOM;
     button.setLayoutParams(params);
 
     button.setOnClickListener(new OnClickListener() {
@@ -522,7 +521,7 @@ public class NativeCommand {
     final FWEditText editText = new FWEditText(frame);
     editText.setId(getChildInternalId());
     editText.setText(getTextValue());
-    editText.setMinWidth(80);
+//    editText.setMinWidth(80);
     editText.setSingleLine();
     editText.setImeOptions(EditorInfo.IME_ACTION_DONE);
     

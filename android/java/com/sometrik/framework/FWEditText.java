@@ -8,7 +8,10 @@ import android.content.Context;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.LinearLayout.LayoutParams;
 
 public class FWEditText extends EditText implements NativeCommandHandler {
 
@@ -18,7 +21,9 @@ public class FWEditText extends EditText implements NativeCommandHandler {
   public FWEditText(FrameWork frameWork) {
     super(frameWork);
     this.frame = frameWork;
-    
+
+    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+    setLayoutParams(params);
   }
   
   public void addDelayedChangeListener(final int viewId){
@@ -88,7 +93,28 @@ public class FWEditText extends EditText implements NativeCommandHandler {
 
   @Override
   public void setStyle(String key, String value) {
-
+    if (key.equals("add_weight")) {
+      LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
+      params.weight += 1;
+      setLayoutParams(params);
+      System.out.println("edittext weight: " + params.weight);
+    } else if (key.equals("width")) {
+      LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
+      if (value.equals("wrap_content")) {
+	params.width = LinearLayout.LayoutParams.WRAP_CONTENT;
+      } else if (value.equals("match_parent")) {
+	params.width = LinearLayout.LayoutParams.MATCH_PARENT;
+      }
+      setLayoutParams(params);
+    } else if (key.equals("height")) {
+      LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
+      if (value.equals("wrap_content")) {
+	params.height = LinearLayout.LayoutParams.WRAP_CONTENT;
+      } else if (value.equals("match_parent")) {
+	params.height = LinearLayout.LayoutParams.MATCH_PARENT;
+      }
+      setLayoutParams(params);
+    }
   }
 
   @Override

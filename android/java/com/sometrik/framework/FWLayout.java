@@ -5,6 +5,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewParent;
 import android.widget.LinearLayout;
+import android.widget.LinearLayout.LayoutParams;
 
 public class FWLayout extends LinearLayout implements NativeCommandHandler {
   
@@ -51,17 +52,37 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
 
   @Override
   public void setStyle(String key, String value) {
-    if (key.equals("gravity")){
-	LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
-      if (value.equals("bottom")){
+    if (key.equals("gravity")) {
+      LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
+      if (value.equals("bottom")) {
 	params.gravity = Gravity.BOTTOM;
-      } else if (value.equals("top")){
+      } else if (value.equals("top")) {
 	params.gravity = Gravity.TOP;
-      } else if (value.equals("left")){
+      } else if (value.equals("left")) {
 	params.gravity = Gravity.LEFT;
-      } else if (value.equals("right")){
+      } else if (value.equals("right")) {
 	params.gravity = Gravity.RIGHT;
       }
+      setLayoutParams(params);
+    } else if (key.equals("width")) {
+      LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
+      if (value.equals("wrap_content")) {
+	params.width = LinearLayout.LayoutParams.WRAP_CONTENT;
+      } else if (value.equals("match_parent")) {
+	params.width = LinearLayout.LayoutParams.MATCH_PARENT;
+      }
+      setLayoutParams(params);
+    } else if (key.equals("height")) {
+      LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
+      if (value.equals("wrap_content")) {
+	params.height = LinearLayout.LayoutParams.WRAP_CONTENT;
+      } else if (value.equals("match_parent")) {
+	params.height = LinearLayout.LayoutParams.MATCH_PARENT;
+      }
+      setLayoutParams(params);
+    } else if (key.equals("add_weight")) {
+      LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
+      params.weight += 1;
       setLayoutParams(params);
     }
   }

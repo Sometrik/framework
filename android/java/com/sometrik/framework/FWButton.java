@@ -1,9 +1,13 @@
 package com.sometrik.framework;
 
 import android.graphics.Typeface;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.RotateAnimation;
 import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.LinearLayout.LayoutParams;
 
 public class FWButton extends Button implements NativeCommandHandler {
 
@@ -62,6 +66,40 @@ public class FWButton extends Button implements NativeCommandHandler {
       } else if (value.equals("large")){
 	this.setTextAppearance(frame, android.R.style.TextAppearance_DeviceDefault_Large);
       }
+    } else if (key.equals("gravity")) {
+      LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+      params.weight = 1;
+      if (value.equals("bottom")) {
+	params.gravity = Gravity.BOTTOM;
+      } else if (value.equals("top")) {
+	params.gravity = Gravity.TOP;
+      } else if (value.equals("left")) {
+	params.gravity = Gravity.LEFT;
+      } else if (value.equals("right")) {
+	params.gravity = Gravity.RIGHT;
+      }
+      setLayoutParams(params);
+    } else if (key.equals("width")) {
+      LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
+      if (value.equals("wrap_content")) {
+	params.width = LinearLayout.LayoutParams.WRAP_CONTENT;
+      } else if (value.equals("match_parent")) {
+	params.width = LinearLayout.LayoutParams.MATCH_PARENT;
+      }
+      setLayoutParams(params);
+    } else if (key.equals("height")) {
+      LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
+      if (value.equals("wrap_content")) {
+	params.height = LinearLayout.LayoutParams.WRAP_CONTENT;
+      } else if (value.equals("match_parent")) {
+	params.height = LinearLayout.LayoutParams.MATCH_PARENT;
+      }
+      setLayoutParams(params);
+    } else if (key.equals("add_weight")){
+      LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
+      params.weight += 1;
+      setLayoutParams(params);
+      System.out.println("button weight: " + params.weight);
     }
   }
 
