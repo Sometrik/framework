@@ -7,6 +7,7 @@ import java.util.TimerTask;
 import android.content.Context;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -114,6 +115,18 @@ public class FWEditText extends EditText implements NativeCommandHandler {
 	params.height = LinearLayout.LayoutParams.MATCH_PARENT;
       }
       setLayoutParams(params);
+    } else if (key.equals("gravity")) {
+      LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
+      params.weight = 1;
+      if (value.equals("bottom")) {
+	params.gravity = Gravity.BOTTOM;
+      } else if (value.equals("top")) {
+	params.gravity = Gravity.TOP;
+      } else if (value.equals("left")) {
+	params.gravity = Gravity.LEFT;
+      } else if (value.equals("right")) {
+	params.gravity = Gravity.RIGHT;
+      }
     }
   }
 
