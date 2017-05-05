@@ -92,6 +92,7 @@ public class FWList extends ExpandableListView implements NativeCommandHandler{
       Log.d("FWList", "adding header to row " + optionId);
       adapter.addSectionHeader(optionId, text);
     }
+    adapter.notifyDataSetChanged();
   }
 
   @Override
