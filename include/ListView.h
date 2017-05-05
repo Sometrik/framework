@@ -44,6 +44,12 @@ class ListView : public Element {
     sendCommand(Command(Command::CLEAR, getInternalId()));
   }
 
+  void onValueEvent(ValueEvent & ev) override {
+    notify();
+    CommandEvent ev2(ev.getTimestamp(), getId(), ev.getValue());
+    ev2.dispatch(*this);
+  }
+
  protected: 
   void create() override {
     Command c(Command::CREATE_LISTVIEW, getParentInternalId(), getInternalId());
