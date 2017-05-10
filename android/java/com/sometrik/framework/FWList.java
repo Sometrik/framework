@@ -2,6 +2,7 @@ package com.sometrik.framework;
 
 import java.util.ArrayList;
 
+import android.R.color;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -19,7 +20,8 @@ public class FWList extends ExpandableListView implements NativeCommandHandler{
     this.frame = frame;
     this.adapter = adapter;
     this.setAdapter((ExpandableListAdapter)adapter);
-    this.setGroupIndicator(frame.getResources().getDrawable(android.R.drawable.ic_menu_more));
+    this.setGroupIndicator(null);
+//  this.setGroupIndicator(frame.getResources().getDrawable(android.R.drawable.ic_menu_more));
     setOnGroupClickListener(new OnGroupClickListener(){
       @Override
       public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
