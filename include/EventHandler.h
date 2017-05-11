@@ -38,6 +38,7 @@ class VisiblePostsEvent;
 class LeaveWorkspaceEvent;
 class MultiTouchEvent;
 class LoadEvent;
+class SearchEvent;
 
 class EventHandler : public Notifier {
  public:
@@ -89,6 +90,7 @@ class EventHandler : public Notifier {
   virtual void handleLeaveWorkspaceEvent(LeaveWorkspaceEvent & ev) { }
   virtual void handleMultiTouchEvent(MultiTouchEvent & ev) { }
   virtual void handleLoadEvent(LoadEvent & ev) { }
+  virtual void handleSearchEvent(SearchEvent & ev) { }
   
   virtual bool acceptPositionEvent(const PositionEvent & ev, float margin = 0) const { return false; }
   virtual bool isVisibleOnWorkspace(int w) const { return true; }  
