@@ -1,6 +1,7 @@
 package com.sometrik.framework;
 
 import android.graphics.Typeface;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -67,10 +68,12 @@ public class FWButton extends Button implements NativeCommandHandler {
 	this.setTextAppearance(frame, android.R.style.TextAppearance_DeviceDefault_Large);
       }
     } else if (key.equals("gravity")) {
-      LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+      Log.d("button", "setting gravity: ");
+      LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
       params.weight = 1;
       if (value.equals("bottom")) {
 	params.gravity = Gravity.BOTTOM;
+	      Log.d("button", " to bottom");
       } else if (value.equals("top")) {
 	params.gravity = Gravity.TOP;
       } else if (value.equals("left")) {
