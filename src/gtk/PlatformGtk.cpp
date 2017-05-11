@@ -29,6 +29,13 @@ extern FWApplication * applicationMain();
 
 static int width = 800, height = 600;
 
+class PlatformGtk;
+
+struct event_data_s {
+  PlatformGtk * platform;
+  Event * event;
+};
+
 class PlatformGtk : public FWPlatform {
 public:
   PlatformGtk() : FWPlatform(1.0f) {
@@ -37,7 +44,10 @@ public:
   }
 
   void pushEvent(const Event & ev) override {
-    assert(0);
+    event_data_s * ed = new event_data_s;
+    ed->platform = this;
+    ed->event = ev.dup();
+    g_idle_add(idle_callback, ed);
   }
   
   string getLocalFilename(const char * fn, FileType type) override {
@@ -482,6 +492,7 @@ protected:
   static void send_selection_value(GtkWidget * widget, gpointer data);
   static void on_previous_button(GtkWidget * widget, gpointer data);
   static void on_next_button(GtkWidget * widget, gpointer data);
+  static gboolean idle_callback(gpointer data);
   
 private:
   GtkApplication * app = nullptr;
@@ -641,6 +652,18 @@ PlatformGtk::on_next_button(GtkWidget * widget, gpointer data) {
   cerr << "got next\n";
   PlatformGtk * platform = (PlatformGtk*)data;
   platform->sendCommand2(Command(Command::HISTORY_GO_FORWARD, 0));  
+}
+
+gboolean
+PlatformGtk::idle_callback(gpointer data) {
+  cerr << "got idle_callback\n";
+  event_data_s * ed = (event_data_s*)data;
+  PlatformGtk * platform = ed->platform;
+  Event * ev = ed->event;
+  delete ed;
+  platform->postEvent(platform->getInternalId(), *ev);
+  delete ev;
+  return FALSE;
 }
 
 static void activate(GtkApplication * app, gpointer user_data) {
