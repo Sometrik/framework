@@ -3,14 +3,6 @@
 
 using namespace std;
 
-//Selection &
-//Selection::show() {
-//  for (auto & e : data) {
-//    e->show();
-//  }
-//  return *this;
-//}
-
 Selection &
 Selection::show(bool recordHistory) {
   for (auto & e : data) {
