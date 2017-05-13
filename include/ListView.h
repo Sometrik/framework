@@ -16,6 +16,12 @@ class ListView : public Element {
     return Element::isA(className);
   }
 
+  void addSheet(const std::string & name) {
+    Command c(Command::ADD_SHEET, getInternalId());
+    c.setTextValue(name);
+    sendCommand(c);
+  }
+
   void addColumn(const std::string & name) {
     Command c(Command::ADD_COLUMN, getInternalId());
     c.setTextValue(name);
@@ -28,12 +34,6 @@ class ListView : public Element {
     c.setColumn(column);
     c.setSheet(sheet);
     c.setTextValue(value);
-    sendCommand(c);
-  }
-
-  void addHeaderBar(int row, const char * text) {
-    Command c(Command::ADD_COLUMN, getInternalId(), text);
-    c.setValue(row);
     sendCommand(c);
   }
 
