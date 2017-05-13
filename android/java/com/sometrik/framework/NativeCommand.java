@@ -117,6 +117,7 @@ public class NativeCommand {
     FLUSH_VIEW, // Flushes GridView content
     UPDATE_PREFERENCE,
     ADD_OPTION,
+    ADD_SHEET,
     ADD_COLUMN,
     QUIT_APP,
 
