@@ -17,7 +17,7 @@ Element::initialize(FWPlatform * _platform) {
   if (_platform) {
     platform = _platform;
     create();
-    for (auto & c : pendingCommands){
+    for (auto & c : pendingCommands) {
       sendCommand(c);
     }
     pendingCommands.clear();
@@ -59,7 +59,7 @@ Element::style(const std::string & key, const std::string & value) {
   
 void
 Element::sendCommand(const Command & command) {
-  if (platform){
+  if (platform) {
     platform->sendCommand2(command);
   } else {
     pendingCommands.push_back(command);
