@@ -28,7 +28,7 @@ class TextField : public InputElement {
     return true;
   }
 
-  const std::string & getValue() { return value; }
+  const std::string & getValue() const { return value; }
 
  protected:
 
