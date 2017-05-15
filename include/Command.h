@@ -74,7 +74,6 @@ class Command {
  Command(Type _command, int _internalId, int _childInternalId = 0) : commandType(_command), internalId(_internalId), childInternalId(_childInternalId) { }
  Command(Type _command, int _internalId, const std::string & _textValue) : commandType(_command), internalId(_internalId), childInternalId(0), textValue(_textValue) { }
  Command(Type _command, int _internalId, const std::string & _textValue, const std::string & _textValue2) : commandType(_command), internalId(_internalId), childInternalId(0), textValue(_textValue), textValue2(_textValue2) { }
-  ~Command() { }
   
   Type getType() const { return commandType; }
   int getInternalId() const { return internalId; }
@@ -91,7 +90,7 @@ class Command {
   const std::string & getKey() const { return key; }
   void setKey(const std::string & _key) { key = _key; }
 
-  void setWidth(int _width){ width = _width; }
+  void setWidth(int _width) { width = _width; }
   int getWidth() { return width; }
   void setHeight(int _height) { height = _height; }
   int getHeight() { return height; }
@@ -104,7 +103,6 @@ class Command {
   void setColumn(int c) { column = c; }
   int getColumn() const { return column; }
   
-
   void setSheet(int s) { sheet = s; }
   int getSheet() const { return sheet; }
 
