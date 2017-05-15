@@ -233,11 +233,14 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
 
   @Override
   public int getChildrenCount(int groupPosition) {
-    Log.d("adapter", "getChildrenCount");
+    Log.d("adapter", "getChildrenCount " + groupPosition);
     if (groupPosition == 0){
       return 0;
     }
     AdapterData sheetData = dataList.get(groupPosition);
+    if (sheetData == null){
+      return 0;
+    }
     if (sheetData.getChildren().size() > 0){
       return 1;
     } else {
