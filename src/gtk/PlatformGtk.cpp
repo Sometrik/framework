@@ -305,15 +305,22 @@ public:
       if (GTK_IS_LABEL(view)) {
 	gtk_label_set_text((GtkLabel*)view, command.getTextValue().c_str());
       } else if (GTK_IS_TEXT_VIEW(view)) {
-	cerr << "setting text value\n";
 	auto buffer = gtk_text_view_get_buffer((GtkTextView*)view);
 	gtk_text_buffer_set_text(buffer, command.getTextValue().c_str(),
 				 command.getTextValue().size());
-      } else if (GTK_IS_TREE_VIEW(view)) {
+      } else {
+	assert(0);
+      }
+    }
+      break;
+
+    case Command::SET_TEXT_DATA: {
+      auto view = views_by_id[command.getInternalId()];
+      if (GTK_IS_TREE_VIEW(view)) {
 	auto n_sheets = num_sheets_by_id[command.getInternalId()];
 	auto model = gtk_tree_view_get_model((GtkTreeView*)view);
 	GtkTreeIter iter;
-	if (n_sheets || 1) {
+	if (n_sheets) {
 	  GtkTreeIter parent;
 	  while (!gtk_tree_model_iter_nth_child(model, &parent, 0, command.getSheet())) {
 	    gtk_tree_store_append((GtkTreeStore*)model, &iter, 0);
@@ -325,24 +332,6 @@ public:
 	  while (!gtk_tree_model_iter_nth_child(model, &iter, 0, command.getRow())) {
 	    gtk_tree_store_append((GtkTreeStore*)model, &iter, 0);
 	  }
-	}
-	gtk_tree_store_set((GtkTreeStore*)model, &iter,
-			   command.getColumn(),
-			   command.getTextValue().c_str(),
-			   -1);
-      } else {
-	assert(0);
-      }
-    }
-      break;
-
-    case Command::SET_TEXT_DATA: {
-      auto view = views_by_id[command.getInternalId()];
-      if (GTK_IS_TREE_VIEW(view)) {
-	auto model = gtk_tree_view_get_model((GtkTreeView*)view);
-	GtkTreeIter iter;
-	if (!gtk_tree_model_iter_nth_child(model, &iter, 0, command.getRow())) {
-	  gtk_tree_store_append((GtkTreeStore*)model, &iter, NULL);
 	}
 	gtk_tree_store_set((GtkTreeStore*)model, &iter,
 			   command.getColumn(),
@@ -400,7 +389,6 @@ public:
       break;
       
     case Command::CREATE_FORMVIEW: {
-      cerr << "creating formview\n";
       auto sw = gtk_scrolled_window_new(0, 0);
       gtk_container_set_border_width((GtkContainer*)sw, 10);
       gtk_scrolled_window_set_policy((GtkScrolledWindow*)sw,
@@ -477,7 +465,7 @@ public:
 	}
 	unsigned int row = n / columns;
 	unsigned int col = n % columns;
-	cerr << "n = " << n << ", size = " << rows << "x" << columns << ", pos = (" << row << " " << col << ")\n";
+	// cerr << "n = " << n << ", size = " << rows << "x" << columns << ", pos = (" << row << " " << col << ")\n";
 	gtk_table_attach((GtkTable*)parent, widget,
 			 col, col + 1,
 			 row, row + 1,
