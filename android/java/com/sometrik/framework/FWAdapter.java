@@ -29,9 +29,9 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
   private int addedHeaders = 0;
   private LinearLayout.LayoutParams listItemParams;
   
-  public FWAdapter(Context context, List<View> viewList) {
-    super(context, 0, viewList);
-    this.frame = (FrameWork) context;
+  public FWAdapter(FrameWork frame, List<View> viewList) {
+    super(frame, 0, viewList);
+    this.frame = frame;
 //    dataList = new ArrayList<AdapterData>();
     dataList = new HashMap<Integer, AdapterData>();
     columnData = new AdapterData(new ArrayList<String>());
@@ -95,6 +95,7 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
 
   @Override
   public int getCount() {
+    Log.d("adapter", "getCount");
     if (columnData.getSize() != 0){
       return dataList.size() + 1;
     }
@@ -103,11 +104,13 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
 
   @Override
   public long getItemId(int arg0) {
+    Log.d("adapter", "getItemId");
     return 0;
   }
   
   @Override
   public void clear(){
+    Log.d("adapter", "clear");
     dataList = new HashMap<Integer, AdapterData>();
   }
 
@@ -124,6 +127,9 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
 	TextView txtFirst = new TextView(frame);
 	txtFirst.setLayoutParams(listItemParams);
 	txtFirst.setTypeface(null, Typeface.BOLD);
+	txtFirst.setFocusable(false);
+	txtFirst.setFocusableInTouchMode(false);
+	txtFirst.setClickable(false);
 	layout.addView(txtFirst);
 	txtFirst.setText(data.getData(i));
       }
@@ -158,11 +164,15 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
       
       if (data == null) {
 	Log.d("adapter", "no data on position " + position);
+	      return layout;
       }
 
       for (int i = 0; i < data.getSize(); i++) {
 	TextView txtFirst = new TextView(frame);
 	txtFirst.setLayoutParams(listItemParams);
+	txtFirst.setFocusable(false);
+	txtFirst.setClickable(false);
+	txtFirst.setFocusableInTouchMode(false);
 	layout.addView(txtFirst);
 	txtFirst.setText(data.getData(i));
       }
@@ -174,13 +184,18 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
   
   @Override
   public Object getChild(int groupPosition, int childPosition) {
-    // TODO Auto-generated method stub
+    Log.d("adapter", "getChild");
     return null;
+  }
+  
+  @Override
+  public boolean isEnabled(int position) {
+    return true;
   }
 
   @Override
   public long getChildId(int groupPosition, int childPosition) {
-    // TODO Auto-generated method stub
+    Log.d("adapter", "getChildId");
     return 0;
   }
 
@@ -204,6 +219,9 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
       for (int i2 = 0; i2 < childData.getSize(); i2++) {
 	TextView txtFirst = new TextView(frame);
 	txtFirst.setLayoutParams(listItemParams);
+	txtFirst.setFocusable(false);
+	txtFirst.setClickable(false);
+	txtFirst.setFocusableInTouchMode(false);
 	layout.addView(txtFirst);
 	txtFirst.setText(childData.getData(i2));
       }
@@ -215,10 +233,14 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
 
   @Override
   public int getChildrenCount(int groupPosition) {
+    Log.d("adapter", "getChildrenCount " + groupPosition);
     if (groupPosition == 0){
       return 0;
     }
     AdapterData sheetData = dataList.get(groupPosition);
+    if (sheetData == null){
+      return 0;
+    }
     if (sheetData.getChildren().size() > 0){
       return 1;
     } else {
@@ -228,13 +250,13 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
 
   @Override
   public long getCombinedChildId(long groupId, long childId) {
-    // TODO Auto-generated method stub
+    Log.d("adapter", "getCombinedChildId");
     return 0;
   }
 
   @Override
   public long getCombinedGroupId(long groupId) {
-    // TODO Auto-generated method stub
+    Log.d("adapter", "getCombinedGroupId");
     return 0;
   }
 
@@ -248,14 +270,16 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
   @Override
   public int getGroupCount() {
     if (columnData.getSize() != 0){
+      Log.d("adapter", "getGroupCount " + (dataList.size() + 1));
       return dataList.size() + 1;
     }
+    Log.d("adapter", "getGroupCount " + dataList.size());
     return dataList.size();
   }
 
   @Override
   public long getGroupId(int groupPosition) {
-    // TODO Auto-generated method stub
+    Log.d("adapter", "getGroupId");
     return 0;
   }
 
@@ -271,14 +295,22 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
 	TextView txtFirst = new TextView(frame);
 	txtFirst.setLayoutParams(listItemParams);
 	txtFirst.setTypeface(null, Typeface.BOLD);
+	txtFirst.setFocusable(false);
+	txtFirst.setFocusableInTouchMode(false);
+	txtFirst.setClickable(false);
 	layout.addView(txtFirst);
-	layout.setBackgroundColor(0xFF777777);
+//	layout.setBackgroundColor(0xFF777777);
 	txtFirst.setText(data.getData(i));
       }
 
       return layout;
 
     } else {
+      
+      if (columnData.getSize() != 0){
+	position--;
+      }
+      
       Log.d("adapter", "dataKList.size: " + dataList.size());
       if (columnData.getSize() != 0) {
 	Log.d("adapter", "trying to get from index: " + (position));
@@ -303,11 +335,15 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
       
       if (data == null) {
 	Log.d("adapter", "no data on position " + position);
+	return layout;
       }
 
       for (int i = 0; i < data.getSize(); i++) {
-	    Log.d("adapter", "looping throud data " + i);
+	Log.d("adapter", "looping throud data " + i);
 	TextView txtFirst = new TextView(frame);
+	txtFirst.setFocusable(false);
+	txtFirst.setFocusableInTouchMode(false);
+	txtFirst.setClickable(false);
 	txtFirst.setLayoutParams(listItemParams);
 	layout.setBackgroundColor(0xFF777777);
 	layout.addView(txtFirst);
@@ -320,17 +356,18 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
 
   @Override
   public boolean isChildSelectable(int groupPosition, int childPosition) {
-    return true;
+    return false;
   }
 
   @Override
   public void onGroupCollapsed(int groupPosition) {
-    // TODO Auto-generated method stub
+    Log.d("adapter", "onGroupCollapsed");
     
   }
 
   @Override
   public void onGroupExpanded(int groupPosition) {
+    Log.d("adapter", "onGroupExpanded");
     
   }
   

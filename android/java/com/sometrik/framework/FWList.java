@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import android.R.color;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
@@ -21,6 +22,9 @@ public class FWList extends ExpandableListView implements NativeCommandHandler{
     this.adapter = adapter;
     this.setAdapter((ExpandableListAdapter)adapter);
     this.setGroupIndicator(null);
+    this.setAnimation(null);
+    System.out.println("FWLIST constructor");
+    this.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
 //  this.setGroupIndicator(frame.getResources().getDrawable(android.R.drawable.ic_menu_more));
     setOnGroupClickListener(new OnGroupClickListener(){
       @Override
@@ -32,14 +36,14 @@ public class FWList extends ExpandableListView implements NativeCommandHandler{
 	  System.out.println("row clicked. Sending intChangedEvent of " + (groupPosition - 1));
 	  frame.intChangedEvent(System.currentTimeMillis() / 1000.0, getElementId(), groupPosition - 1);
   	}
-	return false;
+	return true;
       }
     });
     setOnChildClickListener(new OnChildClickListener(){
       @Override
       public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
 	System.out.println("childClick detected group: " + groupPosition + " child: " + childPosition);
-	return false;
+	return true;
       }
     });
 
