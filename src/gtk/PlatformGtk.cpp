@@ -106,12 +106,26 @@ public:
     }
       break;
 
+    case Command::ADD_SHEET: {
+      auto view = views_by_id[command.getInternalId()];
+      if (view && GTK_IS_TREE_VIEW(view)) {
+	auto model = gtk_tree_view_get_model((GtkTreeView*)view);
+	auto & n_sheets = num_sheets_by_id[command.getInternalId()];
+	GtkTreeIter iter;
+	gtk_tree_store_append((GtkTreeStore*)model, &iter, 0);
+	gtk_tree_store_set((GtkTreeStore*)model, &iter,
+			   0,
+			   command.getTextValue().c_str(),
+			   -1);
+	n_sheets++;
+	assert(num_sheets_by_id[command.getInternalId()]);
+      }
+    }
+      break;
+      
     case Command::ADD_COLUMN: {
       auto view = views_by_id[command.getInternalId()];
       if (view) {
-	// auto column = gtk_tree_view_column_new();
-	// gtk_tree_view_column_set_title((GtkTreeViewColumn*)column, command.getTextValue().c_str());
-	// int i = gtk_tree_view_append_column((GtkTreeView*)view, column);
 	int i = gtk_tree_view_get_n_columns((GtkTreeView*)view);
 	gtk_tree_view_insert_column_with_attributes((GtkTreeView*)view,
 						    -1,
@@ -296,10 +310,21 @@ public:
 	gtk_text_buffer_set_text(buffer, command.getTextValue().c_str(),
 				 command.getTextValue().size());
       } else if (GTK_IS_TREE_VIEW(view)) {
+	auto n_sheets = num_sheets_by_id[command.getInternalId()];
 	auto model = gtk_tree_view_get_model((GtkTreeView*)view);
 	GtkTreeIter iter;
-	if (!gtk_tree_model_iter_nth_child(model, &iter, 0, command.getRow())) {
-	  gtk_tree_store_append((GtkTreeStore*)model, &iter, NULL);
+	if (n_sheets || 1) {
+	  GtkTreeIter parent;
+	  while (!gtk_tree_model_iter_nth_child(model, &parent, 0, command.getSheet())) {
+	    gtk_tree_store_append((GtkTreeStore*)model, &iter, 0);
+	  }
+	  while (!gtk_tree_model_iter_nth_child(model, &iter, &parent, command.getRow())) {
+	    gtk_tree_store_append((GtkTreeStore*)model, &iter, &parent);
+	  }
+	} else {
+	  while (!gtk_tree_model_iter_nth_child(model, &iter, 0, command.getRow())) {
+	    gtk_tree_store_append((GtkTreeStore*)model, &iter, 0);
+	  }
 	}
 	gtk_tree_store_set((GtkTreeStore*)model, &iter,
 			   command.getColumn(),
@@ -501,6 +526,7 @@ private:
   GtkWidget * stack = nullptr;
   unordered_map<int, GtkWidget *> views_by_id;
   bool initial_view_shown = false;
+  unordered_map<int, unsigned int> num_sheets_by_id;
 };
 
 string
