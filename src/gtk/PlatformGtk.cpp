@@ -25,6 +25,11 @@
 
 using namespace std;
 
+struct sheet_data_s {
+  string name;
+  bool is_created;
+};
+
 extern FWApplication * applicationMain();
 
 static int width = 800, height = 600;
@@ -111,24 +116,8 @@ public:
       break;
 
     case Command::ADD_SHEET: {
-      auto window = views_by_id[command.getInternalId()];
-      assert(window);
-      if (window) {
-	auto view = gtk_bin_get_child(GTK_BIN(window));
-	assert(GTK_IS_TREE_VIEW(view));
-	if (GTK_IS_TREE_VIEW(view)) {
-	  auto model = gtk_tree_view_get_model((GtkTreeView*)view);
-	  auto & n_sheets = num_sheets_by_id[command.getInternalId()];
-	  GtkTreeIter iter;
-	  gtk_tree_store_append((GtkTreeStore*)model, &iter, 0);
-	  gtk_tree_store_set((GtkTreeStore*)model, &iter,
-			     0,
-			     command.getTextValue().c_str(),
-			     -1);
-	  n_sheets++;
-	  assert(num_sheets_by_id[command.getInternalId()]);
-	}
-      }
+      auto & sheets = sheets_by_id[command.getInternalId()];
+      sheets.push_back({ command.getTextValue(), false });
     }
       break;
       
@@ -334,32 +323,53 @@ public:
 	auto view = gtk_bin_get_child(GTK_BIN(window));
 	assert(GTK_IS_TREE_VIEW(view));
 	if (GTK_IS_TREE_VIEW(view)) {
-	  auto n_sheets = num_sheets_by_id[command.getInternalId()];
-	  auto model = gtk_tree_view_get_model((GtkTreeView*)view);
-	  GtkTreeIter iter;
-	  if (n_sheets) {
-	    GtkTreeIter parent;
-	    while (!gtk_tree_model_iter_nth_child(model, &parent, 0, command.getSheet())) {
-	      gtk_tree_store_append((GtkTreeStore*)model, &iter, 0);
+	  auto & sheets = sheets_by_id[command.getInternalId()];
+	  if (command.getSheet() < sheets.size() || sheets.empty()) {
+	    auto model = gtk_tree_view_get_model((GtkTreeView*)view);
+
+	    GtkTreeIter iter;
+	    if (!sheets.empty()) {
+	      for (unsigned int si = 0; si <= command.getSheet(); si++) {
+		auto & sheet = sheets[si];
+		if (!sheet.is_created) {
+		  sheet.is_created = true;
+		  GtkTreeIter iter;
+		  gtk_tree_store_append((GtkTreeStore*)model, &iter, 0);
+		  gtk_tree_store_set((GtkTreeStore*)model, &iter,
+				     0,
+				     sheet.name.c_str(),
+				     -1);
+		}
+	      }
+	    
+	      GtkTreeIter parent;
+	      gtk_tree_model_iter_nth_child(model, &parent, 0, command.getSheet());
+	      while (!gtk_tree_model_iter_nth_child(model, &iter, &parent, command.getRow())) {
+		gtk_tree_store_append((GtkTreeStore*)model, &iter, &parent);
+	      }
+	    } else {
+	      while (!gtk_tree_model_iter_nth_child(model, &iter, 0, command.getRow())) {
+		gtk_tree_store_append((GtkTreeStore*)model, &iter, 0);
+	      }
 	    }
-	    while (!gtk_tree_model_iter_nth_child(model, &iter, &parent, command.getRow())) {
-	      gtk_tree_store_append((GtkTreeStore*)model, &iter, &parent);
-	    }
-	  } else {
-	    while (!gtk_tree_model_iter_nth_child(model, &iter, 0, command.getRow())) {
-	      gtk_tree_store_append((GtkTreeStore*)model, &iter, 0);
-	    }
+	    gtk_tree_store_set((GtkTreeStore*)model, &iter,
+			       command.getColumn(),
+			       command.getTextValue().c_str(),
+			       -1);
 	  }
-	  gtk_tree_store_set((GtkTreeStore*)model, &iter,
-			     command.getColumn(),
-			     command.getTextValue().c_str(),
-			     -1);
 	}
       }
     }
       break;
       
     case Command::CLEAR: {
+      auto it = sheets_by_id.find(command.getInternalId());
+      if (it != sheets_by_id.end()) {
+	for (auto & sd : it->second) {
+	  sd.is_created = false;
+	}
+      }
+      
       auto window = views_by_id[command.getInternalId()];
       assert(window);
       if (window) {
@@ -535,7 +545,7 @@ private:
   GtkWidget * stack = nullptr;
   unordered_map<int, GtkWidget *> views_by_id;
   bool initial_view_shown = false;
-  unordered_map<int, unsigned int> num_sheets_by_id;
+  unordered_map<int, vector<sheet_data_s> > sheets_by_id;
 };
 
 string
