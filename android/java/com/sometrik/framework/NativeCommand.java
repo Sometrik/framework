@@ -301,6 +301,9 @@ public class NativeCommand {
     case ADD_COLUMN:
       view.addOption(getValue(), getTextValue());
       break;
+    case ADD_SHEET:
+      System.out.println("add_sheet: " + textValue + " " + rowNumber + " " + columnNumber + " " + sheet);
+      view.setValue(textValue);
     case POST_NOTIFICATION:
       frame.createNotification(getTextValue(), getTextValue2());
       break;
@@ -330,6 +333,7 @@ public class NativeCommand {
       view.setValue(textValue);
       break;
     case SET_TEXT_DATA:
+      System.out.println("set_text_data: " + textValue + " " + rowNumber + " " + columnNumber + " " + sheet);
       view.addData(textValue, rowNumber, columnNumber, sheet);
       break;
     case SET_VISIBILITY:

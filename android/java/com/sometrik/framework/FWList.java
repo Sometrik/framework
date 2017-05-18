@@ -78,10 +78,6 @@ public class FWList extends ExpandableListView implements NativeCommandHandler{
     }
   }
   
-  public void addSheet(String text) {
-    adapter.addSheet(text);
-  }
-
   @Override
   public void onScreenOrientationChange(boolean isLandscape) {
     // TODO Auto-generated method stub
@@ -104,6 +100,7 @@ public class FWList extends ExpandableListView implements NativeCommandHandler{
 
   @Override
   public void setValue(String v) {
+    adapter.addSheet(v);
   }
 
   @Override
