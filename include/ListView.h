@@ -9,6 +9,7 @@
 
 class ListView : public Element {
  public:
+  enum ColumnType { TEXT = 1, NUMERIC, TIMESTAMP };
   ListView() { }
 
   bool isA(const std::string & className) override {
@@ -22,9 +23,10 @@ class ListView : public Element {
     sendCommand(c);
   }
 
-  void addColumn(const std::string & name) {
+  void addColumn(const std::string & name, ColumnType type = TEXT) {
     Command c(Command::ADD_COLUMN, getInternalId());
     c.setTextValue(name);
+    c.setValue(int(type));
     sendCommand(c);
   }
 
