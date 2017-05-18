@@ -36,7 +36,7 @@ public class FWList extends ExpandableListView implements NativeCommandHandler{
 	  System.out.println("row clicked. Sending intChangedEvent of " + (groupPosition - 1));
 	  frame.intChangedEvent(System.currentTimeMillis() / 1000.0, getElementId(), groupPosition - 1);
   	}
-	return true;
+	return false;
       }
     });
     setOnChildClickListener(new OnChildClickListener(){
@@ -77,6 +77,10 @@ public class FWList extends ExpandableListView implements NativeCommandHandler{
       adapter.addItem(row, sheet, dataRow);
     }
   }
+  
+  public void addSheet(String text) {
+    adapter.addSheet(text);
+  }
 
   @Override
   public void onScreenOrientationChange(boolean isLandscape) {
@@ -94,9 +98,6 @@ public class FWList extends ExpandableListView implements NativeCommandHandler{
   public void addOption(int optionId, String text) {
     if (optionId == 0){
       adapter.addColumn(text);
-    } else {
-      Log.d("FWList", "adding header to row " + optionId);
-      adapter.addSectionHeader(optionId, text);
     }
     adapter.notifyDataSetChanged();
   }
