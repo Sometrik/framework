@@ -127,6 +127,7 @@ FWPlatform::disconnectThreads() {
 void
 FWPlatform::onSysEvent(SysEvent & ev) {
   if (ev.getType() == SysEvent::THREAD_TERMINATED) {
+    cerr << "thread " << ev.getThread() << " is terminated\n";
     bool is_affected = false;
     for (auto it = threads.begin(); it != threads.end(); it++) {
       PlatformThread * thread = it->get();
