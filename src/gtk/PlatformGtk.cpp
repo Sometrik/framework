@@ -665,7 +665,6 @@ PlatformGtk::send_text_value(GtkWidget * widget, gpointer data) {
 
 void
 PlatformGtk::send_selection_value(GtkWidget * widget, gpointer data) {
-  // auto widget = gtk_tree_selection_get_tree_view(selection);
   PlatformGtk * platform = (PlatformGtk*)data;
   assert(GTK_IS_TREE_VIEW(widget));
   auto treeview = (GtkTreeView*)widget;
@@ -675,14 +674,18 @@ PlatformGtk::send_selection_value(GtkWidget * widget, gpointer data) {
   if (id) {
     GtkTreeModel * model;
     GList * l = gtk_tree_selection_get_selected_rows(selection, &model);
-    auto path = (GtkTreePath*)l->data;
-    auto i = gtk_tree_path_get_indices(path);
-    cerr << "selection = " << *i << endl;
-
-    ValueEvent ev(platform->getTime(), *i);
-    platform->postEvent(id, ev);
-
-    g_list_free_full(l, (GDestroyNotify)gtk_tree_path_free);
+    if (l) {
+      assert(model);
+      auto path = (GtkTreePath*)l->data;
+      auto i = gtk_tree_path_get_indices(path);
+      assert(i);
+      cerr << "selection = " << *i << endl;
+      
+      ValueEvent ev(platform->getTime(), *i);
+      platform->postEvent(id, ev);
+      
+      g_list_free_full(l, (GDestroyNotify)gtk_tree_path_free);
+    }
   }
 }
 
