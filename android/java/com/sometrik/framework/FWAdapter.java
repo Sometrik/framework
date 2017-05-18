@@ -24,7 +24,6 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
 //  private ArrayList<String> sheetList;
   private HashMap<Integer, AdapterData> dataList;
   private AdapterData columnData;
-  private ArrayList<Integer> sectionHeaderRows;
   private FrameWork frame;
   private int addedHeaders = 0;
   private LinearLayout.LayoutParams listItemParams;
@@ -37,7 +36,6 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
     listItemParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT);
     listItemParams.weight = 1;
     listItemParams.leftMargin = 50;
-    sectionHeaderRows = new ArrayList<Integer>();
   }
 
   public ArrayList<String> getDataRow(int row, int sheet) {
@@ -272,7 +270,7 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
     Log.d("adapter", "GetGroupView position: " + position);
     LinearLayout layout = new LinearLayout(frame);
     AdapterData data;
-    if (position == 0){
+    if (position == 0) {
       data = columnData;
 
       for (int i = 0; i < data.getSize(); i++) {
@@ -283,45 +281,21 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
 	txtFirst.setFocusableInTouchMode(false);
 	txtFirst.setClickable(false);
 	layout.addView(txtFirst);
-//	layout.setBackgroundColor(0xFF777777);
+	// layout.setBackgroundColor(0xFF777777);
 	txtFirst.setText(data.getData(i));
       }
 
       return layout;
 
     } else {
-      
-      if (columnData.getSize() != 0){
+
+      if (columnData.getSize() != 0) {
 	position--;
       }
-      
+
       Log.d("adapter", "dataKList.size: " + dataList.size());
-	Log.d("adapter", "trying to get from index: " + (position));
-//      if (columnData.getSize() != 0) {
-//	Log.d("adapter", "trying to get from index: " + (position));
-////	for (Integer sectionRow : sectionHeaderRows) {
-////	  if (position == sectionRow) {
-////	    Log.d("adapter", "sectionRow found");
-////		data = dataList.get(position);
-////		String sectionText = data.getData(0);
-////		Log.d("adapter", "section text: " + sectionText);
-////	    TextView section = new TextView(frame);
-////	    section.setLayoutParams(listItemParams);
-////	    section.setTypeface(null, Typeface.BOLD);
-////	    layout.addView(section);
-////	    section.setText(sectionText);
-////	    return layout;
-////	  }
-////	}
-////	data = sheetList.get(position);
-//      } else {
-	data = dataList.get(position);
-//      }
-     
-//      if (data == null) {
-//	Log.d("adapter", "no data on position " + position);
-//	return layout;
-//      }
+      Log.d("adapter", "trying to get from index: " + (position));
+      data = dataList.get(position);
 
       for (int i = 0; i < data.getSize(); i++) {
 	Log.d("adapter", "looping throud data " + i);
@@ -356,24 +330,16 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
     
   }
   
-  
-
+ 
   public class AdapterData {
 
     private ArrayList<String> stringList;
     private boolean columnData = false;
-    private String dataType = "data";
     private ArrayList<AdapterData> children;
     
     public AdapterData(ArrayList<String> stringList) {
       this.stringList = stringList;
       children = new ArrayList<AdapterData>();
-    }
-    public AdapterData(String sectionTitle) {
-      dataType = "section";
-      stringList = new ArrayList<String>();
-      children = new ArrayList<AdapterData>();
-      stringList.add(sectionTitle);
     }
     
     public void addString(String text){
