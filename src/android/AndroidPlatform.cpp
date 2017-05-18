@@ -437,8 +437,8 @@ AndroidPlatform::renderLoop() {
           getLogger().println("exiting loop after SysEvent::DESTROY");
           exit_loop = true;
         } else if (ev2->getType() == SysEvent::PAUSE) {
-          getLogger().println("exiting loop after SysEvent::PAUSE");
-          exit_loop = true;
+//          getLogger().println("exiting loop after SysEvent::PAUSE");
+//          exit_loop = true;
         }
       }
 
