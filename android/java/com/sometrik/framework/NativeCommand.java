@@ -237,9 +237,9 @@ public class NativeCommand {
       break;
     case CREATE_LISTVIEW:
       FWList listView = new FWList(frame, new FWAdapter(frame, null));
-    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-//    params.weight = 1.0f;
-//    params.gravity = Gravity.BOTTOM;
+    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+    params.weight = 1.0f;
+//    params.gravity = Gravity.TOP;
     listView.setLayoutParams(params);
       listView.setId(childInternalId);
 //      listView.setNestedScrollingEnabled(false);
