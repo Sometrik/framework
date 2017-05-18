@@ -99,39 +99,53 @@ public:
 
     case Command::CREATE_GRIDVIEW:
     case Command::CREATE_LISTVIEW: {
+      auto window = gtk_scrolled_window_new(0, 0);
+      gtk_scrolled_window_set_min_content_height((GtkScrolledWindow*)window, 400);
       auto store = gtk_tree_store_new(5, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
       auto gridview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(store));
       g_signal_connect(gridview, "cursor-changed", G_CALLBACK(send_selection_value), this);
-      addView(command, gridview);
+      gtk_container_add(GTK_CONTAINER(window), gridview);
+      addView(command, window);
+      if (initial_view_shown) gtk_widget_show(gridview);
     }
       break;
 
     case Command::ADD_SHEET: {
-      auto view = views_by_id[command.getInternalId()];
-      if (view && GTK_IS_TREE_VIEW(view)) {
-	auto model = gtk_tree_view_get_model((GtkTreeView*)view);
-	auto & n_sheets = num_sheets_by_id[command.getInternalId()];
-	GtkTreeIter iter;
-	gtk_tree_store_append((GtkTreeStore*)model, &iter, 0);
-	gtk_tree_store_set((GtkTreeStore*)model, &iter,
-			   0,
-			   command.getTextValue().c_str(),
-			   -1);
-	n_sheets++;
-	assert(num_sheets_by_id[command.getInternalId()]);
+      auto window = views_by_id[command.getInternalId()];
+      assert(window);
+      if (window) {
+	auto view = gtk_bin_get_child(GTK_BIN(window));
+	assert(GTK_IS_TREE_VIEW(view));
+	if (GTK_IS_TREE_VIEW(view)) {
+	  auto model = gtk_tree_view_get_model((GtkTreeView*)view);
+	  auto & n_sheets = num_sheets_by_id[command.getInternalId()];
+	  GtkTreeIter iter;
+	  gtk_tree_store_append((GtkTreeStore*)model, &iter, 0);
+	  gtk_tree_store_set((GtkTreeStore*)model, &iter,
+			     0,
+			     command.getTextValue().c_str(),
+			     -1);
+	  n_sheets++;
+	  assert(num_sheets_by_id[command.getInternalId()]);
+	}
       }
     }
       break;
       
     case Command::ADD_COLUMN: {
-      auto view = views_by_id[command.getInternalId()];
-      if (view) {
-	int i = gtk_tree_view_get_n_columns((GtkTreeView*)view);
-	gtk_tree_view_insert_column_with_attributes((GtkTreeView*)view,
-						    -1,
-						    command.getTextValue().c_str(),
-						    gtk_cell_renderer_text_new(),
-						    "text", i, 0);
+      auto window = views_by_id[command.getInternalId()];
+      assert(window);
+      if (window) {
+	auto view = gtk_bin_get_child(GTK_BIN(window));
+	assert(GTK_IS_TREE_VIEW(view));
+	if (GTK_IS_TREE_VIEW(view)) {
+	  int i = gtk_tree_view_get_n_columns((GtkTreeView*)view);
+	  gtk_tree_view_insert_column_with_attributes((GtkTreeView*)view,
+						      -1,
+						      command.getTextValue().c_str(),
+						      gtk_cell_renderer_text_new(),
+						      "text", i, 0);
+	}
       }
     }
       break;
@@ -169,7 +183,6 @@ public:
     case Command::CREATE_CHECKBOX: {
       auto cb = gtk_check_button_new_with_label(command.getTextValue().c_str());
       g_signal_connect(cb, "toggled", G_CALLBACK(send_toggled_value), this);
-
       addView(command, cb);
     }
       break;
@@ -315,39 +328,47 @@ public:
       break;
 
     case Command::SET_TEXT_DATA: {
-      auto view = views_by_id[command.getInternalId()];
-      if (GTK_IS_TREE_VIEW(view)) {
-	auto n_sheets = num_sheets_by_id[command.getInternalId()];
-	auto model = gtk_tree_view_get_model((GtkTreeView*)view);
-	GtkTreeIter iter;
-	if (n_sheets) {
-	  GtkTreeIter parent;
-	  while (!gtk_tree_model_iter_nth_child(model, &parent, 0, command.getSheet())) {
-	    gtk_tree_store_append((GtkTreeStore*)model, &iter, 0);
+      auto window = views_by_id[command.getInternalId()];
+      assert(window);
+      if (window) {
+	auto view = gtk_bin_get_child(GTK_BIN(window));
+	assert(GTK_IS_TREE_VIEW(view));
+	if (GTK_IS_TREE_VIEW(view)) {
+	  auto n_sheets = num_sheets_by_id[command.getInternalId()];
+	  auto model = gtk_tree_view_get_model((GtkTreeView*)view);
+	  GtkTreeIter iter;
+	  if (n_sheets) {
+	    GtkTreeIter parent;
+	    while (!gtk_tree_model_iter_nth_child(model, &parent, 0, command.getSheet())) {
+	      gtk_tree_store_append((GtkTreeStore*)model, &iter, 0);
+	    }
+	    while (!gtk_tree_model_iter_nth_child(model, &iter, &parent, command.getRow())) {
+	      gtk_tree_store_append((GtkTreeStore*)model, &iter, &parent);
+	    }
+	  } else {
+	    while (!gtk_tree_model_iter_nth_child(model, &iter, 0, command.getRow())) {
+	      gtk_tree_store_append((GtkTreeStore*)model, &iter, 0);
+	    }
 	  }
-	  while (!gtk_tree_model_iter_nth_child(model, &iter, &parent, command.getRow())) {
-	    gtk_tree_store_append((GtkTreeStore*)model, &iter, &parent);
-	  }
-	} else {
-	  while (!gtk_tree_model_iter_nth_child(model, &iter, 0, command.getRow())) {
-	    gtk_tree_store_append((GtkTreeStore*)model, &iter, 0);
-	  }
+	  gtk_tree_store_set((GtkTreeStore*)model, &iter,
+			     command.getColumn(),
+			     command.getTextValue().c_str(),
+			     -1);
 	}
-	gtk_tree_store_set((GtkTreeStore*)model, &iter,
-			   command.getColumn(),
-			   command.getTextValue().c_str(),
-			   -1);
-      } else {
-	cerr << "unable to set data\n";
       }
     }
       break;
       
     case Command::CLEAR: {
-      auto view = views_by_id[command.getInternalId()];
-      if (GTK_IS_TREE_VIEW(view)) {
-	auto model = gtk_tree_view_get_model((GtkTreeView*)view);
-	gtk_tree_store_clear((GtkTreeStore*)model);
+      auto window = views_by_id[command.getInternalId()];
+      assert(window);
+      if (window) {
+	auto view = gtk_bin_get_child(GTK_BIN(window));
+	assert(GTK_IS_TREE_VIEW(view));
+	if (GTK_IS_TREE_VIEW(view)) {
+	  auto model = gtk_tree_view_get_model((GtkTreeView*)view);
+	  gtk_tree_store_clear((GtkTreeStore*)model);
+	}
       }
     }
       break;
@@ -448,7 +469,7 @@ public:
 
   void addView(int parent_id, int id, GtkWidget * widget) {
     assert(widget);
-    if (initial_view_shown) gtk_widget_show(widget);
+    if (initial_view_shown) gtk_widget_show(widget);    
     if (parent_id) {
       auto parent = (GtkContainer *)views_by_id[parent_id];
       assert(parent);
@@ -639,7 +660,7 @@ PlatformGtk::send_selection_value(GtkWidget * widget, gpointer data) {
   assert(GTK_IS_TREE_VIEW(widget));
   auto treeview = (GtkTreeView*)widget;
   auto selection = gtk_tree_view_get_selection(treeview);
-  int id = platform->getId(widget);
+  int id = platform->getId(gtk_widget_get_parent(widget));
   assert(id);
   if (id) {
     GtkTreeModel * model;
