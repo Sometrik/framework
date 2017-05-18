@@ -268,11 +268,11 @@ AndroidPlatform::sendCommand2(const Command & command) {
   
   // SET_TEXT_VALUE check and new listcommand constructor should be refactored. ListView creation needs work
   jobject jcommand;
-  if (command.getType() == Command::SET_TEXT_DATA) {
+//  if (command.getType() == Command::SET_TEXT_DATA || command.getType() == Command::ADD_SHEET) {
     jcommand = env->NewObject(javaCache.nativeCommandClass, javaCache.nativeListCommandConstructor, framework, commandTypeId, command.getInternalId(), command.getChildInternalId(), command.getValue(), jtextValue, jtextValue2, command.getFlags(), command.getRow(), command.getColumn(), command.getSheet());
-  } else {
-    jcommand = env->NewObject(javaCache.nativeCommandClass, javaCache.nativeCommandConstructor, framework, commandTypeId, command.getInternalId(), command.getChildInternalId(), command.getValue(), jtextValue, jtextValue2, command.getFlags());
-  }
+//  } else {
+//    jcommand = env->NewObject(javaCache.nativeCommandClass, javaCache.nativeCommandConstructor, framework, commandTypeId, command.getInternalId(), command.getChildInternalId(), command.getValue(), jtextValue, jtextValue2, command.getFlags());
+//  }
   env->CallStaticVoidMethod(javaCache.frameworkClass, javaCache.sendCommandMethod, framework, jcommand);
   
   env->DeleteLocalRef(jcommand);
