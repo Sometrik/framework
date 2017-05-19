@@ -73,10 +73,12 @@ public class FWList extends ExpandableListView implements NativeCommandHandler{
     ArrayList<String> dataRow = adapter.getDataRow(row, sheet);
     if (dataRow != null){
       Log.d("FWList", "row found adding data");
-      if (dataRow.size() > column){
+      if (dataRow.size() > column) {
+	Log.d("FWList", "replacing column " + column);
 	dataRow.remove(column);
       }
       dataRow.add(column, text);
+      adapter.notifyDataSetChanged();
     } else {
       Log.d("FWList", "creating new row");
       dataRow = new ArrayList<String>();
