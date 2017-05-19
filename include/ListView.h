@@ -39,6 +39,13 @@ class ListView : public Element {
     sendCommand(c);
   }
 
+  //Used to expand a sheet
+  void setValue(int value) {
+    Command c(Command::SET_INT_VALUE, getInternalId());
+    c.setValue(value);
+    sendCommand(c);
+  }
+
   void flush() {
     sendCommand(Command(Command::FLUSH_VIEW, getInternalId()));
   }
