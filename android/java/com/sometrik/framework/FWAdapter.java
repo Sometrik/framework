@@ -2,8 +2,11 @@ package com.sometrik.framework;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import android.content.Context;
 import android.graphics.Typeface;
@@ -131,7 +134,13 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
   @Override
   public void clear(){
     Log.d("adapter", "clear");
-    dataList = new HashMap<Integer, AdapterData>();
+    Iterator<Entry<Integer, AdapterData>> iterator = dataList.entrySet().iterator();
+    while (iterator.hasNext()) {
+      Map.Entry<Integer, AdapterData> entry = iterator.next();
+      if (entry.getValue().type == AdapterDataType.DATA) {
+	iterator.remove();
+      }
+    }
   }
 
   @Override
