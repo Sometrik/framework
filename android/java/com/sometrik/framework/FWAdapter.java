@@ -7,11 +7,13 @@ import java.util.Map;
 
 import android.content.Context;
 import android.graphics.Typeface;
+import android.opengl.Visibility;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.ExpandableListAdapter;
 import android.widget.LinearLayout;
@@ -20,6 +22,8 @@ import android.widget.TextView;
 
 public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapter {
 
+  enum AdapterDataType { SHEET, DATA }
+  
   private List<View> viewList;
 //  private ArrayList<String> sheetList;
   private HashMap<Integer, AdapterData> dataList;
@@ -51,6 +55,7 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
     } else {
       sheet--;
       AdapterData sheetData = dataList.get(sheet);
+	  Log.d("adapter", "sheetData size: " + dataList.size());
       if (sheetData == null){
 	  Log.d("adapter", "sheetData null");
 	return null;
@@ -79,6 +84,10 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
     } else {
       Log.d("adapter",  "datalist size: " + dataList.size());
       AdapterData sheetData = dataList.get(sheet - 1);
+      if (sheetData == null){
+	Log.d("adapter", "no sheet found");
+	return;
+      }
       sheetData.addChild(row, new AdapterData(cellItems));
     }
   }
@@ -92,16 +101,25 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
     ArrayList<String> sheet = new ArrayList<String>();
     sheet.add(sheetName);
     Log.d("adapter", "putting sheet to " + size);
-    dataList.put(size, new AdapterData(sheet));
+    dataList.put(size, new AdapterData(sheet, AdapterDataType.SHEET));
   }
 
   @Override
   public int getCount() {
     Log.d("adapter", "getCount");
-    if (columnData.getSize() != 0){
-      return dataList.size() + 1;
+    int counter = 0;
+    for (HashMap.Entry<Integer, AdapterData> pair : dataList.entrySet()) {
+      if (pair.getValue().type == AdapterDataType.SHEET && pair.getValue().getChildren().size() == 0) {
+	continue;
+      } else {
+	counter++;
+      }
     }
-    return dataList.size();
+    if (columnData.getSize() != 0) {
+      return counter + 1;
+    } else {
+      return counter;
+    }
   }
 
   @Override
@@ -251,12 +269,25 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
 
   @Override
   public int getGroupCount() {
-    if (columnData.getSize() != 0){
-      Log.d("adapter", "getGroupCount " + (dataList.size() + 1));
+    Log.d("adapter", "getGroupCount");
+    if (columnData.getSize() != 0) {
       return dataList.size() + 1;
+    } else {
+      return dataList.size();
     }
-    Log.d("adapter", "getGroupCount " + dataList.size());
-    return dataList.size();
+//    int counter = 0;
+//    for (HashMap.Entry<Integer, AdapterData> pair : dataList.entrySet()) {
+//      if (pair.getValue().type == AdapterDataType.SHEET && pair.getValue().getChildren().size() == 0) {
+//	continue;
+//      } else {
+//	counter++;
+//      }
+//    }
+//    if (columnData.getSize() != 0) {
+//      return counter + 1;
+//    } else {
+//      return counter;
+//    }
   }
 
   @Override
@@ -271,7 +302,6 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
     LinearLayout layout = new LinearLayout(frame);
     AdapterData data;
     if (position == 0) {
-      Log.d("adapter", "ColumnData size: " + columnData.getSize());
       data = columnData;
 
       for (int i = 0; i < data.getSize(); i++) {
@@ -298,6 +328,12 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
       Log.d("adapter", "trying to get from index: " + (position));
       data = dataList.get(position);
 
+//      if (data.type == AdapterDataType.SHEET && data.getChildren().size() == 0) {
+//	layout.setVisibility(LinearLayout.INVISIBLE);
+//	layout.setLayoutParams(new AbsListView.LayoutParams(-1, -2));
+//	return layout;
+//      }
+	
       for (int i = 0; i < data.getSize(); i++) {
 	Log.d("adapter", "looping throud data " + i);
 	TextView txtFirst = new TextView(frame);
@@ -309,6 +345,7 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
 	layout.addView(txtFirst);
 	txtFirst.setText(data.getData(i));
       }
+
 
       return layout;
     }
@@ -333,12 +370,18 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
   
  
   public class AdapterData {
-
+    
     private ArrayList<String> stringList;
     private boolean columnData = false;
     private ArrayList<AdapterData> children;
+    private AdapterDataType type = AdapterDataType.DATA;
     
     public AdapterData(ArrayList<String> stringList) {
+      this.stringList = stringList;
+      children = new ArrayList<AdapterData>();
+    }
+    public AdapterData(ArrayList<String> stringList, AdapterDataType type) {
+      this.type = type;
       this.stringList = stringList;
       children = new ArrayList<AdapterData>();
     }
