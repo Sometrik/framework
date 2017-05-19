@@ -271,6 +271,7 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
     LinearLayout layout = new LinearLayout(frame);
     AdapterData data;
     if (position == 0) {
+      Log.d("adapter", "ColumnData size: " + columnData.getSize());
       data = columnData;
 
       for (int i = 0; i < data.getSize(); i++) {

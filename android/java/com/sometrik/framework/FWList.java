@@ -2,6 +2,8 @@ package com.sometrik.framework;
 
 import java.util.ArrayList;
 
+import com.sometrik.framework.NativeCommand.CommandType;
+
 import android.R.color;
 import android.util.Log;
 import android.view.View;
@@ -12,6 +14,8 @@ import android.widget.ExpandableListView;
 import android.widget.ListView;
 
 public class FWList extends ExpandableListView implements NativeCommandHandler{
+  
+  enum ColumnType { TEXT, NUMERIC, TIMESTAMP };
 
   private FrameWork frame;
   private FWAdapter adapter;
@@ -95,7 +99,9 @@ public class FWList extends ExpandableListView implements NativeCommandHandler{
 
   @Override
   public void addOption(int optionId, String text) {
-    if (optionId == 0){
+    ColumnType type = ColumnType.values()[optionId - 1];
+    System.out.println("columnType int: " + ColumnType.values()[optionId - 1]);
+    if (type == ColumnType.TEXT){
       adapter.addColumn(text);
     }
     adapter.notifyDataSetChanged();
