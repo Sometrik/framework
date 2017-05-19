@@ -132,4 +132,9 @@ public class NativeSurface extends SurfaceView implements NativeCommandHandler {
       this.setVisibility(INVISIBLE);
     }
   }
+
+  @Override
+  public void clear() {
+    System.out.println("Native Surface couldn't handle command");
+  }
 }

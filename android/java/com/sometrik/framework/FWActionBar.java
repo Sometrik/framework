@@ -108,4 +108,11 @@ public class FWActionBar implements NativeCommandHandler {
       this.pictureAsset = pictureAsset;
     }
   }
+
+
+  @Override
+  public void clear() {
+    // TODO Auto-generated method stub
+    
+  }
 }

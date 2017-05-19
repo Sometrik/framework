@@ -222,8 +222,7 @@ public class NativeCommand {
       break;
       
     case CLEAR:
-      //FWList clears list on 0
-      view.setValue(0);
+      view.clear();
       break;
       
     case CREATE_GRIDVIEW:

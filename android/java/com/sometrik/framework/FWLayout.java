@@ -108,4 +108,9 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
       this.setVisibility(INVISIBLE);
     }
   }
+
+  @Override
+  public void clear() {
+    System.out.println("couldn't handle command");
+  }
 }

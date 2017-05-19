@@ -116,9 +116,7 @@ public class FWList extends ExpandableListView implements NativeCommandHandler{
 
   @Override
   public void setValue(int v) {
-    if (v == 0){
-      adapter.clear();
-    }
+    this.expandGroup(v + 1);
   }
 
   @Override
@@ -151,5 +149,10 @@ public class FWList extends ExpandableListView implements NativeCommandHandler{
     } else {
       this.setVisibility(INVISIBLE);
     }
+  }
+
+  @Override
+  public void clear() {
+    adapter.clear();
   }
 }

@@ -97,5 +97,10 @@ public class FWPopupView extends PopupWindow implements NativeCommandHandler {
   public int getElementId() {
     return id;
   }
+
+  @Override
+  public void clear() {
+    System.out.println("couldn't handle command");
+  }
   
 }
