@@ -6,17 +6,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
-import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Typeface;
-import android.opengl.Visibility;
-import android.util.DisplayMetrics;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.ExpandableListAdapter;
 import android.widget.LinearLayout;
@@ -225,11 +222,14 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
     for (int i = 0; i < children.size(); i++) {
       AdapterData childData = sheetData.getChild(i);
       LinearLayout layout = new LinearLayout(frame);
+      layout.setBackgroundColor(Color.parseColor("#d1d1d1"));
       for (int i2 = 0; i2 < childData.getSize(); i2++) {
 	TextView txtFirst = new TextView(frame);
 	txtFirst.setLayoutParams(listItemParams);
 	txtFirst.setFocusable(false);
 	txtFirst.setClickable(false);
+	txtFirst.setSingleLine();
+	txtFirst.setEllipsize(TextUtils.TruncateAt.END);
 	txtFirst.setFocusableInTouchMode(false);
 	layout.addView(txtFirst);
 	txtFirst.setText(childData.getData(i2));
@@ -350,7 +350,6 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
 	txtFirst.setFocusableInTouchMode(false);
 	txtFirst.setClickable(false);
 	txtFirst.setLayoutParams(listItemParams);
-	layout.setBackgroundColor(0xFF777777);
 	layout.addView(txtFirst);
 	txtFirst.setText(data.getData(i));
       }
