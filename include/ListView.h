@@ -9,7 +9,7 @@
 
 class ListView : public Element {
  public:
-  enum ColumnType { TEXT = 1, NUMERIC, TIMESTAMP };
+  enum ColumnType { TEXT = 1, NUMERIC, TIMESTAMP, ICON };
   ListView() { }
 
   bool isA(const std::string & className) override {
@@ -55,8 +55,11 @@ class ListView : public Element {
   }
 
   void onValueEvent(ValueEvent & ev) override {
+    selected_sheet = ev.getValue();
+    selected_row = ev.getValue2();
+    
     notify();
-    CommandEvent ev2(ev.getTimestamp(), getId(), ev.getValue());
+    CommandEvent ev2(ev.getTimestamp(), getId(), ev.getValue(), ev.getValue2());
     ev2.dispatch(*this);
   }
 
@@ -66,6 +69,8 @@ class ListView : public Element {
     c.setLayoutWeight(getLayoutWeight());
     sendCommand(c);
   }
+
+  int selected_sheet = 0, selected_row = 0;
 };
 
 #endif
