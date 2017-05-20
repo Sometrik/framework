@@ -13,7 +13,8 @@
  
 class UIElement : public Element {
  public:
-  UIElement() { }
+  UIElement(int _id = 0, unsigned int _flags = 0)
+    : Element(_id, _flags) { }
 
   bool isA(const std::string & className) override {
     if (className == "UIElement") return true;
