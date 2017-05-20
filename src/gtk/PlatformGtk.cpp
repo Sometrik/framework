@@ -129,11 +129,23 @@ public:
 	assert(GTK_IS_TREE_VIEW(view));
 	if (GTK_IS_TREE_VIEW(view)) {
 	  int i = gtk_tree_view_get_n_columns((GtkTreeView*)view);
+	  auto renderer = gtk_cell_renderer_text_new();
+	  float xalign = 0.0f;
+	  bool autosize = false;
+	  if (command.getValue() == 2) {
+	    xalign = 1.0f;
+	    autosize = true;
+	  }
+	  gtk_cell_renderer_set_alignment(renderer, xalign, 0.0f);
 	  gtk_tree_view_insert_column_with_attributes((GtkTreeView*)view,
 						      -1,
 						      command.getTextValue().c_str(),
-						      gtk_cell_renderer_text_new(),
+						      renderer,
 						      "text", i, 0);
+	  if (autosize) {
+	    auto column = gtk_tree_view_get_column((GtkTreeView*)view, i);
+	    gtk_tree_view_column_set_sizing(column, GTK_TREE_VIEW_COLUMN_AUTOSIZE);
+					    }
 	}
       }
     }
@@ -522,6 +534,15 @@ public:
     return 0;
   }
 
+  const vector<sheet_data_s> & getSheetsById(int id) const {
+    auto it = sheets_by_id.find(id);
+    if (it != sheets_by_id.end()) {
+      return it->second;
+    } else {
+      return null_sheets;
+    }
+  }
+
 protected:
   static string getTextProperty(gpointer object, const char * key);
   static string getTextProperty(GtkContainer * c, GtkWidget * w, const char * key);
@@ -546,6 +567,7 @@ private:
   unordered_map<int, GtkWidget *> views_by_id;
   bool initial_view_shown = false;
   unordered_map<int, vector<sheet_data_s> > sheets_by_id;
+  vector<sheet_data_s> null_sheets;
 };
 
 string
@@ -677,11 +699,23 @@ PlatformGtk::send_selection_value(GtkWidget * widget, gpointer data) {
     if (l) {
       assert(model);
       auto path = (GtkTreePath*)l->data;
-      auto i = gtk_tree_path_get_indices(path);
+      int depth;
+      auto i = gtk_tree_path_get_indices_with_depth(path, &depth);
       assert(i);
-      cerr << "selection = " << *i << endl;
+      auto & sheets = platform->getSheetsById(id);
+
+      int sheet = 0, row = 0;
+      if (sheets.empty() && depth == 1) {
+	row = i[0];
+      } else if (!sheets.empty() && depth == 2) {
+	sheet = i[0];
+	row = i[1];
+      } else {
+	cerr << "unable to handle selection\n";
+	return;
+      }
       
-      ValueEvent ev(platform->getTime(), *i);
+      ValueEvent ev(platform->getTime(), row, sheet);
       platform->postEvent(id, ev);
       
       g_list_free_full(l, (GDestroyNotify)gtk_tree_path_free);
