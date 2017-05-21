@@ -38,7 +38,7 @@ public class FWList extends ExpandableListView implements NativeCommandHandler{
 	  System.out.println("column title clicked. ignoring");
 	} else {
 	  System.out.println("row clicked. Sending intChangedEvent of " + (groupPosition - 1));
-	  frame.intChangedEvent(System.currentTimeMillis() / 1000.0, getElementId(), groupPosition - 1);
+	  frame.intChangedEvent(System.currentTimeMillis() / 1000.0, getElementId(), 0, groupPosition - 1);
   	}
 	return false;
       }
@@ -46,7 +46,8 @@ public class FWList extends ExpandableListView implements NativeCommandHandler{
     setOnChildClickListener(new OnChildClickListener(){
       @Override
       public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-	System.out.println("childClick detected group: " + groupPosition + " child: " + childPosition);
+	System.out.println("child clicked. Sending intChangedEvent of " + (groupPosition - 1) + " " + (childPosition - 1));
+	frame.intChangedEvent(System.currentTimeMillis() / 1000.0, getElementId(), childPosition - 1, groupPosition - 1);
 	return true;
       }
     });

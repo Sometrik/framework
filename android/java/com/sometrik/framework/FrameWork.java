@@ -88,7 +88,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
 
   public native void endModal(double timestamp, int value, byte[] textValue);
   public native void textChangedEvent(double timestamp, int id, byte[] textValue);
-  public native void intChangedEvent(double timestamp, int id, int changedInt);
+  public native void intChangedEvent(double timestamp, int id, int changedInt, int changedInt2);
   public native void keyPressed(double timestamp, int keyId, int viewId);
   public native void touchEvent(int viewId, int mode, int fingerIndex, double timestamp, float x, float y);
   public native void flushTouchEvent(double timestamp, int viewId, int mode);
@@ -447,7 +447,7 @@ public class FrameWork extends Activity implements NativeCommandHandler {
 
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
-    intChangedEvent(System.currentTimeMillis() / 1000.0, actionBar.getElementId(), item.getItemId());
+    intChangedEvent(System.currentTimeMillis() / 1000.0, actionBar.getElementId(), item.getItemId(), 0);
     return super.onOptionsItemSelected(item);
   }
 

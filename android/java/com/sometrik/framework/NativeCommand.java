@@ -441,7 +441,7 @@ public class NativeCommand {
     click.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
       @Override
       public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-	frame.intChangedEvent(System.currentTimeMillis() / 1000.0, buttonView.getId(), isChecked ? 1 : 0);
+	frame.intChangedEvent(System.currentTimeMillis() / 1000.0, buttonView.getId(), isChecked ? 1 : 0, 0);
       }
     });
     FrameWork.addToViewList(click);
@@ -512,7 +512,7 @@ public class NativeCommand {
       public void onClick(View arg0) {
 	System.out.println("Java: my button was clicked with id " + getChildInternalId());
 	if (!FrameWork.transitionAnimation) {
-	  frame.intChangedEvent(System.currentTimeMillis() / 1000.0, getChildInternalId(), 1);
+	  frame.intChangedEvent(System.currentTimeMillis() / 1000.0, getChildInternalId(), 1, 0);
 	}
       }
     });
@@ -582,7 +582,7 @@ public class NativeCommand {
     checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
       @Override
       public void onCheckedChanged(CompoundButton box, boolean isChecked) {
-	frame.intChangedEvent(System.currentTimeMillis() / 1000.0, childInternalId, isChecked ? 1 : 0);
+	frame.intChangedEvent(System.currentTimeMillis() / 1000.0, childInternalId, isChecked ? 1 : 0, 0);
       }
     });
     return checkBox;
