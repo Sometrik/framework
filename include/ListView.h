@@ -10,7 +10,7 @@
 class ListView : public Element {
  public:
   enum ColumnType { TEXT = 1, NUMERIC, TIMESTAMP, ICON };
-  ListView() { }
+ ListView(int _id = 0, unsigned int _flags = 0) : Element(_id, _flags) { }
 
   bool isA(const std::string & className) override {
     if (className == "ListView") return true;
