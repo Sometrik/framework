@@ -54,7 +54,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 
-public class FrameWork extends Activity implements NativeCommandHandler {
+public class FrameWork extends Activity {
 
   private RelativeLayout mainView;
   private SharedPreferences prefs;
@@ -638,71 +638,20 @@ public class FrameWork extends Activity implements NativeCommandHandler {
     return purchaseHelper;
   }
 
-  //Load JNI. Framework references to make file.
+  // Load JNI. Framework references to make file.
   static {
     System.out.println("Loading native library");
     System.loadLibrary("framework");
     System.out.println("native library loaded");
   }
-  
-  public static void handleNativeException(Throwable error){
+
+  public static void handleNativeException(Throwable error) {
     System.out.println("handling error");
     error.printStackTrace();
     System.out.println("error cause: " + error.getCause());
   }
-  public Charset getCharset(){
+
+  public Charset getCharset() {
     return utf8_charset;
-  }
-
-  @Override
-  public int getElementId() {
-    return appId;
-  }
-  @Override
-  public void addChild(View view) {
-    System.out.println("FrameWork couldn't handle addChild");
-  }
-  @Override
-  public void addOption(int optionId, String text) {
-    System.out.println("FrameWork couldn't handle addOption");
-  }
-  
-  @Override
-  public void setValue(String v) {
-    System.out.println("FrameWork couldn't handle addOption"); 
-    }
-
-  @Override
-  public void setValue(int v) { 
-    System.out.println("FrameWork couldn't handle addOption");
-    }
-  @Override
-  public void setViewEnabled(Boolean enabled) {
-    System.out.println("FrameWork couldn't handle addOption");
-  }
-  @Override
-  public void setStyle(String key, String value) { }
-
-  @Override
-  public void setError(boolean hasError, String errorText) { }
-  @Override
-  public void onScreenOrientationChange(boolean isLandscape) {
-    // TODO Auto-generated method stub
-    
-  }
-  @Override
-  public void addData(String text, int row, int column, int sheet) {
-    // TODO Auto-generated method stub
-    
-  }
-  
-  @Override
-  public void setViewVisibility(boolean visibility) {
-
-  }
-  @Override
-  public void clear() {
-    // TODO Auto-generated method stub
-    
   }
 }
