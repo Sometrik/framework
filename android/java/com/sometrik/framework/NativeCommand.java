@@ -182,7 +182,7 @@ public class NativeCommand {
       if (view == null){
 	System.out.println("view was null");
 	if (frame.getCurrentViewId() == 0){
-	  scrollView.setValue(1);
+	  scrollView.setValue(2);
 	}
       } else {
 	view.addChild(scrollView);
