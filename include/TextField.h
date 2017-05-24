@@ -19,6 +19,11 @@ class TextField : public InputElement {
     notify(value);
   }
 
+  void clear() {
+    Command c(Command::CLEAR, getInternalId());
+    sendCommand(c);
+  }
+
   bool call(bool t) override { return call(t ? "true" : "false"); }
   bool call(const std::string & s) override {
     value = s;
