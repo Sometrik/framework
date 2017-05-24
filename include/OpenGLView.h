@@ -14,7 +14,7 @@ class OpenGLView : public FWViewBase {
  public:
   OpenGLView(int _id = 0) : FWViewBase(_id) { }
 
-  bool isA(const std::string & className) override {
+  bool isA(const std::string & className) const override {
     if (className == "OpenGLView") return true;
     return FWViewBase::isA(className);
   }

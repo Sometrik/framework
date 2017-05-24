@@ -9,7 +9,7 @@ class FormView : public FWViewBase {
   FormView(int _id = 0) : FWViewBase(_id) { }
   FormView(const std::string & label, int _id = 0) : FWViewBase(label, _id) { }
 
-  bool isA(const std::string & className) override {
+  bool isA(const std::string & className) const override {
     if (className == "FormView") return true;
     return Element::isA(className);
   }

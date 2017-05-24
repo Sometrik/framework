@@ -19,7 +19,7 @@ class GridView : public Element {
  public:
   GridView() { }
 
-  bool isA(const std::string & className) override {
+  bool isA(const std::string & className) const override {
     if (className == "GridView") return true;
     return Element::isA(className);
   }

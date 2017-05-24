@@ -9,7 +9,7 @@ class Picker : public Element {
  public:
   Picker() { }
 
-  bool isA(const std::string & className) override {
+  bool isA(const std::string & className) const override {
     if (className == "Picker") return true;
     return Element::isA(className);
   }

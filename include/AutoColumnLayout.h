@@ -8,7 +8,7 @@ class AutoColumnLayout : public Element {
  public:
   AutoColumnLayout() { }
 
-  bool isA(const std::string & className) override {
+  bool isA(const std::string & className) const override {
     if (className == "AutoColumnLayout") return true;
     return Element::isA(className);
   }

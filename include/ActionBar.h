@@ -11,7 +11,7 @@ class ActionBar : public Element {
   ActionBar() { }
   ActionBar(const char * _title) : title(_title) { }
 
-  bool isA(const std::string & className) override {
+  bool isA(const std::string & className) const override {
     if (className == "ActionBar") return true;
     return Element::isA(className);
   }

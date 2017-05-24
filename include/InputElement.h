@@ -7,7 +7,7 @@ class InputElement : public Element {
  public:
  InputElement(int _id = 0, unsigned int _flags = 0) : Element(_id, _flags) { }
 
-  bool isA(const std::string & className) override {
+  bool isA(const std::string & className) const override {
     if (className == "InputElement") return true;
     return Element::isA(className);
   }

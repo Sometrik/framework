@@ -13,7 +13,7 @@ class Button : public UIElement {
  Button(const std::string & _label, int _id = 0, unsigned int _flags = 0)
    : UIElement(_id, _flags), label(_label) { }
 
-  bool isA(const std::string & className) override {
+  bool isA(const std::string & className) const override {
     if (className == "Button") return true;
     return UIElement::isA(className);
   }

@@ -11,7 +11,7 @@ class Switch : public InputElement {
   Switch(const std::string & _on_label, const std::string & _off_label)
     : on_label(_on_label), off_label(_off_label) { }
 
-  bool isA(const std::string & className) override {
+  bool isA(const std::string & className) const override {
     if (className == "Switch") return true;
     return InputElement::isA(className);
   }

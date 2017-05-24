@@ -10,7 +10,7 @@ class FWViewBase : public Element {
   FWViewBase(const std::string & _label, int _id)
     : Element(_id), label(_label) { }
 
-  bool isA(const std::string & className) override {
+  bool isA(const std::string & className) const override {
     if (className == "FWViewBase") return true;
     return Element::isA(className);
   }

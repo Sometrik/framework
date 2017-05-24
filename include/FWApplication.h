@@ -13,7 +13,7 @@ public:
  FWApplication(const char * _name, const char * _iap_public_key, bool _full_screen = false)
    : name(_name), iap_public_key(_iap_public_key), full_screen(_full_screen) { }
 
-  bool isA(const std::string & className) override {
+  bool isA(const std::string & className) const override {
     if (className == "FWApplication") return true;
     return Element::isA(className);
   }

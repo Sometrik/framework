@@ -9,7 +9,7 @@ class RadioGroup : public Element {
  public:
   RadioGroup() { }
 
-  bool isA(const std::string & className) override {
+  bool isA(const std::string & className) const override {
     if (className == "RadioGroup") return true;
     return Element::isA(className);
   }

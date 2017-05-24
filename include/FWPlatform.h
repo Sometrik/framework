@@ -37,7 +37,7 @@ class FWPlatform : public Element {
   
   FWPlatform(float _display_scale);
 
-  bool isA(const std::string & className) override {
+  bool isA(const std::string & className) const override {
     if (className == "FWPlatform") return true;
     return Element::isA(className);
   }

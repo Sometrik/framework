@@ -10,7 +10,7 @@ class Checkbox : public InputElement {
  public:
   Checkbox(const std::string & _label) : label(_label) { }
 
-  bool isA(const std::string & className) override {
+  bool isA(const std::string & className) const override {
     if (className == "Checkbox") return true;
     return InputElement::isA(className);
   }

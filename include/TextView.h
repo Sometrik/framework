@@ -9,7 +9,7 @@ class TextView : public InputElement {
  public:
  TextView() { }
 
-  bool isA(const std::string & className) override {
+  bool isA(const std::string & className) const override {
     if (className == "TextView") return true;
     return InputElement::isA(className);
   }

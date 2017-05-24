@@ -9,7 +9,7 @@ class TextField : public InputElement {
  public:
  TextField(unsigned int _flags = 0) : InputElement(0, _flags) {  }
 
-  bool isA(const std::string & className) override {
+  bool isA(const std::string & className) const override {
     if (className == "TextField") return true;
     return InputElement::isA(className);
   }

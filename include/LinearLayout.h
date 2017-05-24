@@ -11,8 +11,7 @@ class LinearLayout : public Element {
  public:
   LinearLayout(int _direction, int _id = 0) : Element(_id), direction(_direction) { }
 
-
-  bool isA(const std::string & className) override {
+  bool isA(const std::string & className) const override {
     if (className == "LinearLayout") return true;
     return Element::isA(className);
   }

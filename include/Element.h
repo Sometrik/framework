@@ -22,8 +22,8 @@ class Element : public EventHandler {
   virtual void show(bool recordHistory = true) { }
   virtual void hide() { }
     
-  virtual bool isA(const std::string & className) {
-    return className == "Element";
+  virtual bool isA(const std::string & className) const {
+    return className == '*' || className == "Element";
   }  
   
   virtual int showModal() { return 0; }

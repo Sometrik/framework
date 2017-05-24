@@ -8,7 +8,7 @@ class TableLayout : public Element {
  public:
   TableLayout(int _num_columns) : num_columns(_num_columns) { }
 
-  bool isA(const std::string & className) override {
+  bool isA(const std::string & className) const override {
     if (className == "TableLayout") return true;
     return Element::isA(className);
   }
