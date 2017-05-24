@@ -9,7 +9,7 @@
 
 class LinearLayout : public Element {
  public:
-  LinearLayout(int _direction, int _id) : Element(_id), direction(_direction) { }
+  LinearLayout(int _direction, int _id = 0) : Element(_id), direction(_direction) { }
 
 
   bool isA(const std::string & className) override {
