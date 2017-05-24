@@ -31,6 +31,7 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
   private FrameWork frame;
   private int addedHeaders = 0;
   private LinearLayout.LayoutParams listItemParams;
+  private boolean sheetsEnabled = false;
   
   public FWAdapter(FrameWork frame, List<View> viewList) {
     super(frame, 0, viewList);
@@ -91,10 +92,10 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
       }
     }
   }
-  
-  public void addItem(int row, int sheet, ArrayList<String> cellItems){
-    Log.d("adapter",  "adding new dataList to row: " + row + " sheet: " + sheet);
-    if (dataList.size() == 0 && sheet == 0){
+
+  public void addItem(int row, int sheet, ArrayList<String> cellItems) {
+    Log.d("adapter", "adding new dataList to row: " + row + " sheet: " + sheet);
+    if (!sheetsEnabled) {
       dataList.put(row, new AdapterData(cellItems));
       return;
     } else {
@@ -117,6 +118,7 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
     ArrayList<String> sheet = new ArrayList<String>();
     sheet.add(sheetName);
     Log.d("adapter", "putting sheet to " + (size));
+    sheetsEnabled = true;
     dataList.put(size, new AdapterData(sheet, AdapterDataType.SHEET));
   }
 
@@ -263,7 +265,7 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
   @Override
   public int getChildrenCount(int groupPosition) {
     Log.d("adapter", "getChildrenCount " + groupPosition);
-    if (groupPosition == 0){
+    if (groupPosition == 0 || !sheetsEnabled){
       return 0;
     }
     Log.d("adapter", "getChildrenCount (changed) " + (groupPosition - 1));
