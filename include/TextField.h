@@ -20,8 +20,7 @@ class TextField : public InputElement {
   }
 
   void clear() {
-    Command c(Command::CLEAR, getInternalId());
-    sendCommand(c);
+    sendCommand(Command(Command::CLEAR, getInternalId()));
   }
 
   bool call(bool t) override { return call(t ? "true" : "false"); }
