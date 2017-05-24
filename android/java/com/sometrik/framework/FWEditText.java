@@ -162,6 +162,7 @@ public class FWEditText extends EditText implements NativeCommandHandler {
 
   @Override
   public void clear() {
-    System.out.println("couldn't handle command");
+    System.out.println("Clear on EditText");
+    this.setText("");
   }
 }
