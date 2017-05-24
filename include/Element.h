@@ -23,7 +23,7 @@ class Element : public EventHandler {
   virtual void hide() { }
     
   virtual bool isA(const std::string & className) const {
-    return className == '*' || className == "Element";
+    return className == "*" || className == "Element";
   }  
   
   virtual int showModal() { return 0; }
