@@ -375,22 +375,24 @@ public:
       break;
       
     case Command::CLEAR: {
-      auto it = sheets_by_id.find(command.getInternalId());
-      if (it != sheets_by_id.end()) {
-	for (auto & sd : it->second) {
-	  sd.is_created = false;
-	}
-      }
-      
       auto window = views_by_id[command.getInternalId()];
       assert(window);
-      if (window) {
+      if (GTK_IS_BIN(window)) {
+	auto it = sheets_by_id.find(command.getInternalId());
+	if (it != sheets_by_id.end()) {
+	  for (auto & sd : it->second) {
+	    sd.is_created = false;
+	  }
+	}
+      
 	auto view = gtk_bin_get_child(GTK_BIN(window));
 	assert(GTK_IS_TREE_VIEW(view));
 	if (GTK_IS_TREE_VIEW(view)) {
 	  auto model = gtk_tree_view_get_model((GtkTreeView*)view);
 	  gtk_tree_store_clear((GtkTreeStore*)model);
 	}
+      } else if (GTK_IS_ENTRY(window)) {
+	gtk_entry_set_text((GtkEntry*)window, "");
       }
     }
       break;
