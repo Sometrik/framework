@@ -40,7 +40,7 @@ public class FWList extends ExpandableListView implements NativeCommandHandler{
 	  System.out.println("row clicked. Sending intChangedEvent of " + (groupPosition - 1));
 	  frame.intChangedEvent(System.currentTimeMillis() / 1000.0, getElementId(), 0, groupPosition - 1);
   	}
-	return false;
+	return true;
       }
     });
     setOnChildClickListener(new OnChildClickListener(){
