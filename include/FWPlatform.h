@@ -44,6 +44,8 @@ class FWPlatform : public Element {
   
   virtual std::string getBundleFilename(const char * filename) = 0;
   virtual std::string getLocalFilename(const char * filename, FileType type) = 0;
+  virtual std::string loadTextAsset(const char * filename) = 0;
+  
 #ifndef NO_CANVAS
   virtual std::unique_ptr<canvas::ContextFactory> createContextFactory() const = 0;
 #endif
