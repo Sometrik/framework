@@ -485,7 +485,7 @@ public:
   }
 
   std::string loadTextAsset(const char * filename) override {
-    std::ifstream t(filename);
+    std::ifstream t(getBundleFilename(filename));
     std::stringstream buffer;
     buffer << t.rdbuf();
     return buffer.str();
