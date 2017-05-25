@@ -262,7 +262,7 @@ PrimitiveRenderer::bind(const VBO & vbo) {
 }
 
 void
-PrimitiveRenderer::use(const gpufw::shader_program & program) {
+PrimitiveRenderer::use(const shader_program & program) {
   int id = program.getProgramObjectId();
   if (!id) {
     assert(0);

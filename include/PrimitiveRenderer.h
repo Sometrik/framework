@@ -77,7 +77,7 @@ class PrimitiveRenderer {
   void setCompositionMode(CompositionMode mode);
   void bind(const Texture & texture);
   void bind(const VBO & vbo);
-  void use(const gpufw::shader_program & program);
+  void use(const shader_program & program);
   const char * getGLSLVersion() const;
   const char * getModernGLSLVersion() const;
 
