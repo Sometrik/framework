@@ -12,7 +12,6 @@
 #endif
 
 using namespace std;
-using namespace gpufw;
 
 bool
 shader_program::loadShaders(const char * glsl_version, const char * shaderSrc, const char * filename) {
