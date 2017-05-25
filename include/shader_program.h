@@ -14,8 +14,8 @@ class shader_program {
   shader_program(const shader_program & other) = delete;
   shader_program & operator=(const shader_program & other) = delete;
 
-  bool loadShaders(const char * glsl_version, const char * shaderSrc, const char * filename);
-  bool loadShader(GLenum type, const char * glsl_version, const char * shaderSrc, const char * filename = 0);
+  bool loadShaders(const std::string & glsl_version, const std::string & shaderSrc);
+  bool loadShader(GLenum type, const std::string & glsl_version, const std::string & shaderSrc);
     
   bool link();
     

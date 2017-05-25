@@ -14,14 +14,14 @@
 using namespace std;
 
 bool
-shader_program::loadShaders(const char * glsl_version, const char * shaderSrc, const char * filename) {
+shader_program::loadShaders(const std::string & glsl_version, const std::string & shaderSrc) {
   return
-    loadShader(GL_VERTEX_SHADER, glsl_version, shaderSrc, filename) &&
-    loadShader(GL_FRAGMENT_SHADER, glsl_version, shaderSrc, filename);
+    loadShader(GL_VERTEX_SHADER, glsl_version, shaderSrc) &&
+    loadShader(GL_FRAGMENT_SHADER, glsl_version, shaderSrc);
 }
 
 bool
-shader_program::loadShader(GLenum type, const char * glsl_version, const char * shaderSrc, const char * filename) {
+shader_program::loadShader(GLenum type, const std::string & glsl_version, const std::string & shaderSrc) {
   GLuint shader;
   GLint compiled;
 
@@ -34,7 +34,7 @@ shader_program::loadShader(GLenum type, const char * glsl_version, const char * 
 
   const char * strings[64]; // 4 + 2 * defines.size()];
   unsigned int si = 0;
-  strings[si++] = glsl_version;
+  strings[si++] = glsl_version.c_str();
   strings[si++] = "\n";
   if (type == GL_VERTEX_SHADER) {
     strings[si++] = "#define VERTEX\n";
@@ -46,7 +46,7 @@ shader_program::loadShader(GLenum type, const char * glsl_version, const char * 
     strings[si++] = "\n";
   }
   strings[si++] = "#line 1\n";
-  strings[si++] = shaderSrc;
+  strings[si++] = shaderSrc.c_str();
 
   // Load the shader source
   glShaderSource( shader, 5 + 2 * defines.size(), strings, NULL);
@@ -73,9 +73,7 @@ shader_program::loadShader(GLenum type, const char * glsl_version, const char * 
      
     string msg = "Error compiling ";
     msg += (type == GL_VERTEX_SHADER ? "vertex" : "fragment" );
-    msg += " shader (";
-    if (filename) msg += filename;
-    msg += "):\n";
+    msg += " shader:\n";
     msg += infoLog;
 
 #ifdef __ANDROID__
