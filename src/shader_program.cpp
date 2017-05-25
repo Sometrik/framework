@@ -3,62 +3,22 @@
 #include "shader_program.h"
 
 #include <iostream>
-#include <fstream>
-#include <sstream>
 #include <cassert>
 
 #include <glm/gtc/type_ptr.hpp>
 
 #ifdef __ANDROID__
-#include "android_fopen.h"
 #include <android/log.h>
 #endif
 
 using namespace std;
 using namespace gpufw;
 
-shader_program::shader_program() { }
-
 bool
-shader_program::loadShaders(const char * glsl_version, const char * filename) {
-  string shader_text;
-#ifdef __ANDROID__
-  FILE * in = android_fopen(filename, "r");
-  while (!feof(in)) {
-    char b[256];
-    size_t n = fread(b, 1, 256, in);
-    shader_text += string(b, n);
-  }
-  fclose(in);
-#else
-  std::ifstream t(filename);
-  std::stringstream buffer;
-  buffer << t.rdbuf();
-  shader_text = buffer.str();
-#endif
-  
-  bool r = true;
-  r = loadShader(GL_VERTEX_SHADER, glsl_version, shader_text.c_str(), filename);
-  if (r) {
-    r = loadShader(GL_FRAGMENT_SHADER, glsl_version, shader_text.c_str(), filename);
-  }
-
-#ifdef __ANDROID__
-  if (r){
-  __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Shader code compiled succesfully");
-  } else {
-    __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Shader code compile failed");
-  }
-#endif
-  return r;
-}
-
-bool
-shader_program::loadShaderFromFile(GLenum type, const char * glsl_version, const char * filename) {
-  std::ifstream t(filename);
-  std::stringstream buffer;
-  buffer << t.rdbuf();
-  return loadShader(type, glsl_version, buffer.str().c_str(), filename);
+shader_program::loadShaders(const char * glsl_version, const char * shaderSrc, const char * filename) {
+  return
+    loadShader(GL_VERTEX_SHADER, glsl_version, shaderSrc, filename) &&
+    loadShader(GL_FRAGMENT_SHADER, glsl_version, shaderSrc, filename);
 }
 
 bool

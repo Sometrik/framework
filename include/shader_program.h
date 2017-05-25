@@ -5,19 +5,16 @@
 
 #include <glm/glm.hpp>
 #include <string>
-#include <set>
+#include <unordered_set>
 #include <unordered_map>
 
-namespace gpufw {
-  class shader_program {
+class shader_program {
   public:
-    shader_program();
+    shader_program() { }
     shader_program(const shader_program & other) = delete;
     shader_program & operator=(const shader_program & other) = delete;
 
-    bool loadShaders(const std::string & glsl_version, const std::string & filename) { return loadShaders(glsl_version.c_str(), filename.c_str()); }
-    bool loadShaders(const char * glsl_version, const char * filename);
-    bool loadShaderFromFile(GLenum type, const char * glsl_version, const char * filename);
+    bool loadShaders(const char * glsl_version, const char * shaderSrc, const char * filename);
     bool loadShader(GLenum type, const char * glsl_version, const char * shaderSrc, const char * filename = 0);
     
     bool link();
@@ -44,7 +41,7 @@ namespace gpufw {
     unsigned int vertexShader = 0;
     unsigned int fragmentShader = 0;   
     std::unordered_map<std::string, int> uniform_locations;
-    std::set<std::string> defines;
+    std::unordered_set<std::string> defines;
   };
 };
 
