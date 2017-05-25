@@ -22,6 +22,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cassert>
+#include <fstream>
 
 using namespace std;
 
@@ -481,6 +482,13 @@ public:
   std::string getBundleFilename(const char * filename) override {
     string s = "assets/";
     return s + filename;
+  }
+
+  std::string loadTextAsset(const char * filename) override {
+    std::ifstream t(filename);
+    std::stringstream buffer;
+    buffer << t.rdbuf();
+    return buffer.str();
   }
 
   void activate(GtkApplication * _app) {
