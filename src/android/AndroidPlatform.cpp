@@ -25,6 +25,9 @@
 #include <EventQueue.h>
 #include <GL.h>
 
+#ifdef __ANDROID__
+#include "android_fopen.h"
+#endif
 
 class JavaCache {
 
@@ -114,6 +117,17 @@ public:
 
   std::string getBundleFilename(const char * filename) override;
   std::string getLocalFilename(const char * filename, FileType type) override;
+  std::string loadTextAsset(const char * filename) override {
+    string text;
+    FILE * in = android_fopen(filename, "r");
+    while (!feof(in)) {
+      char b[256];
+      size_t n = fread(b, 1, 256, in);
+      text += string(b, n);
+    }
+    fclose(in);
+    return text;
+  }
   std::unique_ptr<canvas::ContextFactory> createContextFactory() const override {
     return std::unique_ptr<canvas::ContextFactory>(new canvas::AndroidContextFactory(asset_manager, canvasCache, getDisplayScale()));
   }
