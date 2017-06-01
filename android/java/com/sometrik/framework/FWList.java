@@ -107,9 +107,7 @@ public class FWList extends ExpandableListView implements NativeCommandHandler{
   public void addOption(int optionId, String text) {
     ColumnType type = ColumnType.values()[optionId - 1];
     System.out.println("columnType int: " + ColumnType.values()[optionId - 1]);
-    if (type == ColumnType.TEXT){
-      adapter.addColumn(text);
-    }
+    adapter.addColumn(text);
     adapter.notifyDataSetChanged();
   }
 
