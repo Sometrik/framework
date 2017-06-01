@@ -9,7 +9,6 @@
 #include <jni.h>
 #include <android/asset_manager.h>
 #include <android/asset_manager_jni.h>
-#include <iostream>
 #include <android/bitmap.h>
 #include <ContextAndroid.h>
 #include <AndroidClient.h>
@@ -25,9 +24,27 @@
 #include <EventQueue.h>
 #include <GL.h>
 
-#ifdef __ANDROID__
-#include "android_fopen.h"
-#endif
+#include <FWApplication.h>
+
+#include <pthread.h>
+
+#include <TouchEvent.h>
+#include <PurchaseEvent.h>
+#include <TimerEvent.h>
+#include <ValueEvent.h>
+#include <SysEvent.h>
+#include <CommandEvent.h>
+#include <DrawEvent.h>
+#include <UpdateEvent.h>
+#include <ResizeEvent.h>
+#include <AndroidOpenGLInitEvent.h>
+
+#include <android_fopen.h>
+#include <unistd.h>
+
+#include <string>
+
+using namespace std;
 
 class JavaCache {
 
@@ -193,26 +210,6 @@ private:
   EventQueue eventqueue;
   bool canDraw = false, isPaused = false, isDestroyed = false;
 };
-
-#include <FWApplication.h>
-
-#include <pthread.h>
-
-#include <TouchEvent.h>
-#include <PurchaseEvent.h>
-#include <TimerEvent.h>
-#include <ValueEvent.h>
-#include <SysEvent.h>
-#include <CommandEvent.h>
-#include <DrawEvent.h>
-#include <UpdateEvent.h>
-#include <ResizeEvent.h>
-#include <AndroidOpenGLInitEvent.h>
-
-#include <android_fopen.h>
-#include <unistd.h>
-
-using namespace std;
 
 extern FWApplication * applicationMain();
 
