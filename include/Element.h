@@ -30,6 +30,8 @@ class Element : public EventHandler {
 
   void setError(bool t) override;
 
+  void setEnabled(bool enabled);
+
   void style(const std::string & key, const std::string & value);
   void sendCommand(const Command & command);
 

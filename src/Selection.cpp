@@ -39,6 +39,14 @@ Selection::style(const std::string & key, const std::string & value) {
   return *this;
 }
 
+Selection &
+Selection::setEnabled(bool enabled) {
+  for (auto & e : data) {
+    e->setEnabled(enabled);
+  }
+}
+
+
 Selection
 Selection::parent() const {
   // TODO: return a selection of parents of current selection

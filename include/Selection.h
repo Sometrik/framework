@@ -19,6 +19,7 @@ class Selection {
   Selection & hide();
   Selection & remove();
   Selection & style(const std::string & key, const std::string & value);
+  Selection & setEnabled(bool enabled);
 
   Selection parent() const;
   Selection parents() const;

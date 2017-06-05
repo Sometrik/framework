@@ -49,6 +49,17 @@ Element::setError(bool t) {
 }
 
 void
+Element::setEnabled(bool enabled) {
+  Command c(Command::SET_ENABLED, getInternalId());
+  if (enabled){
+    c.setValue(1);
+  } else {
+    c.setValue(0);
+  }
+  sendCommand(c);
+}
+
+void
 Element::style(const std::string & key, const std::string & value) {
 
   Command c(Command::SET_STYLE, getInternalId());
