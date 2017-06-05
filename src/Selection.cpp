@@ -44,6 +44,7 @@ Selection::setEnabled(bool enabled) {
   for (auto & e : data) {
     e->setEnabled(enabled);
   }
+  return *this;
 }
 
 
