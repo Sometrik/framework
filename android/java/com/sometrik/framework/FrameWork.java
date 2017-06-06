@@ -72,7 +72,6 @@ public class FrameWork extends Activity {
   private View currentlyShowingView;
   private Charset utf8_charset;
   private FWDrawerLayout drawerLayout;
-  private boolean drawerNavigationEnabled = false;
   private int currentDrawerViewId;
   
   private boolean drawMode = false;
@@ -316,9 +315,11 @@ public class FrameWork extends Activity {
       drawerLayout.removeAllViews();
     }
 
-    if (drawerNavigationEnabled && currentDrawerViewId != 0) {
+    System.out.println("currentDrawerViewId: " + currentDrawerViewId);
+    if (currentDrawerViewId != 0) {
       NativeCommandHandler drawerView = views.get(currentDrawerViewId);
       if (drawerView != null) {
+	System.out.println("setting drawerLayout");
 	drawerLayout.addView(view);
 	drawerLayout.addView((View) drawerView);
 	setContentView(drawerLayout);
