@@ -692,4 +692,7 @@ public class FrameWork extends Activity {
   public void setCurrentDrawerViewId(int currentDrawerViewId) {
     this.currentDrawerViewId = currentDrawerViewId;
   }
+  public FWDrawerLayout getDrawerLayout() {
+    return drawerLayout;
+  }
 }
