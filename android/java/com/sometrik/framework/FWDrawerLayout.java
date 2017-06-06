@@ -19,18 +19,6 @@ public class FWDrawerLayout extends DrawerLayout {
     this.frame = frame;
     
     final DrawerLayout drawer = new DrawerLayout(frame);
-    System.out.println("here jnot");
-    
-    DrawerLayout.LayoutParams lp = new DrawerLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
-    lp.gravity = Gravity.START;
-
-    FrameLayout drawFrame = new FrameLayout(frame);
-    drawFrame.setLayoutParams(lp);
-    drawFrame.setBackgroundColor(Color.parseColor("#dddbd6"));
-    LinearLayout drawerPanel = new LinearLayout(frame);
-    drawerPanel.setGravity(Gravity.START);
-    drawerPanel.setClickable(true);
-    drawerPanel.setOrientation(LinearLayout.VERTICAL);
     
     ActionBarDrawerToggle mDrawerToggle = new ActionBarDrawerToggle(frame, drawer,
             0, 0) {
@@ -40,6 +28,7 @@ public class FWDrawerLayout extends DrawerLayout {
             super.onDrawerClosed(view);
             System.out.println("drawerClosed");
             frame.invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+            frame.intChangedEvent(System.currentTimeMillis() / 1000.0 , frame.getCurrentDrawerViewId(), 0, 0);
         }
 
         /** Called when a drawer has settled in a completely open state. */
@@ -47,8 +36,10 @@ public class FWDrawerLayout extends DrawerLayout {
             super.onDrawerOpened(drawerView);
             System.out.println("drawerOpened");
             frame.invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+            frame.intChangedEvent(System.currentTimeMillis() / 1000.0 , frame.getCurrentDrawerViewId(), 1, 0);
         }
     };
+    setDrawerListener(mDrawerToggle);
   }
 
   @Override
