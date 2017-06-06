@@ -193,10 +193,11 @@ public class NativeCommand {
       }
       break;
     case CREATE_NAVIGATIONVIEW:
-      FWLayout navigationLayout = new FWLayout(frame);
+      NavigationLayout navigationLayout = new NavigationLayout(frame);
       navigationLayout.setId(getChildInternalId());
       FrameWork.addToViewList(navigationLayout);
       if (frame.getCurrentDrawerViewId() == 0){
+	System.out.println("setting current navigationDrawer to " + getChildInternalId());
 	frame.setCurrentDrawerViewId(getChildInternalId());
       }
       break;
