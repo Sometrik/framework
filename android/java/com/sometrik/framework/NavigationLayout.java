@@ -1,11 +1,10 @@
 package com.sometrik.framework;
 
-import android.content.Context;
+import android.graphics.Color;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.LinearLayout.LayoutParams;
 
 public class NavigationLayout extends LinearLayout implements NativeCommandHandler {
 
@@ -18,6 +17,7 @@ public class NavigationLayout extends LinearLayout implements NativeCommandHandl
     DrawerLayout.LayoutParams lp = new DrawerLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
     lp.gravity = Gravity.START;
     setLayoutParams(lp);
+    setBackgroundColor(Color.parseColor("#dddbd6"));
   }
 
   @Override
