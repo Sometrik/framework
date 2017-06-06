@@ -41,6 +41,14 @@ public class FWDrawerLayout extends DrawerLayout {
     };
     setDrawerListener(mDrawerToggle);
   }
+  
+  public void setDrawerVisibility(View view, boolean visible){
+    if (!visible){
+      this.closeDrawer(view);
+    } else {
+      this.openDrawer(view);
+    }
+  }
 
   @Override
   protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {

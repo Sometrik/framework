@@ -24,6 +24,16 @@ class NavigationDrawer : public Element {
     Command c(Command::CREATE_NAVIGATIONVIEW, getParentInternalId(), getInternalId());
     sendCommand(c);
   }
+
+  void setDrawer(bool opened){
+    Command c(Command::SET_VISIBILITY, getInternalId());
+    if (opened){
+      c.setValue(1);
+    } else {
+      c.setValue(0);
+    }
+    sendCommand(c);
+  }
 			       
  private:
 };

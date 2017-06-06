@@ -65,11 +65,8 @@ public class NavigationLayout extends LinearLayout implements NativeCommandHandl
 
   @Override
   public void setViewVisibility(boolean visible) {
-    if (visible){
-      this.setVisibility(VISIBLE);
-    } else {
-      this.setVisibility(INVISIBLE);
-    }
+    System.out.println("Drawer visibility");
+    frame.getDrawerLayout().setDrawerVisibility(this, visible);
   }
 
   @Override
