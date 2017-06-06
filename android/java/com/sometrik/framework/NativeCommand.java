@@ -20,6 +20,8 @@ import android.content.DialogInterface.OnCancelListener;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.text.Editable;
 import android.text.Html;
 import android.text.InputType;
@@ -34,6 +36,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.inputmethod.EditorInfo;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -73,6 +76,7 @@ public class NativeCommand {
     CREATE_APPLICATION,
     CREATE_BASICVIEW,
     CREATE_FORMVIEW,
+    CREATE_NAVIGATIONVIEW,
     CREATE_OPENGL_VIEW,
     CREATE_TEXTFIELD, // For viewing single value
     CREATE_TEXTVIEW, // For viewing multiline text
@@ -186,6 +190,14 @@ public class NativeCommand {
 	}
       } else {
 	view.addChild(scrollView);
+      }
+      break;
+    case CREATE_NAVIGATIONVIEW:
+      FWLayout navigationLayout = new FWLayout(frame);
+      navigationLayout.setId(getChildInternalId());
+      FrameWork.addToViewList(navigationLayout);
+      if (frame.getCurrentDrawerViewId() == 0){
+	frame.setCurrentDrawerViewId(getChildInternalId());
       }
       break;
     case CREATE_BASICVIEW:
@@ -400,7 +412,6 @@ public class NativeCommand {
       break;
     }
   }
-  
   
   private void createActionSheet(){
     PopupMenu menu = new PopupMenu(frame, null);
