@@ -13,6 +13,12 @@ class NavigationDrawer : public Element {
     return Element::isA(className);
   }
 
+  void onValueEvent(ValueEvent & ev) override {
+     notify();
+     CommandEvent ev2(ev.getTimestamp(), getId());
+     ev2.dispatch(*this);
+   }
+
  protected:
   void create() override {
     Command c(Command::CREATE_NAVIGATIONVIEW, getParentInternalId(), getInternalId());
