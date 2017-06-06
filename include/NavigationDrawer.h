@@ -6,7 +6,7 @@
 
 class NavigationDrawer : public Element {
  public:
-  NavigationDrawer(int _id = 0) : Element(_id) { }
+  NavigationDrawer() : Element() { }
 
   bool isA(const std::string & className) const override {
     if (className == "NavigationDrawer") return true;
