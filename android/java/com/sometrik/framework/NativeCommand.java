@@ -374,8 +374,8 @@ public class NativeCommand {
       showInputDialog(textValue, textValue2);
       break;
     case CREATE_DIALOG:
-      FWPopupView popView = createDialogView();
-      FrameWork.addToViewList(popView);
+      FWDialog dialog = new FWDialog(frame, childInternalId);
+      FrameWork.addToViewList(dialog);
       break;
     case CREATE_ACTION_SHEET:
       createActionSheet();
@@ -663,11 +663,6 @@ public class NativeCommand {
     // Create and show the alert
     AlertDialog alert = builder.create();
     alert.show();
-  }
-  
-  private FWPopupView createDialogView(){
-    FWPopupView window = new FWPopupView(frame, childInternalId);
-    return window;
   }
 
   // create Message dialog
