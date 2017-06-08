@@ -3,17 +3,21 @@ package com.sometrik.framework;
 import android.app.Dialog;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ScrollView;
 
 public class FWDialog extends Dialog implements NativeCommandHandler{
 
   FrameWork frame;
   ViewGroup baseView;
+  ScrollView scrollView;
   int id;
   
   public FWDialog(FrameWork frame, int id) {
     super(frame);
     this.frame = frame;
     this.id = id;
+    scrollView = new ScrollView(frame);
+    setContentView(scrollView);
   }
 
   @Override
@@ -24,7 +28,7 @@ public class FWDialog extends Dialog implements NativeCommandHandler{
   public void addChild(View view) {
     if (baseView == null){
       baseView = (ViewGroup) view;
-      setContentView(view);
+      scrollView.addView(baseView);
     } else {
       baseView.addView(view);
     }
