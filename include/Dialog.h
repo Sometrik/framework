@@ -13,13 +13,15 @@ class Dialog : public FWViewBase {
     return Element::isA(className);
   }
 
- protected:
-  void initialize(FWPlatform * _platform) override {
-    Element::initialize(_platform);
+protected:
+  void create() override {
     Command c(Command::CREATE_DIALOG, getParentInternalId(), getInternalId());
     sendCommand(c);
   }
 
+  void initialize(FWPlatform * _platform) override {
+    Element::initialize(_platform);
+  }
  private:
 
 };
