@@ -4,6 +4,8 @@
 #include <Command.h>
 #include <FWPlatform.h>
 #include <FWViewBase.h>
+#include <ValueEvent.h>
+#include <CommandEvent.h>
 
 class Dialog : public FWViewBase {
  public:
