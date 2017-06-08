@@ -3,6 +3,7 @@
 
 #include <Command.h>
 #include <FWPlatform.h>
+#include <FWViewBase.h>
 
 class Dialog : public FWViewBase {
  public:
