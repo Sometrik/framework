@@ -20,57 +20,7 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
 
     LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
     setLayoutParams(params);
-    
-    
-    //DUMMY DATA--------
-    setValue("15 minutes");
-    setValue("1 hour");
-    setValue("1 day");
-    setValue("1 month");
-    
-    addData("data", 0, 0, 0);
-    addData("data", 0, 1, 0);
-    addData("data", 1, 0, 0);
-    addData("data", 1, 1, 0);
-    addData("data", 2, 0, 0);
-    addData("data", 2, 1, 0);
-    addData("data", 3, 0, 0);
-    addData("data", 3, 1, 0);
-    addData("data", 4, 0, 0);
-    addData("data", 4, 1, 0);
-    addData("data", 5, 0, 0);
-    addData("data", 5, 1, 0);
-    addData("data", 6, 0, 0);
-    addData("data", 6, 1, 0);
-    addData("data", 7, 0, 0);
-    addData("data", 7, 1, 0);
-    addData("data", 8, 0, 0);
-    addData("data", 8, 1, 0);
-    addData("data", 9, 0, 0);
-    addData("data", 10, 0, 0);
-    addData("data", 11, 0, 0);
-    addData("data", 12, 0, 0);
-    addData("data", 13, 0, 0);
-    addData("data", 14, 0, 0);
-    addData("data", 15, 0, 0);
-    
-
-    addData("data", 0, 0, 1);
-    addData("data", 0, 1, 1);
-    addData("data", 1, 0, 1);
-    addData("data", 1, 1, 1);
-
-    addData("data", 0, 0, 2);
-    addData("data", 0, 1, 2);
-    addData("data", 1, 0, 2);
-    addData("data", 1, 1, 2);
-    
-    addData("data", 0, 0, 3);
-    addData("data", 0, 1, 3);
-    addData("data", 1, 0, 3);
-    addData("data", 1, 1, 3);
-
-    //DUMMY DATA--------
+ 
   }
   
   @Override
