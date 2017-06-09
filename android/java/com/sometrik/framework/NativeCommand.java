@@ -70,6 +70,7 @@ public class NativeCommand {
   private final int FLAG_NUMERIC = 32;
   private final int FLAG_HYPERLINK = 64;
   private final int FLAG_USE_PURCHASES_API = 128;
+  private final int FLAG_SLIDERVIEW = 256;
  
   public enum CommandType {
     CREATE_PLATFORM,
@@ -248,15 +249,21 @@ public class NativeCommand {
       view.addChild(debugList);
       break;
     case CREATE_LISTVIEW:
-      FWList listView = new FWList(frame, new FWAdapter(frame, null));
-    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-    params.weight = 1.0f;
-//    params.gravity = Gravity.TOP;
-    listView.setLayoutParams(params);
-      listView.setId(childInternalId);
-//      listView.setNestedScrollingEnabled(false);
-      FrameWork.addToViewList(listView);
-      view.addChild(listView);
+      if (isSet(FLAG_SLIDERVIEW)) {
+	SliderLayout slider = new SliderLayout(frame);
+	slider.setId(childInternalId);
+	FrameWork.addToViewList(slider);
+	view.addChild(slider);
+      } else {
+	FWList listView = new FWList(frame, new FWAdapter(frame, null));
+	LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+	params.weight = 1.0f;
+	// params.gravity = Gravity.TOP;
+	listView.setLayoutParams(params);
+	listView.setId(childInternalId);
+	FrameWork.addToViewList(listView);
+	view.addChild(listView);
+      }
       break;
       
     case CREATE_TIMER:

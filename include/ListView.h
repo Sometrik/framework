@@ -67,6 +67,7 @@ class ListView : public Element {
   void create() override {
     Command c(Command::CREATE_LISTVIEW, getParentInternalId(), getInternalId());
     c.setLayoutWeight(getLayoutWeight());
+    c.setFlags(getFlags());
     sendCommand(c);
   }
 
