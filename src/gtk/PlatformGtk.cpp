@@ -109,9 +109,11 @@ public:
       gtk_scrolled_window_set_min_content_height((GtkScrolledWindow*)window, 400);
       auto store = gtk_tree_store_new(5, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
       auto gridview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(store));
+      // gtk_widget_set_vexpand((GtkWidget*)gridview, 1);
+      // gtk_widget_set_hexpand((GtkWidget*)gridview, 1);
       g_signal_connect(gridview, "cursor-changed", G_CALLBACK(send_selection_value), this);
       gtk_container_add(GTK_CONTAINER(window), gridview);
-      addView(command, window);
+      addView(command, window, true);
       if (initial_view_shown) gtk_widget_show(gridview);
     }
       break;
@@ -142,7 +144,7 @@ public:
 						      -1,
 						      command.getTextValue().c_str(),
 						      renderer,
-						      "text", i, 0);
+						      "text", i, NULL);
 	  if (autosize) {
 	    auto column = gtk_tree_view_get_column((GtkTreeView*)view, i);
 	    gtk_tree_view_column_set_sizing(column, GTK_TREE_VIEW_COLUMN_AUTOSIZE);
@@ -499,14 +501,14 @@ public:
     gtk_window_set_default_size (GTK_WINDOW (window), width, height);
   }
 
-  void addView(int parent_id, int id, GtkWidget * widget) {
+  void addView(int parent_id, int id, GtkWidget * widget, bool expand = false) {
     assert(widget);
     if (initial_view_shown) gtk_widget_show(widget);    
     if (parent_id) {
       auto parent = (GtkContainer *)views_by_id[parent_id];
       assert(parent);
       if (GTK_IS_BOX(parent)) {
-	gtk_box_pack_start((GtkBox*)parent, widget, 0, 0, 5);
+	gtk_box_pack_start((GtkBox*)parent, widget, expand ? 1 : 0, 0, 5);
       } else if (GTK_IS_FLOW_BOX(parent)) {
 	gtk_flow_box_insert((GtkFlowBox*)parent, widget, -1);
       } else if (GTK_IS_TABLE(parent)) {
@@ -533,8 +535,8 @@ public:
     views_by_id[id] = widget;
   }
 
-  void addView(const Command & c, GtkWidget * widget) {
-    addView(c.getInternalId(), c.getChildInternalId(), widget);
+  void addView(const Command & c, GtkWidget * widget, bool expand = false) {
+    addView(c.getInternalId(), c.getChildInternalId(), widget, expand);
   }
 
   int getId(GtkWidget * widget) const {
