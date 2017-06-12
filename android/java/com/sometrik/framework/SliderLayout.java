@@ -2,6 +2,8 @@ package com.sometrik.framework;
 
 import java.util.ArrayList;
 
+import com.sometrik.framework.SliderButton.Position;
+
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -10,7 +12,9 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
 
   FrameWork frame;
   ArrayList<SliderButton> buttonList;
+  int activeButton = 0;
   int nextId = 77777773;
+  public static int buttonSize = 0;
   
   public SliderLayout(FrameWork frame) {
     super(frame);
@@ -57,10 +61,19 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
       SliderButton topButton = buttonList.get(buttonList.size() - 1);
       topButton.setBottomButton(button);
       button.setTopButton(topButton);
+    } else {
+      button.setPosition(Position.TOP);
+      button.setInitialPosition();
+    }
+    if (buttonList.size() == 1){
+      button.setPosition(Position.BOTTOM);
+      button.setInitialPosition();
+    } else if (buttonList.size() > 1){
+      button.setPosition(Position.BOTTOMHIDDEN);
+      button.setInitialPosition();
     }
     buttonList.add(button);
     addView(button);
-    button.setPosition();
     
     FWList list = new FWList(frame, new FWAdapter(frame, null));
     RelativeLayout.LayoutParams listParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
@@ -114,6 +127,14 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
   @Override
   public int getElementId() {
     return getId();
+  }
+
+  public int getActiveButton() {
+    return activeButton;
+  }
+
+  public void setActiveButton(int activeButton) {
+    this.activeButton = activeButton;
   }
 
 }
