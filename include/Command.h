@@ -13,6 +13,7 @@ class Command {
     CREATE_APPLICATION,
     CREATE_BASICVIEW,
     CREATE_FORMVIEW,
+    CREATE_NAVIGATIONVIEW,
     CREATE_OPENGL_VIEW,
     CREATE_TEXTFIELD, // For viewing single value
     CREATE_TEXTVIEW, // For viewing multiline text

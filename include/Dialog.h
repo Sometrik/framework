@@ -3,6 +3,9 @@
 
 #include <Command.h>
 #include <FWPlatform.h>
+#include <FWViewBase.h>
+#include <ValueEvent.h>
+#include <CommandEvent.h>
 
 class Dialog : public FWViewBase {
  public:
@@ -13,13 +16,21 @@ class Dialog : public FWViewBase {
     return Element::isA(className);
   }
 
- protected:
-  void initialize(FWPlatform * _platform) override {
-    Element::initialize(_platform);
+  void onValueEvent(ValueEvent & ev) override {
+    notify();
+    CommandEvent ev2(ev.getTimestamp(), getId());
+    ev2.dispatch(*this);
+  }
+
+protected:
+  void create() override {
     Command c(Command::CREATE_DIALOG, getParentInternalId(), getInternalId());
     sendCommand(c);
   }
 
+  void initialize(FWPlatform * _platform) override {
+    Element::initialize(_platform);
+  }
  private:
 
 };

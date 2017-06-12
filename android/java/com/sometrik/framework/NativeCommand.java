@@ -20,6 +20,8 @@ import android.content.DialogInterface.OnCancelListener;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.text.Editable;
 import android.text.Html;
 import android.text.InputType;
@@ -34,6 +36,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.inputmethod.EditorInfo;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -67,12 +70,14 @@ public class NativeCommand {
   private final int FLAG_NUMERIC = 32;
   private final int FLAG_HYPERLINK = 64;
   private final int FLAG_USE_PURCHASES_API = 128;
+  private final int FLAG_SLIDERVIEW = 256;
  
   public enum CommandType {
     CREATE_PLATFORM,
     CREATE_APPLICATION,
     CREATE_BASICVIEW,
     CREATE_FORMVIEW,
+    CREATE_NAVIGATIONVIEW,
     CREATE_OPENGL_VIEW,
     CREATE_TEXTFIELD, // For viewing single value
     CREATE_TEXTVIEW, // For viewing multiline text
@@ -188,6 +193,15 @@ public class NativeCommand {
 	view.addChild(scrollView);
       }
       break;
+    case CREATE_NAVIGATIONVIEW:
+      NavigationLayout navigationLayout = new NavigationLayout(frame);
+      navigationLayout.setId(getChildInternalId());
+      FrameWork.addToViewList(navigationLayout);
+      if (frame.getCurrentDrawerViewId() == 0){
+	System.out.println("setting current navigationDrawer to " + getChildInternalId());
+	frame.setCurrentDrawerViewId(getChildInternalId());
+      }
+      break;
     case CREATE_BASICVIEW:
     case CREATE_LINEAR_LAYOUT:
       FWLayout layout = createLinearLayout();
@@ -235,15 +249,21 @@ public class NativeCommand {
       view.addChild(debugList);
       break;
     case CREATE_LISTVIEW:
-      FWList listView = new FWList(frame, new FWAdapter(frame, null));
-    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-    params.weight = 1.0f;
-//    params.gravity = Gravity.TOP;
-    listView.setLayoutParams(params);
-      listView.setId(childInternalId);
-//      listView.setNestedScrollingEnabled(false);
-      FrameWork.addToViewList(listView);
-      view.addChild(listView);
+      if (isSet(FLAG_SLIDERVIEW)) {
+	SliderLayout slider = new SliderLayout(frame);
+	slider.setId(childInternalId);
+	FrameWork.addToViewList(slider);
+	view.addChild(slider);
+      } else {
+	FWList listView = new FWList(frame, new FWAdapter(frame, null));
+	LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+	params.weight = 1.0f;
+	// params.gravity = Gravity.TOP;
+	listView.setLayoutParams(params);
+	listView.setId(childInternalId);
+	FrameWork.addToViewList(listView);
+	view.addChild(listView);
+      }
       break;
       
     case CREATE_TIMER:
@@ -361,8 +381,8 @@ public class NativeCommand {
       showInputDialog(textValue, textValue2);
       break;
     case CREATE_DIALOG:
-      FWPopupView popView = createDialogView();
-      FrameWork.addToViewList(popView);
+      FWDialog dialog = new FWDialog(frame, childInternalId);
+      FrameWork.addToViewList(dialog);
       break;
     case CREATE_ACTION_SHEET:
       createActionSheet();
@@ -400,7 +420,6 @@ public class NativeCommand {
       break;
     }
   }
-  
   
   private void createActionSheet(){
     PopupMenu menu = new PopupMenu(frame, null);
@@ -651,11 +670,6 @@ public class NativeCommand {
     // Create and show the alert
     AlertDialog alert = builder.create();
     alert.show();
-  }
-  
-  private FWPopupView createDialogView(){
-    FWPopupView window = new FWPopupView(frame, childInternalId);
-    return window;
   }
 
   // create Message dialog

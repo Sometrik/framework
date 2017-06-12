@@ -34,9 +34,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -51,12 +54,13 @@ import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 public class FrameWork extends Activity {
 
-  private RelativeLayout mainView;
   private SharedPreferences prefs;
   private SharedPreferences.Editor editor;
   private FrameWork frameWork;
@@ -67,6 +71,8 @@ public class FrameWork extends Activity {
   private DisplayMetrics displayMetrics;
   private View currentlyShowingView;
   private Charset utf8_charset;
+  private FWDrawerLayout drawerLayout;
+  private int currentDrawerViewId;
   
   private boolean drawMode = false;
   
@@ -125,6 +131,8 @@ public class FrameWork extends Activity {
     }
     super.onCreate(savedInstanceState);
     
+
+    
     utf8_charset = Charset.forName("UTF-8");
     defaultLocale = Locale.getDefault();
     System.out.println("Users preferred locale: " + defaultLocale.getCountry() + " Language: " + defaultLocale.getLanguage());
@@ -133,6 +141,10 @@ public class FrameWork extends Activity {
 //    actionBar = getActionBar();
 //    actionBar.hide();
     getActionBar().hide();
+    
+    //Init NavigationBar
+    drawerLayout = new FWDrawerLayout(this);
+    currentDrawerViewId = 0;
     
     // Init for screen settings
     setupDisplayMetrics();
@@ -298,7 +310,27 @@ public class FrameWork extends Activity {
 //    } else {
       currentView = view.getId();
       currentlyShowingView = view;
+
+    if (drawerLayout.getChildCount() > 0) {
+      drawerLayout.removeAllViews();
+    }
+
+    System.out.println("currentDrawerViewId: " + currentDrawerViewId);
+    if (currentDrawerViewId != 0) {
+      NativeCommandHandler drawerView = views.get(currentDrawerViewId);
+      if (drawerView != null) {
+	System.out.println("setting drawerLayout");
+	drawerLayout.addView(view);
+	drawerLayout.addView((View) drawerView);
+	setContentView(drawerLayout);
+      } else {
+	System.out.println("no navigation drawer element found on id: " + currentDrawerViewId);
+	setContentView(view);
+      }
+    } else {
       setContentView(view);
+    }
+     
       setNativeActiveView(System.currentTimeMillis() / 1000.0, view.getId(), recordHistory);
 //    }
   }
@@ -653,5 +685,14 @@ public class FrameWork extends Activity {
 
   public Charset getCharset() {
     return utf8_charset;
+  }
+  public int getCurrentDrawerViewId() {
+    return currentDrawerViewId;
+  }
+  public void setCurrentDrawerViewId(int currentDrawerViewId) {
+    this.currentDrawerViewId = currentDrawerViewId;
+  }
+  public FWDrawerLayout getDrawerLayout() {
+    return drawerLayout;
   }
 }
