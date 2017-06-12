@@ -47,6 +47,7 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
 
   @Override
   public void addData(String text, int row, int column, int sheet) {
+    System.out.println("adding data to SliderLayoutList " + getId());
     SliderButton button = buttonList.get(sheet);
     button.getList().addData(text, row, column, 0);
   }
@@ -62,7 +63,7 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
       topButton.setBottomButton(button);
       button.setTopButton(topButton);
     } else {
-      button.setPosition(Position.TOP);
+      button.setPosition(Position.MIDDLE);
       button.setInitialPosition();
     }
     if (buttonList.size() == 1){
@@ -78,7 +79,6 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
     FWList list = new FWList(frame, new FWAdapter(frame, null));
     RelativeLayout.LayoutParams listParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
     listParams.addRule(RelativeLayout.BELOW, button.getId());
-    listParams.topMargin = 10;
     list.setLayoutParams(listParams);
     list.setViewVisibility(false);
     button.setText(v);
@@ -89,9 +89,7 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
 
   @Override
   public void setValue(int v) {
-    if (v > 0){
-      frame.setCurrentView(this, false);
-    }
+    
   }
 
   @Override

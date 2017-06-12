@@ -52,8 +52,12 @@ public class SliderButton extends Button {
 	    bottomButton.collapseBelow();
 	  }
 	  sliderLayout.setActiveButton(getId());
-	  list.setViewVisibility(true);
 	  moveToMiddle();
+//	  RelativeLayout.LayoutParams listParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+//	  listParams.addRule(RelativeLayout.BELOW, getId());
+//	  listParams.topMargin = 10;
+	  list.setViewVisibility(true);
+//	  list.setLayoutParams(listParams);
 	  onTop = true;
 
 	}
@@ -62,7 +66,7 @@ public class SliderButton extends Button {
   }
 
   public void setInitialPosition() {
-    if (position == Position.TOP) {
+    if (position == Position.MIDDLE) {
       RelativeLayout.LayoutParams buttonParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
       buttonParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
       setLayoutParams(buttonParams);
@@ -77,6 +81,9 @@ public class SliderButton extends Button {
 
   public void setList(FWList list) {
     this.list = list;
+    if (position == Position.MIDDLE){
+      list.setViewVisibility(true);
+    }
   }
 
   public FWList getList() {
@@ -99,6 +106,9 @@ public class SliderButton extends Button {
 
     if (topButton != null) {
       topButton.hideAbove();
+    } else {
+      position = Position.TOP;
+      return;
     }
     position = Position.TOP;
 
@@ -134,7 +144,6 @@ public class SliderButton extends Button {
 
   private void moveToMiddle() {
     if (topButton != null) {
-
       if (position == Position.BOTTOM) {
 	final float yDelta = sliderLayout.getHeight() - (2 * base.getHeight());
 	final Animation animation = new TranslateAnimation(0, 0, 0, yDelta * -1);
