@@ -10,6 +10,7 @@ public class SliderButton extends Button {
   
   SliderButton topButton;
   SliderButton bottomButton;
+  boolean hideExtraButtons = true;
   
   FWList list;
   SliderLayout sliderLayout;
@@ -18,10 +19,11 @@ public class SliderButton extends Button {
   boolean onTop = true;
   SliderButton base;
   
-  public SliderButton(final FrameWork frame, final SliderLayout sliderLayout) {
+  public SliderButton(final FrameWork frame, final SliderLayout sliderLayout, boolean hideExtraButtons) {
     super(frame);
     this.frame = frame;
     this.sliderLayout = sliderLayout;
+    this.hideExtraButtons = hideExtraButtons;
     base = this;
     
     setOnClickListener(new Button.OnClickListener(){
@@ -68,7 +70,7 @@ public class SliderButton extends Button {
 	setLayoutParams(buttonParams);
       }
     } else {
-      if (bottomButton != null) {
+      if (bottomButton != null && !hideExtraButtons) {
 	RelativeLayout.LayoutParams buttonParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
 	buttonParams.addRule(RelativeLayout.ABOVE, bottomButton.getId());
 	setLayoutParams(buttonParams);
@@ -103,18 +105,48 @@ public class SliderButton extends Button {
   public void collapseBelow(){
     onTop = false;
     list.setViewVisibility(false);
-    if (bottomButton != null){
-      bottomButton.collapseBelow();
+    if (bottomButton != null) {
+      if (!hideExtraButtons) {
+	bottomButton.collapseBelow();
+      } else {
+	bottomButton.hideBelow();
+      }
     }
+    this.setVisibility(VISIBLE);
     setPosition();
   }
   
-  public void raiseAbove(){
+  public void raiseAbove() {
+    onTop = true;
+    list.setViewVisibility(false);
+    if (topButton != null) {
+      if (!hideExtraButtons) {
+	topButton.raiseAbove();
+      } else {
+	topButton.hideAbove();
+      }
+    }
+    this.setVisibility(VISIBLE);
+    setPosition();
+  }
+  
+  public void hideBelow() {
+    onTop = false;
+    list.setViewVisibility(false);
+    if (bottomButton != null) {
+      bottomButton.hideBelow();
+    }
+    setPosition();
+    this.setVisibility(GONE);
+  }
+  
+  public void hideAbove(){
     onTop = true;
     list.setViewVisibility(false);
     if (topButton != null){
-      topButton.raiseAbove();
+      topButton.hideAbove();
     }
     setPosition();
+    this.setVisibility(GONE);
   }
 }

@@ -50,7 +50,7 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
   @Override
   public void setValue(String v) {
     System.out.println("setValue");
-    SliderButton button = new SliderButton(frame, this);
+    SliderButton button = new SliderButton(frame, this, true);
     button.setId(nextId);
     nextId++;
     if (buttonList.size() != 0){
