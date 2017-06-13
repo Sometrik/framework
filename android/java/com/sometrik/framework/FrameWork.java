@@ -13,7 +13,6 @@ import com.sometrik.framework.FWActionBar.ActionBarItem;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
@@ -34,12 +33,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
-import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -49,15 +45,8 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceHolder.Callback;
 import android.view.View;
 import android.view.View.OnTouchListener;
-import android.view.Window;
 import android.view.WindowManager;
-import android.view.animation.Animation;
-import android.view.animation.TranslateAnimation;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 
 public class FrameWork extends Activity {
 
@@ -131,11 +120,11 @@ public class FrameWork extends Activity {
     }
     super.onCreate(savedInstanceState);
     
-
-    
     utf8_charset = Charset.forName("UTF-8");
     defaultLocale = Locale.getDefault();
     System.out.println("Users preferred locale: " + defaultLocale.getCountry() + " Language: " + defaultLocale.getLanguage());
+    
+
     
     // ActionBar is hidden by default with this
 //    actionBar = getActionBar();
@@ -148,7 +137,7 @@ public class FrameWork extends Activity {
     
     // Init for screen settings
     setupDisplayMetrics();
-
+    
     mainHandler = new Handler() {
 
       public void handleMessage(Message msg) {
@@ -219,7 +208,7 @@ public class FrameWork extends Activity {
     display.getMetrics(displayMetrics);
     screenWidth = displayMetrics.widthPixels;
     screenHeight = displayMetrics.heightPixels;
-    
+
     Resources resources = getResources();
     int resourceId = resources.getIdentifier( "status_bar_height", "dimen", "android" );
     int statusHeight = ( resourceId > 0 ) ? resources.getDimensionPixelSize( resourceId ) : 0;
@@ -319,7 +308,6 @@ public class FrameWork extends Activity {
     if (currentDrawerViewId != 0) {
       NativeCommandHandler drawerView = views.get(currentDrawerViewId);
       if (drawerView != null) {
-	System.out.println("setting drawerLayout");
 	drawerLayout.addView(view);
 	drawerLayout.addView((View) drawerView);
 	setContentView(drawerLayout);
@@ -513,6 +501,9 @@ public class FrameWork extends Activity {
   
   public float getScreenWidth(){
     return screenWidth;
+  }
+  public float getScreenHeight(){
+    return screenHeight;
   }
   
   public void setAppId(int id){ this.appId = id; }
