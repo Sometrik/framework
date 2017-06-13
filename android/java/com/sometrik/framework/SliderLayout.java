@@ -84,7 +84,6 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
     button.setText(v);
     button.setList(list);
     addView(list);
-    System.out.println("setValue end");
   }
 
   @Override
