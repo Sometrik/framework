@@ -17,6 +17,7 @@ public class FWButton extends Button implements NativeCommandHandler {
   public FWButton(FrameWork frameWork) {
     super(frameWork);
     this.frame = frameWork;
+    this.setBackground(frame.getResources().getDrawable(android.R.drawable.dialog_holo_light_frame));
     
   }
 
@@ -59,6 +60,7 @@ public class FWButton extends Button implements NativeCommandHandler {
 
   @Override
   public void setStyle(String key, String value) {
+    System.out.println("Button style " + key + " " + value);
     if (key.equals("font-size")){
       if (value.equals("small")){
 	this.setTextAppearance(frame, android.R.style.TextAppearance_DeviceDefault_Small);
@@ -103,6 +105,14 @@ public class FWButton extends Button implements NativeCommandHandler {
       params.weight += 1;
       setLayoutParams(params);
       System.out.println("button weight: " + params.weight);
+    } else if (key.equals("pressed")){
+      this.setPressed(true);
+//      this.setBackground(frame.getResources().getDrawable(android.R.drawable.alert_light_frame));
+      this.setBackground(frame.getResources().getDrawable(android.R.drawable.dialog_holo_dark_frame));
+    } else if (key.equals("unpressed")){
+      this.setPressed(false);
+      this.setBackground(frame.getResources().getDrawable(android.R.drawable.dialog_holo_light_frame));
+//      this.setBackground(null);
     }
   }
 
