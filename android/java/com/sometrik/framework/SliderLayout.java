@@ -62,14 +62,11 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
       button.setTopButton(topButton);
     } else {
       button.setPosition(Position.MIDDLE);
-      button.setInitialPosition();
     }
     if (buttonList.size() == 1){
       button.setPosition(Position.BOTTOM);
-      button.setInitialPosition();
     } else if (buttonList.size() > 1){
       button.setPosition(Position.BOTTOMHIDDEN);
-      button.setInitialPosition();
     }
     buttonList.add(button);
     addView(button);
@@ -82,6 +79,7 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
     button.setText(v);
     button.setList(list);
     addView(list);
+    button.setInitialPosition();
   }
 
   @Override

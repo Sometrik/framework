@@ -77,10 +77,12 @@ public class SliderButton extends Button {
 	RelativeLayout.LayoutParams buttonParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
 	buttonParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
 	setLayoutParams(buttonParams);
+	list.setViewVisibility(true);
       } else {
 	RelativeLayout.LayoutParams buttonParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
 	buttonParams.addRule(RelativeLayout.BELOW, topButton.getId());
 	setLayoutParams(buttonParams);
+	list.setViewVisibility(true);
       }
     } else if (position == Position.BOTTOM) {
       RelativeLayout.LayoutParams buttonParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
