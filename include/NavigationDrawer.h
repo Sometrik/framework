@@ -3,10 +3,12 @@
 
 #include <Element.h>
 #include <Command.h>
+#include <CommandEvent.h>
+#include <ValueEvent.h>
 
 class NavigationDrawer : public Element {
  public:
-  NavigationDrawer() : Element() { }
+  NavigationDrawer(int _id = 0, unsigned int _flags = 0) : Element(_id, _flags) { }
 
   bool isA(const std::string & className) const override {
     if (className == "NavigationDrawer") return true;
@@ -25,7 +27,7 @@ class NavigationDrawer : public Element {
     sendCommand(c);
   }
 
-  void setDrawer(bool opened){
+  void setDrawer(bool opened) {
     Command c(Command::SET_VISIBILITY, getInternalId());
     if (opened){
       c.setValue(1);
@@ -34,8 +36,6 @@ class NavigationDrawer : public Element {
     }
     sendCommand(c);
   }
-			       
- private:
 };
 
 #endif
