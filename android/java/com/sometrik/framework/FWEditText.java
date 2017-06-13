@@ -165,4 +165,10 @@ public class FWEditText extends EditText implements NativeCommandHandler {
     System.out.println("Clear on EditText");
     this.setText("");
   }
+
+  @Override
+  public void flush() {
+    // TODO Auto-generated method stub
+    
+  }
 }

@@ -128,4 +128,10 @@ public class FWDialog extends Dialog implements NativeCommandHandler{
     return id;
   }
 
+  @Override
+  public void flush() {
+    // TODO Auto-generated method stub
+    
+  }
+
 }

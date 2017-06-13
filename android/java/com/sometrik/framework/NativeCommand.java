@@ -396,8 +396,7 @@ public class NativeCommand {
       FrameWork.addToViewList(ab);
       break;
     case FLUSH_VIEW:
-      View viewConversion = (View)view;
-      viewConversion.invalidate();
+      view.flush();
       break;
     case QUIT_APP:
       // TODO

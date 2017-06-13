@@ -124,4 +124,10 @@ public class NavigationLayout extends LinearLayout implements NativeCommandHandl
     return getId();
   }
 
+  @Override
+  public void flush() {
+    // TODO Auto-generated method stub
+    
+  }
+
 }

@@ -82,7 +82,6 @@ public class FWList extends ExpandableListView implements NativeCommandHandler{
 	dataRow.remove(column);
       }
       dataRow.add(column, text);
-      adapter.notifyDataSetChanged();
     } else {
       Log.d("FWList", "creating new row");
       dataRow = new ArrayList<String>();
@@ -156,5 +155,11 @@ public class FWList extends ExpandableListView implements NativeCommandHandler{
   @Override
   public void clear() {
     adapter.clear();
+  }
+
+  @Override
+  public void flush() {
+    adapter.notifyDataSetChanged();
+    invalidate();
   }
 }

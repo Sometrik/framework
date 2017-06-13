@@ -14,6 +14,7 @@ public interface NativeCommandHandler {
   public void setStyle(String key, String value);
   public void setError(boolean hasError, String errorText);
   public void clear();
+  public void flush();
   
   public int getElementId();
 }

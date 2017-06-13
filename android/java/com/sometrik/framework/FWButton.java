@@ -146,4 +146,11 @@ public class FWButton extends Button implements NativeCommandHandler {
   public void clear() {
     System.out.println("couldn't handle command");
   }
+
+
+  @Override
+  public void flush() {
+    // TODO Auto-generated method stub
+    
+  }
 }

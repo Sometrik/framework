@@ -137,4 +137,10 @@ public class NativeSurface extends SurfaceView implements NativeCommandHandler {
   public void clear() {
     System.out.println("Native Surface couldn't handle command");
   }
+
+  @Override
+  public void flush() {
+    // TODO Auto-generated method stub
+    
+  }
 }

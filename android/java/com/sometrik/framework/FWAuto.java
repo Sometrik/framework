@@ -179,4 +179,11 @@ public class FWAuto extends LinearLayout implements NativeCommandHandler {
   public void clear() {
     System.out.println("couldn't handle command");
   }
+
+
+  @Override
+  public void flush() {
+    // TODO Auto-generated method stub
+    
+  }
 }
