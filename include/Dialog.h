@@ -22,7 +22,7 @@ class Dialog : public Element {
     ev2.dispatch(*this);
   }
 
-  int showModal(Element * parent) {
+  int showModal(Element * parent) override {
     if (!isInitialized()) {
       setParent(parent);
       initialize(&(parent->getPlatform()));
