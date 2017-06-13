@@ -36,6 +36,7 @@ import android.os.Message;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -130,6 +131,9 @@ public class FrameWork extends Activity {
 //    actionBar = getActionBar();
 //    actionBar.hide();
     getActionBar().hide();
+    getActionBar().setDisplayHomeAsUpEnabled(true);
+//    getActionBar().setHomeButtonEnabled(true);
+
     
     //Init NavigationBar
     drawerLayout = new FWDrawerLayout(this);
@@ -468,6 +472,13 @@ public class FrameWork extends Activity {
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
     intChangedEvent(System.currentTimeMillis() / 1000.0, actionBar.getElementId(), item.getItemId(), 0);
+    if (item.getItemId() == 16908332){
+      if (drawerLayout.isDrawerOpen(Gravity.LEFT)){
+	drawerLayout.closeDrawer(Gravity.LEFT);
+      } else {
+	drawerLayout.openDrawer(Gravity.LEFT);
+      }
+    }
     return super.onOptionsItemSelected(item);
   }
 

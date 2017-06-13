@@ -1,5 +1,6 @@
 package com.sometrik.framework;
 
+import android.R;
 import android.graphics.Color;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -19,7 +20,6 @@ public class FWDrawerLayout extends DrawerLayout {
     this.frame = frame;
     
     final DrawerLayout drawer = new DrawerLayout(frame);
-    
     ActionBarDrawerToggle mDrawerToggle = new ActionBarDrawerToggle(frame, drawer,
             0, 0) {
 
@@ -39,6 +39,8 @@ public class FWDrawerLayout extends DrawerLayout {
             frame.intChangedEvent(System.currentTimeMillis() / 1000.0 , frame.getCurrentDrawerViewId(), 1, 0);
         }
     };
+    mDrawerToggle.setDrawerIndicatorEnabled(false);
+    mDrawerToggle.setHomeAsUpIndicator(R.drawable.ic_menu_agenda);
     setDrawerListener(mDrawerToggle);
   }
   
