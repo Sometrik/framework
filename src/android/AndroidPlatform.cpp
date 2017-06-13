@@ -290,7 +290,10 @@ AndroidPlatform::sendCommand2(const Command & command) {
   if (jtextValue) env->DeleteLocalRef(jtextValue);
   if (jtextValue2) env->DeleteLocalRef(jtextValue2);
   
-  if (command.getType() == Command::SHOW_MESSAGE_DIALOG || command.getType() == Command::SHOW_INPUT_DIALOG || command.getType() == Command::SHOW_ACTION_SHEET) {
+  if (command.getType() == Command::SHOW_DIALOG ||
+      command.getType() == Command::SHOW_MESSAGE_DIALOG ||
+      command.getType() == Command::SHOW_INPUT_DIALOG ||
+      command.getType() == Command::SHOW_ACTION_SHEET) {
     modal_result_value = 0;
     modal_result_text = "";
     __android_log_print(ANDROID_LOG_INFO, "Sometrik", "starting modal run loop");
