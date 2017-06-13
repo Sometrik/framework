@@ -26,24 +26,33 @@ class FWActionSheet : public Element {
 
   void addOption(int id, const std::string & name) {
     options.push_back(FWOption(id, name));
+    auto & op = options.back();
+    
+    Command c(Command::ADD_OPTION, getInternalId());
+    c.setValue(op.getId());
+    c.setTextValue(op.getText());
+    sendCommand(c);
   }
 
   const std::string & getTitle() const { return title; }
   const std::vector<FWOption> & getOptions() const { return options; }
 
-  int showModal() override {
-    Command c0(Command::CREATE_ACTION_SHEET, getParentInternalId(), getInternalId());
-    c0.setTextValue(title);
-    sendCommand(c0);
-    for (auto & op : options) {
-      Command c(Command::ADD_OPTION, getInternalId());
-      c.setValue(op.getId());
-      c.setTextValue(op.getText());
-      sendCommand(c);
+  int showModal(Element * parent) override {
+    if (!isInitialized()) {
+      setParent(parent);
+      initialize(&(parent->getPlatform()));
+      initializeChildren();
     }
     Command c1(Command::SHOW_ACTION_SHEET, getInternalId());
     sendCommand(c1);
     return 0;
+  }
+
+ protected:
+  void create() override {
+    Command c0(Command::CREATE_ACTION_SHEET, getParentInternalId(), getInternalId());
+    c0.setTextValue(title);
+    sendCommand(c0);
   }
   
  private:
