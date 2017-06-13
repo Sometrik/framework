@@ -13,7 +13,7 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
   FrameWork frame;
   ArrayList<SliderButton> buttonList;
   int activeButton = 0;
-  int nextId = 77777773;
+  int nextId = 777775;
   public static int buttonSize = 0;
   
   public SliderLayout(FrameWork frame) {
@@ -53,7 +53,7 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
 
   @Override
   public void setValue(String v) {
-    SliderButton button = new SliderButton(frame, this, true);
+    SliderButton button = new SliderButton(frame, this, true, buttonList.size());
     button.setId(nextId);
     nextId++;
     if (buttonList.size() != 0){
@@ -86,8 +86,44 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
 
   @Override
   public void setValue(int v) {
-    
+    System.out.println("setValue "  + v + " activeButton " + activeButton);
+    if (activeButton == v){
+      System.out.println("button already active");
+      return;
+    }
+    activeButton = v;
+    if (v < buttonList.size()) {
+      for (int i = 0; i < buttonList.size(); i++) {
+	System.out.println("button loop " + i);
+	SliderButton button = buttonList.get(i);
+	if (i == v) {
+	  button.setPosition(Position.MIDDLE);
+	} else if (i == (v - 1)) {
+	  button.setPosition(Position.TOP);
+	} else if (i == (v + 1)) {
+	  button.setPosition(Position.BOTTOM);
+	} else if (i < (v - 1)) {
+	  button.setPosition(Position.TOPHIDDEN);
+	} else if (i > (v + 1)) {
+	  button.setPosition(Position.BOTTOMHIDDEN);
+	}
+      }
+      
+      for (SliderButton button : buttonList){
+	button.setInitialPosition();
+      }
+    }
   }
+  
+//  @Override
+//  public void onVisibilityChanged(View changedView, int visibility){
+//    switch (visibility){
+//    case VISIBLE:
+//      
+//      break;
+//    }
+//  }
+  
 
   @Override
   public void setViewEnabled(Boolean enabled) {
@@ -115,8 +151,10 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
 
   @Override
   public void clear() {
-    // TODO Auto-generated method stub
-    
+    for (SliderButton button : buttonList){
+      FWList list = button.getList();
+      list.clear();
+    }
   }
 
   @Override

@@ -305,7 +305,6 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
 
   @Override
   public int getGroupCount() {
-    Log.d("adapter", "getGroupCount");
     if (columnData.getSize() != 0) {
       return dataList.size() + 1;
     } else {

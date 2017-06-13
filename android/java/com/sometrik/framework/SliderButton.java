@@ -17,7 +17,8 @@ public class SliderButton extends Button {
   FWList list;
   SliderLayout sliderLayout;
   Position position;
-
+  int positionId;
+  
   FrameWork frame;
   boolean onTop = true;
   SliderButton base;
@@ -26,18 +27,19 @@ public class SliderButton extends Button {
     BOTTOM, MIDDLE, TOP, BOTTOMHIDDEN, TOPHIDDEN
   }
 
-  public SliderButton(final FrameWork frame, final SliderLayout sliderLayout, boolean hideExtraButtons) {
+  public SliderButton(final FrameWork frame, final SliderLayout sliderLayout, boolean hideExtraButtons, final int positionId) {
     super(frame);
     this.frame = frame;
     this.sliderLayout = sliderLayout;
     this.hideExtraButtons = hideExtraButtons;
+    this.positionId = positionId;
     base = this;
 
     setOnClickListener(new Button.OnClickListener() {
       @Override
       public void onClick(View arg0) {
-	System.out.println("onclick on " + getId() + " activeId: " + sliderLayout.getActiveButton());
-	if (sliderLayout.getActiveButton() != getId()) {
+	System.out.println("onclick on " + positionId + " activeId: " + sliderLayout.getActiveButton());
+	if (sliderLayout.getActiveButton() != positionId) {
 	  if (position == Position.BOTTOM) {
 	    System.out.println("position: BOTTOM");
 	    topButton.raiseAbove();
@@ -51,14 +53,12 @@ public class SliderButton extends Button {
 	    }
 	    bottomButton.collapseBelow();
 	  }
-	  sliderLayout.setActiveButton(getId());
+	  sliderLayout.setActiveButton(positionId);
 	  moveToMiddle();
-//	  RelativeLayout.LayoutParams listParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-//	  listParams.addRule(RelativeLayout.BELOW, getId());
-//	  listParams.topMargin = 10;
 	  list.setViewVisibility(true);
-//	  list.setLayoutParams(listParams);
 	  onTop = true;
+
+	  frame.intChangedEvent(System.currentTimeMillis() / 1000.0, sliderLayout.getId(), 1, positionId);
 
 	}
       }
@@ -66,10 +66,22 @@ public class SliderButton extends Button {
   }
 
   public void setInitialPosition() {
-    if (position == Position.MIDDLE) {
+    System.out.println("setInitialPosition " + positionId + " position: " + String.valueOf(position));
+    this.setVisibility(VISIBLE);
+    if (position == Position.TOP) {
       RelativeLayout.LayoutParams buttonParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
       buttonParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
       setLayoutParams(buttonParams);
+    } else if (position == Position.MIDDLE) {
+      if (topButton == null){
+	RelativeLayout.LayoutParams buttonParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+	buttonParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+	setLayoutParams(buttonParams);
+      } else {
+	RelativeLayout.LayoutParams buttonParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+	buttonParams.addRule(RelativeLayout.BELOW, topButton.getId());
+	setLayoutParams(buttonParams);
+      }
     } else if (position == Position.BOTTOM) {
       RelativeLayout.LayoutParams buttonParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
       buttonParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
@@ -77,6 +89,7 @@ public class SliderButton extends Button {
     } else if (position == Position.BOTTOMHIDDEN || position == Position.TOPHIDDEN) {
       setVisibility(GONE);
     }
+    System.out.println("setInitialPosition end " + positionId);
   }
 
   public void setList(FWList list) {
@@ -219,7 +232,6 @@ public class SliderButton extends Button {
   protected void onDraw(Canvas canvas) {
     super.onDraw(canvas);
     if (getHeight() != 0) {
-      System.out.println("Setting buttonSize as " + getHeight());
       SliderLayout.buttonSize = getHeight();
     }
 
