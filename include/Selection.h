@@ -15,7 +15,7 @@ class Selection {
     add(e);
   }
 
-  Selection & show(bool recordHistory = true);
+  Selection & show();
   Selection & hide();
   Selection & remove();
   Selection & style(const std::string & key, const std::string & value);

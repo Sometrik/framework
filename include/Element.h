@@ -19,7 +19,7 @@ class Element : public EventHandler {
   Element(const Element & other);
   Element & operator= (const Element & other);
   
-  virtual void show(bool recordHistory = true) { }
+  virtual void show() { }
   virtual void hide() { }
     
   virtual bool isA(const std::string & className) const {

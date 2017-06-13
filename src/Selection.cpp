@@ -4,9 +4,9 @@
 using namespace std;
 
 Selection &
-Selection::show(bool recordHistory) {
+Selection::show() {
   for (auto & e : data) {
-    e->show(recordHistory);
+    e->show();
   }
   return *this;
 }

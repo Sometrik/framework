@@ -15,13 +15,9 @@ class FWViewBase : public Element {
     return Element::isA(className);
   }
 
-  void show(bool recordHistory = true) override {
+  void show() override {
     Command c(Command::SET_INT_VALUE, getInternalId());
-    if (recordHistory){
-      c.setValue(1);
-    } else {
-      c.setValue(2);
-    }
+    c.setValue(1);
     sendCommand(c);
   }
 
