@@ -301,7 +301,9 @@ public:
       
     case Command::SET_INT_VALUE: {
       auto view = views_by_id[command.getInternalId()];
-      if (gtk_widget_get_parent(view) == stack) {
+      if (!view) {
+	cerr << "no view " << command.getInternalId() << " for SET_INT_VALUE\n";
+      } else if (gtk_widget_get_parent(view) == stack) {
 	if (command.getValue() != 2) {
 	  addToHistory(getActiveViewId());
 	}
@@ -418,6 +420,15 @@ public:
       }
     }
       break;
+
+    case Command::CREATE_DIALOG: {
+      auto dialog = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+      gtk_window_set_modal(GTK_WINDOW(dialog), 1);
+      // gtk_window_set_transient_for(dialog, GtkWindow *parent);
+      gtk_window_present(GTK_WINDOW(dialog));
+      addView(0, command.getChildInternalId(), dialog);
+    }
+      break;
       
     case Command::SHOW_MESSAGE_DIALOG: {
       GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
@@ -503,11 +514,14 @@ public:
 
   void addView(int parent_id, int id, GtkWidget * widget, bool expand = false) {
     assert(widget);
+    cerr << "adding view " << id << endl;
     if (initial_view_shown) gtk_widget_show(widget);    
     if (parent_id) {
       auto parent = (GtkContainer *)views_by_id[parent_id];
-      assert(parent);
-      if (GTK_IS_BOX(parent)) {
+      if (!parent) {
+	cerr << "no parent " << parent_id << " for view " << id << endl;
+	// assert(0);
+      } else if (GTK_IS_BOX(parent)) {
 	gtk_box_pack_start((GtkBox*)parent, widget, expand ? 1 : 0, 0, 5);
       } else if (GTK_IS_FLOW_BOX(parent)) {
 	gtk_flow_box_insert((GtkFlowBox*)parent, widget, -1);
