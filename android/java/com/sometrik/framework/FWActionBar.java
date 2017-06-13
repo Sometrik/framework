@@ -49,7 +49,7 @@ public class FWActionBar implements NativeCommandHandler {
 
   @Override
   public void setValue(String v) {
-    System.out.println("Command couldn't be handled by FWActionBar");
+    actionBar.setTitle(v);
   }
 
   @Override

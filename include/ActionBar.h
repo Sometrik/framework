@@ -23,6 +23,13 @@ class ActionBar : public Element {
     sendCommand(c);
   }
 
+  void setTitle(std::string _title){
+    title = _title;
+    Command c(Command::SET_TEXT_VALUE, getInternalId());
+    c.setTextValue(title);
+    sendCommand(c);
+  }
+
  protected:
 
   void create() override {

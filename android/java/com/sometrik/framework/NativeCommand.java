@@ -368,6 +368,9 @@ public class NativeCommand {
     case SET_STYLE:
       view.setStyle(textValue, textValue2);
       break;
+    case SET_LABEL:
+      frame.actionBar.setValue(textValue);
+      break;
     case SET_ERROR:
       view.setError(value != 0, textValue);
       break;
