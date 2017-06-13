@@ -47,14 +47,12 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
 
   @Override
   public void addData(String text, int row, int column, int sheet) {
-    System.out.println("adding data to SliderLayoutList " + getId());
     SliderButton button = buttonList.get(sheet);
     button.getList().addData(text, row, column, 0);
   }
 
   @Override
   public void setValue(String v) {
-    System.out.println("setValue");
     SliderButton button = new SliderButton(frame, this, true);
     button.setId(nextId);
     nextId++;
