@@ -26,7 +26,7 @@ class Element : public EventHandler {
     return className == "*" || className == "Element";
   }  
   
-  virtual int showModal() { return 0; }
+  virtual int showModal(Element * parent) { return 0; }
 
   void setError(bool t) override;
 
@@ -49,7 +49,7 @@ class Element : public EventHandler {
   }  
 
   Element & addChild(const std::shared_ptr<Element> & element) {
-    element->parent = this;
+    element->setParent(this);
     children.push_back(element);
 
     if (isInitialized()) {
@@ -156,6 +156,7 @@ class Element : public EventHandler {
 
   Element * getParent() { return parent; }
   const Element * getParent() const { return parent; }
+  void setParent(Element * _parent) { parent = _parent; }
   size_t size() const { return children.size(); }
   bool isInitialized() const { return platform != 0; }
 
