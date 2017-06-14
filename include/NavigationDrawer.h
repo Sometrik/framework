@@ -16,24 +16,20 @@ class NavigationDrawer : public Element {
   }
 
   void onValueEvent(ValueEvent & ev) override {
-     notify();
-     CommandEvent ev2(ev.getTimestamp(), getId());
-     ev2.dispatch(*this);
-   }
+    notify();
+    CommandEvent ev2(ev.getTimestamp(), getId());
+    ev2.dispatch(*this);
+  }
+
+  void hide() override {
+    Command c(Command::SET_VISIBILITY, getInternalId());
+    c.setValue(0);
+    sendCommand(c);
+  }
 
  protected:
   void create() override {
     Command c(Command::CREATE_NAVIGATIONVIEW, getParentInternalId(), getInternalId());
-    sendCommand(c);
-  }
-
-  void setDrawer(bool opened) {
-    Command c(Command::SET_VISIBILITY, getInternalId());
-    if (opened){
-      c.setValue(1);
-    } else {
-      c.setValue(0);
-    }
     sendCommand(c);
   }
 };
