@@ -32,7 +32,11 @@ class Dialog : public Element {
     return getPlatform().getModalResultValue();
   }
 
-protected:
+ protected:
+  void endModal(int value = 0) {
+    sendCommand(Command(Command::END_MODAL, getInternalId()));
+  }
+  
   void create() override {
     Command c(Command::CREATE_DIALOG, getParentInternalId(), getInternalId());
     sendCommand(c);
