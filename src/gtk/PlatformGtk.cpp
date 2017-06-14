@@ -431,6 +431,16 @@ public:
     }
       break;
 
+    case Command::END_MODAL: {
+      auto it = views_by_id.find(command.getInternalId());
+      assert(it != views_by_id.end());
+      if (it != views_by_id.end()) {
+	auto dialog = it->second;
+	gtk_dialog_response(GTK_DIALOG(dialog), 0);
+      }
+    }
+      break;
+      
     case Command::SHOW_DIALOG: {
       auto it = views_by_id.find(command.getInternalId());
       assert(it != views_by_id.end());
