@@ -15,9 +15,9 @@ class Element : public EventHandler {
     id(_id),
     flags(_flags)
     { }
-
-  Element(const Element & other);
-  Element & operator= (const Element & other);
+  Element(const Element & other) = delete;
+  Element & operator= (const Element & other) = delete; 
+  ~Element();
   
   virtual void show() { }
   virtual void hide() { }
@@ -137,18 +137,6 @@ class Element : public EventHandler {
       }
     }
     return Selection();
-  }
-
-  Element * getElementByInternalId(int _internal_id) { // internal use only
-    if (_internal_id == internal_id) {
-      return this;
-    } else {
-      for (auto & c : children) {
-	Element * e = c->getElementByInternalId(_internal_id);
-	if (e) return e;
-      }
-      return 0;
-    }
   }
   
   void showMessageDialog(const std::string & title, const std::string & text);

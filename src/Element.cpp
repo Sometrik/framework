@@ -11,11 +11,18 @@ using namespace std;
 
 int Element::nextInternalId = 1;
 
+Element::~Element() {
+  if (platform) {
+    platform->unregisterElement(this);
+  }
+}
+
 void
 Element::initialize(FWPlatform * _platform) {
   assert(_platform);
   if (_platform) {
     platform = _platform;
+    platform->registerElement(this);
     create();
     for (auto & c : pendingCommands) {
       sendCommand(c);
