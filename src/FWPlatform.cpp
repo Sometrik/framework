@@ -157,9 +157,10 @@ FWPlatform::getTime() const {
 void
 FWPlatform::postEvent(int internal_id, Event & ev) {
   assert(internal_id);
-  Element * e = getElementByInternalId(internal_id);
-  if (e) ev.dispatch(*e);
-  else {
+  auto it = registered_elements.find(internal_id);
+  if (it != registered_elements.end()) {
+    ev.dispatch(*(it->second));
+  } else {
     std::ostringstream s;
     s << "Failed to dispatch event " << typeid(ev).name() << " id: " << internal_id;
     getLogger().println(s.str());
