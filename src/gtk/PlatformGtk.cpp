@@ -321,7 +321,9 @@ public:
       
     case Command::SET_TEXT_VALUE: {
       auto view = views_by_id[command.getInternalId()];
-      if (GTK_IS_LABEL(view)) {
+      if (!view) {
+	cerr << "view not found for SET_TEXT_VALUE\n";
+      } else if (GTK_IS_LABEL(view)) {
 	gtk_label_set_text((GtkLabel*)view, command.getTextValue().c_str());
       } else if (GTK_IS_TEXT_VIEW(view)) {
 	auto buffer = gtk_text_view_get_buffer((GtkTextView*)view);
@@ -422,11 +424,23 @@ public:
       break;
 
     case Command::CREATE_DIALOG: {
-      auto dialog = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+      auto dialog = gtk_dialog_new();
       gtk_window_set_modal(GTK_WINDOW(dialog), 1);
-      // gtk_window_set_transient_for(dialog, GtkWindow *parent);
-      gtk_window_present(GTK_WINDOW(dialog));
+      // gtk_window_set_transient_for(GTK_WINDOW(dialog), parent);
       addView(0, command.getChildInternalId(), dialog);
+    }
+      break;
+
+    case Command::SHOW_DIALOG: {
+      auto it = views_by_id.find(command.getInternalId());
+      assert(it != views_by_id.end());
+      if (it != views_by_id.end()) {
+	cerr << "running dialog\n";
+	auto dialog = it->second;
+	gtk_dialog_run(GTK_DIALOG(dialog));
+	gtk_widget_destroy(dialog);
+	views_by_id.erase(command.getInternalId());
+      }
     }
       break;
       
@@ -521,6 +535,9 @@ public:
       if (!parent) {
 	cerr << "no parent " << parent_id << " for view " << id << endl;
 	// assert(0);
+      } else if (GTK_IS_DIALOG(parent)) {
+	auto a = gtk_dialog_get_content_area(GTK_DIALOG(parent));
+	gtk_container_add(GTK_CONTAINER(a), widget);
       } else if (GTK_IS_BOX(parent)) {
 	gtk_box_pack_start((GtkBox*)parent, widget, expand ? 1 : 0, 0, 5);
       } else if (GTK_IS_FLOW_BOX(parent)) {
