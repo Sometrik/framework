@@ -209,6 +209,7 @@ private:
   jobject handler;
   EventQueue eventqueue;
   bool canDraw = false, isPaused = false, isDestroyed = false;
+  bool exit_loop = false;
 };
 
 extern FWApplication * applicationMain();
@@ -299,6 +300,8 @@ AndroidPlatform::sendCommand2(const Command & command) {
     __android_log_print(ANDROID_LOG_INFO, "Sometrik", "starting modal run loop");
     renderLoop();
     __android_log_print(ANDROID_LOG_INFO, "Sometrik", "ending modal run loop");
+  } else if (command.getType() == Command::END_MODAL) {
+    exit_loop = true;
   }
 }
 
@@ -421,8 +424,9 @@ AndroidPlatform::joinThread() {
 void
 AndroidPlatform::renderLoop() {
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Looping louie");
-
-  bool exit_loop = false;
+  
+  exit_loop = false;
+  
   while (!isDestroyed && !exit_loop) {
     std::vector<std::pair<int, std::shared_ptr<Event> > > evs;
     evs.push_back(eventqueue.pop());
@@ -470,6 +474,8 @@ AndroidPlatform::renderLoop() {
       }
     }
   }
+
+  exit_loop = false;
 
   getLogger().println("Looping Louie is out");
 }
