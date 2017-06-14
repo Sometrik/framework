@@ -21,6 +21,7 @@ class Element : public EventHandler {
   
   virtual void show() { }
   virtual void hide() { }
+  virtual void refresh() { }
     
   virtual bool isA(const std::string & className) const {
     return className == "*" || className == "Element";

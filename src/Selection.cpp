@@ -32,6 +32,14 @@ Selection::remove() {
 }
 
 Selection &
+Selection::refresh() {
+  for (auto & e : data) {
+    e->refresh();
+  }
+  return *this;
+}
+
+Selection &
 Selection::style(const std::string & key, const std::string & value) {
   for (auto & e : data) {
     e->style(key, value);

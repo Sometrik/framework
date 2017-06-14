@@ -18,6 +18,7 @@ class Selection {
   Selection & show();
   Selection & hide();
   Selection & remove();
+  Selection & refresh();
   Selection & style(const std::string & key, const std::string & value);
   Selection & setEnabled(bool enabled);
 
