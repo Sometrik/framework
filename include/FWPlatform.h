@@ -16,6 +16,7 @@
 #include <string>
 #include <memory>
 #include <list>
+#include <unordered_map>
 
 #ifndef NO_CANVAS
 namespace canvas {
@@ -148,6 +149,14 @@ class FWPlatform : public Element {
 
   void dumpThreads() const;
 
+  void registerElement(Element * e) {
+    registered_elements[e->getInternalId()] = e;
+  }
+
+  void unregisterElement(Element * e) {
+    registered_elements.erase(e->getInternalId());
+  }
+
  protected:
 
 #ifdef HAS_SOUNDCANVAS
@@ -173,6 +182,7 @@ class FWPlatform : public Element {
 
   std::list<std::shared_ptr<PlatformThread> > threads;
   std::vector<int> view_back_history, view_forward_history;
+  std::unordered_map<int, Element *> registered_elements;
   size_t num_running_threads = 0;
 };
 
