@@ -230,7 +230,7 @@ public class FrameWork extends Activity {
   public SharedPreferences.Editor getPreferencesEditor() { return editor; }
 
   public static void addToViewList(NativeCommandHandler view) {
-    System.out.println(view.getElementId() + " added to view list");
+    System.out.println(view.getElementId() + " added to view child");
     views.put(view.getElementId(), view);
   }
 
