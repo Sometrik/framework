@@ -23,6 +23,13 @@ class ListView : public Element {
     sendCommand(c);
   }
 
+  void setSheet(int sheet, const std::string & name) {
+    Command c(Command::ADD_OPTION, getInternalId());
+    c.setValue(sheet);
+    c.setTextValue(name);
+    sendCommand(c);
+  }
+
   void addColumn(const std::string & name, ColumnType type = TEXT) {
     Command c(Command::ADD_COLUMN, getInternalId());
     c.setTextValue(name);
