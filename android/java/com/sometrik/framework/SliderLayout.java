@@ -55,14 +55,27 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
     buttonList.add(button);
     addView(button);
     
-    RelativeLayout.LayoutParams listParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+    LinearLayout layout = new LinearLayout(frame);
+    
+//    RelativeLayout.LayoutParams listParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+//    listParams.addRule(RelativeLayout.BELOW, button.getId());
+//    view.setLayoutParams(listParams);
+//    addView(view);
+//    NativeCommandHandler handler = (NativeCommandHandler) view;
+//    handler.setViewVisibility(false);
+//    button.setList(handler);
+//      
+//    button.setText("Label");
+//    button.setInitialPosition();
+    
+    RelativeLayout.LayoutParams listParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, 0);
     listParams.addRule(RelativeLayout.BELOW, button.getId());
-    view.setLayoutParams(listParams);
-    addView(view);
-    NativeCommandHandler handler = (NativeCommandHandler) view;
-    handler.setViewVisibility(false);
-    button.setList(handler);
-      
+    FWScrollView scrollView = new FWScrollView(frame);
+    scrollView.setViewVisibility(false);
+    scrollView.setLayoutParams(listParams);
+    scrollView.addChild(view);
+    addView(scrollView);
+    button.setList(scrollView);
     button.setText("Label");
     button.setInitialPosition();
   }
