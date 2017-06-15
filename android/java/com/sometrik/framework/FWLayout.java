@@ -84,6 +84,14 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
       LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
       params.weight += 1;
       setLayoutParams(params);
+    } else if (key.equals("padding_top")) {
+      setPadding(getPaddingLeft(), Integer.parseInt(value), getPaddingRight(), getPaddingBottom());
+    } else if (key.equals("padding_bottom")) {
+      setPadding(getPaddingLeft(), getPaddingTop(), getPaddingRight(), Integer.parseInt(value));
+    } else if (key.equals("padding_left")) {
+      setPadding(Integer.parseInt(value), getPaddingTop(), getPaddingRight(), getPaddingBottom());
+    } else if (key.equals("padding_right")) {
+      setPadding(getPaddingLeft(), getPaddingTop(), Integer.parseInt(value), getPaddingBottom());
     }
   }
 
