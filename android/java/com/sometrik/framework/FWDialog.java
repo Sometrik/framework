@@ -1,6 +1,7 @@
 package com.sometrik.framework;
 
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +16,7 @@ public class FWDialog extends Dialog implements NativeCommandHandler{
   ScrollView scrollView;
   int id;
   
-  public FWDialog(FrameWork frame, int id) {
+  public FWDialog(final FrameWork frame, final int id) {
     super(frame);
     this.frame = frame;
     this.id = id;
@@ -27,6 +28,13 @@ public class FWDialog extends Dialog implements NativeCommandHandler{
     params.height = LayoutParams.WRAP_CONTENT;
     params.width = LayoutParams.MATCH_PARENT;
     getWindow().setAttributes((android.view.WindowManager.LayoutParams) params);
+    
+    this.setOnDismissListener(new OnDismissListener(){
+      @Override
+      public void onDismiss(DialogInterface arg0) {
+	frame.endModal(System.currentTimeMillis() / 1000.0, id, null);
+      }
+    });
   }
 
   @Override
