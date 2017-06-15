@@ -300,9 +300,11 @@ AndroidPlatform::sendCommand2(const Command & command) {
     __android_log_print(ANDROID_LOG_INFO, "Sometrik", "starting modal run loop");
     renderLoop();
     __android_log_print(ANDROID_LOG_INFO, "Sometrik", "ending modal run loop");
-  } else if (command.getType() == Command::END_MODAL) {
-    exit_loop = true;
   }
+  //Dialog shuts down loop
+//  else if (command.getType() == Command::END_MODAL) {
+//    exit_loop = true;
+//  }
 }
 
 bool
