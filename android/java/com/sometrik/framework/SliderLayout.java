@@ -1,6 +1,7 @@
 package com.sometrik.framework;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import com.sometrik.framework.SliderButton.Position;
 
@@ -12,6 +13,7 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
 
   FrameWork frame;
   ArrayList<SliderButton> buttonList;
+  HashMap<Integer, String> labelList;
   int activeButton = 0;
   int nextId = 777775;
   public static int buttonSize = 0;
@@ -21,6 +23,7 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
     super(frame);
 
     buttonList = new ArrayList<SliderButton>();
+    labelList = new HashMap<Integer, String>();
     this.frame = frame;
 
     LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
@@ -40,33 +43,22 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
     SliderButton button = new SliderButton(frame, this, true, buttonList.size());
     button.setId(nextId);
     nextId++;
-    if (buttonList.size() != 0){
-      SliderButton topButton = buttonList.get(buttonList.size() - 1);
-      topButton.setBottomButton(button);
-      button.setTopButton(topButton);
-    } else {
-      button.setPosition(Position.MIDDLE);
+    if (activeButton == 0){
+      if (buttonList.size() != 0){
+        SliderButton topButton = buttonList.get(buttonList.size() - 1);
+        topButton.setBottomButton(button);
+        button.setTopButton(topButton);
+      } else {
+        button.setPosition(Position.MIDDLE);
+      }
+      if (buttonList.size() == 1){
+        button.setPosition(Position.BOTTOM);
+      } else if (buttonList.size() > 1){
+        button.setPosition(Position.BOTTOMHIDDEN);
+      }
+      buttonList.add(button);
+      addView(button);
     }
-    if (buttonList.size() == 1){
-      button.setPosition(Position.BOTTOM);
-    } else if (buttonList.size() > 1){
-      button.setPosition(Position.BOTTOMHIDDEN);
-    }
-    buttonList.add(button);
-    addView(button);
-    
-    LinearLayout layout = new LinearLayout(frame);
-    
-//    RelativeLayout.LayoutParams listParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-//    listParams.addRule(RelativeLayout.BELOW, button.getId());
-//    view.setLayoutParams(listParams);
-//    addView(view);
-//    NativeCommandHandler handler = (NativeCommandHandler) view;
-//    handler.setViewVisibility(false);
-//    button.setList(handler);
-//      
-//    button.setText("Label");
-//    button.setInitialPosition();
     
     RelativeLayout.LayoutParams listParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, 0);
     listParams.addRule(RelativeLayout.BELOW, button.getId());
@@ -76,16 +68,23 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
     scrollView.addChild(view);
     addView(scrollView);
     button.setList(scrollView);
-    button.setText("Label");
+    String label = labelList.get(buttonList.size() - 1);
+    if (label != ""){
+      button.setText(label);
+    } else {
+      button.setText("Label");
+    }
     button.setInitialPosition();
   }
 
   @Override
   public void addOption(int optionId, String text) {
+    System.out.println("Slider addOption: " + optionId + " " + text + " " + buttonList.size());
     if (optionId < buttonList.size()){
       SliderButton button = buttonList.get(optionId);
       button.setText(text);
     }
+    labelList.put(optionId, text);
   }
 
   @Override
@@ -131,7 +130,11 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
 
   @Override
   public void setValue(int v) {
-    System.out.println("setValue "  + v + " activeButton " + activeButton);
+    System.out.println("setValue "  + v + " activeButton " + activeButton + " buttonList.size " + buttonList.size() + " " + getId());
+    if (buttonList.size() == 0){
+      activeButton = v;
+      return;
+    }
     if (activeButton == v){
       System.out.println("button already active");
       return;
@@ -160,16 +163,6 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
     }
   }
   
-//  @Override
-//  public void onVisibilityChanged(View changedView, int visibility){
-//    switch (visibility){
-//    case VISIBLE:
-//      
-//      break;
-//    }
-//  }
-  
-
   @Override
   public void setViewEnabled(Boolean enabled) {
     // TODO Auto-generated method stub
@@ -178,8 +171,11 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
 
   @Override
   public void setViewVisibility(boolean visible) {
-    // TODO Auto-generated method stub
-    
+    if (visible){
+      this.setVisibility(VISIBLE);
+    } else{
+      this.setVisibility(GONE);
+    }
   }
 
   @Override
@@ -196,10 +192,10 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
 
   @Override
   public void clear() {
-    for (SliderButton button : buttonList){
-      NativeCommandHandler child = button.getList();
-      child.clear();
-    }
+//    for (SliderButton button : buttonList){
+//      NativeCommandHandler child = button.getList();
+//      child.clear();
+//    }
   }
 
   @Override
