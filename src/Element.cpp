@@ -67,6 +67,17 @@ Element::setEnabled(bool enabled) {
 }
 
 void
+Element::setVisibility(bool visible) {
+  Command c(Command::SET_VISIBILITY, getInternalId());
+  if (visible){
+    c.setValue(1);
+  } else {
+    c.setValue(0);
+  }
+  sendCommand(c);
+}
+
+void
 Element::style(const std::string & key, const std::string & value) {
 
   Command c(Command::SET_STYLE, getInternalId());
