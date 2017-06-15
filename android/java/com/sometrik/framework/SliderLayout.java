@@ -15,6 +15,7 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
   int activeButton = 0;
   int nextId = 777775;
   public static int buttonSize = 0;
+  boolean usesLists = true;
   
   public SliderLayout(FrameWork frame) {
     super(frame);
@@ -35,24 +36,7 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
 
   @Override
   public void addChild(View view) {
-    // TODO Auto-generated method stub
-    
-  }
-
-  @Override
-  public void addOption(int optionId, String text) {
-    // TODO Auto-generated method stub
-    
-  }
-
-  @Override
-  public void addData(String text, int row, int column, int sheet) {
-    SliderButton button = buttonList.get(sheet);
-    button.getList().addData(text, row, column, 0);
-  }
-
-  @Override
-  public void setValue(String v) {
+    usesLists = false;
     SliderButton button = new SliderButton(frame, this, true, buttonList.size());
     button.setId(nextId);
     nextId++;
@@ -71,15 +55,65 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
     buttonList.add(button);
     addView(button);
     
-    FWList list = new FWList(frame, new FWAdapter(frame, null));
     RelativeLayout.LayoutParams listParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
     listParams.addRule(RelativeLayout.BELOW, button.getId());
-    list.setLayoutParams(listParams);
-    list.setViewVisibility(false);
-    button.setText(v);
-    button.setList(list);
-    addView(list);
+    view.setLayoutParams(listParams);
+    addView(view);
+    NativeCommandHandler handler = (NativeCommandHandler) view;
+    handler.setViewVisibility(false);
+    button.setList(handler);
+      
+    button.setText("Label");
     button.setInitialPosition();
+  }
+
+  @Override
+  public void addOption(int optionId, String text) {
+    if (optionId < buttonList.size()){
+      SliderButton button = buttonList.get(optionId);
+      button.setText(text);
+    }
+  }
+
+  @Override
+  public void addData(String text, int row, int column, int sheet) {
+    SliderButton button = buttonList.get(sheet);
+    button.getList().addData(text, row, column, 0);
+  }
+
+  @Override
+  public void setValue(String v) {
+
+    if (usesLists) {
+      SliderButton button = new SliderButton(frame, this, true, buttonList.size());
+      button.setId(nextId);
+      nextId++;
+      if (buttonList.size() != 0) {
+	SliderButton topButton = buttonList.get(buttonList.size() - 1);
+	topButton.setBottomButton(button);
+	button.setTopButton(topButton);
+      } else {
+	button.setPosition(Position.MIDDLE);
+      }
+      if (buttonList.size() == 1) {
+	button.setPosition(Position.BOTTOM);
+      } else if (buttonList.size() > 1) {
+	button.setPosition(Position.BOTTOMHIDDEN);
+      }
+      buttonList.add(button);
+      addView(button);
+      FWList list = new FWList(frame, new FWAdapter(frame, null));
+      RelativeLayout.LayoutParams listParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+      listParams.addRule(RelativeLayout.BELOW, button.getId());
+      list.setLayoutParams(listParams);
+      list.setViewVisibility(false);
+      button.setList(list);
+      addView(list);
+      button.setText(v);
+      button.setInitialPosition();
+    } else {
+      
+    }
   }
 
   @Override
@@ -150,8 +184,8 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
   @Override
   public void clear() {
     for (SliderButton button : buttonList){
-      FWList list = button.getList();
-      list.clear();
+      NativeCommandHandler child = button.getList();
+      child.clear();
     }
   }
 

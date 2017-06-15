@@ -94,10 +94,10 @@ public class SliderButton extends Button {
     System.out.println("setInitialPosition end " + positionId);
   }
 
-  public void setList(FWList list) {
-    this.child = list;
+  public void setList(NativeCommandHandler child) {
+    this.child = child;
     if (position == Position.MIDDLE){
-      list.setViewVisibility(true);
+      child.setViewVisibility(true);
     }
   }
 
