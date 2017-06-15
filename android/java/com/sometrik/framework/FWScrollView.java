@@ -22,6 +22,14 @@ public class FWScrollView extends ScrollView implements NativeCommandHandler {
       frame.getActionBar().setTitle(title);
     }
   }
+  
+  public FWScrollView(FrameWork frameWork) {
+    super(frameWork);
+    this.frame = frameWork;
+    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+    this.setLayoutParams(params);
+    this.setFillViewport(true);
+  }
 
   @Override
   public void addChild(View view) {
