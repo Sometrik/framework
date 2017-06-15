@@ -13,6 +13,9 @@ public class SliderButton extends Button {
   SliderButton topButton;
   SliderButton bottomButton;
   boolean hideExtraButtons = true;
+  
+  //in millis
+  static int transitionTime = 500;
 
   NativeCommandHandler child;
   SliderLayout sliderLayout;
@@ -131,7 +134,7 @@ public class SliderButton extends Button {
     final float yDelta = sliderLayout.getHeight() - (SliderLayout.buttonSize);
     System.out.println("BaseHeight: " + SliderLayout.buttonSize);
     final Animation animation = new TranslateAnimation(0, 0, 0, -getHeight());
-    animation.setDuration(1000);
+    animation.setDuration(transitionTime);
     startAnimation(animation);
     animation.setAnimationListener(new Animation.AnimationListener() {
 
@@ -164,7 +167,7 @@ public class SliderButton extends Button {
 	final float yDelta = sliderLayout.getHeight() - (2 * base.getHeight());
 	final Animation animation = new TranslateAnimation(0, 0, 0, yDelta * -1);
 	// set Animation for 5 sec
-	animation.setDuration(1000);
+	animation.setDuration(transitionTime);
 	// for button stops in the new position.
 	// animation.setFillAfter(true);
 	startAnimation(animation);
@@ -196,7 +199,7 @@ public class SliderButton extends Button {
 	final float yDelta = sliderLayout.getHeight() - (2 * base.getHeight());
 	final Animation animation = new TranslateAnimation(0, 0, 0, base.getHeight());
 	// set Animation for 5 sec
-	animation.setDuration(1000);
+	animation.setDuration(transitionTime);
 	// for button stops in the new position.
 	// animation.setFillAfter(true);
 	startAnimation(animation);
@@ -248,7 +251,7 @@ public class SliderButton extends Button {
     final float yDelta = sliderLayout.getHeight() - (SliderLayout.buttonSize);
     System.out.println("BaseHeight: " + SliderLayout.buttonSize);
     final Animation animation = new TranslateAnimation(0, 0, sliderLayout.getHeight(), yDelta);
-    animation.setDuration(1000);
+    animation.setDuration(transitionTime);
     startAnimation(animation);
     animation.setAnimationListener(new Animation.AnimationListener() {
 
@@ -282,7 +285,7 @@ public class SliderButton extends Button {
     setLayoutParams(buttonParams);
     final float yDelta = sliderLayout.getHeight() - (SliderLayout.buttonSize);
     final Animation animation = new TranslateAnimation(0, 0, -SliderLayout.buttonSize, 0);
-    animation.setDuration(1000);
+    animation.setDuration(transitionTime);
     startAnimation(animation);
     animation.setAnimationListener(new Animation.AnimationListener() {
 
@@ -320,7 +323,7 @@ public class SliderButton extends Button {
     final float yDelta = sliderLayout.getHeight() - (2 * base.getHeight());
     final Animation animation = new TranslateAnimation(0, 0, 0, yDelta * 1);
     // set Animation for 5 sec
-    animation.setDuration(1000);
+    animation.setDuration(transitionTime);
     // for button stops in the new position.
     // animation.setFillAfter(true);
     startAnimation(animation);
@@ -389,7 +392,7 @@ public class SliderButton extends Button {
 
     System.out.println("BaseHeight: " + SliderLayout.buttonSize);
     final Animation animation = new TranslateAnimation(0, 0, 0, getHeight());
-    animation.setDuration(1000);
+    animation.setDuration(transitionTime);
     startAnimation(animation);
     animation.setAnimationListener(new Animation.AnimationListener() {
 
@@ -420,7 +423,7 @@ public class SliderButton extends Button {
 
     System.out.println("BaseHeight: " + SliderLayout.buttonSize);
     final Animation animation = new TranslateAnimation(0, 0, 0, -getHeight());
-    animation.setDuration(1000);
+    animation.setDuration(transitionTime);
     startAnimation(animation);
     animation.setAnimationListener(new Animation.AnimationListener() {
 
