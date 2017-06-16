@@ -41,8 +41,15 @@ public class FWTextView extends TextView implements NativeCommandHandler {
 
   @Override
   public void setStyle(String key, String value) {
-    //TODO
-    System.out.println("FWTextView couldn't handle command");
+    if (key.equals("font-size")) {
+      if (value.equals("small")) {
+	this.setTextSize(9);
+      } else if (value.equals("medium")) {
+	this.setTextSize(12);
+      } else if (value.equals("large")) {
+	this.setTextSize(15);
+      }
+    }
   }
 
   @Override
