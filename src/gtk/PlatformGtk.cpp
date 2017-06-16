@@ -547,7 +547,6 @@ public:
 
   void addView(int parent_id, int id, GtkWidget * widget, bool expand = false) {
     assert(widget);
-    cerr << "adding view " << id << endl;
     if (initial_view_shown) gtk_widget_show(widget);    
     if (parent_id) {
       auto parent = (GtkContainer *)views_by_id[parent_id];
