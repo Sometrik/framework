@@ -108,18 +108,19 @@ public class FWButton extends Button implements NativeCommandHandler {
 	params.height = LinearLayout.LayoutParams.MATCH_PARENT;
       }
       setLayoutParams(params);
-    } else if (key.equals("weight")){
+    } else if (key.equals("weight")) {
       LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
       params.weight = Integer.parseInt(value);
       setLayoutParams(params);
       System.out.println("button weight: " + params.weight);
-    } else if (key.equals("pressed")){
-      this.setPressed(true);
-//      this.setBackground(frame.getResources().getDrawable(android.R.drawable.alert_light_frame));
-      this.setBackground(frame.getResources().getDrawable(android.R.drawable.dialog_holo_dark_frame));
-    } else if (key.equals("unpressed")){
-      this.setPressed(false);
-      this.setBackground(frame.getResources().getDrawable(android.R.drawable.dialog_holo_light_frame));
+    } else if (key.equals("pressed")) {
+      if (value.equals("true") || value.equals("1")) {
+	this.setPressed(true);
+	this.setBackground(frame.getResources().getDrawable(android.R.drawable.dialog_holo_dark_frame));
+      } else {
+	this.setPressed(false);
+	this.setBackground(frame.getResources().getDrawable(android.R.drawable.dialog_holo_light_frame));
+      }
     } else if (key.equals("icon_left") || key.equals("icon_right") || key.equals("icon_top") || key.equals("icon_bottom")){
 
       AssetManager mgr = frame.getAssets();
