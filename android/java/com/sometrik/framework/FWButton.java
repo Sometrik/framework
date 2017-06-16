@@ -1,10 +1,14 @@
 package com.sometrik.framework;
 
-import android.graphics.Typeface;
+import java.io.IOException;
+import java.io.InputStream;
+
+import android.content.res.AssetManager;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ScaleDrawable;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.RotateAnimation;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -13,12 +17,14 @@ import android.widget.LinearLayout.LayoutParams;
 public class FWButton extends Button implements NativeCommandHandler {
 
   FrameWork frame;
+  BitmapDrawable leftDraw;
+  BitmapDrawable rightDraw;
+  BitmapDrawable bottomDraw;
+  BitmapDrawable topDraw;
   
   public FWButton(FrameWork frameWork) {
     super(frameWork);
     this.frame = frameWork;
-    this.setBackground(frame.getResources().getDrawable(android.R.drawable.dialog_holo_light_frame));
-    
   }
 
 
@@ -63,16 +69,18 @@ public class FWButton extends Button implements NativeCommandHandler {
     System.out.println("Button style " + key + " " + value);
     if (key.equals("font-size")){
       if (value.equals("small")){
-	this.setTextAppearance(frame, android.R.style.TextAppearance_DeviceDefault_Small);
+//	this.setTextAppearance(frame, android.R.style.TextAppearance_DeviceDefault_Small);
+	this.setTextSize(9);
       } else if (value.equals("medium")){
-	this.setTextAppearance(frame, android.R.style.TextAppearance_DeviceDefault_Medium);
+//	this.setTextAppearance(frame, android.R.style.TextAppearance_DeviceDefault_Medium);
+	this.setTextSize(12);
       } else if (value.equals("large")){
-	this.setTextAppearance(frame, android.R.style.TextAppearance_DeviceDefault_Large);
+//	this.setTextAppearance(frame, android.R.style.TextAppearance_DeviceDefault_Large);
+	this.setTextSize(15);
       }
     } else if (key.equals("gravity")) {
       Log.d("button", "setting gravity: ");
       LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
-      params.weight = 1;
       if (value.equals("bottom")) {
 	params.gravity = Gravity.BOTTOM;
 	      Log.d("button", " to bottom");
@@ -112,7 +120,31 @@ public class FWButton extends Button implements NativeCommandHandler {
     } else if (key.equals("unpressed")){
       this.setPressed(false);
       this.setBackground(frame.getResources().getDrawable(android.R.drawable.dialog_holo_light_frame));
-//      this.setBackground(null);
+    } else if (key.equals("icon_left") || key.equals("icon_right") || key.equals("icon_top") || key.equals("icon_bottom")){
+
+      AssetManager mgr = frame.getAssets();
+      try {
+        InputStream stream = mgr.open(value);
+        BitmapDrawable draw = new BitmapDrawable(stream);
+        this.setGravity(Gravity.CENTER);
+        
+
+      if (key.equals("icon_right")){
+        rightDraw = draw;
+      } else if (key.equals("icon_top")){
+        topDraw = draw;
+      } else if (key.equals("icon_bottom")){
+        bottomDraw = draw;
+      } else if (key.equals("icon_left")){
+	leftDraw = draw;
+      }
+//      this.setCompoundDrawablePadding(-50);
+//         this.setPadding(0, 160, 0, 300);
+      this.setCompoundDrawablesWithIntrinsicBounds(leftDraw, topDraw, rightDraw, bottomDraw);
+      } catch (IOException e) {
+        System.out.println("no picture found: " + value);
+        e.printStackTrace();
+      }
     }
   }
 
