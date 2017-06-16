@@ -62,6 +62,7 @@ class Command {
     ADD_OPTION,
     ADD_SHEET,
     ADD_COLUMN,
+    RESHAPE_SHEET,
     QUIT_APP,
 
     // Timers
