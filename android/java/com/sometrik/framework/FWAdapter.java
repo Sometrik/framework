@@ -343,16 +343,17 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
 	TextView txtFirst = new TextView(frame);
 	txtFirst.setLayoutParams(listItemParams);
 	txtFirst.setTypeface(null, Typeface.BOLD);
-	txtFirst.setTextAppearance(frame, android.R.style.TextAppearance_DeviceDefault_Small);
+//	txtFirst.setTextAppearance(frame, android.R.style.TextAppearance_DeviceDefault_Small);
+	txtFirst.setTextSize(9);
 	txtFirst.setFocusable(false);
 	txtFirst.setFocusableInTouchMode(false);
 	txtFirst.setClickable(false);
-	txtFirst.setPadding(0, 20, 0, 20);
 	layout.addView(txtFirst);
 	// layout.setBackgroundColor(0xFF777777);
 	txtFirst.setText(data.getData(i));
       }
 
+	layout.setPadding(0, 20, 0, 20);
       return layout;
 
     } else {
@@ -377,13 +378,14 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
 	txtFirst.setFocusable(false);
 	txtFirst.setFocusableInTouchMode(false);
 	txtFirst.setClickable(false);
-	txtFirst.setTextAppearance(frame, android.R.style.TextAppearance_DeviceDefault_Small);
+//	txtFirst.setTextAppearance(frame, android.R.style.TextAppearance_DeviceDefault_Small);
+	txtFirst.setTextSize(9);
 	txtFirst.setLayoutParams(listItemParams);
 	layout.addView(txtFirst);
 	txtFirst.setText(data.getData(i));
       }
 
-
+      layout.setPadding(0, 20, 0, 20);
       return layout;
     }
   }
