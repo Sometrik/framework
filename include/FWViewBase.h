@@ -16,6 +16,7 @@ class FWViewBase : public Element {
   }
 
   void show() override {
+    Element::show();
     Command c(Command::SET_INT_VALUE, getInternalId());
     c.setValue(1);
     sendCommand(c);
