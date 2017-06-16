@@ -37,6 +37,7 @@ public class SliderButton extends Button {
     this.hideExtraButtons = hideExtraButtons;
     this.positionId = positionId;
     base = this;
+    setBackground(frame.getResources().getDrawable(android.R.drawable.dialog_holo_light_frame));
 
     setOnClickListener(new Button.OnClickListener() {
       @Override
@@ -165,11 +166,13 @@ public class SliderButton extends Button {
     if (topButton != null) {
       if (position == Position.BOTTOM) {
 	final float yDelta = sliderLayout.getHeight() - (2 * base.getHeight());
+//	final Animation animation = new TranslateAnimation(0, 0, sliderLayout.getHeight() - base.getHeight(), -base.getHeight());
 	final Animation animation = new TranslateAnimation(0, 0, 0, yDelta * -1);
 	// set Animation for 5 sec
 	animation.setDuration(transitionTime);
 	// for button stops in the new position.
 	// animation.setFillAfter(true);
+	
 	startAnimation(animation);
 	animation.setAnimationListener(new Animation.AnimationListener() {
 
@@ -180,6 +183,7 @@ public class SliderButton extends Button {
 	    TranslateAnimation anim = new TranslateAnimation(0.0f, 0.0f, 0.0f, 0.0f);
 	    anim.setDuration(1);
 	    base.startAnimation(anim);
+
 
 	    RelativeLayout.LayoutParams buttonParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
 	    buttonParams.addRule(RelativeLayout.BELOW, topButton.getId());
