@@ -30,6 +30,13 @@ class ListView : public Element {
     sendCommand(c);
   }
 
+  void reshapeSheet(int sheet, int size) {
+    Command c(Command::RESHAPE_SHEET, getInternalId());
+    c.setSheet(sheet);
+    c.setValue(size);
+    sendCommand(c);    
+  }
+      
   void addColumn(const std::string & name, ColumnType type = TEXT) {
     Command c(Command::ADD_COLUMN, getInternalId());
     c.setTextValue(name);
