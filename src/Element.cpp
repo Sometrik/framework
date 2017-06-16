@@ -67,13 +67,16 @@ Element::setEnabled(bool enabled) {
 }
 
 void
-Element::setVisibility(bool visible) {
+Element::show() {
   Command c(Command::SET_VISIBILITY, getInternalId());
-  if (visible){
-    c.setValue(1);
-  } else {
-    c.setValue(0);
-  }
+  c.setValue(1);
+  sendCommand(c);
+}
+
+void
+Element::hide() {
+  Command c(Command::SET_VISIBILITY, getInternalId());
+  c.setValue(0);
   sendCommand(c);
 }
 

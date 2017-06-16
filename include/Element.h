@@ -19,8 +19,8 @@ class Element : public EventHandler {
   Element & operator= (const Element & other) = delete; 
   ~Element();
   
-  virtual void show() { }
-  virtual void hide() { }
+  virtual void show();
+  virtual void hide();
   virtual void refresh() { }
     
   virtual bool isA(const std::string & className) const {
@@ -32,7 +32,6 @@ class Element : public EventHandler {
   void setError(bool t) override;
 
   void setEnabled(bool enabled);
-  void setVisibility(bool visibled);
 
   void style(const std::string & key, const std::string & value);
   void sendCommand(const Command & command);
