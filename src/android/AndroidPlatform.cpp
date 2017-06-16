@@ -87,7 +87,6 @@ public:
     args.version = JNI_VERSION_1_6; // choose your JNI version
     args.name = NULL; // you might want to give the java thread a name
     args.group = NULL; // you might want to assign the java thread to a ThreadGroup
-    __android_log_print(ANDROID_LOG_INFO, "Sometrik", "attaching JVM (platform)");
     javaVM->AttachCurrentThread(&env, &args);
 
     return env;
