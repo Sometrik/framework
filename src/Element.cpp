@@ -68,6 +68,7 @@ Element::setEnabled(bool enabled) {
 
 void
 Element::show() {
+  is_visible = true;
   Command c(Command::SET_VISIBILITY, getInternalId());
   c.setValue(1);
   sendCommand(c);
@@ -75,6 +76,7 @@ Element::show() {
 
 void
 Element::hide() {
+  is_visible = false;
   Command c(Command::SET_VISIBILITY, getInternalId());
   c.setValue(0);
   sendCommand(c);

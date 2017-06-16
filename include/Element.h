@@ -29,6 +29,12 @@ class Element : public EventHandler {
   
   virtual int showModal(Element * parent) { return 0; }
 
+  bool isVisible() const {
+    if (!is_visible) return false;
+    else if (parent) return parent->isChildVisible(this);
+    else return true;
+  }
+  
   void setError(bool t) override;
 
   void setEnabled(bool enabled);
@@ -152,7 +158,9 @@ class Element : public EventHandler {
   void removeChild(Element * c);
 		   
  protected:
-
+  virtual bool isChildVisible(const Element * child) const {
+    return is_visible;
+  }
   virtual void create() { }
   virtual void initialize(FWPlatform * _platform);
   void initializeChildren();
@@ -168,6 +176,7 @@ class Element : public EventHandler {
   unsigned int flags; // initialized in constructor
   bool has_error = false;
   std::vector<Command> pendingCommands;
+  bool is_visible = true;
 
   static int nextInternalId;
 };
