@@ -108,9 +108,9 @@ public class FWButton extends Button implements NativeCommandHandler {
 	params.height = LinearLayout.LayoutParams.MATCH_PARENT;
       }
       setLayoutParams(params);
-    } else if (key.equals("add_weight")){
+    } else if (key.equals("weight")){
       LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
-      params.weight += 1;
+      params.weight = Integer.parseInt(value);
       setLayoutParams(params);
       System.out.println("button weight: " + params.weight);
     } else if (key.equals("pressed")){
