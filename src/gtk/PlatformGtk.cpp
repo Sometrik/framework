@@ -410,6 +410,15 @@ public:
     }
       break;
 
+    case Command::SET_VISIBILITY: {
+      auto view = views_by_id[command.getInternalId()];
+      if (view) {
+	if (command.getValue()) gtk_widget_show(view);
+	else gtk_widget_hide(view);
+      }
+    }
+      break;
+
     case Command::SET_ERROR: {
       auto view = views_by_id[command.getInternalId()];
       if (view) {
