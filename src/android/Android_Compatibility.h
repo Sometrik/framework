@@ -5,53 +5,58 @@
 #include <sstream>
 
 namespace std {
-  template <typename T> inline
-   std::string to_string(T value) {
-      std::ostringstream os ;
-      os << value ;
-      return os.str() ;
+  template <typename T>
+    inline string to_string(T value) {
+    ostringstream os ;
+    os << value ;
+    return os.str() ;
   }
 
-  inline float
-  stof(std::string value){
+  inline int stoi(const string & str, size_t* idx = 0, int base = 10) {
+#if 1
+    return strtoul(str.c_str(), 0, base);
+#else
+    stringstream buffer(value);
+    int i;
+    buffer >> i;
+    return i;
+#endif
+  }
+
+  inline float stof(string value) {
+#if 1
+    stringstream buffer(value);
+    float f;
+    buffer >> f;
+    return f;
+#else
     const char * cstring = value.c_str();
     float f;
     sscanf(cstring, "%f", &f);
     return f;
+#endif
   }
 
-  inline int
-  stoi(std::string value){
-    std::stringstream buffer(value);
-    int i;
-    buffer >> i;
-    return i;
-  }
-
-  inline double
-  stod(std::string value){
-    std::stringstream buffer(value);
+  inline double stod(string value) {
+    stringstream buffer(value);
     double d;
     buffer >> d;
     return d;
   }
 
-  inline long long
-  stoll(std::string value){
-    std::stringstream buffer(value);
+  inline long long stoll(string value){
+    stringstream buffer(value);
     long long l;
     buffer >> l;
     return l;
   }
 
-  inline unsigned long long stoull(std::string value) {
-  std::stringstream buffer(value);
-  unsigned long long l;
-  buffer >> l;
-  return l;
+  inline unsigned long long stoull(string value) {
+    stringstream buffer(value);
+    unsigned long long l;
+    buffer >> l;
+    return l;
   }
 };
-
-
 
 #endif
