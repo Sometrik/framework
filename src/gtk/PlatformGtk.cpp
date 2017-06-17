@@ -109,9 +109,11 @@ public:
       gtk_scrolled_window_set_min_content_height((GtkScrolledWindow*)window, 400);
       auto store = gtk_tree_store_new(5, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
       auto gridview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(store));
+      gtk_tree_view_set_activate_on_single_click(GTK_TREE_VIEW(gridview), 1);
       // gtk_widget_set_vexpand((GtkWidget*)gridview, 1);
       // gtk_widget_set_hexpand((GtkWidget*)gridview, 1);
-      g_signal_connect(gridview, "cursor-changed", G_CALLBACK(send_selection_value), this);
+      // g_signal_connect(gridview, "cursor-changed", G_CALLBACK(send_selection_value), this);
+      g_signal_connect(gridview, "row-activated", G_CALLBACK(send_activation_value), this);
       gtk_container_add(GTK_CONTAINER(window), gridview);
       addView(command, window, true);
       if (initial_view_shown) gtk_widget_show(gridview);
@@ -121,6 +123,25 @@ public:
     case Command::ADD_SHEET: {
       auto & sheets = sheets_by_id[command.getInternalId()];
       sheets.push_back({ command.getTextValue(), false });
+    }
+      break;
+
+    case Command::RESHAPE_SHEET: {
+      size_t max_size = command.getValue();
+      auto window = views_by_id[command.getInternalId()];
+      assert(window);
+      if (window) {
+	auto & sheets = sheets_by_id[command.getInternalId()];
+	if (command.getSheet() < sheets.size()) {
+	  auto view = gtk_bin_get_child(GTK_BIN(window));
+	  auto model = gtk_tree_view_get_model((GtkTreeView*)view);
+	  GtkTreeIter iter, parent;
+	  gtk_tree_model_iter_nth_child(model, &parent, 0, command.getSheet());
+	  while (gtk_tree_model_iter_nth_child(model, &iter, &parent, max_size)) {
+	    gtk_tree_store_remove(GTK_TREE_STORE(model), &iter);
+	  }
+	}	  
+      }
     }
       break;
       
@@ -249,12 +270,15 @@ public:
 	gtk_style_context_add_class(gtk_widget_get_style_context(box), "linked");
 	auto previous = gtk_button_new_from_icon_name("go-previous", GTK_ICON_SIZE_BUTTON);
 	auto next = gtk_button_new_from_icon_name("go-next", GTK_ICON_SIZE_BUTTON);
+	auto settings = gtk_button_new_from_icon_name("properties", GTK_ICON_SIZE_BUTTON);
 	g_signal_connect(previous, "clicked", G_CALLBACK(on_previous_button), this);
 	g_signal_connect(next, "clicked", G_CALLBACK(on_next_button), this);
+	g_signal_connect(settings, "clicked", G_CALLBACK(on_settings_button), this);
 	gtk_box_pack_start((GtkBox*)box, previous, 0, 0, 0);
 	gtk_box_pack_start((GtkBox*)box, next, 0, 0, 0);
 	
 	gtk_header_bar_pack_start((GtkHeaderBar*)header, box);
+	gtk_header_bar_pack_start((GtkHeaderBar*)header, settings);
 	
 	gtk_widget_show_all(header);
 	gtk_window_set_titlebar(GTK_WINDOW(window), header);
@@ -616,8 +640,10 @@ protected:
   static void send_combo_value(GtkWidget * widget, gpointer data);
   static void send_text_value(GtkWidget * widget, gpointer data);
   static void send_selection_value(GtkWidget * widget, gpointer data);
+  static void send_activation_value(GtkTreeView * treeview, GtkTreePath * path, GtkTreeViewColumn * column, gpointer data);
   static void on_previous_button(GtkWidget * widget, gpointer data);
   static void on_next_button(GtkWidget * widget, gpointer data);
+  static void on_settings_button(GtkWidget * widget, gpointer data);
   static gboolean idle_callback(gpointer data);
   
 private:
@@ -785,6 +811,36 @@ PlatformGtk::send_selection_value(GtkWidget * widget, gpointer data) {
 }
 
 void
+PlatformGtk::send_activation_value(GtkTreeView * treeview, GtkTreePath * path, GtkTreeViewColumn * column, gpointer data) {
+  PlatformGtk * platform = (PlatformGtk*)data;
+  // auto selection = gtk_tree_view_get_selection(treeview);
+  int id = platform->getId(gtk_widget_get_parent(GTK_WIDGET(treeview)));
+  assert(id);
+  if (id) {
+    int depth;
+    auto i = gtk_tree_path_get_indices_with_depth(path, &depth);
+    assert(i);
+    auto & sheets = platform->getSheetsById(id);
+
+    int sheet = 0, row = 0;
+    if (sheets.empty() && depth == 1) {
+      row = i[0];
+    } else if (!sheets.empty() && depth == 2) {
+      sheet = i[0];
+      row = i[1];
+    } else {
+      cerr << "unable to handle selection\n";
+      return;
+    }
+      
+    ValueEvent ev(platform->getTime(), row, sheet);
+    platform->postEvent(id, ev);
+    
+    // g_list_free_full(l, (GDestroyNotify)gtk_tree_path_free);
+  }
+}
+
+void
 PlatformGtk::on_previous_button(GtkWidget * widget, gpointer data) {
   PlatformGtk * platform = (PlatformGtk*)data;
   platform->sendCommand2(Command(Command::HISTORY_GO_BACK, 0));  
@@ -793,6 +849,13 @@ PlatformGtk::on_previous_button(GtkWidget * widget, gpointer data) {
 void
 PlatformGtk::on_next_button(GtkWidget * widget, gpointer data) {
   cerr << "got next\n";
+  PlatformGtk * platform = (PlatformGtk*)data;
+  platform->sendCommand2(Command(Command::HISTORY_GO_FORWARD, 0));  
+}
+
+void
+PlatformGtk::on_settings_button(GtkWidget * widget, gpointer data) {
+  cerr << "got settings\n";
   PlatformGtk * platform = (PlatformGtk*)data;
   platform->sendCommand2(Command(Command::HISTORY_GO_FORWARD, 0));  
 }
