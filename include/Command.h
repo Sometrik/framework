@@ -18,6 +18,7 @@ class Command {
     CREATE_TEXTFIELD, // For viewing single value
     CREATE_TEXTVIEW, // For viewing multiline text
     CREATE_LISTVIEW, // For viewing lists
+    CREATE_SIMPLELISTVIEW,
     CREATE_GRIDVIEW, // For viewing tables
     CREATE_BUTTON,
     CREATE_SWITCH,
