@@ -35,7 +35,13 @@ public:
 
   const std::string & getName() const { return name; }
 
+  void setActiveViewId(int id) { activeViewId = id; }
+  int getActiveViewId() const { return activeViewId; }
+
  protected:
+  bool isChildVisible(const Element & child) const override {
+    return activeViewId == child.getInternalId();
+  }
   void initialize(FWPlatform * _platform) override {
     Element::initialize(_platform);
     Command c(Command::CREATE_APPLICATION, getParentInternalId(), getInternalId());
@@ -49,6 +55,7 @@ public:
   std::string name, iap_public_key;
   bool full_screen;
   std::shared_ptr<Logger> logger;
+  int activeViewId = 0;
 };
 
 #endif
