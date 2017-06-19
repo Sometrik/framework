@@ -82,20 +82,20 @@ public class FWList extends ExpandableListView implements NativeCommandHandler{
 
   @Override
   public void addData(String text, int row, int column, int sheet){
-    System.out.println("FWList adding data for row " + row + " column " + column + " sheet " + sheet);
+    // System.out.println("FWList adding data for row " + row + " column " + column + " sheet " + sheet);
     ArrayList<String> dataRow = adapter.getDataRow(row, sheet);
     if (dataRow != null){
-      System.out.println("FWList row found adding data");
+      // System.out.println("FWList row found adding data");
       while (dataRow.size() < column) { // Add empty cells if needed
 	dataRow.add(dataRow.size(), "");
       }
       if (dataRow.size() > column) {
-	System.out.println("FWList replacing column " + column);
+	// System.out.println("FWList replacing column " + column);
 	dataRow.remove(column);
       }
       dataRow.add(column, text);
     } else {
-      System.out.println("FWList creating new row");
+      // System.out.println("FWList creating new row");
       dataRow = new ArrayList<String>();
       dataRow.add(text);
       adapter.addItem(row, sheet, dataRow);
@@ -186,9 +186,7 @@ public class FWList extends ExpandableListView implements NativeCommandHandler{
   public void flush() {
     System.out.println("FWList flush");
     adapter.notifyDataSetChanged();
-    System.out.println("FWList flush");
     invalidate();
-    System.out.println("FWList flush");
   }
 
   @Override
