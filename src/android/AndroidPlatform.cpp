@@ -596,7 +596,7 @@ void Java_com_sometrik_framework_FrameWork_onResize(JNIEnv* env, jclass clazz, d
 
 void Java_com_sometrik_framework_FrameWork_keyPressed(JNIEnv* env, jobject thiz, double timestamp, int keyId, int viewId) {
   if (keyId == 4) {
-    int poppedView = platform->popViewBackHistory();
+    int poppedView = platform->getApplication().popViewBackHistory();
     if (poppedView != 0) {
       Command co(Command::SET_INT_VALUE, poppedView);
       co.setValue(2);
@@ -806,7 +806,7 @@ void Java_com_sometrik_framework_FrameWork_setNativeActiveView(JNIEnv* env, jobj
   __android_log_print(ANDROID_LOG_INFO, "Sometrik", "setActivewView: %u", activeView);
   auto & app = platform->getApplication();
   if (app.getActiveViewId() != 0 && recordHistory) {
-    platform->addToHistory(app.getActiveViewId());
+    app.addToHistory(app.getActiveViewId());
   }
   app.setActiveViewId(activeView);
   //TODO

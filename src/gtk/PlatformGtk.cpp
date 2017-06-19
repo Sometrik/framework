@@ -306,11 +306,12 @@ public:
 
     case Command::HISTORY_GO_BACK:
     case Command::HISTORY_GO_FORWARD: {
+      auto & app = getApplication();
       int id;
       if (command.getType() == Command::HISTORY_GO_BACK) {
-	id = popViewBackHistory();
+	id = app.popViewBackHistory();
       } else {
-	id = popViewForwardHistory();
+	id = app.popViewForwardHistory();
       }
       if (id) {
 	cerr << "id = " << id << endl;
@@ -333,7 +334,7 @@ public:
 	cerr << "no view " << command.getInternalId() << " for SET_INT_VALUE\n";
       } else if (gtk_widget_get_parent(view) == stack) {
 	auto & app = getApplication();
-	addToHistory(app.getActiveViewId());
+	app.addToHistory(app.getActiveViewId());
 	app.setActiveViewId(command.getInternalId());
 	gtk_stack_set_visible_child((GtkStack*)stack, view);
 	string title = getTextProperty((GtkContainer*)stack, view, "title");

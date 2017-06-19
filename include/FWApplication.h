@@ -38,6 +38,31 @@ public:
   void setActiveViewId(int id) { activeViewId = id; }
   int getActiveViewId() const { return activeViewId; }
 
+  void addToHistory(int view_internal_id) {
+    view_back_history.push_back(view_internal_id);
+    view_forward_history.clear();
+  }
+
+  int popViewBackHistory() {
+    int id = 0;
+    if (!view_back_history.empty()) {
+      id = view_back_history.back();
+      view_back_history.pop_back();
+      view_forward_history.push_back(id);
+    }
+    return id;    
+  }
+
+  int popViewForwardHistory() {
+    int id = 0;
+    if (!view_forward_history.empty()) {
+      id = view_forward_history.back();
+      view_forward_history.pop_back();
+      view_back_history.push_back(id);
+    }
+    return id;    
+  }
+  
  protected:
   bool isChildVisible(const Element & child) const override {
     return activeViewId == child.getInternalId();
@@ -56,6 +81,7 @@ public:
   bool full_screen;
   std::shared_ptr<Logger> logger;
   int activeViewId = 0;
+  std::vector<int> view_back_history, view_forward_history;
 };
 
 #endif

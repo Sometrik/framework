@@ -107,32 +107,7 @@ class FWPlatform : public Element {
   }
 
   virtual double getTime() const;
-
-  void addToHistory(int view_internal_id) {
-    view_back_history.push_back(view_internal_id);
-    view_forward_history.clear();
-  }
-
-  int popViewBackHistory() {
-    int id = 0;
-    if (!view_back_history.empty()) {
-      id = view_back_history.back();
-      view_back_history.pop_back();
-      view_forward_history.push_back(id);
-    }
-    return id;    
-  }
-
-  int popViewForwardHistory() {
-    int id = 0;
-    if (!view_forward_history.empty()) {
-      id = view_forward_history.back();
-      view_forward_history.pop_back();
-      view_back_history.push_back(id);
-    }
-    return id;    
-  }
-  
+ 
   MobileAccount & getMobileAccount();
 
   Logger & getLogger() {
@@ -175,7 +150,6 @@ class FWPlatform : public Element {
   std::shared_ptr<Logger> logger;
 
   std::list<std::shared_ptr<PlatformThread> > threads;
-  std::vector<int> view_back_history, view_forward_history;
   std::unordered_map<int, Element *> registered_elements;
   size_t num_running_threads = 0;
 };
