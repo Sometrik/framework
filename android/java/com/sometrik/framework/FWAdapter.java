@@ -375,6 +375,7 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
 	txtFirst.setFocusable(false);
 	txtFirst.setFocusableInTouchMode(false);
 	txtFirst.setClickable(false);
+	txtFirst.setSingleLine();
 	layout.addView(txtFirst);
 	// layout.setBackgroundColor(0xFF777777);
 	txtFirst.setText(data.getData(i));
