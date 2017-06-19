@@ -70,8 +70,11 @@ public:
   }
 
   void sendCommand2(const Command & command) override {
-    if (!getActiveViewId() && (command.getType() == Command::CREATE_FORMVIEW || command.getType() == Command::CREATE_OPENGL_VIEW)) {
-      setActiveViewId(command.getChildInternalId());
+    if (command.getType() == Command::CREATE_FORMVIEW || command.getType() == Command::CREATE_OPENGL_VIEW) {
+      auto & app = getApplication();
+      if (!app.getActiveViewId()) {
+	app.setActiveViewId(command.getChildInternalId());
+      }
     }
     
     switch (command.getType()) {
@@ -314,7 +317,8 @@ public:
 	auto view = views_by_id[id];
 	if (view) {
 	  cerr << "found view\n";
-	  setActiveViewId(id);
+	  auto & app = getApplication();
+	  app.setActiveViewId(id);
 	  gtk_stack_set_visible_child((GtkStack*)stack, view);
 	  string title = getTextProperty((GtkContainer*)stack, view, "title");
 	  gtk_header_bar_set_subtitle((GtkHeaderBar*)header, title.c_str());
@@ -328,10 +332,9 @@ public:
       if (!view) {
 	cerr << "no view " << command.getInternalId() << " for SET_INT_VALUE\n";
       } else if (gtk_widget_get_parent(view) == stack) {
-	if (command.getValue() != 2) {
-	  addToHistory(getActiveViewId());
-	}
-	setActiveViewId(command.getInternalId());
+	auto & app = getApplication();
+	addToHistory(app.getActiveViewId());
+	app.setActiveViewId(command.getInternalId());
 	gtk_stack_set_visible_child((GtkStack*)stack, view);
 	string title = getTextProperty((GtkContainer*)stack, view, "title");
 	gtk_header_bar_set_subtitle((GtkHeaderBar*)header, title.c_str());
@@ -561,10 +564,10 @@ public:
     return buffer.str();
   }
 
-  void activate(GtkApplication * _app) {
-    app = _app;
+  void activate(GtkApplication * _gtk_app) {
+    gtk_app = _gtk_app;
         
-    window = gtk_application_window_new (app);
+    window = gtk_application_window_new(gtk_app);
     gtk_window_set_title (GTK_WINDOW (window), "Window");
     gtk_window_set_default_size (GTK_WINDOW (window), width, height);
   }
@@ -647,7 +650,7 @@ protected:
   static gboolean idle_callback(gpointer data);
   
 private:
-  GtkApplication * app = nullptr;
+  GtkApplication * gtk_app = nullptr;
   GtkWidget * window = nullptr;
   GtkWidget * header = nullptr;
   GtkWidget * stack = nullptr;
@@ -872,16 +875,16 @@ PlatformGtk::idle_callback(gpointer data) {
   return FALSE;
 }
 
-static void activate(GtkApplication * app, gpointer user_data) {
+static void activate(GtkApplication * gtk_app, gpointer user_data) {
   cerr << "activate\n";
   PlatformGtk * platform = (PlatformGtk*)user_data;
-  platform->activate(app);
+  platform->activate(gtk_app);
   FWApplication * application = applicationMain();
   platform->addChild(std::shared_ptr<Element>(application));  
 }
 
 int main (int argc, char *argv[]) {
-  GtkApplication * app;
+  GtkApplication * gtk_app;
 
   PlatformGtk platform;  
   platform.setActualDisplayWidth(width);
@@ -889,10 +892,10 @@ int main (int argc, char *argv[]) {
 
   cerr << "creating application\n";
   
-  app = gtk_application_new("com.sometrik.test", G_APPLICATION_FLAGS_NONE); // FIXME: add correct name
-  g_signal_connect (app, "activate", G_CALLBACK (activate), &platform);
-  int status = g_application_run (G_APPLICATION (app), argc, argv);
-  g_object_unref (app);
+  gtk_app = gtk_application_new("com.sometrik.test", G_APPLICATION_FLAGS_NONE); // FIXME: add correct name
+  g_signal_connect (gtk_app, "activate", G_CALLBACK (activate), &platform);
+  int status = g_application_run (G_APPLICATION(gtk_app), argc, argv);
+  g_object_unref(gtk_app);
   
 #if 0
   SysEvent ev(platform.getTime(), SysEvent::DESTROY);
