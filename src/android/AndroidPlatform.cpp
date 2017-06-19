@@ -32,6 +32,7 @@
 #include <PurchaseEvent.h>
 #include <TimerEvent.h>
 #include <ValueEvent.h>
+#include <VisibilityEvent.h>
 #include <SysEvent.h>
 #include <CommandEvent.h>
 #include <DrawEvent.h>
@@ -787,6 +788,12 @@ void Java_com_sometrik_framework_FrameWork_textChangedEvent(JNIEnv* env, jobject
 void Java_com_sometrik_framework_FrameWork_intChangedEvent(JNIEnv* env, jobject thiz, double timestamp, jint id, jint changedInt, jint changedInt2) {
   __android_log_print(ANDROID_LOG_INFO, "Sometrik", "intChangedEvent: %u %u", changedInt, changedInt2);
   ValueEvent ev(timestamp, changedInt, changedInt2);
+  platform->queueEvent(id, ev);
+}
+
+void Java_com_sometrik_framework_FrameWork_visibilityChangedEvent(JNIEnv* env, jobject thiz, double timestamp, jint id, bool visible) {
+  __android_log_print(ANDROID_LOG_INFO, "Sometrik", "visibilityChangedEvent on %u", id);
+  VisibilityEvent ev(timestamp, visible);
   platform->queueEvent(id, ev);
 }
 
