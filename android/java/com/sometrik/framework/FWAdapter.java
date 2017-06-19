@@ -123,6 +123,9 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
   }
 
   public void reshape(int sheet, int size) {
+    if (size == dataList.size()){
+      return;
+    }
     if (size < dataList.size()) {
       // Currently removes rows from the end
       ArrayList<Integer> keyList = new ArrayList<Integer>();
@@ -142,6 +145,7 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
 	dataList.put(dataList.size(), new AdapterData(newSheet, AdapterDataType.SHEET));
       }
     }
+    notifyDataSetChanged();
   }
 
   @Override
