@@ -3,6 +3,7 @@
 
 #include <string>
 #include <sstream>
+#include <cstdlib>
 
 namespace std {
   template <typename T>
@@ -16,7 +17,7 @@ namespace std {
 #if 1
     return strtoul(str.c_str(), 0, base);
 #else
-    stringstream buffer(value);
+    stringstream buffer(str);
     int i;
     buffer >> i;
     return i;
@@ -37,6 +38,14 @@ namespace std {
 #endif
   }
 
+
+  inline unsigned long long stoull(string value) {
+     stringstream buffer(value);
+     unsigned long long l;
+     buffer >> l;
+     return l;
+   }
+
   inline double stod(string value) {
     stringstream buffer(value);
     double d;
@@ -51,12 +60,7 @@ namespace std {
     return l;
   }
 
-  inline unsigned long long stoull(string value) {
-    stringstream buffer(value);
-    unsigned long long l;
-    buffer >> l;
-    return l;
-  }
+
 };
 
 #endif
