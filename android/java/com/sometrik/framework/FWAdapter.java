@@ -22,17 +22,17 @@ import android.widget.TextView;
 
 public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapter {
 
-  enum AdapterDataType { SHEET, DATA }
-  
+  enum AdapterDataType {
+    SHEET, DATA
+  }
+
   private List<View> viewList;
-//  private ArrayList<String> sheetList;
   private HashMap<Integer, AdapterData> dataList;
   private AdapterData columnData;
   private FrameWork frame;
-  private int addedHeaders = 0;
   private LinearLayout.LayoutParams listItemParams;
   private boolean sheetsEnabled = false;
-  
+
   public FWAdapter(FrameWork frame, List<View> viewList) {
     super(frame, 0, viewList);
     this.frame = frame;
@@ -66,15 +66,15 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
 	  return data.stringList;
 	}
       } else {
-	  Log.d("adapter", "no children - no row found");
+	Log.d("adapter", "no children - no row found");
 	return null;
       }
-      
+
     } else {
       AdapterData sheetData = dataList.get(sheet);
-	  Log.d("adapter", "sheetData size: " + dataList.size());
-      if (sheetData == null){
-	  Log.d("adapter", "sheetData null");
+      Log.d("adapter", "sheetData size: " + dataList.size());
+      if (sheetData == null) {
+	Log.d("adapter", "sheetData null");
 	return null;
       }
       if (sheetData.getChildren().size() != 0) {
@@ -87,7 +87,7 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
 	  return data.stringList;
 	}
       } else {
-	  Log.d("adapter", "no children - no row found");
+	Log.d("adapter", "no children - no row found");
 	return null;
       }
     }
@@ -99,27 +99,49 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
       dataList.put(row, new AdapterData(cellItems));
       return;
     } else {
-      Log.d("adapter",  "datalist size: " + dataList.size());
+      Log.d("adapter", "datalist size: " + dataList.size());
       AdapterData sheetData = dataList.get(sheet);
-      if (sheetData == null){
+      if (sheetData == null) {
 	Log.d("adapter", "no sheet found");
 	return;
       }
       sheetData.addChild(row, new AdapterData(cellItems));
     }
   }
-  
-  public void addColumn(String columnText){
+
+  public void addColumn(String columnText) {
     columnData.addString(columnText);
   }
-  
-  public void addSheet(String sheetName){
+
+  public void addSheet(String sheetName) {
     int size = dataList.size();
     ArrayList<String> sheet = new ArrayList<String>();
     sheet.add(sheetName);
     Log.d("adapter", "putting sheet to " + (size));
     sheetsEnabled = true;
     dataList.put(size, new AdapterData(sheet, AdapterDataType.SHEET));
+  }
+
+  public void reshape(int sheet, int size) {
+    if (size < dataList.size()) {
+      // Currently removes rows from the end
+      ArrayList<Integer> keyList = new ArrayList<Integer>();
+      for (Entry<Integer, AdapterData> entry : dataList.entrySet()) {
+	keyList.add(entry.getKey());
+      }
+
+      for (int i = 0; i < size; i++) {
+	int key = keyList.get(keyList.size() - 1);
+	dataList.remove(key);
+      }
+    } else {
+      int difference = size - dataList.size();
+      System.out.println("adding " + difference + " new rows");
+      for (int i = 0; i < difference; i++) {
+	ArrayList<String> newSheet = new ArrayList<String>();
+	dataList.put(dataList.size(), new AdapterData(newSheet, AdapterDataType.SHEET));
+      }
+    }
   }
 
   @Override
@@ -145,9 +167,9 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
     Log.d("adapter", "getItemId");
     return 0;
   }
-  
+
   @Override
-  public void clear(){
+  public void clear() {
     Log.d("adapter", "clear");
     Iterator<Entry<Integer, AdapterData>> iterator = dataList.entrySet().iterator();
     while (iterator.hasNext()) {
@@ -203,13 +225,13 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
 
     return layout;
   }
-  
+
   @Override
   public Object getChild(int groupPosition, int childPosition) {
     Log.d("adapter", "getChild");
     return null;
   }
-  
+
   @Override
   public boolean isEnabled(int position) {
     return true;
@@ -224,7 +246,7 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
   @Override
   public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
     Log.d("adapter", "GetChildView position: " + groupPosition + " childPosition: " + childPosition);
-    if (columnData.getSize() != 0){
+    if (columnData.getSize() != 0) {
       groupPosition--;
       Log.d("adapter", "GetChildView (changed) position: " + groupPosition + " childPosition: " + childPosition);
     }
@@ -238,7 +260,6 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
     expandLayout.setOrientation(LinearLayout.VERTICAL);
     expandLayout.setLayoutParams(params);
     scrollView.addView(expandLayout);
-
 
     Log.d("adapter", "Children size on getChildView: " + children.size());
     for (int i = 0; i < children.size(); i++) {
@@ -265,17 +286,17 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
   @Override
   public int getChildrenCount(int groupPosition) {
     Log.d("adapter", "getChildrenCount " + groupPosition);
-    if (groupPosition == 0 || !sheetsEnabled){
+    if (groupPosition == 0 || !sheetsEnabled) {
       return 0;
     }
     Log.d("adapter", "getChildrenCount (changed) " + (groupPosition - 1));
-    
+
     AdapterData sheetData = dataList.get(groupPosition - 1);
-    if (sheetData == null){
+    if (sheetData == null) {
       Log.d("adapter", "sheetData null");
       return 0;
     }
-    if (sheetData.getChildren().size() > 0){
+    if (sheetData.getChildren().size() > 0) {
       Log.d("adapter", "children found");
       return 1;
     } else {
@@ -299,7 +320,7 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
   @Override
   public Object getGroup(int groupPosition) {
     Log.d("adapter", "getGroup");
-    
+
     return null;
   }
 
@@ -310,19 +331,20 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
     } else {
       return dataList.size();
     }
-//    int counter = 0;
-//    for (HashMap.Entry<Integer, AdapterData> pair : dataList.entrySet()) {
-//      if (pair.getValue().type == AdapterDataType.SHEET && pair.getValue().getChildren().size() == 0) {
-//	continue;
-//      } else {
-//	counter++;
-//      }
-//    }
-//    if (columnData.getSize() != 0) {
-//      return counter + 1;
-//    } else {
-//      return counter;
-//    }
+    // int counter = 0;
+    // for (HashMap.Entry<Integer, AdapterData> pair : dataList.entrySet()) {
+    // if (pair.getValue().type == AdapterDataType.SHEET &&
+    // pair.getValue().getChildren().size() == 0) {
+    // continue;
+    // } else {
+    // counter++;
+    // }
+    // }
+    // if (columnData.getSize() != 0) {
+    // return counter + 1;
+    // } else {
+    // return counter;
+    // }
   }
 
   @Override
@@ -343,7 +365,8 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
 	TextView txtFirst = new TextView(frame);
 	txtFirst.setLayoutParams(listItemParams);
 	txtFirst.setTypeface(null, Typeface.BOLD);
-//	txtFirst.setTextAppearance(frame, android.R.style.TextAppearance_DeviceDefault_Small);
+	// txtFirst.setTextAppearance(frame,
+	// android.R.style.TextAppearance_DeviceDefault_Small);
 	txtFirst.setTextSize(9);
 	txtFirst.setFocusable(false);
 	txtFirst.setFocusableInTouchMode(false);
@@ -353,7 +376,7 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
 	txtFirst.setText(data.getData(i));
       }
 
-	layout.setPadding(0, 20, 0, 20);
+      layout.setPadding(0, 20, 0, 20);
       return layout;
 
     } else {
@@ -366,19 +389,21 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
       Log.d("adapter", "trying to get from index: " + (position));
       data = dataList.get(position);
 
-//      if (data.type == AdapterDataType.SHEET && data.getChildren().size() == 0) {
-//	layout.setVisibility(LinearLayout.INVISIBLE);
-//	layout.setLayoutParams(new AbsListView.LayoutParams(-1, -2));
-//	return layout;
-//      }
-	
+      // if (data.type == AdapterDataType.SHEET && data.getChildren().size() ==
+      // 0) {
+      // layout.setVisibility(LinearLayout.INVISIBLE);
+      // layout.setLayoutParams(new AbsListView.LayoutParams(-1, -2));
+      // return layout;
+      // }
+
       for (int i = 0; i < data.getSize(); i++) {
 	Log.d("adapter", "looping throud data " + i);
 	TextView txtFirst = new TextView(frame);
 	txtFirst.setFocusable(false);
 	txtFirst.setFocusableInTouchMode(false);
 	txtFirst.setClickable(false);
-//	txtFirst.setTextAppearance(frame, android.R.style.TextAppearance_DeviceDefault_Small);
+	// txtFirst.setTextAppearance(frame,
+	// android.R.style.TextAppearance_DeviceDefault_Small);
 	txtFirst.setTextSize(9);
 	txtFirst.setLayoutParams(listItemParams);
 	layout.addView(txtFirst);
@@ -398,42 +423,42 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
   @Override
   public void onGroupCollapsed(int groupPosition) {
     Log.d("adapter", "onGroupCollapsed");
-    
+
   }
 
   @Override
   public void onGroupExpanded(int groupPosition) {
     Log.d("adapter", "onGroupExpanded");
-    
+
   }
-  
- 
+
   public class AdapterData {
-    
+
     private ArrayList<String> stringList;
     private boolean columnData = false;
     private ArrayList<AdapterData> children;
     private AdapterDataType type = AdapterDataType.DATA;
-    
+
     public AdapterData(ArrayList<String> stringList) {
       this.stringList = stringList;
       children = new ArrayList<AdapterData>();
     }
+
     public AdapterData(ArrayList<String> stringList, AdapterDataType type) {
       this.type = type;
       this.stringList = stringList;
       children = new ArrayList<AdapterData>();
     }
-    
-    public void addString(String text){
+
+    public void addString(String text) {
       stringList.add(text);
     }
 
     public int getSize() {
       return stringList.size();
     }
-    
-    public void addChild(int row, AdapterData data){
+
+    public void addChild(int row, AdapterData data) {
       children.add(row, data);
     }
 
@@ -453,17 +478,13 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
       }
       return children.get(row);
     }
-    
+
     public ArrayList<AdapterData> getChildren() {
       return children;
     }
-    
-    public ArrayList<String> getList(){
+
+    public ArrayList<String> getList() {
       return stringList;
     }
-
   }
-
 }
-
-

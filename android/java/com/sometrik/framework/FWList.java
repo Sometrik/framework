@@ -184,7 +184,6 @@ public class FWList extends ExpandableListView implements NativeCommandHandler{
 
   @Override
   public void reshape(int value, int size) {
-    // TODO Auto-generated method stub
-    
+    adapter.reshape(value, size);
   }
 }

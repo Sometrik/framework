@@ -228,8 +228,12 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
 
   @Override
   public void reshape(int value, int size) {
-    // TODO Auto-generated method stub
-    
+    if (value < buttonList.size()) {
+      SliderButton button = buttonList.get(value);
+      button.getList().reshape(0, size);
+    } else {
+      System.out.println("Error reshaping list. index of " + value + " is too big");
+    }
   }
 
 }
