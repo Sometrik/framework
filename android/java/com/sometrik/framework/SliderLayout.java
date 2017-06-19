@@ -116,6 +116,7 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
       buttonList.add(button);
       addView(button);
       FWList list = new FWList(frame, new FWAdapter(frame, null));
+      list.setOwnerId(getId());
       RelativeLayout.LayoutParams listParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
       listParams.addRule(RelativeLayout.BELOW, button.getId());
       list.setLayoutParams(listParams);

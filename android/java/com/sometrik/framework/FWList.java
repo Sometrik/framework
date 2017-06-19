@@ -19,6 +19,7 @@ public class FWList extends ExpandableListView implements NativeCommandHandler{
 
   private FrameWork frame;
   private FWAdapter adapter;
+  private int ownerId = 0;
   
   public FWList(final FrameWork frame, final FWAdapter adapter) {
     super(frame);
@@ -38,7 +39,11 @@ public class FWList extends ExpandableListView implements NativeCommandHandler{
 	  System.out.println("column title clicked. ignoring");
 	} else {
 	  System.out.println("row clicked. Sending intChangedEvent of " + (groupPosition - 1));
-	  frame.intChangedEvent(System.currentTimeMillis() / 1000.0, getElementId(), 0, groupPosition - 1);
+	  if (ownerId == 0) {
+	    frame.intChangedEvent(System.currentTimeMillis() / 1000.0, getElementId(), 0, groupPosition - 1);
+	  } else {
+	    frame.intChangedEvent(System.currentTimeMillis() / 1000.0, ownerId, 0, groupPosition - 1);
+	  }
   	}
 	return true;
       }
@@ -47,7 +52,11 @@ public class FWList extends ExpandableListView implements NativeCommandHandler{
       @Override
       public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
 	System.out.println("child clicked. Sending intChangedEvent of " + (groupPosition - 1) + " " + (childPosition - 1));
-	frame.intChangedEvent(System.currentTimeMillis() / 1000.0, getElementId(), childPosition - 1, groupPosition - 1);
+	if (ownerId == 0) {
+	  frame.intChangedEvent(System.currentTimeMillis() / 1000.0, getElementId(), childPosition - 1, groupPosition - 1);
+	} else {
+	  frame.intChangedEvent(System.currentTimeMillis() / 1000.0, ownerId, childPosition - 1, groupPosition - 1);
+	}
 	return true;
       }
     });
@@ -67,6 +76,8 @@ public class FWList extends ExpandableListView implements NativeCommandHandler{
       }
     });
   }
+  
+  public void setOwnerId(int ownerId){ this.ownerId = ownerId; }
 
   @Override
   public void addData(String text, int row, int column, int sheet){
