@@ -4,6 +4,7 @@
 #include <EventHandler.h>
 #include <Selection.h>
 #include <Command.h>
+#include <VisibilityEvent.h>
 
 class FWPlatform;
 class FWApplication;
@@ -43,6 +44,9 @@ class Element : public EventHandler {
   void sendCommand(const Command & command);
 
   void onEvent(Event & ev) override;
+  void onVisibilityEvent(VisibilityEvent & ev) override {
+    is_visible = ev.isVisible();
+  }
 
   Element & insertChild(const std::shared_ptr<Element> & element) {
     element->parent = this;
