@@ -253,6 +253,7 @@ public class NativeCommand {
       view.addChild(debugList);
       break;
     case CREATE_LISTVIEW:
+    case CREATE_SIMPLELISTVIEW:
       if (isSet(FLAG_SLIDERVIEW)) {
 	SliderLayout slider = new SliderLayout(frame);
 	slider.setId(childInternalId);
