@@ -92,4 +92,10 @@ public class FWCheckBox extends CheckBox implements NativeCommandHandler {
     // TODO Auto-generated method stub
     
   }
+
+  @Override
+  public void reshape(int value, int size) {
+    // TODO Auto-generated method stub
+    
+  }
 }

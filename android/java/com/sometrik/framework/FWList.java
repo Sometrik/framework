@@ -181,4 +181,10 @@ public class FWList extends ExpandableListView implements NativeCommandHandler{
     adapter.notifyDataSetChanged();
     System.out.println("AddOption " + columnType + " text");
   }
+
+  @Override
+  public void reshape(int value, int size) {
+    // TODO Auto-generated method stub
+    
+  }
 }

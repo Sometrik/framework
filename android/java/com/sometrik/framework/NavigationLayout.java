@@ -136,4 +136,10 @@ public class NavigationLayout extends LinearLayout implements NativeCommandHandl
     
   }
 
+  @Override
+  public void reshape(int value, int size) {
+    // TODO Auto-generated method stub
+    
+  }
+
 }

@@ -427,6 +427,10 @@ public class NativeCommand {
 	e.printStackTrace();
 	System.out.println("Error on launchPurchase with message: " + e.getMessage());
       }
+      break;
+    case RESHAPE_SHEET:
+      view.reshape(sheet, value);
+      break;
     default:
       System.out.println("Message couldn't be handled");
       break;

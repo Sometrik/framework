@@ -10,6 +10,7 @@ public interface NativeCommandHandler {
   public void addData(String text, int row, int column, int sheet);
   public void setValue(String v);
   public void setValue(int v);
+  public void reshape(int value, int size);
   public void setViewEnabled(Boolean enabled);
   public void setViewVisibility(boolean visible);
   public void setStyle(String key, String value);
