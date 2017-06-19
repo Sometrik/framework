@@ -1,7 +1,7 @@
 #ifndef _LISTVIEW_H_
 #define _LISTVIEW_H_
 
-#include <UIElement.h>
+#include <Element.h>
 
 #include <Command.h>
 #include <CommandEvent.h>
@@ -19,13 +19,6 @@ class ListView : public Element {
 
   void addSheet(const std::string & name) {
     Command c(Command::ADD_SHEET, getInternalId());
-    c.setTextValue(name);
-    sendCommand(c);
-  }
-
-  void setSheet(int sheet, const std::string & name) {
-    Command c(Command::ADD_OPTION, getInternalId());
-    c.setValue(sheet);
     c.setTextValue(name);
     sendCommand(c);
   }
@@ -53,7 +46,7 @@ class ListView : public Element {
     sendCommand(c);
   }
 
-  //Used to expand a sheet
+  // Used to expand a sheet
   void setValue(int value) {
     Command c(Command::SET_INT_VALUE, getInternalId());
     c.setValue(value);
