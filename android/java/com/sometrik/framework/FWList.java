@@ -40,9 +40,10 @@ public class FWList extends ExpandableListView implements NativeCommandHandler{
 	} else {
 	  System.out.println("row clicked. Sending intChangedEvent of " + (groupPosition - 1));
 	  if (ownerId == 0) {
-	    frame.intChangedEvent(System.currentTimeMillis() / 1000.0, getElementId(), 0, groupPosition - 1);
+	    frame.intChangedEvent(System.currentTimeMillis() / 1000.0, getElementId(), groupPosition - 1, 0);
 	  } else {
-	    frame.intChangedEvent(System.currentTimeMillis() / 1000.0, ownerId, 0, groupPosition - 1);
+	    System.out.println("ownerId " + ownerId);
+	    frame.intChangedEvent(System.currentTimeMillis() / 1000.0, ownerId, groupPosition - 1, 0);
 	  }
   	}
 	return true;
@@ -53,9 +54,9 @@ public class FWList extends ExpandableListView implements NativeCommandHandler{
       public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
 	System.out.println("child clicked. Sending intChangedEvent of " + (groupPosition - 1) + " " + (childPosition - 1));
 	if (ownerId == 0) {
-	  frame.intChangedEvent(System.currentTimeMillis() / 1000.0, getElementId(), childPosition - 1, groupPosition - 1);
+	  frame.intChangedEvent(System.currentTimeMillis() / 1000.0, getElementId(), groupPosition - 1, childPosition - 1);
 	} else {
-	  frame.intChangedEvent(System.currentTimeMillis() / 1000.0, ownerId, childPosition - 1, groupPosition - 1);
+	  frame.intChangedEvent(System.currentTimeMillis() / 1000.0, ownerId, groupPosition - 1, childPosition - 1);
 	}
 	return true;
       }
@@ -81,24 +82,25 @@ public class FWList extends ExpandableListView implements NativeCommandHandler{
 
   @Override
   public void addData(String text, int row, int column, int sheet){
-    Log.d("FWList", "adding data for row " + row + " column " + column + " sheet " + sheet);
+    System.out.println("FWList adding data for row " + row + " column " + column + " sheet " + sheet);
     ArrayList<String> dataRow = adapter.getDataRow(row, sheet);
     if (dataRow != null){
-      Log.d("FWList", "row found adding data");
+      System.out.println("FWList row found adding data");
       while (dataRow.size() < column) { // Add empty cells if needed
 	dataRow.add(dataRow.size(), "");
       }
       if (dataRow.size() > column) {
-	Log.d("FWList", "replacing column " + column);
+	System.out.println("FWList replacing column " + column);
 	dataRow.remove(column);
       }
       dataRow.add(column, text);
     } else {
-      Log.d("FWList", "creating new row");
+      System.out.println("FWList creating new row");
       dataRow = new ArrayList<String>();
       dataRow.add(text);
       adapter.addItem(row, sheet, dataRow);
     }
+    adapter.notifyDataSetChanged();
   }
   
   @Override
@@ -134,6 +136,7 @@ public class FWList extends ExpandableListView implements NativeCommandHandler{
   @Override
   public void setValue(String v) {
     adapter.addSheet(v);
+    adapter.notifyDataSetChanged();
   }
 
   @Override
@@ -176,12 +179,16 @@ public class FWList extends ExpandableListView implements NativeCommandHandler{
   @Override
   public void clear() {
     adapter.clear();
+    adapter.notifyDataSetChanged();
   }
 
   @Override
   public void flush() {
+    System.out.println("FWList flush");
     adapter.notifyDataSetChanged();
+    System.out.println("FWList flush");
     invalidate();
+    System.out.println("FWList flush");
   }
 
   @Override
@@ -198,5 +205,6 @@ public class FWList extends ExpandableListView implements NativeCommandHandler{
   @Override
   public void reshape(int value, int size) {
     adapter.reshape(value, size);
+    adapter.notifyDataSetChanged();
   }
 }
