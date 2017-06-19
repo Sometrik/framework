@@ -371,7 +371,7 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
 	txtFirst.setTypeface(null, Typeface.BOLD);
 	// txtFirst.setTextAppearance(frame,
 	// android.R.style.TextAppearance_DeviceDefault_Small);
-	txtFirst.setTextSize(9);
+	txtFirst.setTextSize(10);
 	txtFirst.setFocusable(false);
 	txtFirst.setFocusableInTouchMode(false);
 	txtFirst.setClickable(false);
