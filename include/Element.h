@@ -31,7 +31,7 @@ class Element : public EventHandler {
 
   bool isVisible() const {
     if (!is_visible) return false;
-    else if (parent) return parent->isChildVisible(this);
+    else if (parent) return parent->isChildVisible(*this);
     else return true;
   }
   
@@ -158,7 +158,7 @@ class Element : public EventHandler {
   void removeChild(Element * c);
 		   
  protected:
-  virtual bool isChildVisible(const Element * child) const {
+  virtual bool isChildVisible(const Element & child) const {
     return is_visible;
   }
   virtual void create() { }
