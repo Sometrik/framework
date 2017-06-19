@@ -335,8 +335,8 @@ DateTime::getTimeUTC() const {
 #if defined WIN32
   return _mkgmtime(&tt);
 #elif defined __ANDROID__
-  //this needs to be changed
-  return mktime(&tt);
+  // this needs to be changed
+  return mktime(&tt) - timezone; // or _timezone
 #else
   return timegm(&tt);
 #endif
