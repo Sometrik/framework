@@ -265,8 +265,11 @@ AndroidPlatform::convertToByteArray(const std::string & s) {
 
 void
 AndroidPlatform::sendCommand2(const Command & command) {
-  if (!getActiveViewId() && (command.getType() == Command::CREATE_FORMVIEW || command.getType() == Command::CREATE_OPENGL_VIEW)) {
-    setActiveViewId(command.getChildInternalId());
+  if (command.getType() == Command::CREATE_FORMVIEW || command.getType() == Command::CREATE_OPENGL_VIEW) {
+    auto & app = getApplication();
+    if (!app.getActiveViewId()) {
+      app.setActiveViewId(command.getChildInternalId());
+    }
   }
   
   auto env = getEnv();
@@ -468,7 +471,7 @@ AndroidPlatform::renderLoop() {
 
     if (canDraw && surface && redraw) {
       DrawEvent dev(getTime());
-      postEvent(getActiveViewId(), dev);
+      postEvent(getApplication().getActiveViewId(), dev);
       
       if (!eglSwapBuffers(display, surface)) {
 	getLogger().println("error eglSwapBuffers");
@@ -605,7 +608,7 @@ void Java_com_sometrik_framework_FrameWork_keyPressed(JNIEnv* env, jobject thiz,
     }
   } else if (keyId == 82) {
     CommandEvent ce(timestamp, FW_ID_MENU);
-    platform->queueEvent(platform->getActiveViewId(), ce);
+    platform->queueEvent(platform->getApplication().getActiveViewId(), ce);
   } else {
     CommandEvent ce(timestamp, keyId);
     platform->queueEvent(viewId, ce);
@@ -794,10 +797,11 @@ void Java_com_sometrik_framework_FrameWork_timerEvent(JNIEnv* env, jobject thiz,
 
 void Java_com_sometrik_framework_FrameWork_setNativeActiveView(JNIEnv* env, jobject thiz, double timestamp, jint activeView, bool recordHistory) {
   __android_log_print(ANDROID_LOG_INFO, "Sometrik", "setActivewView: %u", activeView);
-  if (platform->getActiveViewId() != 0 && recordHistory) {
-    platform->addToHistory(platform->getActiveViewId());
+  auto & app = platform->getApplication();
+  if (app.getActiveViewId() != 0 && recordHistory) {
+    platform->addToHistory(app.getActiveViewId());
   }
-  platform->setActiveViewId(activeView);
+  app.setActiveViewId(activeView);
   //TODO
   // Wrong thread. Send event instead
 }
