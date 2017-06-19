@@ -73,10 +73,6 @@ class FWPlatform : public Element {
     return *soundCanvas;
   }
 #endif
-
-  void setActiveViewId(int id) {
-    activeViewId = id;
-  }
   
   virtual void sendCommand2(const Command & command) = 0;
   
@@ -88,7 +84,6 @@ class FWPlatform : public Element {
   int getActualDisplayWidth() const { return actual_display_width; }
   int getActualDisplayHeight() const { return actual_display_height; }
   float getDisplayScale() const { return display_scale; }
-  int getActiveViewId() const { return activeViewId; }
 
   virtual void createFBO(int flags) { }
 
@@ -178,7 +173,6 @@ class FWPlatform : public Element {
   std::shared_ptr<SoundCanvas> soundCanvas;
 #endif
   std::shared_ptr<Logger> logger;
-  int activeViewId = 0;
 
   std::list<std::shared_ptr<PlatformThread> > threads;
   std::vector<int> view_back_history, view_forward_history;
