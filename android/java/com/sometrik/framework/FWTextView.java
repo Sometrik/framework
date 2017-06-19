@@ -93,4 +93,10 @@ public class FWTextView extends TextView implements NativeCommandHandler {
     // TODO Auto-generated method stub
     
   }
+
+  @Override
+  public void addColumn(String text, int columnType) {
+    // TODO Auto-generated method stub
+    
+  }
 }

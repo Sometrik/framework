@@ -319,11 +319,10 @@ public class NativeCommand {
       break;
       
     case ADD_OPTION:
-      // Forward Command to FWPicker
       view.addOption(getValue(), getTextValue());
       break;
     case ADD_COLUMN:
-      view.addOption(getValue(), getTextValue());
+      view.addColumn(getTextValue(), getValue());
       break;
     case ADD_SHEET:
       System.out.println("add_sheet: " + textValue + " " + rowNumber + " " + columnNumber + " " + sheet);

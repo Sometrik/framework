@@ -15,7 +15,7 @@ import android.widget.ListView;
 
 public class FWList extends ExpandableListView implements NativeCommandHandler{
   
-  enum ColumnType { TEXT, NUMERIC, TIMESTAMP };
+  enum ColumnType { TEXT, NUMERIC, TIMESTAMP, ICON };
 
   private FrameWork frame;
   private FWAdapter adapter;
@@ -104,10 +104,7 @@ public class FWList extends ExpandableListView implements NativeCommandHandler{
 
   @Override
   public void addOption(int optionId, String text) {
-    ColumnType type = ColumnType.values()[optionId - 1];
-    System.out.println("columnType int: " + ColumnType.values()[optionId - 1]);
-    adapter.addColumn(text);
-    adapter.notifyDataSetChanged();
+    System.out.println("FWlist couldn't handle commnad addOption");
   }
 
   @Override
@@ -161,5 +158,16 @@ public class FWList extends ExpandableListView implements NativeCommandHandler{
   public void flush() {
     adapter.notifyDataSetChanged();
     invalidate();
+  }
+
+  @Override
+  public void addColumn(String text, int columnType) {
+    System.out.println("AddOption " + columnType + " text");
+    ColumnType type = ColumnType.values()[columnType - 1];
+    System.out.println("columnType int: " + ColumnType.values()[columnType - 1]);
+    adapter.addColumn(text);
+    System.out.println("AddOption " + columnType + " text");
+    adapter.notifyDataSetChanged();
+    System.out.println("AddOption " + columnType + " text");
   }
 }

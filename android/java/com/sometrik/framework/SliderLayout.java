@@ -15,6 +15,7 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
   ArrayList<SliderButton> buttonList;
   HashMap<Integer, String> labelList;
   int activeButton = 0;
+  boolean topVisible = false;
   int nextId = 777775;
   public static int buttonSize = 0;
   boolean usesLists = true;
@@ -215,6 +216,13 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
   public void flush() {
     // TODO Auto-generated method stub
     
+  }
+
+  @Override
+  public void addColumn(String text, int columnType) {
+    for (SliderButton button : buttonList){
+      button.getList().addColumn(text, columnType);
+    }
   }
 
 }

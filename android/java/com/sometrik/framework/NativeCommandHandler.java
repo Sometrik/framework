@@ -6,6 +6,7 @@ public interface NativeCommandHandler {
   public void onScreenOrientationChange(boolean isLandscape);
   public void addChild(View view);
   public void addOption(int optionId, String text);
+  public void addColumn(String text, int columnType);
   public void addData(String text, int row, int column, int sheet);
   public void setValue(String v);
   public void setValue(int v);

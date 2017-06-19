@@ -142,4 +142,10 @@ public class FWDialog extends Dialog implements NativeCommandHandler{
     
   }
 
+  @Override
+  public void addColumn(String text, int columnType) {
+    // TODO Auto-generated method stub
+    
+  }
+
 }

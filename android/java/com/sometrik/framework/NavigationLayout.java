@@ -130,4 +130,10 @@ public class NavigationLayout extends LinearLayout implements NativeCommandHandl
     
   }
 
+  @Override
+  public void addColumn(String text, int columnType) {
+    // TODO Auto-generated method stub
+    
+  }
+
 }
