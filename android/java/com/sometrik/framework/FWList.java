@@ -102,6 +102,19 @@ public class FWList extends ExpandableListView implements NativeCommandHandler{
   }
   
   @Override
+  public void onVisibilityChanged(View changedView, int visibility) {
+    switch (visibility) {
+    case VISIBLE:
+      frame.visibilityChangedEvent(System.currentTimeMillis() / 1000.0, getId(), true);
+      break;
+    case GONE:
+    case INVISIBLE: 
+      frame.visibilityChangedEvent(System.currentTimeMillis() / 1000.0, getId(), false);
+    break;
+    }
+  }
+  
+  @Override
   public void onScreenOrientationChange(boolean isLandscape) {
     // TODO Auto-generated method stub
     

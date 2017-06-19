@@ -46,6 +46,19 @@ public class NativeSurface extends SurfaceView implements NativeCommandHandler {
 //    FrameWork.onResize(System.currentTimeMillis() / 1000.0, width, height, getId());
     
   }
+  
+  @Override
+  public void onVisibilityChanged(View changedView, int visibility) {
+    switch (visibility) {
+    case VISIBLE:
+      framework.visibilityChangedEvent(System.currentTimeMillis() / 1000.0, getId(), true);
+      break;
+    case GONE:
+    case INVISIBLE: 
+      framework.visibilityChangedEvent(System.currentTimeMillis() / 1000.0, getId(), false);
+    break;
+    }
+  }
 
   @Override
   public int getElementId() {

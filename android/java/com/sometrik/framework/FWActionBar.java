@@ -109,7 +109,6 @@ public class FWActionBar implements NativeCommandHandler {
     }
   }
 
-
   @Override
   public void clear() {
     // TODO Auto-generated method stub

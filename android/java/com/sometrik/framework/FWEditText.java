@@ -68,6 +68,19 @@ public class FWEditText extends EditText implements NativeCommandHandler {
   }
 
   @Override
+  public void onVisibilityChanged(View changedView, int visibility) {
+    switch (visibility) {
+    case VISIBLE:
+      frame.visibilityChangedEvent(System.currentTimeMillis() / 1000.0, getId(), true);
+      break;
+    case GONE:
+    case INVISIBLE: 
+      frame.visibilityChangedEvent(System.currentTimeMillis() / 1000.0, getId(), false);
+    break;
+    }
+  }
+  
+  @Override
   public void addChild(View view) {
     System.out.println("FWEditText couldn't handle command");
   }

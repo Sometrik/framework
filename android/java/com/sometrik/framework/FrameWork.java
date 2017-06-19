@@ -85,6 +85,7 @@ public class FrameWork extends Activity {
   public native void endModal(double timestamp, int value, byte[] textValue);
   public native void textChangedEvent(double timestamp, int id, byte[] textValue);
   public native void intChangedEvent(double timestamp, int id, int changedInt, int changedInt2);
+  public native void visibilityChangedEvent(double timestamp, int id, boolean visible);
   public native void keyPressed(double timestamp, int keyId, int viewId);
   public native void touchEvent(int viewId, int mode, int fingerIndex, double timestamp, float x, float y);
   public native void flushTouchEvent(double timestamp, int viewId, int mode);
