@@ -5,6 +5,7 @@
 #include <SDLSoundCanvas.h>
 #include <Command.h>
 #include <FWApplication.h>
+#include <FWViewBase.h>
 
 #include <OpenGLInitEvent.h>
 #include <TouchEvent.h>
@@ -285,6 +286,8 @@ public:
 	
 	gtk_widget_show_all(header);
 	gtk_window_set_titlebar(GTK_WINDOW(window), header);
+
+	addView(0, command.getChildInternalId(), header);
       }
     }
       break;
@@ -321,8 +324,16 @@ public:
 	  auto & app = getApplication();
 	  app.setActiveViewId(id);
 	  gtk_stack_set_visible_child((GtkStack*)stack, view);
-	  string title = getTextProperty((GtkContainer*)stack, view, "title");
-	  gtk_header_bar_set_subtitle((GtkHeaderBar*)header, title.c_str());
+
+	  if (header) {
+	    string title;
+	    auto e = getRegisteredElement(id);
+	    if (e) {
+	      auto e2 = dynamic_cast<FWViewBase*>(e);
+	      if (e2) title = e2->getTitle().c_str();
+	    }
+	    gtk_header_bar_set_subtitle((GtkHeaderBar*)header, title.c_str());
+	  }
 	}
       }
     }
@@ -337,8 +348,7 @@ public:
 	app.addToHistory(app.getActiveViewId());
 	app.setActiveViewId(command.getInternalId());
 	gtk_stack_set_visible_child((GtkStack*)stack, view);
-	string title = getTextProperty((GtkContainer*)stack, view, "title");
-	gtk_header_bar_set_subtitle((GtkHeaderBar*)header, title.c_str());
+	gtk_header_bar_set_subtitle((GtkHeaderBar*)header, command.getTextValue().c_str());
       } else if (GTK_IS_SWITCH(view)) {
 	gtk_switch_set_active((GtkSwitch*)view, command.getValue() ? true : false);
       } else {
@@ -357,6 +367,8 @@ public:
 	auto buffer = gtk_text_view_get_buffer((GtkTextView*)view);
 	gtk_text_buffer_set_text(buffer, command.getTextValue().c_str(),
 				 command.getTextValue().size());
+      } else if (GTK_IS_HEADER_BAR(view)) {
+	gtk_header_bar_set_subtitle((GtkHeaderBar*)view, command.getTextValue().c_str());
       } else {
 	assert(0);
       }
@@ -515,16 +527,11 @@ public:
 				     GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
       addView(0, command.getChildInternalId(), sw);
       string s = "form" + to_string(command.getChildInternalId());
-      auto & title = command.getTextValue();
-      if (title.empty()) {
-	gtk_stack_add_named((GtkStack *)stack, sw, s.c_str());
-      } else {
-	gtk_stack_add_titled((GtkStack *)stack, sw, s.c_str(), title.c_str());
-      }
-
+      gtk_stack_add_named((GtkStack *)stack, sw, s.c_str());
+      
       if (!initial_view_shown) {
 	if (header) {
-	  gtk_header_bar_set_subtitle((GtkHeaderBar*)header, title.c_str());
+	  gtk_header_bar_set_subtitle((GtkHeaderBar*)header, command.getTextValue().c_str());
 	}
 	gtk_stack_set_visible_child((GtkStack*)stack, sw);
 	gtk_widget_show_all(window);
