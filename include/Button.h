@@ -69,10 +69,6 @@ protected:
     sendCommand(c);
   }
 
-  void initialize(FWPlatform * _platform) override {
-    Element::initialize(_platform);
-  }
-
  private:
   std::string label;
 };
