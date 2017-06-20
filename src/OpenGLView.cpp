@@ -14,14 +14,15 @@
 using namespace std;
 
 void
-OpenGLView::initialize(FWPlatform * _platform) {
-  FWViewBase::initialize(_platform);
-  sendCommand(Command(Command::CREATE_OPENGL_VIEW, getParentInternalId(), getInternalId()));
-  logical_width = int(_platform->getActualDisplayWidth() / _platform->getDisplayScale());
-  logical_height = int(_platform->getActualDisplayHeight() / _platform->getDisplayScale());
-  actual_width = _platform->getActualDisplayWidth();
-  actual_height = _platform->getActualDisplayHeight();
-  initializeChildren();
+OpenGLView::create() {
+  Command c(Command::CREATE_OPENGL_VIEW, getParentInternalId(), getInternalId());
+  c.setTextValue(getTitle());
+  sendCommand(c);
+  
+  logical_width = int(platform->getActualDisplayWidth() / platform->getDisplayScale());
+  logical_height = int(platform->getActualDisplayHeight() / platform->getDisplayScale());
+  actual_width = platform->getActualDisplayWidth();
+  actual_height = platform->getActualDisplayHeight();
 }
 
 void

@@ -37,7 +37,7 @@ class OpenGLView : public FWViewBase {
 #endif
  
  protected:
-  void initialize(FWPlatform * _platform) override;
+  void create() override;
   void checkGLError();
 
  private:
