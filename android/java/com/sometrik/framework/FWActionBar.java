@@ -1,9 +1,14 @@
 package com.sometrik.framework;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 import android.app.ActionBar;
-import android.view.MenuItem;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.view.View;
 
 public class FWActionBar implements NativeCommandHandler {
@@ -11,9 +16,11 @@ public class FWActionBar implements NativeCommandHandler {
   int id;
   ActionBar actionBar;
   ArrayList<ActionBarItem> itemList;
+  FrameWork frame;
   
 
   public FWActionBar(FrameWork frame, String title, int id){
+    this.frame = frame;
     actionBar = frame.getActionBar();
     actionBar.setDisplayShowTitleEnabled(true);
     actionBar.setTitle(title);
@@ -81,8 +88,17 @@ public class FWActionBar implements NativeCommandHandler {
 
   @Override
   public void setStyle(String key, String value) {
-    // TODO Auto-generated method stub
-    
+    if (key.equals("icon")){
+      try {
+	InputStream stream = frame.getAssets().open(value);
+	Bitmap b = BitmapFactory.decodeStream(stream);
+	;
+	Drawable d = new BitmapDrawable(b);
+	actionBar.setIcon(d);
+      } catch (IOException e) {
+	e.printStackTrace();
+      }
+    }
   }
 
   @Override
