@@ -23,7 +23,7 @@ class ActionBar : public Element {
     sendCommand(c);
   }
 
-  void setTitle(std::string _title){
+  void setTitle(const std::string & _title){
     title = _title;
     Command c(Command::SET_TEXT_VALUE, getInternalId());
     c.setTextValue(title);
