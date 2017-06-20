@@ -15,10 +15,9 @@ class FormView : public FWViewBase {
   }
 
  protected:
-  void initialize(FWPlatform * _platform) override {
-    FWViewBase::initialize(_platform);
+  void create() override {
     Command c(Command::CREATE_FORMVIEW, getParentInternalId(), getInternalId());
-    c.setTextValue(getLabel());
+    c.setTextValue(getTitle());
     sendCommand(c);
   }
 };
