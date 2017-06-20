@@ -128,7 +128,11 @@ class FWPlatform : public Element {
   }
 
  protected:
-
+  Element * getRegisteredElement(int internal_id) {
+    auto it = registered_elements.find(internal_id);
+    return it != registered_elements.end() ? it->second : 0;
+  }
+  
 #ifdef HAS_SOUNDCANVAS
   virtual std::shared_ptr<SoundCanvas> createSoundCanvas() const {
     return std::make_shared<DummySoundCanvas>();
