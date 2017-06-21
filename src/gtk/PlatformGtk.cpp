@@ -473,10 +473,18 @@ public:
       break;
 
     case Command::CREATE_DIALOG: {
-      auto dialog = gtk_dialog_new();
-      gtk_window_set_modal(GTK_WINDOW(dialog), 1);
-      // gtk_window_set_transient_for(GTK_WINDOW(dialog), parent);
-      addView(0, command.getChildInternalId(), dialog);
+      auto parent = views_by_id[command.getInternalId()];
+      if (parent) {
+	GtkDialogFlags flags = GtkDialogFlags(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT);
+	auto dlg = gtk_dialog_new_with_buttons(command.getTextValue().c_str(),
+					       GTK_WINDOW(parent),
+					       flags,
+					       0
+					       );
+	// gtk_window_set_modal(GTK_WINDOW(dlg), 1);
+	// gtk_window_set_transient_for(GTK_WINDOW(dlg), GTK_WINDOW(parent));
+	addView(0, command.getChildInternalId(), dlg);
+      }
     }
       break;
 
