@@ -25,6 +25,7 @@ public class FWButton extends Button implements NativeCommandHandler {
   public FWButton(FrameWork frameWork) {
     super(frameWork);
     this.frame = frameWork;
+	this.setBackground(frame.getResources().getDrawable(android.R.drawable.dialog_holo_light_frame));
   }
 
 
