@@ -220,6 +220,7 @@ public class FWAdapter2 extends ArrayAdapter<View> {
 	textView.setTextSize(9);
 	textView.setLayoutParams(listItemParams);
 	textView.setText(data.getData(i));
+	textView.setSingleLine();
 	viewList.add(textView);
 	rowLayout.addView(textView);
       }

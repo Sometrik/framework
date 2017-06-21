@@ -18,7 +18,6 @@ public class FWList extends ListView implements NativeCommandHandler {
 
   private FrameWork frame;
   private FWAdapter2 adapter;
-  private int ownerId = 0;
   private ArrayList<String> headers;
   private View currentHeaderView;
 
@@ -33,18 +32,6 @@ public class FWList extends ListView implements NativeCommandHandler {
     System.out.println("FWLIST constructor");
     this.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
     // this.setGroupIndicator(frame.getResources().getDrawable(android.R.drawable.ic_menu_more));
-    setOnItemClickListener(new OnItemClickListener() {
-
-      @Override
-      public void onItemClick(AdapterView<?> arg0, View arg1, int groupPosition, long id) {
-	System.out.println("row clicked. Sending intChangedEvent of " + (groupPosition - 1));
-	 if (ownerId == 0) {
-	  frame.intChangedEvent(System.currentTimeMillis() / 1000.0, getElementId(), (groupPosition - 1), 0);
-	} else {
-	  frame.intChangedEvent(System.currentTimeMillis() / 1000.0, ownerId, (groupPosition - 1), 0);
-	}
-      }
-    });
 //    setOnGroupClickListener(new OnGroupClickListener() {
 //      @Override
 //      public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
@@ -89,10 +76,6 @@ public class FWList extends ListView implements NativeCommandHandler {
 //	Log.d("adapterExpansion", "expansionStuff done");
 //      }
 //    });
-  }
-
-  public void setOwnerId(int ownerId) {
-    this.ownerId = ownerId;
   }
 
   @Override
@@ -244,7 +227,6 @@ public class FWList extends ListView implements NativeCommandHandler {
       txtFirst.setFocusable(false);
       txtFirst.setFocusableInTouchMode(false);
       txtFirst.setClickable(false);
-      txtFirst.setSingleLine();
       layout.addView(txtFirst);
       txtFirst.setText(headers.get(i));
     }

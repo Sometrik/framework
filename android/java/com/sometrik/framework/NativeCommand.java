@@ -36,6 +36,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.inputmethod.EditorInfo;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -44,6 +45,7 @@ import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.PopupMenu.OnMenuItemClickListener;
 import android.widget.PopupWindow;
+import android.widget.AdapterView.OnItemClickListener;
 
 public class NativeCommand {
 
@@ -266,6 +268,13 @@ public class NativeCommand {
 	// params.gravity = Gravity.TOP;
 	listView.setLayoutParams(params);
 	listView.setId(childInternalId);
+	listView.setOnItemClickListener(new OnItemClickListener() {
+	      @Override
+	      public void onItemClick(AdapterView<?> arg0, View arg1, int groupPosition, long id) {
+		System.out.println("row clicked. Sending intChangedEvent of " + (groupPosition - 1));
+		  frame.intChangedEvent(System.currentTimeMillis() / 1000.0, childInternalId, (groupPosition - 1), 0);
+	      }
+	    });
 	FrameWork.addToViewList(listView);
 	view.addChild(listView);
       }

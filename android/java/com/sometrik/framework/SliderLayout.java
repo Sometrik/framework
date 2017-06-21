@@ -6,8 +6,10 @@ import java.util.HashMap;
 import com.sometrik.framework.SliderButton.Position;
 
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.AdapterView.OnItemClickListener;
 
 public class SliderLayout extends RelativeLayout implements NativeCommandHandler {
 
@@ -111,6 +113,7 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
   public void setValue(String v) {
 
     if (usesLists) {
+      final int sheet = buttonList.size();
       SliderButton button = new SliderButton(frame, this, true, buttonList.size());
       button.setId(nextId);
       nextId++;
@@ -129,7 +132,15 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
       buttonList.add(button);
       addView(button);
       FWList list = new FWList(frame, new FWAdapter2(frame, null));
-      list.setOwnerId(getId());
+      list.setOnItemClickListener(new OnItemClickListener() {
+
+        @Override
+        public void onItemClick(AdapterView<?> arg0, View arg1, int groupPosition, long id) {
+  	System.out.println("row clicked. Sending intChangedEvent of " + (groupPosition - 1));
+  	  frame.intChangedEvent(System.currentTimeMillis() / 1000.0, getId(), (groupPosition - 1), sheet);
+        }
+      });
+      
       RelativeLayout.LayoutParams listParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
       listParams.addRule(RelativeLayout.BELOW, button.getId());
       list.setLayoutParams(listParams);
