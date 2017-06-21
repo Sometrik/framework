@@ -247,7 +247,7 @@ public class NativeCommand {
       //TODO
       //Fix from being debug status
 //      FWLayout debugList = createDebugResultsScreen();
-      FWList debugList = new FWList(frame, new FWAdapter(frame, null));
+      FWList debugList = new FWList(frame, new FWAdapter2(frame, null));
       debugList.setId(childInternalId);
       FrameWork.addToViewList(debugList);
       view.addChild(debugList);
@@ -260,7 +260,7 @@ public class NativeCommand {
 	FrameWork.addToViewList(slider);
 	view.addChild(slider);
       } else {
-	FWList listView = new FWList(frame, new FWAdapter(frame, null));
+	FWList listView = new FWList(frame, new FWAdapter2(frame, null));
 	LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
 	params.weight = 1.0f;
 	// params.gravity = Gravity.TOP;
@@ -395,6 +395,7 @@ public class NativeCommand {
       break;
     case CREATE_DIALOG:
       FWDialog dialog = new FWDialog(frame, childInternalId);
+      dialog.setTitle(textValue);
       FrameWork.addToViewList(dialog);
       break;
     case CREATE_ACTION_SHEET:

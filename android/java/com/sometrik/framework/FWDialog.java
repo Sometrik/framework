@@ -2,10 +2,10 @@ package com.sometrik.framework;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
+import android.view.Window;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
@@ -22,8 +22,6 @@ public class FWDialog extends Dialog implements NativeCommandHandler{
     this.id = id;
     scrollView = new ScrollView(frame);
     setContentView(scrollView);
-    
-
     LayoutParams params = getWindow().getAttributes();
     params.height = LayoutParams.WRAP_CONTENT;
     params.width = LayoutParams.MATCH_PARENT;
