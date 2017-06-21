@@ -118,7 +118,9 @@ public class FrameWork extends Activity {
     } else {
       // this.setTheme(android.R.style.Theme_DeviceDefault);
       // this.setTheme(android.R.style.Theme_Holo);
-      this.setTheme(android.R.style.Theme_Holo);
+//      this.setBackground(frame.getResources().getDrawable(android.R.drawable.dialog_holo_light_frame));
+//      this.setTheme(android.R.style.Theme_Holo);
+      this.setTheme(android.R.style.Theme_Holo_Light);
     }
     super.onCreate(savedInstanceState);
     
