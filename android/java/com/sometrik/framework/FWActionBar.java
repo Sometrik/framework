@@ -92,7 +92,6 @@ public class FWActionBar implements NativeCommandHandler {
       try {
 	InputStream stream = frame.getAssets().open(value);
 	Bitmap b = BitmapFactory.decodeStream(stream);
-	;
 	Drawable d = new BitmapDrawable(b);
 	actionBar.setIcon(d);
       } catch (IOException e) {
