@@ -2,89 +2,105 @@ package com.sometrik.framework;
 
 import java.util.ArrayList;
 
-import com.sometrik.framework.NativeCommand.CommandType;
-
-import android.R.color;
-import android.util.Log;
+import android.graphics.Typeface;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ExpandableListAdapter;
-import android.widget.ExpandableListView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 
-public class FWList extends ExpandableListView implements NativeCommandHandler{
-  
-  enum ColumnType { TEXT, NUMERIC, TIMESTAMP, ICON };
+public class FWList extends ListView implements NativeCommandHandler {
+
+  enum ColumnType {
+    TEXT, NUMERIC, TIMESTAMP, ICON
+  };
 
   private FrameWork frame;
-  private FWAdapter adapter;
+  private FWAdapter2 adapter;
   private int ownerId = 0;
-  
-  public FWList(final FrameWork frame, final FWAdapter adapter) {
+  private ArrayList<String> headers;
+  private View currentHeaderView;
+
+  public FWList(final FrameWork frame, final FWAdapter2 adapter) {
     super(frame);
     this.frame = frame;
     this.adapter = adapter;
-    this.setAdapter((ExpandableListAdapter)adapter);
-    this.setGroupIndicator(null);
+    this.setAdapter( adapter);
+//    this.setGroupIndicator(null);
     this.setAnimation(null);
+    headers = new ArrayList<String>();
     System.out.println("FWLIST constructor");
     this.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
-//  this.setGroupIndicator(frame.getResources().getDrawable(android.R.drawable.ic_menu_more));
-    setOnGroupClickListener(new OnGroupClickListener(){
-      @Override
-      public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
-	System.out.println("groupClick detected " + groupPosition);
-	if (groupPosition == 0) {
-	  System.out.println("column title clicked. ignoring");
-	} else {
-	  System.out.println("row clicked. Sending intChangedEvent of " + (groupPosition - 1));
-	  if (ownerId == 0) {
-	    frame.intChangedEvent(System.currentTimeMillis() / 1000.0, getElementId(), groupPosition - 1, 0);
-	  } else {
-	    System.out.println("ownerId " + ownerId);
-	    frame.intChangedEvent(System.currentTimeMillis() / 1000.0, ownerId, groupPosition - 1, 0);
-	  }
-  	}
-	return true;
-      }
-    });
-    setOnChildClickListener(new OnChildClickListener(){
-      @Override
-      public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-	System.out.println("child clicked. Sending intChangedEvent of " + (groupPosition - 1) + " " + (childPosition - 1));
-	if (ownerId == 0) {
-	  frame.intChangedEvent(System.currentTimeMillis() / 1000.0, getElementId(), groupPosition - 1, childPosition - 1);
-	} else {
-	  frame.intChangedEvent(System.currentTimeMillis() / 1000.0, ownerId, groupPosition - 1, childPosition - 1);
-	}
-	return true;
-      }
-    });
+    // this.setGroupIndicator(frame.getResources().getDrawable(android.R.drawable.ic_menu_more));
+    setOnItemClickListener(new OnItemClickListener() {
 
-    //This collapses all other than the chosen group
-    setOnGroupExpandListener(new OnGroupExpandListener() {
       @Override
-      public void onGroupExpand(int groupPosition) {
-	for (int i = 0; i < adapter.getGroupCount(); i++) {
-	  if (i != groupPosition) {
-	    if (isGroupExpanded(i)) {
-	      collapseGroup(i);
-	    }
-	  }
+      public void onItemClick(AdapterView<?> arg0, View arg1, int groupPosition, long id) {
+	System.out.println("row clicked. Sending intChangedEvent of " + (groupPosition - 1));
+	 if (ownerId == 0) {
+	  frame.intChangedEvent(System.currentTimeMillis() / 1000.0, getElementId(), (groupPosition - 1), 0);
+	} else {
+	  frame.intChangedEvent(System.currentTimeMillis() / 1000.0, ownerId, (groupPosition - 1), 0);
 	}
-	Log.d("adapterExpansion", "expansionStuff done");
       }
     });
+//    setOnGroupClickListener(new OnGroupClickListener() {
+//      @Override
+//      public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
+//	System.out.println("groupClick detected " + groupPosition);
+//	System.out.println("row clicked. Sending intChangedEvent of " + (groupPosition));
+//	// if (ownerId == 0) {
+//	frame.intChangedEvent(System.currentTimeMillis() / 1000.0, getElementId(), groupPosition, 0);
+//	// } else {
+//	// System.out.println("ownerId " + ownerId);
+//	// frame.intChangedEvent(System.currentTimeMillis() / 1000.0, ownerId,
+//	// groupPosition - 1, 0);
+//	// }
+//
+//	return true;
+//      }
+//    });
+//    setOnChildClickListener(new OnChildClickListener() {
+//      @Override
+//      public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+//	System.out.println("child clicked. Sending intChangedEvent of " + (groupPosition - 1) + " " + (childPosition - 1));
+//	// if (ownerId == 0) {
+//	frame.intChangedEvent(System.currentTimeMillis() / 1000.0, getElementId(), groupPosition - 1, childPosition - 1);
+//	// } else {
+//	// frame.intChangedEvent(System.currentTimeMillis() / 1000.0, ownerId,
+//	// groupPosition - 1, childPosition - 1);
+//	// }
+//	return true;
+//      }
+//    });
+//
+//    // This collapses all other than the chosen group
+//    setOnGroupExpandListener(new OnGroupExpandListener() {
+//      @Override
+//      public void onGroupExpand(int groupPosition) {
+//	for (int i = 0; i < adapter.getGroupCount(); i++) {
+//	  if (i != groupPosition) {
+//	    if (isGroupExpanded(i)) {
+//	      collapseGroup(i);
+//	    }
+//	  }
+//	}
+//	Log.d("adapterExpansion", "expansionStuff done");
+//      }
+//    });
   }
-  
-  public void setOwnerId(int ownerId){ this.ownerId = ownerId; }
+
+  public void setOwnerId(int ownerId) {
+    this.ownerId = ownerId;
+  }
 
   @Override
-  public void addData(String text, int row, int column, int sheet){
-    // System.out.println("FWList adding data for row " + row + " column " + column + " sheet " + sheet);
+  public void addData(String text, int row, int column, int sheet) {
+    // System.out.println("FWList adding data for row " + row + " column " +
+    // column + " sheet " + sheet);
     ArrayList<String> dataRow = adapter.getDataRow(row, sheet);
-    if (dataRow != null){
+    if (dataRow != null) {
       // System.out.println("FWList row found adding data");
       while (dataRow.size() < column) { // Add empty cells if needed
 	dataRow.add(dataRow.size(), "");
@@ -102,7 +118,7 @@ public class FWList extends ExpandableListView implements NativeCommandHandler{
     }
     adapter.notifyDataSetChanged();
   }
-  
+
   @Override
   public void onVisibilityChanged(View changedView, int visibility) {
     switch (visibility) {
@@ -110,22 +126,22 @@ public class FWList extends ExpandableListView implements NativeCommandHandler{
       frame.visibilityChangedEvent(System.currentTimeMillis() / 1000.0, getId(), true);
       break;
     case GONE:
-    case INVISIBLE: 
+    case INVISIBLE:
       frame.visibilityChangedEvent(System.currentTimeMillis() / 1000.0, getId(), false);
-    break;
+      break;
     }
   }
-  
+
   @Override
   public void onScreenOrientationChange(boolean isLandscape) {
     // TODO Auto-generated method stub
-    
+
   }
 
   @Override
   public void addChild(View view) {
     // TODO Auto-generated method stub
-    
+
   }
 
   @Override
@@ -135,31 +151,31 @@ public class FWList extends ExpandableListView implements NativeCommandHandler{
 
   @Override
   public void setValue(String v) {
-    adapter.addSheet(v);
+//    adapter.addSheet(v);
     adapter.notifyDataSetChanged();
   }
 
   @Override
   public void setValue(int v) {
-    this.expandGroup(v + 1);
+//    this.expandGroup(v + 1);
   }
 
   @Override
   public void setViewEnabled(Boolean enabled) {
     // TODO Auto-generated method stub
-    
+
   }
 
   @Override
   public void setStyle(String key, String value) {
     // TODO Auto-generated method stub
-    
+
   }
 
   @Override
   public void setError(boolean hasError, String errorText) {
     // TODO Auto-generated method stub
-    
+
   }
 
   @Override
@@ -169,7 +185,7 @@ public class FWList extends ExpandableListView implements NativeCommandHandler{
 
   @Override
   public void setViewVisibility(boolean visibility) {
-    if (visibility){
+    if (visibility) {
       this.setVisibility(VISIBLE);
     } else {
       this.setVisibility(INVISIBLE);
@@ -194,10 +210,46 @@ public class FWList extends ExpandableListView implements NativeCommandHandler{
     System.out.println("AddOption " + columnType + " text");
     ColumnType type = ColumnType.values()[columnType - 1];
     System.out.println("columnType int: " + ColumnType.values()[columnType - 1]);
-    adapter.addColumn(text);
+    headers.add(text);
+//    adapter.addColumn(text);
     System.out.println("AddOption " + columnType + " text");
     adapter.notifyDataSetChanged();
     System.out.println("AddOption " + columnType + " text");
+    
+    View headerView = createHeaderView();
+    if (getHeaderViewsCount() > 0){
+      this.removeHeaderView(currentHeaderView);
+    }
+    currentHeaderView = headerView;
+    addHeaderView(headerView);
+  }
+  
+  private View createHeaderView(){
+
+    LinearLayout.LayoutParams listItemParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT);
+    listItemParams.weight = 1;
+    listItemParams.leftMargin = 50;
+    
+    LinearLayout layout = new LinearLayout(frame);
+    layout.setOrientation(LinearLayout.HORIZONTAL);
+    layout.setPadding(0, 20, 0, 20);
+
+    System.out.println(getId() + " headers size: " + headers.size());
+    for (int i = 0; i < headers.size(); i++) {
+      System.out.println(getId() + " add header: " + headers.get(i));
+      TextView txtFirst = new TextView(frame);
+      txtFirst.setLayoutParams(listItemParams);
+      txtFirst.setTypeface(null, Typeface.BOLD);
+      txtFirst.setTextSize(10);
+      txtFirst.setFocusable(false);
+      txtFirst.setFocusableInTouchMode(false);
+      txtFirst.setClickable(false);
+      txtFirst.setSingleLine();
+      layout.addView(txtFirst);
+      txtFirst.setText(headers.get(i));
+    }
+    
+    return layout;
   }
 
   @Override

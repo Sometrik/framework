@@ -27,8 +27,9 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
   }
 
   private List<View> viewList;
+  private ArrayList<HashMap> sheetList;
   private HashMap<Integer, AdapterData> dataList;
-  private AdapterData columnData;
+//  private AdapterData columnData;
   private FrameWork frame;
   private LinearLayout.LayoutParams listItemParams;
   private boolean sheetsEnabled = false;
@@ -37,7 +38,9 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
     super(frame, 0, viewList);
     this.frame = frame;
     dataList = new HashMap<Integer, AdapterData>();
-    columnData = new AdapterData(new ArrayList<String>());
+    sheetList = new ArrayList<HashMap>();
+    sheetList.add(dataList);
+//    columnData = new AdapterData(new ArrayList<String>());
     listItemParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT);
     listItemParams.weight = 1;
     listItemParams.leftMargin = 50;
@@ -45,9 +48,9 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
 
   public ArrayList<String> getDataRow(int row, int sheet) {
     if (sheet == 0) {
-      AdapterData sheetData = dataList.get(sheet);
-      if (sheetData == null || sheetData.type == AdapterDataType.DATA) {
-	AdapterData data = dataList.get(row);
+      HashMap<Integer, AdapterData> sheetData = sheetList.get(0);
+//      if (sheetData == null || sheetData.type == AdapterDataType.DATA) {
+	AdapterData data = sheetData.get(row);
 	if (data == null) {
 	  Log.d("adapter", "no row found");
 	  return null;
@@ -55,71 +58,64 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
 	  Log.d("adapter", "row found");
 	  return data.stringList;
 	}
-      }
-      if (sheetData.getChildren().size() != 0) {
-	AdapterData data = sheetData.getChild(row);
-	if (data == null) {
-	  Log.d("adapter", "no row found");
-	  return null;
-	} else {
-	  Log.d("adapter", "row found");
-	  return data.stringList;
-	}
-      } else {
-	Log.d("adapter", "no children - no row found");
-	return null;
-      }
+	
+//      if (sheetData.getChildren().size() != 0) {
+//	AdapterData data = sheetData.getChild(row);
+//	if (data == null) {
+//	  Log.d("adapter", "no row found");
+//	  return null;
+//	} else {
+//	  Log.d("adapter", "row found");
+//	  return data.stringList;
+//	}
+//      } else {
+//	Log.d("adapter", "no children - no row found");
+      // return null;
+      // }
 
     } else {
-      AdapterData sheetData = dataList.get(sheet);
-      Log.d("adapter", "sheetData size: " + dataList.size());
+      // AdapterData sheetData = dataList.get(sheet);
+      HashMap<Integer, AdapterData> sheetData = sheetList.get(sheet);
+      // Log.d("adapter", "sheetData size: " + dataList.size());
       if (sheetData == null) {
 	Log.d("adapter", "sheetData null");
 	return null;
       }
-      if (sheetData.getChildren().size() != 0) {
-	AdapterData data = sheetData.getChild(row);
-	if (data == null) {
-	  Log.d("adapter", "no row found");
-	  return null;
-	} else {
-	  Log.d("adapter", "row found");
-	  return data.stringList;
-	}
-      } else {
-	Log.d("adapter", "no children - no row found");
+      AdapterData data = sheetData.get(row);
+      if (data == null) {
+	Log.d("adapter", "no row found");
 	return null;
+      } else {
+	Log.d("adapter", "row found");
+	return data.stringList;
       }
     }
   }
 
   public void addItem(int row, int sheet, ArrayList<String> cellItems) {
     Log.d("adapter", "adding new dataList to row: " + row + " sheet: " + sheet);
-    if (!sheetsEnabled) {
-      dataList.put(row, new AdapterData(cellItems));
-      return;
-    } else {
-      Log.d("adapter", "datalist size: " + dataList.size());
-      AdapterData sheetData = dataList.get(sheet);
-      if (sheetData == null) {
-	Log.d("adapter", "no sheet found");
-	return;
-      }
-      sheetData.addChild(row, new AdapterData(cellItems));
-    }
+    HashMap<Integer, AdapterData> sheetData = sheetList.get(sheet);
+    
+    AdapterData data = new AdapterData(cellItems);
+    sheetData.put(row, data);
+    
+//    if (!sheetsEnabled) {
+//      dataList.put(row, new AdapterData(cellItems));
+//      return;
+//    } else {
+//      Log.d("adapter", "datalist size: " + dataList.size());
+//      AdapterData sheetData = dataList.get(sheet);
+//      if (sheetData == null) {
+//	Log.d("adapter", "no sheet found");
+//	return;
+//      }
+//      sheetData.addChild(row, new AdapterData(cellItems));
+//    }
   }
-
-  public void addColumn(String columnText) {
-    columnData.addString(columnText);
-  }
-
+  
   public void addSheet(String sheetName) {
-    int size = dataList.size();
-    ArrayList<String> sheet = new ArrayList<String>();
-    sheet.add(sheetName);
-    Log.d("adapter", "putting sheet to " + (size));
-    sheetsEnabled = true;
-    dataList.put(size, new AdapterData(sheet, AdapterDataType.SHEET));
+    HashMap<Integer, AdapterData> newList = new HashMap<Integer, AdapterData>();
+    sheetList.add(newList);
   }
 
   public void reshape(int sheet, int size) {
@@ -150,20 +146,21 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
 
   @Override
   public int getCount() {
-    Log.d("adapter", "getCount");
-    int counter = 0;
-    for (HashMap.Entry<Integer, AdapterData> pair : dataList.entrySet()) {
-      if (pair.getValue().type == AdapterDataType.SHEET && pair.getValue().getChildren().size() == 0) {
-	continue;
-      } else {
-	counter++;
-      }
-    }
-    if (columnData.getSize() != 0) {
-      return counter + 1;
-    } else {
-      return counter;
-    }
+    System.out.println("adapter getCount " + sheetList.size());
+    return sheetList.size();
+//    int counter = 0;
+//    for (HashMap.Entry<Integer, AdapterData> pair : dataList.entrySet()) {
+//      if (pair.getValue().type == AdapterDataType.SHEET && pair.getValue().getChildren().size() == 0) {
+//	continue;
+//      } else {
+//	counter++;
+//      }
+//    }
+//    if (columnData.getSize() != 0) {
+//      return counter + 1;
+//    } else {
+//      return counter;
+//    }
   }
 
   @Override
@@ -186,32 +183,13 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
 
   @Override
   public View getView(int position, View convertView, ViewGroup parent) {
-
+    if (convertView != null) {
+      System.out.println("Data already set");
+      return convertView;
+    }
     Log.d("adapter", "position: " + position);
     LinearLayout layout = new LinearLayout(frame);
-    AdapterData data;
-    if (position == 0) {
-      data = columnData;
-
-      for (int i = 0; i < data.getSize(); i++) {
-	TextView txtFirst = new TextView(frame);
-	txtFirst.setLayoutParams(listItemParams);
-	txtFirst.setTypeface(null, Typeface.BOLD);
-	txtFirst.setFocusable(false);
-	txtFirst.setFocusableInTouchMode(false);
-	txtFirst.setClickable(false);
-	layout.addView(txtFirst);
-	txtFirst.setText(data.getData(i));
-      }
-
-      return layout;
-
-    } else {
-      Log.d("adapter", "dataKList.size: " + dataList.size());
-      Log.d("adapter", "trying to get from index: " + (position));
-      data = dataList.get(position);
-    }
-
+    AdapterData data = dataList.get(position);
     if (data == null) {
       Log.d("adapter", "no data on position " + position);
       return layout;
@@ -249,64 +227,60 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
 
   @Override
   public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
-    Log.d("adapter", "GetChildView position: " + groupPosition + " childPosition: " + childPosition);
-    if (columnData.getSize() != 0) {
-      groupPosition--;
-      Log.d("adapter", "GetChildView (changed) position: " + groupPosition + " childPosition: " + childPosition);
-    }
-    AdapterData sheetData = dataList.get(groupPosition);
-    ArrayList<AdapterData> children = sheetData.getChildren();
-    ScrollView scrollView = new ScrollView(frame);
-    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
-    params.gravity = Gravity.FILL;
-    scrollView.setLayoutParams(params);
-    LinearLayout expandLayout = new LinearLayout(frame);
-    expandLayout.setOrientation(LinearLayout.VERTICAL);
-    expandLayout.setLayoutParams(params);
-    scrollView.addView(expandLayout);
-
-    Log.d("adapter", "Children size on getChildView: " + children.size());
-    for (int i = 0; i < children.size(); i++) {
-      AdapterData childData = sheetData.getChild(i);
-      LinearLayout layout = new LinearLayout(frame);
-      layout.setBackgroundColor(Color.parseColor("#d1d1d1"));
-      for (int i2 = 0; i2 < childData.getSize(); i2++) {
-	TextView txtFirst = new TextView(frame);
-	txtFirst.setLayoutParams(listItemParams);
-	txtFirst.setFocusable(false);
-	txtFirst.setClickable(false);
-	txtFirst.setSingleLine();
-	txtFirst.setEllipsize(TextUtils.TruncateAt.END);
-	txtFirst.setFocusableInTouchMode(false);
-	layout.addView(txtFirst);
-	txtFirst.setText(childData.getData(i2));
-      }
-      expandLayout.addView(layout);
-    }
-
-    return scrollView;
+//    Log.d("adapter", "GetChildView position: " + groupPosition + " childPosition: " + childPosition);
+//    if (columnData.getSize() != 0) {
+//      groupPosition--;
+//      Log.d("adapter", "GetChildView (changed) position: " + groupPosition + " childPosition: " + childPosition);
+//    }
+//    HashMap<Integer, AdapterData> sheetData = sheetList.get(groupPosition);
+//    ArrayList<String> data = sheetData.get(childPosition).getList();
+//    
+//    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+//    params.gravity = Gravity.FILL;
+//    LinearLayout expandLayout = new LinearLayout(frame);
+//    expandLayout.setOrientation(LinearLayout.HORIZONTAL);
+//    expandLayout.setLayoutParams(params);
+//
+//    Log.d("adapter", "Children size on getChildView: " + data.size());;
+//    for (int i = 0; i < data.size(); i++) {
+//      TextView txtFirst = new TextView(frame);
+//      txtFirst.setLayoutParams(listItemParams);
+//      txtFirst.setFocusable(false);
+//      txtFirst.setClickable(false);
+//      txtFirst.setSingleLine();
+//      txtFirst.setEllipsize(TextUtils.TruncateAt.END);
+//      txtFirst.setFocusableInTouchMode(false);
+//      txtFirst.setText(data.get(i));
+//      expandLayout.addView(txtFirst);
+//      }
+//
+    return convertView;
   }
 
   @Override
   public int getChildrenCount(int groupPosition) {
     Log.d("adapter", "getChildrenCount " + groupPosition);
-    if (groupPosition == 0 || !sheetsEnabled) {
-      return 0;
-    }
-    Log.d("adapter", "getChildrenCount (changed) " + (groupPosition - 1));
-
-    AdapterData sheetData = dataList.get(groupPosition - 1);
-    if (sheetData == null) {
-      Log.d("adapter", "sheetData null");
-      return 0;
-    }
-    if (sheetData.getChildren().size() > 0) {
-      Log.d("adapter", "children found");
-      return 1;
-    } else {
-      Log.d("adapter", "no children found");
-      return 0;
-    }
+    return 0;
+//    HashMap<Integer, AdapterData> sheetData = sheetList.get(groupPosition);
+//    return sheetData.size();
+    
+//    if (groupPosition == 0 || !sheetsEnabled) {
+//      return 0;
+//    }
+//    Log.d("adapter", "getChildrenCount (changed) " + (groupPosition - 1));
+//
+//    AdapterData sheetData = dataList.get(groupPosition - 1);
+//    if (sheetData == null) {
+//      Log.d("adapter", "sheetData null");
+//      return 0;
+//    }
+//    if (sheetData.getChildren().size() > 0) {
+//      Log.d("adapter", "children found");
+//      return 1;
+//    } else {
+//      Log.d("adapter", "no children found");
+//      return 0;
+//    }
   }
 
   @Override
@@ -330,25 +304,7 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
 
   @Override
   public int getGroupCount() {
-    if (columnData.getSize() != 0) {
-      return dataList.size() + 1;
-    } else {
-      return dataList.size();
-    }
-    // int counter = 0;
-    // for (HashMap.Entry<Integer, AdapterData> pair : dataList.entrySet()) {
-    // if (pair.getValue().type == AdapterDataType.SHEET &&
-    // pair.getValue().getChildren().size() == 0) {
-    // continue;
-    // } else {
-    // counter++;
-    // }
-    // }
-    // if (columnData.getSize() != 0) {
-    // return counter + 1;
-    // } else {
-    // return counter;
-    // }
+    return dataList.size();
   }
 
   @Override
@@ -358,49 +314,19 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
   }
 
   @Override
-  public View getGroupView(int position, boolean arg1, View arg2, ViewGroup arg3) {
+  public View getGroupView(int position, boolean arg1, View convertView, ViewGroup arg3) {
     Log.d("adapter", "GetGroupView position: " + position);
+    if (convertView != null) {
+      System.out.println("Data already set");
+      return convertView;
+    }
     LinearLayout layout = new LinearLayout(frame);
     AdapterData data;
-    if (position == 0) {
-      data = columnData;
-
-      for (int i = 0; i < data.getSize(); i++) {
-	TextView txtFirst = new TextView(frame);
-	txtFirst.setLayoutParams(listItemParams);
-	txtFirst.setTypeface(null, Typeface.BOLD);
-	// txtFirst.setTextAppearance(frame,
-	// android.R.style.TextAppearance_DeviceDefault_Small);
-	txtFirst.setTextSize(10);
-	txtFirst.setFocusable(false);
-	txtFirst.setFocusableInTouchMode(false);
-	txtFirst.setClickable(false);
-	txtFirst.setSingleLine();
-	layout.addView(txtFirst);
-	// layout.setBackgroundColor(0xFF777777);
-	txtFirst.setText(data.getData(i));
-      }
-
-      layout.setPadding(0, 20, 0, 20);
-      return layout;
-
-    } else {
-
-      if (columnData.getSize() != 0) {
-	position--;
-      }
 
       Log.d("adapter", "dataKList.size: " + dataList.size());
       Log.d("adapter", "trying to get from index: " + (position));
       data = dataList.get(position);
-
-      // if (data.type == AdapterDataType.SHEET && data.getChildren().size() ==
-      // 0) {
-      // layout.setVisibility(LinearLayout.INVISIBLE);
-      // layout.setLayoutParams(new AbsListView.LayoutParams(-1, -2));
-      // return layout;
-      // }
-
+      
       for (int i = 0; i < data.getSize(); i++) {
 	Log.d("adapter", "looping throud data " + i);
 	TextView txtFirst = new TextView(frame);
@@ -417,7 +343,7 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
 
       layout.setPadding(0, 20, 0, 20);
       return layout;
-    }
+    
   }
 
   @Override
@@ -441,18 +367,15 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
 
     private ArrayList<String> stringList;
     private boolean columnData = false;
-    private ArrayList<AdapterData> children;
     private AdapterDataType type = AdapterDataType.DATA;
 
     public AdapterData(ArrayList<String> stringList) {
       this.stringList = stringList;
-      children = new ArrayList<AdapterData>();
     }
 
     public AdapterData(ArrayList<String> stringList, AdapterDataType type) {
       this.type = type;
       this.stringList = stringList;
-      children = new ArrayList<AdapterData>();
     }
 
     public void addString(String text) {
@@ -463,29 +386,12 @@ public class FWAdapter extends ArrayAdapter<View> implements ExpandableListAdapt
       return stringList.size();
     }
 
-    public void addChild(int row, AdapterData data) {
-      children.add(row, data);
-    }
-
     public String getData(int position) {
       if (position < stringList.size()) {
 	return stringList.get(position);
       } else {
 	return stringList.get(0);
       }
-    }
-
-    public AdapterData getChild(int row) {
-      System.out.println("getChild on AdpaterData");
-      if (row >= children.size()) {
-	System.out.println("no children");
-	return null;
-      }
-      return children.get(row);
-    }
-
-    public ArrayList<AdapterData> getChildren() {
-      return children;
     }
 
     public ArrayList<String> getList() {
