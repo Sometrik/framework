@@ -32,6 +32,9 @@ class BasicPlatform : public FWPlatform {
   void sendCommand2(const Command & command) {
     
   }
+  std::string loadTextAsset(const char * filename) {
+    return "";
+  }
 };
 
 #endif
