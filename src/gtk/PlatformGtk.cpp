@@ -473,18 +473,15 @@ public:
       break;
 
     case Command::CREATE_DIALOG: {
-      auto parent = views_by_id[command.getInternalId()];
-      if (parent) {
-	GtkDialogFlags flags = GtkDialogFlags(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT);
-	auto dlg = gtk_dialog_new_with_buttons(command.getTextValue().c_str(),
-					       GTK_WINDOW(parent),
-					       flags,
-					       0
-					       );
-	// gtk_window_set_modal(GTK_WINDOW(dlg), 1);
-	// gtk_window_set_transient_for(GTK_WINDOW(dlg), GTK_WINDOW(parent));
-	addView(0, command.getChildInternalId(), dlg);
-      }
+      GtkDialogFlags flags = GtkDialogFlags(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT);
+      auto dlg = gtk_dialog_new_with_buttons(command.getTextValue().c_str(),
+					     GTK_WINDOW(window),
+					     flags,
+					     0
+					     );
+      // gtk_window_set_modal(GTK_WINDOW(dlg), 1);
+      // gtk_window_set_transient_for(GTK_WINDOW(dlg), GTK_WINDOW(parent));
+      addView(0, command.getChildInternalId(), dlg);
     }
       break;
 
@@ -502,7 +499,6 @@ public:
       auto it = views_by_id.find(command.getInternalId());
       assert(it != views_by_id.end());
       if (it != views_by_id.end()) {
-	cerr << "running dialog\n";
 	auto dialog = it->second;
 	gtk_dialog_run(GTK_DIALOG(dialog));
 	gtk_widget_destroy(dialog);
@@ -513,7 +509,7 @@ public:
       
     case Command::SHOW_MESSAGE_DIALOG: {
       GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
-      auto dialog = gtk_message_dialog_new((GtkWindow*)window,
+      auto dialog = gtk_message_dialog_new(GTK_WINDOW(window),
 					   flags,
 					   GTK_MESSAGE_ERROR,
 					   GTK_BUTTONS_CLOSE,
