@@ -21,13 +21,13 @@ class EventQueue {
 
   void push(int internal_id, const Event & ev) {
     std::shared_ptr<Event> ptr(ev.dup());
-    pthread_mutex_lock (&_mutex);
+    pthread_mutex_lock(&_mutex);
     data.push_front(std::pair<int, std::shared_ptr<Event> >(internal_id, ptr));
     pthread_cond_signal(&_condv);
     pthread_mutex_unlock(&_mutex);
   }
   std::pair<int, std::shared_ptr<Event> > pop() {
-    pthread_mutex_lock (&_mutex);
+    pthread_mutex_lock(&_mutex);
     while (data.empty()) {
       pthread_cond_wait(&_condv, &_mutex);
     }
