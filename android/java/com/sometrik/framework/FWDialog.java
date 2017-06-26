@@ -102,17 +102,17 @@ public class FWDialog extends Dialog implements NativeCommandHandler{
   public void setStyle(String key, String value) {
     if (key.equals("width")) {
       ViewGroup.LayoutParams params = getWindow().getAttributes();
-      if (value.equals("wrap_content")) {
+      if (value.equals("wrap-content")) {
 	params.width = LinearLayout.LayoutParams.WRAP_CONTENT;
-      } else if (value.equals("match_parent")) {
+      } else if (value.equals("match-parent")) {
 	params.width = LinearLayout.LayoutParams.MATCH_PARENT;
       }
       getWindow().setAttributes((android.view.WindowManager.LayoutParams) params);
     } else if (key.equals("height")) {
       ViewGroup.LayoutParams params = getWindow().getAttributes();
-      if (value.equals("wrap_content")) {
+      if (value.equals("wrap-content")) {
 	params.height = LinearLayout.LayoutParams.WRAP_CONTENT;
-      } else if (value.equals("match_parent")) {
+      } else if (value.equals("match-parent")) {
 	params.height = LinearLayout.LayoutParams.MATCH_PARENT;
       }
       getWindow().setAttributes((android.view.WindowManager.LayoutParams) params);

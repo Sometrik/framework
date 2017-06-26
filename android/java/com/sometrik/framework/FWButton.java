@@ -108,17 +108,17 @@ public class FWButton extends Button implements NativeCommandHandler {
       setLayoutParams(params);
     } else if (key.equals("width")) {
       LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
-      if (value.equals("wrap_content")) {
+      if (value.equals("wrap-content")) {
 	params.width = LinearLayout.LayoutParams.WRAP_CONTENT;
-      } else if (value.equals("match_parent")) {
+      } else if (value.equals("match-parent")) {
 	params.width = LinearLayout.LayoutParams.MATCH_PARENT;
       }
       setLayoutParams(params);
     } else if (key.equals("height")) {
       LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
-      if (value.equals("wrap_content")) {
+      if (value.equals("wrap-content")) {
 	params.height = LinearLayout.LayoutParams.WRAP_CONTENT;
-      } else if (value.equals("match_parent")) {
+      } else if (value.equals("match-parent")) {
 	params.height = LinearLayout.LayoutParams.MATCH_PARENT;
       }
       setLayoutParams(params);
@@ -135,7 +135,7 @@ public class FWButton extends Button implements NativeCommandHandler {
 	this.setPressed(false);
 	this.setBackground(frame.getResources().getDrawable(android.R.drawable.dialog_holo_light_frame));
       }
-    } else if (key.equals("icon_left") || key.equals("icon_right") || key.equals("icon_top") || key.equals("icon_bottom")){
+    } else if (key.equals("icon-left") || key.equals("icon-right") || key.equals("icon-top") || key.equals("icon-bottom")){
 
       AssetManager mgr = frame.getAssets();
       try {
@@ -144,13 +144,13 @@ public class FWButton extends Button implements NativeCommandHandler {
         this.setGravity(Gravity.CENTER);
         
 
-      if (key.equals("icon_right")){
+      if (key.equals("icon-right")){
         rightDraw = draw;
-      } else if (key.equals("icon_top")){
+      } else if (key.equals("icon-top")){
         topDraw = draw;
-      } else if (key.equals("icon_bottom")){
+      } else if (key.equals("icon-bottom")){
         bottomDraw = draw;
-      } else if (key.equals("icon_left")){
+      } else if (key.equals("icon-left")){
 	leftDraw = draw;
       }
 //      this.setCompoundDrawablePadding(-50);

@@ -79,17 +79,17 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
       setLayoutParams(params);
     } else if (key.equals("width")) {
       LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
-      if (value.equals("wrap_content")) {
+      if (value.equals("wrap-content")) {
 	params.width = LinearLayout.LayoutParams.WRAP_CONTENT;
-      } else if (value.equals("match_parent")) {
+      } else if (value.equals("match-parent")) {
 	params.width = LinearLayout.LayoutParams.MATCH_PARENT;
       }
       setLayoutParams(params);
     } else if (key.equals("height")) {
       LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
-      if (value.equals("wrap_content")) {
+      if (value.equals("wrap-content")) {
 	params.height = LinearLayout.LayoutParams.WRAP_CONTENT;
-      } else if (value.equals("match_parent")) {
+      } else if (value.equals("match-parent")) {
 	params.height = LinearLayout.LayoutParams.MATCH_PARENT;
       }
       setLayoutParams(params);
@@ -97,13 +97,13 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
       LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
       params.weight = Integer.parseInt(value);
       setLayoutParams(params);
-    } else if (key.equals("padding_top")) {
+    } else if (key.equals("padding-top")) {
       setPadding(getPaddingLeft(), Integer.parseInt(value), getPaddingRight(), getPaddingBottom());
-    } else if (key.equals("padding_bottom")) {
+    } else if (key.equals("padding-bottom")) {
       setPadding(getPaddingLeft(), getPaddingTop(), getPaddingRight(), Integer.parseInt(value));
-    } else if (key.equals("padding_left")) {
+    } else if (key.equals("padding-left")) {
       setPadding(Integer.parseInt(value), getPaddingTop(), getPaddingRight(), getPaddingBottom());
-    } else if (key.equals("padding_right")) {
+    } else if (key.equals("padding-right")) {
       setPadding(getPaddingLeft(), getPaddingTop(), Integer.parseInt(value), getPaddingBottom());
     }
   }
