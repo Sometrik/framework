@@ -150,13 +150,12 @@ public:
       break;
       
     case Command::ADD_COLUMN: {
-      auto window = views_by_id[command.getInternalId()];
-      assert(window);
-      if (window) {
-	auto view = gtk_bin_get_child(GTK_BIN(window));
-	assert(GTK_IS_TREE_VIEW(view));
-	if (GTK_IS_TREE_VIEW(view)) {
-	  int i = gtk_tree_view_get_n_columns((GtkTreeView*)view);
+      auto view = views_by_id[command.getInternalId()];
+      if (view) {
+	auto treeview = gtk_bin_get_child(GTK_BIN(view));
+	assert(GTK_IS_TREE_VIEW(treeview));
+	if (GTK_IS_TREE_VIEW(treeview)) {
+	  int i = gtk_tree_view_get_n_columns(GTK_TREE_VIEW(treeview));
 	  auto renderer = gtk_cell_renderer_text_new();
 	  float xalign = 0.0f;
 	  bool autosize = false;
@@ -165,16 +164,18 @@ public:
 	    autosize = true;
 	  }
 	  gtk_cell_renderer_set_alignment(renderer, xalign, 0.0f);
-	  gtk_tree_view_insert_column_with_attributes((GtkTreeView*)view,
+	  gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(treeview),
 						      -1,
 						      command.getTextValue().c_str(),
 						      renderer,
 						      "text", i, NULL);
 	  if (autosize) {
-	    auto column = gtk_tree_view_get_column((GtkTreeView*)view, i);
+	    auto column = gtk_tree_view_get_column(GTK_TREE_VIEW(treeview), i);
 	    gtk_tree_view_column_set_sizing(column, GTK_TREE_VIEW_COLUMN_AUTOSIZE);
-					    }
+	  }
 	}
+      } else {
+	cerr << "view not found for ADD_COLUMN\n";
       }
     }
       break;
