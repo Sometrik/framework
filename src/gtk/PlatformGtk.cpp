@@ -542,7 +542,7 @@ public:
 	initial_view_shown = true;
       }
     }
-      break;
+      break;      
 
     case Command::DELETE_ELEMENT: {
       auto it = views_by_id.find(command.getChildInternalId());
@@ -550,6 +550,21 @@ public:
 	gtk_widget_destroy(it->second); // autom. removed from container
 	views_by_id.erase(it);
       }
+    }
+      break;
+
+    case Command::LAUNCH_BROWSER: {
+#if 0
+      gtk_show_uri_on_window(GTK_WINDOW(window),
+			     command.getTextValue().c_str(),
+			     GDK_CURRENT_TIME,
+			     0);
+#else
+      gtk_show_uri(0,
+		   command.getTextValue().c_str(),
+		   GDK_CURRENT_TIME,
+		   0);
+#endif
     }
       break;
       
