@@ -180,7 +180,7 @@ class Element : public EventHandler {
   unsigned int flags; // initialized in constructor
   bool has_error = false;
   std::vector<Command> pendingCommands;
-  bool is_visible = true;
+  bool is_visible = true, is_enabled = true;
 
   static int nextInternalId;
 };

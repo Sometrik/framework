@@ -56,13 +56,10 @@ Element::setError(bool t) {
 }
 
 void
-Element::setEnabled(bool enabled) {
+Element::setEnabled(bool _is_enabled) {
+  is_enabled = _is_enabled;
   Command c(Command::SET_ENABLED, getInternalId());
-  if (enabled){
-    c.setValue(1);
-  } else {
-    c.setValue(0);
-  }
+  c.setValue(is_enabled ? 1 : 0);
   sendCommand(c);
 }
 
@@ -84,7 +81,6 @@ Element::hide() {
 
 void
 Element::style(const std::string & key, const std::string & value) {
-
   Command c(Command::SET_STYLE, getInternalId());
   c.setTextValue(key);
   c.setTextValue2(value);
