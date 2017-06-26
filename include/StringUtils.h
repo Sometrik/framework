@@ -38,7 +38,7 @@ class StringUtils {
   static unsigned int chomp(std::string & str);
   static bool isNumber(const char * str);
   static bool isNumber(const std::string & str) { return isNumber(str.c_str()); }
-  static bool isBlank(const char * str);
+  // static bool isBlank(const char * str);
   static bool isBlank(const std::string & str) { return isBlank(str.c_str()); }
   static bool isBlank(uint32_t c );
   static bool isWord(const std::string & str);

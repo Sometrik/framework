@@ -605,6 +605,7 @@ StringUtils::isNumber(const char * s) {
   return true;
 }
 
+#if 0
 bool
 StringUtils::isBlank(const char * s) {
   for (unsigned int i = 0; s[i] != 0; i++) {
@@ -614,6 +615,7 @@ StringUtils::isBlank(const char * s) {
   }
   return true;
 }
+#endif
 
 uint32_t
 StringUtils::toLower(uint32_t c) {
