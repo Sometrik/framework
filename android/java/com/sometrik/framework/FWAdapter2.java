@@ -200,6 +200,7 @@ public class FWAdapter2 extends ArrayAdapter<View> {
 	// txtFirst.setTextAppearance(frame,
 	// android.R.style.TextAppearance_DeviceDefault_Small);
 	textView.setTextSize(9);
+	textView.setSingleLine();
 	textView.setLayoutParams(listItemParams);
 	textView.setText(data.getData(i));
 	viewList.add(textView);
