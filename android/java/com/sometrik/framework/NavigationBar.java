@@ -28,24 +28,9 @@ public class NavigationBar extends FrameLayout implements NativeCommandHandler {
     baseLayout.setLayoutParams(params);
     setLayoutParams(params);
 
-
     childParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 40);
     childParams.weight = 1;
     
-//    for (int i = 0; i < 3; i++) {
-//      ImageView view = new ImageView(frame);
-//      view.setLayoutParams(childParams);
-//      InputStream stream;
-//      view.setScaleType(ScaleType.CENTER_INSIDE);
-//      try {
-//	stream = frame.getAssets().open("active3.png");
-//	view.setImageBitmap(BitmapFactory.decodeStream(stream));
-//      } catch (IOException e) {
-//	e.printStackTrace();
-//      }
-//      
-//      baseLayout.addView(view);
-//    }
     addView(baseLayout);
   }
 
