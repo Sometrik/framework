@@ -64,6 +64,7 @@ public class NavigationBar extends FrameLayout implements NativeCommandHandler {
       @Override
       public void onClick(View v) {
 	System.out.println("Navigation OnClick: " + buttonId);
+	frame.intChangedEvent(System.currentTimeMillis() / 1000.0, getId(), 1, buttonId);
       }
     });
 

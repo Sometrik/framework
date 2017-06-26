@@ -17,18 +17,18 @@ class NavigationBar : public Element {
     return Element::isA(className);
   }
 
-  void onValueEvent(ValueEvent & ev) override {
-    notify();
-    CommandEvent ev2(ev.getTimestamp(), getId());
-    ev2.dispatch(*this);
-  }
-
   void addOption(int optionId, std::string imageFileName){
     Command c(Command::ADD_OPTION, getInternalId());
     c.setTextValue(imageFileName);
     c.setValue(optionId);
     sendCommand(c);
   }
+
+  void onValueEvent(ValueEvent & ev) override {
+     notify();
+     CommandEvent ev2(ev.getTimestamp(), getId(), ev.getValue(), ev.getValue2());
+     ev2.dispatch(*this);
+   }
 
 protected:
   void create() override {
