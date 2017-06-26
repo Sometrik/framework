@@ -28,44 +28,24 @@ class TextView : public InputElement {
   const std::string & getValue() { return value; }
 
   void setValue(const std::string & s) {
-    value = s;
-    if (isInitialized()) {
-      sendValue();
-    }
-  }
-
-  void setEnabled(bool _enabled){
-    enabled = _enabled;
-    if (isInitialized()){
-      Command c(Command::SET_ENABLED, getInternalId());
-      c.setValue(enabled ? 1 : 0);
-      sendCommand(c);
+    if (s != value) {
+      value = s;
+      
+      Command c(Command::SET_TEXT_VALUE, getInternalId());
+      c.setTextValue(value);
+      sendCommand(c);    
     }
   }
 
  protected:
-  void initialize(FWPlatform * _platform) override {
-    Element::initialize(_platform);
+  void create() override {
     Command c(Command::CREATE_TEXTVIEW, getParentInternalId(), getInternalId());
     c.setLayoutWeight(getLayoutWeight());
     sendCommand(c);
-
-    if (!value.empty()) {
-      sendValue();
-    }
-
-    setEnabled(enabled);
-  }
-
-  void sendValue() {
-    Command c(Command::SET_TEXT_VALUE, getInternalId());
-    c.setTextValue(value);
-    sendCommand(c);    
   }
   
  private:
   std::string value;
-  bool enabled = true;
 };
 
 #endif
