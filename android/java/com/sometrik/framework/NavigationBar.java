@@ -2,26 +2,28 @@ package com.sometrik.framework;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 
-import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ImageView.ScaleType;
+import android.widget.LinearLayout;
 
 public class NavigationBar extends FrameLayout implements NativeCommandHandler {
   
   FrameWork frame;
   LinearLayout baseLayout;
   LinearLayout.LayoutParams childParams;
+  ArrayList<ImageView> childList;
   
   public NavigationBar(FrameWork frame) {
     super(frame);
 
     this.frame = frame;
     this.setBackground(frame.getResources().getDrawable(android.R.drawable.dialog_holo_light_frame));
+    childList = new ArrayList<ImageView>();
     baseLayout = new LinearLayout(frame);
     baseLayout.setOrientation(LinearLayout.HORIZONTAL);
     LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -48,9 +50,25 @@ public class NavigationBar extends FrameLayout implements NativeCommandHandler {
 
   @Override
   public void addOption(int optionId, String text) {
-    final int buttonId = optionId;
+
+    for (ImageView view : childList) {
+      if (optionId == view.getId()) {
+	try {
+	  InputStream stream = frame.getAssets().open(text);
+	  view.setImageBitmap(BitmapFactory.decodeStream(stream));
+	} catch (IOException e) {
+	  e.printStackTrace();
+	}
+      }
+    }
+  }
+
+  @Override
+  public void addColumn(String text, int columnType) {
+    final int buttonId = columnType;
     ImageView view = new ImageView(frame);
     view.setLayoutParams(childParams);
+    view.setId(columnType);
     InputStream stream;
     view.setScaleType(ScaleType.CENTER_INSIDE);
     try {
@@ -68,11 +86,8 @@ public class NavigationBar extends FrameLayout implements NativeCommandHandler {
       }
     });
 
+    childList.add(view);
     baseLayout.addView(view);
-  }
-
-  @Override
-  public void addColumn(String text, int columnType) {
   }
 
   @Override
