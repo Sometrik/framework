@@ -30,7 +30,7 @@ public class NavigationBar extends FrameLayout implements NativeCommandHandler {
     baseLayout.setLayoutParams(params);
     setLayoutParams(params);
 
-    childParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 40);
+    childParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 50);
     childParams.weight = 1;
     
     addView(baseLayout);

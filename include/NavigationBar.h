@@ -20,14 +20,14 @@ class NavigationBar : public Element {
   void addButton(int buttonId, std::string imageFileName){
       Command c(Command::ADD_COLUMN, getInternalId());
       c.setTextValue(imageFileName);
-      c.setValue(optionId);
+      c.setValue(buttonId);
       sendCommand(c);
     }
 
   void changeButton(int buttonId, std::string imageFileName){
     Command c(Command::ADD_OPTION, getInternalId());
     c.setTextValue(imageFileName);
-    c.setValue(optionId);
+    c.setValue(buttonId);
     sendCommand(c);
   }
 
