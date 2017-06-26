@@ -102,6 +102,7 @@ public class NativeCommand {
     CREATE_SEPARATOR,
     CREATE_SLIDER,
     CREATE_ACTIONBAR,
+    CREATE_NAVIGATIONBAR,
     DELETE_ELEMENT,
     END_MODAL,
     SHOW_DIALOG,
@@ -415,6 +416,11 @@ public class NativeCommand {
       frame.actionBar = ab;
       FrameWork.addToViewList(ab);
       break;
+    case CREATE_NAVIGATIONBAR:
+      NavigationBar bar = new NavigationBar(frame);
+      bar.setId(childInternalId);
+      view.addChild(bar);
+      FrameWork.addToViewList(bar);
     case FLUSH_VIEW:
       view.flush();
       break;
