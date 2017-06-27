@@ -40,7 +40,7 @@ public class FWDrawerLayout extends DrawerLayout {
         }
     };
     mDrawerToggle.setDrawerIndicatorEnabled(false);
-    mDrawerToggle.setHomeAsUpIndicator(R.drawable.ic_menu_agenda);
+//    mDrawerToggle.setHomeAsUpIndicator(R.drawable.ic_menu_agenda);
     setDrawerListener(mDrawerToggle);
   }
   
