@@ -24,6 +24,21 @@ public class NavigationLayout extends LinearLayout implements NativeCommandHandl
   public void onScreenOrientationChange(boolean isLandscape) {
     invalidate();
   }
+  
+  @Override
+  public void onVisibilityChanged(View changedView, int visibility) {
+    switch (visibility) {
+    case VISIBLE:
+      System.out.println("DRAWER java: visible");
+      frame.visibilityChangedEvent(System.currentTimeMillis() / 1000.0, getId(), true);
+      break;
+    case GONE:
+    case INVISIBLE: 
+      System.out.println("DRAWER java: invisible");
+      frame.visibilityChangedEvent(System.currentTimeMillis() / 1000.0, getId(), false);
+    break;
+    }
+  }
 
   @Override
     public void addChild(View view) {
