@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.sometrik.framework.FWList.ColumnType;
+
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,17 +26,26 @@ public class FWAdapter2 extends ArrayAdapter<View> {
   private HashMap<Integer, AdapterData> dataList;
 //  private AdapterData columnData;
   private FrameWork frame;
-  private LinearLayout.LayoutParams listItemParams;
+  private LinearLayout.LayoutParams defaultListParams;
+  private LinearLayout.LayoutParams numericListParams;
+  private LinearLayout.LayoutParams iconListParams;
+  private LinearLayout.LayoutParams timestampListParams;
   private boolean sheetsEnabled = false;
+  private HashMap<Integer, ColumnType> columnTypes;
 
   public FWAdapter2(FrameWork frame, List<View> viewList) {
     super(frame, 0, viewList);
     this.frame = frame;
     dataList = new HashMap<Integer, AdapterData>();
-//    columnData = new AdapterData(new ArrayList<String>());
-    listItemParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT);
-    listItemParams.weight = 1;
-    listItemParams.leftMargin = 50;
+    columnTypes = new HashMap<Integer, ColumnType>();
+    defaultListParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, FWList.defaultColumnWeight);
+    numericListParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, FWList.numericColumnWeight);
+    iconListParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, FWList.iconColumnWeight);
+    timestampListParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, FWList.timestampColumnWeight);
+    defaultListParams.leftMargin = 20;
+    numericListParams.leftMargin = 20;
+    iconListParams.leftMargin = 20;
+    timestampListParams.leftMargin = 20;
   }
 
   public ArrayList<String> getDataRow(int row, int sheet) {
@@ -180,6 +191,32 @@ public class FWAdapter2 extends ArrayAdapter<View> {
     }
   }
   
+  public void setColumnType(ColumnType type, int column){
+    columnTypes.put(column, type);
+  }
+  
+  public LinearLayout.LayoutParams getColumnParameters(int column) {
+
+    // Check column specs
+    ColumnType type = columnTypes.get(column);
+    if (type != null) {
+      switch (type) {
+      case TEXT:
+	return defaultListParams;
+      case NUMERIC:
+	return numericListParams;
+      case TIMESTAMP:
+	return timestampListParams;
+      case ICON:
+	return iconListParams;
+      default:
+	return defaultListParams;
+      }
+    } else {
+      return defaultListParams;
+    }
+  }
+  
   public class ViewHolder {
     
     AdapterData data;
@@ -197,11 +234,9 @@ public class FWAdapter2 extends ArrayAdapter<View> {
 	textView.setFocusable(false);
 	textView.setFocusableInTouchMode(false);
 	textView.setClickable(false);
-	// txtFirst.setTextAppearance(frame,
-	// android.R.style.TextAppearance_DeviceDefault_Small);
 	textView.setTextSize(9);
 	textView.setSingleLine();
-	textView.setLayoutParams(listItemParams);
+	textView.setLayoutParams(getColumnParameters(i));
 	textView.setText(data.getData(i));
 	viewList.add(textView);
 	rowLayout.addView(textView);
@@ -216,10 +251,8 @@ public class FWAdapter2 extends ArrayAdapter<View> {
 	textView.setFocusable(false);
 	textView.setFocusableInTouchMode(false);
 	textView.setClickable(false);
-	// txtFirst.setTextAppearance(frame,
-	// android.R.style.TextAppearance_DeviceDefault_Small);
 	textView.setTextSize(9);
-	textView.setLayoutParams(listItemParams);
+	textView.setLayoutParams(getColumnParameters(i));
 	textView.setText(data.getData(i));
 	textView.setSingleLine();
 	viewList.add(textView);

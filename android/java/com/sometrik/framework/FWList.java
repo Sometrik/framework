@@ -1,6 +1,9 @@
 package com.sometrik.framework;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+
+import com.sometrik.framework.FWList.ColumnType;
 
 import android.graphics.Typeface;
 import android.view.View;
@@ -20,62 +23,24 @@ public class FWList extends ListView implements NativeCommandHandler {
   private FWAdapter2 adapter;
   private ArrayList<String> headers;
   private View currentHeaderView;
+  private HashMap<Integer, ColumnType> columnTypes;
+
+  public static int defaultColumnWeight = 3;
+  public static int timestampColumnWeight = 1;
+  public static int iconColumnWeight = 3;
+  public static int numericColumnWeight = 1;
+  
 
   public FWList(final FrameWork frame, final FWAdapter2 adapter) {
     super(frame);
     this.frame = frame;
     this.adapter = adapter;
     this.setAdapter( adapter);
-//    this.setGroupIndicator(null);
     this.setAnimation(null);
+    columnTypes = new HashMap<Integer, ColumnType>();
     headers = new ArrayList<String>();
     System.out.println("FWLIST constructor");
     this.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
-    // this.setGroupIndicator(frame.getResources().getDrawable(android.R.drawable.ic_menu_more));
-//    setOnGroupClickListener(new OnGroupClickListener() {
-//      @Override
-//      public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
-//	System.out.println("groupClick detected " + groupPosition);
-//	System.out.println("row clicked. Sending intChangedEvent of " + (groupPosition));
-//	// if (ownerId == 0) {
-//	frame.intChangedEvent(System.currentTimeMillis() / 1000.0, getElementId(), groupPosition, 0);
-//	// } else {
-//	// System.out.println("ownerId " + ownerId);
-//	// frame.intChangedEvent(System.currentTimeMillis() / 1000.0, ownerId,
-//	// groupPosition - 1, 0);
-//	// }
-//
-//	return true;
-//      }
-//    });
-//    setOnChildClickListener(new OnChildClickListener() {
-//      @Override
-//      public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-//	System.out.println("child clicked. Sending intChangedEvent of " + (groupPosition - 1) + " " + (childPosition - 1));
-//	// if (ownerId == 0) {
-//	frame.intChangedEvent(System.currentTimeMillis() / 1000.0, getElementId(), groupPosition - 1, childPosition - 1);
-//	// } else {
-//	// frame.intChangedEvent(System.currentTimeMillis() / 1000.0, ownerId,
-//	// groupPosition - 1, childPosition - 1);
-//	// }
-//	return true;
-//      }
-//    });
-//
-//    // This collapses all other than the chosen group
-//    setOnGroupExpandListener(new OnGroupExpandListener() {
-//      @Override
-//      public void onGroupExpand(int groupPosition) {
-//	for (int i = 0; i < adapter.getGroupCount(); i++) {
-//	  if (i != groupPosition) {
-//	    if (isGroupExpanded(i)) {
-//	      collapseGroup(i);
-//	    }
-//	  }
-//	}
-//	Log.d("adapterExpansion", "expansionStuff done");
-//      }
-//    });
   }
 
   @Override
@@ -194,11 +159,9 @@ public class FWList extends ListView implements NativeCommandHandler {
     ColumnType type = ColumnType.values()[columnType - 1];
     System.out.println("columnType int: " + ColumnType.values()[columnType - 1]);
     headers.add(text);
-//    adapter.addColumn(text);
-    System.out.println("AddOption " + columnType + " text");
     adapter.notifyDataSetChanged();
-    System.out.println("AddOption " + columnType + " text");
-    
+
+    adapter.setColumnType(type, headers.size() - 1);
     View headerView = createHeaderView();
     if (getHeaderViewsCount() > 0){
       this.removeHeaderView(currentHeaderView);
@@ -209,10 +172,6 @@ public class FWList extends ListView implements NativeCommandHandler {
   
   private View createHeaderView(){
 
-    LinearLayout.LayoutParams listItemParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT);
-    listItemParams.weight = 1;
-    listItemParams.leftMargin = 50;
-    
     LinearLayout layout = new LinearLayout(frame);
     layout.setOrientation(LinearLayout.HORIZONTAL);
     layout.setPadding(0, 20, 0, 20);
@@ -221,14 +180,14 @@ public class FWList extends ListView implements NativeCommandHandler {
     for (int i = 0; i < headers.size(); i++) {
       System.out.println(getId() + " add header: " + headers.get(i));
       TextView txtFirst = new TextView(frame);
-      txtFirst.setLayoutParams(listItemParams);
-      txtFirst.setTypeface(null, Typeface.BOLD);
-      txtFirst.setTextSize(10);
       txtFirst.setFocusable(false);
       txtFirst.setFocusableInTouchMode(false);
       txtFirst.setClickable(false);
-      layout.addView(txtFirst);
+      txtFirst.setTextSize(10);
+      txtFirst.setLayoutParams(adapter.getColumnParameters(i));
       txtFirst.setText(headers.get(i));
+      txtFirst.setTypeface(null, Typeface.BOLD);
+      layout.addView(txtFirst);
     }
     
     return layout;
