@@ -75,19 +75,6 @@ public class FWTable extends TableLayout implements NativeCommandHandler {
     return row;
   }
   
-  @Override
-  public void onVisibilityChanged(View changedView, int visibility) {
-    switch (visibility) {
-    case VISIBLE:
-      frame.visibilityChangedEvent(System.currentTimeMillis() / 1000.0, getId(), true);
-      break;
-    case GONE:
-    case INVISIBLE: 
-      frame.visibilityChangedEvent(System.currentTimeMillis() / 1000.0, getId(), false);
-    break;
-    }
-  }
-  
   public void resizeAutoSize(){
     if (autoSize){
       Log.d("table", "Resizing autoSize table");
