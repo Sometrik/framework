@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 
 import android.graphics.BitmapFactory;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -17,6 +18,7 @@ public class NavigationBar extends FrameLayout implements NativeCommandHandler {
   LinearLayout baseLayout;
   LinearLayout.LayoutParams childParams;
   ArrayList<ImageView> childList;
+  int displayScale = 1;
   
   public NavigationBar(FrameWork frame) {
     super(frame);
@@ -29,8 +31,9 @@ public class NavigationBar extends FrameLayout implements NativeCommandHandler {
     LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
     baseLayout.setLayoutParams(params);
     setLayoutParams(params);
-
-    childParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 50);
+    DisplayMetrics metrics = frame.setupDisplayMetrics();
+    displayScale = (int) metrics.scaledDensity;
+    childParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 60 * displayScale);
     childParams.weight = 1;
     
     addView(baseLayout);
