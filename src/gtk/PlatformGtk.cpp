@@ -85,11 +85,16 @@ public:
       
     case Command::CREATE_APPLICATION: {
       cerr << "creating stack\n";
+      assert(window);
+#if 0
+      window_layout = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+      gtk_container_add(GTK_CONTAINER(window), window_layout);
+#endif
+
       stack = gtk_stack_new();
       gtk_stack_set_transition_type((GtkStack*)stack, GTK_STACK_TRANSITION_TYPE_SLIDE_LEFT_RIGHT);
       // ignore parent id
       addView(0, command.getChildInternalId(), stack);
-      assert(window);
       gtk_container_add(GTK_CONTAINER(window), stack);
     }
       break;
@@ -109,8 +114,8 @@ public:
 
     case Command::CREATE_GRIDVIEW:
     case Command::CREATE_LISTVIEW: {
-      auto window = gtk_scrolled_window_new(0, 0);
-      gtk_scrolled_window_set_min_content_height((GtkScrolledWindow*)window, 400);
+      auto view = gtk_scrolled_window_new(0, 0);
+      gtk_scrolled_window_set_min_content_height((GtkScrolledWindow*)view, 400);
       auto store = gtk_tree_store_new(5, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
       auto gridview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(store));
       gtk_tree_view_set_activate_on_single_click(GTK_TREE_VIEW(gridview), 1);
@@ -118,8 +123,8 @@ public:
       // gtk_widget_set_hexpand((GtkWidget*)gridview, 1);
       // g_signal_connect(gridview, "cursor-changed", G_CALLBACK(send_selection_value), this);
       g_signal_connect(gridview, "row-activated", G_CALLBACK(send_activation_value), this);
-      gtk_container_add(GTK_CONTAINER(window), gridview);
-      addView(command, window, true);
+      gtk_container_add(GTK_CONTAINER(view), gridview);
+      addView(command, view, true);
       if (initial_view_shown) gtk_widget_show(gridview);
     }
       break;
@@ -153,8 +158,11 @@ public:
       auto view = views_by_id[command.getInternalId()];
       if (view) {
 	auto treeview = gtk_bin_get_child(GTK_BIN(view));
-	assert(GTK_IS_TREE_VIEW(treeview));
-	if (GTK_IS_TREE_VIEW(treeview)) {
+	if (!treeview) {
+	  cerr << "no actual child for ADD_COLUMN\n";
+	} else if (!GTK_IS_TREE_VIEW(treeview)) {
+	  cerr << "actual child is not tree view\n";
+	} else {
 	  int i = gtk_tree_view_get_n_columns(GTK_TREE_VIEW(treeview));
 	  auto renderer = gtk_cell_renderer_text_new();
 	  float xalign = 0.0f;
@@ -264,11 +272,11 @@ public:
       break;
 
     case Command::CREATE_NAVIGATIONBAR: {
-      if (!footer) {
+      if (!footer && 0) {
 	footer = gtk_action_bar_new();
 	gtk_widget_show_all(footer);
 	addView(0, command.getChildInternalId(), footer);
-	gtk_container_add(GTK_CONTAINER(window), footer);
+	gtk_container_add(GTK_CONTAINER(window_layout), footer);
       };
     }
       break;
@@ -692,6 +700,7 @@ private:
   GtkWidget * header = nullptr;
   GtkWidget * footer = nullptr;
   GtkWidget * stack = nullptr;
+  GtkWidget * window_layout = nullptr;
   unordered_map<int, GtkWidget *> views_by_id;
   bool initial_view_shown = false;
   unordered_map<int, vector<sheet_data_s> > sheets_by_id;
