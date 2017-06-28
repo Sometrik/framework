@@ -26,13 +26,19 @@ public class FWDialog extends Dialog implements NativeCommandHandler{
     params.height = LayoutParams.WRAP_CONTENT;
     params.width = LayoutParams.MATCH_PARENT;
     getWindow().setAttributes((android.view.WindowManager.LayoutParams) params);
-    
-    this.setOnDismissListener(new OnDismissListener(){
+
+    this.setOnCancelListener(new OnCancelListener(){
       @Override
-      public void onDismiss(DialogInterface arg0) {
+      public void onCancel(DialogInterface arg0) {
 	frame.endModal(System.currentTimeMillis() / 1000.0, id, null);
-      }
+      }      
     });
+    // this.setOnDismissListener(new OnDismissListener(){
+    //   @Override
+    //   public void onDismiss(DialogInterface arg0) {
+    // 	  frame.endModal(System.currentTimeMillis() / 1000.0, id, null);
+    //   }
+    // });
   }
 
   @Override
