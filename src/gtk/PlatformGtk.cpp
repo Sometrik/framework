@@ -86,16 +86,14 @@ public:
     case Command::CREATE_APPLICATION: {
       cerr << "creating stack\n";
       assert(window);
-#if 0
-      window_layout = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
-      gtk_container_add(GTK_CONTAINER(window), window_layout);
-#endif
-
       stack = gtk_stack_new();
       gtk_stack_set_transition_type((GtkStack*)stack, GTK_STACK_TRANSITION_TYPE_SLIDE_LEFT_RIGHT);
       // ignore parent id
-      addView(0, command.getChildInternalId(), stack);
       gtk_container_add(GTK_CONTAINER(window), stack);
+
+      addView(0, command.getChildInternalId(), stack);
+
+      gtk_widget_show_all(window);
     }
       break;
       
@@ -272,12 +270,8 @@ public:
       break;
 
     case Command::CREATE_NAVIGATIONBAR: {
-      if (!footer && 0) {
-	footer = gtk_action_bar_new();
-	gtk_widget_show_all(footer);
-	addView(0, command.getChildInternalId(), footer);
-	gtk_container_add(GTK_CONTAINER(window_layout), footer);
-      };
+      auto bar = gtk_action_bar_new();
+      addView(command, bar);
     }
       break;
       
@@ -700,7 +694,6 @@ private:
   GtkWidget * header = nullptr;
   GtkWidget * footer = nullptr;
   GtkWidget * stack = nullptr;
-  GtkWidget * window_layout = nullptr;
   unordered_map<int, GtkWidget *> views_by_id;
   bool initial_view_shown = false;
   unordered_map<int, vector<sheet_data_s> > sheets_by_id;
