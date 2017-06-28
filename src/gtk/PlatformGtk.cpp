@@ -263,9 +263,18 @@ public:
     }
       break;
 
+    case Command::CREATE_NAVIGATIONBAR: {
+      if (!footer) {
+	footer = gtk_action_bar_new();
+	gtk_widget_show_all(footer);
+	addView(0, command.getChildInternalId(), footer);
+	gtk_container_add(GTK_CONTAINER(window), footer);
+      };
+    }
+      break;
+      
     case Command::CREATE_ACTIONBAR: {
       if (!header) {
-	cerr << "creating actionbar\n";
 	header = gtk_header_bar_new();
 	gtk_header_bar_set_title((GtkHeaderBar*)header, "App");
 	gtk_header_bar_set_show_close_button((GtkHeaderBar*)header, 1);
@@ -681,6 +690,7 @@ private:
   GtkApplication * gtk_app = nullptr;
   GtkWidget * window = nullptr;
   GtkWidget * header = nullptr;
+  GtkWidget * footer = nullptr;
   GtkWidget * stack = nullptr;
   unordered_map<int, GtkWidget *> views_by_id;
   bool initial_view_shown = false;
