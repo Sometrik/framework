@@ -155,29 +155,36 @@ public:
     case Command::ADD_COLUMN: {
       auto view = views_by_id[command.getInternalId()];
       if (view) {
-	auto treeview = gtk_bin_get_child(GTK_BIN(view));
-	if (!treeview) {
-	  cerr << "no actual child for ADD_COLUMN\n";
-	} else if (!GTK_IS_TREE_VIEW(treeview)) {
-	  cerr << "actual child is not tree view\n";
+	if (GTK_IS_ACTION_BAR(view)) {
+	  auto button = gtk_button_new_from_icon_name("properties", GTK_ICON_SIZE_BUTTON);
+	  // g_signal_connect(settings, "clicked", G_CALLBACK(on_settings_button), this);
+	  gtk_action_bar_pack_start((GtkActionBar*)view, button);
+	  gtk_widget_show(button);
 	} else {
-	  int i = gtk_tree_view_get_n_columns(GTK_TREE_VIEW(treeview));
-	  auto renderer = gtk_cell_renderer_text_new();
-	  float xalign = 0.0f;
-	  bool autosize = false;
-	  if (command.getValue() == 2) {
-	    xalign = 1.0f;
-	    autosize = true;
-	  }
-	  gtk_cell_renderer_set_alignment(renderer, xalign, 0.0f);
-	  gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(treeview),
-						      -1,
-						      command.getTextValue().c_str(),
-						      renderer,
-						      "text", i, NULL);
-	  if (autosize) {
-	    auto column = gtk_tree_view_get_column(GTK_TREE_VIEW(treeview), i);
-	    gtk_tree_view_column_set_sizing(column, GTK_TREE_VIEW_COLUMN_AUTOSIZE);
+	  auto treeview = gtk_bin_get_child(GTK_BIN(view));
+	  if (!treeview) {
+	    cerr << "no actual child for ADD_COLUMN\n";
+	  } else if (!GTK_IS_TREE_VIEW(treeview)) {
+	    cerr << "actual child is not tree view\n";
+	  } else {
+	    int i = gtk_tree_view_get_n_columns(GTK_TREE_VIEW(treeview));
+	    auto renderer = gtk_cell_renderer_text_new();
+	    float xalign = 0.0f;
+	    bool autosize = false;
+	    if (command.getValue() == 2) {
+	      xalign = 1.0f;
+	      autosize = true;
+	    }
+	    gtk_cell_renderer_set_alignment(renderer, xalign, 0.0f);
+	    gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(treeview),
+							-1,
+							command.getTextValue().c_str(),
+							renderer,
+							"text", i, NULL);
+	    if (autosize) {
+	      auto column = gtk_tree_view_get_column(GTK_TREE_VIEW(treeview), i);
+	      gtk_tree_view_column_set_sizing(column, GTK_TREE_VIEW_COLUMN_AUTOSIZE);
+	    }
 	  }
 	}
       } else {
