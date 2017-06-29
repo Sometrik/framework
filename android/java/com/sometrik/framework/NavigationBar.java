@@ -158,4 +158,10 @@ public class NavigationBar extends FrameLayout implements NativeCommandHandler {
     return getId();
   }
 
+  @Override
+  public void setImage(byte[] bytes) {
+    // TODO Auto-generated method stub
+    
+  }
+
 }

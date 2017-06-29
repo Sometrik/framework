@@ -55,6 +55,7 @@ public class NativeCommand {
   private int flags = 0;
   private String textValue = "";
   private String textValue2 = "";
+  private byte[] byteArray;
   private CommandType command;
   private String key;
   private FrameWork frame;
@@ -94,7 +95,7 @@ public class NativeCommand {
     CREATE_AUTO_COLUMN_LAYOUT,
     CREATE_HEADING_TEXT,
     CREATE_TEXT,
-    CREATE_DIALOG, // For future
+    CREATE_DIALOG,
     CREATE_IMAGEVIEW,
     CREATE_ACTION_SHEET,
     CREATE_CHECKBOX,
@@ -113,11 +114,11 @@ public class NativeCommand {
     POST_NOTIFICATION,
     HISTORY_GO_BACK,
     HISTORY_GO_FORWARD,
-    CLEAR, // Clears the contents of GridView
+    CLEAR,
     SET_INT_VALUE, // Sets value of radio groups, checkboxes and pickers
     SET_TEXT_VALUE, // Sets value of textfields, labels and images
     SET_INT_DATA,
-    SET_TEXT_DATA, // Sets the cell value of GridView
+    SET_TEXT_DATA,
     SET_LABEL, // Sets label for buttons and checkboxes
     SET_ENABLED,
     SET_READONLY,
@@ -125,7 +126,8 @@ public class NativeCommand {
     SET_SHAPE, // Specifies the number of rows and columns in a GridView
     SET_STYLE,
     SET_ERROR,
-    FLUSH_VIEW, // Flushes GridView content
+    SET_IMAGE,
+    FLUSH_VIEW,
     UPDATE_PREFERENCE,
     ADD_OPTION,
     ADD_SHEET,
@@ -172,6 +174,7 @@ public class NativeCommand {
     this.flags = flags;
 
     if (textValue != null) {
+      byteArray = textValue;
 	this.textValue = new String(textValue, frame.getCharset());
     }
     if (textValue2 != null) {
@@ -324,7 +327,9 @@ public class NativeCommand {
       break;
 
     case CREATE_IMAGEVIEW:
-      ImageView imageView = createImageView();
+      FWImageView imageView = new FWImageView(frame);
+      imageView.setId(childInternalId);
+      FrameWork.addToViewList(imageView);
       view.addChild(imageView);
       break;
       
@@ -387,6 +392,9 @@ public class NativeCommand {
       break;
     case SET_ERROR:
       view.setError(value != 0, textValue);
+      break;
+    case SET_IMAGE:
+      view.setImage(byteArray);
       break;
     case LAUNCH_BROWSER:
       frame.launchBrowser(getTextValue());

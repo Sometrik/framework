@@ -185,4 +185,10 @@ public class FWList extends ListView implements NativeCommandHandler {
     adapter.reshape(value, size);
     adapter.notifyDataSetChanged();
   }
+
+  @Override
+  public void setImage(byte[] bytes) {
+    // TODO Auto-generated method stub
+    
+  }
 }

@@ -122,6 +122,7 @@ public class FrameWork extends Activity {
 //      this.setTheme(android.R.style.Theme_Holo);
       this.setTheme(android.R.style.Theme_Holo_Light);
     }
+    this.setTheme(android.R.style.Theme_Holo_Light);
     super.onCreate(savedInstanceState);
     
     utf8_charset = Charset.forName("UTF-8");
@@ -326,6 +327,7 @@ public class FrameWork extends Activity {
       setContentView(view);
     }
      
+    
       setNativeActiveView(System.currentTimeMillis() / 1000.0, view.getId(), recordHistory);
 //    }
   }

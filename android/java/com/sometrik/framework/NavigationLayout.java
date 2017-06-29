@@ -157,4 +157,10 @@ public class NavigationLayout extends LinearLayout implements NativeCommandHandl
     
   }
 
+  @Override
+  public void setImage(byte[] bytes) {
+    // TODO Auto-generated method stub
+    
+  }
+
 }

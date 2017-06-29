@@ -147,4 +147,10 @@ public class FWActionBar implements NativeCommandHandler {
     // TODO Auto-generated method stub
     
   }
+
+  @Override
+  public void setImage(byte[] bytes) {
+    // TODO Auto-generated method stub
+    
+  }
 }

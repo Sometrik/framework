@@ -248,4 +248,10 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
     }
   }
 
+  @Override
+  public void setImage(byte[] bytes) {
+    // TODO Auto-generated method stub
+    
+  }
+
 }
