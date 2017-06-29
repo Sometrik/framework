@@ -32,7 +32,7 @@ class Element : public EventHandler {
 
   bool isVisible() const {
     if (!is_visible) return false;
-    else if (parent) return parent->isChildVisible(*this);
+    else if (parent && !isA("NavigationDrawer")) return parent->isChildVisible(*this);
     else return true;
   }
   
