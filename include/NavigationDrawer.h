@@ -5,6 +5,7 @@
 #include <Command.h>
 #include <CommandEvent.h>
 #include <ValueEvent.h>
+#include <VisibilityEvent.h>
 
 class NavigationDrawer : public Element {
  public:
@@ -27,7 +28,12 @@ class NavigationDrawer : public Element {
     sendCommand(c);
   }
 
+  bool isVisible() const override {
+    return is_visible;
+  }
+
  protected:
+
   void create() override {
     Command c(Command::CREATE_NAVIGATIONVIEW, getParentInternalId(), getInternalId());
     sendCommand(c);

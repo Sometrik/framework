@@ -30,9 +30,9 @@ class Element : public EventHandler {
   
   virtual int showModal(Element * parent) { return 0; }
 
-  bool isVisible() const {
+  virtual bool isVisible() const {
     if (!is_visible) return false;
-    else if (parent && !isA("NavigationDrawer")) return parent->isChildVisible(*this);
+    else if (parent) return parent->isChildVisible(*this);
     else return true;
   }
   
@@ -169,6 +169,8 @@ class Element : public EventHandler {
   virtual void initialize(FWPlatform * _platform);
   void initializeChildren();
 
+  bool is_visible = true;
+
  private:
   static int getNextInternalId() { return nextInternalId++; }
 
@@ -180,7 +182,7 @@ class Element : public EventHandler {
   unsigned int flags; // initialized in constructor
   bool has_error = false;
   std::vector<Command> pendingCommands;
-  bool is_visible = true, is_enabled = true;
+  bool is_enabled = true;
 
   static int nextInternalId;
 };
