@@ -278,7 +278,9 @@ AndroidPlatform::sendCommand2(const Command & command) {
   auto textValue = command.getTextValue();
   auto textValue2 = command.getTextValue2();
   jbyteArray jtextValue = 0, jtextValue2 = 0;
-  if (!textValue.empty()) jtextValue = convertToByteArray(textValue);
+  if (command.getType() == Command::SET_IMAGE){
+    jtextValue = convertToByteArray(command.getTextValueAsBinary());
+  } else if (!textValue.empty()) jtextValue = convertToByteArray(textValue);
   if (!textValue2.empty()) jtextValue2 = convertToByteArray(textValue2);
   
   // SET_TEXT_VALUE check and new listcommand constructor should be refactored. ListView creation needs work

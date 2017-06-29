@@ -59,6 +59,7 @@ class Command {
     SET_SHAPE, // Specifies the number of rows and columns in a GridView
     SET_STYLE,
     SET_ERROR,
+    SET_IMAGE,
     FLUSH_VIEW, // Flushes GridView content
     UPDATE_PREFERENCE,
     ADD_OPTION,
@@ -89,8 +90,10 @@ class Command {
   void setValue(int v) { value = v; }
   
   const std::string & getTextValue() const { return textValue; }
+  const char * getTextValueAsBinary() const { return textValue.c_str(); }
   void setTextValue(const std::string & s) { textValue = s; }
   const std::string & getTextValue2() const { return textValue2; }
+  const char * getTextValue2AsBinary() const { return textValue2.c_str(); }
   void setTextValue2(const std::string & s) { textValue2 = s; }
   
   const std::string & getKey() const { return key; }
