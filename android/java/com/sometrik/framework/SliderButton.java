@@ -61,6 +61,8 @@ public class SliderButton extends Button {
 	      topButton.collapseBelow();
 	    }
 	    bottomButton.collapseBelow();
+	  } else if (position == Position.BOTTOMHIDDEN || position == Position.TOPHIDDEN){
+	    return;
 	  }
 	  sliderLayout.setActiveButton(positionId);
 	  moveToMiddle();
