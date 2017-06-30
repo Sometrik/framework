@@ -21,6 +21,7 @@ public class SliderButton extends Button {
   SliderLayout sliderLayout;
   Position position;
   int positionId;
+  boolean disableOnClick = false;
   
   FrameWork frame;
   boolean onTop = true;
@@ -42,6 +43,10 @@ public class SliderButton extends Button {
     setOnClickListener(new Button.OnClickListener() {
       @Override
       public void onClick(View arg0) {
+	if (disableOnClick){
+	  System.out.println("Button disabled");
+	  return;
+	}
 	System.out.println("onclick on " + positionId + " activeId: " + sliderLayout.getActiveButton());
 	if (sliderLayout.getActiveButton() != positionId) {
 	  if (position == Position.BOTTOM) {
@@ -59,6 +64,7 @@ public class SliderButton extends Button {
 	  }
 	  sliderLayout.setActiveButton(positionId);
 	  moveToMiddle();
+	  sliderLayout.setAllButtonsDisabled();
 	  child.setViewVisibility(true);
 	  onTop = true;
 
@@ -92,7 +98,9 @@ public class SliderButton extends Button {
       RelativeLayout.LayoutParams buttonParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
       buttonParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
       setLayoutParams(buttonParams);
+      child.setViewVisibility(false);
     } else if (position == Position.BOTTOMHIDDEN || position == Position.TOPHIDDEN) {
+      child.setViewVisibility(false);
       setVisibility(GONE);
     }
     System.out.println("setInitialPosition end " + positionId);
@@ -184,7 +192,6 @@ public class SliderButton extends Button {
 	    anim.setDuration(1);
 	    base.startAnimation(anim);
 
-
 	    RelativeLayout.LayoutParams buttonParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
 	    buttonParams.addRule(RelativeLayout.BELOW, topButton.getId());
 	    setLayoutParams(buttonParams);
@@ -256,6 +263,7 @@ public class SliderButton extends Button {
     System.out.println("BaseHeight: " + SliderLayout.buttonSize);
     final Animation animation = new TranslateAnimation(0, 0, sliderLayout.getHeight(), yDelta);
     animation.setDuration(transitionTime);
+    child.setViewVisibility(false);
     startAnimation(animation);
     animation.setAnimationListener(new Animation.AnimationListener() {
 
@@ -291,6 +299,7 @@ public class SliderButton extends Button {
     final Animation animation = new TranslateAnimation(0, 0, -SliderLayout.buttonSize, 0);
     animation.setDuration(transitionTime);
     startAnimation(animation);
+    child.setViewVisibility(false);
     animation.setAnimationListener(new Animation.AnimationListener() {
 
       @Override
@@ -328,6 +337,7 @@ public class SliderButton extends Button {
     final Animation animation = new TranslateAnimation(0, 0, 0, yDelta * 1);
     // set Animation for 5 sec
     animation.setDuration(transitionTime);
+    child.setViewVisibility(false);
     // for button stops in the new position.
     // animation.setFillAfter(true);
     startAnimation(animation);

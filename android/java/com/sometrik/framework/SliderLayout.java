@@ -2,6 +2,8 @@ package com.sometrik.framework;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import com.sometrik.framework.SliderButton.Position;
 
@@ -32,6 +34,26 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
     LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
     setLayoutParams(params);
  
+  }
+  
+  public void setAllButtonsDisabled(){
+    for (SliderButton button : buttonList){
+      button.disableOnClick = true;
+      button.child.setViewVisibility(false);
+      button.child.setViewEnabled(false);
+    }
+    
+    Timer timer = new Timer();
+    TimerTask task = new TimerTask(){
+      @Override
+      public void run() {
+	for (SliderButton button : buttonList) {
+	  button.disableOnClick = false;
+	  button.child.setViewEnabled(true);
+	}
+      }
+    };
+    timer.schedule(task, SliderButton.transitionTime);
   }
   
   @Override
