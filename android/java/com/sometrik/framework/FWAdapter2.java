@@ -128,6 +128,8 @@ public class FWAdapter2 extends ArrayAdapter<View> {
       if (data == null) {
         
         Log.d("adapter", "no data on position " + position);
+        LinearLayout layout = new LinearLayout(frame);
+        convertView = layout;
         return convertView;
       }
       LinearLayout layout = new LinearLayout(frame);
