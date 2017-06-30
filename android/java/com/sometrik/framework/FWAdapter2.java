@@ -96,13 +96,11 @@ public class FWAdapter2 extends ArrayAdapter<View> {
 
   @Override
   public int getCount() {
-    System.out.println("adapter getCount " + dataList.size());
     return dataList.size();
   }
 
   @Override
   public long getItemId(int arg0) {
-    Log.d("adapter", "getItemId");
     return 0;
   }
 
