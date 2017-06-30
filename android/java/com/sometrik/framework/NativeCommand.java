@@ -53,9 +53,8 @@ public class NativeCommand {
   private int childInternalId = 0;
   private int value = 0;
   private int flags = 0;
-  private String textValue = "";
-  private String textValue2 = "";
   private byte[] byteArray;
+  private byte[] byteArray2;
   private CommandType command;
   private String key;
   private FrameWork frame;
@@ -156,13 +155,8 @@ public class NativeCommand {
     this.rowNumber = row;
     this.columnNumber = column;
     this.sheet = sheet;
-
-    if (textValue != null) {
-	this.textValue = new String(textValue, frame.getCharset());
-    }
-    if (textValue2 != null) {
-	this.textValue2 = new String(textValue2, frame.getCharset());
-    }
+    byteArray = textValue;
+    byteArray2 = textValue2;
   }
   
   public NativeCommand(FrameWork frame, int messageTypeId, int internalId, int childInternalId, int value, byte[] textValue, byte[] textValue2, int flags){
@@ -172,14 +166,32 @@ public class NativeCommand {
     this.childInternalId = childInternalId;
     this.value = value;
     this.flags = flags;
+    byteArray = textValue;
+    byteArray2 = textValue2;
+  }
 
-    if (textValue != null) {
-      byteArray = textValue;
-	this.textValue = new String(textValue, frame.getCharset());
+  private String getTextValueAsString() {
+    if (byteArray != null) {
+      return new String(byteArray, frame.getCharset());
+    } else {
+      return "";
     }
-    if (textValue2 != null) {
-	this.textValue2 = new String(textValue2, frame.getCharset());
+  }
+
+  private byte[] getTextValueAsBinary() {
+    return byteArray;
+  }
+
+  private String getTextValue2AsString() {
+    if (byteArray2 != null) {
+      return new String(byteArray2, frame.getCharset());
+    } else {
+      return "";
     }
+  }
+
+  private byte[] getTextValue2AsBinary() {
+    return byteArray2;
   }
   
   public void apply(NativeCommandHandler view) {
@@ -189,7 +201,7 @@ public class NativeCommand {
     switch (command) {
 
     case CREATE_FORMVIEW:
-      FWScrollView scrollView = new FWScrollView(frame, textValue);
+      FWScrollView scrollView = new FWScrollView(frame, getTextValueAsString());
       scrollView.setId(getChildInternalId());
       scrollView.setPadding(10, 10, 10, 10);
       FrameWork.addToViewList(scrollView);
@@ -334,23 +346,23 @@ public class NativeCommand {
       break;
       
     case ADD_OPTION:
-      view.addOption(getValue(), getTextValue());
+      view.addOption(getValue(), getTextValueAsString());
       break;
     case ADD_COLUMN:
-      view.addColumn(getTextValue(), getValue());
+      view.addColumn(getTextValueAsString(), getValue());
       break;
     case ADD_SHEET:
-      System.out.println("add_sheet: " + textValue + " " + rowNumber + " " + columnNumber + " " + sheet);
-      view.setValue(textValue);
+      System.out.println("add_sheet: " + getTextValueAsString() + " " + rowNumber + " " + columnNumber + " " + sheet);
+      view.setValue(getTextValueAsString());
     case POST_NOTIFICATION:
-      frame.createNotification(getTextValue(), getTextValue2());
+      frame.createNotification(getTextValueAsString(), getTextValue2AsString());
       break;
     case CREATE_APPLICATION:
       frame.setAppId(getInternalId());
-      frame.setSharedPreferences(textValue);
+      frame.setSharedPreferences(getTextValueAsString());
       if (isSet(FLAG_USE_PURCHASES_API)) {
 	System.out.println("Initializing purchaseHelper");
-	frame.initializePurchaseHelper(textValue2, new IabHelper.OnIabSetupFinishedListener() {
+	frame.initializePurchaseHelper(getTextValue2AsString(), new IabHelper.OnIabSetupFinishedListener() {
 
 	  @Override
 	  public void onIabSetupFinished(IabResult result) {
@@ -368,11 +380,11 @@ public class NativeCommand {
       view.setValue(getValue());
       break;
     case SET_TEXT_VALUE:
-      view.setValue(textValue);
+      view.setValue(getTextValueAsString());
       break;
     case SET_TEXT_DATA:
-      System.out.println("set_text_data: " + textValue + " " + rowNumber + " " + columnNumber + " " + sheet);
-      view.addData(textValue, rowNumber, columnNumber, sheet);
+      System.out.println("set_text_data: " + getTextValueAsString() + " " + rowNumber + " " + columnNumber + " " + sheet);
+      view.addData(getTextValueAsString(), rowNumber, columnNumber, sheet);
       break;
     case SET_VISIBILITY:
       if (value == 0){
@@ -385,19 +397,19 @@ public class NativeCommand {
       view.setViewEnabled(value != 0);
       break;
     case SET_STYLE:
-      view.setStyle(textValue, textValue2);
+      view.setStyle(getTextValueAsString(), getTextValue2AsString());
       break;
     case SET_LABEL:
-      frame.actionBar.setValue(textValue);
+      frame.actionBar.setValue(getTextValueAsString());
       break;
     case SET_ERROR:
-      view.setError(value != 0, textValue);
+      view.setError(value != 0, getTextValueAsString());
       break;
     case SET_IMAGE:
       view.setImage(byteArray);
       break;
     case LAUNCH_BROWSER:
-      frame.launchBrowser(getTextValue());
+      frame.launchBrowser(getTextValueAsString());
       break;
     case END_MODAL:
       view.setValue(0);
@@ -406,21 +418,21 @@ public class NativeCommand {
       view.setValue(1);
       break;
     case SHOW_MESSAGE_DIALOG:
-      showMessageDialog(textValue, textValue2);
+      showMessageDialog(getTextValueAsString(), getTextValue2AsString());
       break;
     case SHOW_INPUT_DIALOG:
-      showInputDialog(textValue, textValue2);
+      showInputDialog(getTextValueAsString(), getTextValue2AsString());
       break;
     case CREATE_DIALOG:
       FWDialog dialog = new FWDialog(frame, childInternalId);
-      dialog.setTitle(textValue);
+      dialog.setTitle(getTextValueAsString());
       FrameWork.addToViewList(dialog);
       break;
     case CREATE_ACTION_SHEET:
       createActionSheet();
       break;
     case CREATE_ACTIONBAR:
-      FWActionBar ab = new FWActionBar(frame, textValue, childInternalId);
+      FWActionBar ab = new FWActionBar(frame, getTextValueAsString(), childInternalId);
       frame.actionBar = ab;
       FrameWork.addToViewList(ab);
       break;
@@ -438,7 +450,7 @@ public class NativeCommand {
       break;
     case UPDATE_PREFERENCE:
     	//Now stores String value to string key.
-      frame.getPreferencesEditor().putString(textValue, textValue2);
+      frame.getPreferencesEditor().putString(getTextValueAsString(), getTextValue2AsString());
       frame.getPreferencesEditor().apply();
       break;
     case DELETE_ELEMENT:
@@ -446,7 +458,7 @@ public class NativeCommand {
       break;
     case BUY_PRODUCT:
       try {
-	launchPurchase(textValue);
+	launchPurchase(getTextValueAsString());
       } catch (IabAsyncInProgressException e) {
 	e.printStackTrace();
 	System.out.println("Error on launchPurchase with message: " + e.getMessage());
@@ -491,11 +503,11 @@ public class NativeCommand {
   private FWSwitch createSwitch() {
     FWSwitch click = new FWSwitch(frame);
     click.setId(childInternalId);
-    if (textValue != "") {
-      click.setTextOn(textValue);
+    if (getTextValueAsString() != "") {
+      click.setTextOn(getTextValueAsString());
     }
-    if (textValue2 != "") {
-      click.setTextOff(textValue2);
+    if (getTextValue2AsString() != "") {
+      click.setTextOff(getTextValue2AsString());
     }
     click.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
       @Override
@@ -528,7 +540,7 @@ public class NativeCommand {
     ImageView imageView = new ImageView(frame);
     imageView.setId(childInternalId);
     try {
-      InputStream is = frame.getAssets().open(textValue);
+      InputStream is = frame.getAssets().open(getTextValueAsString());
       Bitmap bitmap = BitmapFactory.decodeStream(is);
       imageView.setImageBitmap(bitmap);
       return imageView;
@@ -560,7 +572,7 @@ public class NativeCommand {
   private FWButton createButton() {
     FWButton button = new FWButton(frame);
     button.setId(getChildInternalId());
-    button.setText(getTextValue());
+    button.setText(getTextValueAsString());
     LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 //    params.weight = 1;
 //    params.gravity = Gravity.BOTTOM;
@@ -583,7 +595,7 @@ public class NativeCommand {
     
     final FWEditText editText = new FWEditText(frame);
     editText.setId(getChildInternalId());
-    editText.setText(getTextValue());
+    editText.setText(getTextValueAsString());
 //    editText.setMinWidth(80);
     editText.setSingleLine();
     editText.setImeOptions(EditorInfo.IME_ACTION_DONE);
@@ -615,7 +627,7 @@ public class NativeCommand {
     editText.setMinLines(4);
     editText.setLayoutParams(params);
     editText.setId(getChildInternalId());
-    editText.setText(getTextValue());
+    editText.setText(getTextValueAsString());
     editText.setVerticalScrollBarEnabled(true);
     editText.setMovementMethod(new ScrollingMovementMethod());
     editText.addDelayedChangeListener(getChildInternalId());
@@ -635,8 +647,8 @@ public class NativeCommand {
     FWCheckBox checkBox = new FWCheckBox(frame);
     checkBox.setPadding(0, 0, 10, 0);
     checkBox.setId(childInternalId);
-    if (textValue != "") {
-      checkBox.setText(textValue);
+    if (getTextValueAsString() != "") {
+      checkBox.setText(getTextValueAsString());
     }
     checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
       @Override
@@ -655,10 +667,10 @@ public class NativeCommand {
     }
     if (isSet(FLAG_HYPERLINK)) {
       textView.setMovementMethod(LinkMovementMethod.getInstance());
-      String text = "<a href='" + textValue2 + "'>" + textValue + "</a>";
+      String text = "<a href='" + getTextValue2AsString() + "'>" + getTextValueAsString() + "</a>";
       textView.setText(Html.fromHtml(text));
     } else {
-      textView.setText(textValue);
+      textView.setText(getTextValueAsString());
     }
 
     FrameWork.addToViewList(textView);
@@ -791,12 +803,6 @@ public class NativeCommand {
   }
   public int getChildInternalId() {
     return childInternalId;
-  }
-  public String getTextValue() {
-    return textValue;
-  }
-  public String getTextValue2() {
-    return textValue2;
   }
   public CommandType getCommand() {
     return command;
