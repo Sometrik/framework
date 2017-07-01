@@ -157,7 +157,8 @@ public:
       if (view) {
 	if (GTK_IS_ACTION_BAR(view)) {
 	  auto button = gtk_button_new_from_icon_name("properties", GTK_ICON_SIZE_BUTTON);
-	  // g_signal_connect(settings, "clicked", G_CALLBACK(on_settings_button), this);
+	  widget_values[button] = command.getValue();
+	  g_signal_connect(button, "clicked", G_CALLBACK(on_bar_button), this);
 	  gtk_action_bar_pack_start((GtkActionBar*)view, button);
 	  gtk_widget_show(button);
 	} else {
@@ -203,7 +204,13 @@ public:
     case Command::ADD_OPTION: {
       auto view = views_by_id[command.getInternalId()];
       if (view) {
-	if (GTK_IS_COMBO_BOX_TEXT(view)) {
+	if (GTK_IS_HEADER_BAR(view)) {
+	  auto button = gtk_button_new_from_icon_name("properties", GTK_ICON_SIZE_BUTTON);
+	  widget_values[button] = command.getValue(); 
+	  g_signal_connect(button, "clicked", G_CALLBACK(on_bar_button), this);
+	  gtk_header_bar_pack_start((GtkHeaderBar*)view, button);
+	  gtk_widget_show(button);
+	} else if (GTK_IS_COMBO_BOX_TEXT(view)) {
 	  auto av = gtk_combo_box_text_get_active_text((GtkComboBoxText*)view);
 	  string id = to_string(command.getValue());
 	  gtk_combo_box_text_append((GtkComboBoxText*)view,
@@ -293,15 +300,13 @@ public:
 	gtk_style_context_add_class(gtk_widget_get_style_context(box), "linked");
 	auto previous = gtk_button_new_from_icon_name("go-previous", GTK_ICON_SIZE_BUTTON);
 	auto next = gtk_button_new_from_icon_name("go-next", GTK_ICON_SIZE_BUTTON);
-	auto settings = gtk_button_new_from_icon_name("properties", GTK_ICON_SIZE_BUTTON);
 	g_signal_connect(previous, "clicked", G_CALLBACK(on_previous_button), this);
 	g_signal_connect(next, "clicked", G_CALLBACK(on_next_button), this);
-	g_signal_connect(settings, "clicked", G_CALLBACK(on_settings_button), this);
+
 	gtk_box_pack_start((GtkBox*)box, previous, 0, 0, 0);
 	gtk_box_pack_start((GtkBox*)box, next, 0, 0, 0);
 	
 	gtk_header_bar_pack_start((GtkHeaderBar*)header, box);
-	gtk_header_bar_pack_start((GtkHeaderBar*)header, settings);
 	
 	gtk_widget_show_all(header);
 	gtk_window_set_titlebar(GTK_WINDOW(window), header);
@@ -668,6 +673,15 @@ public:
     return 0;
   }
 
+  int getValue(GtkWidget * widget) const {
+    auto it = widget_values.find(widget);
+    if (it != widget_values.end()) {
+      return it->second;
+    } else {
+      return 0;
+    }
+  }
+
   const vector<sheet_data_s> & getSheetsById(int id) const {
     auto it = sheets_by_id.find(id);
     if (it != sheets_by_id.end()) {
@@ -692,7 +706,7 @@ protected:
   static void send_activation_value(GtkTreeView * treeview, GtkTreePath * path, GtkTreeViewColumn * column, gpointer data);
   static void on_previous_button(GtkWidget * widget, gpointer data);
   static void on_next_button(GtkWidget * widget, gpointer data);
-  static void on_settings_button(GtkWidget * widget, gpointer data);
+  static void on_bar_button(GtkWidget * widget, gpointer data);
   static gboolean idle_callback(gpointer data);
   
 private:
@@ -705,6 +719,7 @@ private:
   bool initial_view_shown = false;
   unordered_map<int, vector<sheet_data_s> > sheets_by_id;
   vector<sheet_data_s> null_sheets;
+  map<GtkWidget *, int> widget_values;
 };
 
 string
@@ -904,10 +919,20 @@ PlatformGtk::on_next_button(GtkWidget * widget, gpointer data) {
 }
 
 void
-PlatformGtk::on_settings_button(GtkWidget * widget, gpointer data) {
-  cerr << "got settings\n";
+PlatformGtk::on_bar_button(GtkWidget * widget, gpointer data) {
   PlatformGtk * platform = (PlatformGtk*)data;
-  platform->sendCommand2(Command(Command::HISTORY_GO_FORWARD, 0));  
+  int id = 0;
+  for (GtkWidget * w = widget; !id && w; w = gtk_widget_get_parent(w)) {
+    cerr << "trying to get id from " << (long long)w << endl;
+    id = platform->getId(w);
+  }
+  assert(id);
+  if (id) {
+    int value = platform->getValue(widget);
+    cerr << "sending bar button click value: " << value << endl;
+    ValueEvent ev(platform->getTime(), value, value);
+    platform->postEvent(id, ev);
+  }
 }
 
 gboolean
