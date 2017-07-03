@@ -343,7 +343,7 @@ public class NativeCommand {
     case CREATE_TOAST:
       Toast toast = new Toast(frame);
       toast.setText(getTextValueAsString());
-      toast.setDuration(getValue());
+      toast.setDuration(getValue() != 0 ? getValue() : 2);
       toast.show();
       break;
     case ADD_OPTION:
