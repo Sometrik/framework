@@ -73,6 +73,7 @@ public class NativeCommand {
   private final int FLAG_HYPERLINK = 64;
   private final int FLAG_USE_PURCHASES_API = 128;
   private final int FLAG_SLIDERVIEW = 256;
+  private final int FLAG_STICKY_HEADER = 512;
  
   public enum CommandType {
     CREATE_PLATFORM,
@@ -103,6 +104,7 @@ public class NativeCommand {
     CREATE_SLIDER,
     CREATE_ACTIONBAR,
     CREATE_NAVIGATIONBAR,
+    CREATE_TOAST,
     DELETE_ELEMENT,
     END_MODAL,
     SHOW_DIALOG,
@@ -285,12 +287,12 @@ public class NativeCommand {
 	listView.setLayoutParams(params);
 	listView.setId(childInternalId);
 	listView.setOnItemClickListener(new OnItemClickListener() {
-	      @Override
-	      public void onItemClick(AdapterView<?> arg0, View arg1, int groupPosition, long id) {
-		System.out.println("row clicked. Sending intChangedEvent of " + (groupPosition - 1));
-		  frame.intChangedEvent(System.currentTimeMillis() / 1000.0, childInternalId, (groupPosition - 1), 0);
-	      }
-	    });
+	  @Override
+	  public void onItemClick(AdapterView<?> arg0, View arg1, int groupPosition, long id) {
+	    System.out.println("row clicked. Sending intChangedEvent of " + (groupPosition - 1));
+	    frame.intChangedEvent(System.currentTimeMillis() / 1000.0, childInternalId, (groupPosition - 1), 0);
+	  }
+	});
 	FrameWork.addToViewList(listView);
 	view.addChild(listView);
       }
