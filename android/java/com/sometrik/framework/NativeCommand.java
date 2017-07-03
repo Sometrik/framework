@@ -13,15 +13,12 @@ import com.android.trivialdrivesample.util.IabResult;
 import com.android.trivialdrivesample.util.Inventory;
 import com.android.trivialdrivesample.util.Purchase;
 
-import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.text.Editable;
 import android.text.Html;
 import android.text.InputType;
@@ -29,23 +26,20 @@ import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
-import android.widget.Button;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.PopupMenu.OnMenuItemClickListener;
-import android.widget.PopupWindow;
-import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Toast;
 
 public class NativeCommand {
 
@@ -346,7 +340,12 @@ public class NativeCommand {
       FrameWork.addToViewList(imageView);
       view.addChild(imageView);
       break;
-      
+    case CREATE_TOAST:
+      Toast toast = new Toast(frame);
+      toast.setText(getTextValueAsString());
+      toast.setDuration(getValue());
+      toast.show();
+      break;
     case ADD_OPTION:
       view.addOption(getValue(), getTextValueAsString());
       break;
