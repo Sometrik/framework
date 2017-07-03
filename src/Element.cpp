@@ -146,6 +146,14 @@ Element::showInputDialog(const std::string & title, const std::string & text) {
   return platform->getModalResultText();
 }
 
+void
+Element::showToast(const std::string & message, int duration) {
+  Command c(Command::CREATE_TOAST, getParentInternalId(), getInternalId());
+  c.setTextValue(message);
+  c.setValue(duration);
+  sendCommand(c);
+}
+
 FWApplication &
 Element::getApplication() {
   auto p = getPlatform().getFirstChild();
