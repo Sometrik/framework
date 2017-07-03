@@ -18,6 +18,7 @@
 #include <CommandEvent.h>
 
 #include <gtk/gtk.h>
+#include <gio/gio.h>
 
 #include <unordered_map>
 #include <cstdio>
@@ -542,6 +543,19 @@ public:
 					   );
       gtk_dialog_run (GTK_DIALOG (dialog));
       gtk_widget_destroy (dialog);
+    }
+      break;
+
+    case Command::CREATE_TOAST: {
+      // GApplication *application = g_application_new ("hello.world", G_APPLICATION_FLAGS_NONE);
+      // g_application_register (application, NULL, NULL);
+      GNotification * notification = g_notification_new(command.getTextValue().c_str());
+      g_notification_set_body(notification, command.getTextValue().c_str());
+      GIcon *icon = g_themed_icon_new ("dialog-information");
+      g_notification_set_icon (notification, icon);
+      g_application_send_notification(G_APPLICATION(gtk_app), NULL, notification);
+      g_object_unref (icon);
+      g_object_unref (notification);
     }
       break;
       
