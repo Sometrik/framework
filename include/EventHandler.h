@@ -29,17 +29,20 @@ class ContextMenuEvent;
 class ImageRequestEvent;
 class ImageEvent;
 class PositionEvent;
-class GraphChangeEvent;
 class RebuildEvent;
-class LicenseEvent;
-class EdgeEvent;
-class PrepareEvent;
 class ThreadEvent;
-class VisiblePostsEvent;
 class LeaveWorkspaceEvent;
 class MultiTouchEvent;
 class LoadEvent;
+
+// Application specific
+class LicenseEvent;
+class EdgeEvent;
+class PrepareEvent;
+class VisiblePostsEvent;
+class GraphChangeEvent;
 class SearchEvent;
+class StatusEvent;
 
 class EventHandler : public Notifier {
  public:
@@ -64,17 +67,7 @@ class EventHandler : public Notifier {
 
   virtual void handleWindowEvent(WindowEvent & ev) { }
   virtual void handleUICommandEvent(UICommandEvent & ev) { }
-  virtual void handlePrepareEvent(PrepareEvent & ev) { }
-  virtual void handlePaintEventRecursive(PaintEvent & ev) { }
-  virtual void handlePaintEvent(PaintEvent & ev) { }
-  virtual void handlePaintEventCanvas(PaintEventCanvas & ev) { }
-  virtual void handleSelectionEvent(SelectionEvent & ev) { }
   virtual void handleAnimationEvent(AnimationEvent & ev) { }
-  virtual void handleLayoutEvent(LayoutEvent & ev) { }
-  virtual void handleGraphChangeEvent(GraphChangeEvent & ev) { }
-  virtual void handleRebuildEvent(RebuildEvent & ev) { }
-  virtual void handleLicenseEvent(LicenseEvent & ev) { }
-  virtual void handleEdgeEvent(EdgeEvent & ev) { }
   virtual void handleThreadEvent(ThreadEvent & ev) { }
   
   virtual void handleContextMenuEvent(ContextMenuEvent & ev) { }
@@ -88,11 +81,24 @@ class EventHandler : public Notifier {
   virtual void handleMouseEvent(MouseEvent & ev) { }
   virtual void handleImageRequestEvent(ImageRequestEvent & ev) { }
   virtual void handleImageEvent(ImageEvent & ev) { }
-  virtual void handleVisiblePostsEvent(VisiblePostsEvent & ev) { }
   virtual void handleLeaveWorkspaceEvent(LeaveWorkspaceEvent & ev) { }
   virtual void handleMultiTouchEvent(MultiTouchEvent & ev) { }
   virtual void handleLoadEvent(LoadEvent & ev) { }
+
+  // Application specific
+  virtual void handlePrepareEvent(PrepareEvent & ev) { }
+  virtual void handlePaintEventRecursive(PaintEvent & ev) { }
+  virtual void handlePaintEvent(PaintEvent & ev) { }
+  virtual void handlePaintEventCanvas(PaintEventCanvas & ev) { }
+  virtual void handleSelectionEvent(SelectionEvent & ev) { }
+  virtual void handleLayoutEvent(LayoutEvent & ev) { }
+  virtual void handleGraphChangeEvent(GraphChangeEvent & ev) { }
+  virtual void handleRebuildEvent(RebuildEvent & ev) { }
+  virtual void handleLicenseEvent(LicenseEvent & ev) { }
+  virtual void handleEdgeEvent(EdgeEvent & ev) { }
+  virtual void handleVisiblePostsEvent(VisiblePostsEvent & ev) { }
   virtual void handleSearchEvent(SearchEvent & ev) { }
+  virtual void handleStatusEvent(StatusEvent & ev) { }
   
   virtual bool acceptPositionEvent(const PositionEvent & ev, float margin = 0) const { return false; }
   virtual bool isVisibleOnWorkspace(int w) const { return true; }  
