@@ -951,7 +951,6 @@ PlatformGtk::on_bar_button(GtkWidget * widget, gpointer data) {
 
 gboolean
 PlatformGtk::idle_callback(gpointer data) {
-  cerr << "got idle_callback\n";
   event_data_s * ed = (event_data_s*)data;
   PlatformGtk * platform = ed->platform;
   Event * ev = ed->event;
