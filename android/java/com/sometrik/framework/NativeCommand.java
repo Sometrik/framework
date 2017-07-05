@@ -341,9 +341,7 @@ public class NativeCommand {
       view.addChild(imageView);
       break;
     case CREATE_TOAST:
-      Toast toast = new Toast(frame);
-      toast.setText(getTextValueAsString());
-      toast.setDuration(getValue() != 0 ? getValue() : 2);
+      Toast toast = Toast.makeText(frame, getTextValueAsString(), getValue() != 0 ? getValue() : 2);
       toast.show();
       break;
     case ADD_OPTION:
