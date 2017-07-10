@@ -5,7 +5,7 @@
 
 #include <EventQueue.h>
 #include <FWPlatform.h>
-#include <Mutex.h>
+// #include <Mutex.h>
 
 #include <string>
 
@@ -26,24 +26,26 @@ class Runnable : public EventHandler {
   const PlatformThread & getThread() const;
   PlatformThread * getThreadPtr() { return thread; }
 
+#if 0
   void sendEvent(const Event & ev) {
     event_queue.push(0, ev);
   }
+#endif
 
-  bool isRunning() const;
+  // bool isRunning() const;
         
  protected:
   FWPlatform & getPlatform();
   const FWPlatform & getPlatform() const;
   
-  EventQueue event_queue;
+  // EventQueue event_queue;
   void postEvent(const Event & event);
   virtual void run() = 0;
 
  private:
   PlatformThread * thread = 0;
-  bool is_running = true;
-  mutable Mutex mutex;
+  // bool is_running = true;
+  // mutable Mutex mutex;
 };
 
 #endif

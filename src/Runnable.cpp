@@ -17,10 +17,12 @@ Runnable::start(PlatformThread * _thread) {
   } catch (exception & e) {
     getPlatform().getLogger().println("Runnable: received an exception: " + string(e.what()));
   }
+#if 0
   {
     MutexLocker l(mutex);
     is_running = false;
   }
+#endif
   SysEvent ev(getPlatform().getTime(), SysEvent::THREAD_TERMINATED);
   ev.setThread(thread);
   postEvent(ev);
@@ -54,6 +56,7 @@ Runnable::getPlatform() const {
   return getThread().getPlatform();
 }
 
+#if 0
 bool
 Runnable::isRunning() const {
   bool t;
@@ -63,3 +66,5 @@ Runnable::isRunning() const {
   }
   return t;
 }
+#endif
+
