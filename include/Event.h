@@ -3,6 +3,11 @@
 
 #include <EventHandler.h>
 
+#define FW_EVENT_IS_HANDLED	1
+#define FW_EVENT_IS_STOPPED	2
+#define FW_EVENT_REDRAW		4
+#define FW_EVENT_UPDATE_LAYOUT	8
+
 class Event {
  public:
   Event(double _timestamp) : timestamp(_timestamp) { }
@@ -22,19 +27,19 @@ class Event {
   
   double getTimestamp() const { return timestamp; }
   
-  bool isHandled() const { return is_handled; }
-  bool isRedrawNeeded() const { return redraw_needed; }
-  bool isStopped() const { return is_stopped; }
+  bool isHandled() const { return flags & FW_EVENT_IS_HANDLED; }
+  bool isRedrawNeeded() const { return flags & FW_EVENT_REDRAW; }
+  bool isStopped() const { return flags & FW_EVENT_IS_STOPPED; }
 
-  bool needUpdateLayout() const { return update_layout_needed; }
+  bool needUpdateLayout() const { return flags & FW_EVENT_UPDATE_LAYOUT; }
 
-  void setHandled(bool t = true) { is_handled = t; }
-  void requestRedraw() { redraw_needed = true; }
-  void updateLayout() { update_layout_needed = true; }
-  void stop() { is_stopped = true; }
+  void setHandled(bool t = true) { setFlag(FW_EVENT_IS_HANDLED, t); }
+  void requestRedraw() { setFlag(FW_EVENT_REDRAW, true); }
+  void updateLayout() { setFlag(FW_EVENT_UPDATE_LAYOUT, true); }
+  void stop() { setFlag(FW_EVENT_IS_STOPPED, true); }
 
-  bool needUpdate() const { return redraw_needed; }
-  void update() { redraw_needed = true; }
+  bool needUpdate() const { return flags & FW_EVENT_REDRAW; }
+  void update() { setFlag(FW_EVENT_REDRAW, true); }
 
   const EventHandler * getHandler() const { return handler; }
   EventHandler * getHandler() { return handler; }
@@ -42,13 +47,19 @@ class Event {
   void setEventHandler(EventHandler * h) { handler = h; }
 
  protected:
+  void setFlag(unsigned int flag, bool value) {
+    if (value) {
+      flags |= flag;
+    } else {
+      flags &= ~flag;
+    }
+  }
+  
   EventHandler * handler = 0;
 
  private:
   double timestamp;
-  bool is_handled = false, is_stopped = false;
-  bool redraw_needed = false;
-  bool update_layout_needed = false;
+  unsigned short flags = 0;
 };
 
 #endif
