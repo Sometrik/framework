@@ -100,7 +100,6 @@ class FWPlatform : public Element {
   size_t getNumRunningThreads() const { return num_running_threads; }
 
   void terminateThreads();
-  void disconnectThreads();
 
   virtual std::unique_ptr<Logger> createLogger(const std::string & name) const {
     return std::unique_ptr<Logger>(new BasicLogger(name));

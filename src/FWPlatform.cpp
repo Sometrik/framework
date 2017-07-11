@@ -1,92 +1,18 @@
 #include <FWPlatform.h>
 
-#include <pthread.h>
 #include <PlatformThread.h>
 #include <Runnable.h>
 #include <SysEvent.h>
 #include <StringUtils.h>
+#include <PosixThread.h>
 
 #include <cassert>
 #include <iostream>
-#include <unistd.h>
 #include <sys/time.h>
 #include <typeinfo>
 #include <sstream>
 
 using namespace std;
-
-class PosixThread : public PlatformThread {
-public:
-  PosixThread(FWPlatform * _platform, std::shared_ptr<Runnable> & _runnable)
-    : PlatformThread(_platform, _runnable)
-  {
-    
-  }
-
-  void start() override {
-    if (pthread_create(&thread, NULL, PosixThread::entryPoint, this) == 0) {
-      
-    } else {
-      cerr << "failed to create thread\n";
-    }
-  }
-  
-  bool testDestroy() override {
-    return false; // !terminate_thread;
-  }
-
-  void terminate() override {
-    assert(0);
-    terminate_thread = true;    
-  }
-
-  void disconnect() override {
-    // platform = 0;
-  }
-
-  // void postEventToThread(Event & event) {
-  //   event.dispatch(getRunnable());
-  // }
-      
-  void sleep(float t) override {
-    usleep(int(t * 1000000));
-  }
-  
-protected:
-  void sendEventFromThread(const Event & ev) override {
-    getPlatform().pushEvent(ev);
-  }
-  
-private:
-  static void * entryPoint(void * pthis);
-  
-  pthread_t thread;
-  pthread_t thread_id;
-  volatile bool terminate_thread = false;
-};
-
-void *
-PosixThread::entryPoint(void * pthis) {
-  // OS::getInstance().ignoreSigPipe();
-
-  PosixThread * pt = static_cast<PosixThread*>(pthis);
-  pt->thread_id = pthread_self();
-
-  // pt->setupThread();
-  pt->getRunnable().start(pt);
-  // pt->getRunnable().stop();
-  // pt->deinitializeThread();
-
-  // {
-  //   MutexLocker l(pt->mutex);
-  //   pt->is_running = false;
-  // }
-
-  // cerr << "thread really exiting\n";
-  pthread_exit(0);
-  
-  return 0;
-}
 
 FWPlatform::FWPlatform(float _display_scale) : display_scale(_display_scale) {
   StringUtils::initialize();
@@ -118,13 +44,6 @@ FWPlatform::terminateThreads() {
 }
 
 void
-FWPlatform::disconnectThreads() {
-  for (auto & thread : threads) {
-    thread->disconnect();
-  }
-}
-
-void
 FWPlatform::onSysEvent(SysEvent & ev) {
   if (ev.getType() == SysEvent::THREAD_TERMINATED) {
     cerr << "thread " << ev.getThread() << " is terminated\n";
@@ -138,7 +57,7 @@ FWPlatform::onSysEvent(SysEvent & ev) {
 	break;
       }
     }
-    assert(is_affected);
+    // assert(is_affected);
   }
 }
 
