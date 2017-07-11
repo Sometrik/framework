@@ -136,13 +136,13 @@ public:
 
     case Command::RESHAPE_SHEET: {
       size_t max_size = command.getValue();
-      auto window = views_by_id[command.getInternalId()];
-      assert(window);
-      if (window) {
+      auto view = views_by_id[command.getInternalId()];
+      assert(view);
+      if (view) {
 	auto & sheets = sheets_by_id[command.getInternalId()];
 	if (command.getSheet() < sheets.size()) {
-	  auto view = gtk_bin_get_child(GTK_BIN(window));
-	  auto model = gtk_tree_view_get_model((GtkTreeView*)view);
+	  auto treeview = gtk_bin_get_child(GTK_BIN(view));
+	  auto model = gtk_tree_view_get_model((GtkTreeView*)treeview);
 	  GtkTreeIter iter, parent;
 	  gtk_tree_model_iter_nth_child(model, &parent, 0, command.getSheet());
 	  while (gtk_tree_model_iter_nth_child(model, &iter, &parent, max_size)) {
@@ -401,16 +401,16 @@ public:
       break;
 
     case Command::SET_TEXT_DATA: {
-      auto window = views_by_id[command.getInternalId()];
-      assert(window);
-      if (window) {
-	auto view = gtk_bin_get_child(GTK_BIN(window));
-	assert(GTK_IS_TREE_VIEW(view));
-	if (GTK_IS_TREE_VIEW(view)) {
+      auto view = views_by_id[command.getInternalId()];
+      assert(view);
+      if (GTK_IS_BIN(view)) {
+	auto treeview = gtk_bin_get_child(GTK_BIN(view));
+	assert(GTK_IS_TREE_VIEW(treeview));
+	if (GTK_IS_TREE_VIEW(treeview)) {
 	  auto & sheets = sheets_by_id[command.getInternalId()];
 	  if (command.getSheet() < sheets.size() || sheets.empty()) {
-	    auto model = gtk_tree_view_get_model((GtkTreeView*)view);
-
+	    auto model = gtk_tree_view_get_model((GtkTreeView*)treeview);
+	      
 	    GtkTreeIter iter;
 	    if (!sheets.empty()) {
 	      for (unsigned int si = 0; si <= command.getSheet(); si++) {
@@ -425,7 +425,7 @@ public:
 				     -1);
 		}
 	      }
-	    
+		
 	      GtkTreeIter parent;
 	      gtk_tree_model_iter_nth_child(model, &parent, 0, command.getSheet());
 	      while (!gtk_tree_model_iter_nth_child(model, &iter, &parent, command.getRow())) {
@@ -441,15 +441,17 @@ public:
 			       command.getTextValue().c_str(),
 			       -1);
 	  }
+	} else {
+	  cerr << "unable to handle SET_TEXT_DATA\n";
 	}
       }
     }
       break;
       
     case Command::CLEAR: {
-      auto window = views_by_id[command.getInternalId()];
-      assert(window);
-      if (GTK_IS_BIN(window)) {
+      auto view = views_by_id[command.getInternalId()];
+      assert(view);
+      if (GTK_IS_BIN(view)) {
 	auto it = sheets_by_id.find(command.getInternalId());
 	if (it != sheets_by_id.end()) {
 	  for (auto & sd : it->second) {
@@ -457,14 +459,14 @@ public:
 	  }
 	}
       
-	auto view = gtk_bin_get_child(GTK_BIN(window));
-	assert(GTK_IS_TREE_VIEW(view));
-	if (GTK_IS_TREE_VIEW(view)) {
+	auto treeview = gtk_bin_get_child(GTK_BIN(view));
+	assert(GTK_IS_TREE_VIEW(treeview));
+	if (GTK_IS_TREE_VIEW(treeview)) {
 	  auto model = gtk_tree_view_get_model((GtkTreeView*)view);
 	  gtk_tree_store_clear((GtkTreeStore*)model);
 	}
-      } else if (GTK_IS_ENTRY(window)) {
-	gtk_entry_set_text((GtkEntry*)window, "");
+      } else if (GTK_IS_ENTRY(view)) {
+	gtk_entry_set_text((GtkEntry*)view, "");
       }
     }
       break;
@@ -633,8 +635,9 @@ public:
     gtk_app = _gtk_app;
         
     window = gtk_application_window_new(gtk_app);
-    gtk_window_set_title (GTK_WINDOW (window), "Window");
-    gtk_window_set_default_size (GTK_WINDOW (window), width, height);
+    gtk_window_set_title (GTK_WINDOW(window), "Window");
+    gtk_window_set_default_size (GTK_WINDOW(window), width, height);
+    g_signal_connect(window, "delete-event", G_CALLBACK(delete_window), this);
   }
 
   void addView(int parent_id, int id, GtkWidget * widget, bool expand = false) {
@@ -722,6 +725,7 @@ protected:
   static void on_next_button(GtkWidget * widget, gpointer data);
   static void on_bar_button(GtkWidget * widget, gpointer data);
   static gboolean idle_callback(gpointer data);
+  static gboolean delete_window(GtkWidget *widget, GdkEvent  *event, gpointer user_data);
   
 private:
   GtkApplication * gtk_app = nullptr;
@@ -960,6 +964,14 @@ PlatformGtk::idle_callback(gpointer data) {
   return FALSE;
 }
 
+gboolean
+PlatformGtk::delete_window(GtkWidget *widget, GdkEvent  *event, gpointer user_data) {
+  PlatformGtk * platform = (PlatformGtk*)user_data;
+  platform->terminateThreads();
+
+  return FALSE;
+}
+
 static void activate(GtkApplication * gtk_app, gpointer user_data) {
   cerr << "activate\n";
   PlatformGtk * platform = (PlatformGtk*)user_data;
@@ -981,7 +993,7 @@ int main (int argc, char *argv[]) {
   g_signal_connect (gtk_app, "activate", G_CALLBACK (activate), &platform);
   int status = g_application_run (G_APPLICATION(gtk_app), argc, argv);
   g_object_unref(gtk_app);
-  
+    
 #if 0
   SysEvent ev(platform.getTime(), SysEvent::DESTROY);
   platform.postEvent(application->getInternalId(), ev);
