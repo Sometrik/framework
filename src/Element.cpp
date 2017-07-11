@@ -12,7 +12,8 @@ using namespace std;
 int Element::nextInternalId = 1;
 
 Element::~Element() {
-  if (platform) {
+  // the platform itself cannot be unregistered at this point
+  if (platform && this != platform) {
     platform->unregisterElement(this);
   }
 }
