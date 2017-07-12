@@ -2,7 +2,6 @@
 
 #include <PlatformThread.h>
 #include <Event.h>
-#include <SysEvent.h>
 
 #include <cassert>
 
@@ -17,9 +16,6 @@ Runnable::start(PlatformThread * _thread) {
   } catch (exception & e) {
     getPlatform().getLogger().println("Runnable: received an exception: " + string(e.what()));
   }
-  SysEvent ev(getPlatform().getTime(), SysEvent::THREAD_TERMINATED);
-  ev.setThread(thread);
-  postEvent(ev);
 }
 
 void
