@@ -28,8 +28,6 @@
 
 #include <FWApplication.h>
 
-#include <pthread.h>
-
 #include <TouchEvent.h>
 #include <PurchaseEvent.h>
 #include <TimerEvent.h>
@@ -114,8 +112,12 @@ private:
   JNIEnv * env;
 };
 
-class AndroidPlatform: public FWPlatform {
+class AndroidNativeThread;
+
+class AndroidPlatform : public FWPlatform {
 public:
+  friend class AndroidNativeThread;
+  
  AndroidPlatform(JNIEnv * _env, jobject _mgr, jobject _framework, float _display_scale, JavaVM * _javaVM, MobileAccount * _account)
    : FWPlatform(_display_scale),
      account(_account),
@@ -172,10 +174,7 @@ public:
   void sendCommand2(const Command & command) override;
   bool initializeRenderer(int opengl_es_version, ANativeWindow * _window);
   void deinitializeRenderer();
-  void startThread();
-  void joinThread();
   void renderLoop();
-  static void* threadStartCallback(void *myself);
 
   JNIEnv* getEnv();
 
@@ -195,7 +194,6 @@ public:
 
 private:
   JavaCache javaCache;
-  pthread_t _threadId;
   std::string databasePath;
 
   EGLDisplay display = 0;
@@ -215,6 +213,35 @@ private:
   EventQueue eventqueue;
   bool canDraw = false, isPaused = false, isDestroyed = false;
   bool exit_loop = false;
+};
+
+class AndroidNativeThread : public Runnable {
+public:
+  AndroidNativeThread(AndroidPlatform * _platform)
+    : platform(_platform) { }
+
+  void run() override {
+    JavaVMAttachArgs args;
+    args.version = JNI_VERSION_1_6; // choose your JNI version
+    args.name = NULL; // you might want to give the java thread a name
+    args.group = NULL; // you might want to assign the java thread to a ThreadGroup
+
+    __android_log_print(ANDROID_LOG_INFO, "Sometrik", "attaching JVM1");
+    JNIEnv * env = platform->getEnv();
+    JNIEnv * myEnv = 0;
+    __android_log_print(ANDROID_LOG_INFO, "Sometrik", "attaching JVM2");
+    platform->gJavaVM->AttachCurrentThread(&myEnv, &args);
+    // platform->javaCache.getJavaVM()->AttachCurrentThread(&env, NULL);
+    FWApplication * application = applicationMain();
+    platform->addChild(std::shared_ptr<Element>(application));
+    platform->renderLoop();
+    __android_log_print(ANDROID_LOG_INFO, "Sometrik", "Application is exiting");
+    platform->deinitializeRenderer();
+    platform->gJavaVM->DetachCurrentThread();    
+  }
+  
+private:
+  AndroidPlatform * platform;
 };
 
 extern FWApplication * applicationMain();
@@ -419,17 +446,6 @@ AndroidPlatform::deinitializeRenderer() {
 }
 
 void
-AndroidPlatform::startThread() {
-  __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "About to start thread 1");
-  pthread_create(&_threadId, 0, threadStartCallback, this);
-}
-
-void
-AndroidPlatform::joinThread() {
-  pthread_join(_threadId, 0);
-}
-
-void
 AndroidPlatform::renderLoop() {
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Looping louie");
   
@@ -533,43 +549,9 @@ AndroidPlatform::onSysEvent(SysEvent & ev) {
     //TODO
     break;
   case SysEvent::THREAD_TERMINATED:
-    __android_log_print(ANDROID_LOG_INFO, "Sometrik", "THREAD_TERMINATED");
-
     //TODO
     break;
   }
-}
-
-void* AndroidPlatform::threadStartCallback(void *myself) {
-  __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "About to start thread 2");
-
-  AndroidPlatform * aplatform = (AndroidPlatform*) myself;
-  if (aplatform->isInitialized()){
-    __android_log_print(ANDROID_LOG_INFO, "Sometrik", "aplatform is initialized");
-  } else {
-    __android_log_print(ANDROID_LOG_INFO, "Sometrik", "aplatform isn't initialized");
-  }
-
-
-  JavaVMAttachArgs args;
-  args.version = JNI_VERSION_1_6; // choose your JNI version
-  args.name = NULL; // you might want to give the java thread a name
-  args.group = NULL; // you might want to assign the java thread to a ThreadGroup
-
-  __android_log_print(ANDROID_LOG_INFO, "Sometrik", "attaching JVM1");
-  JNIEnv * env = aplatform->getEnv();
-  JNIEnv * myEnv = 0;
-  __android_log_print(ANDROID_LOG_INFO, "Sometrik", "attaching JVM2");
-      aplatform->gJavaVM->AttachCurrentThread(&myEnv, &args);
-//  aplatform->javaCache.getJavaVM()->AttachCurrentThread(&env, NULL);
-  FWApplication * application = applicationMain();
-  aplatform->addChild(std::shared_ptr<Element>(application));
-  aplatform->renderLoop();
-  __android_log_print(ANDROID_LOG_INFO, "Sometrik", "Application is exiting");
-  aplatform->deinitializeRenderer();
-  aplatform->gJavaVM->DetachCurrentThread();
-  
-  return 0;
 }
 
 JNIEnv * AndroidPlatform::getEnv() {
@@ -697,7 +679,8 @@ void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, job
     platform->setActualDisplayWidth(screenWidth);
     platform->setActualDisplayHeight(screenHeight);
 
-    platform->startThread();
+    platform->run(make_shared<AndroidNativeThread>(platform));
+    
 //    setenv("CPUPROFILE", "/data/data/com.sometrik.kraphio/files/gmon.out", 1);
 #ifdef PROFILING
     monstartup("framework.so");
@@ -757,9 +740,10 @@ void Java_com_sometrik_framework_FrameWork_nativeOnStart(JNIEnv* env, jobject th
   platform->queueEvent(appId, ev);
 }
 void Java_com_sometrik_framework_FrameWork_nativeOnDestroy(JNIEnv* env, jobject thiz, double timestamp, int appId) {
+  platform->terminateThreads();
   SysEvent ev(timestamp, SysEvent::DESTROY);
   platform->queueEvent(appId, ev);
-  platform->joinThread();
+  // TODO: Wait for threads to terminate
 #ifdef PROFILING
   moncleanup();
 #endif
