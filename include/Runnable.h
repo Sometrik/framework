@@ -5,7 +5,6 @@
 
 #include <EventQueue.h>
 #include <FWPlatform.h>
-// #include <Mutex.h>
 
 #include <string>
 
@@ -20,7 +19,6 @@ class Runnable : public EventHandler {
   Runnable & operator= (const Runnable & other) = delete;
   
   void start(PlatformThread * _thread);
-  // void stop();
 
   PlatformThread & getThread();
   const PlatformThread & getThread() const;
@@ -32,9 +30,9 @@ class Runnable : public EventHandler {
   }
 #endif
 
-  void terminate() {
-    if (thread) thread->terminate();
-  }
+  void terminate();
+  bool testDestroy() const;
+
   // bool isRunning() const;
         
  protected:
@@ -48,7 +46,6 @@ class Runnable : public EventHandler {
  private:
   PlatformThread * thread = 0;
   // bool is_running = true;
-  // mutable Mutex mutex;
 };
 
 #endif

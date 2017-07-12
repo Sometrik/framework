@@ -68,3 +68,12 @@ Runnable::isRunning() const {
 }
 #endif
 
+void
+Runnable::terminate() {
+  if (thread) thread->terminate();
+}
+
+bool
+Runnable::testDestroy() const {
+  return thread ? thread->testDestroy() : true;
+}
