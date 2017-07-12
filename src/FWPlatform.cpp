@@ -49,7 +49,7 @@ FWPlatform::onSysEvent(SysEvent & ev) {
       threads.erase(it);
       r = true;
     }
-    cerr << "thread " << ev.getThread() << " is terminated: " << r << "\n";
+    cerr << "thread " << ev.getThread()->getId() << ":" << ev.getThread() << " is terminated: " << r << "\n";
     if (exit_when_threads_terminated && threads.empty()) {
       cerr << "threads exited, terminating\n";
       exitApp();
