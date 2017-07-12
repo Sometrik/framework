@@ -33,10 +33,7 @@ public:
   void sleep(float t) override {
     usleep(int(t * 1000000));
   }
-  
-protected:
-  void sendEventFromThread(const Event & ev) override;
-  
+    
 private:
   static void * entryPoint(void * pthis);
   

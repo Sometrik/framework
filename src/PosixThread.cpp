@@ -17,11 +17,6 @@ PosixThread::start() {
   }
 }
 
-void
-PosixThread::sendEventFromThread(const Event & ev) {
-  getPlatform().pushEvent(ev);
-}
-
 void *
 PosixThread::entryPoint(void * pthis) {
   PosixThread * pt = static_cast<PosixThread*>(pthis);
