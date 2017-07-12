@@ -5,14 +5,22 @@
 
 class Mutex {
  public:
-  Mutex();
-  ~Mutex();
+  Mutex() {
+    pthread_mutex_init(&m, 0);
+  }
+  ~Mutex() {
+    pthread_mutex_destroy( &m );  
+  }
 
   Mutex(const Mutex & other) = delete;
   Mutex & operator=(const Mutex & other) = delete;
   
-  void lock();
-  void unlock();
+  void lock() {
+    pthread_mutex_lock( &m );
+  }
+  void unlock() {
+    pthread_mutex_unlock( &m );
+  }
   
  private:
   pthread_mutex_t m;
@@ -20,10 +28,19 @@ class Mutex {
 
 class MutexLocker {
  public:
-  MutexLocker(Mutex & _mutex);
-  ~MutexLocker();
+  MutexLocker(Mutex & _mutex) : mutex(&_mutex) {
+    mutex->lock();
+  }
+  ~MutexLocker() {
+    release();
+  }
 
-  void release();
+  void release() {
+    if (mutex) {
+      mutex->unlock();
+      mutex = 0;
+    }
+  }
 
  private:
   Mutex * mutex;
