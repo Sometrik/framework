@@ -83,7 +83,11 @@ public:
     case Command::CREATE_PLATFORM:
       cerr << "ignore CREATE_PLATFORM\n";
       break;
-      
+
+    case Command::QUIT_APP:
+      exit(0);
+      break;
+
     case Command::CREATE_APPLICATION: {
       cerr << "creating stack\n";
       assert(window);
