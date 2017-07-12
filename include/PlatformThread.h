@@ -8,6 +8,7 @@
 class Runnable;
 class Event;
 class FWPlatform;
+class HTTPClientFactory;
 
 class PlatformThread {
  public:
@@ -36,7 +37,9 @@ class PlatformThread {
   const FWPlatform & getPlatform() const { return *platform; }
   
   int getId() const { return id; }
-    
+
+  virtual std::unique_ptr<HTTPClientFactory> createHTTPClientFactory() const = 0;
+
  private:
   FWPlatform * platform;
   std::shared_ptr<Runnable> runnable;

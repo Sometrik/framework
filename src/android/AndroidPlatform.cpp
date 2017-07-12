@@ -112,6 +112,16 @@ private:
   JNIEnv * env;
 };
 
+class AndroidThread : public PosixThread {
+public:
+  AndroidThread(FWPlatform * _platform, std::shared_ptr<Runnable> & _runnable)
+    : PosixThread(_platform, _runnable) { }
+
+  std::unique_ptr<HTTPClientFactory> createHTTPClientFactory() const override {
+    return std::unique_ptr<HTTPClientFactory>(new AndroidClientFactory(getPlatform().getClientCache()));
+  }
+};
+
 class AndroidNativeThread;
 
 class AndroidPlatform : public FWPlatform {
@@ -153,13 +163,10 @@ public:
     return std::unique_ptr<canvas::ContextFactory>(new canvas::AndroidContextFactory(asset_manager, canvasCache, getDisplayScale()));
   }
 
-  std::unique_ptr<HTTPClientFactory> createHTTPClientFactory() const override {
-    return std::unique_ptr<HTTPClientFactory>(new AndroidClientFactory(clientCache));
-  }
   void createFBO(int flags) { }
 
   std::shared_ptr<PlatformThread> createThread(std::shared_ptr<Runnable> & runnable) override {
-    return make_shared<PosixThread>(this, runnable);
+    return make_shared<AndroidThread>(this, runnable);
   }
 
 #ifdef HAS_SOUNDCANVAS
@@ -189,6 +196,8 @@ public:
   void onOpenGLInitEvent(OpenGLInitEvent & _ev) override;
   void onSysEvent(SysEvent & ev) override;
 
+  std::shared_ptr<AndroidClientCache> & getClientCache() { return clientCache; }
+  
  protected:
   jbyteArray convertToByteArray(const std::string & s);
 
