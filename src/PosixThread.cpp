@@ -8,10 +8,11 @@ using namespace std;
 
 bool
 PosixThread::start() {
-  if (pthread_create(&thread, NULL, PosixThread::entryPoint, this) == 0) {
+  int r = pthread_create(&thread, NULL, PosixThread::entryPoint, this);
+  if (r == 0) {
     return true;
   } else {
-    cerr << "failed to create thread\n";
+    cerr << "failed to create thread: " << r << "\n";
     return false;
   }
 }
