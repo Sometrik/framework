@@ -32,8 +32,6 @@ class Runnable : public EventHandler {
 
   void terminate();
   bool testDestroy() const;
-
-  // bool isRunning() const;
         
  protected:
   FWPlatform & getPlatform();
@@ -45,7 +43,6 @@ class Runnable : public EventHandler {
 
  private:
   PlatformThread * thread = 0;
-  // bool is_running = true;
 };
 
 #endif
