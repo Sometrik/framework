@@ -1,27 +1,25 @@
 #ifndef _PLATFORMTHREAD_H_
 #define _PLATFORMTHREAD_H_
 
-#include <FWPlatform.h>
-
 #include <memory>
+#include <atomic>
 
 class Runnable;
 class Event;
 class FWPlatform;
 class HTTPClientFactory;
 
-#ifndef NO_CANVAS
 namespace canvas {
   class ContextFactory;
 };
-#endif
 
 class PlatformThread {
  public:
  PlatformThread(FWPlatform * _platform, std::shared_ptr<Runnable> & _runnable)
-   : platform(_platform),
-    runnable(_runnable),
-    id(_platform->getNextThreadId()) {
+   : id(getNextThreadId()),
+    platform(_platform),
+    runnable(_runnable)
+    {
     
   }
   PlatformThread(const PlatformThread & other) = delete;
@@ -45,18 +43,22 @@ class PlatformThread {
   
   int getId() const { return id; }
 
-  void sendEventFromThread(const Event & ev) {
-    getPlatform().pushEvent(ev);
-  }
+  void sendEventFromThread(const Event & ev);
 
  protected:
-  virtual void initialize() { }
+  virtual void initialize() { }  
   virtual void deinitialize() { }
 
+  void start2();
+
+  int getNextThreadId() { return next_thread_id.fetch_add(1); }
+
  private:
+  int id;
   FWPlatform * platform;
   std::shared_ptr<Runnable> runnable;
-  int id;
+
+  static std::atomic<int> next_thread_id;
 };
 
 #endif
