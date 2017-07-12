@@ -1,6 +1,4 @@
 #include <PosixThread.h>
-#include <FWPlatform.h>
-#include <Runnable.h>
 
 #include <iostream>
 
@@ -24,10 +22,7 @@ PosixThread::start() {
 void *
 PosixThread::entryPoint(void * pthis) {
   PosixThread * pt = static_cast<PosixThread*>(pthis);
-
-  pt->initialize();
-  pt->getRunnable().start(pt);
-  pt->deinitialize();
+  pt->start2();  
   pthread_exit(0);
   
   return 0;
