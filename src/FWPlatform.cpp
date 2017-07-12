@@ -19,18 +19,20 @@ FWPlatform::FWPlatform(float _display_scale) : display_scale(_display_scale) {
   initialize(this);
 }
 
-std::shared_ptr<PlatformThread>
+void
 FWPlatform::run(std::shared_ptr<Runnable> runnable) {
   auto thread = run2(runnable);
-  threads.push_back(thread);
-  return thread;
+  if (thread.get()) threads.push_back(thread);
 }
 
 std::shared_ptr<PlatformThread>
 FWPlatform::run2(std::shared_ptr<Runnable> & runnable) {
   auto thread = make_shared<PosixThread>(this, runnable);
-  thread->start();
-  return thread;
+  if (thread->start()) {
+    return thread;
+  } else {
+    return shared_ptr<PlatformThread>(0);
+  }
 }
 
 void

@@ -95,7 +95,7 @@ class FWPlatform : public Element {
     sendCommand2(c);
   }
 
-  std::shared_ptr<PlatformThread> run(std::shared_ptr<Runnable> runnable);
+  void run(std::shared_ptr<Runnable> runnable);
 
   // size_t getNumRunningThreads() const { return num_running_threads; }
 
