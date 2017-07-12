@@ -13,8 +13,6 @@
 
 using namespace std;
 
-atomic<int> FWPlatform::next_thread_id(1);
-
 FWPlatform::FWPlatform(float _display_scale) : display_scale(_display_scale) {
   StringUtils::initialize();
   initialize(this);

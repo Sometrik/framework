@@ -17,7 +17,6 @@
 #include <memory>
 #include <list>
 #include <unordered_map>
-#include <atomic>
 
 class Runnable;
 class PlatformThread;
@@ -113,8 +112,6 @@ class FWPlatform : public Element {
   void unregisterElement(Element * e) {
     registered_elements.erase(e->getInternalId());
   }
-
-  int getNextThreadId() { return next_thread_id.fetch_add(1); }
   
  protected:
   Element * getRegisteredElement(int internal_id) {
@@ -147,8 +144,6 @@ class FWPlatform : public Element {
 
   std::unordered_map<int, std::shared_ptr<PlatformThread> > threads;
   std::unordered_map<int, Element *> registered_elements;
-
-  static std::atomic<int> next_thread_id;
 };
 
 #endif
