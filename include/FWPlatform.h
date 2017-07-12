@@ -97,8 +97,6 @@ class FWPlatform : public Element {
 
   void run(std::shared_ptr<Runnable> runnable);
 
-  // size_t getNumRunningThreads() const { return num_running_threads; }
-
   void terminateThreads();
 
   virtual std::unique_ptr<Logger> createLogger(const std::string & name) const {
@@ -137,6 +135,8 @@ class FWPlatform : public Element {
     return std::make_shared<DummySoundCanvas>();
   }
 #endif
+
+  size_t getNumRunningThreads() const { return threads.size(); }
 
   virtual std::shared_ptr<PlatformThread> run2(std::shared_ptr<Runnable> & runnable);
 
