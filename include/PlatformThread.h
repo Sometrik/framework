@@ -47,6 +47,10 @@ class PlatformThread {
   virtual std::unique_ptr<HTTPClientFactory> createHTTPClientFactory() const = 0;
   virtual std::unique_ptr<canvas::ContextFactory> createContextFactory() const = 0;
 
+ protected:
+  virtual void initialize() { }
+  virtual void deinitialize() { }
+
  private:
   FWPlatform * platform;
   std::shared_ptr<Runnable> runnable;

@@ -27,7 +27,9 @@ PosixThread::entryPoint(void * pthis) {
   PosixThread * pt = static_cast<PosixThread*>(pthis);
   pt->thread_id = pthread_self();
 
+  pt->initialize();
   pt->getRunnable().start(pt);
+  pt->deinitialize();
   pthread_exit(0);
   
   return 0;

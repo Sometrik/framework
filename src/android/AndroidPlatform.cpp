@@ -99,7 +99,6 @@ public:
   jmethodID loadPrefsValueMethod;
   // jmethodID addPrefsValueMethod;
   jmethodID storeValueMethod;
-  // jmethodID currentTimeMillisMethod;
   jmethodID nativeCommandConstructor;
   jmethodID nativeListCommandConstructor;
   jmethodID sendCommandMethod;
@@ -121,6 +120,14 @@ public:
   }
   std::unique_ptr<canvas::ContextFactory> createContextFactory() const override {
     return std::unique_ptr<canvas::ContextFactory>(new canvas::AndroidContextFactory(asset_manager, canvasCache, getDisplayScale()));
+  }
+
+protected:
+  void initialize() override {
+    // initialize JVM for thread
+  }
+  void deinitialize() override {
+    // deinitialize JVM for thread
   }
 };
 
