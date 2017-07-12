@@ -941,7 +941,7 @@ PlatformGtk::on_bar_button(GtkWidget * widget, gpointer data) {
   PlatformGtk * platform = (PlatformGtk*)data;
   int id = 0;
   for (GtkWidget * w = widget; !id && w; w = gtk_widget_get_parent(w)) {
-    cerr << "trying to get id from " << (long long)w << endl;
+    // cerr << "trying to get id from " << (long long)w << endl;
     id = platform->getId(w);
   }
   assert(id);
@@ -968,8 +968,12 @@ gboolean
 PlatformGtk::delete_window(GtkWidget *widget, GdkEvent  *event, gpointer user_data) {
   PlatformGtk * platform = (PlatformGtk*)user_data;
   platform->terminateThreads();
-
-  return FALSE;
+  if (platform->getNumRunningThreads()) {
+    platform->exit_when_threads_terminated = true;
+    return TRUE;
+  } else {
+    return FALSE;
+  }
 }
 
 static void activate(GtkApplication * gtk_app, gpointer user_data) {
