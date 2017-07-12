@@ -97,7 +97,7 @@ class FWPlatform : public Element {
 
   std::shared_ptr<PlatformThread> run(std::shared_ptr<Runnable> runnable);
 
-  size_t getNumRunningThreads() const { return num_running_threads; }
+  // size_t getNumRunningThreads() const { return num_running_threads; }
 
   void terminateThreads();
 
@@ -155,7 +155,6 @@ class FWPlatform : public Element {
 
   std::list<std::shared_ptr<PlatformThread> > threads;
   std::unordered_map<int, Element *> registered_elements;
-  size_t num_running_threads = 0;
 };
 
 #endif

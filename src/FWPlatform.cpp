@@ -22,14 +22,13 @@ FWPlatform::FWPlatform(float _display_scale) : display_scale(_display_scale) {
 std::shared_ptr<PlatformThread>
 FWPlatform::run(std::shared_ptr<Runnable> runnable) {
   auto thread = run2(runnable);
-  num_running_threads++;
   threads.push_back(thread);
   return thread;
 }
 
 std::shared_ptr<PlatformThread>
 FWPlatform::run2(std::shared_ptr<Runnable> & runnable) {
-  std::shared_ptr<PlatformThread> thread(new PosixThread(this, runnable));
+  auto thread = make_shared<PosixThread>(this, runnable);
   thread->start();
   return thread;
 }
@@ -52,12 +51,11 @@ FWPlatform::onSysEvent(SysEvent & ev) {
       PlatformThread * thread = it->get();
       if (thread == ev.getThread()) {
 	threads.erase(it);
-	num_running_threads--;
 	is_affected = true;
 	break;
       }
     }
-    if (!num_running_threads && exit_when_threads_terminated) {
+    if (exit_when_threads_terminated && threads.empty()) {
       cerr << "threads exited, terminating\n";
       exit();
     }
