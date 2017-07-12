@@ -14,7 +14,6 @@
 #include <AndroidClient.h>
 
 #include <FWPlatform.h>
-#include <ContextAndroid.h>
 #include <AndroidClient.h>
 #include <AndroidSoundCanvas.h>
 #include <AndroidLogger.h>
@@ -120,6 +119,9 @@ public:
   std::unique_ptr<HTTPClientFactory> createHTTPClientFactory() const override {
     return std::unique_ptr<HTTPClientFactory>(new AndroidClientFactory(getPlatform().getClientCache()));
   }
+  std::unique_ptr<canvas::ContextFactory> createContextFactory() const override {
+    return std::unique_ptr<canvas::ContextFactory>(new canvas::AndroidContextFactory(asset_manager, canvasCache, getDisplayScale()));
+  }
 };
 
 class AndroidNativeThread;
@@ -158,9 +160,6 @@ public:
     }
     fclose(in);
     return text;
-  }
-  std::unique_ptr<canvas::ContextFactory> createContextFactory() const override {
-    return std::unique_ptr<canvas::ContextFactory>(new canvas::AndroidContextFactory(asset_manager, canvasCache, getDisplayScale()));
   }
 
   void createFBO(int flags) { }

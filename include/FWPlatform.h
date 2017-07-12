@@ -19,12 +19,6 @@
 #include <unordered_map>
 #include <atomic>
 
-#ifndef NO_CANVAS
-namespace canvas {
-  class ContextFactory;
-};
-#endif
-
 class Runnable;
 class PlatformThread;
 
@@ -47,9 +41,6 @@ class FWPlatform : public Element {
   virtual std::string getLocalFilename(const char * filename, FileType type) = 0;
   virtual std::string loadTextAsset(const char * filename) = 0;
   
-#ifndef NO_CANVAS
-  virtual std::unique_ptr<canvas::ContextFactory> createContextFactory() const = 0;
-#endif
   virtual void pushEvent(const Event & ev) = 0;
   virtual void setCursor(const std::string & cursor) { }
 

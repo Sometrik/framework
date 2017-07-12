@@ -10,6 +10,12 @@ class Event;
 class FWPlatform;
 class HTTPClientFactory;
 
+#ifndef NO_CANVAS
+namespace canvas {
+  class ContextFactory;
+};
+#endif
+
 class PlatformThread {
  public:
  PlatformThread(FWPlatform * _platform, std::shared_ptr<Runnable> & _runnable)
@@ -39,6 +45,7 @@ class PlatformThread {
   int getId() const { return id; }
 
   virtual std::unique_ptr<HTTPClientFactory> createHTTPClientFactory() const = 0;
+  virtual std::unique_ptr<canvas::ContextFactory> createContextFactory() const = 0;
 
  private:
   FWPlatform * platform;

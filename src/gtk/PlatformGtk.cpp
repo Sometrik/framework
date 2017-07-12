@@ -38,6 +38,9 @@ public:
   std::unique_ptr<HTTPClientFactory> createHTTPClientFactory() const override {
     return std::unique_ptr<HTTPClientFactory>(new CurlClientFactory);
   }
+  std::unique_ptr<canvas::ContextFactory> createContextFactory() const override {
+    return std::unique_ptr<canvas::ContextFactory>(new canvas::CairoContextFactory);
+  }
 };
 
 struct sheet_data_s {
@@ -78,11 +81,7 @@ public:
     string s = "assets/";
     return s + fn;
   }
-      
-  std::unique_ptr<canvas::ContextFactory> createContextFactory() const override {
-    return std::unique_ptr<canvas::ContextFactory>(new canvas::CairoContextFactory);
-  }
-
+  
   void sendCommand2(const Command & command) override {
     if (command.getType() == Command::CREATE_FORMVIEW || command.getType() == Command::CREATE_OPENGL_VIEW) {
       auto & app = getApplication();
