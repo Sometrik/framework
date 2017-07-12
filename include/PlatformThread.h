@@ -1,6 +1,8 @@
 #ifndef _PLATFORMTHREAD_H_
 #define _PLATFORMTHREAD_H_
 
+#include <FWPlatform.h>
+
 #include <memory>
 
 class Runnable;
@@ -10,7 +12,9 @@ class FWPlatform;
 class PlatformThread {
  public:
  PlatformThread(FWPlatform * _platform, std::shared_ptr<Runnable> & _runnable)
-   : platform(_platform), runnable(_runnable) {
+   : platform(_platform),
+    runnable(_runnable),
+    id(_platform->getNextThreadId()) {
     
   }
   PlatformThread(const PlatformThread & other) = delete;
@@ -31,11 +35,12 @@ class PlatformThread {
   FWPlatform & getPlatform() { return *platform; }
   const FWPlatform & getPlatform() const { return *platform; }
   
- protected:
+  int getId() const { return id; }
     
  private:
   FWPlatform * platform;
   std::shared_ptr<Runnable> runnable;
+  int id;
 };
 
 #endif

@@ -17,6 +17,7 @@
 #include <memory>
 #include <list>
 #include <unordered_map>
+#include <atomic>
 
 #ifndef NO_CANVAS
 namespace canvas {
@@ -90,12 +91,12 @@ class FWPlatform : public Element {
   int getModalResultValue() const { return modal_result_value; }
   const std::string & getModalResultText() const { return modal_result_text; }
 
-  void exit() {
+  void exitApp() {
     Command c(Command::QUIT_APP, getInternalId());
     sendCommand2(c);
   }
 
-  void run(std::shared_ptr<Runnable> runnable);
+  bool run(std::shared_ptr<Runnable> runnable);
 
   void terminateThreads();
 
@@ -124,6 +125,8 @@ class FWPlatform : public Element {
     registered_elements.erase(e->getInternalId());
   }
 
+  int getNextThreadId() { return next_thread_id.fetch_add(1); }
+  
  protected:
   Element * getRegisteredElement(int internal_id) {
     auto it = registered_elements.find(internal_id);
@@ -138,7 +141,7 @@ class FWPlatform : public Element {
 
   size_t getNumRunningThreads() const { return threads.size(); }
 
-  virtual std::shared_ptr<PlatformThread> run2(std::shared_ptr<Runnable> & runnable);
+  virtual std::shared_ptr<PlatformThread> createThread(std::shared_ptr<Runnable> & runnable);
 
   int actual_display_width = 0, actual_display_height = 0;
   float display_scale = 1.0f;
@@ -153,8 +156,10 @@ class FWPlatform : public Element {
 #endif
   std::shared_ptr<Logger> logger;
 
-  std::list<std::shared_ptr<PlatformThread> > threads;
+  std::unordered_map<int, std::shared_ptr<PlatformThread> > threads;
   std::unordered_map<int, Element *> registered_elements;
+
+  static std::atomic<int> next_thread_id;
 };
 
 #endif

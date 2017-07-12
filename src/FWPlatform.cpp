@@ -14,54 +14,53 @@
 
 using namespace std;
 
+atomic<int> FWPlatform::next_thread_id(1);
+
 FWPlatform::FWPlatform(float _display_scale) : display_scale(_display_scale) {
   StringUtils::initialize();
   initialize(this);
 }
 
-void
+bool
 FWPlatform::run(std::shared_ptr<Runnable> runnable) {
-  auto thread = run2(runnable);
-  if (thread.get()) threads.push_back(thread);
+  auto thread = createThread(runnable);
+  threads[thread->getId()] = thread;
+  if (thread->start()) {
+    return true;
+  } else {
+    threads.erase(thread->getId());
+    return false;
+  }
 }
 
 std::shared_ptr<PlatformThread>
-FWPlatform::run2(std::shared_ptr<Runnable> & runnable) {
-  auto thread = make_shared<PosixThread>(this, runnable);
-  if (thread->start()) {
-    return thread;
-  } else {
-    return shared_ptr<PlatformThread>(0);
-  }
+FWPlatform::createThread(std::shared_ptr<Runnable> & runnable) {
+  return make_shared<PosixThread>(this, runnable);
 }
 
 void
 FWPlatform::terminateThreads() {
   cerr << "terminating " << threads.size() << " threads\n";
   for (auto & thread : threads) {
-    assert(thread.get());
-    thread->terminate();
+    thread.second->terminate();
   }
 }
 
 void
 FWPlatform::onSysEvent(SysEvent & ev) {
   if (ev.getType() == SysEvent::THREAD_TERMINATED) {
-    cerr << "thread " << ev.getThread() << " is terminated\n";
-    bool is_affected = false;
-    for (auto it = threads.begin(); it != threads.end(); it++) {
-      PlatformThread * thread = it->get();
-      if (thread == ev.getThread()) {
-	threads.erase(it);
-	is_affected = true;
-	break;
-      }
+    bool r = false;
+    auto it = threads.find(ev.getThread()->getId());
+    if (it != threads.end()) {
+      threads.erase(it);
+      r = true;
     }
+    cerr << "thread " << ev.getThread() << " is terminated: " << r << "\n";
     if (exit_when_threads_terminated && threads.empty()) {
       cerr << "threads exited, terminating\n";
-      exit();
+      exitApp();
     }
-    // assert(is_affected);
+    assert(r);
   }
 }
 
@@ -94,7 +93,7 @@ void
 FWPlatform::dumpThreads() const {
   cerr << "threads:\n";
   for (auto & t : threads) {
-    auto & r = t->getRunnable();
+    auto & r = t.second->getRunnable();
     cerr << "  " << typeid(r).name() << endl;
   }
 }
