@@ -4,7 +4,6 @@
 #include <Runnable.h>
 #include <SysEvent.h>
 #include <StringUtils.h>
-#include <PosixThread.h>
 
 #include <cassert>
 #include <iostream>
@@ -31,11 +30,6 @@ FWPlatform::run(std::shared_ptr<Runnable> runnable) {
     threads.erase(thread->getId());
     return false;
   }
-}
-
-std::shared_ptr<PlatformThread>
-FWPlatform::createThread(std::shared_ptr<Runnable> & runnable) {
-  return make_shared<PosixThread>(this, runnable);
 }
 
 void

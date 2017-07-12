@@ -24,6 +24,8 @@
 #include <EventQueue.h>
 #include <GL.h>
 
+#include <PosixThread.h>
+
 #include <FWApplication.h>
 
 #include <pthread.h>
@@ -149,11 +151,14 @@ public:
     return std::unique_ptr<canvas::ContextFactory>(new canvas::AndroidContextFactory(asset_manager, canvasCache, getDisplayScale()));
   }
 
-
   std::unique_ptr<HTTPClientFactory> createHTTPClientFactory() const override {
     return std::unique_ptr<HTTPClientFactory>(new AndroidClientFactory(clientCache));
   }
   void createFBO(int flags) { }
+
+  std::shared_ptr<PlatformThread> createThread(std::shared_ptr<Runnable> & runnable) override {
+    return make_shared<PosixThread>(this, runnable);
+  }
 
 #ifdef HAS_SOUNDCANVAS
   std::shared_ptr<SoundCanvas> createSoundCanvas() const override {

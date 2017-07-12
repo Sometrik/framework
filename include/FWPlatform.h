@@ -141,7 +141,7 @@ class FWPlatform : public Element {
 
   size_t getNumRunningThreads() const { return threads.size(); }
 
-  virtual std::shared_ptr<PlatformThread> createThread(std::shared_ptr<Runnable> & runnable);
+  virtual std::shared_ptr<PlatformThread> createThread(std::shared_ptr<Runnable> & runnable) = 0;
 
   int actual_display_width = 0, actual_display_height = 0;
   float display_scale = 1.0f;

@@ -17,6 +17,8 @@
 #include <ValueEvent.h>
 #include <CommandEvent.h>
 
+#include <PosixThread.h>
+
 #include <gtk/gtk.h>
 #include <gio/gio.h>
 
@@ -56,6 +58,10 @@ public:
     ed->platform = this;
     ed->event = ev.dup();
     g_idle_add(idle_callback, ed);
+  }
+
+  std::shared_ptr<PlatformThread> createThread(std::shared_ptr<Runnable> & runnable) override {
+    return make_shared<PosixThread>(this, runnable);
   }
   
   string getLocalFilename(const char * fn, FileType type) override {
