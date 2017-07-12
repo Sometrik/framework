@@ -38,7 +38,6 @@ private:
   static void * entryPoint(void * pthis);
   
   pthread_t thread;
-  pthread_t thread_id;
   std::atomic<bool> terminate_thread;
 };
 

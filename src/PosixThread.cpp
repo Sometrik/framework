@@ -8,7 +8,11 @@ using namespace std;
 
 bool
 PosixThread::start() {
-  int r = pthread_create(&thread, NULL, PosixThread::entryPoint, this);
+  pthread_attr_t attr;
+  pthread_attr_init(&attr);
+  pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+  int r = pthread_create(&thread, &attr, PosixThread::entryPoint, this);
+  pthread_attr_destroy(&attr);
   if (r == 0) {
     return true;
   } else {
@@ -20,7 +24,6 @@ PosixThread::start() {
 void *
 PosixThread::entryPoint(void * pthis) {
   PosixThread * pt = static_cast<PosixThread*>(pthis);
-  pt->thread_id = pthread_self();
 
   pt->initialize();
   pt->getRunnable().start(pt);
