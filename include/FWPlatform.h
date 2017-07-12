@@ -145,6 +145,7 @@ class FWPlatform : public Element {
   FWPreferences preferences;
   int modal_result_value = 0;
   std::string modal_result_text;
+  bool exit_when_threads_terminated = false;
     
  private:
 #ifdef HAS_SOUNDCANVAS

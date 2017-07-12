@@ -57,6 +57,10 @@ FWPlatform::onSysEvent(SysEvent & ev) {
 	break;
       }
     }
+    if (!num_running_threads && exit_when_threads_terminated) {
+      cerr << "threads exited, terminating\n";
+      exit();
+    }
     // assert(is_affected);
   }
 }
