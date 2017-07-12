@@ -32,6 +32,9 @@ class Runnable : public EventHandler {
   }
 #endif
 
+  void terminate() {
+    if (thread) thread->terminate();
+  }
   // bool isRunning() const;
         
  protected:
