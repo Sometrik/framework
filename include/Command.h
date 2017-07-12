@@ -7,7 +7,6 @@
 
 class Command {
  public:
-
   enum Type {
     CREATE_PLATFORM = 0,
     CREATE_APPLICATION,
