@@ -21,10 +21,14 @@ FWPlatform::FWPlatform(float _display_scale) : display_scale(_display_scale) {
 bool
 FWPlatform::run(std::shared_ptr<Runnable> runnable) {
   auto thread = createThread(runnable);
-  threads[thread->getId()] = thread;
+  {
+    MutexLocker m(mutex);
+    threads[thread->getId()] = thread;
+  }
   if (thread->start()) {
     return true;
   } else {
+    MutexLocker m(mutex);
     threads.erase(thread->getId());
     return false;
   }
@@ -33,6 +37,7 @@ FWPlatform::run(std::shared_ptr<Runnable> runnable) {
 void
 FWPlatform::terminateThreads() {
   cerr << "terminating " << threads.size() << " threads\n";
+  MutexLocker m(mutex);
   for (auto & thread : threads) {
     thread.second->terminate();
   }
@@ -40,19 +45,24 @@ FWPlatform::terminateThreads() {
 
 void
 FWPlatform::onSysEvent(SysEvent & ev) {
+  bool exit_app = false;
   if (ev.getType() == SysEvent::THREAD_TERMINATED) {
+    MutexLocker m(mutex);
     bool r = false;
     auto it = threads.find(ev.getThread()->getId());
     if (it != threads.end()) {
       threads.erase(it);
       r = true;
     }
-    cerr << "thread " << ev.getThread()->getId() << ":" << ev.getThread() << " is terminated: " << r << "\n";
+    // cerr << "thread " << ev.getThread()->getId() << ":" << ev.getThread() << " is terminated: " << r << "\n";
     if (exit_when_threads_terminated && threads.empty()) {
-      cerr << "threads exited, terminating\n";
-      exitApp();
+      exit_app = true;
     }
     assert(r);
+  }
+  if (exit_app) {
+    cerr << "threads exited, terminating\n";
+    exitApp();
   }
 }
 
@@ -83,9 +93,10 @@ FWPlatform::postEvent(int internal_id, Event & ev) {
 
 void
 FWPlatform::dumpThreads() const {
-  cerr << "threads:\n";
+  MutexLocker m(mutex);
+  cerr << "running threads:\n";
   for (auto & t : threads) {
     auto & r = t.second->getRunnable();
-    cerr << "  " << typeid(r).name() << endl;
+    cerr << "  thread " << t.second->getId() << ": " << typeid(r).name() << endl;
   }
 }

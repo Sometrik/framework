@@ -8,6 +8,7 @@
 #include <FWDefs.h>
 #include <FWPreferences.h>
 #include <MobileAccount.h>
+#include <Mutex.h>
 
 #ifdef HAS_SOUNDCANVAS
 #include <SoundCanvas.h>
@@ -125,7 +126,10 @@ class FWPlatform : public Element {
   }
 #endif
 
-  size_t getNumRunningThreads() const { return threads.size(); }
+  size_t getNumRunningThreads() const {
+    MutexLocker m(mutex);
+    return threads.size();
+  }
 
   virtual std::shared_ptr<PlatformThread> createThread(std::shared_ptr<Runnable> & runnable) = 0;
 
@@ -144,6 +148,7 @@ class FWPlatform : public Element {
 
   std::unordered_map<int, std::shared_ptr<PlatformThread> > threads;
   std::unordered_map<int, Element *> registered_elements;
+  mutable Mutex mutex;
 };
 
 #endif
