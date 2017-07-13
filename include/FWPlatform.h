@@ -42,7 +42,6 @@ class FWPlatform : public Element {
   virtual std::string loadTextAsset(const char * filename) = 0;
   
   virtual void pushEvent(const Event & ev) = 0;
-  virtual void setCursor(const std::string & cursor) { }
 
   void onSysEvent(SysEvent & ev) override;
 
