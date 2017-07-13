@@ -42,6 +42,7 @@ class FWPlatform : public Element {
   virtual std::string loadTextAsset(const char * filename) = 0; 
   virtual void pushEvent(const Event & ev) = 0;
   virtual void sendCommand2(const Command & command) = 0;
+  virtual void createFBO(int flags) { }
 
   void onSysEvent(SysEvent & ev) override;
 
@@ -64,8 +65,6 @@ class FWPlatform : public Element {
   int getActualDisplayWidth() const { return actual_display_width; }
   int getActualDisplayHeight() const { return actual_display_height; }
   float getDisplayScale() const { return display_scale; }
-
-  virtual void createFBO(int flags) { }
 
   int getModalResultValue() const { return modal_result_value; }
   const std::string & getModalResultText() const { return modal_result_text; }
