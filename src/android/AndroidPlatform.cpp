@@ -110,27 +110,10 @@ private:
   JNIEnv * env;
 };
 
-class AndroidThread : public PosixThread {
-public:
-  AndroidThread(FWPlatform * _platform, std::shared_ptr<Runnable> & _runnable)
-    : PosixThread(_platform, _runnable) { }
 
-  std::unique_ptr<HTTPClientFactory> createHTTPClientFactory() const override {
-    return std::unique_ptr<HTTPClientFactory>(new AndroidClientFactory(getPlatform().getClientCache()));
-  }
-  std::unique_ptr<canvas::ContextFactory> createContextFactory() const override {
-    return std::unique_ptr<canvas::ContextFactory>(new canvas::AndroidContextFactory(asset_manager, canvasCache, getDisplayScale()));
-  }
 
-protected:
-  void initialize() override {
-    // initialize JVM for thread
-  }
-  void deinitialize() override {
-    // deinitialize JVM for thread
-  }
-};
 
+class AndroidThread;
 class AndroidNativeThread;
 
 class AndroidPlatform : public FWPlatform {
@@ -202,7 +185,9 @@ public:
   void onOpenGLInitEvent(OpenGLInitEvent & _ev) override;
   void onSysEvent(SysEvent & ev) override;
 
-  std::shared_ptr<AndroidClientCache> & getClientCache() { return clientCache; }
+  const std::shared_ptr<AndroidClientCache> & getClientCache() const { return clientCache; }
+  const std::shared_ptr<canvas::AndroidCache> & getCanvasCache() const { return canvasCache; }
+  AAssetManager * getAssetManager() const { return asset_manager; }
   
  protected:
   jbyteArray convertToByteArray(const std::string & s);
@@ -228,6 +213,32 @@ private:
   EventQueue eventqueue;
   bool canDraw = false, isPaused = false, isDestroyed = false;
   bool exit_loop = false;
+};
+
+
+extern FWApplication * applicationMain();
+
+class AndroidThread : public PosixThread {
+public:
+  AndroidThread(AndroidPlatform * _platform, std::shared_ptr<Runnable> & _runnable)
+    : PosixThread(_platform, _runnable) { }
+
+  std::unique_ptr<HTTPClientFactory> createHTTPClientFactory() const override {
+    const AndroidPlatform & androidPlatform = dynamic_cast<const AndroidPlatform&>(getPlatform());
+    return std::unique_ptr<HTTPClientFactory>(new AndroidClientFactory(androidPlatform.getClientCache()));
+  }
+  std::unique_ptr<canvas::ContextFactory> createContextFactory() const override {
+    const AndroidPlatform & androidPlatform = dynamic_cast<const AndroidPlatform&>(getPlatform());
+    return std::unique_ptr<canvas::ContextFactory>(new canvas::AndroidContextFactory(androidPlatform.getAssetManager(), androidPlatform.getCanvasCache(), androidPlatform.getDisplayScale()));
+  }
+
+protected:
+  void initialize() override {
+    // initialize JVM for thread
+  }
+  void deinitialize() override {
+    // deinitialize JVM for thread
+  }
 };
 
 class AndroidNativeThread : public Runnable {
@@ -259,7 +270,6 @@ private:
   AndroidPlatform * platform;
 };
 
-extern FWApplication * applicationMain();
 
 std::string AndroidPlatform::getBundleFilename(const char * filename) {
   return filename;

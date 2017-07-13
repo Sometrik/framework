@@ -9,6 +9,7 @@
 #include <FWPreferences.h>
 #include <MobileAccount.h>
 #include <Mutex.h>
+#include <Runnable.h>
 
 #ifdef HAS_SOUNDCANVAS
 #include <SoundCanvas.h>
@@ -19,7 +20,6 @@
 #include <list>
 #include <unordered_map>
 
-class Runnable;
 class PlatformThread;
 
 class FWPlatform : public Element {
