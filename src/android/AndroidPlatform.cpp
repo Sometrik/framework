@@ -154,9 +154,7 @@ public:
 
   void createFBO(int flags) { }
 
-  std::shared_ptr<PlatformThread> createThread(std::shared_ptr<Runnable> & runnable) override {
-    return make_shared<AndroidThread>(this, runnable);
-  }
+  std::shared_ptr<PlatformThread> createThread(std::shared_ptr<Runnable> & runnable) override;
 
 #ifdef HAS_SOUNDCANVAS
   std::shared_ptr<SoundCanvas> createSoundCanvas() const override {
@@ -363,6 +361,15 @@ AndroidPlatform::sendCommand2(const Command & command) {
   } else if (command.getType() == Command::END_MODAL) {
     exit_loop = true;
   }
+}
+
+
+std::shared_ptr<PlatformThread>
+AndroidPlatform::createThread(std::shared_ptr<Runnable> & runnable) {
+//    shared_ptr<PlatformThread> thread = make_shared<AndroidThread>(this, runnable);
+  std::shared_ptr<PlatformThread> thread = std::unique_ptr<AndroidThread>(new AndroidThread(this, runnable));
+//    <Logger>(new AndroidLogger(name));
+  return thread;
 }
 
 bool
