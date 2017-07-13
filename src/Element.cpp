@@ -9,7 +9,7 @@
 
 using namespace std;
 
-int Element::nextInternalId = 1;
+atomic<int> Element::nextInternalId(1);
 
 Element::~Element() {
   // the platform itself cannot be unregistered at this point

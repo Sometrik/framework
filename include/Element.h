@@ -6,6 +6,8 @@
 #include <Command.h>
 #include <VisibilityEvent.h>
 
+#include <atomic>
+
 class FWPlatform;
 class FWApplication;
 
@@ -173,7 +175,7 @@ class Element : public EventHandler {
   bool is_visible = true;
 
  private:
-  static int getNextInternalId() { return nextInternalId++; }
+  static int getNextInternalId() { return nextInternalId.fetch_add(1); }
 
   FWPlatform * platform = 0;
   Element * parent = 0;
@@ -185,7 +187,7 @@ class Element : public EventHandler {
   std::vector<Command> pendingCommands;
   bool is_enabled = true;
 
-  static int nextInternalId;
+  static std::atomic<int> nextInternalId;
 };
 
 #endif
