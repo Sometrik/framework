@@ -39,20 +39,13 @@ class FWPlatform : public Element {
   
   virtual std::string getBundleFilename(const char * filename) = 0;
   virtual std::string getLocalFilename(const char * filename, FileType type) = 0;
-  virtual std::string loadTextAsset(const char * filename) = 0;
-  
+  virtual std::string loadTextAsset(const char * filename) = 0; 
   virtual void pushEvent(const Event & ev) = 0;
+  virtual void sendCommand2(const Command & command) = 0;
 
   void onSysEvent(SysEvent & ev) override;
 
   std::string getBundleFilename(const std::string & filename) { return getBundleFilename(filename.c_str()); }
-
-  void storeValue(const std::string & key, const std::string & value) {
-    Command c(Command::UPDATE_PREFERENCE, 0);
-    c.setKey(key);
-    c.setTextValue(value);
-    sendCommand2(c);
-  }
   
 #ifdef HAS_SOUNDCANVAS
   SoundCanvas & getSoundCanvas() {
@@ -62,9 +55,7 @@ class FWPlatform : public Element {
     return *soundCanvas;
   }
 #endif
-  
-  virtual void sendCommand2(const Command & command) = 0;
-  
+    
   void postEvent(int internal_id, Event & ev);
       
   void setActualDisplayWidth(int w) { actual_display_width = w; }
