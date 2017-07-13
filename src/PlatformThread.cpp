@@ -30,3 +30,13 @@ PlatformThread::start2() {
   ev.setThread(this);
   sendEventFromThread(ev);
 }
+
+bool
+PlatformThread::run(std::shared_ptr<Runnable> runnable) {
+  return getPlatform().run(runnable);
+}
+
+std::unique_ptr<Logger>
+PlatformThread::createLogger(const std::string & name) const {
+  return getPlatform().createLogger(name);
+}

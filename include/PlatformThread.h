@@ -8,6 +8,7 @@ class Runnable;
 class Event;
 class FWPlatform;
 class HTTPClientFactory;
+class Logger;
 
 namespace canvas {
   class ContextFactory;
@@ -44,6 +45,9 @@ class PlatformThread {
   int getId() const { return id; }
 
   void sendEventFromThread(const Event & ev);
+
+  bool run(std::shared_ptr<Runnable> runnable);
+  std::unique_ptr<Logger> createLogger(const std::string & name) const;
 
  protected:
   virtual void initialize() { }  
