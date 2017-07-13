@@ -5,6 +5,7 @@
 
 #include <EventQueue.h>
 #include <FWPlatform.h>
+#include <PlatformThread.h>
 
 #include <string>
 
@@ -18,11 +19,12 @@ class Runnable : public EventHandler {
   Runnable(const Runnable & other) = delete;
   Runnable & operator= (const Runnable & other) = delete;
   
-  void start(PlatformThread * _thread);
-
-  PlatformThread & getThread();
-  const PlatformThread & getThread() const;
-  PlatformThread * getThreadPtr() { return thread; }
+  void start(PlatformThread * _thread) {
+    if (_thread) {
+      thread = _thread;
+      run();
+    }
+  }
 
 #if 0
   void sendEvent(const Event & ev) {
@@ -30,15 +32,21 @@ class Runnable : public EventHandler {
   }
 #endif
 
-  void terminate();
-  bool testDestroy() const;
-        
+  void terminate() { getThread().terminate(); }
+  bool testDestroy() { return getThread().testDestroy(); }
+
+  PlatformThread & getThread() { return *thread; }
+  const PlatformThread & getThread() const { return *thread; }
+  PlatformThread * getThreadPtr() { return thread; }
+
  protected:
-  FWPlatform & getPlatform();
-  const FWPlatform & getPlatform() const;
+  FWPlatform & getPlatform() { return getThread().getPlatform(); }
+  const FWPlatform & getPlatform() const { return getThread().getPlatform(); }
   
   // EventQueue event_queue;
-  void postEvent(const Event & event);
+  void postEvent(const Event & event) {
+    getThread().sendEventFromThread(event);
+  }
   virtual void run() = 0;
 
  private:
