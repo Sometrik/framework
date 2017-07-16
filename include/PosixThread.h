@@ -5,7 +5,6 @@
 
 #include <pthread.h>
 #include <atomic>
-#include <unistd.h>
 
 class PosixThread : public PlatformThread {
 public:
@@ -29,11 +28,7 @@ public:
   // void postEventToThread(Event & event) {
   //   event.dispatch(getRunnable());
   // }
-      
-  void sleep(float t) override {
-    usleep(int(t * 1000000));
-  }
-    
+          
 private:
   static void * entryPoint(void * pthis);
   

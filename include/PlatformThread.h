@@ -31,7 +31,6 @@ class PlatformThread {
   virtual bool start() = 0;
   virtual bool testDestroy() = 0;
   virtual void terminate() = 0;
-  virtual void sleep(float t) = 0;
   virtual std::unique_ptr<HTTPClientFactory> createHTTPClientFactory() const = 0;
   virtual std::unique_ptr<canvas::ContextFactory> createContextFactory() const = 0;
   
