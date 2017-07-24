@@ -78,34 +78,38 @@ StringUtils::trimPunctuation(string & input) {
 #endif
 }
 
-string
-StringUtils::normalizeText(const string & input) {
-  string r;
+bool
+StringUtils::normalizeText(const string & input, string & output) {
+  output.clear();
+  
   bool is_whitespace = false;
   
   const char * str = input.c_str();
   const char * str_i = str;
   const char * end = str + input.size();
 
+  auto output_inserter = back_inserter(output);
+  
   try {
     while ( str_i < end ) {
       uint32_t c = utf8::next(str_i, end);
       if (!is_space_unicode(c)) {
 	if (is_whitespace) {
-	  r += ' ';
+	  utf8::append(' ', output_inserter);
 	  is_whitespace = false;
 	}
-	utf8::append(c, back_inserter(r));
-      } else if (!is_whitespace && !r.empty()) {
+	utf8::append(c, output_inserter);
+      } else if (!is_whitespace && !output.empty()) {
 	is_whitespace = true;
       }
     }
   } catch (utf8::invalid_utf8 & e) {
-    cerr << "StringUtils: invalid utf8: " << input << "\n";
+    return false;
   }
-  return r;
+  return true;
 }
 
+#if 0
 void
 StringUtils::trimUtf8(string & s) {
   string n;
@@ -142,6 +146,7 @@ StringUtils::trimUtf8(string & s) {
   }
   s = output;
 }
+#endif
 
 void
 StringUtils::strip(string & s, char c) {
@@ -381,9 +386,11 @@ StringUtils::toLower(const string & input) {
   const char * str_i = str;
   const char * end = str + input.size(); 
 
+  auto output_inserter = back_inserter(r);
+
   while ( str_i < end ) {
     uint32_t c = utf8::next(str_i, end); // get 32 bit code of a utf-8 symbol
-    utf8::append(to_lower_unicode(c), back_inserter(r));
+    utf8::append(to_lower_unicode(c), output_inserter);
   }
   return r;
 }
@@ -397,9 +404,11 @@ StringUtils::toUpper(const string & input) {
   const char * str_i = str;
   const char * end = str + input.size(); 
 
+  auto output_inserter = back_inserter(r);
+
   while ( str_i < end ) {
     uint32_t c = utf8::next(str_i, end); // get 32 bit code of a utf-8 symbol
-    utf8::append(to_upper_unicode(c), back_inserter(r));
+    utf8::append(to_upper_unicode(c), output_inserter);
   }
   return r;
 }
@@ -635,8 +644,9 @@ StringUtils::toVector(const std::string & input) {
 string
 StringUtils::fromVector(const vector<uint32_t> & input) {
   string r;
+  auto output_inserter = back_inserter(r);
   for (auto it = input.begin(); it != input.end(); it++) {
-    utf8::append(*it, back_inserter(r));
+    utf8::append(*it, output_inserter);
   }
   return r;
 }
@@ -710,10 +720,11 @@ StringUtils::substr(const std::string & input, size_t start, size_t l) {
   const char * end = str + input.size();
 
   string output;
+  auto output_inserter = back_inserter(output);
   for (unsigned int i = 0; i < start + l && str_i < end; i++) {
     uint32_t c = utf8::next(str_i, end); // get 32 bit code of a utf-8 symbol
     if (i >= start) {
-      utf8::append(c, back_inserter(output));
+      utf8::append(c, output_inserter);
     }
   }
   
