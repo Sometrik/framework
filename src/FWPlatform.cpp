@@ -36,7 +36,9 @@ FWPlatform::run(std::shared_ptr<Runnable> runnable) {
 
 void
 FWPlatform::terminateThreads() {
-  cerr << "terminating " << threads.size() << " threads\n";
+  cerr << "terminating " << threads.size() << " threads:\n";
+  dumpThreads();
+
   MutexLocker m(mutex);
   for (auto & thread : threads) {
     thread.second->terminate();
