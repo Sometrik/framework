@@ -324,8 +324,7 @@ StringUtils::trimPunctuation(string & input) {
 #endif
 }
 
-bool
-StringUtils::isBlank(uint32_t c ) {
+static inline bool is_blank_unicode(uint32_t c ) {
   switch (c) {
   case ' ': return true; // space
   case '\t': return true; // tab
@@ -337,13 +336,41 @@ StringUtils::isBlank(uint32_t c ) {
   }
 }
 
-bool
-StringUtils::isSpace(uint32_t cp) { 
-  return isBlank(cp) ||
+static inline bool is_space_unicode(uint32_t cp) { 
+  return is_blank_unicode(cp) ||
     cp == 173 || // soft hyphen
     cp == '\b' ||
     cp == 0x0a ||
-    cp == 0x0d;
+    cp == 0x0d ||
+    cp == '\t';    
+}
+
+string
+StringUtils::normalizeText(const string & input) {
+  string r;
+  bool is_whitespace = false;
+  
+  const char * str = input.c_str();
+  const char * str_i = str;
+  const char * end = str + input.size();
+
+  try {
+    while ( str_i < end ) {
+      uint32_t c = utf8::next(str_i, end);
+      if (!is_space_unicode(c)) {
+	if (is_whitespace) {
+	  r += ' ';
+	  is_whitespace = false;
+	}
+	utf8::append(c, back_inserter(r));
+      } else if (!is_whitespace && !r.empty()) {
+	is_whitespace = true;
+      }
+    }
+  } catch (utf8::invalid_utf8 & e) {
+    cerr << "StringUtils: invalid utf8: " << input << "\n";
+  }
+  return r;
 }
 
 void
@@ -360,7 +387,7 @@ StringUtils::trimUtf8(string & s) {
     uint32_t c = utf8::next(str_i, end); // get 32 bit code of a utf-8 symbol
     assert(c);
     
-    bool is_whitespace = c == '\t' || c == '\b' || c == '\x0a' || c == '\x0d' || isBlank(c);
+    bool is_whitespace = is_space_unicode(c);
 
     switch (state) {
     case 1:
@@ -605,18 +632,6 @@ StringUtils::isNumber(const char * s) {
   return true;
 }
 
-#if 0
-bool
-StringUtils::isBlank(const char * s) {
-  for (unsigned int i = 0; s[i] != 0; i++) {
-    if (!isspace(s[i])) {
-      return false;
-    }
-  }
-  return true;
-}
-#endif
-
 static inline uint32_t to_lower_unicode(uint32_t c) {
   if ((c >= 'A' && c <= 'Z') ||
       (c >= 192 && c <= 214) || // Agrave to Ouml
@@ -797,7 +812,7 @@ StringUtils::convertEntity(const std::string & entity, std::string & r) {
 
   if (!value) {
     return false;
-  } else if (isBlank(value)) {
+  } else if (is_blank_unicode(value)) {
     r += " ";
     return true;
   } else if (value == 173) { // soft hyphen
@@ -1344,7 +1359,7 @@ StringUtils::extractLinks(const std::string & input, bool allow_utf8, bool extra
 	state = STATE_URL_HTTP1;
       } else if (c == 'f' || c == 'F') {
 	state = STATE_URL_FTP1;
-      } else if (isSpace(c)) {
+      } else if (is_space_unicode(c)) {
 	state = STATE_INITIAL;
       }
       break;
@@ -1357,7 +1372,7 @@ StringUtils::extractLinks(const std::string & input, bool allow_utf8, bool extra
 	state = STATE_MENTION_IDEOGRAPH;
       } else if (c == '@') {
 	// ignore
-      } else if (isSymbol(c) || isSpace(c) || c == ')' || c == ':' || c == '.' || c == '+' || c == ',' || c == '%' || c == '/' || c == '\'' || c == '?' || c == '!' || c == '<' || c == '-' ||
+      } else if (isSymbol(c) || is_space_unicode(c) || c == ')' || c == ':' || c == '.' || c == '+' || c == ',' || c == '%' || c == '/' || c == '\'' || c == '?' || c == '!' || c == '<' || c == '-' ||
 		 c == '&' || c == '*' || c == '^' || c == '"' || c == ']' || c == ';' || c == '=') {
 	state = STATE_INITIAL;
 	current_token.clear();
@@ -1382,12 +1397,12 @@ StringUtils::extractLinks(const std::string & input, bool allow_utf8, bool extra
       } else if (c == ')' || c == ']' || c == '}' || c == '.' || c == ':' || c == ';' || c == '!' || c == '?' || c == '\'' || c == '"' || c == ',' || c == '&' ||
 		 c == '*' || c == '<' || c == '>' || c == '^' || c == '$' || c == '(' || c == '/' || c == '+' || c == '%' || c == '=' || c == '-' || c == '|' ||
 		 c == 8212 || // Em Dash
-		 isSpace(c) || isSymbol(c) || isPrivate(c) || isIdeograph(c) || isSyllabary(c) || isArabic(c)
+		 is_space_unicode(c) || isSymbol(c) || isPrivate(c) || isIdeograph(c) || isSyllabary(c) || isArabic(c)
 		 ) {
 	// cerr << "adding mention " << current_token << endl;
 	entities.push_back(current_token);
 	current_token.clear();
-	if (isSpace(c)) {
+	if (is_space_unicode(c)) {
 	  state = STATE_INITIAL;
 	} else {
 	  state = STATE_WORD;
@@ -1431,14 +1446,14 @@ StringUtils::extractLinks(const std::string & input, bool allow_utf8, bool extra
 		 c == 176 || // degree symbol
 		 c == 180 || // ACUTE ACCENT
 		 c == 0xfe0f || // VARIATION SELECTOR-16
-		 isSpace(c) || isSymbol(c) || isPrivate(c)
+		 is_space_unicode(c) || isSymbol(c) || isPrivate(c)
 		 ) {
 	if (current_token.size() >= 2) {
 	  // cerr << "adding hashtag " << current_token << endl;
 	  entities.push_back(current_token);
 	}
 	current_token.clear();
-	if (isSpace(c)) {
+	if (is_space_unicode(c)) {
 	  state = STATE_INITIAL;
 	} else {
 	  state = STATE_WORD;
@@ -1543,7 +1558,7 @@ StringUtils::extractLinks(const std::string & input, bool allow_utf8, bool extra
 	state = STATE_URL_BODY_IPV6;
       } else if (c == 173) { // soft hyphen
 	// skip
-      } else if (isSpace(c)) {
+      } else if (is_space_unicode(c)) {
 	state = STATE_WORD;
 	// i--;
 	utf8::prior(str_i, str);
@@ -1567,7 +1582,7 @@ StringUtils::extractLinks(const std::string & input, bool allow_utf8, bool extra
 	state = STATE_URL_BODY;
       } else if (c == '[') {
 	state = STATE_URL_BODY_IPV6;
-      } else if (isSpace(c) || c == ')' || c == '_' || c == '<' || c == ',' || c == '\'') {
+      } else if (is_space_unicode(c) || c == ')' || c == '_' || c == '<' || c == ',' || c == '\'') {
 	state = STATE_WORD;
       } else if (c == 173) { // soft hyphen
 	// skip
@@ -1604,7 +1619,7 @@ StringUtils::extractLinks(const std::string & input, bool allow_utf8, bool extra
       } else if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || isDigit(c) || (allow_utf8 && c > 127) || c == '.' || c == '%' || c == '/' || c == '?' || c == '~' || c == '-' || c == '_' || c == '=' || c == '!' || c == '+' || c == '@' || c =='\\' || c == '|' || c == '$' || c == '^' || c == '#') {
 	// current_token += c;
 	utf8::append(c, back_inserter(current_token));
-      } else if (isSpace(c)) {
+      } else if (is_space_unicode(c)) {
 	entities.push_back(current_token);
 	state = STATE_INITIAL;
       } else if ((!allow_utf8 && c > 127) || c == '\'' || c == '"' || c == '*' || c == '<' || c == '>' || c == '[' || c == ']' || c == '{' || c == '}' || c == '(' || c == ')' || c == ',' || c == '`') {
@@ -1675,7 +1690,7 @@ StringUtils::extractLinks(const std::string & input, bool allow_utf8, bool extra
 #else
 	return set<string>();
 #endif
-      } else if (isSpace(c)) {
+      } else if (is_space_unicode(c)) {
 	state = STATE_URL_BODY;
 	// i--;
 	utf8::prior(str_i, str);
@@ -1695,7 +1710,7 @@ StringUtils::extractLinks(const std::string & input, bool allow_utf8, bool extra
 #else
 	return set<string>();
 #endif
-      } else if (isSpace(c)) {
+      } else if (is_space_unicode(c)) {
 	state = STATE_URL_BODY;
 	// i--;
 	utf8::prior(str_i, str);
@@ -1715,7 +1730,7 @@ StringUtils::extractLinks(const std::string & input, bool allow_utf8, bool extra
 #else
 	return set<string>();
 #endif
-      } else if (isSpace(c)) {
+      } else if (is_space_unicode(c)) {
 	state = STATE_URL_BODY;
 	// i--;
 	utf8::prior(str_i, str);

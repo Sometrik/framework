@@ -38,9 +38,6 @@ class StringUtils {
   static unsigned int chomp(std::string & str);
   static bool isNumber(const char * str);
   static bool isNumber(const std::string & str) { return isNumber(str.c_str()); }
-  // static bool isBlank(const char * str);
-  // static bool isBlank(const std::string & str) { return isBlank(str.c_str()); }
-  static bool isBlank(uint32_t c);
   static bool isWord(const std::string & str);
 
   static bool isDigit(uint32_t c);
@@ -78,7 +75,6 @@ class StringUtils {
   static bool isArabic(uint32_t cp);
   static bool isComplexSymbol(uint32_t cp);
   static bool isSymbol(uint32_t cp);
-  static bool isSpace(uint32_t cp);
   static bool isCombining(uint32_t cp);
   static bool isPrivate(uint32_t cp);
 
@@ -90,6 +86,8 @@ class StringUtils {
   static std::string createNonce(unsigned int size);
 
   static std::string substr(const std::string & input, size_t i, size_t l);
+
+  static std::string normalizeText(const std::string & input);
 
  private:
   static std::map<std::string, int> entities;
