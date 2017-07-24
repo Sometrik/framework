@@ -42,8 +42,6 @@ class StringUtils {
   // static bool isBlank(const std::string & str) { return isBlank(str.c_str()); }
   static bool isBlank(uint32_t c);
   static bool isWord(const std::string & str);
-  static uint32_t toLower(uint32_t c);
-  static uint32_t toUpper(uint32_t c);
 
   static bool isDigit(uint32_t c);
 

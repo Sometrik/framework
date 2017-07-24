@@ -617,30 +617,24 @@ StringUtils::isBlank(const char * s) {
 }
 #endif
 
-uint32_t
-StringUtils::toLower(uint32_t c) {
-  if (c <= 127) {
-    return (char)tolower((char)c);
-  } else if ((c >= 192 && c <= 214) || // Agrave to Ouml
-	     (c >= 216 && c <= 222) // Oslash to Thorn
-	     ) {
-    return c + 32;
-  } else if (c >= 0x0410 && c <= 0x042f) { // Cyrillic capitals
+static inline uint32_t to_lower_unicode(uint32_t c) {
+  if ((c >= 'A' && c <= 'Z') ||
+      (c >= 192 && c <= 214) || // Agrave to Ouml
+      (c >= 216 && c <= 222) || // Oslash to Thorn
+      (c >= 0x0410 && c <= 0x042f) // Cyrillic capitals
+      ) {
     return c + 0x20;
   } else {
     return c;
   }
 }
 
-uint32_t
-StringUtils::toUpper(uint32_t c) {
-  if (c <= 127) {
-    return (char)toupper((char)c);
-  } else if ((c >= 224 && c <= 246) || // Agrave to Ouml
-	     (c >= 248 && c <= 254) // Oslash to Thorn
-	     ) {
-    return c - 32;
-  } else if (c >= 0x0430 && c <= 0x044F) { // Cyrillic capitals
+static inline uint32_t to_upper_unicode(uint32_t c) {
+  if ((c >= 'a' && c <= 'z') ||
+      (c >= 224 && c <= 246) || // Agrave to Ouml
+      (c >= 248 && c <= 254) || // Oslash to Thorn
+      (c >= 0x0430 && c <= 0x044F) // Cyrillic capitals
+      ) {
     return c - 0x20;
   } else {
     return c;
@@ -658,7 +652,7 @@ StringUtils::toLower(const string & input) {
 
   while ( str_i < end ) {
     uint32_t c = utf8::next(str_i, end); // get 32 bit code of a utf-8 symbol
-    utf8::append(toLower(c), back_inserter(r));
+    utf8::append(to_lower_unicode(c), back_inserter(r));
   }
   return r;
 }
@@ -674,7 +668,7 @@ StringUtils::toUpper(const string & input) {
 
   while ( str_i < end ) {
     uint32_t c = utf8::next(str_i, end); // get 32 bit code of a utf-8 symbol
-    utf8::append(toUpper(c), back_inserter(r));
+    utf8::append(to_upper_unicode(c), back_inserter(r));
   }
   return r;
 }
