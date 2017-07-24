@@ -18,11 +18,11 @@ class NavigationBar : public Element {
   }
 
   void addButton(int buttonId, std::string imageFileName){
-      Command c(Command::ADD_COLUMN, getInternalId());
-      c.setTextValue(imageFileName);
-      c.setValue(buttonId);
-      sendCommand(c);
-    }
+    Command c(Command::ADD_COLUMN, getInternalId());
+    c.setTextValue(imageFileName);
+    c.setValue(buttonId);
+    sendCommand(c);
+  }
 
   void changeButton(int buttonId, std::string imageFileName){
     Command c(Command::ADD_OPTION, getInternalId());
@@ -32,17 +32,16 @@ class NavigationBar : public Element {
   }
 
   void onValueEvent(ValueEvent & ev) override {
-     notify();
-     CommandEvent ev2(getId(), ev.getValue(), ev.getValue2());
-     ev2.dispatch(*this);
-   }
+    notify();
+    CommandEvent ev2(getId(), ev.getValue(), ev.getValue2());
+    ev2.dispatch(*this);
+  }
 
 protected:
   void create() override {
     Command c(Command::CREATE_NAVIGATIONBAR, getParentInternalId(), getInternalId());
     sendCommand(c);
   }
-
 };
 
 #endif
