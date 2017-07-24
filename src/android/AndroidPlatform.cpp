@@ -726,7 +726,7 @@ void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, job
   if (surface != 0) {
     ANativeWindow * window = 0;
     window = ANativeWindow_fromSurface(env, surface);
-    AndroidOpenGLInitEvent ev(platform->getTime(), gl_version, true, window);
+    AndroidOpenGLInitEvent ev(gl_version, true, window);
     platform->queueEvent(platform->getInternalId(), ev);
 
   }

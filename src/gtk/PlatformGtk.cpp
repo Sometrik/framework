@@ -1014,7 +1014,7 @@ int main (int argc, char *argv[]) {
   g_object_unref(gtk_app);
     
 #if 0
-  SysEvent ev(platform.getTime(), SysEvent::DESTROY);
+  SysEvent ev(SysEvent::DESTROY);
   platform.postEvent(application->getInternalId(), ev);
 #endif
   
