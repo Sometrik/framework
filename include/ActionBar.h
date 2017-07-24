@@ -31,7 +31,6 @@ class ActionBar : public Element {
   }
 
  protected:
-
   void create() override {
     Command c(Command::CREATE_ACTIONBAR, getParentInternalId(), getInternalId());
     c.setTextValue(title);
