@@ -31,7 +31,9 @@ class FWPlatform : public Element {
     CACHE_DATABASE
   };
   
-  FWPlatform(float _display_scale);
+  FWPlatform(float _display_scale) : display_scale(_display_scale) {
+    initialize(this);
+  }
 
   bool isA(const std::string & className) const override {
     if (className == "FWPlatform") return true;

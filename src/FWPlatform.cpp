@@ -11,11 +11,6 @@
 
 using namespace std;
 
-FWPlatform::FWPlatform(float _display_scale) : display_scale(_display_scale) {
-  StringUtils::initialize();
-  initialize(this);
-}
-
 bool
 FWPlatform::run(std::shared_ptr<Runnable> runnable) {
   auto thread = createThread(runnable);

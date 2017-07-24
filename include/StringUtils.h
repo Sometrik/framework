@@ -3,7 +3,6 @@
 
 #include <vector>
 #include <list>
-#include <map>
 #include <set>
 #include <string>
 
@@ -13,8 +12,6 @@ class StringUtils {
  public:
   static const char * WHITESPACE;
   static const char * PUNCTUATION;
-
-  static void initialize();
 
   static void trim(std::string & s);
   static void trimPunctuation(std::string & s);
@@ -60,8 +57,6 @@ class StringUtils {
     while (!l.empty() && l.back().empty()) l.pop_back();
   }
   
-  static bool convertEntity(const std::string & entity, std::string & r); // html entities
-
   static std::set<std::string> extractLinks(const std::string & message, bool allow_utf8, bool extract_mentions, bool extract_hashtags);  // twitter entities
 
   // static std::string encodeIDN(const std::string & input);
@@ -88,10 +83,6 @@ class StringUtils {
   static std::string substr(const std::string & input, size_t i, size_t l);
 
   static std::string normalizeText(const std::string & input);
-
- private:
-  static std::map<std::string, int> entities;
-  static bool initialized;
 };
 
 #endif
