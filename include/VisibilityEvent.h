@@ -8,8 +8,7 @@
 
 class VisibilityEvent : public Event {
 public:
-  VisibilityEvent(double _timestamp, bool _visible)
-    : Event(_timestamp), visible(_visible) { }
+  VisibilityEvent(bool _visible) : visible(_visible) { }
 
   Event * dup() const override { return new VisibilityEvent(*this); }
   void dispatch(EventHandler & element) override {

@@ -18,7 +18,7 @@ class NavigationDrawer : public Element {
 
   void onValueEvent(ValueEvent & ev) override {
     notify();
-    CommandEvent ev2(ev.getTimestamp(), getId());
+    CommandEvent ev2(getId());
     ev2.dispatch(*this);
   }
 

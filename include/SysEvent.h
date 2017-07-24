@@ -20,7 +20,7 @@ public:
     END_MODAL,
     LANGUAGE_CHANGED
   };
- SysEvent(double _timestamp, Type _type) : Event(_timestamp), type(_type) { }
+ SysEvent(Type _type) : type(_type) { }
 
   Event * dup() const override { return new SysEvent(*this); }
   void dispatch(EventHandler & element) override {

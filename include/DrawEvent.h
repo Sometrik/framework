@@ -5,7 +5,7 @@
 
 class DrawEvent : public Event {
 public:
-  DrawEvent(double _timestamp) : Event(_timestamp) { }
+  DrawEvent() { }
 
   Event * dup() const override { return new DrawEvent(*this); }
   void dispatch(EventHandler & element) override {
@@ -18,8 +18,6 @@ public:
     Event::dispatch(element);
   }
   bool isBroadcast() const override { return true; }
-    
- private:  
 };
 
 #endif

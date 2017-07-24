@@ -10,7 +10,7 @@
 
 class Event {
  public:
-  Event(double _timestamp) : timestamp(_timestamp) { }
+  Event() { }
   virtual ~Event() { }
 
   virtual const char * key() const { return "event"; }
@@ -24,9 +24,7 @@ class Event {
     }  
   }
   virtual bool isBroadcast() const { return false; }
-  
-  double getTimestamp() const { return timestamp; }
-  
+    
   bool isHandled() const { return flags & FW_EVENT_IS_HANDLED; }
   bool isRedrawNeeded() const { return flags & FW_EVENT_REDRAW; }
   bool isStopped() const { return flags & FW_EVENT_IS_STOPPED; }
@@ -58,7 +56,6 @@ class Event {
   EventHandler * handler = 0;
 
  private:
-  double timestamp;
   unsigned short flags = 0;
 };
 

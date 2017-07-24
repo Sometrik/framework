@@ -7,8 +7,7 @@
 
 class ScrollEvent : public Event {
  public:
- ScrollEvent(double _timestamp, float _delta)
-   : Event(_timestamp), delta(_delta) { }
+ ScrollEvent(float _delta) : delta(_delta) { }
 
   const char * key() const override { return "scroll"; }
   Event * dup() const override { return new ScrollEvent(*this); }

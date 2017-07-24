@@ -26,7 +26,7 @@ PlatformThread::start2() {
   }
   deinitialize();
 
-  SysEvent ev(getPlatform().getTime(), SysEvent::THREAD_TERMINATED);
+  SysEvent ev(SysEvent::THREAD_TERMINATED);
   ev.setThread(this);
   sendEventFromThread(ev);
 }

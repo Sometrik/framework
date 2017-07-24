@@ -23,7 +23,7 @@ class Button : public UIElement {
 	ev.getX() >= x && ev.getX() < x + width &&
 	ev.getY() >= y && ev.getY() < y + height) {
       setTouched(true);
-      CommandEvent ev2(ev.getTimestamp(), getId());
+      CommandEvent ev2(getId());
       ev2.dispatch(*this);
       ev.setHandled();
       ev.requestRedraw();
@@ -36,7 +36,7 @@ class Button : public UIElement {
 
   void onValueEvent(ValueEvent & ev) override {
     notify();
-    CommandEvent ev2(ev.getTimestamp(), getId());
+    CommandEvent ev2(getId());
     ev2.dispatch(*this);
   }
   

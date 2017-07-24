@@ -491,13 +491,10 @@ AndroidPlatform::renderLoop() {
     }
 
     bool redraw = false, update_sent = false;    
-    std::pair<int, std::shared_ptr<UpdateEvent> > update_ev;
     for (auto & ev : evs) {
       if (dynamic_cast<UpdateEvent*>(ev.second.get())) {
-	if (update_sent) {
-	  // getLogger().println("skipping update event!");
-	  continue;
-	} else update_sent = true;
+	if (update_sent) continue;
+	update_sent = true;
       }
       
       postEvent(ev.first, *ev.second.get());
@@ -522,7 +519,7 @@ AndroidPlatform::renderLoop() {
     }
 
     if (canDraw && surface && redraw) {
-      DrawEvent dev(getTime());
+      DrawEvent dev;
       postEvent(getApplication().getActiveViewId(), dev);
       
       if (!eglSwapBuffers(display, surface)) {
@@ -607,7 +604,7 @@ void Java_com_sometrik_framework_FrameWork_onResize(JNIEnv* env, jclass clazz, d
   platform->setActualDisplayWidth(x);
   platform->setActualDisplayHeight(y);
 
-  ResizeEvent ev(timestamp, x / platform->getDisplayScale(), y / platform->getDisplayScale(), x, y);
+  ResizeEvent ev(x / platform->getDisplayScale(), y / platform->getDisplayScale(), x, y);
   platform->queueEvent(viewId, ev);
 }
 
@@ -625,10 +622,10 @@ void Java_com_sometrik_framework_FrameWork_keyPressed(JNIEnv* env, jobject thiz,
       platform->sendCommand2(co);
     }
   } else if (keyId == 82) {
-    CommandEvent ce(timestamp, FW_ID_MENU);
+    CommandEvent ce(FW_ID_MENU);
     platform->queueEvent(platform->getApplication().getActiveViewId(), ce);
   } else {
-    CommandEvent ce(timestamp, keyId);
+    CommandEvent ce(keyId);
     platform->queueEvent(viewId, ce);
   }
 }
@@ -682,7 +679,7 @@ void Java_com_sometrik_framework_FrameWork_flushTouchEvent(JNIEnv* env, jobject 
 }
 
 void Java_com_sometrik_framework_FrameWork_onUpdate(JNIEnv* env, jclass clazz, double timestamp, int viewId) {
-  UpdateEvent ev(timestamp);
+  UpdateEvent ev;
   platform->queueEvent(viewId, ev);
 }
 
@@ -749,31 +746,31 @@ void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, job
      env->ReleaseByteArrayElements(jarray, content_array, JNI_ABORT);
    }
    __android_log_print(ANDROID_LOG_INFO, "Sometrik", "native endModal: %d %s", value, text.c_str());
-   SysEvent ev(timestamp, SysEvent::END_MODAL);
+   SysEvent ev(SysEvent::END_MODAL);
    ev.setValue(value);
    ev.setTextValue(text);
    platform->queueEvent(platform->getInternalId(), ev);
  }
 
 void Java_com_sometrik_framework_FrameWork_nativeOnResume(JNIEnv* env, jobject thiz, double timestamp, int appId) {
-  SysEvent ev(timestamp, SysEvent::RESUME);
+  SysEvent ev(SysEvent::RESUME);
   platform->queueEvent(appId, ev);
 }
 void Java_com_sometrik_framework_FrameWork_nativeOnPause(JNIEnv* env, jobject thiz, double timestamp, int appId) {
-  SysEvent ev(timestamp, SysEvent::PAUSE);
+  SysEvent ev(SysEvent::PAUSE);
   platform->queueEvent(appId, ev);
 }
 void Java_com_sometrik_framework_FrameWork_nativeOnStop(JNIEnv* env, jobject thiz, double timestamp, int appId) {
-  SysEvent ev(timestamp, SysEvent::STOP);
+  SysEvent ev(SysEvent::STOP);
   platform->queueEvent(appId, ev);
 }
 void Java_com_sometrik_framework_FrameWork_nativeOnStart(JNIEnv* env, jobject thiz, double timestamp, int appId) {
-  SysEvent ev(timestamp, SysEvent::START);
+  SysEvent ev(SysEvent::START);
   platform->queueEvent(appId, ev);
 }
 void Java_com_sometrik_framework_FrameWork_nativeOnDestroy(JNIEnv* env, jobject thiz, double timestamp, int appId) {
   platform->terminateThreads();
-  SysEvent ev(timestamp, SysEvent::DESTROY);
+  SysEvent ev(SysEvent::DESTROY);
   platform->queueEvent(appId, ev);
   // TODO: Wait for threads to terminate
 #ifdef PROFILING
@@ -783,13 +780,13 @@ void Java_com_sometrik_framework_FrameWork_nativeOnDestroy(JNIEnv* env, jobject 
 }
 void Java_com_sometrik_framework_FrameWork_languageChanged(JNIEnv* env, jobject thiz, double timestamp, int appId, jstring language) {
   const char * clanguage = env->GetStringUTFChars(language, NULL);
-  SysEvent ev(timestamp, SysEvent::LANGUAGE_CHANGED);
+  SysEvent ev(SysEvent::LANGUAGE_CHANGED);
   ev.setTextValue(clanguage);
   platform->queueEvent(appId, ev);
   env->ReleaseStringUTFChars(language, clanguage);
 }
 void Java_com_sometrik_framework_FrameWork_memoryWarning(JNIEnv* env, jobject thiz, double timestamp, int appId) {
-  SysEvent ev(timestamp, SysEvent::MEMORY_WARNING);
+  SysEvent ev(SysEvent::MEMORY_WARNING);
   platform->queueEvent(appId, ev);
 }
   
@@ -800,24 +797,24 @@ void Java_com_sometrik_framework_FrameWork_textChangedEvent(JNIEnv* env, jobject
     text = string((const char *) content_array, env->GetArrayLength(jarray));
     env->ReleaseByteArrayElements(jarray, content_array, JNI_ABORT);
   }
-  ValueEvent ev(timestamp, text);
+  ValueEvent ev(text);
   platform->queueEvent(id, ev);
 }
 
 void Java_com_sometrik_framework_FrameWork_intChangedEvent(JNIEnv* env, jobject thiz, double timestamp, jint id, jint changedInt, jint changedInt2) {
   __android_log_print(ANDROID_LOG_INFO, "Sometrik", "intChangedEvent: %u %u", changedInt, changedInt2);
-  ValueEvent ev(timestamp, changedInt, changedInt2);
+  ValueEvent ev(changedInt, changedInt2);
   platform->queueEvent(id, ev);
 }
 
 void Java_com_sometrik_framework_FrameWork_visibilityChangedEvent(JNIEnv* env, jobject thiz, double timestamp, jint id, bool visible) {
   __android_log_print(ANDROID_LOG_INFO, "Sometrik", "visibilityChangedEvent on %u", id);
-  VisibilityEvent ev(timestamp, visible);
+  VisibilityEvent ev(visible);
   platform->queueEvent(id, ev);
 }
 
 void Java_com_sometrik_framework_FrameWork_timerEvent(JNIEnv* env, jobject thiz, double timestamp, jint viewId, jint timerId){
-  TimerEvent ev(timestamp, timerId);
+  TimerEvent ev(timerId);
   platform->queueEvent(viewId, ev);
 }
 
@@ -835,7 +832,7 @@ void Java_com_sometrik_framework_FrameWork_setNativeActiveView(JNIEnv* env, jobj
 void Java_com_sometrik_framework_FrameWork_OnPurchaseEvent(JNIEnv* env, jclass clazz, double timestamp, jint applicationId, jstring productId, bool newPurchase, double purchaseTime){
   const char * cstring = env->GetStringUTFChars(productId, 0);
   //PurchaseEvent Type not used yet. PurchaseTime is not sent //TODO
-  PurchaseEvent ev(timestamp, cstring, PurchaseEvent::PURCHASE_STATUS, newPurchase);
+  PurchaseEvent ev(cstring, PurchaseEvent::PURCHASE_STATUS, newPurchase);
  //Id not used. Sent to 0 //TODO
   platform->queueEvent(applicationId, ev);
   env->ReleaseStringUTFChars(productId, cstring);

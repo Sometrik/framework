@@ -796,7 +796,7 @@ PlatformGtk::send_int_value(GtkWidget * widget, gpointer data) {
   assert(id);
   if (id) {
     cerr << "int value: id = " << id << endl;
-    ValueEvent ev(platform->getTime(), 1);
+    ValueEvent ev(1);
     platform->postEvent(id, ev);
   }
 }
@@ -814,7 +814,7 @@ PlatformGtk::send_bool_value(GtkWidget * widget, GParamSpec *pspec, gpointer dat
       assert(0);
     }
     cerr << "bool value: id = " << id << ", v = " << v << endl;
-    ValueEvent ev(platform->getTime(), v ? 1 : 0);
+    ValueEvent ev(v ? 1 : 0);
     platform->postEvent(id, ev);
   }
 }
@@ -828,7 +828,7 @@ PlatformGtk::send_combo_value(GtkWidget * widget, gpointer data) {
     string v0 = gtk_combo_box_text_get_active_text((GtkComboBoxText*)widget);
     cerr << "combo value: id = " << id << ", v = " << v0 << endl;
     int v = atoi(v0.c_str());
-    ValueEvent ev(platform->getTime(), v ? 1 : 0);
+    ValueEvent ev(v ? 1 : 0);
     platform->postEvent(id, ev);
   }
 }
@@ -847,7 +847,7 @@ PlatformGtk::send_toggled_value(GtkWidget * widget, gpointer data) {
       assert(0);
     }
     cerr << "toggled value: id = " << id << ", v = " << v << endl;
-    ValueEvent ev(platform->getTime(), v ? 1 : 0);
+    ValueEvent ev(v ? 1 : 0);
     platform->postEvent(id, ev);
   }
 }
@@ -865,7 +865,7 @@ PlatformGtk::send_text_value(GtkWidget * widget, gpointer data) {
       assert(0);
     }
     cerr << "text value: id = " << id << ", text = " << s << endl;
-    ValueEvent ev(platform->getTime(), s);
+    ValueEvent ev(s);
     platform->postEvent(id, ev);
   }
 }
@@ -900,7 +900,7 @@ PlatformGtk::send_selection_value(GtkWidget * widget, gpointer data) {
 	return;
       }
       
-      ValueEvent ev(platform->getTime(), row, sheet);
+      ValueEvent ev(row, sheet);
       platform->postEvent(id, ev);
       
       g_list_free_full(l, (GDestroyNotify)gtk_tree_path_free);
@@ -931,7 +931,7 @@ PlatformGtk::send_activation_value(GtkTreeView * treeview, GtkTreePath * path, G
       return;
     }
       
-    ValueEvent ev(platform->getTime(), row, sheet);
+    ValueEvent ev(row, sheet);
     platform->postEvent(id, ev);
     
     // g_list_free_full(l, (GDestroyNotify)gtk_tree_path_free);
@@ -963,7 +963,7 @@ PlatformGtk::on_bar_button(GtkWidget * widget, gpointer data) {
   if (id) {
     int value = platform->getValue(widget);
     cerr << "sending bar button click value: " << value << endl;
-    ValueEvent ev(platform->getTime(), value, value);
+    ValueEvent ev(value, value);
     platform->postEvent(id, ev);
   }
 }

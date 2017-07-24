@@ -5,8 +5,8 @@
 
 class OpenGLInitEvent : public Event {
 public:
- OpenGLInitEvent(double _timestamp, int _opengl_version, bool _is_opengl_es)
-   : Event(_timestamp), opengl_version(_opengl_version), is_opengl_es(_is_opengl_es) { }
+ OpenGLInitEvent(int _opengl_version, bool _is_opengl_es)
+   : opengl_version(_opengl_version), is_opengl_es(_is_opengl_es) { }
 
   Event * dup() const override { return new OpenGLInitEvent(*this); }
   void dispatch(EventHandler & element) override {

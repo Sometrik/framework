@@ -9,9 +9,9 @@ public:
     ACTION_DOWN, ACTION_DRAG, ACTION_UP
   };
  TouchEvent(double _timestamp, Type _type, float _x, float _y, long long _identifier)
-   : Event(_timestamp), type(_type), x(_x), y(_y), identifier(_identifier), flush(false) { }
+   : timestamp(_timestamp), type(_type), x(_x), y(_y), identifier(_identifier), flush(false) { }
  TouchEvent(double _timestamp, Type _type, bool _flush = false)
-   : Event(_timestamp), type(_type), x(0), y(0), identifier(0), flush(_flush) { }
+   : timestamp(_timestamp), type(_type), x(0), y(0), identifier(0), flush(_flush) { }
 
   Event * dup() const override { return new TouchEvent(*this); }
   void dispatch(EventHandler & evh) override {
@@ -25,6 +25,7 @@ public:
   }
   bool isBroadcast() const override { return true; }
   
+  double getTimestamp() const { return timestamp; }
   Type getType() const { return type; }
   float getX() const { return x; }
   float getY() const { return y; }
@@ -32,6 +33,7 @@ public:
   bool isFlush() const { return flush; }
 
  private:
+  double timestamp;
   Type type;
   float x, y;
   long long identifier;

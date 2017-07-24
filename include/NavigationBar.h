@@ -33,7 +33,7 @@ class NavigationBar : public Element {
 
   void onValueEvent(ValueEvent & ev) override {
      notify();
-     CommandEvent ev2(ev.getTimestamp(), getId(), ev.getValue(), ev.getValue2());
+     CommandEvent ev2(getId(), ev.getValue(), ev.getValue2());
      ev2.dispatch(*this);
    }
 

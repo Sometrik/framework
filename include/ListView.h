@@ -66,7 +66,7 @@ class ListView : public Element {
     selected_row = ev.getValue2();
     
     notify();
-    CommandEvent ev2(ev.getTimestamp(), getId(), ev.getValue(), ev.getValue2());
+    CommandEvent ev2(getId(), ev.getValue(), ev.getValue2());
     ev2.dispatch(*this);
   }
 

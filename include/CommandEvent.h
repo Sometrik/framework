@@ -7,8 +7,8 @@
 
 class CommandEvent : public Event {
 public:
- CommandEvent(double _timestamp, int _element_id = 0, int _value = 0, int _value2 = 0)
-   : Event(_timestamp), element_id(_element_id), value(_value), value2(_value2) { }
+ CommandEvent(int _element_id = 0, int _value = 0, int _value2 = 0)
+   : element_id(_element_id), value(_value), value2(_value2) { }
 
   Event * dup() const override { return new CommandEvent(*this); }
   void dispatch(EventHandler & element) override {

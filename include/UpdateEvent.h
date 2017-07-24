@@ -5,7 +5,7 @@
 
 class UpdateEvent : public Event {
 public:
-  UpdateEvent(double _timestamp) : Event(_timestamp) { }
+  UpdateEvent() { }
 
   Event * dup() const override { return new UpdateEvent(*this); }
   void dispatch(EventHandler & element) override {
