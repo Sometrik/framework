@@ -549,17 +549,18 @@ public class NativeCommand {
   
   private FWLayout createLinearLayout() {
     FWLayout layout = new FWLayout(frame);
-    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-    params.weight = 1.0f;
-//    params.gravity = Gravity.FILL;
-//    layout.setBaselineAligned(false);
-    layout.setLayoutParams(params);
     layout.setId(getChildInternalId());
     FrameWork.addToViewList(layout);
     if (getValue() == 2) {
-	layout.setOrientation(LinearLayout.HORIZONTAL);
+      LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+      params.weight = 1.0f;
+      layout.setLayoutParams(params);
+      layout.setOrientation(LinearLayout.HORIZONTAL);
     } else {
-	layout.setOrientation(LinearLayout.VERTICAL);
+      LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT);
+      params.weight = 1.0f;
+      layout.setLayoutParams(params);
+      layout.setOrientation(LinearLayout.VERTICAL);
     }
     return layout;
   }
