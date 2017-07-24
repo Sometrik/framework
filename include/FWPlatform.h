@@ -9,6 +9,7 @@
 #include <FWPreferences.h>
 #include <MobileAccount.h>
 #include <Mutex.h>
+#include <Runnable.h>
 
 #ifdef HAS_SOUNDCANVAS
 #include <SoundCanvas.h>

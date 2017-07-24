@@ -1,7 +1,6 @@
 #include <FWPlatform.h>
 
 #include <PlatformThread.h>
-#include <Runnable.h>
 #include <SysEvent.h>
 #include <StringUtils.h>
 
