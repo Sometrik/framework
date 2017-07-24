@@ -164,10 +164,6 @@ public:
   void pushEvent(const Event & ev) override {
     event_queue.push(0, ev);
   }
-  double getTime() const override {
-    double t = [[NSProcessInfo processInfo] systemUptime];
-    return t;
-  }
   bool hasActiveModal() const { return has_active_modal; }
 #if 0
   int showActionSheet(const FWRect & rect, const FWActionSheet & sheet) override {
@@ -390,7 +386,7 @@ extern FWApplication * applicationMain();
 
 	_platform->addChild(std::shared_ptr<Element>(_esContext));
       
-	OpenGLInitEvent ev(_platform->getTime(), self->_opengl_version, true);
+	OpenGLInitEvent ev(self->_opengl_version, true);
 	_platform->postEvent(_esContext->getInternalId(), ev);
 
         [self drawView: nil];
@@ -514,8 +510,7 @@ extern FWApplication * applicationMain();
 
 - (void)tearDownGL {
   [EAGLContext setCurrentContext:self->context];
-  double t = [[NSProcessInfo processInfo] systemUptime];
-  SysEvent ev(t, SysEvent::DESTROY);
+  SysEvent ev(SysEvent::DESTROY);
   _platform->postEvent(_esContext->getInternalId(), ev);
   delete _esContext;
 }
@@ -533,9 +528,8 @@ extern FWApplication * applicationMain();
     }
   }
 
-  double t = [[NSProcessInfo processInfo] systemUptime];
   assert(_platform->getActiveViewId());
-  UpdateEvent ev0(t);
+  UpdateEvent ev0;
   _platform->postEvent(_platform->getActiveViewId(), ev0);
   need_update |= ev0.isRedrawNeeded();
   // need_update |= _esContext->onUpdate(t);
@@ -563,11 +557,11 @@ extern FWApplication * applicationMain();
       drawableHeight = newHeight;
       
       cerr << "resize window: " << logical_width << " " << logical_height << endl;
-      ResizeEvent ev(t, logical_width, logical_height, drawableWidth, drawableHeight);
+      ResizeEvent ev(logical_width, logical_height, drawableWidth, drawableHeight);
       _platform->postEvent(_platform->getActiveViewId(), ev);
       // _esContext->onResize(logical_width, logical_height, drawableWidth, drawableHeight);
     }
-    DrawEvent ev1(t);
+    DrawEvent ev1;
     _platform->postEvent(_platform->getActiveViewId(), ev1);
     
     [context presentRenderbuffer:GL_RENDERBUFFER];
@@ -602,8 +596,7 @@ extern FWApplication * applicationMain();
 
 - (void)sendMemoryWarning
 {
-  double t = [[NSProcessInfo processInfo] systemUptime];
-  SysEvent ev(t, SysEvent::MEMORY_WARNING);
+  SysEvent ev(SysEvent::MEMORY_WARNING);
   _platform->postEvent(_esContext->getInternalId(), ev);
 }
 
