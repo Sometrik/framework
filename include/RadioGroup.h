@@ -15,13 +15,15 @@ class RadioGroup : public Element {
   }
 
   void addOption(int id, const std::string & name) {
-    if (options.empty()){
+    if (options.empty()) {
       value = id;
     }
     options.push_back(std::pair<int, std::string>(id, name));
-    if (isInitialized()) {
-      initializeOption(options.back());
-    }
+
+    Command c(Command::ADD_OPTION, getInternalId());
+    c.setValue(id);
+    c.setTextValue(name);
+    sendCommand(c);
   }
 
   void onValueEvent(ValueEvent & ev) override {
@@ -40,20 +42,9 @@ class RadioGroup : public Element {
   void call(const std::string & s) override { }
 
  protected:
-  void initialize(FWPlatform * _platform) override {
-    Element::initialize(_platform);
+  void create() override {
     Command c(Command::CREATE_RADIO_GROUP, getParentInternalId(), getInternalId());
     c.setLayoutWeight(getLayoutWeight());
-    sendCommand(c);
-    for (auto & o : options) {
-      initializeOption(o);
-    }
-  }
-
-  void initializeOption(const std::pair<int, std::string> & o) {
-    Command c(Command::ADD_OPTION, getInternalId(), 0);
-    c.setValue(o.first);
-    c.setTextValue(o.second);
     sendCommand(c);
   }
 

@@ -34,8 +34,7 @@ class Checkbox : public InputElement {
   bool getValue() const { return value; }
 
  protected:
-  void initialize(FWPlatform * _platform) override {
-    Element::initialize(_platform);
+  void create() override {
     Command c(Command::CREATE_CHECKBOX, getParentInternalId(), getInternalId());
     c.setTextValue(label);
     c.setLayoutWeight(getLayoutWeight());

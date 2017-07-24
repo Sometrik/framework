@@ -35,15 +35,10 @@ class TextField : public InputElement {
   const std::string & getValue() const { return value; }
 
  protected:
-
   void create() override {
     Command c(Command::CREATE_TEXTFIELD, getParentInternalId(), getInternalId());
     c.setLayoutWeight(getLayoutWeight());
     sendCommand(c);
-  }
-
-  void initialize(FWPlatform * _platform) override {
-    Element::initialize(_platform);
   }
 
  private:

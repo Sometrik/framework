@@ -67,8 +67,7 @@ public:
   bool isChildVisible(const Element & child) const override {
     return activeViewId == child.getInternalId();
   }
-  void initialize(FWPlatform * _platform) override {
-    Element::initialize(_platform);
+  void create() override {
     Command c(Command::CREATE_APPLICATION, getParentInternalId(), getInternalId());
     c.setFlags(iap_public_key.empty() ? 0 : 128);
     c.setTextValue(name);

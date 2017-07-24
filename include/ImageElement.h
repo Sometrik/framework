@@ -14,8 +14,7 @@ class ImageElement : public Element {
   }
 
  protected:
-  void initialize(FWPlatform * _platform) override {
-    Element::initialize(_platform);
+  void create() override {
     Command c(Command::CREATE_IMAGEVIEW, getParentInternalId(), getInternalId());
     c.setTextValue(filename);
     c.setLayoutWeight(getLayoutWeight());

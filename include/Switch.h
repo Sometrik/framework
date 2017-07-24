@@ -24,8 +24,7 @@ class Switch : public InputElement {
   bool getValue() const { return value; }
 
  protected:
-  void initialize(FWPlatform * _platform) override {
-    Element::initialize(_platform);
+  void create() override {
     Command c(Command::CREATE_SWITCH, getParentInternalId(), getInternalId());
     c.setTextValue(on_label);
     c.setTextValue2(off_label);
