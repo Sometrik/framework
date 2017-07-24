@@ -55,6 +55,17 @@ public:
     CurlClientFactory::globalInit();
   }
 
+  double getTime() const {
+    struct timeval tv;
+    struct timezone tz;
+    int r = gettimeofday(&tv, &tz);
+    double t = 0;
+    if (r == 0) {
+      t = (double)tv.tv_sec + tv.tv_usec / 1000000.0;
+    }
+    return t;
+  }
+
   void pushEvent(const Event & ev) override {
     SDL_Event user_event;
     user_event.type = SDL_USEREVENT;
