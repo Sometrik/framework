@@ -106,7 +106,6 @@ public class NativeCommand {
     SHOW_INPUT_DIALOG,
     SHOW_ACTION_SHEET,
     LAUNCH_BROWSER,
-    POST_NOTIFICATION,
     HISTORY_GO_BACK,
     HISTORY_GO_FORWARD,
     CLEAR,
@@ -353,9 +352,6 @@ public class NativeCommand {
     case ADD_SHEET:
       System.out.println("add_sheet: " + getTextValueAsString() + " " + rowNumber + " " + columnNumber + " " + sheet);
       view.setValue(getTextValueAsString());
-    case POST_NOTIFICATION:
-      frame.createNotification(getTextValueAsString(), getTextValue2AsString());
-      break;
     case CREATE_APPLICATION:
       frame.setAppId(getInternalId());
       frame.setSharedPreferences(getTextValueAsString());

@@ -44,7 +44,6 @@ class Command {
     SHOW_INPUT_DIALOG,
     SHOW_ACTION_SHEET,
     LAUNCH_BROWSER,
-    POST_NOTIFICATION,
     HISTORY_GO_BACK,
     HISTORY_GO_FORWARD,
     CLEAR, // Clears the contents of GridView

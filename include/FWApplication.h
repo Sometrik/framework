@@ -22,10 +22,6 @@ public:
     sendCommand(Command(Command::LAUNCH_BROWSER, getInternalId(), input_url));
   }
   
-  void postNotification(const std::string & title, const std::string & command) {
-    sendCommand(Command(Command::POST_NOTIFICATION, getInternalId(), title, command));
-  }
-
   Logger & getLogger() {
     if (!logger.get()) {
       logger = getPlatform().createLogger(name);
