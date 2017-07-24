@@ -35,43 +35,23 @@ class StringUtils {
   static unsigned int chomp(std::string & str);
   static bool isNumber(const char * str);
   static bool isNumber(const std::string & str) { return isNumber(str.c_str()); }
-  static bool isWord(const std::string & str);
-
-  static bool isDigit(uint32_t c);
-
-  static bool isLower(uint32_t c);
-
-  static bool isUpper(uint32_t c);
+  static bool isAlpha(const std::string & str);
   static bool isUpper(const std::string & s);
-  
+
   static std::string toLower(const std::string & str);
   static std::string toUpper(const std::string & str);
   static std::string extractAscii(const std::string & s);
   static std::string extractNumber(const std::string & s);
   // static std::vector<std::string> split(const char * s, char delimiter = 0);
   static std::string decodeEntities(const std::string & s);
-  static std::string stripHTML(const std::string & s, bool strip_html = true); // and decode entities;
 
   static void trim(std::list<std::string> & l) {
     while (!l.empty() && l.front().empty()) l.pop_front();
     while (!l.empty() && l.back().empty()) l.pop_back();
   }
   
-  static std::set<std::string> extractLinks(const std::string & message, bool allow_utf8, bool extract_mentions, bool extract_hashtags);  // twitter entities
-
   // static std::string encodeIDN(const std::string & input);
   static std::string encodePunycode(const std::string & input);
-
-  static std::string repairUTF8(const std::string & s);
-
-  static bool isAlpha(uint32_t cp);
-  static bool isIdeograph(uint32_t cp);
-  static bool isSyllabary(uint32_t cp);
-  static bool isArabic(uint32_t cp);
-  static bool isComplexSymbol(uint32_t cp);
-  static bool isSymbol(uint32_t cp);
-  static bool isCombining(uint32_t cp);
-  static bool isPrivate(uint32_t cp);
 
   static std::string removeRepeatingLetters(const std::string & input);
 
