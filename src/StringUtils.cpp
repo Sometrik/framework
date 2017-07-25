@@ -60,17 +60,25 @@ StringUtils::trimPunctuation(string & input) {
       break;
     }
   }
-  
-  string tmp;
-  string part;
+
+  string tmp, part;
+
+  auto tmp_inserter = back_inserter(tmp);
+  auto part_inserter = back_inserter(part);
+
   while ( str_i < end ) {
     uint32_t c = utf8::next(str_i, end); // get 32 bit code of a utf-8 symbol
     if (is_alpha_unicode(c)) {
-      tmp += part;
-      part.clear();
-      utf8::append(c, back_inserter(tmp));
+      if (!part.empty()) {
+	tmp += part;
+	part.clear();
+	tmp_inserter = back_inserter(tmp);
+	part_inserter = back_inserter(part);
+      }
+
+      utf8::append(c, tmp_inserter);
     } else {
-      utf8::append(c, back_inserter(part));
+      utf8::append(c, part_inserter);
     }
   }
   
@@ -119,6 +127,9 @@ StringUtils::trimUtf8(string & s) {
   const char * str = s.c_str();
   const char * str_i = str;
   const char * end = str + s.size();
+
+  auto output_inserter = back_inserter(output);
+  auto ww_inserter = back_inserter(waiting_whitespace);
   
   while ( str_i < end ) {
     uint32_t c = utf8::next(str_i, end); // get 32 bit code of a utf-8 symbol
@@ -130,16 +141,20 @@ StringUtils::trimUtf8(string & s) {
     case 1:
       if (!is_whitespace) {
 	state++;
-	utf8::append(c, back_inserter(output));
+	utf8::append(c, output_inserter);
       }
       break;
     case 2:
       if (is_whitespace) {
-	utf8::append(c, back_inserter(waiting_whitespace));
+	utf8::append(c, ww_inserter);
       } else {
-	output += waiting_whitespace;
-	waiting_whitespace.clear();
-	utf8::append(c, back_inserter(output));
+	if (!waiting_whitespace.empty()) {
+	  output += waiting_whitespace;
+	  waiting_whitespace.clear();
+	  output_inserter = back_inserter(output);
+	  ww_inserter = back_inserter(waiting_whitespace);
+	}
+	utf8::append(c, output_inserter);
       }
       break;
     }
@@ -548,6 +563,8 @@ StringUtils::encodePunycode(const string & input) {
     return output;
   }
 
+  auto output_inserter = back_inserter(output);
+
   vector<uint32_t> input2;
   
   const char * str = input.c_str();
@@ -578,10 +595,10 @@ StringUtils::encodePunycode(const string & input) {
 	    int t = (k <= bias) ? TMIN : (k >= bias + TMAX) ? TMAX : k - bias;
 	    if (q < t) break;
 	    uint32_t cp = code_point(t + ((q - t) % (BASE - t)));
-	    utf8::append(cp, back_inserter(output));
+	    utf8::append(cp, output_inserter);
 	    q = (q - t) / (BASE - t);
 	  }
-	  utf8::append(code_point(q), back_inserter(output));
+	  utf8::append(code_point(q), output_inserter);
 	  bias = adapt(delta, h + 1, h == b);
 	  cerr << "bias becomes " << bias << endl;
 	  delta = 0;
@@ -603,6 +620,7 @@ StringUtils::removeRepeatingLetters(const std::string & input) {
   const char * str_i = str;
   const char * end = str + input.size();
   string output;
+  auto output_inserter = back_inserter(output);
   while ( str_i < end ) {
     uint32_t c = utf8::next(str_i, end); // get 32 bit code of a utf-8 symbol
     uint32_t lcc = tolower(c);
@@ -612,7 +630,7 @@ StringUtils::removeRepeatingLetters(const std::string & input) {
       if (prev_c) {
 	if (current_repeat > 2) current_repeat = 2;
 	for (unsigned int i = 0; i < current_repeat; i++) {
-	  utf8::append(prev_c, back_inserter(output));
+	  utf8::append(prev_c, output_inserter);
 	}
       } 
       current_repeat = 1;
@@ -622,7 +640,7 @@ StringUtils::removeRepeatingLetters(const std::string & input) {
   }
   if (current_repeat > 2) current_repeat = 2;
   for (unsigned int i = 0; i < current_repeat; i++) {
-    utf8::append(prev_c, back_inserter(output));
+    utf8::append(prev_c, output_inserter);
   }
   return output;
 }
