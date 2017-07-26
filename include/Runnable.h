@@ -5,11 +5,11 @@
 
 #include <EventQueue.h>
 #include <FWPlatform.h>
+#include <Mutex.h>
 #include <PlatformThread.h>
 
 #include <string>
 
-class PlatformThread;
 class Event;
 class FWPlatform;
 
@@ -39,6 +39,11 @@ class Runnable : public EventHandler {
   const PlatformThread & getThread() const { return *thread; }
   PlatformThread * getThreadPtr() { return thread; }
 
+  std::string getStatusText() const {
+    MutexLocker m(mutex);
+    return status_text;
+  }
+
  protected:
   FWPlatform & getPlatform() { return getThread().getPlatform(); }
   const FWPlatform & getPlatform() const { return getThread().getPlatform(); }
@@ -49,8 +54,15 @@ class Runnable : public EventHandler {
   }
   virtual void run() = 0;
 
+  void setStatusText(const std::string & s) {
+    MutexLocker m(mutex);
+    status_text = s;
+  }
+
  private:
   PlatformThread * thread = 0;
+  std::string status_text;
+  mutable Mutex mutex;
 };
 
 #endif
