@@ -80,6 +80,6 @@ FWPlatform::dumpThreads() const {
   cerr << "running threads:\n";
   for (auto & t : threads) {
     auto & r = t.second->getRunnable();
-    cerr << "  thread " << t.second->getId() << ": " << typeid(r).name() << endl;
+    cerr << "  thread " << t.second->getId() << "/" << typeid(r).name() << ": " << r.getStatusText() << endl;
   }
 }
