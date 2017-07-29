@@ -110,9 +110,6 @@ private:
   JNIEnv * env;
 };
 
-
-
-
 class AndroidThread;
 class AndroidNativeThread;
 
@@ -218,8 +215,8 @@ extern FWApplication * applicationMain();
 
 class AndroidThread : public PosixThread {
 public:
-  AndroidThread(AndroidPlatform * _platform, std::shared_ptr<Runnable> & _runnable)
-    : PosixThread(_platform, _runnable) { }
+  AndroidThread(int _id, AndroidPlatform * _platform, std::shared_ptr<Runnable> & _runnable)
+    : PosixThread(_id, _platform, _runnable) { }
 
   std::unique_ptr<HTTPClientFactory> createHTTPClientFactory() const override {
     const AndroidPlatform & androidPlatform = dynamic_cast<const AndroidPlatform&>(getPlatform());
@@ -367,7 +364,7 @@ AndroidPlatform::sendCommand2(const Command & command) {
 std::shared_ptr<PlatformThread>
 AndroidPlatform::createThread(std::shared_ptr<Runnable> & runnable) {
 //    shared_ptr<PlatformThread> thread = make_shared<AndroidThread>(this, runnable);
-  std::shared_ptr<PlatformThread> thread = std::unique_ptr<AndroidThread>(new AndroidThread(this, runnable));
+  std::shared_ptr<PlatformThread> thread = std::unique_ptr<AndroidThread>(new AndroidThread(getNextThreadId(), this, runnable));
 //    <Logger>(new AndroidLogger(name));
   return thread;
 }

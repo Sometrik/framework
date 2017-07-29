@@ -11,6 +11,8 @@
 
 using namespace std;
 
+atomic<int> FWPlatform::next_thread_id(1);
+
 bool
 FWPlatform::run(std::shared_ptr<Runnable> runnable) {
   auto thread = createThread(runnable);

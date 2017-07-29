@@ -6,12 +6,12 @@
 #include <EventQueue.h>
 #include <FWPlatform.h>
 #include <Mutex.h>
-#include <PlatformThread.h>
 
 #include <string>
 
 class Event;
 class FWPlatform;
+class PlatformThread;
 
 class Runnable : public EventHandler {
  public:
@@ -32,9 +32,6 @@ class Runnable : public EventHandler {
   }
 #endif
 
-  void terminate() { getThread().terminate(); }
-  bool testDestroy() { return getThread().testDestroy(); }
-
   PlatformThread & getThread() { return *thread; }
   const PlatformThread & getThread() const { return *thread; }
   PlatformThread * getThreadPtr() { return thread; }
@@ -44,20 +41,15 @@ class Runnable : public EventHandler {
     return status_text;
   }
 
- protected:
-  FWPlatform & getPlatform() { return getThread().getPlatform(); }
-  const FWPlatform & getPlatform() const { return getThread().getPlatform(); }
-  
-  // EventQueue event_queue;
-  void postEvent(const Event & event) {
-    getThread().sendEventFromThread(event);
-  }
+ protected: 
   virtual void run() = 0;
 
   void setStatusText(const std::string & s) {
     MutexLocker m(mutex);
     status_text = s;
   }
+
+  // EventQueue event_queue;
 
  private:
   PlatformThread * thread = 0;

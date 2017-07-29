@@ -1,10 +1,13 @@
 #ifndef _PLATFORMTHREAD_H_
 #define _PLATFORMTHREAD_H_
 
-#include <memory>
-#include <atomic>
+#include <Logger.h>
+#include <Runnable.h>
+#include <SysEvent.h>
 
-class Runnable;
+#include <exception>
+#include <memory>
+
 class Event;
 class FWPlatform;
 class HTTPClientFactory;
@@ -16,8 +19,8 @@ namespace canvas {
 
 class PlatformThread {
  public:
- PlatformThread(FWPlatform * _platform, std::shared_ptr<Runnable> & _runnable)
-   : id(getNextThreadId()),
+ PlatformThread(int _id, FWPlatform * _platform, std::shared_ptr<Runnable> & _runnable)
+   : id(_id),
     platform(_platform),
     runnable(_runnable)
     {
@@ -43,25 +46,40 @@ class PlatformThread {
   
   int getId() const { return id; }
 
-  void sendEventFromThread(const Event & ev);
+  void postEvent(const Event & ev) {
+    getPlatform().pushEvent(ev);
+  }
 
-  bool run(std::shared_ptr<Runnable> runnable);
-  std::unique_ptr<Logger> createLogger(const std::string & name) const;
+  bool run(std::shared_ptr<Runnable> runnable) {
+    return getPlatform().run(runnable);
+  }
+  
+  std::unique_ptr<Logger> createLogger(const std::string & name) const {
+    return getPlatform().createLogger(name);
+  }
 
  protected:
   virtual void initialize() { }  
   virtual void deinitialize() { }
 
-  void start2();
-
-  int getNextThreadId() { return next_thread_id.fetch_add(1); }
+  void start2() {
+    initialize();
+    try {
+      getRunnable().start(this);
+    } catch (std::exception & e) {
+      getPlatform().getLogger().println("PlatformThread: Runnable threw an exception: " + std::string(e.what()));
+    }
+    deinitialize();
+    
+    SysEvent ev(SysEvent::THREAD_TERMINATED);
+    ev.setThread(this);
+    postEvent(ev);
+  }
 
  private:
   int id;
   FWPlatform * platform;
   std::shared_ptr<Runnable> runnable;
-
-  static std::atomic<int> next_thread_id;
 };
 
 #endif

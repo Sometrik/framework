@@ -19,6 +19,7 @@
 #include <memory>
 #include <list>
 #include <unordered_map>
+#include <atomic>
 
 class Runnable;
 class PlatformThread;
@@ -121,6 +122,8 @@ class FWPlatform : public Element {
     return threads.size();
   }
 
+  int getNextThreadId() { return next_thread_id.fetch_add(1); }
+
   virtual std::shared_ptr<PlatformThread> createThread(std::shared_ptr<Runnable> & runnable) = 0;
 
   int actual_display_width = 0, actual_display_height = 0;
@@ -139,6 +142,8 @@ class FWPlatform : public Element {
   std::unordered_map<int, std::shared_ptr<PlatformThread> > threads;
   std::unordered_map<int, Element *> registered_elements;
   mutable Mutex mutex;
+
+  static std::atomic<int> next_thread_id;
 };
 
 #endif

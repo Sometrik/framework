@@ -32,8 +32,8 @@ using namespace std;
 
 class GtkThread : public PosixThread {
 public:
-  GtkThread(FWPlatform * _platform, std::shared_ptr<Runnable> & _runnable)
-    : PosixThread(_platform, _runnable) { }
+  GtkThread(int _id, FWPlatform * _platform, std::shared_ptr<Runnable> & _runnable)
+    : PosixThread(_id, _platform, _runnable) { }
 
   std::unique_ptr<HTTPClientFactory> createHTTPClientFactory() const override {
     return std::unique_ptr<HTTPClientFactory>(new CurlClientFactory);
@@ -74,7 +74,7 @@ public:
   }
 
   std::shared_ptr<PlatformThread> createThread(std::shared_ptr<Runnable> & runnable) override {
-    return make_shared<GtkThread>(this, runnable);
+    return make_shared<GtkThread>(getNextThreadId(), this, runnable);
   }
   
   string getLocalFilename(const char * fn, FileType type) override {

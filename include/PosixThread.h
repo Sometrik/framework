@@ -8,8 +8,8 @@
 
 class PosixThread : public PlatformThread {
 public:
-  PosixThread(FWPlatform * _platform, std::shared_ptr<Runnable> & _runnable)
-    : PlatformThread(_platform, _runnable),
+ PosixThread(int _id, FWPlatform * _platform, std::shared_ptr<Runnable> & _runnable)
+   : PlatformThread(_id, _platform, _runnable),
     terminate_thread(false)
   {
     
