@@ -15,7 +15,7 @@ class StringUtils {
 
   static void trim(std::string & s);
   static void trimPunctuation(std::string & s);
-  // static void trimUtf8(std::string & s);
+  static void trimUtf8(std::string & s);
   static std::vector<std::string> split(const std::string & line, char delimiter = 0);
   static std::pair<std::string, std::string> splitOnce(const std::string & line, char delimiter = 0);
   static size_t split(const std::string & line, std::back_insert_iterator< std::vector<std::string> > backiter, char delimiter = 0);

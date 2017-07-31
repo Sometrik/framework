@@ -117,7 +117,6 @@ StringUtils::normalizeText(const string & input, string & output) {
   return true;
 }
 
-#if 0
 void
 StringUtils::trimUtf8(string & s) {
   string n;
@@ -161,7 +160,6 @@ StringUtils::trimUtf8(string & s) {
   }
   s = output;
 }
-#endif
 
 void
 StringUtils::strip(string & s, char c) {
