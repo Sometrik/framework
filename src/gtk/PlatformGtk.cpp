@@ -110,6 +110,8 @@ public:
       addView(0, command.getChildInternalId(), stack);
 
       gtk_widget_show_all(window);
+
+      g_timeout_add_seconds(1, timer_60, this);
     }
       break;
       
@@ -741,6 +743,7 @@ protected:
   static void on_bar_button(GtkWidget * widget, gpointer data);
   static gboolean idle_callback(gpointer data);
   static gboolean delete_window(GtkWidget *widget, GdkEvent  *event, gpointer user_data);
+  static gboolean timer_60(gpointer data);
   
 private:
   GtkApplication * gtk_app = nullptr;
@@ -989,6 +992,14 @@ PlatformGtk::delete_window(GtkWidget *widget, GdkEvent  *event, gpointer user_da
   } else {
     return FALSE;
   }
+}
+
+gboolean
+PlatformGtk::timer_60(gpointer data) {
+  PlatformGtk * platform = (PlatformGtk*)data;
+  UpdateEvent ev;
+  platform->postEvent(platform->getInternalId(), ev);
+  return TRUE;
 }
 
 static void activate(GtkApplication * gtk_app, gpointer user_data) {
