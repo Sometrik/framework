@@ -151,6 +151,28 @@ public:
     }
       break;
 
+    case Command::RESHAPE_TABLE: {
+      size_t max_size = command.getValue();
+      auto view = views_by_id[command.getInternalId()];
+      assert(view);
+      if (view) {
+	auto treeview = gtk_bin_get_child(GTK_BIN(view));
+	auto model = gtk_tree_view_get_model((GtkTreeView*)treeview);
+
+	auto & sheets = sheets_by_id[command.getInternalId()];
+	for (int i = int(sheets.size()) - 1; i >= 0; i--) {
+	  auto & sheet = sheets[i];
+	  if (sheet.is_created) {
+	    sheet.is_created = false;
+	    GtkTreeIter parent;
+	    gtk_tree_model_iter_nth_child(model, &parent, 0, i);
+	    gtk_tree_store_remove(GTK_TREE_STORE(model), &parent);
+	  }	  
+	}
+      }
+    }
+      break;
+      
     case Command::RESHAPE_SHEET: {
       size_t max_size = command.getValue();
       auto view = views_by_id[command.getInternalId()];

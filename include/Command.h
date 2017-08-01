@@ -64,6 +64,7 @@ class Command {
     ADD_OPTION,
     ADD_SHEET,
     ADD_COLUMN,
+    RESHAPE_TABLE,
     RESHAPE_SHEET,
     QUIT_APP,
 
