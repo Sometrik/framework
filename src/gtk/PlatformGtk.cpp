@@ -160,7 +160,7 @@ public:
 	auto model = gtk_tree_view_get_model((GtkTreeView*)treeview);
 
 	auto & sheets = sheets_by_id[command.getInternalId()];
-	for (int i = int(sheets.size()) - 1; i >= 0; i--) {
+	for (int i = int(sheets.size()) - 1; i >= max_size; i--) {
 	  auto & sheet = sheets[i];
 	  if (sheet.is_created) {
 	    sheet.is_created = false;
