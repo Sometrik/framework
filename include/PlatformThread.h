@@ -35,7 +35,9 @@ class PlatformThread {
   virtual bool testDestroy() = 0;
   virtual void terminate() = 0;
   virtual std::unique_ptr<HTTPClientFactory> createHTTPClientFactory() const = 0;
+#ifndef NO_CANVAS
   virtual std::unique_ptr<canvas::ContextFactory> createContextFactory() const = 0;
+#endif
   
   Runnable & getRunnable() { return *runnable; }
   Runnable * getRunnablePtr() { return runnable.get(); }
