@@ -72,7 +72,7 @@ class PlatformThread {
     deinitialize();
     
     SysEvent ev(SysEvent::THREAD_TERMINATED);
-    ev.setThread(this);
+    ev.setThreadId(getInternalId());
     postEvent(ev);
   }
 

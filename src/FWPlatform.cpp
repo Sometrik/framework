@@ -46,7 +46,7 @@ FWPlatform::onSysEvent(SysEvent & ev) {
   if (ev.getType() == SysEvent::THREAD_TERMINATED) {
     MutexLocker m(mutex);
     bool r = false;
-    auto it = threads.find(ev.getThread()->getInternalId());
+    auto it = threads.find(ev.getThreadId());
     if (it != threads.end()) {
       threads.erase(it);
       r = true;
