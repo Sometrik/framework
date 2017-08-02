@@ -2,11 +2,27 @@
 #define _BASICPLATFORM_H_
 
 #include <FWPlatform.h>
+#include <PosixThread.h>
 #include <CurlClient.h>
 
 #ifndef NO_CANVAS
 #include <Context.h>
 #endif
+
+class BasicThread : public PosixThread {
+ public:
+ BasicThread(int _id, FWPlatform * _platform, std::shared_ptr<Runnable> & _runnable)
+   : PosixThread(_id, _platform, _runnable) { }
+
+#ifndef NO_CANVAS
+  std::unique_ptr<canvas::ContextFactory> createContextFactory() const override {
+    return std::unique_ptr<canvas::ContextFactory>(new canvas::NullContextFactory);
+  }
+#endif
+  std::unique_ptr<HTTPClientFactory> createHTTPClientFactory() const override {
+    return std::unique_ptr<HTTPClientFactory>(new CurlClientFactory);
+  }
+};
 
 class BasicPlatform : public FWPlatform {
  public:
@@ -18,13 +34,8 @@ class BasicPlatform : public FWPlatform {
   std::string getLocalFilename(const char * filename, FileType type) override {
     return filename;
   }
-#ifndef NO_CANVAS
-  std::unique_ptr<canvas::ContextFactory> createContextFactory() const override {
-    return std::unique_ptr<canvas::ContextFactory>(new canvas::NullContextFactory);
-  }
-#endif
-  std::unique_ptr<HTTPClientFactory> createHTTPClientFactory() const override {
-    return std::unique_ptr<HTTPClientFactory>(new CurlClientFactory);
+  std::shared_ptr<PlatformThread> createThread(std::shared_ptr<Runnable> & runnable) override {
+    return std::make_shared<BasicThread>(getNextThreadId(), this, runnable);
   }
   void pushEvent(const Event & ev) override {
 
