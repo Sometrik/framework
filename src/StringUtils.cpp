@@ -111,6 +111,8 @@ StringUtils::normalizeText(const string & input, string & output) {
 	is_whitespace = true;
       }
     }
+  } catch (utf8::invalid_code_point & e) {
+    return false;
   } catch (utf8::invalid_utf8 & e) {
     return false;
   }
