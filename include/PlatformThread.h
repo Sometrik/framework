@@ -44,7 +44,7 @@ class PlatformThread {
   FWPlatform & getPlatform() { return *platform; }
   const FWPlatform & getPlatform() const { return *platform; }
   
-  int getId() const { return id; }
+  int getInternalId() const { return id; }
 
   void postEvent(const Event & ev) {
     getPlatform().pushEvent(ev);

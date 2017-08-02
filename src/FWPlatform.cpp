@@ -18,13 +18,13 @@ FWPlatform::run(std::shared_ptr<Runnable> runnable) {
   auto thread = createThread(runnable);
   {
     MutexLocker m(mutex);
-    threads[thread->getId()] = thread;
+    threads[thread->getInternalId()] = thread;
   }
   if (thread->start()) {
     return true;
   } else {
     MutexLocker m(mutex);
-    threads.erase(thread->getId());
+    threads.erase(thread->getInternalId());
     return false;
   }
 }
@@ -46,12 +46,11 @@ FWPlatform::onSysEvent(SysEvent & ev) {
   if (ev.getType() == SysEvent::THREAD_TERMINATED) {
     MutexLocker m(mutex);
     bool r = false;
-    auto it = threads.find(ev.getThread()->getId());
+    auto it = threads.find(ev.getThread()->getInternalId());
     if (it != threads.end()) {
       threads.erase(it);
       r = true;
     }
-    // cerr << "thread " << ev.getThread()->getId() << ":" << ev.getThread() << " is terminated: " << r << "\n";
     if (exit_when_threads_terminated && threads.empty()) {
       exit_app = true;
     }
@@ -82,6 +81,6 @@ FWPlatform::dumpThreads() const {
   cerr << "running threads:\n";
   for (auto & t : threads) {
     auto & r = t.second->getRunnable();
-    cerr << "  thread " << t.second->getId() << "/" << typeid(r).name() << ": " << r.getStatusText() << endl;
+    cerr << "  thread " << t.second->getInternalId() << "/" << typeid(r).name() << ": " << r.getStatusText() << endl;
   }
 }
