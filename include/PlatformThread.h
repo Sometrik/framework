@@ -46,7 +46,7 @@ class PlatformThread {
   FWPlatform & getPlatform() { return *platform; }
   const FWPlatform & getPlatform() const { return *platform; }
   
-  int getId() const { return id; }
+  int getInternalId() const { return id; }
 
   void postEvent(const Event & ev) {
     getPlatform().pushEvent(ev);
@@ -74,7 +74,7 @@ class PlatformThread {
     deinitialize();
     
     SysEvent ev(SysEvent::THREAD_TERMINATED);
-    ev.setThread(this);
+    ev.setThreadId(getInternalId());
     postEvent(ev);
   }
 

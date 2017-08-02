@@ -104,6 +104,15 @@ class FWPlatform : public Element {
   void unregisterElement(Element * e) {
     registered_elements.erase(e->getInternalId());
   }
+
+  const PlatformThread * getThreadById(int id) const {
+    auto it = threads.find(id);
+    if (it != threads.end()) {
+      return it->second.get();
+    } else {
+      return 0;
+    }    
+  }
   
  protected:
   Element * getRegisteredElement(int internal_id) {
