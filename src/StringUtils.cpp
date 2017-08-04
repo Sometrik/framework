@@ -115,6 +115,8 @@ StringUtils::normalizeText(const string & input, string & output) {
     return false;
   } catch (utf8::invalid_utf8 & e) {
     return false;
+  } catch (utf8::not_enough_room & e) {
+    return false;
   }
   return true;
 }
