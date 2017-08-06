@@ -44,6 +44,10 @@ class Runnable : public EventHandler {
  protected: 
   virtual void run() = 0;
 
+  void setThread(PlatformThread * _thread) {
+    thread = _thread;
+  }
+
   void setStatusText(const std::string & s) {
     MutexLocker m(mutex);
     status_text = s;
