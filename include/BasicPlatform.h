@@ -24,6 +24,28 @@ class BasicThread : public PosixThread {
   }
 };
 
+class DummyThread : public PlatformThread {
+public:
+ DummyThread(int _id, FWPlatform * _platform, std::shared_ptr<Runnable> & _runnable)
+   : PlatformThread(_id, _platform, _runnable)
+  {
+    
+  }
+
+#ifndef NO_CANVAS
+  std::unique_ptr<canvas::ContextFactory> createContextFactory() const override {
+    return std::unique_ptr<canvas::ContextFactory>(new canvas::NullContextFactory);
+  }
+#endif
+  std::unique_ptr<HTTPClientFactory> createHTTPClientFactory() const override {
+    return std::unique_ptr<HTTPClientFactory>(new CurlClientFactory);
+  }
+
+  bool start() override { return false; }
+  bool testDestroy() override { return false; }
+  void terminate() override { }
+};
+
 class BasicPlatform : public FWPlatform {
  public:
  BasicPlatform() : FWPlatform(1.0f) { }
