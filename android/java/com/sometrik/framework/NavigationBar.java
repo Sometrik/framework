@@ -164,4 +164,10 @@ public class NavigationBar extends FrameLayout implements NativeCommandHandler {
     
   }
 
+  @Override
+  public void reshape(int size) {
+    // TODO Auto-generated method stub
+    
+  }
+
 }

@@ -109,4 +109,10 @@ public class FWImageView extends ImageView implements NativeCommandHandler {
     this.setImage(bytes);
   }
 
+  @Override
+  public void reshape(int size) {
+    // TODO Auto-generated method stub
+    
+  }
+
 }

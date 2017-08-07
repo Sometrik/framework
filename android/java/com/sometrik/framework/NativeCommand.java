@@ -127,7 +127,7 @@ public class NativeCommand {
     ADD_SHEET,
     ADD_COLUMN,
     RESHAPE_TABLE,
-    RESHAPE_SHEET,
+    RESHAPE_SHEET,	
     QUIT_APP,
 
     // Timers
@@ -463,6 +463,9 @@ public class NativeCommand {
     case RESHAPE_SHEET:
       view.reshape(sheet, value);
       break;
+    case RESHAPE_TABLE:
+      System.out.println("reshape table: " + value);
+      view.reshape(value);
     default:
       System.out.println("Message couldn't be handled");
       break;

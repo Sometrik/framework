@@ -24,6 +24,7 @@ public class FWList extends ListView implements NativeCommandHandler {
   private ArrayList<String> headers;
   private View currentHeaderView;
   private HashMap<Integer, ColumnType> columnTypes;
+  private FWLayout stickyHeader;
 
   public static int defaultColumnWeight = 3;
   public static int timestampColumnWeight = 1;
@@ -65,6 +66,10 @@ public class FWList extends ListView implements NativeCommandHandler {
       adapter.addItem(row, sheet, dataRow);
     }
     adapter.notifyDataSetChanged();
+  }
+  
+  public void addStickyHeader(FWLayout stickyHeader){
+    this.stickyHeader = stickyHeader;
   }
 
   @Override
@@ -188,6 +193,12 @@ public class FWList extends ListView implements NativeCommandHandler {
 
   @Override
   public void setImage(byte[] bytes) {
+    // TODO Auto-generated method stub
+    
+  }
+
+  @Override
+  public void reshape(int size) {
     // TODO Auto-generated method stub
     
   }

@@ -161,4 +161,10 @@ public class NativeSurface extends SurfaceView implements NativeCommandHandler {
     // TODO Auto-generated method stub
     
   }
+
+  @Override
+  public void reshape(int size) {
+    // TODO Auto-generated method stub
+    
+  }
 }

@@ -164,4 +164,10 @@ public class FWDialog extends Dialog implements NativeCommandHandler{
     
   }
 
+  @Override
+  public void reshape(int size) {
+    // TODO Auto-generated method stub
+    
+  }
+
 }

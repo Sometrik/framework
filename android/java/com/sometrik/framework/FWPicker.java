@@ -125,4 +125,10 @@ public class FWPicker extends Spinner implements NativeCommandHandler {
     // TODO Auto-generated method stub
     
   }
+
+  @Override
+  public void reshape(int size) {
+    // TODO Auto-generated method stub
+    
+  }
 }

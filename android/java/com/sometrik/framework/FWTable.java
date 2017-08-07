@@ -188,4 +188,10 @@ public class FWTable extends TableLayout implements NativeCommandHandler {
     // TODO Auto-generated method stub
     
   }
+
+  @Override
+  public void reshape(int size) {
+    // TODO Auto-generated method stub
+    
+  }
 }

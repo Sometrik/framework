@@ -1,6 +1,5 @@
 package com.sometrik.framework;
 
-import android.R;
 import android.graphics.Color;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;

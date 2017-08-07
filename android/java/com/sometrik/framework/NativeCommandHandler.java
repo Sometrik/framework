@@ -12,6 +12,7 @@ public interface NativeCommandHandler {
   public void setImage(byte[] bytes);
   public void setValue(int v);
   public void reshape(int value, int size);
+  public void reshape(int size);
   public void setViewEnabled(Boolean enabled);
   public void setViewVisibility(boolean visible);
   public void setStyle(String key, String value);

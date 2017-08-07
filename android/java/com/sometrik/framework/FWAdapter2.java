@@ -119,7 +119,11 @@ public class FWAdapter2 extends ArrayAdapter<View> {
   @Override
   public View getView(int position, View convertView, ViewGroup parent) {
     System.out.println("adapter position: " + position);
-    if (convertView == null) {
+    ViewHolder holder = null;    
+    if (convertView != null) {
+      holder = (ViewHolder) convertView.getTag();     
+    }
+    if (holder == null) {
       System.out.println("Data already set");
 
       AdapterData data = dataList.get(position);
@@ -133,7 +137,7 @@ public class FWAdapter2 extends ArrayAdapter<View> {
       LinearLayout layout = new LinearLayout(frame);
       layout.setOrientation(LinearLayout.HORIZONTAL);
       layout.setPadding(0, 20, 0, 20);
-      ViewHolder holder = new ViewHolder(data, layout);
+      holder = new ViewHolder(data, layout);
       convertView = holder.rowLayout;
       convertView.setTag(holder);
       
@@ -143,7 +147,6 @@ public class FWAdapter2 extends ArrayAdapter<View> {
         Log.d("adapter", "no data on position " + position);
         return convertView;
       }
-      ViewHolder holder = (ViewHolder) convertView.getTag();
       holder.update(data);
     }
     return convertView;
@@ -182,7 +185,7 @@ public class FWAdapter2 extends ArrayAdapter<View> {
       if (position < stringList.size()) {
 	return stringList.get(position);
       } else {
-	return stringList.get(0);
+	return "";
       }
     }
 
