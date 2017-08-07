@@ -177,6 +177,7 @@ public class FWList extends ListView implements NativeCommandHandler {
       txtFirst.setClickable(false);
       txtFirst.setTextSize(10);
       txtFirst.setLayoutParams(adapter.getColumnParameters(i));
+      txtFirst.setSingleLine();
       txtFirst.setText(headers.get(i));
       txtFirst.setTypeface(null, Typeface.BOLD);
       layout.addView(txtFirst);
