@@ -294,12 +294,12 @@ public class NativeCommand {
       
     case CREATE_TIMER:
       Timer timer = new Timer();
-      timer.schedule((new TimerTask(){
+      timer.scheduleAtFixedRate((new TimerTask() {
 	@Override
 	public void run() {
 	  FrameWork.timerEvent(System.currentTimeMillis() / 1000, internalId, childInternalId);
 	}
-      }), value, value);
+      }), 1000, 1000);
       break;
     case CREATE_CHECKBOX:
       FWCheckBox checkBox = createCheckBox();
