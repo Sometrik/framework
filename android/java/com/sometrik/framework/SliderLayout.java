@@ -159,7 +159,7 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
       button.setText(v);
       button.setInitialPosition();
     } else {
-      
+      //TODO
     }
   }
 
@@ -261,6 +261,7 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
 
   @Override
   public void reshape(int value, int size) {
+    //RESHAPE_SHEET
     System.out.println("reshape: " + value + " " + size);
     if (value < buttonList.size()) {
       SliderButton button = buttonList.get(value);
@@ -270,6 +271,29 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
     }
   }
 
+
+  @Override
+  public void reshape(int size) {
+    // RESHAPE_TABLE
+
+    this.removeAllViews();
+    if (size <= buttonList.size()) {
+      for (int i = 0; i < size; i++) {
+	SliderButton button = buttonList.get(i);
+	this.addView(button);
+	this.addView((View) button.getList());
+      }
+    } else if (size > buttonList.size()) {
+      for (int i = buttonList.size(); i < size; i++) {
+	if (usesLists) {
+	  setValue("");
+	} else {
+	  addChild(new LinearLayout(frame));
+	}
+      }
+    }
+  }
+  
   @Override
   public void setImage(byte[] bytes) {
     // TODO Auto-generated method stub
