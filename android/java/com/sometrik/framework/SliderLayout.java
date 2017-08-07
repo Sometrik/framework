@@ -22,6 +22,7 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
   boolean topVisible = false;
   int nextId = 777775;
   public static int buttonSize = 0;
+  int tableSize = 0;
   boolean usesLists = true;
   
   public SliderLayout(FrameWork frame) {
@@ -82,6 +83,7 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
         button.setPosition(Position.BOTTOMHIDDEN);
       }
       buttonList.add(button);
+      tableSize++;
       addView(button);
     }
     
@@ -114,8 +116,13 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
 
   @Override
   public void addData(String text, int row, int column, int sheet) {
-    SliderButton button = buttonList.get(sheet);
-    button.getList().addData(text, row, column, 0);
+    if (sheet < buttonList.size()) {
+      SliderButton button = buttonList.get(sheet);
+      button.getList().addData(text, row, column, 0);
+    } else {
+      setValue(labelList.get(sheet));
+      addData(text,row,column,sheet);
+    }
   }
 
   @Override
@@ -139,6 +146,7 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
 	button.setPosition(Position.BOTTOMHIDDEN);
       }
       buttonList.add(button);
+      tableSize++;
       addView(button);
       FWList list = new FWList(frame, new FWAdapter2(frame, null));
       list.setOnItemClickListener(new OnItemClickListener() {
@@ -157,6 +165,7 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
       button.setList(list);
       addView(list);
       button.setText(v);
+      labelList.put(buttonList.size() - 1, v);
       button.setInitialPosition();
     } else {
       //TODO
@@ -275,13 +284,27 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
   @Override
   public void reshape(int size) {
     // RESHAPE_TABLE
-
-    this.removeAllViews();
+    
+    System.out.println("size: " + size + " tableSize: " + tableSize + " buttonListSize: " + buttonList.size());
+    
+    if (tableSize == size) {
+      return;
+    }
+    int removeCounter = 0;
     if (size <= buttonList.size()) {
-      for (int i = 0; i < size; i++) {
-	SliderButton button = buttonList.get(i);
-	this.addView(button);
-	this.addView((View) button.getList());
+      for (int i = 0; i < buttonList.size(); i++) {
+	if (i >= size) {
+	  SliderButton button = buttonList.get(i);
+	  removeView(button);
+//	  button.setVisibility(GONE);
+	  View list = (View) button.getList();
+//	  list.setVisibility(GONE);
+	  removeCounter++;
+	  removeView(list);
+	} else if (i > tableSize){
+	  System.out.println("adding back in button");
+	  setValue(labelList.get(i));
+	}
       }
     } else if (size > buttonList.size()) {
       for (int i = buttonList.size(); i < size; i++) {
@@ -292,6 +315,12 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
 	}
       }
     }
+    for (int i = 0; i < removeCounter; i++) {
+	  System.out.println("removing from buttonList");
+      buttonList.remove(buttonList.size() - 1);
+    }
+    
+    tableSize = size;
   }
   
   @Override
