@@ -45,10 +45,13 @@ class EventQueue {
 
   std::vector<std::shared_ptr<Event> > recvAll() {
     pthread_mutex_lock(&_mutex);
+    while (data.empty()) {
+      pthread_cond_wait(&_condv, &_mutex);
+    }
     std::vector<std::shared_ptr<Event> > v;    
     while (!data.empty()) {
-      v.push_back(data.front().second);
-      data.pop_front();
+      v.push_back(data.back().second);
+      data.pop_back();
     }
     pthread_mutex_unlock(&_mutex);
     return v;
