@@ -23,7 +23,7 @@ class ListView : public Element {
     sendCommand(c);
   }
 
-  void reshapeTable(int size) {
+  virtual void reshapeTable(int size) {
     Command c(Command::RESHAPE_TABLE, getInternalId());
     c.setValue(size);
     sendCommand(c);    
