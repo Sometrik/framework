@@ -177,3 +177,10 @@ Element::removeChild(Element * child) {
     }
   }
 }
+
+int
+Element::createTimer(int timeout_ms) {
+  int timer_id = getNextInternalId();
+  sendCommand(Command(Command::CREATE_TIMER, getInternalId(), timer_id));
+  return timer_id;
+}

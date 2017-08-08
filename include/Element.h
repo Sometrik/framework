@@ -163,6 +163,8 @@ class Element : public EventHandler {
   bool isInitialized() const { return platform != 0; }
 
   void removeChild(Element * c);
+
+  int createTimer(int timeout_ms);
 		   
  protected:
   virtual bool isChildVisible(const Element & child) const {
