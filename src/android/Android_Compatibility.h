@@ -8,9 +8,9 @@
 namespace std {
   template <typename T>
     inline string to_string(T value) {
-    ostringstream os ;
-    os << value ;
-    return os.str() ;
+    ostringstream os;
+    os << value;
+    return os.str();
   }
 
   inline int stoi(const string & str, size_t* idx = 0, int base = 10) {
