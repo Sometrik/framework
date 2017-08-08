@@ -110,8 +110,12 @@ public:
       addView(0, command.getChildInternalId(), stack);
 
       gtk_widget_show_all(window);
+    }
+      break;
 
-      g_timeout_add_seconds(1, timer_60, this);
+    case Command::CREATE_TIMER: {
+      cerr << "creating timer for " << command.getValue() << endl;
+      g_timeout_add(command.getValue(), timer_callback, this);
     }
       break;
       
@@ -599,10 +603,7 @@ public:
       g_object_unref (notification);
     }
       break;
-      
-    case Command::CREATE_TIMER:
-      break;
-      
+            
     case Command::CREATE_FORMVIEW: {
       auto sw = gtk_scrolled_window_new(0, 0);
       gtk_container_set_border_width((GtkContainer*)sw, 10);
@@ -765,7 +766,7 @@ protected:
   static void on_bar_button(GtkWidget * widget, gpointer data);
   static gboolean idle_callback(gpointer data);
   static gboolean delete_window(GtkWidget *widget, GdkEvent  *event, gpointer user_data);
-  static gboolean timer_60(gpointer data);
+  static gboolean timer_callback(gpointer data);
   
 private:
   GtkApplication * gtk_app = nullptr;
@@ -1017,9 +1018,9 @@ PlatformGtk::delete_window(GtkWidget *widget, GdkEvent  *event, gpointer user_da
 }
 
 gboolean
-PlatformGtk::timer_60(gpointer data) {
+PlatformGtk::timer_callback(gpointer data) {
   PlatformGtk * platform = (PlatformGtk*)data;
-  UpdateEvent ev;
+  TimerEvent ev(0);
   platform->postEvent(platform->getInternalId(), ev);
   return TRUE;
 }
