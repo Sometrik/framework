@@ -181,6 +181,9 @@ Element::removeChild(Element * child) {
 int
 Element::createTimer(int timeout_ms) {
   int timer_id = getNextInternalId();
-  sendCommand(Command(Command::CREATE_TIMER, getInternalId(), timer_id));
+  Command c(Command::CREATE_TIMER, getInternalId(), timer_id);
+  c.setValue(timeout_ms);
+  sendCommand(c);
+
   return timer_id;
 }
