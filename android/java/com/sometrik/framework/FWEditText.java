@@ -94,11 +94,10 @@ public class FWEditText extends EditText implements NativeCommandHandler {
 
   @Override
   public void setStyle(String key, String value) {
-    if (key.equals("add-weight")) {
+    if (key.equals("weight")) {
       LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
-      params.weight += 1;
+      params.weight = Integer.parseInt(value);
       setLayoutParams(params);
-      System.out.println("edittext weight: " + params.weight);
     } else if (key.equals("width")) {
       LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
       if (value.equals("wrap-content")) {
@@ -127,6 +126,8 @@ public class FWEditText extends EditText implements NativeCommandHandler {
       } else if (value.equals("right")) {
 	params.gravity = Gravity.RIGHT;
       }
+    } else if (key.equals("minimun-width")) {
+      setMinimumWidth(Integer.parseInt(value));
     }
   }
 
