@@ -78,9 +78,9 @@ public class FWAdapter2 extends ArrayAdapter<View> {
       for (Entry<Integer, AdapterData> entry : dataList.entrySet()) {
 	keyList.add(entry.getKey());
       }
-
-      for (int i = 0; i < size; i++) {
-	int key = keyList.get(keyList.size() - 1);
+      int difference = dataList.size() - size;
+      for (int i = 0; i < difference; i++) {
+	int key = keyList.get(keyList.size() - 1 - i);
 	dataList.remove(key);
       }
     } else {
