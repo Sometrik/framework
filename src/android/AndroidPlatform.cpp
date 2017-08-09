@@ -234,7 +234,7 @@ protected:
     args.name = NULL; // you might want to give the java thread a name
     args.group = NULL; // you might want to assign the java thread to a ThreadGroup
 
-    JNIEnv * myEnv = 0;
+//    JNIEnv * myEnv = 0;
     javaVM->AttachCurrentThread(&myEnv, &args);
   }
   void deinitialize() override {
@@ -242,6 +242,7 @@ protected:
   }
 
   JavaVM * javaVM;
+  JNIEnv * myEnv = 0;
 };
 
 class AndroidNativeThread : public Runnable {
@@ -250,11 +251,22 @@ public:
     : platform(_platform) { }
 
   void run() override {
+    JavaVMAttachArgs args;
+    args.version = JNI_VERSION_1_6; // choose your JNI version
+    args.name = NULL; // you might want to give the java thread a name
+    args.group = NULL; // you might want to assign the java thread to a ThreadGroup
+    __android_log_print(ANDROID_LOG_INFO, "Sometrik", "attaching JVM1");
+    JNIEnv * env = platform->getEnv();
+    JNIEnv * myEnv = 0;
+    __android_log_print(ANDROID_LOG_INFO, "Sometrik", "attaching JVM2");
+    platform->gJavaVM->AttachCurrentThread(&myEnv, &args);
+    // platform->javaCache.getJavaVM()->AttachCurrentThread(&env, NULL);
     FWApplication * application = applicationMain();
     platform->addChild(std::shared_ptr<Element>(application));
     platform->renderLoop();
     __android_log_print(ANDROID_LOG_INFO, "Sometrik", "Application is exiting");
     platform->deinitializeRenderer();
+    platform->gJavaVM->DetachCurrentThread();
   }
   
 private:
