@@ -215,8 +215,8 @@ extern FWApplication * applicationMain();
 
 class AndroidThread : public PosixThread {
 public:
-  AndroidThread(int _id, AndroidPlatform * _platform, std::shared_ptr<Runnable> & _runnable)
-    : PosixThread(_id, _platform, _runnable) { }
+  AndroidThread(int _id, AndroidPlatform * _platform, std::shared_ptr<Runnable> & _runnable, JavaVM * _javaVM)
+    : PosixThread(_id, _platform, _runnable), javaVM(_javaVM) { }
 
   std::unique_ptr<HTTPClientFactory> createHTTPClientFactory() const override {
     const AndroidPlatform & androidPlatform = dynamic_cast<const AndroidPlatform&>(getPlatform());
@@ -229,11 +229,19 @@ public:
 
 protected:
   void initialize() override {
-    // initialize JVM for thread
+    JavaVMAttachArgs args;
+    args.version = JNI_VERSION_1_6; // choose your JNI version
+    args.name = NULL; // you might want to give the java thread a name
+    args.group = NULL; // you might want to assign the java thread to a ThreadGroup
+
+    JNIEnv * myEnv = 0;
+    javaVM->AttachCurrentThread(&myEnv, &args);
   }
   void deinitialize() override {
-    // deinitialize JVM for thread
+    javaVM->DetachCurrentThread();
   }
+
+  JavaVM * javaVM;
 };
 
 class AndroidNativeThread : public Runnable {
@@ -242,23 +250,11 @@ public:
     : platform(_platform) { }
 
   void run() override {
-    JavaVMAttachArgs args;
-    args.version = JNI_VERSION_1_6; // choose your JNI version
-    args.name = NULL; // you might want to give the java thread a name
-    args.group = NULL; // you might want to assign the java thread to a ThreadGroup
-
-    __android_log_print(ANDROID_LOG_INFO, "Sometrik", "attaching JVM1");
-    JNIEnv * env = platform->getEnv();
-    JNIEnv * myEnv = 0;
-    __android_log_print(ANDROID_LOG_INFO, "Sometrik", "attaching JVM2");
-    platform->gJavaVM->AttachCurrentThread(&myEnv, &args);
-    // platform->javaCache.getJavaVM()->AttachCurrentThread(&env, NULL);
     FWApplication * application = applicationMain();
     platform->addChild(std::shared_ptr<Element>(application));
     platform->renderLoop();
     __android_log_print(ANDROID_LOG_INFO, "Sometrik", "Application is exiting");
     platform->deinitializeRenderer();
-    platform->gJavaVM->DetachCurrentThread();    
   }
   
 private:
@@ -364,7 +360,7 @@ AndroidPlatform::sendCommand2(const Command & command) {
 std::shared_ptr<PlatformThread>
 AndroidPlatform::createThread(std::shared_ptr<Runnable> & runnable) {
 //    shared_ptr<PlatformThread> thread = make_shared<AndroidThread>(this, runnable);
-  std::shared_ptr<PlatformThread> thread = std::unique_ptr<AndroidThread>(new AndroidThread(getNextThreadId(), this, runnable));
+  std::shared_ptr<PlatformThread> thread = std::unique_ptr<AndroidThread>(new AndroidThread(getNextThreadId(), this, runnable, javaCache.getJavaVM()));
 //    <Logger>(new AndroidLogger(name));
   return thread;
 }
