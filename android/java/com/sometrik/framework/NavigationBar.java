@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -17,7 +18,6 @@ public class NavigationBar extends FrameLayout implements NativeCommandHandler {
   FrameWork frame;
   LinearLayout baseLayout;
   LinearLayout.LayoutParams childParams;
-  ArrayList<ImageView> childList;
   int displayScale = 1;
   
   public NavigationBar(FrameWork frame) {
@@ -25,7 +25,6 @@ public class NavigationBar extends FrameLayout implements NativeCommandHandler {
 
     this.frame = frame;
     this.setBackground(frame.getResources().getDrawable(android.R.drawable.dialog_holo_light_frame));
-    childList = new ArrayList<ImageView>();
     baseLayout = new LinearLayout(frame);
     baseLayout.setOrientation(LinearLayout.HORIZONTAL);
     LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -47,53 +46,27 @@ public class NavigationBar extends FrameLayout implements NativeCommandHandler {
 
   @Override
   public void addChild(View view) {
-    // TODO Auto-generated method stub
-    
-  }
-
-  @Override
-  public void addOption(int optionId, String text) {
-
-    for (ImageView view : childList) {
-      if (optionId == view.getId()) {
-	try {
-	  InputStream stream = frame.getAssets().open(text);
-	  view.setImageBitmap(BitmapFactory.decodeStream(stream));
-	} catch (IOException e) {
-	  e.printStackTrace();
-	}
-      }
-    }
-  }
-
-  @Override
-  public void addColumn(String text, int columnType) {
-    final int buttonId = columnType;
-    ImageView view = new ImageView(frame);
+    System.out.println("addChild on NavigationBar " + view.getId());
+    final int buttonId = view.getId();
     view.setLayoutParams(childParams);
-    view.setId(columnType);
-    InputStream stream;
-    view.setScaleType(ScaleType.CENTER_INSIDE);
-    
-    if (text != "") {
-      try {
-        stream = frame.getAssets().open(text);
-        view.setImageBitmap(BitmapFactory.decodeStream(stream));
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-    }
-    
-    view.setOnClickListener(new OnClickListener(){
+    view.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
 	System.out.println("Navigation OnClick: " + buttonId);
 	frame.intChangedEvent(System.currentTimeMillis() / 1000.0, getId(), 1, buttonId);
       }
     });
-
-    childList.add(view);
     baseLayout.addView(view);
+  }
+
+  @Override
+  public void addOption(int optionId, String text) {
+    System.out.println("navigationBar couldn't handle command");
+  }
+
+  @Override
+  public void addColumn(String text, int columnType) {
+    
   }
 
   @Override
