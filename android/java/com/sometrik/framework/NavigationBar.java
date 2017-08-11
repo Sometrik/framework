@@ -74,11 +74,14 @@ public class NavigationBar extends FrameLayout implements NativeCommandHandler {
     view.setId(columnType);
     InputStream stream;
     view.setScaleType(ScaleType.CENTER_INSIDE);
-    try {
-      stream = frame.getAssets().open(text);
-      view.setImageBitmap(BitmapFactory.decodeStream(stream));
-    } catch (IOException e) {
-      e.printStackTrace();
+    
+    if (text != "") {
+      try {
+        stream = frame.getAssets().open(text);
+        view.setImageBitmap(BitmapFactory.decodeStream(stream));
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
     }
     
     view.setOnClickListener(new OnClickListener(){
