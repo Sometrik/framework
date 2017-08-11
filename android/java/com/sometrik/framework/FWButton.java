@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import android.content.res.AssetManager;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ScaleDrawable;
 import android.util.Log;
@@ -117,13 +118,14 @@ public class FWButton extends Button implements NativeCommandHandler {
     } else if (key.equals("pressed")) {
       if (value.equals("true") || value.equals("1")) {
 	this.setPressed(true);
-	this.setBackground(frame.getResources().getDrawable(android.R.drawable.dialog_holo_dark_frame));
+	this.setTextColor(Color.RED);
+	// this.setBackground(frame.getResources().getDrawable(android.R.drawable.dialog_holo_dark_frame));
       } else {
+	this.setTextColor(Color.BLACK);
 	this.setPressed(false);
-	this.setBackground(frame.getResources().getDrawable(android.R.drawable.dialog_holo_light_frame));
+//	this.setBackground(frame.getResources().getDrawable(android.R.drawable.dialog_holo_light_frame));
       }
     } else if (key.equals("icon-left") || key.equals("icon-right") || key.equals("icon-top") || key.equals("icon-bottom")){
-
       AssetManager mgr = frame.getAssets();
       try {
         InputStream stream = mgr.open(value);
@@ -147,6 +149,9 @@ public class FWButton extends Button implements NativeCommandHandler {
         System.out.println("no picture found: " + value);
         e.printStackTrace();
       }
+    } else if (key.equals("borderless")) {
+
+      setBackgroundResource(0);
     }
   }
 
