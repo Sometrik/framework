@@ -25,6 +25,8 @@ public class FWActionBar implements NativeCommandHandler {
     actionBar.setDisplayShowTitleEnabled(true);
     actionBar.setTitle(title);
     actionBar.show();
+    actionBar.setDisplayUseLogoEnabled(false);
+    actionBar.setBackgroundDrawable(frame.getResources().getDrawable(android.R.drawable.dialog_holo_light_frame));
     itemList = new ArrayList<ActionBarItem>();
     this.id = id;
   }
