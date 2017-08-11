@@ -337,6 +337,7 @@ public class NativeCommand {
     case CREATE_IMAGEVIEW:
       FWImageView imageView = new FWImageView(frame);
       imageView.setId(childInternalId);
+      imageView.setImage(getTextValueAsBinary());
       FrameWork.addToViewList(imageView);
       view.addChild(imageView);
       break;
