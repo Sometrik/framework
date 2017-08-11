@@ -50,6 +50,9 @@ class Button : public UIElement {
     if (l != label) {
       label = l;
       if (context) context->clear();
+      Command c(Command::SET_TEXT_VALUE, getInternalId());
+      c.setTextValue(label);
+      sendCommand(c);
     }
   }
 
