@@ -321,6 +321,7 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
     }
     
     tableSize = size;
+    this.invalidate();
   }
   
   @Override
