@@ -38,8 +38,9 @@ public class FWDrawerLayout extends DrawerLayout {
             frame.intChangedEvent(System.currentTimeMillis() / 1000.0 , frame.getCurrentDrawerViewId(), 1, 0);
         }
     };
-    mDrawerToggle.setDrawerIndicatorEnabled(false);
-//    mDrawerToggle.setHomeAsUpIndicator(R.drawable.ic_menu_agenda);
+//    mDrawerToggle.setDrawerIndicatorEnabled(false);
+//    scrollView.setBackground(frame.getResources().getDrawable(android.R.drawable.screen_background_light));
+//    mDrawerToggle.setHomeAsUpIndicator(android.R.drawable.ic_menu_agenda);
     setDrawerListener(mDrawerToggle);
   }
   
