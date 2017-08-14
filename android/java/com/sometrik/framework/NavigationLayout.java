@@ -1,6 +1,7 @@
 package com.sometrik.framework;
 
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Gravity;
 import android.view.View;
@@ -18,6 +19,10 @@ public class NavigationLayout extends LinearLayout implements NativeCommandHandl
     lp.gravity = Gravity.START;
     setLayoutParams(lp);
     setBackgroundColor(Color.parseColor("#dddbd6"));
+//    setBackground(frame.getResources().getDrawable(android.R.drawable.dialog_holo_light_frame));
+    ColorDrawable cd = new ColorDrawable();
+    cd.setColor(Color.WHITE);
+    setBackgroundDrawable(cd);
   }
 
   @Override
