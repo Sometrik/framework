@@ -7,7 +7,9 @@ import java.util.ArrayList;
 import android.app.ActionBar;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.view.View;
 
@@ -26,7 +28,9 @@ public class FWActionBar implements NativeCommandHandler {
     actionBar.setTitle(title);
     actionBar.show();
     actionBar.setDisplayUseLogoEnabled(false);
-    actionBar.setBackgroundDrawable(frame.getResources().getDrawable(android.R.drawable.dialog_holo_light_frame));
+    ColorDrawable cd = new ColorDrawable();
+    cd.setColor(Color.WHITE);
+    actionBar.setBackgroundDrawable(cd);
     itemList = new ArrayList<ActionBarItem>();
     this.id = id;
   }
