@@ -5,6 +5,7 @@
 
 #include <Command.h>
 #include <CommandEvent.h>
+#include <ValueEvent.h>
 
 class SimpleListView : public Element {
  public:
@@ -22,6 +23,15 @@ class SimpleListView : public Element {
     sendCommand(c);
   }
 
+  void onValueEvent(ValueEvent & ev) override {
+    selected_sheet = ev.getValue2();
+    selected_row = ev.getValue();
+
+    notify();
+    CommandEvent ev2(getId(), ev.getValue(), ev.getValue2());
+    ev2.dispatch(*this);
+  }
+
   // Used to expand a sheet
   void setValue(int value) {
     Command c(Command::SET_INT_VALUE, getInternalId());
@@ -36,6 +46,7 @@ class SimpleListView : public Element {
     c.setFlags(getFlags());
     sendCommand(c);
   }
+  int selected_sheet = 0, selected_row = 0;
 };
 
 #endif
