@@ -66,7 +66,8 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
   @Override
   public void addChild(View view) {
     usesLists = false;
-    SliderButton button = new SliderButton(frame, this, true, buttonList.size());
+    final int positionId = buttonList.size();
+    SliderButton button = new SliderButton(frame, this, true, positionId);
     button.setId(nextId);
     nextId++;
     if (activeButton == 0){
@@ -92,7 +93,20 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
     FWScrollView scrollView = new FWScrollView(frame);
     scrollView.setViewVisibility(false);
     scrollView.setLayoutParams(listParams);
+    System.out.println("addChild on SliderLayout " + view.getId());
     scrollView.addChild(view);
+    if (view instanceof FWLayout) {
+      FWLayout.ChildClickListener listener = new FWLayout.ChildClickListener() {
+
+	@Override
+	public void onClick(int childIndex, int childId) {
+	  System.out.println("Child index " + childIndex);
+	  frame.intChangedEvent(System.currentTimeMillis() / 1000.0, getId(), childIndex, 0);
+	}
+      };
+      FWLayout layout = (FWLayout) view;
+      layout.setChildListeners(listener);
+    }
     addView(scrollView);
     button.setList(scrollView);
     String label = labelList.get(buttonList.size() - 1);
@@ -270,13 +284,15 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
 
   @Override
   public void reshape(int value, int size) {
-    //RESHAPE_SHEET
-    System.out.println("reshape: " + value + " " + size);
-    if (value < buttonList.size()) {
-      SliderButton button = buttonList.get(value);
-      button.getList().reshape(0, size);
-    } else {
-      System.out.println("Error reshaping list. index of " + value + " is too big");
+    if (usesLists) {
+      // RESHAPE_SHEET
+      System.out.println("reshape: " + value + " " + size);
+      if (value < buttonList.size()) {
+	SliderButton button = buttonList.get(value);
+	button.getList().reshape(0, size);
+      } else {
+	System.out.println("Error reshaping list. index of " + value + " is too big");
+      }
     }
   }
 
@@ -284,44 +300,46 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
   @Override
   public void reshape(int size) {
     // RESHAPE_TABLE
-    
-    System.out.println("size: " + size + " tableSize: " + tableSize + " buttonListSize: " + buttonList.size());
-    
-    if (tableSize == size) {
-      return;
-    }
-    int removeCounter = 0;
-    if (size <= buttonList.size()) {
-      for (int i = 0; i < buttonList.size(); i++) {
-	if (i >= size) {
-	  SliderButton button = buttonList.get(i);
-	  removeView(button);
-//	  button.setVisibility(GONE);
-	  View list = (View) button.getList();
-//	  list.setVisibility(GONE);
-	  removeCounter++;
-	  removeView(list);
-	} else if (i > tableSize){
-	  System.out.println("adding back in button");
-	  setValue(labelList.get(i));
+
+    if (usesLists) {
+      System.out.println("size: " + size + " tableSize: " + tableSize + " buttonListSize: " + buttonList.size());
+
+      if (tableSize == size) {
+	return;
+      }
+      int removeCounter = 0;
+      if (size <= buttonList.size()) {
+	for (int i = 0; i < buttonList.size(); i++) {
+	  if (i >= size) {
+	    SliderButton button = buttonList.get(i);
+	    removeView(button);
+	    // button.setVisibility(GONE);
+	    View list = (View) button.getList();
+	    // list.setVisibility(GONE);
+	    removeCounter++;
+	    removeView(list);
+	  } else if (i > tableSize) {
+	    System.out.println("adding back in button");
+	    setValue(labelList.get(i));
+	  }
+	}
+      } else if (size > buttonList.size()) {
+	for (int i = buttonList.size(); i < size; i++) {
+	  if (usesLists) {
+	    setValue("");
+	  } else {
+	    addChild(new LinearLayout(frame));
+	  }
 	}
       }
-    } else if (size > buttonList.size()) {
-      for (int i = buttonList.size(); i < size; i++) {
-	if (usesLists) {
-	  setValue("");
-	} else {
-	  addChild(new LinearLayout(frame));
-	}
+      for (int i = 0; i < removeCounter; i++) {
+	System.out.println("removing from buttonList");
+	buttonList.remove(buttonList.size() - 1);
       }
+
+      tableSize = size;
+      this.invalidate();
     }
-    for (int i = 0; i < removeCounter; i++) {
-	  System.out.println("removing from buttonList");
-      buttonList.remove(buttonList.size() - 1);
-    }
-    
-    tableSize = size;
-    this.invalidate();
   }
   
   @Override
