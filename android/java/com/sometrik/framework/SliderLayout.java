@@ -88,7 +88,7 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
       addView(button);
     }
     
-    RelativeLayout.LayoutParams listParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, 0);
+    RelativeLayout.LayoutParams listParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
     listParams.addRule(RelativeLayout.BELOW, button.getId());
     FWScrollView scrollView = new FWScrollView(frame);
     scrollView.setViewVisibility(false);
@@ -284,15 +284,13 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
 
   @Override
   public void reshape(int value, int size) {
-    if (usesLists) {
-      // RESHAPE_SHEET
-      System.out.println("reshape: " + value + " " + size);
-      if (value < buttonList.size()) {
-	SliderButton button = buttonList.get(value);
-	button.getList().reshape(0, size);
-      } else {
-	System.out.println("Error reshaping list. index of " + value + " is too big");
-      }
+    // RESHAPE_SHEET
+    System.out.println("reshape: " + value + " " + size);
+    if (value < buttonList.size()) {
+      SliderButton button = buttonList.get(value);
+      button.getList().reshape(0, size);
+    } else {
+      System.out.println("Error reshaping list. index of " + value + " is too big");
     }
   }
 
@@ -301,7 +299,6 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
   public void reshape(int size) {
     // RESHAPE_TABLE
 
-    if (usesLists) {
       System.out.println("size: " + size + " tableSize: " + tableSize + " buttonListSize: " + buttonList.size());
 
       if (tableSize == size) {
@@ -312,10 +309,9 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
 	for (int i = 0; i < buttonList.size(); i++) {
 	  if (i >= size) {
 	    SliderButton button = buttonList.get(i);
+	    System.out.println("removing button " + i);
 	    removeView(button);
-	    // button.setVisibility(GONE);
 	    View list = (View) button.getList();
-	    // list.setVisibility(GONE);
 	    removeCounter++;
 	    removeView(list);
 	  } else if (i > tableSize) {
@@ -328,7 +324,7 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
 	  if (usesLists) {
 	    setValue("");
 	  } else {
-	    addChild(new LinearLayout(frame));
+	    addChild(new FWLayout(frame));
 	  }
 	}
       }
@@ -339,7 +335,6 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
 
       tableSize = size;
       this.invalidate();
-    }
   }
   
   @Override
