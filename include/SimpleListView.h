@@ -23,6 +23,19 @@ class SimpleListView : public Element {
     sendCommand(c);
   }
 
+  virtual void reshapeTable(int size) {
+     Command c(Command::RESHAPE_TABLE, getInternalId());
+     c.setValue(size);
+     sendCommand(c);
+   }
+
+   void reshapeSheet(int sheet, int size) {
+     Command c(Command::RESHAPE_SHEET, getInternalId());
+     c.setSheet(sheet);
+     c.setValue(size);
+     sendCommand(c);
+   }
+
   void onValueEvent(ValueEvent & ev) override {
     selected_sheet = ev.getValue2();
     selected_row = ev.getValue();
