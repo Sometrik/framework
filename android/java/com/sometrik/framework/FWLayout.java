@@ -1,13 +1,12 @@
 package com.sometrik.framework;
 
-import android.content.Context;
+import java.util.ArrayList;
+import java.util.Iterator;
+
 import android.view.Gravity;
 import android.view.View;
-import android.view.ViewParent;
-import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
-import android.widget.LinearLayout.LayoutParams;
 
 public class FWLayout extends LinearLayout implements NativeCommandHandler {
   
@@ -199,8 +198,24 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
 
   @Override
   public void reshape(int value, int size) {
-    // TODO Auto-generated method stub
+    System.out.println("FWLayout reshape: " + size + " current: " + getChildCount());
+//    
+    if (size > getChildCount()) {
+      System.out.println("FWLayout did nothing");
+    }
     
+    ArrayList<View> viewsToBeRemoved = new ArrayList<View>();
+    for (int i = size; i < getChildCount(); i++) {
+      System.out.println("addView to reshape");
+      View view = getChildAt(i);
+      viewsToBeRemoved.add(view);
+    }
+
+    Iterator<View> i = viewsToBeRemoved.iterator();
+    while (i.hasNext()) {
+      View v = i.next();
+      removeView(v);
+    }
   }
 
   @Override
@@ -211,7 +226,17 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
 
   @Override
   public void reshape(int size) {
-    // TODO Auto-generated method stub
-    
+    System.out.println("FWLayout reshape: " + size + " current: " + getChildCount());
+    ArrayList<View> viewsToBeRemoved = new ArrayList<View>();
+    for (int i = size; i < getChildCount(); i++) {
+      View view = getChildAt(i);
+      viewsToBeRemoved.add(view);
+    }
+
+    Iterator<View> i = viewsToBeRemoved.iterator();
+    while (i.hasNext()) {
+      View v = i.next(); 
+      removeView(v);
+   }
   }
 }
