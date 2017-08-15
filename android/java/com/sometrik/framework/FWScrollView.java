@@ -122,8 +122,13 @@ public class FWScrollView extends ScrollView implements NativeCommandHandler {
 
   @Override
   public void reshape(int value, int size) {
-    // TODO Auto-generated method stub
-    
+    if (getChildCount() > 0) {
+      View view = getChildAt(0);
+      if (view instanceof NativeCommandHandler) {
+	NativeCommandHandler handler = (NativeCommandHandler)view;
+	handler.reshape(value, size);
+      }
+    }
   }
 
   @Override
@@ -134,7 +139,12 @@ public class FWScrollView extends ScrollView implements NativeCommandHandler {
 
   @Override
   public void reshape(int size) {
-    // TODO Auto-generated method stub
-    
+    if (getChildCount() > 0) {
+      View view = getChildAt(0);
+      if (view instanceof NativeCommandHandler) {
+	NativeCommandHandler handler = (NativeCommandHandler)view;
+	handler.reshape(size);
+      }
+    }
   }
 }
