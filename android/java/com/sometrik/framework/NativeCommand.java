@@ -267,9 +267,28 @@ public class NativeCommand {
       FrameWork.addToViewList(debugList);
       view.addChild(debugList);
       break;
+    case CREATE_SIMPLELISTVIEW:{
+      FWSimpleList datList = new FWSimpleList(frame);
+	LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+	params.weight = 1.0f;
+	// params.gravity = Gravity.TOP;
+	datList.setLayoutParams(params);
+	datList.setId(childInternalId);
+//	datList.setOnItemClickListener(new OnItemClickListener() {
+//	  @Override
+//	  public void onItemClick(AdapterView<?> arg0, View arg1, int groupPosition, long id) {
+//	    System.out.println("row clicked. Sending intChangedEvent of " + (groupPosition - 1));
+//	    frame.intChangedEvent(System.currentTimeMillis() / 1000.0, childInternalId, (groupPosition - 1), 0);
+//	  }
+//	});
+	view.addChild(datList);
+	FrameWork.addToViewList(datList);
+      break;
+    }
     case CREATE_LISTVIEW:
-    case CREATE_SIMPLELISTVIEW:
       if (isSet(FLAG_SLIDERVIEW)) {
+	
+//	Real slider stuff
 	SliderLayout slider = new SliderLayout(frame);
 	slider.setId(childInternalId);
 	FrameWork.addToViewList(slider);
