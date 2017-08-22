@@ -17,6 +17,7 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
   public FWLayout(FrameWork frameWork) {
     super(frameWork);
     this.frame = frameWork;
+    setDividerDrawable(frame.getResources().getDrawable(android.R.drawable.divider_horizontal_bright));
   }
 
   @Override
@@ -154,6 +155,14 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
       } else if (value.equals("dark")) {
 	this.setBackgroundDrawable(frame.getResources().getDrawable(android.R.drawable.alert_light_frame));
       }
+    } else if (key.equals("divider")) {
+      if (value.equals("middle")) {
+	this.setShowDividers(LinearLayout.SHOW_DIVIDER_MIDDLE);
+      } else if (value.equals("end")) {
+	this.setShowDividers(LinearLayout.SHOW_DIVIDER_END);
+      } else if (value.equals("beginning")) {
+	this.setShowDividers(LinearLayout.SHOW_DIVIDER_BEGINNING);
+      }
     }
   }
 
@@ -175,7 +184,7 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
     if (visibility){
       this.setVisibility(VISIBLE);
     } else {
-      this.setVisibility(INVISIBLE);
+      this.setVisibility(GONE);
     }
   }
 
