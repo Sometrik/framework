@@ -20,9 +20,10 @@ public class FWSimpleList extends LinearLayout implements NativeCommandHandler {
     public FWSimpleList(FrameWork frame) {
       super(frame);
       this.frame = frame;
-      defaultListParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, 2);
+      defaultListParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
       defaultListParams.setMargins(0, 10, 0, 10);
-      this.setOrientation(LinearLayout.VERTICAL);
+      setOrientation(LinearLayout.VERTICAL);
+      setDividerDrawable(frame.getResources().getDrawable(android.R.drawable.divider_horizontal_bright));
     }
     
     @Override
@@ -187,8 +188,15 @@ public class FWSimpleList extends LinearLayout implements NativeCommandHandler {
 
     @Override
     public void setStyle(String key, String value) {
-      // TODO Auto-generated method stub
-      
+    if (key.equals("divider")) {
+      if (value.equals("middle")) {
+	this.setShowDividers(LinearLayout.SHOW_DIVIDER_MIDDLE);
+      } else if (value.equals("end")) {
+	this.setShowDividers(LinearLayout.SHOW_DIVIDER_END);
+      } else if (value.equals("beginning")) {
+	this.setShowDividers(LinearLayout.SHOW_DIVIDER_BEGINNING);
+      }
+    }
     }
 
     @Override
