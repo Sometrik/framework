@@ -1,16 +1,8 @@
 package com.sometrik.framework;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
 
 public class NavigationBar extends FrameLayout implements NativeCommandHandler {
@@ -22,7 +14,6 @@ public class NavigationBar extends FrameLayout implements NativeCommandHandler {
   
   public NavigationBar(FrameWork frame) {
     super(frame);
-
     this.frame = frame;
     this.setBackground(frame.getResources().getDrawable(android.R.drawable.dialog_holo_light_frame));
     baseLayout = new LinearLayout(frame);
@@ -34,6 +25,7 @@ public class NavigationBar extends FrameLayout implements NativeCommandHandler {
     displayScale = (int) metrics.scaledDensity;
     childParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 60 * displayScale);
     childParams.weight = 1;
+    
     
     addView(baseLayout);
   }
