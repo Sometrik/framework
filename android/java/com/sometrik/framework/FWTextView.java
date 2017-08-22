@@ -1,6 +1,7 @@
 package com.sometrik.framework;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.view.View;
 import android.widget.TextView;
@@ -12,6 +13,8 @@ public class FWTextView extends TextView implements NativeCommandHandler {
   public FWTextView(FrameWork frame) {
     super(frame);
     this.frame = frame;
+//    Color color = new Color();
+    this.setBackground(null);
   }
 
   @Override
