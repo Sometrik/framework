@@ -334,7 +334,7 @@ public class FrameWork extends Activity {
   
   public void setCurrentView(final View view, final boolean recordHistory, String title) {
     if (getActionBar() != null){
-      getActionBar().setTitle(title);
+//      getActionBar().setTitle(title);
     }
     setCurrentView(view, recordHistory);
   }
@@ -464,13 +464,13 @@ public class FrameWork extends Activity {
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
-    if (actionBar != null) {
-      ArrayList<ActionBarItem> itemList = actionBar.getItemList();
-      for (ActionBarItem item : itemList) {
-	menu.add(0, item.id, 0, item.name).setIcon(android.R.drawable.ic_menu_manage).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-      }
-    }
-    System.out.println("onCreateOptionsMenu");
+//    if (actionBar != null) {
+//      ArrayList<ActionBarItem> itemList = actionBar.getItemList();
+//      for (ActionBarItem item : itemList) {
+//	menu.add(0, item.id, 0, item.name).setIcon(android.R.drawable.ic_menu_manage).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+//      }
+//    }
+//    System.out.println("onCreateOptionsMenu");
     return true;
   }
 
