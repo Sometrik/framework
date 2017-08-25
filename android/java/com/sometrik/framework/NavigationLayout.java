@@ -10,16 +10,16 @@ import android.widget.LinearLayout;
 public class NavigationLayout extends LinearLayout implements NativeCommandHandler {
 
   FrameWork frame;
-  
+
   public NavigationLayout(FrameWork frame) {
     super(frame);
     this.frame = frame;
 
-    DrawerLayout.LayoutParams lp = new DrawerLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+    DrawerLayout.LayoutParams lp = new DrawerLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
     lp.gravity = Gravity.START;
     setLayoutParams(lp);
     setBackgroundColor(Color.parseColor("#dddbd6"));
-//    setBackground(frame.getResources().getDrawable(android.R.drawable.dialog_holo_light_frame));
+    // setBackground(frame.getResources().getDrawable(android.R.drawable.dialog_holo_light_frame));
     ColorDrawable cd = new ColorDrawable();
     cd.setColor(Color.WHITE);
     setBackgroundDrawable(cd);
@@ -29,7 +29,7 @@ public class NavigationLayout extends LinearLayout implements NativeCommandHandl
   public void onScreenOrientationChange(boolean isLandscape) {
     invalidate();
   }
-  
+
   @Override
   public void onVisibilityChanged(View changedView, int visibility) {
     switch (visibility) {
@@ -38,39 +38,44 @@ public class NavigationLayout extends LinearLayout implements NativeCommandHandl
       frame.visibilityChangedEvent(System.currentTimeMillis() / 1000.0, getId(), true);
       break;
     case GONE:
-    case INVISIBLE: 
+    case INVISIBLE:
       System.out.println("DRAWER java: invisible");
       frame.visibilityChangedEvent(System.currentTimeMillis() / 1000.0, getId(), false);
-    break;
+      break;
     }
   }
 
   @Override
-    public void addChild(View view) {
+  public void addChild(View view) {
     addView(view);
   }
 
   @Override
   public void addOption(int optionId, String text) {
     // TODO Auto-generated method stub
-    
+
   }
 
   @Override
   public void addData(String text, int row, int column, int sheet) {
     // TODO Auto-generated method stub
-    
+
   }
 
   @Override
   public void setValue(String v) {
-    // TODO Auto-generated method stub
-    
+    if (v.equals("toggle")) {
+      if (getVisibility() == VISIBLE) {
+	frame.getDrawerLayout().setDrawerVisibility(this, false);
+      } else {
+	frame.getDrawerLayout().setDrawerVisibility(this, true);
+      }
+    }
   }
 
   @Override
   public void setValue(int v) {
-    if (v == 0){
+    if (v == 0) {
       frame.setCurrentDrawerViewId(0);
     } else {
       frame.setCurrentDrawerViewId(getId());
@@ -80,7 +85,7 @@ public class NavigationLayout extends LinearLayout implements NativeCommandHandl
   @Override
   public void setViewEnabled(Boolean enabled) {
     // TODO Auto-generated method stub
-    
+
   }
 
   @Override
@@ -130,13 +135,13 @@ public class NavigationLayout extends LinearLayout implements NativeCommandHandl
   @Override
   public void setError(boolean hasError, String errorText) {
     // TODO Auto-generated method stub
-    
+
   }
 
   @Override
   public void clear() {
     // TODO Auto-generated method stub
-    
+
   }
 
   @Override
@@ -147,31 +152,31 @@ public class NavigationLayout extends LinearLayout implements NativeCommandHandl
   @Override
   public void flush() {
     // TODO Auto-generated method stub
-    
+
   }
 
   @Override
   public void addColumn(String text, int columnType) {
     // TODO Auto-generated method stub
-    
+
   }
 
   @Override
   public void reshape(int value, int size) {
     // TODO Auto-generated method stub
-    
+
   }
 
   @Override
   public void setImage(byte[] bytes) {
     // TODO Auto-generated method stub
-    
+
   }
 
   @Override
   public void reshape(int size) {
     // TODO Auto-generated method stub
-    
+
   }
 
 }
