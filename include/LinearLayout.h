@@ -3,6 +3,8 @@
 
 #include <Element.h>
 #include <Command.h>
+#include <CommandEvent.h>
+#include <ValueEvent.h>
 
 #define FW_VERTICAL	1
 #define FW_HORIZONTAL	2
@@ -15,6 +17,12 @@ class LinearLayout : public Element {
     if (className == "LinearLayout") return true;
     return Element::isA(className);
   }
+
+  void onValueEvent(ValueEvent & ev) override {
+     notify();
+     CommandEvent ev2(getId());
+     ev2.dispatch(*this);
+   }
 
  protected:
   void create() override {
