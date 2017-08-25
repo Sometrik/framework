@@ -1,6 +1,7 @@
 package com.sometrik.framework;
 
-import android.content.Context;
+import android.content.res.Resources;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -10,17 +11,15 @@ public class FWScrollView extends ScrollView implements NativeCommandHandler {
 
   FrameWork frame;
   private String title;
+  private int maxHeight = 0;
   
   public FWScrollView(FrameWork frameWork, String title) {
     super(frameWork);
     this.frame = frameWork;
     this.title = title;
-    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
     this.setLayoutParams(params);
     this.setFillViewport(true);
-    if (frame.getActionBar() != null){
-      frame.getActionBar().setTitle(title);
-    }
   }
   
   public FWScrollView(FrameWork frameWork) {
@@ -119,6 +118,20 @@ public class FWScrollView extends ScrollView implements NativeCommandHandler {
     // TODO Auto-generated method stub
     
   }
+  
+  @Override
+  protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+    if (maxHeight != 0) {
+      heightMeasureSpec = MeasureSpec.makeMeasureSpec(dpToPx(getResources(),maxHeight), MeasureSpec.AT_MOST);
+      super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+    } else {
+      super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+    }
+  }
+
+  private int dpToPx(Resources res, int dp) {
+    return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, res.getDisplayMetrics());
+  }
 
   @Override
   public void reshape(int value, int size) {
@@ -129,6 +142,10 @@ public class FWScrollView extends ScrollView implements NativeCommandHandler {
 	handler.reshape(value, size);
       }
     }
+  }
+  
+  public void setMaxHeight(int maxHeight) {
+    this.maxHeight = maxHeight;
   }
 
   @Override
