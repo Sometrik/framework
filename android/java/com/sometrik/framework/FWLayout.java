@@ -3,9 +3,14 @@ package com.sometrik.framework;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.view.Gravity;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 public class FWLayout extends LinearLayout implements NativeCommandHandler {
@@ -18,6 +23,7 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
     super(frameWork);
     this.frame = frameWork;
     setDividerDrawable(frame.getResources().getDrawable(android.R.drawable.divider_horizontal_bright));
+    this.setBackgroundColor(Color.rgb(255, 255, 255));
   }
 
   @Override
@@ -26,7 +32,7 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
   }
  
   @Override
-  public void addChild(View view) {
+  public void addChild(final View view) {
     System.out.println("addChild on FWLayout " + view.getId());
     addView(view);
     
@@ -44,6 +50,13 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
 	  }
 	});
       }
+    } else if (view instanceof FWLayout){
+      view.setOnClickListener(new OnClickListener() {
+	  @Override
+	  public void onClick(View v) {
+	    frame.intChangedEvent(System.currentTimeMillis() / 1000.0, view.getId(), 1, 0);
+	  }
+      });
     }
   }
   
@@ -126,6 +139,10 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
 	params.width = LinearLayout.LayoutParams.WRAP_CONTENT;
       } else if (value.equals("match-parent")) {
 	params.width = LinearLayout.LayoutParams.MATCH_PARENT;
+      } else {
+	final float scale = getContext().getResources().getDisplayMetrics().density;
+	int pixels = (int) (Integer.parseInt(value) * scale + 0.5f);
+	params.width = pixels;
       }
       setLayoutParams(params);
     } else if (key.equals("height")) {
@@ -134,6 +151,11 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
 	params.height = LinearLayout.LayoutParams.WRAP_CONTENT;
       } else if (value.equals("match-parent")) {
 	params.height = LinearLayout.LayoutParams.MATCH_PARENT;
+      } else {
+
+	final float scale = getContext().getResources().getDisplayMetrics().density;
+	int pixels = (int) (Integer.parseInt(value) * scale + 0.5f);
+	params.height = pixels;
       }
       setLayoutParams(params);
     } else if (key.equals("weight")) {
@@ -163,6 +185,8 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
       } else if (value.equals("beginning")) {
 	this.setShowDividers(LinearLayout.SHOW_DIVIDER_BEGINNING);
       }
+    } else if (key.equals("color")) {
+      this.setBackgroundColor(Color.parseColor(value));
     }
   }
 
@@ -223,6 +247,13 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
     Iterator<View> i = viewsToBeRemoved.iterator();
     while (i.hasNext()) {
       View v = i.next();
+      if (v instanceof FWImageView) {
+	  Bitmap drawable = ((BitmapDrawable) v.getBackground()).getBitmap();
+	  if (drawable != null) {
+	    drawable.recycle();
+	  }
+	}
+      frame.removeViewFromList(v.getId());
       removeView(v);
     }
   }
