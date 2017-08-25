@@ -1,9 +1,11 @@
 package com.sometrik.framework;
 
+import android.graphics.Color;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.LinearLayout.LayoutParams;
 
 public class NavigationBar extends FrameLayout implements NativeCommandHandler {
   
@@ -15,7 +17,8 @@ public class NavigationBar extends FrameLayout implements NativeCommandHandler {
   public NavigationBar(FrameWork frame) {
     super(frame);
     this.frame = frame;
-    this.setBackground(frame.getResources().getDrawable(android.R.drawable.dialog_holo_light_frame));
+//    this.setBackground(frame.getResources().getDrawable(android.R.drawable.dialog_holo_light_frame));
+    setBackgroundColor(Color.parseColor("#ffffff"));
     baseLayout = new LinearLayout(frame);
     baseLayout.setOrientation(LinearLayout.HORIZONTAL);
     LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -99,8 +102,32 @@ public class NavigationBar extends FrameLayout implements NativeCommandHandler {
 
   @Override
   public void setStyle(String key, String value) {
-    // TODO Auto-generated method stub
-    
+    if (key.equals("width")) {
+      LinearLayout.LayoutParams params = (android.widget.LinearLayout.LayoutParams) getLayoutParams();
+      if (value.equals("wrap-content")) {
+	params.width = LinearLayout.LayoutParams.WRAP_CONTENT;
+      } else if (value.equals("match-parent")) {
+	params.width = LinearLayout.LayoutParams.MATCH_PARENT;
+      } else {
+	final float scale = getContext().getResources().getDisplayMetrics().density;
+	int pixels = (int) (Integer.parseInt(value) * scale + 0.5f);
+	params.width = pixels;
+      }
+      setLayoutParams(params);
+    } else if (key.equals("height")) {
+      LinearLayout.LayoutParams params = (android.widget.LinearLayout.LayoutParams) getLayoutParams();
+      if (value.equals("wrap-content")) {
+	params.height = LinearLayout.LayoutParams.WRAP_CONTENT;
+      } else if (value.equals("match-parent")) {
+	params.height = LinearLayout.LayoutParams.MATCH_PARENT;
+      } else {
+
+	final float scale = getContext().getResources().getDisplayMetrics().density;
+	int pixels = (int) (Integer.parseInt(value) * scale + 0.5f);
+	params.height = pixels;
+      }
+      setLayoutParams(params);
+    }
   }
 
   @Override
