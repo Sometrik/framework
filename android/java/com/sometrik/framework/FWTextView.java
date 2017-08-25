@@ -15,6 +15,7 @@ public class FWTextView extends TextView implements NativeCommandHandler {
     this.frame = frame;
 //    Color color = new Color();
     this.setBackground(null);
+    this.setBackgroundColor(Color.rgb(255, 255, 255));
   }
 
   @Override
@@ -52,6 +53,14 @@ public class FWTextView extends TextView implements NativeCommandHandler {
       } else if (value.equals("large")) {
 	this.setTextSize(15);
       }
+    } else if (key.equals("padding-top")) {
+      setPadding(getPaddingLeft(), Integer.parseInt(value), getPaddingRight(), getPaddingBottom());
+    } else if (key.equals("padding-bottom")) {
+      setPadding(getPaddingLeft(), getPaddingTop(), getPaddingRight(), Integer.parseInt(value));
+    } else if (key.equals("padding-left")) {
+      setPadding(Integer.parseInt(value), getPaddingTop(), getPaddingRight(), getPaddingBottom());
+    } else if (key.equals("padding-right")) {
+      setPadding(getPaddingLeft(), getPaddingTop(), Integer.parseInt(value), getPaddingBottom());
     }
   }
 
