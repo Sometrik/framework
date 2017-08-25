@@ -5,13 +5,17 @@ import java.io.InputStream;
 import java.util.ArrayList;
 
 import android.app.ActionBar;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.view.Gravity;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.LinearLayout.LayoutParams;
+import android.widget.TextView;
 
 public class FWActionBar implements NativeCommandHandler {
   
@@ -19,24 +23,96 @@ public class FWActionBar implements NativeCommandHandler {
   ActionBar actionBar;
   ArrayList<ActionBarItem> itemList;
   FrameWork frame;
+  TextView titleView;
   
 
-  public FWActionBar(FrameWork frame, String title, int id){
+  public FWActionBar(final FrameWork frame, String title, int id){
     this.frame = frame;
     actionBar = frame.getActionBar();
-    actionBar.setDisplayShowTitleEnabled(true);
-    actionBar.setTitle(title);
-    actionBar.show();
+//    actionBar.setDisplayShowTitleEnabled(true);
+//    actionBar.setTitle(title);
+
+    actionBar.setDisplayShowHomeEnabled(false);
+    actionBar.setDisplayHomeAsUpEnabled(false);
     actionBar.setDisplayUseLogoEnabled(false);
-    ColorDrawable cd = new ColorDrawable();
-    cd.setColor(Color.WHITE);
-    actionBar.setBackgroundDrawable(cd);
+    actionBar.setDisplayShowTitleEnabled(false);
+    actionBar.setDisplayShowCustomEnabled(true);
+    
+    LinearLayout layout = new LinearLayout(frame);
+    layout.setOrientation(LinearLayout.HORIZONTAL);
+    layout.setBackgroundColor(Color.parseColor("#ffffff"));
+    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+    layout.setLayoutParams(params);
+
+    try {
+      InputStream stream = frame.getAssets().open("icons_hamburger-menu.png");
+      Drawable draw = new BitmapDrawable(stream);
+      stream.close();
+
+      ImageButton drawerButton = new ImageButton(frame);
+      drawerButton.setImageDrawable(draw);
+      drawerButton.setBackgroundColor(Color.parseColor("#ffffff"));
+      drawerButton.setOnClickListener(new OnClickListener() {
+	@Override
+	public void onClick(View v) {
+	  System.out.println("drawerButton click");
+	  NativeCommandHandler handler = frame.views.get(frame.getCurrentDrawerViewId());
+	  System.out.println("handler: " + handler.getElementId());
+	  if (handler instanceof View) {
+	    if (((View) handler).getVisibility() == View.VISIBLE) {
+	      handler.setViewVisibility(false);
+	    } else {
+	      handler.setViewVisibility(true);
+	    }
+	  }
+	}
+      });
+      layout.addView(drawerButton);
+
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    
+    titleView = new TextView(frame);
+    titleView.setText("STREAM");
+    titleView.setLayoutParams(params);
+    titleView.setGravity(Gravity.CENTER);
+
+    final float scale = frame.getResources().getDisplayMetrics().density;
+    int pixels = (int) (56 * scale + 0.5f);
+    titleView.setPadding(titleView.getPaddingLeft(), titleView.getPaddingRight(), pixels, titleView.getPaddingBottom());
+//    titleView.setGravity(Gravity.CENTER);
+    layout.addView(titleView);
+    
+
+    
+    actionBar.show();
+    actionBar.setCustomView(layout);
+//    actionBar.setDisplayUseLogoEnabled(false);
+//
+//    
+//    ColorDrawable cd = new ColorDrawable();
+//    cd.setColor(Color.WHITE);
+//    actionBar.setBackgroundDrawable(cd);
+//
+//	final float scale = frame.getResources().getDisplayMetrics().density;
+//    try {
+//        Field f = actionBar.getClass().getSuperclass().getDeclaredField("mContentHeight");
+//        f.setAccessible(true);
+//        f.set(actionBar, (106 * scale + 0.5f));
+//    } catch (NoSuchFieldException e) {
+//      e.printStackTrace();
+//    } catch (IllegalAccessException e) {
+//      e.printStackTrace();
+//    }
+    
+    
     itemList = new ArrayList<ActionBarItem>();
     this.id = id;
   }
   
   public ArrayList<ActionBarItem> getItemList(){
-    return itemList;
+    return null;
   }
   
   @Override
@@ -62,7 +138,8 @@ public class FWActionBar implements NativeCommandHandler {
 
   @Override
   public void setValue(String v) {
-    actionBar.setTitle(v);
+//    actionBar.setTitle(v);
+//    titleView.setText(v);
   }
 
   @Override
@@ -94,16 +171,16 @@ public class FWActionBar implements NativeCommandHandler {
 
   @Override
   public void setStyle(String key, String value) {
-    if (key.equals("icon")){
-      try {
-	InputStream stream = frame.getAssets().open(value);
-	Bitmap b = BitmapFactory.decodeStream(stream);
-	Drawable d = new BitmapDrawable(b);
-	actionBar.setIcon(d);
-      } catch (IOException e) {
-	e.printStackTrace();
-      }
-    }
+//    if (key.equals("icon")){
+//      try {
+//	InputStream stream = frame.getAssets().open(value);
+//	Bitmap b = BitmapFactory.decodeStream(stream);
+//	Drawable d = new BitmapDrawable(b);
+//	actionBar.setIcon(d);
+//      } catch (IOException e) {
+//	e.printStackTrace();
+//      }
+//    }
   }
 
   @Override
