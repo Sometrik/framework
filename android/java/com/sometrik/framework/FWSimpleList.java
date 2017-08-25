@@ -3,16 +3,20 @@ package com.sometrik.framework;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
 public class FWSimpleList extends LinearLayout implements NativeCommandHandler {
 
   private FrameWork frame;
-  private LinearLayout.LayoutParams defaultListParams;
+  private FrameLayout.LayoutParams defaultListParams;
   private ArrayList<Sheet> sheets = new ArrayList<Sheet>();
   private ArrayList<String> sheetMemory = new ArrayList<String>();
   private int tableSize = 1;
@@ -20,10 +24,12 @@ public class FWSimpleList extends LinearLayout implements NativeCommandHandler {
     public FWSimpleList(FrameWork frame) {
       super(frame);
       this.frame = frame;
-      defaultListParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+      defaultListParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT);
       defaultListParams.setMargins(0, 10, 0, 10);
       setOrientation(LinearLayout.VERTICAL);
       setDividerDrawable(frame.getResources().getDrawable(android.R.drawable.divider_horizontal_bright));
+
+      this.setBackgroundColor(Color.rgb(255, 255, 255));
     }
     
     @Override
@@ -120,11 +126,23 @@ public class FWSimpleList extends LinearLayout implements NativeCommandHandler {
         }
 
         Iterator<View> i = viewsToBeRemoved.iterator();
-        while (i.hasNext()) {
-          View v = i.next(); 
-          layout.removeView(v);
+      while (i.hasNext()) {
+	View v = i.next();
+	if (v instanceof FWImageView) {
+	  Bitmap drawable = ((BitmapDrawable) v.getBackground()).getBitmap();
+	  if (drawable != null) {
+	    drawable.recycle();
+	  }
+	}
+	frame.removeViewFromList(v.getId());
+	layout.removeView(v);
        }
       } else {
+
+        ViewGroup layout = sheets.get(value).layout;
+	for (int i = 0; i < layout.getChildCount(); i++) {
+	  
+	}
 	return;
       }
 //      invalidate();
@@ -186,8 +204,8 @@ public class FWSimpleList extends LinearLayout implements NativeCommandHandler {
       }
     }
 
-    @Override
-    public void setStyle(String key, String value) {
+  @Override
+  public void setStyle(String key, String value) {
     if (key.equals("divider")) {
       if (value.equals("middle")) {
 	this.setShowDividers(LinearLayout.SHOW_DIVIDER_MIDDLE);
@@ -196,8 +214,35 @@ public class FWSimpleList extends LinearLayout implements NativeCommandHandler {
       } else if (value.equals("beginning")) {
 	this.setShowDividers(LinearLayout.SHOW_DIVIDER_BEGINNING);
       }
+    } else if (key.equals("color")) {
+      this.setBackgroundColor(Color.parseColor(value));
+    } else if (key.equals("width")) {
+      FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) getLayoutParams();
+      if (value.equals("wrap-content")) {
+	params.width = LinearLayout.LayoutParams.WRAP_CONTENT;
+      } else if (value.equals("match-parent")) {
+	params.width = LinearLayout.LayoutParams.MATCH_PARENT;
+      } else {
+	final float scale = getContext().getResources().getDisplayMetrics().density;
+	int pixels = (int) (Integer.parseInt(value) * scale + 0.5f);
+	params.width = pixels;
+      }
+      setLayoutParams(params);
+    } else if (key.equals("height")) {
+      FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) getLayoutParams();
+      if (value.equals("wrap-content")) {
+	params.height = LinearLayout.LayoutParams.WRAP_CONTENT;
+      } else if (value.equals("match-parent")) {
+	params.height = LinearLayout.LayoutParams.MATCH_PARENT;
+      } else {
+
+	final float scale = getContext().getResources().getDisplayMetrics().density;
+	int pixels = (int) (Integer.parseInt(value) * scale + 0.5f);
+	params.height = pixels;
+      }
+      setLayoutParams(params);
     }
-    }
+  }
 
     @Override
     public void setError(boolean hasError, String errorText) {
@@ -207,8 +252,7 @@ public class FWSimpleList extends LinearLayout implements NativeCommandHandler {
 
     @Override
     public void clear() {
-      // TODO Auto-generated method stub
-      
+      reshape(0);
     }
 
     @Override
@@ -242,9 +286,15 @@ public class FWSimpleList extends LinearLayout implements NativeCommandHandler {
       private Sheet(ViewGroup view) {
         name = new FWTextView(frame);
 //        name.setBackgroundDrawable(frame.getResources().getDrawable(android.R.drawable.dialog_holo_light_frame));
-        name.setTextSize(20);
+        name.setTextSize(24);
         name.setTypeface(null, Typeface.BOLD);
         name.setLayoutParams(defaultListParams);
+        
+
+	final float scale = getContext().getResources().getDisplayMetrics().density;
+	int pixels = (int) (41 * scale + 0.5f);
+	
+        name.setHeight(pixels);
 //        name.setBackgroundDrawable(backgroundColor);
         layout = view;
         view.addView(name);
