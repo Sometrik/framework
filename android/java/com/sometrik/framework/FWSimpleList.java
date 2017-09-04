@@ -39,8 +39,16 @@ public class FWSimpleList extends LinearLayout implements NativeCommandHandler {
     }
 
     @Override
-    public void addChild(View view) {
+    public void addChild(final View view) {
       view.setLayoutParams(defaultListParams);
+      final int sheetNumber = sheets.size();
+      view.setOnClickListener(new OnClickListener() {
+	  @Override
+	  public void onClick(View v) {
+	    System.out.println("Click java sheet: " + sheetNumber);
+	    frame.intChangedEvent(System.currentTimeMillis() / 1000.0, view.getId(), 1, sheetNumber);
+	  }
+      });
       Sheet sheet = new Sheet((ViewGroup)view);
       sheets.add(sheet);
       if (sheetMemory.size() >= sheets.size()) {
@@ -49,6 +57,7 @@ public class FWSimpleList extends LinearLayout implements NativeCommandHandler {
       } else {
         sheet.name.setText("TITLE");
       }
+
       addView(sheet.layout);
     }
     
@@ -105,9 +114,12 @@ public class FWSimpleList extends LinearLayout implements NativeCommandHandler {
 
     @Override
     public void setValue(int v) {
-      // TODO Auto-generated method stub
-      
+    if (v == 1) {
+      frame.setCurrentView(this, true);
+    } else if (v == 2) {
+      frame.setCurrentView(this, false);
     }
+  }
 
     @Override
     public void reshape(int value, int size) {
@@ -289,7 +301,6 @@ public class FWSimpleList extends LinearLayout implements NativeCommandHandler {
         name.setTextSize(24);
         name.setTypeface(null, Typeface.BOLD);
         name.setLayoutParams(defaultListParams);
-        
 
 	final float scale = getContext().getResources().getDisplayMetrics().density;
 	int pixels = (int) (41 * scale + 0.5f);
