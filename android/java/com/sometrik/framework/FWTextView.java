@@ -4,7 +4,9 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.LinearLayout.LayoutParams;
 
 public class FWTextView extends TextView implements NativeCommandHandler {
 
@@ -52,6 +54,8 @@ public class FWTextView extends TextView implements NativeCommandHandler {
 	this.setTextSize(12);
       } else if (value.equals("large")) {
 	this.setTextSize(15);
+      } else {
+	setTextSize(Integer.parseInt(value));
       }
     } else if (key.equals("padding-top")) {
       setPadding(getPaddingLeft(), Integer.parseInt(value), getPaddingRight(), getPaddingBottom());
@@ -61,6 +65,41 @@ public class FWTextView extends TextView implements NativeCommandHandler {
       setPadding(Integer.parseInt(value), getPaddingTop(), getPaddingRight(), getPaddingBottom());
     } else if (key.equals("padding-right")) {
       setPadding(getPaddingLeft(), getPaddingTop(), Integer.parseInt(value), getPaddingBottom());
+    }  else if (key.equals("width")) {
+      LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
+      if (value.equals("wrap-content")) {
+	params.width = LinearLayout.LayoutParams.WRAP_CONTENT;
+      } else if (value.equals("match-parent")) {
+	params.width = LinearLayout.LayoutParams.MATCH_PARENT;
+      } else {
+	final float scale = getContext().getResources().getDisplayMetrics().density;
+	int pixels = (int) (Integer.parseInt(value) * scale + 0.5f);
+	params.width = pixels;
+      }
+      setLayoutParams(params);
+    } else if (key.equals("height")) {
+      LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
+      if (value.equals("wrap-content")) {
+	params.height = LinearLayout.LayoutParams.WRAP_CONTENT;
+      } else if (value.equals("match-parent")) {
+	params.height = LinearLayout.LayoutParams.MATCH_PARENT;
+      } else {
+
+	final float scale = getContext().getResources().getDisplayMetrics().density;
+	int pixels = (int) (Integer.parseInt(value) * scale + 0.5f);
+	params.height = pixels;
+      }
+      setLayoutParams(params);
+    } else if (key.equals("typeface")) {
+      if (value.equals("bold")) {
+        setTypeface(null, Typeface.BOLD);
+      } else if (value.equals("normal")) {
+        setTypeface(null, Typeface.NORMAL);
+      } else if (value.equals("italic")) {
+        setTypeface(null, Typeface.ITALIC);
+      } else if (value.equals("bold-italic")) {
+        setTypeface(null, Typeface.BOLD_ITALIC);
+      }
     }
   }
 
