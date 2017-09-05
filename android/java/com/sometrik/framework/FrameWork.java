@@ -1,7 +1,6 @@
 package com.sometrik.framework;
 
 import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
 
@@ -9,7 +8,6 @@ import com.android.trivialdrivesample.util.IabException;
 import com.android.trivialdrivesample.util.IabHelper;
 import com.android.trivialdrivesample.util.IabHelper.IabAsyncInProgressException;
 import com.android.trivialdrivesample.util.Inventory;
-import com.sometrik.framework.FWActionBar.ActionBarItem;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -47,6 +45,8 @@ import android.view.SurfaceHolder.Callback;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 import android.widget.FrameLayout;
 
 public class FrameWork extends Activity {
@@ -245,6 +245,46 @@ public class FrameWork extends Activity {
   
   public void removeViewFromList(int viewId){
     FrameWork.views.remove(viewId);
+  }
+
+  public void setCurrentView(final View view, final boolean recordHistory, Animation animation) {
+    animation.setAnimationListener(new Animation.AnimationListener() {
+	@Override
+	public void onAnimationStart(Animation animation) {
+	}
+
+	@Override
+	public void onAnimationEnd(Animation animation) {
+	  currentView = view.getId();
+	  currentlyShowingView = view;
+	  setContentView(view);
+	  TranslateAnimation q;
+	  if (recordHistory) {
+	    q = new TranslateAnimation(1000, 0, 0, 0);
+	  } else {
+	    q = new TranslateAnimation(-1000, 0, 0, 0);
+	  }
+	  setNativeActiveView(System.currentTimeMillis() / 1000.0, view.getId(), recordHistory);
+	  q.setAnimationListener(new Animation.AnimationListener() {
+	    @Override
+	    public void onAnimationEnd(Animation animation) { transitionAnimation = false; }
+	    @Override
+	    public void onAnimationRepeat(Animation animation) {  }
+	    @Override
+	    public void onAnimationStart(Animation animation) { }
+	  });
+	  q.setDuration(100);
+	  view.startAnimation(q);
+	 transitionAnimation = true;
+	}
+
+	@Override
+	public void onAnimationRepeat(Animation animation) {
+	}
+    });
+
+    View sadas = (View) FrameWork.views.get(currentView);
+    sadas.startAnimation(animation);
   }
 
   public void setCurrentView(final View view, final boolean recordHistory) {
