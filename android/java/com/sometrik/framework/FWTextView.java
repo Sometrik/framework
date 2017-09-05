@@ -3,6 +3,7 @@ package com.sometrik.framework;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -99,6 +100,19 @@ public class FWTextView extends TextView implements NativeCommandHandler {
         setTypeface(null, Typeface.ITALIC);
       } else if (value.equals("bold-italic")) {
         setTypeface(null, Typeface.BOLD_ITALIC);
+      }
+    } else if (key.equals("borders")) {
+      this.setBackground(frame.getResources().getDrawable(android.R.drawable.dialog_holo_light_frame));
+    } else if (key.equals("weight")) {
+      LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
+      params.weight = Integer.parseInt(value);
+      setLayoutParams(params);
+    } else if (key.equals("align-text")) {
+      if (value.equals("left")) {
+	setTextAlignment(TEXT_ALIGNMENT_TEXT_START);
+      } else if (value.equals("center")) {
+	setTextAlignment(TEXT_ALIGNMENT_CENTER);
+	this.setGravity(Gravity.CENTER_HORIZONTAL);
       }
     }
   }
