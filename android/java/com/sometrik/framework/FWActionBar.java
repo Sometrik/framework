@@ -87,6 +87,7 @@ public class FWActionBar implements NativeCommandHandler {
     subtitleView.setText("subtitle");
     subtitleView.setLayoutParams(params);
     subtitleView.setGravity(Gravity.CENTER);
+    subtitleView.setVisibility(TextView.GONE);
     
 
     LinearLayout titleHolderLayout = new LinearLayout(frame);
@@ -193,6 +194,11 @@ public class FWActionBar implements NativeCommandHandler {
   public void setStyle(String key, String value) {
     if (key.equals("subtitle")) {
       subtitleView.setText(value);
+      if (value == "" || value == " ") {
+	subtitleView.setVisibility(TextView.GONE);
+      } else if (subtitleView.getVisibility() == TextView.GONE) {
+	subtitleView.setVisibility(TextView.VISIBLE);
+      }
     }
 //    if (key.equals("icon")){
 //      try {
