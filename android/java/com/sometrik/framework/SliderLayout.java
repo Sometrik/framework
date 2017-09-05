@@ -12,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.FrameLayout;
 
 public class SliderLayout extends RelativeLayout implements NativeCommandHandler {
 
@@ -24,6 +25,8 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
   public static int buttonSize = 0;
   int tableSize = 0;
   boolean usesLists = true;
+  private int bottomLayoutId = 0;
+  private int topLayoutId = 0;
   
   public SliderLayout(FrameWork frame) {
     super(frame);
@@ -88,8 +91,11 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
       addView(button);
     }
     
-    RelativeLayout.LayoutParams listParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+    RelativeLayout.LayoutParams listParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
     listParams.addRule(RelativeLayout.BELOW, button.getId());
+    if (bottomLayoutId != 0) {
+      listParams.addRule(RelativeLayout.ABOVE, bottomLayoutId);
+    }
     FWScrollView scrollView = new FWScrollView(frame);
     scrollView.setViewVisibility(false);
     scrollView.setLayoutParams(listParams);
@@ -105,7 +111,10 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
 	}
       };
       FWLayout layout = (FWLayout) view;
+      
+      FrameLayout.LayoutParams fwLayoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT);
       layout.setChildListeners(listener);
+      layout.setLayoutParams(fwLayoutParams);
     }
     addView(scrollView);
     button.setList(scrollView);
@@ -172,7 +181,7 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
         }
       });
       
-      RelativeLayout.LayoutParams listParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+      RelativeLayout.LayoutParams listParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
       listParams.addRule(RelativeLayout.BELOW, button.getId());
       list.setLayoutParams(listParams);
       list.setViewVisibility(false);
@@ -184,6 +193,14 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
     } else {
       //TODO
     }
+  }
+  
+  public void setBottomLayout(int viewId) {
+    bottomLayoutId = viewId;
+  }
+  
+  public void setTopLayout(int viewId) {
+    topLayoutId = viewId;
   }
 
   @Override
@@ -239,7 +256,6 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
   @Override
   public void setStyle(String key, String value) {
     // TODO Auto-generated method stub
-    
   }
 
   @Override
