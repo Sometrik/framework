@@ -11,8 +11,8 @@ import android.graphics.drawable.Drawable;
 import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
@@ -46,13 +46,14 @@ public class FWActionBar implements NativeCommandHandler {
     params.weight = 1;
     layout.setLayoutParams(params);
 
+    ImageButton drawerButton = new ImageButton(frame);
     try {
       InputStream stream = frame.getAssets().open("icons_hamburger-menu.png");
       Drawable draw = new BitmapDrawable(stream);
       stream.close();
 
-      ImageButton drawerButton = new ImageButton(frame);
       drawerButton.setImageDrawable(draw);
+      drawerButton.setScaleType(ScaleType.FIT_START);
       drawerButton.setBackgroundColor(Color.parseColor("#ffffff"));
       drawerButton.setOnClickListener(new OnClickListener() {
 	@Override
@@ -75,10 +76,8 @@ public class FWActionBar implements NativeCommandHandler {
       e.printStackTrace();
     }
     
-    
-    
     titleView = new TextView(frame);
-    titleView.setText("STREAM");
+    titleView.setText(title);
     titleView.setLayoutParams(params);
     titleView.setGravity(Gravity.CENTER);
     
@@ -99,13 +98,13 @@ public class FWActionBar implements NativeCommandHandler {
     
 
     final float scale = frame.getResources().getDisplayMetrics().density;
-    int pixels = (int) (56 * scale + 0.5f);
+    int pixels = (int) (106 * scale + 0.5f);
+//    int pixels = drawerButton.getWidth();
     titleView.setPadding(titleView.getPaddingLeft(), titleView.getPaddingRight(), pixels, titleView.getPaddingBottom());
     subtitleView.setPadding(subtitleView.getPaddingLeft(), subtitleView.getPaddingRight(), pixels, subtitleView.getPaddingBottom());
 //    titleView.setGravity(Gravity.CENTER);
     layout.addView(titleHolderLayout);
     
-
     
     actionBar.show();
     actionBar.setCustomView(layout);
@@ -130,6 +129,10 @@ public class FWActionBar implements NativeCommandHandler {
     
     itemList = new ArrayList<ActionBarItem>();
     this.id = id;
+  }
+  
+  public void setTitle(String title) {
+    titleView.setText(title);
   }
   
   public ArrayList<ActionBarItem> getItemList(){
@@ -159,8 +162,7 @@ public class FWActionBar implements NativeCommandHandler {
 
   @Override
   public void setValue(String v) {
-//    actionBar.setTitle(v);
-//    titleView.setText(v);
+    setTitle(v);
   }
 
   @Override
