@@ -1,9 +1,13 @@
 package com.sometrik.framework;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import android.content.res.AssetManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
@@ -11,6 +15,8 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
 
 public class FWSimpleList extends LinearLayout implements NativeCommandHandler {
@@ -20,6 +26,7 @@ public class FWSimpleList extends LinearLayout implements NativeCommandHandler {
   private ArrayList<Sheet> sheets = new ArrayList<Sheet>();
   private ArrayList<String> sheetMemory = new ArrayList<String>();
   private int tableSize = 1;
+  private String sheeticon_right = "";
   
     public FWSimpleList(FrameWork frame) {
       super(frame);
@@ -56,6 +63,13 @@ public class FWSimpleList extends LinearLayout implements NativeCommandHandler {
         sheet.name.setText(sheetMemory.get(sheets.size() - 1));
       } else {
         sheet.name.setText("TITLE");
+      }
+      
+      if (sheeticon_right != "") {
+	System.out.println("setting sheeticon_right from memory");
+	sheet.setRightIcon(sheeticon_right);
+      } else {
+	System.out.println("no sheeticon_right in memory");
       }
 
       addView(sheet.layout);
@@ -114,11 +128,11 @@ public class FWSimpleList extends LinearLayout implements NativeCommandHandler {
 
     @Override
     public void setValue(int v) {
-    if (v == 1) {
-      frame.setCurrentView(this, true);
-    } else if (v == 2) {
-      frame.setCurrentView(this, false);
-    }
+//    if (v == 1) {
+//      frame.setCurrentView(this, true);
+//    } else if (v == 2) {
+//      frame.setCurrentView(this, false);
+//    }
   }
 
     @Override
@@ -218,6 +232,7 @@ public class FWSimpleList extends LinearLayout implements NativeCommandHandler {
 
   @Override
   public void setStyle(String key, String value) {
+    System.out.println("SimpleListView style " + key + " " + value);
     if (key.equals("divider")) {
       if (value.equals("middle")) {
 	this.setShowDividers(LinearLayout.SHOW_DIVIDER_MIDDLE);
@@ -253,6 +268,12 @@ public class FWSimpleList extends LinearLayout implements NativeCommandHandler {
 	params.height = pixels;
       }
       setLayoutParams(params);
+    } else if (key.equals("sheeticon-right")) {
+      System.out.println("setting right icon");
+	sheeticon_right = value;
+      for (Sheet sheet : sheets) {
+	sheet.setRightIcon(value);
+      }
     }
   }
 
@@ -280,22 +301,29 @@ public class FWSimpleList extends LinearLayout implements NativeCommandHandler {
     
     private class Sheet  {
       private ViewGroup layout;
+      private LinearLayout sheetLayout;
       private FWTextView name;
       private int restrictedSize = 1;
       private boolean disabled = false;
+      private ImageView rightIconView;
       
       private void disable() {
 	disabled = true;
-//	layout.setVisibility(GONE);
+	layout.setVisibility(GONE);
       }
       private void enable() {
 	disabled = false;
-//	layout.setVisibility(VISIBLE);
+	layout.setVisibility(VISIBLE);
 //	for (int i = 0; i < layout.getChildCount(); i++) {
 //	  layout.getChildAt(i).setVisibility(VISIBLE);;
 //	}
       }
       private Sheet(ViewGroup view) {
+	sheetLayout = new LinearLayout(frame);
+	sheetLayout.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+	sheetLayout.setOrientation(LinearLayout.HORIZONTAL);
+	sheetLayout.setFocusable(false);
+	
         name = new FWTextView(frame);
 //        name.setBackgroundDrawable(frame.getResources().getDrawable(android.R.drawable.dialog_holo_light_frame));
         name.setTextSize(24);
@@ -306,11 +334,36 @@ public class FWSimpleList extends LinearLayout implements NativeCommandHandler {
 	int pixels = (int) (41 * scale + 0.5f);
 	
         name.setHeight(pixels);
+        sheetLayout.addView(name);
 //        name.setBackgroundDrawable(backgroundColor);
         layout = view;
-        view.addView(name);
+        view.addView(sheetLayout);
+    }
+
+    private void setRightIcon(String assetFilename) {
+
+      System.out.println("setting right icon");
+      if (rightIconView == null) {
+	rightIconView = new ImageView(frame);
+	ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+	rightIconView.setScaleType(ScaleType.FIT_END);
+	rightIconView.setLayoutParams(params);
+	sheetLayout.addView(rightIconView);
+      }
+      try {
+	AssetManager mgr = frame.getAssets();
+	InputStream stream = mgr.open(assetFilename);
+	if (stream != null) {
+	  Bitmap bitmap = BitmapFactory.decodeStream(stream);
+	  rightIconView.setImageBitmap(bitmap);
+	  bitmap = null;
+	}
+	stream.close();
+      } catch (IOException e) {
+	e.printStackTrace();
       }
     }
+  }
 
   }
 
