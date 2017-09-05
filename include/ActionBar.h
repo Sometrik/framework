@@ -30,6 +30,11 @@ class ActionBar : public Element {
     sendCommand(c);
   }
 
+  void setSubtitle(const std::string & _subtitle){
+    subtitle = _subtitle;
+    style("subtitle", _subtitle);
+  }
+
  protected:
   void create() override {
     Command c(Command::CREATE_ACTIONBAR, getParentInternalId(), getInternalId());
@@ -39,6 +44,7 @@ class ActionBar : public Element {
 
  private:
   std::string title;
+  std::string subtitle;
 };
 
 #endif

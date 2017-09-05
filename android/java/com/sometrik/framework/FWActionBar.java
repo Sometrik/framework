@@ -19,11 +19,12 @@ import android.widget.TextView;
 
 public class FWActionBar implements NativeCommandHandler {
   
-  int id;
-  ActionBar actionBar;
-  ArrayList<ActionBarItem> itemList;
-  FrameWork frame;
-  TextView titleView;
+  private int id;
+  private ActionBar actionBar;
+  private ArrayList<ActionBarItem> itemList;
+  private FrameWork frame;
+  private TextView titleView;
+  private TextView subtitleView;
   
 
   public FWActionBar(final FrameWork frame, String title, int id){
@@ -42,6 +43,7 @@ public class FWActionBar implements NativeCommandHandler {
     layout.setOrientation(LinearLayout.HORIZONTAL);
     layout.setBackgroundColor(Color.parseColor("#ffffff"));
     LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+    params.weight = 1;
     layout.setLayoutParams(params);
 
     try {
@@ -73,16 +75,34 @@ public class FWActionBar implements NativeCommandHandler {
       e.printStackTrace();
     }
     
+    
+    
     titleView = new TextView(frame);
     titleView.setText("STREAM");
     titleView.setLayoutParams(params);
     titleView.setGravity(Gravity.CENTER);
+    
+
+    subtitleView = new TextView(frame);
+    subtitleView.setText("subtitle");
+    subtitleView.setLayoutParams(params);
+    subtitleView.setGravity(Gravity.CENTER);
+    
+
+    LinearLayout titleHolderLayout = new LinearLayout(frame);
+    titleHolderLayout.setOrientation(LinearLayout.VERTICAL);
+    titleHolderLayout.setLayoutParams(params);
+    
+    titleHolderLayout.addView(titleView);
+    titleHolderLayout.addView(subtitleView);
+    
 
     final float scale = frame.getResources().getDisplayMetrics().density;
     int pixels = (int) (56 * scale + 0.5f);
     titleView.setPadding(titleView.getPaddingLeft(), titleView.getPaddingRight(), pixels, titleView.getPaddingBottom());
+    subtitleView.setPadding(subtitleView.getPaddingLeft(), subtitleView.getPaddingRight(), pixels, subtitleView.getPaddingBottom());
 //    titleView.setGravity(Gravity.CENTER);
-    layout.addView(titleView);
+    layout.addView(titleHolderLayout);
     
 
     
@@ -171,6 +191,9 @@ public class FWActionBar implements NativeCommandHandler {
 
   @Override
   public void setStyle(String key, String value) {
+    if (key.equals("subtitle")) {
+      subtitleView.setText(value);
+    }
 //    if (key.equals("icon")){
 //      try {
 //	InputStream stream = frame.getAssets().open(value);
