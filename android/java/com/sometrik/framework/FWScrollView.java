@@ -4,6 +4,8 @@ import android.content.res.Resources;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
@@ -12,6 +14,7 @@ public class FWScrollView extends ScrollView implements NativeCommandHandler {
   FrameWork frame;
   private String title;
   private int maxHeight = 0;
+  private Animation enterAnimation = null;
   
   public FWScrollView(FrameWork frameWork, String title) {
     super(frameWork);
@@ -45,7 +48,11 @@ public class FWScrollView extends ScrollView implements NativeCommandHandler {
 
   @Override
   public void addChild(View view) {
-    addView(view);
+    if (this.getChildCount() > 0) {
+      System.out.println("ScrollView already has a child");
+    } else {
+      addView(view);
+    }
   }
   
   @Override
@@ -61,7 +68,12 @@ public class FWScrollView extends ScrollView implements NativeCommandHandler {
   @Override
   public void setValue(int v) {
     if (v == 1){
-      frame.setCurrentView(this, true, title);
+      if (enterAnimation != null) {
+	System.out.println("animation commencing");
+	frame.setCurrentView(this, true, enterAnimation);
+      } else {
+	frame.setCurrentView(this, true, title);
+      }
     } else if (v == 2){
       frame.setCurrentView(this, false, title);
     }
@@ -73,7 +85,35 @@ public class FWScrollView extends ScrollView implements NativeCommandHandler {
   }
 
   @Override
-  public void setStyle(String key, String value) { }
+  public void setStyle(String key, String value) {
+    if (key.equals("animation")) {
+      if (value.equals("from-left")) {
+	TranslateAnimation r;
+	// if (recordHistory) {
+	// r = new TranslateAnimation(0, -2000, 0, 0);
+	// } else {
+	r = new TranslateAnimation(0, -1000, 0, 0);
+	// }
+	r.setDuration(100);
+	enterAnimation = r;
+	final View holderView = this;
+	r.setAnimationListener(new Animation.AnimationListener() {
+	  @Override
+	  public void onAnimationStart(Animation animation) {
+	  }
+
+	  @Override
+	  public void onAnimationEnd(Animation animation) {
+	      frame.setCurrentView(holderView, true, title);
+	  }
+
+	  @Override
+	  public void onAnimationRepeat(Animation arg0) {
+	  }
+	});
+      }
+    }
+  }
 
   @Override
   public void setError(boolean hasError, String errorText) { }
