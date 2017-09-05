@@ -35,6 +35,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
@@ -223,8 +224,11 @@ public class NativeCommand {
       break;
     case CREATE_BASICVIEW:
     case CREATE_LINEAR_LAYOUT:
+
       FWLayout layout = createLinearLayout();
-      view.addChild(layout);
+      if (view != null) {
+	view.addChild(layout);
+      }
       break;
       
     case CREATE_AUTO_COLUMN_LAYOUT:{
@@ -268,21 +272,20 @@ public class NativeCommand {
       view.addChild(debugList);
       break;
     case CREATE_SIMPLELISTVIEW:{
-      FWSimpleList datList = new FWSimpleList(frame);
-	LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-	params.weight = 1.0f;
+      FWScrollView simpleListScroller = new FWScrollView(frame);
+      FWSimpleList simpleList = new FWSimpleList(frame);
+	final float scale = frame.getResources().getDisplayMetrics().density;
+	int pixels = (int) (80 * scale + 0.5f);
+	simpleListScroller.setMaxHeight(450);
+	LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+	FrameLayout.LayoutParams params2 = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT);
 	// params.gravity = Gravity.TOP;
-	datList.setLayoutParams(params);
-	datList.setId(childInternalId);
-//	datList.setOnItemClickListener(new OnItemClickListener() {
-//	  @Override
-//	  public void onItemClick(AdapterView<?> arg0, View arg1, int groupPosition, long id) {
-//	    System.out.println("row clicked. Sending intChangedEvent of " + (groupPosition - 1));
-//	    frame.intChangedEvent(System.currentTimeMillis() / 1000.0, childInternalId, (groupPosition - 1), 0);
-//	  }
-//	});
-	view.addChild(datList);
-	FrameWork.addToViewList(datList);
+	simpleListScroller.setLayoutParams(params);
+	simpleListScroller.addChild(simpleList);
+	simpleList.setLayoutParams(params2);
+	simpleList.setId(childInternalId);
+	view.addChild(simpleListScroller);
+	FrameWork.addToViewList(simpleList);
       break;
     }
     case CREATE_LISTVIEW:
@@ -357,7 +360,10 @@ public class NativeCommand {
     case CREATE_IMAGEVIEW:
       FWImageView imageView = new FWImageView(frame);
       imageView.setId(childInternalId);
-      imageView.setImage(getTextValueAsBinary());
+      if (getTextValueAsString() != null) {
+	imageView.setImageFromAssets(getTextValueAsString());
+      }
+//      imageView.setImage(getTextValueAsBinary());
       FrameWork.addToViewList(imageView);
       view.addChild(imageView);
       break;
@@ -404,10 +410,12 @@ public class NativeCommand {
       view.addData(getTextValueAsString(), rowNumber, columnNumber, sheet);
       break;
     case SET_VISIBILITY:
-      if (value == 0){
-	view.setViewVisibility(false);
-      } else {
-	view.setViewVisibility(true);
+      if (view != null) {
+	if (value == 0) {
+	  view.setViewVisibility(false);
+	} else {
+	  view.setViewVisibility(true);
+	}
       }
       break;
     case SET_ENABLED:
