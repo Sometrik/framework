@@ -20,6 +20,7 @@ class ImageElement : public Element {
     auto & data = ev.getImage()->getData();
     std::string data2((const char *)data.getData(), data.calculateSize());
     c.setTextValue(data2);
+    c.setValue(int(ev.getImage()->getData().getInternalFormat()));
     sendCommand(c);
   }
 
