@@ -10,8 +10,10 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 
 public class FWLayout extends LinearLayout implements NativeCommandHandler {
   
@@ -134,17 +136,22 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
       }
       setLayoutParams(params);
     } else if (key.equals("width")) {
-      LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
-      if (value.equals("wrap-content")) {
-	params.width = LinearLayout.LayoutParams.WRAP_CONTENT;
-      } else if (value.equals("match-parent")) {
-	params.width = LinearLayout.LayoutParams.MATCH_PARENT;
+      if (getParent() instanceof ScrollView) {
+	FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+	this.setLayoutParams(params);
       } else {
-	final float scale = getContext().getResources().getDisplayMetrics().density;
-	int pixels = (int) (Integer.parseInt(value) * scale + 0.5f);
-	params.width = pixels;
+	      LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
+	      if (value.equals("wrap-content")) {
+		params.width = LinearLayout.LayoutParams.WRAP_CONTENT;
+	      } else if (value.equals("match-parent")) {
+		params.width = LinearLayout.LayoutParams.MATCH_PARENT;
+	      } else {
+		final float scale = getContext().getResources().getDisplayMetrics().density;
+		int pixels = (int) (Integer.parseInt(value) * scale + 0.5f);
+		params.width = pixels;
+	      }
+	      setLayoutParams(params);
       }
-      setLayoutParams(params);
     } else if (key.equals("height")) {
       LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
       if (value.equals("wrap-content")) {
