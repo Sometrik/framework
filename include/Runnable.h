@@ -26,7 +26,7 @@ class Runnable : public EventHandler {
     }
   }
 
-#if 0
+#if 1
   void sendEvent(const Event & ev) {
     event_queue.push(0, ev);
   }
@@ -53,7 +53,7 @@ class Runnable : public EventHandler {
     status_text = s;
   }
 
-  // EventQueue event_queue;
+  EventQueue event_queue;
 
  private:
   PlatformThread * thread = 0;
