@@ -1,7 +1,9 @@
 package com.sometrik.framework;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.ByteBuffer;
 
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
@@ -175,7 +177,26 @@ public class FWImageView extends ImageView implements NativeCommandHandler {
 
   @Override
   public void setImage(byte[] bytes) {
-    this.setImage(bytes);
+    System.out.println("SetImage " + bytes.length + " " + getWidth());
+//    Bitmap map = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+//    BitmapFactory.decodeStream(bytes);
+//    BitmapFactory.de
+//    InputStream myInputStream = new ByteArrayInputStream(bytes); 
+//
+//  Bitmap map = BitmapFactory.decodeStream(myInputStream);
+//    if (map == null) {
+//      System.out.println("shieet");
+//    } else {
+//      System.out.println("mappi: " + map.getHeight());
+//    } 
+    Bitmap bmp = Bitmap.createBitmap(84, 84, Bitmap.Config.ARGB_8888);
+//    Bitmap.createBitmap((int[])bytes, 32, 32, Bitmap.Config.ARGB_8888)
+    ByteBuffer buffer = ByteBuffer.wrap(bytes);
+    bmp.copyPixelsFromBuffer(buffer);
+//    Bitmap map = Bitmap.create
+    this.setImageBitmap(bmp);
+//    map = null;
+    invalidate();
   }
 
   @Override
