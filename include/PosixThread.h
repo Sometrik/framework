@@ -3,6 +3,7 @@
 
 #include <PlatformThread.h>
 
+#include <unistd.h>
 #include <pthread.h>
 #include <atomic>
 
@@ -28,7 +29,11 @@ public:
   // void postEventToThread(Event & event) {
   //   event.dispatch(getRunnable());
   // }
-          
+
+  void sleep(double t) override {
+    usleep((unsigned int)(t * 1000000));
+  }
+
 private:
   static void * entryPoint(void * pthis);
   

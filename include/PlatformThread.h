@@ -60,6 +60,8 @@ class PlatformThread {
     return getPlatform().createLogger(name);
   }
 
+  virtual void sleep(double t) = 0;
+
  protected:
   virtual void initialize() { }  
   virtual void deinitialize() { }
