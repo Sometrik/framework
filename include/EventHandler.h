@@ -27,6 +27,7 @@ class SelectionEvent;
 class ScrollEvent;
 class ContextMenuEvent;
 class ImageRequestEvent;
+class ImageResponseEvent;
 class ImageEvent;
 class PositionEvent;
 class RebuildEvent;
@@ -80,6 +81,7 @@ class EventHandler : public Notifier {
   virtual void handleMouseScrollEvent(MouseEvent & ev) { }
   virtual void handleMouseEvent(MouseEvent & ev) { }
   virtual void handleImageRequestEvent(ImageRequestEvent & ev) { }
+  virtual void handleImageResponseEvent(ImageResponseEvent & ev) { }
   virtual void handleImageEvent(ImageEvent & ev) { }
   virtual void handleLeaveWorkspaceEvent(LeaveWorkspaceEvent & ev) { }
   virtual void handleMultiTouchEvent(MultiTouchEvent & ev) { }

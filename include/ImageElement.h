@@ -4,6 +4,8 @@
 #include <Element.h>
 #include <Command.h>
 
+#include <ImageResponseEvent.h>
+
 class ImageElement : public Element {
  public:
  ImageElement(const std::string & _filename) : filename(_filename) { }
@@ -11,6 +13,14 @@ class ImageElement : public Element {
   bool isA(const std::string & className) const override {
     if (className == "ImageElement") return true;
     return Element::isA(className);
+  }
+
+  void handleImageResponseEvent(ImageResponseEvent & ev) override {
+    Command c(Command::SET_IMAGE, getInternalId());
+    auto & data = ev.getImage()->getData();
+    std::string data2((const char *)data.getData(), data.calculateSize());
+    c.setTextValue(data2);
+    sendCommand(c);
   }
 
  protected:
