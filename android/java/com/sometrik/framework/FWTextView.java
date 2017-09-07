@@ -114,6 +114,8 @@ public class FWTextView extends TextView implements NativeCommandHandler {
 	setTextAlignment(TEXT_ALIGNMENT_CENTER);
 	this.setGravity(Gravity.CENTER_HORIZONTAL);
       }
+    } else if (key.equals("single-line")) {
+      setSingleLine();
     }
   }
 

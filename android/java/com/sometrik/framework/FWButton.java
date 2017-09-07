@@ -150,8 +150,9 @@ public class FWButton extends Button implements NativeCommandHandler {
         e.printStackTrace();
       }
     } else if (key.equals("borderless")) {
-
       setBackgroundResource(0);
+    } else if (key.equals("single-line")) {
+      this.setSingleLine();
     }
   }
 
