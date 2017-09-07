@@ -40,6 +40,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.PopupMenu.OnMenuItemClickListener;
+import android.widget.ScrollView;
 import android.widget.Toast;
 
 public class NativeCommand {
@@ -272,16 +273,17 @@ public class NativeCommand {
       view.addChild(debugList);
       break;
     case CREATE_SIMPLELISTVIEW:{
-      FWScrollView simpleListScroller = new FWScrollView(frame);
+      ScrollView simpleListScroller = new ScrollView(frame);
+      simpleListScroller.setFillViewport(true);
       FWSimpleList simpleList = new FWSimpleList(frame);
 	final float scale = frame.getResources().getDisplayMetrics().density;
 	int pixels = (int) (80 * scale + 0.5f);
-	simpleListScroller.setMaxHeight(450);
-	LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
-	FrameLayout.LayoutParams params2 = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT);
+//	simpleListScroller.setMaxHeight(450);
+	LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+	FrameLayout.LayoutParams params2 = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT);
 	// params.gravity = Gravity.TOP;
 	simpleListScroller.setLayoutParams(params);
-	simpleListScroller.addChild(simpleList);
+	simpleListScroller.addView(simpleList);
 	simpleList.setLayoutParams(params2);
 	simpleList.setId(childInternalId);
 	view.addChild(simpleListScroller);
