@@ -57,6 +57,7 @@ class PlatformGtk;
 struct event_data_s {
   PlatformGtk * platform;
   Event * event;
+  int internal_id;
 };
 
 class PlatformGtk : public FWPlatform {
@@ -66,10 +67,11 @@ public:
     sendCommand2(Command(Command::CREATE_PLATFORM, getParentInternalId(), getInternalId()));
   }
 
-  void pushEvent(const Event & ev) override {
+  void pushEvent(int internal_id, const Event & ev) override {
     event_data_s * ed = new event_data_s;
     ed->platform = this;
     ed->event = ev.dup();
+    ed->internal_id = internal_id;
     g_idle_add(idle_callback, ed);
   }
 
@@ -158,7 +160,6 @@ public:
     case Command::RESHAPE_TABLE: {
       size_t max_size = command.getValue();
       auto view = views_by_id[command.getInternalId()];
-      assert(view);
       if (view) {
 	auto treeview = gtk_bin_get_child(GTK_BIN(view));
 	auto model = gtk_tree_view_get_model((GtkTreeView*)treeview);
@@ -438,7 +439,8 @@ public:
       } else if (GTK_IS_HEADER_BAR(view)) {
 	gtk_header_bar_set_subtitle((GtkHeaderBar*)view, command.getTextValue().c_str());
       } else {
-	assert(0);
+	cerr << "unable to set text value: " << command.getTextValue() << "\n";
+	// assert(0);
       }
     }
       break;
@@ -999,8 +1001,9 @@ PlatformGtk::idle_callback(gpointer data) {
   event_data_s * ed = (event_data_s*)data;
   PlatformGtk * platform = ed->platform;
   Event * ev = ed->event;
+  int internal_id = ed->internal_id;
   delete ed;
-  platform->postEvent(platform->getInternalId(), *ev);
+  platform->postEvent(internal_id ? internal_id : platform->getInternalId(), *ev);
   delete ev;
   return FALSE;
 }

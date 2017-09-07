@@ -173,8 +173,9 @@ public:
     eventqueue.push(internal_id, ev);
   }
 
-  void pushEvent(const Event & ev) {
-    queueEvent(getInternalId(), ev);
+  void pushEvent(int internal_id, const Event & ev) {
+    if (internal_id == 0) internal_id = getInternalId();
+    queueEvent(internal_id, ev);
   }
 
   void onOpenGLInitEvent(OpenGLInitEvent & _ev) override;

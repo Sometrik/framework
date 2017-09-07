@@ -48,8 +48,8 @@ class PlatformThread {
   
   int getInternalId() const { return id; }
 
-  void postEvent(const Event & ev) {
-    getPlatform().pushEvent(ev);
+  void postEvent(int internal_id, const Event & ev) {
+    getPlatform().pushEvent(internal_id, ev);
   }
 
   bool run(std::shared_ptr<Runnable> runnable) {
@@ -76,7 +76,7 @@ class PlatformThread {
     SysEvent ev(SysEvent::THREAD_TERMINATED);
     ev.setThreadId(getInternalId());
     ev.setRunnable(runnable.get());
-    postEvent(ev);
+    postEvent(0, ev);
   }
 
  private:

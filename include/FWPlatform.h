@@ -44,7 +44,7 @@ class FWPlatform : public Element {
   virtual std::string getBundleFilename(const char * filename) = 0;
   virtual std::string getLocalFilename(const char * filename, FileType type) = 0;
   virtual std::string loadTextAsset(const char * filename) = 0; 
-  virtual void pushEvent(const Event & ev) = 0;
+  virtual void pushEvent(int internal_id, const Event & ev) = 0;
   virtual void sendCommand2(const Command & command) = 0;
   virtual void createFBO(int flags) { }
 
