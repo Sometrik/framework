@@ -64,6 +64,8 @@ class Button : public UIElement {
   bool call(int i) override { return call(); }
   bool call(const std::string & s) override { return call(); }
 
+  int linkedView = 0;
+
 protected:
   void create() override {
     Command c(Command::CREATE_BUTTON, getParentInternalId(), getInternalId());
