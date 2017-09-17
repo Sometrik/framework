@@ -45,7 +45,7 @@ class Event {
   void setEventHandler(EventHandler * h) { handler = h; }
 
  protected:
-  void setFlag(unsigned int flag, bool value) {
+  void setFlag(unsigned short flag, bool value) {
     if (value) {
       flags |= flag;
     } else {
