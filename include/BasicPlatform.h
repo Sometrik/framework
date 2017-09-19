@@ -59,7 +59,7 @@ class BasicPlatform : public FWPlatform {
   std::shared_ptr<PlatformThread> createThread(std::shared_ptr<Runnable> & runnable) override {
     return std::make_shared<BasicThread>(getNextThreadId(), this, runnable);
   }
-  void pushEvent(const Event & ev) override {
+  void pushEvent(int internal_id, const Event & ev) override {
 
   }
   void sendCommand2(const Command & command) {
