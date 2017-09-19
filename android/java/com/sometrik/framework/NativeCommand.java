@@ -58,6 +58,8 @@ public class NativeCommand {
   private int rowNumber = -1;
   private int columnNumber = -1;
   private int sheet = 0;
+  private int width = 0;
+  private int height = 0;
   
 
   private final int FLAG_PADDING_LEFT = 1;
@@ -142,7 +144,7 @@ public class NativeCommand {
     CONSUME_PURCHASE
   }
 
-  public NativeCommand(FrameWork frame, int messageTypeId, int internalId, int childInternalId, int value, byte[] textValue, byte[] textValue2, int flags, int row, int column, int sheet){
+  public NativeCommand(FrameWork frame, int messageTypeId, int internalId, int childInternalId, int value, byte[] textValue, byte[] textValue2, int flags, int row, int column, int sheet, int width, int height){
 
     this.frame = frame;
     command = CommandType.values()[messageTypeId];
@@ -153,6 +155,8 @@ public class NativeCommand {
     this.rowNumber = row;
     this.columnNumber = column;
     this.sheet = sheet;
+    this.width = width;
+    this.height = height;
     byteArray = textValue;
     byteArray2 = textValue2;
   }
@@ -273,15 +277,15 @@ public class NativeCommand {
       view.addChild(debugList);
       break;
     case CREATE_SIMPLELISTVIEW:{
-      ScrollView simpleListScroller = new ScrollView(frame);
+      FWScrollView simpleListScroller = new FWScrollView(frame);
       simpleListScroller.setFillViewport(true);
       FWSimpleList simpleList = new FWSimpleList(frame);
 	final float scale = frame.getResources().getDisplayMetrics().density;
-	int pixels = (int) (80 * scale + 0.5f);
-//	simpleListScroller.setMaxHeight(450);
-	LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-	FrameLayout.LayoutParams params2 = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT);
-	// params.gravity = Gravity.TOP;
+	int widthPixels = (int) (350 * scale + 0.5f);
+	int heightPixels = (int) (300 * scale + 0.5f);
+	simpleListScroller.setMaxHeight(450);
+	LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(widthPixels, LinearLayout.LayoutParams.WRAP_CONTENT);
+	FrameLayout.LayoutParams params2 = new FrameLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 	simpleListScroller.setLayoutParams(params);
 	simpleListScroller.addView(simpleList);
 	simpleList.setLayoutParams(params2);
@@ -433,7 +437,7 @@ public class NativeCommand {
       view.setError(value != 0, getTextValueAsString());
       break;
     case SET_IMAGE:
-      view.setImage(byteArray);
+      view.setImage(byteArray, 64, 64);
       break;
     case LAUNCH_BROWSER:
       frame.launchBrowser(getTextValueAsString());
