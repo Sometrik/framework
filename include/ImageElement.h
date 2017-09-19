@@ -20,8 +20,8 @@ class ImageElement : public Element {
     auto & data = ev.getImage()->getData();
     std::string data2((const char *)data.getData(), data.calculateSize());
     c.setTextValue(data2);
-    c.setWidth(ev.getImage()->getData().getWidth()));
-    c.setHeight(ev.getImage()->getData().getHeight()));
+    c.setWidth(ev.getImage()->getData().getWidth());
+    c.setHeight(ev.getImage()->getData().getHeight());
     c.setValue(int(ev.getImage()->getData().getInternalFormat()));
     sendCommand(c);
   }
