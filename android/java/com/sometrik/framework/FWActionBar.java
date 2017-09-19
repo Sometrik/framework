@@ -98,7 +98,7 @@ public class FWActionBar implements NativeCommandHandler {
     
 
     final float scale = frame.getResources().getDisplayMetrics().density;
-    int pixels = (int) (106 * scale + 0.5f);
+    int pixels = (int) (58 * scale + 0.5f);
 //    int pixels = drawerButton.getWidth();
     titleView.setPadding(titleView.getPaddingLeft(), titleView.getPaddingRight(), pixels, titleView.getPaddingBottom());
     subtitleView.setPadding(subtitleView.getPaddingLeft(), subtitleView.getPaddingRight(), pixels, subtitleView.getPaddingBottom());
@@ -263,7 +263,7 @@ public class FWActionBar implements NativeCommandHandler {
   }
 
   @Override
-  public void setImage(byte[] bytes) {
+  public void setImage(byte[] bytes, int width, int height) {
     // TODO Auto-generated method stub
     
   }
