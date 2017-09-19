@@ -9,7 +9,7 @@ public interface NativeCommandHandler {
   public void addColumn(String text, int columnType);
   public void addData(String text, int row, int column, int sheet);
   public void setValue(String v);
-  public void setImage(byte[] bytes, int width, int height);
+  public void setImage(byte[] bytes, int width, int height, Bitmap.Config config);
   public void setValue(int v);
   public void reshape(int value, int size);
   public void reshape(int size);
