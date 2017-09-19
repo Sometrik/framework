@@ -257,7 +257,26 @@ public class FrameWork extends Activity {
 	public void onAnimationEnd(Animation animation) {
 	  currentView = view.getId();
 	  currentlyShowingView = view;
+	  
+	if (drawerLayout.getChildCount() > 0) {
+	  drawerLayout.removeAllViews();
+	}
+
+	System.out.println("currentDrawerViewId: " + currentDrawerViewId);
+	if (currentDrawerViewId != 0) {
+	  NativeCommandHandler drawerView = views.get(currentDrawerViewId);
+	  if (drawerView != null) {
+	    drawerLayout.addView(view);
+	    drawerLayout.addView((View) drawerView);
+	    setContentView(drawerLayout);
+	  } else {
+	    System.out.println("no navigation drawer element found on id: " + currentDrawerViewId);
+	    setContentView(view);
+	  }
+	} else {
 	  setContentView(view);
+	}
+	  
 	  TranslateAnimation q;
 	  if (recordHistory) {
 	    q = new TranslateAnimation(1000, 0, 0, 0);
