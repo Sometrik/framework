@@ -25,6 +25,7 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
     super(frameWork);
     this.frame = frameWork;
     setDividerDrawable(frame.getResources().getDrawable(android.R.drawable.divider_horizontal_bright));
+//    setDividerDrawable(frame.getResources().getDrawable(android.R.drawable.divider_horizontal_textfield));
     this.setBackgroundColor(Color.rgb(255, 255, 255));
   }
 
@@ -153,18 +154,23 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
 	      setLayoutParams(params);
       }
     } else if (key.equals("height")) {
-      LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
-      if (value.equals("wrap-content")) {
-	params.height = LinearLayout.LayoutParams.WRAP_CONTENT;
-      } else if (value.equals("match-parent")) {
-	params.height = LinearLayout.LayoutParams.MATCH_PARENT;
+      if (getParent() instanceof ScrollView) {
+	FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+	this.setLayoutParams(params);
       } else {
+	LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
+	if (value.equals("wrap-content")) {
+	  params.height = LinearLayout.LayoutParams.WRAP_CONTENT;
+	} else if (value.equals("match-parent")) {
+	  params.height = LinearLayout.LayoutParams.MATCH_PARENT;
+	} else {
 
-	final float scale = getContext().getResources().getDisplayMetrics().density;
-	int pixels = (int) (Integer.parseInt(value) * scale + 0.5f);
-	params.height = pixels;
+	  final float scale = getContext().getResources().getDisplayMetrics().density;
+	  int pixels = (int) (Integer.parseInt(value) * scale + 0.5f);
+	  params.height = pixels;
+	}
+	setLayoutParams(params);
       }
-      setLayoutParams(params);
     } else if (key.equals("weight")) {
       LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
       params.weight = Integer.parseInt(value);
@@ -266,7 +272,7 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
   }
 
   @Override
-  public void setImage(byte[] bytes) {
+  public void setImage(byte[] bytes, int width, int height) {
     // TODO Auto-generated method stub
     
   }

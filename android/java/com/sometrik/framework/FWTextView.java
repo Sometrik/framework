@@ -1,13 +1,13 @@
 package com.sometrik.framework;
 
-import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.GradientDrawable;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.LinearLayout.LayoutParams;
+import android.widget.TextView;
 
 public class FWTextView extends TextView implements NativeCommandHandler {
 
@@ -103,6 +103,11 @@ public class FWTextView extends TextView implements NativeCommandHandler {
       }
     } else if (key.equals("borders")) {
       this.setBackground(frame.getResources().getDrawable(android.R.drawable.dialog_holo_light_frame));
+//      GradientDrawable gdDefault = new GradientDrawable();
+//      gdDefault.setColor(Color.parseColor("#c1272d"));
+//      float radius = 2.0f;
+//      gdDefault.setCornerRadii(new float[] { radius, radius, 0, 0, 0, 0, radius, radius });
+//      this.setBackground(gdDefault);
     } else if (key.equals("weight")) {
       LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
       params.weight = Integer.parseInt(value);
@@ -116,6 +121,22 @@ public class FWTextView extends TextView implements NativeCommandHandler {
       }
     } else if (key.equals("single-line")) {
       setSingleLine();
+    } else if (key.equals("text-color")) {
+      this.setTextColor(Color.parseColor(value));
+    } else if (key.equals("gravity")) {
+      LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
+      if (value.equals("bottom")) {
+	params.gravity = Gravity.BOTTOM;
+      } else if (value.equals("top")) {
+	params.gravity = Gravity.TOP;
+      } else if (value.equals("left")) {
+	params.gravity = Gravity.LEFT;
+      } else if (value.equals("right")) {
+	params.gravity = Gravity.RIGHT;
+      } else if (value.equals("center")) {
+	params.gravity = Gravity.CENTER;
+      }
+      setLayoutParams(params);
     }
   }
 
@@ -174,7 +195,7 @@ public class FWTextView extends TextView implements NativeCommandHandler {
   }
 
   @Override
-  public void setImage(byte[] bytes) {
+  public void setImage(byte[] bytes, int width, int height) {
     // TODO Auto-generated method stub
     
   }
