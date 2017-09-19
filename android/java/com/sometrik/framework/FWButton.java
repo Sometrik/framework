@@ -71,14 +71,13 @@ public class FWButton extends Button implements NativeCommandHandler {
     System.out.println("Button style " + key + " " + value);
     if (key.equals("font-size")){
       if (value.equals("small")){
-//	this.setTextAppearance(frame, android.R.style.TextAppearance_DeviceDefault_Small);
 	this.setTextSize(9);
       } else if (value.equals("medium")){
-//	this.setTextAppearance(frame, android.R.style.TextAppearance_DeviceDefault_Medium);
 	this.setTextSize(12);
       } else if (value.equals("large")){
-//	this.setTextAppearance(frame, android.R.style.TextAppearance_DeviceDefault_Large);
 	this.setTextSize(15);
+      } else {
+	setTextSize(Integer.parseInt(value));
       }
     } else if (key.equals("gravity")) {
       Log.d("button", "setting gravity: ");
@@ -119,11 +118,9 @@ public class FWButton extends Button implements NativeCommandHandler {
       if (value.equals("true") || value.equals("1")) {
 	this.setPressed(true);
 	this.setTextColor(Color.RED);
-	// this.setBackground(frame.getResources().getDrawable(android.R.drawable.dialog_holo_dark_frame));
       } else {
 	this.setTextColor(Color.BLACK);
 	this.setPressed(false);
-//	this.setBackground(frame.getResources().getDrawable(android.R.drawable.dialog_holo_light_frame));
       }
     } else if (key.equals("icon-left") || key.equals("icon-right") || key.equals("icon-top") || key.equals("icon-bottom")){
       AssetManager mgr = frame.getAssets();
@@ -131,8 +128,6 @@ public class FWButton extends Button implements NativeCommandHandler {
         InputStream stream = mgr.open(value);
         BitmapDrawable draw = new BitmapDrawable(stream);
         this.setGravity(Gravity.CENTER);
-        
-
       if (key.equals("icon-right")){
         rightDraw = draw;
       } else if (key.equals("icon-top")){
@@ -142,8 +137,6 @@ public class FWButton extends Button implements NativeCommandHandler {
       } else if (key.equals("icon-left")){
 	leftDraw = draw;
       }
-//      this.setCompoundDrawablePadding(-50);
-//         this.setPadding(0, 160, 0, 300);
       this.setCompoundDrawablesWithIntrinsicBounds(leftDraw, topDraw, rightDraw, bottomDraw);
       } catch (IOException e) {
         System.out.println("no picture found: " + value);
@@ -153,7 +146,35 @@ public class FWButton extends Button implements NativeCommandHandler {
       setBackgroundResource(0);
     } else if (key.equals("single-line")) {
       this.setSingleLine();
-    }
+    } else if (key.equals("text-color")) {
+      setTextColor(Color.parseColor(value));
+    } else if (key.equals("color")) {
+      setBackgroundColor(Color.parseColor(value));
+    } else if (key.equals("padding-top")) {
+      setPadding(getPaddingLeft(), Integer.parseInt(value), getPaddingRight(), getPaddingBottom());
+    } else if (key.equals("padding-bottom")) {
+      setPadding(getPaddingLeft(), getPaddingTop(), getPaddingRight(), Integer.parseInt(value));
+    } else if (key.equals("padding-left")) {
+      setPadding(Integer.parseInt(value), getPaddingTop(), getPaddingRight(), getPaddingBottom());
+    } else if (key.equals("padding-right")) {
+      setPadding(getPaddingLeft(), getPaddingTop(), Integer.parseInt(value), getPaddingBottom());
+    } else if (key.equals("margin-right")) {
+      LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
+      params.rightMargin = Integer.parseInt(value);
+      setLayoutParams(params);
+    } else if (key.equals("margin-left")) {
+      LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
+      params.leftMargin = Integer.parseInt(value);
+      setLayoutParams(params);
+    } else if (key.equals("margin-top")) {
+      LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
+      params.topMargin = Integer.parseInt(value);
+      setLayoutParams(params);
+    } else if (key.equals("margin-bottom")) {
+      LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
+      params.bottomMargin = Integer.parseInt(value);
+      setLayoutParams(params);
+    } 
   }
 
   @Override
@@ -210,7 +231,7 @@ public class FWButton extends Button implements NativeCommandHandler {
 
 
   @Override
-  public void setImage(byte[] bytes) {
+  public void setImage(byte[] bytes, int width, int height) {
     // TODO Auto-generated method stub
     
   }
