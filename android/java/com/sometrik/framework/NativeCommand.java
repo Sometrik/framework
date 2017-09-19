@@ -441,7 +441,7 @@ public class NativeCommand {
       case 3:
 	  view.setImage(byteArray, width, height, Bitmap.Config.RGB_565);
 	  break;
-      case 5:
+      case 5: case 6:
 	  view.setImage(byteArray, width, height, Bitmap.Config.ARGB_8888);
 	  break;
       default:
