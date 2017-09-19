@@ -22,7 +22,7 @@ import android.widget.LinearLayout;
 public class FWSimpleList extends LinearLayout implements NativeCommandHandler {
 
   private FrameWork frame;
-  private FrameLayout.LayoutParams defaultListParams;
+  private LinearLayout.LayoutParams defaultListParams;
   private ArrayList<Sheet> sheets = new ArrayList<Sheet>();
   private ArrayList<String> sheetMemory = new ArrayList<String>();
   private int tableSize = 1;
@@ -31,7 +31,7 @@ public class FWSimpleList extends LinearLayout implements NativeCommandHandler {
     public FWSimpleList(FrameWork frame) {
       super(frame);
       this.frame = frame;
-      defaultListParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT);
+      defaultListParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
       defaultListParams.setMargins(0, 10, 0, 10);
       setOrientation(LinearLayout.VERTICAL);
       setDividerDrawable(frame.getResources().getDrawable(android.R.drawable.divider_horizontal_bright));
@@ -121,7 +121,7 @@ public class FWSimpleList extends LinearLayout implements NativeCommandHandler {
     }
 
     @Override
-    public void setImage(byte[] bytes) {
+    public void setImage(byte[] bytes, int width, int height) {
       // TODO Auto-generated method stub
       
     }
@@ -176,8 +176,10 @@ public class FWSimpleList extends LinearLayout implements NativeCommandHandler {
 
     @Override
     public void reshape(int size) {
+	System.out.println("reshape_table simple " + size);
       this.tableSize = size;
       ArrayList<Sheet> enabledSheets = getEnabledSheets();
+	System.out.println("reshape_table simple " + size + " " + enabledSheets.size());
       if (size == enabledSheets.size()) {
         return;
       }
@@ -191,6 +193,7 @@ public class FWSimpleList extends LinearLayout implements NativeCommandHandler {
       }
       if (size > enabledSheets.size()) {
         ArrayList<Sheet> disabledSheets = getDisabledSheets();
+	System.out.println("reshape_table simple disabled: " + disabledSheets.size());
         int difference = size - enabledSheets.size();
         for (int i = 0; i < difference; i++) {
   	Sheet disabledSheet = disabledSheets.get(i);
