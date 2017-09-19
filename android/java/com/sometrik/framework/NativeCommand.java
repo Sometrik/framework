@@ -437,7 +437,7 @@ public class NativeCommand {
       view.setError(value != 0, getTextValueAsString());
       break;
     case SET_IMAGE:
-      view.setImage(byteArray, 64, 64);
+      view.setImage(byteArray, width, height);
       break;
     case LAUNCH_BROWSER:
       frame.launchBrowser(getTextValueAsString());
