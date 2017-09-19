@@ -193,8 +193,9 @@ public class FWImageView extends ImageView implements NativeCommandHandler {
 //    } 
 
 	final float scale = getContext().getResources().getDisplayMetrics().density;
-      System.out.println("picture scale: " + scale + " " + width + " " + height);
-    Bitmap bmp = Bitmap.createBitmap((int)scale * width, (int)scale * height, config);
+//      System.out.println("picture scale: " + scale + " " + width + " " + height);
+//    Bitmap bmp = Bitmap.createBitmap((int)scale * width, (int)scale * height, config);
+    Bitmap bmp = Bitmap.createBitmap(width, height, config);
 //  Bitmap bmp = Bitmap.createBitmap((int[])bytes, 32, 32, Bitmap.Config.ARGB_8888)
     ByteBuffer buffer = ByteBuffer.wrap(bytes);
     bmp.copyPixelsFromBuffer(buffer);
