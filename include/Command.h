@@ -98,9 +98,9 @@ class Command {
   void setKey(const std::string & _key) { key = _key; }
 
   void setWidth(int _width) { width = _width; }
-  int getWidth() { return width; }
+  int getWidth() const { return width; }
   void setHeight(int _height) { height = _height; }
-  int getHeight() { return height; }
+  int getHeight() const { return height; }
   void setLayoutWeight(int _layout_weight) { layout_weight = _layout_weight; }
   int getLayoutWeight() const { return layout_weight; }
 
