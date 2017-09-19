@@ -1,6 +1,7 @@
 package com.sometrik.framework;
 
 import android.R;
+import android.graphics.Bitmap.Config;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -122,7 +123,7 @@ public class FWPopupView extends PopupWindow implements NativeCommandHandler {
   }
 
   @Override
-  public void setImage(byte[] bytes, int width, int height) {
+  public void setImage(byte[] bytes, int width, int height, Config config) {
     // TODO Auto-generated method stub
     
   }

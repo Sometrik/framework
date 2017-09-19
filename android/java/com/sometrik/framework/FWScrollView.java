@@ -1,6 +1,7 @@
 package com.sometrik.framework;
 
 import android.content.res.Resources;
+import android.graphics.Bitmap.Config;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
@@ -189,7 +190,7 @@ public class FWScrollView extends ScrollView implements NativeCommandHandler {
   }
 
   @Override
-  public void setImage(byte[] bytes, int width, int height) {
+  public void setImage(byte[] bytes, int width, int height, Config config) {
     // TODO Auto-generated method stub
     
   }

@@ -1,5 +1,6 @@
 package com.sometrik.framework;
 
+import android.graphics.Bitmap.Config;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
@@ -195,7 +196,7 @@ public class FWTextView extends TextView implements NativeCommandHandler {
   }
 
   @Override
-  public void setImage(byte[] bytes, int width, int height) {
+  public void setImage(byte[] bytes, int width, int height, Config config) {
     // TODO Auto-generated method stub
     
   }

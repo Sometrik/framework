@@ -1,5 +1,6 @@
 package com.sometrik.framework;
 
+import android.graphics.Bitmap.Config;
 import android.graphics.Color;
 import android.util.DisplayMetrics;
 import android.view.View;
@@ -155,7 +156,7 @@ public class NavigationBar extends FrameLayout implements NativeCommandHandler {
   }
 
   @Override
-  public void setImage(byte[] bytes, int width, int height) {
+  public void setImage(byte[] bytes, int width, int height, Config config) {
     // TODO Auto-generated method stub
     
   }

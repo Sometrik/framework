@@ -5,6 +5,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import android.content.Context;
+import android.graphics.Bitmap.Config;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Gravity;
@@ -186,7 +187,7 @@ public class FWEditText extends EditText implements NativeCommandHandler {
   }
 
   @Override
-  public void setImage(byte[] bytes, int width, int height) {
+  public void setImage(byte[] bytes, int width, int height, Config config) {
     // TODO Auto-generated method stub
     
   }

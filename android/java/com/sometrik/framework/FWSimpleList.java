@@ -7,6 +7,7 @@ import java.util.Iterator;
 
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -121,7 +122,7 @@ public class FWSimpleList extends LinearLayout implements NativeCommandHandler {
     }
 
     @Override
-    public void setImage(byte[] bytes, int width, int height) {
+    public void setImage(byte[] bytes, int width, int height, Config config) {
       // TODO Auto-generated method stub
       
     }

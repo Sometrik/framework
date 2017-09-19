@@ -1,5 +1,6 @@
 package com.sometrik.framework;
 
+import android.graphics.Bitmap.Config;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v4.widget.DrawerLayout;
@@ -168,7 +169,7 @@ public class NavigationLayout extends LinearLayout implements NativeCommandHandl
   }
 
   @Override
-  public void setImage(byte[] bytes, int width, int height) {
+  public void setImage(byte[] bytes, int width, int height, Config config) {
     // TODO Auto-generated method stub
 
   }

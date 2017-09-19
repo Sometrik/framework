@@ -5,6 +5,7 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import android.content.Context;
+import android.graphics.Bitmap.Config;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -121,7 +122,7 @@ public class FWPicker extends Spinner implements NativeCommandHandler {
   }
 
   @Override
-  public void setImage(byte[] bytes, int width, int height) {
+  public void setImage(byte[] bytes, int width, int height, Config config) {
     // TODO Auto-generated method stub
     
   }

@@ -1,6 +1,7 @@
 package com.sometrik.framework;
 
 import android.content.Context;
+import android.graphics.Bitmap.Config;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.RadioButton;
@@ -105,7 +106,7 @@ public class FWRadioGroup extends RadioGroup implements NativeCommandHandler {
   }
 
   @Override
-  public void setImage(byte[] bytes, int width, int height) {
+  public void setImage(byte[] bytes, int width, int height, Config config) {
     // TODO Auto-generated method stub
     
   }

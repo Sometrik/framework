@@ -3,6 +3,7 @@ package com.sometrik.framework;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import android.graphics.Bitmap.Config;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -157,7 +158,7 @@ public class NativeSurface extends SurfaceView implements NativeCommandHandler {
   }
 
   @Override
-  public void setImage(byte[] bytes, int width, int height) {
+  public void setImage(byte[] bytes, int width, int height, Config config) {
     // TODO Auto-generated method stub
     
   }

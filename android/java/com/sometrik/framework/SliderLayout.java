@@ -7,6 +7,7 @@ import java.util.TimerTask;
 
 import com.sometrik.framework.SliderButton.Position;
 
+import android.graphics.Bitmap.Config;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
@@ -354,7 +355,7 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
   }
   
   @Override
-  public void setImage(byte[] bytes, int width, int height) {
+  public void setImage(byte[] bytes, int width, int height, Config config) {
     // TODO Auto-generated method stub
     
   }

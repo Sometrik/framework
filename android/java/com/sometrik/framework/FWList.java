@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import com.sometrik.framework.FWList.ColumnType;
 
+import android.graphics.Bitmap.Config;
 import android.graphics.Typeface;
 import android.view.View;
 import android.view.ViewGroup;
@@ -193,7 +194,7 @@ public class FWList extends ListView implements NativeCommandHandler {
   }
 
   @Override
-  public void setImage(byte[] bytes, int width, int height) {
+  public void setImage(byte[] bytes, int width, int height, Config config) {
     // TODO Auto-generated method stub
     
   }
