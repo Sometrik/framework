@@ -113,6 +113,8 @@ public class FWImageView extends ImageView implements NativeCommandHandler {
 	params.gravity = Gravity.LEFT;
       } else if (value.equals("right")) {
 	params.gravity = Gravity.RIGHT;
+      } else if (value.equals("center")) {
+	params.gravity = Gravity.CENTER;
       }
       setLayoutParams(params);
     } else if (key.equals("width")) {
@@ -176,7 +178,7 @@ public class FWImageView extends ImageView implements NativeCommandHandler {
   }
 
   @Override
-  public void setImage(byte[] bytes) {
+  public void setImage(byte[] bytes, int width, int height) {
     System.out.println("SetImage " + bytes.length + " " + getWidth());
 //    Bitmap map = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
 //    BitmapFactory.decodeStream(bytes);
@@ -189,8 +191,11 @@ public class FWImageView extends ImageView implements NativeCommandHandler {
 //    } else {
 //      System.out.println("mappi: " + map.getHeight());
 //    } 
-    Bitmap bmp = Bitmap.createBitmap(84, 84, Bitmap.Config.ARGB_8888);
-//    Bitmap.createBitmap((int[])bytes, 32, 32, Bitmap.Config.ARGB_8888)
+
+	final float scale = getContext().getResources().getDisplayMetrics().density;
+      System.out.println("picture scale: " + scale + " " + width + " " + height);
+    Bitmap bmp = Bitmap.createBitmap((int)scale * width, (int)scale * height, Bitmap.Config.ARGB_8888);
+//  Bitmap bmp = Bitmap.createBitmap((int[])bytes, 32, 32, Bitmap.Config.ARGB_8888)
     ByteBuffer buffer = ByteBuffer.wrap(bytes);
     bmp.copyPixelsFromBuffer(buffer);
 //    Bitmap map = Bitmap.create

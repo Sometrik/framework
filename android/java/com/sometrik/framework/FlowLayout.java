@@ -254,7 +254,7 @@ public class FlowLayout extends ViewGroup implements NativeCommandHandler {
   }
 
   @Override
-  public void setImage(byte[] bytes) {
+  public void setImage(byte[] bytes, int width, int height) {
     // TODO Auto-generated method stub
     
   }

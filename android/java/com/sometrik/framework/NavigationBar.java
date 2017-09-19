@@ -22,6 +22,7 @@ public class NavigationBar extends FrameLayout implements NativeCommandHandler {
     baseLayout = new LinearLayout(frame);
     baseLayout.setOrientation(LinearLayout.HORIZONTAL);
     LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+    
     baseLayout.setLayoutParams(params);
     setLayoutParams(params);
     DisplayMetrics metrics = frame.setupDisplayMetrics();
@@ -154,7 +155,7 @@ public class NavigationBar extends FrameLayout implements NativeCommandHandler {
   }
 
   @Override
-  public void setImage(byte[] bytes) {
+  public void setImage(byte[] bytes, int width, int height) {
     // TODO Auto-generated method stub
     
   }
