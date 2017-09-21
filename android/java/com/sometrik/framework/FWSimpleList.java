@@ -26,7 +26,6 @@ public class FWSimpleList extends LinearLayout implements NativeCommandHandler {
   private LinearLayout.LayoutParams defaultListParams;
   private ArrayList<Sheet> sheets = new ArrayList<Sheet>();
   private ArrayList<String> sheetMemory = new ArrayList<String>();
-  private int tableSize = 1;
   private String sheeticon_right = "";
   
     public FWSimpleList(FrameWork frame) {
@@ -98,7 +97,6 @@ public class FWSimpleList extends LinearLayout implements NativeCommandHandler {
 
     @Override
     public void addOption(int optionId, String text) {
-//      System.out.println("setting sheet " + sheetPosition + " " + title + " " + sheets.size());
       if (optionId < sheets.size()) {
         sheets.get(optionId).name.setText(text);;
       }
@@ -138,21 +136,21 @@ public class FWSimpleList extends LinearLayout implements NativeCommandHandler {
 
     @Override
     public void reshape(int value, int size) {
-      if (value < sheets.size()) {
-        ViewGroup layout = sheets.get(value).layout;
+    if (value < sheets.size()) {
+      ViewGroup layout = sheets.get(value).layout;
 
-        //add one because title layout won't be resized
-        size++;
-        if (layout.getChildCount() == size) {
-  	return;
-        }
-        ArrayList<View> viewsToBeRemoved = new ArrayList<View>();
-        for (int i = size; i < layout.getChildCount(); i++) {
-          View view = layout.getChildAt(i);
-          viewsToBeRemoved.add(view);
-        }
+      // add one because title layout won't be resized
+      size++;
+      if (layout.getChildCount() == size) {
+	return;
+      }
+      ArrayList<View> viewsToBeRemoved = new ArrayList<View>();
+      for (int i = size; i < layout.getChildCount(); i++) {
+	View view = layout.getChildAt(i);
+	viewsToBeRemoved.add(view);
+      }
 
-        Iterator<View> i = viewsToBeRemoved.iterator();
+      Iterator<View> i = viewsToBeRemoved.iterator();
       while (i.hasNext()) {
 	View v = i.next();
 	if (v instanceof FWImageView) {
@@ -163,61 +161,43 @@ public class FWSimpleList extends LinearLayout implements NativeCommandHandler {
 	}
 	frame.removeViewFromList(v.getId());
 	layout.removeView(v);
-       }
-      } else {
-
-        ViewGroup layout = sheets.get(value).layout;
-	for (int i = 0; i < layout.getChildCount(); i++) {
-	  
-	}
-	return;
       }
-//      invalidate();
+    } else {
+
+      ViewGroup layout = sheets.get(value).layout;
+      for (int i = 0; i < layout.getChildCount(); i++) {
+
+      }
+      return;
     }
+  }
 
     @Override
-    public void reshape(int size) {
-	System.out.println("reshape_table simple " + size);
-      this.tableSize = size;
-      ArrayList<Sheet> enabledSheets = getEnabledSheets();
-	System.out.println("reshape_table simple " + size + " " + enabledSheets.size());
-      if (size == enabledSheets.size()) {
-        return;
-      }
-      if (size < enabledSheets.size()) {
-        for (int i = size; i < enabledSheets.size(); i++) {
-  	System.out.println("removing sheet " + i);
-  	sheets.get(i).disable();
-//  	sheets.get(i).layout.setVisibility(GONE);
-//  	removeView(sheets.get(i).layout);
-        }
-      }
-      if (size > enabledSheets.size()) {
-        ArrayList<Sheet> disabledSheets = getDisabledSheets();
-	System.out.println("reshape_table simple disabled: " + disabledSheets.size());
-        int difference = size - enabledSheets.size();
-        for (int i = 0; i < difference; i++) {
-  	Sheet disabledSheet = disabledSheets.get(i);
-  	disabledSheet.enable();
-//  	disabledSheet.disabled = false;
-//  	sheets.get(i).layout.setVisibility(VISIBLE);
-//  	addView(disabledSheet.layout);
-  	
-        }
-      }
-//      updateLayout();
-    invalidate();
+  public void reshape(int size) {
+    System.out.println("reshape_table simple " + size);
+    ArrayList<Sheet> enabledSheets = getEnabledSheets();
+    System.out.println("reshape_table simple " + size + " " + enabledSheets.size());
+    if (size == enabledSheets.size()) {
+      return;
     }
+    if (size < enabledSheets.size()) {
+      for (int i = size; i < enabledSheets.size(); i++) {
+	System.out.println("removing sheet " + i);
+	sheets.get(i).disable();
+      }
+    }
+    if (size > enabledSheets.size()) {
+      ArrayList<Sheet> disabledSheets = getDisabledSheets();
+      System.out.println("reshape_table simple disabled: " + disabledSheets.size());
+      int difference = size - enabledSheets.size();
+      for (int i = 0; i < difference; i++) {
+	Sheet disabledSheet = disabledSheets.get(i);
+	disabledSheet.enable();
+      }
+    }
+    invalidate();
+  }
     
-//    private void updateLayout() {
-//      this.removeAllViews();
-//      
-//      ArrayList<Sheet> enabledSheets = getEnabledSheets();
-//      for (Sheet sheet : enabledSheets) {
-//	addView(sheet.layout);
-//      }
-//      invalidate();
-//    }
 
     @Override
     public void setViewEnabled(Boolean enabled) {
@@ -318,9 +298,6 @@ public class FWSimpleList extends LinearLayout implements NativeCommandHandler {
       private void enable() {
 	disabled = false;
 	layout.setVisibility(VISIBLE);
-//	for (int i = 0; i < layout.getChildCount(); i++) {
-//	  layout.getChildAt(i).setVisibility(VISIBLE);;
-//	}
       }
       private Sheet(ViewGroup view) {
 	sheetLayout = new LinearLayout(frame);
@@ -329,17 +306,17 @@ public class FWSimpleList extends LinearLayout implements NativeCommandHandler {
 	sheetLayout.setFocusable(false);
 	
         name = new FWTextView(frame);
-//        name.setBackgroundDrawable(frame.getResources().getDrawable(android.R.drawable.dialog_holo_light_frame));
+	LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+	params.weight = 1;
+	name.setLayoutParams(params);
         name.setTextSize(24);
         name.setTypeface(null, Typeface.BOLD);
-        name.setLayoutParams(defaultListParams);
-
+        name.setLayoutParams(params);
 	final float scale = getContext().getResources().getDisplayMetrics().density;
 	int pixels = (int) (41 * scale + 0.5f);
 	
         name.setHeight(pixels);
         sheetLayout.addView(name);
-//        name.setBackgroundDrawable(backgroundColor);
         layout = view;
         view.addView(sheetLayout);
     }
@@ -349,10 +326,12 @@ public class FWSimpleList extends LinearLayout implements NativeCommandHandler {
       System.out.println("setting right icon");
       if (rightIconView == null) {
 	rightIconView = new ImageView(frame);
-	ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+	LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
 	rightIconView.setScaleType(ScaleType.FIT_END);
+	params.weight = 1;
 	rightIconView.setLayoutParams(params);
 	sheetLayout.addView(rightIconView);
+	
       }
       try {
 	AssetManager mgr = frame.getAssets();
