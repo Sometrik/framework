@@ -151,6 +151,14 @@ public class FWImageView extends ImageView implements NativeCommandHandler {
       setPadding((int) (Integer.parseInt(value) * scale + 0.5f), getPaddingTop(), getPaddingRight(), getPaddingBottom());
     } else if (key.equals("padding-right")) {
       setPadding(getPaddingLeft(), getPaddingTop(), (int) (Integer.parseInt(value) * scale + 0.5f), getPaddingBottom());
+    } else if (key.equals("scale")) {
+      if (value.equals("start")) {
+	setScaleType(ScaleType.FIT_START);
+      } else if (value.equals("end")) {
+	setScaleType(ScaleType.FIT_END);
+      } else if (value.equals("center")) {
+	setScaleType(ScaleType.FIT_CENTER);
+      }
     }
   }
 
