@@ -23,11 +23,22 @@ class ActionBar : public Element {
     sendCommand(c);
   }
 
-  void setTitle(const std::string & _title){
+  void setTitle(const std::string & _title) {
     title = _title;
     Command c(Command::SET_TEXT_VALUE, getInternalId());
     c.setTextValue(title);
     sendCommand(c);
+  }
+
+  void clear() {
+    Command c(Command::CLEAR, getInternalId());
+    sendCommand(c);
+  }
+
+  void onValueEvent(ValueEvent & ev) override {
+    notify();
+    CommandEvent ev2(getId());
+    ev2.dispatch(*this);
   }
 
   void setSubtitle(const std::string & _subtitle){
