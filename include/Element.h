@@ -88,8 +88,8 @@ class Element : public EventHandler {
   void setLayoutWeight(int w) { layout_weight = w; }
   int getLayoutWeight() const { return layout_weight; }
 
-  FWPlatform & getPlatform() { return *platform; }
-  const FWPlatform & getPlatform() const { return *platform; }
+  FWPlatform & getPlatform();
+  const FWPlatform & getPlatform() const;
 
   FWApplication & getApplication();
   const FWApplication & getApplication() const;

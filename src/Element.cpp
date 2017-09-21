@@ -4,6 +4,7 @@
 #include <TextLabel.h>
 #include <LinearLayout.h>
 #include <FWApplication.h>
+#include <ElementNotInitializedException.h>
 
 #include <cassert>
 
@@ -153,6 +154,18 @@ Element::showToast(const std::string & message, int duration) {
   c.setTextValue(message);
   c.setValue(duration);
   sendCommand(c);
+}
+
+FWPlatform &
+Element::getPlatform() {
+  if (!platform) throw ElementNotInitializedException();
+  return *platform;
+}
+
+const FWPlatform &
+Element::getPlatform() const {
+  if (!platform) throw ElementNotInitializedException();
+  return *platform;
 }
 
 FWApplication &
