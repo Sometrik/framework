@@ -118,7 +118,7 @@ public class FWTextView extends TextView implements NativeCommandHandler {
 	setTextAlignment(TEXT_ALIGNMENT_TEXT_START);
       } else if (value.equals("center")) {
 	setTextAlignment(TEXT_ALIGNMENT_CENTER);
-	this.setGravity(Gravity.CENTER_HORIZONTAL);
+//	this.setGravity(Gravity.Ce);
       }
     } else if (key.equals("single-line")) {
       setSingleLine();
@@ -127,15 +127,19 @@ public class FWTextView extends TextView implements NativeCommandHandler {
     } else if (key.equals("gravity")) {
       LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
       if (value.equals("bottom")) {
-	params.gravity = Gravity.BOTTOM;
+	setGravity(Gravity.BOTTOM);
       } else if (value.equals("top")) {
-	params.gravity = Gravity.TOP;
+	setGravity(Gravity.TOP);
       } else if (value.equals("left")) {
-	params.gravity = Gravity.LEFT;
+	setGravity(Gravity.LEFT);
       } else if (value.equals("right")) {
-	params.gravity = Gravity.RIGHT;
+	setGravity(Gravity.RIGHT);
       } else if (value.equals("center")) {
-	params.gravity = Gravity.CENTER;
+	setGravity(Gravity.CENTER);
+      } else if (value.equals("center-vertical")) {
+	setGravity(Gravity.CENTER_VERTICAL);
+      } else if (value.equals("center-horizontal")) {
+	setGravity(Gravity.CENTER_HORIZONTAL);
       }
       setLayoutParams(params);
     }
