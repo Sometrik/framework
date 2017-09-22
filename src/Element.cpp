@@ -156,6 +156,11 @@ Element::showToast(const std::string & message, int duration) {
   sendCommand(c);
 }
 
+void
+Element::launchBrowser(const std::string & input_url) {
+  sendCommand(Command(Command::LAUNCH_BROWSER, getInternalId(), input_url));
+}
+
 FWPlatform &
 Element::getPlatform() {
   if (!platform) throw ElementNotInitializedException();

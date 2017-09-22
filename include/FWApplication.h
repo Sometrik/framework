@@ -17,10 +17,6 @@ public:
     if (className == "FWApplication") return true;
     return Element::isA(className);
   }
-
-  void launchBrowser(const std::string & input_url) {
-    sendCommand(Command(Command::LAUNCH_BROWSER, getInternalId(), input_url));
-  }
   
   Logger & getLogger() {
     if (!logger.get()) {
