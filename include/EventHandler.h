@@ -37,7 +37,7 @@ class MultiTouchEvent;
 class LoadEvent;
 
 // Application specific
-class LicenseEvent;
+class AuthEvent;
 class EdgeEvent;
 class PrepareEvent;
 class VisiblePostsEvent;
@@ -96,7 +96,7 @@ class EventHandler : public Notifier {
   virtual void handleLayoutEvent(LayoutEvent & ev) { }
   virtual void handleGraphChangeEvent(GraphChangeEvent & ev) { }
   virtual void handleRebuildEvent(RebuildEvent & ev) { }
-  virtual void handleLicenseEvent(LicenseEvent & ev) { }
+  virtual void handleAuthEvent(AuthEvent & ev) { }
   virtual void handleEdgeEvent(EdgeEvent & ev) { }
   virtual void handleVisiblePostsEvent(VisiblePostsEvent & ev) { }
   virtual void handleSearchEvent(SearchEvent & ev) { }
