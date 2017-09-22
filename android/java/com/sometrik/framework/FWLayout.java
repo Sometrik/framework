@@ -15,6 +15,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
+import android.widget.LinearLayout.LayoutParams;
 
 public class FWLayout extends LinearLayout implements NativeCommandHandler {
   
@@ -201,7 +202,23 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
       }
     } else if (key.equals("color")) {
       this.setBackgroundColor(Color.parseColor(value));
-    }
+    } else if (key.equals("margin-right")) {
+      LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
+      params.rightMargin = Integer.parseInt(value);
+      setLayoutParams(params);
+    } else if (key.equals("margin-left")) {
+      LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
+      params.leftMargin = Integer.parseInt(value);
+      setLayoutParams(params);
+    } else if (key.equals("margin-top")) {
+      LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
+      params.topMargin = Integer.parseInt(value);
+      setLayoutParams(params);
+    } else if (key.equals("margin-bottom")) {
+      LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
+      params.bottomMargin = Integer.parseInt(value);
+      setLayoutParams(params);
+    } 
   }
 
   @Override
