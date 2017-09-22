@@ -26,6 +26,9 @@ public class FWActionBar implements NativeCommandHandler {
   private FrameWork frame;
   private TextView titleView;
   private TextView subtitleView;
+  private ImageButton drawerButton;
+  private LinearLayout mainLayout;
+  private FWLayout alternativeButtonLayout;
   
 
   public FWActionBar(final FrameWork frame, String title, int id){
@@ -40,14 +43,14 @@ public class FWActionBar implements NativeCommandHandler {
     actionBar.setDisplayShowTitleEnabled(false);
     actionBar.setDisplayShowCustomEnabled(true);
     
-    LinearLayout layout = new LinearLayout(frame);
-    layout.setOrientation(LinearLayout.HORIZONTAL);
-    layout.setBackgroundColor(Color.parseColor("#ffffff"));
+    mainLayout = new LinearLayout(frame);
+    mainLayout.setOrientation(LinearLayout.HORIZONTAL);
+    mainLayout.setBackgroundColor(Color.parseColor("#ffffff"));
     LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
     params.weight = 1;
-    layout.setLayoutParams(params);
+    mainLayout.setLayoutParams(params);
 
-    ImageButton drawerButton = new ImageButton(frame);
+    drawerButton = new ImageButton(frame);
     try {
       InputStream stream = frame.getAssets().open("icons_hamburger-menu.png");
       Drawable draw = new BitmapDrawable(stream);
@@ -71,7 +74,7 @@ public class FWActionBar implements NativeCommandHandler {
 	  }
 	}
       });
-      layout.addView(drawerButton);
+      mainLayout.addView(drawerButton);
 
     } catch (IOException e) {
       e.printStackTrace();
@@ -81,6 +84,8 @@ public class FWActionBar implements NativeCommandHandler {
     titleView.setText(title);
     titleView.setLayoutParams(params);
     titleView.setGravity(Gravity.CENTER);
+    titleView.setTextSize(14);
+    titleView.setTextColor(Color.parseColor("#5d6468"));
     
 
     subtitleView = new TextView(frame);
@@ -88,6 +93,8 @@ public class FWActionBar implements NativeCommandHandler {
     subtitleView.setLayoutParams(params);
     subtitleView.setGravity(Gravity.CENTER);
     subtitleView.setVisibility(TextView.GONE);
+    subtitleView.setTextSize(10);
+    subtitleView.setTextColor(Color.parseColor("#b7c4cd"));
     
 
     LinearLayout titleHolderLayout = new LinearLayout(frame);
@@ -104,11 +111,11 @@ public class FWActionBar implements NativeCommandHandler {
     titleView.setPadding(titleView.getPaddingLeft(), titleView.getPaddingRight(), pixels, titleView.getPaddingBottom());
     subtitleView.setPadding(subtitleView.getPaddingLeft(), subtitleView.getPaddingRight(), pixels, subtitleView.getPaddingBottom());
 //    titleView.setGravity(Gravity.CENTER);
-    layout.addView(titleHolderLayout);
+    mainLayout.addView(titleHolderLayout);
     
     
     actionBar.show();
-    actionBar.setCustomView(layout);
+    actionBar.setCustomView(mainLayout);
 //    actionBar.setDisplayUseLogoEnabled(false);
 //
 //    
@@ -131,6 +138,28 @@ public class FWActionBar implements NativeCommandHandler {
     itemList = new ArrayList<ActionBarItem>();
     this.id = id;
   }
+
+  
+  void changeButton(final View view) {
+    
+    clear();
+
+    drawerButton.setVisibility(ImageButton.GONE);
+    alternativeButtonLayout = new FWLayout(frame);
+    LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
+    alternativeButtonLayout.setLayoutParams(params2);
+    alternativeButtonLayout.addView(view);
+    alternativeButtonLayout.setGravity(Gravity.CENTER_HORIZONTAL);
+    mainLayout.addView(alternativeButtonLayout, 0);
+
+    alternativeButtonLayout.setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View arg0) {
+	System.out.println("actionbar: view clicked " + view.getId());
+	frame.intChangedEvent(System.currentTimeMillis() / 1000.0, view.getId(), 1, 1);
+      }
+    });
+  }
   
   public void setTitle(String title) {
     titleView.setText(title);
@@ -149,6 +178,7 @@ public class FWActionBar implements NativeCommandHandler {
   @Override
   public void addChild(View view) {
     System.out.println("Command couldn't be handled by FWActionBar");
+    changeButton(view);
   }
 
   @Override
@@ -202,6 +232,19 @@ public class FWActionBar implements NativeCommandHandler {
       } else if (subtitleView.getVisibility() == TextView.GONE) {
 	subtitleView.setVisibility(TextView.VISIBLE);
       }
+    } else if (key.equals("height")) {
+
+      final float scale = frame.getResources().getDisplayMetrics().density;
+      LinearLayout.LayoutParams params = (LayoutParams) mainLayout.getLayoutParams();
+      if (value.equals("wrap-content")) {
+	params.height = LinearLayout.LayoutParams.WRAP_CONTENT;
+      } else if (value.equals("match-parent")) {
+	params.height = LinearLayout.LayoutParams.MATCH_PARENT;
+      } else {
+	int pixels = (int) (Integer.parseInt(value) * scale + 0.5f);
+	params.height = pixels;
+      }
+      mainLayout.setLayoutParams(params);
     }
 //    if (key.equals("icon")){
 //      try {
@@ -241,8 +284,11 @@ public class FWActionBar implements NativeCommandHandler {
 
   @Override
   public void clear() {
-    // TODO Auto-generated method stub
-    
+    if (alternativeButtonLayout != null) {
+     mainLayout.removeView(alternativeButtonLayout);
+     drawerButton.setVisibility(ImageButton.VISIBLE);
+     alternativeButtonLayout = null;
+    }
   }
 
   @Override
