@@ -173,7 +173,7 @@ class Element : public EventHandler {
   }
   virtual void create() { }
   
-  void initialize(FWPlatform * _platform);
+  virtual void initialize(FWPlatform * _platform);
   void initializeChildren();
 
   bool is_visible = true;
