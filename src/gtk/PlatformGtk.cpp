@@ -593,6 +593,49 @@ public:
     }
       break;
 
+    case Command::SHOW_INPUT_DIALOG: {
+      GtkDialogFlags flags = GtkDialogFlags(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT);
+      auto dialog = gtk_dialog_new_with_buttons(command.getTextValue().c_str(),
+						GTK_WINDOW(window),
+						flags,
+						"_OK",
+						GTK_RESPONSE_ACCEPT,
+						"_Cancel",
+						GTK_RESPONSE_REJECT,
+						0
+						);
+
+      auto vbox = gtk_vbox_new(TRUE, TRUE);
+      
+      auto label = gtk_label_new(command.getTextValue2().c_str());
+      gtk_widget_show(label);
+ 
+      auto entry = gtk_entry_new ();
+      gtk_widget_show(entry);
+
+      gtk_box_pack_start(GTK_BOX(vbox), label, TRUE, TRUE, 0);
+      gtk_box_pack_start (GTK_BOX(vbox), entry, TRUE, TRUE, 0);
+      gtk_widget_show (vbox);
+
+      auto a = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
+      gtk_container_add(GTK_CONTAINER(a), vbox);
+
+      gint result = gtk_dialog_run(GTK_DIALOG (dialog));
+      switch (result) {
+      case GTK_RESPONSE_ACCEPT: {
+	modal_result_text = gtk_entry_get_text((GtkEntry*)entry);
+	modal_result_value = 1;
+      }
+	break;
+      default:
+	modal_result_text.clear();
+	modal_result_value = 0;	
+	break;
+      }
+      gtk_widget_destroy (dialog);
+    }
+      break;
+
     case Command::CREATE_TOAST: {
       // GApplication *application = g_application_new ("hello.world", G_APPLICATION_FLAGS_NONE);
       // g_application_register (application, NULL, NULL);
