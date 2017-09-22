@@ -103,12 +103,11 @@ public class FWTextView extends TextView implements NativeCommandHandler {
         setTypeface(null, Typeface.BOLD_ITALIC);
       }
     } else if (key.equals("borders")) {
-      this.setBackground(frame.getResources().getDrawable(android.R.drawable.dialog_holo_light_frame));
-//      GradientDrawable gdDefault = new GradientDrawable();
-//      gdDefault.setColor(Color.parseColor("#c1272d"));
-//      float radius = 2.0f;
-//      gdDefault.setCornerRadii(new float[] { radius, radius, 0, 0, 0, 0, radius, radius });
-//      this.setBackground(gdDefault);
+      GradientDrawable gd = new GradientDrawable();
+      gd.setColor(Color.parseColor("#ffffff")); // Changes this drawbale to use a single color instead of a gradient
+      gd.setCornerRadius(5);
+      gd.setStroke(1, Color.parseColor(value));
+      setBackgroundDrawable(gd);
     } else if (key.equals("weight")) {
       LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
       params.weight = Integer.parseInt(value);
