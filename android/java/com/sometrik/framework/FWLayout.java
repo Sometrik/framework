@@ -55,11 +55,12 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
 	  }
 	});
       }
-    } else if (view instanceof FWLayout){
+    } 
+    else if (view instanceof FWLayout){
       view.setOnClickListener(new OnClickListener() {
 	  @Override
 	  public void onClick(View v) {
-	    frame.intChangedEvent(System.currentTimeMillis() / 1000.0, getElementId(), 0, 0);
+	    frame.intChangedEvent(System.currentTimeMillis() / 1000.0, getElementId(), 0, 1);
 	  }
       });
     }
@@ -218,7 +219,9 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
       LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
       params.bottomMargin = Integer.parseInt(value);
       setLayoutParams(params);
-    } 
+    } else if (key.equals("shadow")) {
+      setElevation(Integer.parseInt(value));
+    }
   }
 
   @Override
