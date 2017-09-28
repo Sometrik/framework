@@ -1,7 +1,7 @@
 #ifndef _FWACTIONSHEET_H_
 #define _FWACTIONSHEET_H_
 
-#include <Element.h>
+#include <Dialog.h>
 #include <Command.h>
 
 class FWOption {
@@ -16,12 +16,9 @@ class FWOption {
   std::string text;
 };
 
-class FWActionSheet : public Element {
+class FWActionSheet : public Dialog {
  public:
-  FWActionSheet(Element & parent, const std::string & _title)
-    : title(_title) {
-    FWPlatform & p = parent.getPlatform();
-    initialize(&p);
+ FWActionSheet(const std::string & _title, int _id = 0) : Dialog(_title, _id) {
   }
 
   void addOption(int id, const std::string & name) {
@@ -34,7 +31,6 @@ class FWActionSheet : public Element {
     sendCommand(c);
   }
 
-  const std::string & getTitle() const { return title; }
   const std::vector<FWOption> & getOptions() const { return options; }
 
   int showModal(Element * parent) override {
@@ -42,10 +38,11 @@ class FWActionSheet : public Element {
       setParent(parent);
       initialize(&(parent->getPlatform()));
       initializeChildren();
+      load();
     }
     Command c1(Command::SHOW_ACTION_SHEET, getInternalId());
     sendCommand(c1);
-    return 0;
+    return getPlatform().getModalResultValue();
   }
 
  protected:
@@ -56,7 +53,7 @@ class FWActionSheet : public Element {
   }
   
  private:
-  std::string title;
   std::vector<FWOption> options;
 };
+
 #endif
