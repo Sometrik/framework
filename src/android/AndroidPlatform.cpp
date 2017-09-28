@@ -78,10 +78,9 @@ public:
       env->DeleteGlobalRef(frameworkClass);
   }
 
+  JavaVM * getJavaVM() { return javaVM; }
 
-    JavaVM * getJavaVM() { return javaVM; }
-
-  JNIEnv * createJNIEnv(){
+  JNIEnv * createJNIEnv() {
     JNIEnv * env = 0;
     JavaVMAttachArgs args;
     args.version = JNI_VERSION_1_6; // choose your JNI version
