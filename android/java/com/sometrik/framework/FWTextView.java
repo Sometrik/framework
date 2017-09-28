@@ -4,6 +4,7 @@ import android.graphics.Bitmap.Config;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
+import android.text.TextUtils.TruncateAt;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -150,6 +151,18 @@ public class FWTextView extends TextView implements NativeCommandHandler {
 	setGravity(Gravity.CENTER_HORIZONTAL);
       }
       setLayoutParams(params);
+    } else if (key.equals("ellipsis")) {
+      if (value.equals("end")) {
+	setEllipsize(TruncateAt.END);
+      } else if (value.equals("start")) {
+	setEllipsize(TruncateAt.START);
+      } else if (value.equals("middle")) {
+	setEllipsize(TruncateAt.MIDDLE);
+      } else if (value.equals("marquee")) {
+	setEllipsize(TruncateAt.MARQUEE);
+      }
+    } else if (key.equals("max-lines")) {
+      setMaxLines(Integer.parseInt(value));
     }
   }
 

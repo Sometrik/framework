@@ -13,12 +13,14 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 public class FWSimpleList extends LinearLayout implements NativeCommandHandler {
 
@@ -308,7 +310,6 @@ public class FWSimpleList extends LinearLayout implements NativeCommandHandler {
         name = new FWTextView(frame);
 	LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
 	params.weight = 1;
-	name.setLayoutParams(params);
         name.setTextSize(24);
         name.setTypeface(null, Typeface.BOLD);
         name.setLayoutParams(params);
@@ -320,17 +321,42 @@ public class FWSimpleList extends LinearLayout implements NativeCommandHandler {
         layout = view;
         view.addView(sheetLayout);
     }
+      
+
+    private void setRightIconText(RelativeLayout layout, ImageView iconView, String text) {
+      FWTextView textView = new FWTextView(frame);
+      RelativeLayout.LayoutParams listParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
+      listParams.addRule(RelativeLayout.LEFT_OF, iconView.getId());
+      textView.setLayoutParams(listParams);
+      textView.setTextSize(13);
+      textView.setText("MORE");
+      textView.setTextColor(Color.parseColor("#c1272d"));
+      textView.setGravity(Gravity.RIGHT);
+//      textView.setPadding(100, 0, 0, 0);
+      layout.addView(textView);
+    }
 
     private void setRightIcon(String assetFilename) {
 
       System.out.println("setting right icon");
       if (rightIconView == null) {
 	rightIconView = new ImageView(frame);
-	LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+//	LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+	      RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
 	rightIconView.setScaleType(ScaleType.FIT_END);
-	params.weight = 1;
 	rightIconView.setLayoutParams(params);
-	sheetLayout.addView(rightIconView);
+	rightIconView.setId(99944);
+	
+
+	RelativeLayout iconLayout = new RelativeLayout(frame);
+	LinearLayout.LayoutParams parentParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+	parentParams.weight = 1;
+	iconLayout.setLayoutParams(parentParams);
+	iconLayout.setGravity(Gravity.RIGHT);
+	setRightIconText(iconLayout, rightIconView, "");
+	
+	iconLayout.addView(rightIconView);
+	sheetLayout.addView(iconLayout);
 	
       }
       try {
