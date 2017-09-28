@@ -95,7 +95,7 @@ public class FWTextView extends TextView implements NativeCommandHandler {
       setLayoutParams(params);
     } else if (key.equals("text-overflow")) {
       if (value.equals("ellipsis")) {
-	setEllipsize(TextUtils.TruncateAt.END);
+	setEllipsize(TruncateAt.END);
       }
     } else if (key.equals("font-weight")) {
       if (value.equals("bold")) {
