@@ -225,7 +225,7 @@ public class FWSimpleList extends LinearLayout implements NativeCommandHandler {
       } else if (value.equals("beginning")) {
 	this.setShowDividers(LinearLayout.SHOW_DIVIDER_BEGINNING);
       }
-    } else if (key.equals("color")) {
+    } else if (key.equals("background-color")) {
       this.setBackgroundColor(Color.parseColor(value));
     } else if (key.equals("width")) {
       FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) getLayoutParams();

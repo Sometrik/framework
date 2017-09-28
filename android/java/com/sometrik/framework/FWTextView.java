@@ -92,22 +92,32 @@ public class FWTextView extends TextView implements NativeCommandHandler {
 	params.height = pixels;
       }
       setLayoutParams(params);
-    } else if (key.equals("typeface")) {
+    } else if (key.equals("text-overflow")) {
+      if (value.equals("ellipsis")) {
+	setEllipsize(TextUtils.TruncateAt.END);
+      }
+    } else if (key.equals("font-weight")) {
       if (value.equals("bold")) {
         setTypeface(null, Typeface.BOLD);
       } else if (value.equals("normal")) {
-        setTypeface(null, Typeface.NORMAL);
-      } else if (value.equals("italic")) {
-        setTypeface(null, Typeface.ITALIC);
-      } else if (value.equals("bold-italic")) {
-        setTypeface(null, Typeface.BOLD_ITALIC);
+	setTypeface(null, Typeface.NORMAL);
       }
-    } else if (key.equals("borders")) {
-      GradientDrawable gd = new GradientDrawable();
-      gd.setColor(Color.parseColor("#ffffff")); // Changes this drawbale to use a single color instead of a gradient
-      gd.setCornerRadius(5);
-      gd.setStroke(1, Color.parseColor(value));
-      setBackgroundDrawable(gd);
+    } else if (key.equals("font-style")) {
+      if (value.equals("italic") || value.equals("oblique")) {
+        setTypeface(null, Typeface.ITALIC);
+      } else if (value.equals("normal")) {
+	setTypeface(null, Typeface.NORMAL);
+      }
+    } else if (key.equals("border")) {
+      if (value.equals("none")) {
+	// TODO: clear border
+      } else {
+	GradientDrawable gd = new GradientDrawable();
+	gd.setColor(Color.parseColor("#ffffff")); // Changes this drawbale to use a single color instead of a gradient
+	gd.setCornerRadius(5);
+	gd.setStroke(1, Color.parseColor(value));
+	setBackgroundDrawable(gd);
+      }
     } else if (key.equals("weight")) {
       LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
       params.weight = Integer.parseInt(value);
@@ -120,7 +130,7 @@ public class FWTextView extends TextView implements NativeCommandHandler {
       }
     } else if (key.equals("single-line")) {
       setSingleLine();
-    } else if (key.equals("text-color")) {
+    } else if (key.equals("color")) {
       this.setTextColor(Color.parseColor(value));
     } else if (key.equals("gravity")) {
       LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();

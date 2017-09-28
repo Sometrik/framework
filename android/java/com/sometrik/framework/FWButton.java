@@ -143,13 +143,15 @@ public class FWButton extends Button implements NativeCommandHandler {
         System.out.println("no picture found: " + value);
         e.printStackTrace();
       }
-    } else if (key.equals("borderless")) {
-      setBackgroundResource(0);
+    } else if (key.equals("border")) {
+      if (value.equals("none")) {
+	setBackgroundResource(0);
+      }
     } else if (key.equals("single-line")) {
       this.setSingleLine();
-    } else if (key.equals("text-color")) {
-      setTextColor(Color.parseColor(value));
     } else if (key.equals("color")) {
+      setTextColor(Color.parseColor(value));
+    } else if (key.equals("background-color")) {
       setBackgroundColor(Color.parseColor(value));
     } else if (key.equals("padding-top")) {
       setPadding(getPaddingLeft(), Integer.parseInt(value), getPaddingRight(), getPaddingBottom());
