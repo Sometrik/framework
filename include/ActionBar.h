@@ -53,7 +53,7 @@ class ActionBar : public Element {
     sendCommand(c);
   }
 
- private:
+ protected:
   std::string title;
   std::string subtitle;
 };
