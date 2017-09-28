@@ -129,6 +129,8 @@ public class FWEditText extends EditText implements NativeCommandHandler {
       }
     } else if (key.equals("minimun-width")) {
       setMinimumWidth(Integer.parseInt(value));
+    } else if (key.equals("hint")) {
+      setHint(value);
     }
   }
 
