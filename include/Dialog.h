@@ -28,6 +28,7 @@ class Dialog : public Element {
       setParent(parent);
       initialize(&(parent->getPlatform()));
       initializeChildren();
+      load();
     }
     sendCommand(Command(Command::SHOW_DIALOG, getInternalId()));
     return getPlatform().getModalResultValue();
