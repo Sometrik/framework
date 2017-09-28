@@ -57,6 +57,7 @@ class Element : public EventHandler {
     if (isInitialized()) {
       element->initialize(platform);
       element->initializeChildren();
+      element->load();
     }
     return *element;
   }  
@@ -68,6 +69,7 @@ class Element : public EventHandler {
     if (isInitialized()) {
       element->initialize(platform);
       element->initializeChildren();
+      element->load();
     }
     return *element;
   }  
@@ -175,6 +177,7 @@ class Element : public EventHandler {
   
   virtual void initialize(FWPlatform * _platform);
   void initializeChildren();
+  virtual void load() { }
 
   bool is_visible = true;
 
