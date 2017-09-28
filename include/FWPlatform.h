@@ -34,6 +34,8 @@ class FWPlatform : public Element {
   
   FWPlatform(float _display_scale) : display_scale(_display_scale) {
     initialize(this);
+    initializeChildren();
+    load();
   }
 
   bool isA(const std::string & className) const override {
