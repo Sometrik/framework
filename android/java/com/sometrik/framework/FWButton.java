@@ -7,6 +7,7 @@ import android.content.res.AssetManager;
 import android.graphics.Bitmap.Config;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.ScaleDrawable;
 import android.util.Log;
 import android.view.Gravity;
@@ -177,6 +178,12 @@ public class FWButton extends Button implements NativeCommandHandler {
       LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
       params.bottomMargin = Integer.parseInt(value);
       setLayoutParams(params);
+    } else if (key.equals("borders")) {
+      GradientDrawable gd = new GradientDrawable();
+      gd.setColor(Color.parseColor("#ffffff")); // Changes this drawbale to use a single color instead of a gradient
+      gd.setCornerRadius(5);
+      gd.setStroke(1, Color.parseColor(value));
+      setBackgroundDrawable(gd);
     } 
   }
 
