@@ -26,6 +26,9 @@ class ImageElement : public Element {
     sendCommand(c);
   }
 
+  const std::string & getFilename() { return filename; }
+  void setFilename(const std::string & _filename) { filename = filename; }
+  
  protected:
   void create() override {
     Command c(Command::CREATE_IMAGEVIEW, getParentInternalId(), getInternalId());
