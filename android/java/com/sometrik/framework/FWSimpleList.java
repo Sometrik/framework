@@ -326,13 +326,19 @@ public class FWSimpleList extends LinearLayout implements NativeCommandHandler {
     private void setRightIconText(RelativeLayout layout, ImageView iconView, String text) {
       FWTextView textView = new FWTextView(frame);
       RelativeLayout.LayoutParams listParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
-      listParams.addRule(RelativeLayout.LEFT_OF, iconView.getId());
+//      listParams.addRule(RelativeLayout.LEFT_OF, iconView.getId());
       textView.setLayoutParams(listParams);
       textView.setTextSize(13);
+      textView.setId(845848);
       textView.setText("MORE");
       textView.setTextColor(Color.parseColor("#c1272d"));
+
+	final float scale = getContext().getResources().getDisplayMetrics().density;
+	int topPadding = (int) (10 * scale + 0.5f);
+	int rightPadding = (int) (38 * scale + 0.5f);
+	
       textView.setGravity(Gravity.RIGHT);
-//      textView.setPadding(100, 0, 0, 0);
+      textView.setPadding(0, topPadding, rightPadding, 0);
       layout.addView(textView);
     }
 
@@ -342,11 +348,11 @@ public class FWSimpleList extends LinearLayout implements NativeCommandHandler {
       if (rightIconView == null) {
 	rightIconView = new ImageView(frame);
 //	LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
-	      RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
 	rightIconView.setScaleType(ScaleType.FIT_END);
-	rightIconView.setLayoutParams(params);
 	rightIconView.setId(99944);
-	
+
+	RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
+	rightIconView.setLayoutParams(params);
 
 	RelativeLayout iconLayout = new RelativeLayout(frame);
 	LinearLayout.LayoutParams parentParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
