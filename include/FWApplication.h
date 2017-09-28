@@ -35,7 +35,7 @@ public:
     view_forward_history.clear();
   }
 
-  int popViewBackHistory() {
+  virtual int popViewBackHistory() {
     int id = 0;
     if (!view_back_history.empty()) {
       id = view_back_history.back();
