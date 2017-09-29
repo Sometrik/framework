@@ -199,7 +199,7 @@ public class NativeCommand {
   
   public void apply(NativeCommandHandler view) {
 
-    System.out.println("Processing message " + command + " id: " + internalId + " Child id: " + getChildInternalId());
+    // System.out.println("Processing message " + command + " id: " + internalId + " Child id: " + getChildInternalId());
     
     switch (command) {
 
