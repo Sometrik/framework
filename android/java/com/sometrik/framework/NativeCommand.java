@@ -89,6 +89,7 @@ public class NativeCommand {
     CREATE_SWITCH,
     CREATE_PICKER, // called Spinner in Android
     CREATE_LINEAR_LAYOUT,
+    CREATE_RELATIVE_LAYOUT,
     CREATE_TABLE_LAYOUT,
     CREATE_AUTO_COLUMN_LAYOUT,
     CREATE_HEADING_TEXT,
@@ -228,14 +229,22 @@ public class NativeCommand {
       }
       break;
     case CREATE_BASICVIEW:
-    case CREATE_LINEAR_LAYOUT:
+    case CREATE_LINEAR_LAYOUT:{
 
       FWLayout layout = createLinearLayout();
       if (view != null) {
 	view.addChild(layout);
       }
       break;
+    }
+
+    case CREATE_RELATIVE_LAYOUT: {
+      FWRelativeLayout layout = new FWRelativeLayout(frame);
+      layout.setId(getChildInternalId());
+      FrameWork.addToViewList(layout);
       
+      break;
+    }
     case CREATE_AUTO_COLUMN_LAYOUT:{
       FWAuto auto  = new FWAuto(frame);
       auto.setId(getChildInternalId());
