@@ -49,9 +49,7 @@ using namespace std;
 class JavaCache {
 
 public:
-  JavaCache(JNIEnv * _env, JavaVM * _javaVM) : env(_env), javaVM(_javaVM) {
-//    env->GetJavaVM(&javaVM);
-
+  JavaCache(JNIEnv * _env) : env(_env) {
     nativeCommandClass = (jclass) env->NewGlobalRef(env->FindClass("com/sometrik/framework/NativeCommand"));
     frameworkClass = (jclass) env->NewGlobalRef(env->FindClass("com/sometrik/framework/FrameWork"));
     systemClass = (jclass) env->NewGlobalRef(env->FindClass("java/lang/System"));
@@ -78,19 +76,6 @@ public:
       env->DeleteGlobalRef(frameworkClass);
   }
 
-  JavaVM * getJavaVM() { return javaVM; }
-
-  JNIEnv * createJNIEnv() {
-    JNIEnv * env = 0;
-    JavaVMAttachArgs args;
-    args.version = JNI_VERSION_1_6; // choose your JNI version
-    args.name = NULL; // you might want to give the java thread a name
-    args.group = NULL; // you might want to assign the java thread to a ThreadGroup
-    javaVM->AttachCurrentThread(&env, &args);
-
-    return env;
-  }
-
   jclass nativeCommandClass;
   jclass frameworkClass;
   jclass systemClass;
@@ -105,7 +90,6 @@ public:
   jmethodID getPathMethod;
 
 private:
-  JavaVM * javaVM;
   JNIEnv * env;
 };
 
@@ -119,7 +103,7 @@ public:
  AndroidPlatform(JNIEnv * _env, jobject _mgr, jobject _framework, float _display_scale, JavaVM * _javaVM, MobileAccount * _account)
    : FWPlatform(_display_scale),
      account(_account),
-    javaCache(JavaCache(_env, _javaVM)),
+    javaCache(JavaCache(_env)),
     gJavaVM(_javaVM){
       
     framework = _env->NewGlobalRef(_framework);
@@ -251,22 +235,11 @@ public:
     : platform(_platform) { }
 
   void run() override {
-    JavaVMAttachArgs args;
-    args.version = JNI_VERSION_1_6; // choose your JNI version
-    args.name = NULL; // you might want to give the java thread a name
-    args.group = NULL; // you might want to assign the java thread to a ThreadGroup
-    __android_log_print(ANDROID_LOG_INFO, "Sometrik", "attaching JVM1");
-    JNIEnv * env = platform->getEnv();
-    JNIEnv * myEnv = 0;
-    __android_log_print(ANDROID_LOG_INFO, "Sometrik", "attaching JVM2");
-    platform->gJavaVM->AttachCurrentThread(&myEnv, &args);
-    // platform->javaCache.getJavaVM()->AttachCurrentThread(&env, NULL);
     FWApplication * application = applicationMain();
     platform->addChild(std::shared_ptr<Element>(application));
     platform->renderLoop();
     __android_log_print(ANDROID_LOG_INFO, "Sometrik", "Application is exiting");
     platform->deinitializeRenderer();
-    platform->gJavaVM->DetachCurrentThread();
   }
   
 private:
@@ -372,7 +345,7 @@ AndroidPlatform::sendCommand2(const Command & command) {
 std::shared_ptr<PlatformThread>
 AndroidPlatform::createThread(std::shared_ptr<Runnable> & runnable) {
 //    shared_ptr<PlatformThread> thread = make_shared<AndroidThread>(this, runnable);
-  std::shared_ptr<PlatformThread> thread = std::unique_ptr<AndroidThread>(new AndroidThread(getNextThreadId(), this, runnable, javaCache.getJavaVM()));
+  std::shared_ptr<PlatformThread> thread = std::unique_ptr<AndroidThread>(new AndroidThread(getNextThreadId(), this, runnable, gJavaVM));
 //    <Logger>(new AndroidLogger(name));
   return thread;
 }
@@ -592,7 +565,14 @@ JNIEnv * AndroidPlatform::getEnv() {
   if (gJavaVM->GetEnv((void**)&stored_env, JNI_VERSION_1_6) != 0) {
     return stored_env;
   } else {
-    stored_env = javaCache.createJNIEnv();
+    JNIEnv * env = 0;
+    JavaVMAttachArgs args;
+    args.version = JNI_VERSION_1_6; // choose your JNI version
+    args.name = NULL; // you might want to give the java thread a name
+    args.group = NULL; // you might want to assign the java thread to a ThreadGroup
+    gJavaVM->AttachCurrentThread(&env, &args);
+
+    stored_env = env;
     return stored_env;
   }
 }
