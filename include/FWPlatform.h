@@ -3,8 +3,6 @@
 
 #include <Element.h>
 #include <Event.h>
-#include <FWPreferences.h>
-#include <MobileAccount.h>
 
 #ifdef HAS_SOUNDCANVAS
 #include <SoundCanvas.h>
@@ -60,8 +58,6 @@ class FWPlatform : public Element {
   int getModalResultValue() const { return modal_result_value; }
   const std::string & getModalResultText() const { return modal_result_text; }
  
-  MobileAccount & getMobileAccount();
-
   void registerElement(Element * e) {
     registered_elements[e->getInternalId()] = e;
   }
@@ -88,7 +84,6 @@ class FWPlatform : public Element {
   }
 #endif
 
-  FWPreferences preferences;
   int modal_result_value = 0;
   std::string modal_result_text;
     

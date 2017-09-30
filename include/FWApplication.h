@@ -4,7 +4,8 @@
 #include <Element.h>
 #include <Command.h>
 #include <PlatformThread.h>
-
+#include <FWPreferences.h>
+#include <MobileAccount.h>
 #include <SysEvent.h>
 
 class FWApplication : public Element {
@@ -71,10 +72,17 @@ public:
     }
   }
 
+  void setMobileAccount(const MobileAccount & account) { mobileAccount = account; }
+  const MobileAccount getMobileAccount() const { return mobileAccount; }
+
+  void setPreferences(const FWPreferences & _preferences) { preferences = _preferences; }
+  const FWPreferences & getPreferences() const { return preferences; }
+
  protected:
   bool isChildVisible(const Element & child) const override {
     return activeViewId == child.getInternalId();
   }
+
   void create() override {
     Command c(Command::CREATE_APPLICATION, getParentInternalId(), getInternalId());
     c.setFlags(iap_public_key.empty() ? 0 : 128);
@@ -89,6 +97,8 @@ public:
   std::shared_ptr<Logger> logger;
   int activeViewId = 0;
   std::vector<int> view_back_history, view_forward_history;
+  FWPreferences preferences;
+  MobileAccount mobileAccount;
 };
 
 #endif

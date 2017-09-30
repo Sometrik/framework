@@ -108,11 +108,7 @@ class AndroidPlatform : public FWPlatform {
 public:
   friend class AndroidNativeThread;
   
-  AndroidPlatform(JNIEnv * _env, jobject _mgr, jobject _framework, JavaVM * _javaVM, const MobileAccount & _account)
-   : account(_account),
-    javaCache(_env),
-    gJavaVM(_javaVM) {
-      
+  AndroidPlatform(JNIEnv * _env, jobject _mgr, jobject _framework, JavaVM * _javaVM) : javaCache(_env), javaVM(_javaVM) {
     registerElement(this);
 
     framework = _env->NewGlobalRef(_framework);
@@ -182,7 +178,7 @@ public:
   AAssetManager * getAssetManager() const { return asset_manager; }
   JavaCache & getJavaCache() { return javaCache; }
   jobject & getFramework() { return framework; }
-  JavaVM * getJavaVM() { return gJavaVM; }
+  JavaVM * getJavaVM() { return javaVM; }
   
 private:
   JavaCache javaCache;
@@ -195,9 +191,8 @@ private:
   std::shared_ptr<AndroidClientCache> clientCache;
   std::shared_ptr<AndroidSoundCache> soundCache;
 
-  MobileAccount account;
   ANativeWindow * window = 0;
-  JavaVM * gJavaVM = 0;
+  JavaVM * javaVM = 0;
   AAssetManager * asset_manager;
   jobject framework;
   EventQueue eventqueue;
@@ -291,7 +286,8 @@ static std::shared_ptr<AndroidThread> mainThread;
 
 class AndroidNativeThread : public Runnable {
 public:
-  AndroidNativeThread() { }
+  AndroidNativeThread(const MobileAccount & _mobileAccount, const FWPreferences & _preferences)
+  : mobileAccount(_mobileAccount), preferences(_preferences) { }
 
   void run() override {
     AndroidPlatform & androidPlatform = dynamic_cast<AndroidPlatform&>(getThread().getPlatform());
@@ -302,14 +298,17 @@ public:
     androidPlatform.load();
 
     FWApplication * application = applicationMain();
+    application->setPreferences(preferences);
+    application->setMobileAccount(mobileAccount);
+
     androidPlatform.addChild(std::shared_ptr<Element>(application));
     androidPlatform.renderLoop();
     androidPlatform.deinitializeRenderer();
   }
 
 private:
-  int screenWidth, screenHeight;
-  float displayScale;
+  MobileAccount mobileAccount;
+  FWPreferences preferences;
 };
 
 std::string AndroidPlatform::getBundleFilename(const char * filename) {
@@ -653,6 +652,7 @@ void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, job
     const char * country = env->GetStringUTFChars(jcountry, NULL);
 
     MobileAccount account = MobileAccount(email, language, country);
+    FWPreferences preferences;
 
     env->ReleaseStringUTFChars(jlanguage, language);
     env->ReleaseStringUTFChars(jemail, email);
@@ -661,8 +661,8 @@ void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, job
     AAssetManager* manager = AAssetManager_fromJava(env, assetManager);
     android_fopen_set_asset_manager(manager);
 
-    auto platform = new AndroidPlatform(env, assetManager, thiz, gJavaVM, account);
-    shared_ptr<Runnable> runnable = make_shared<AndroidNativeThread>();
+    auto platform = new AndroidPlatform(env, assetManager, thiz, gJavaVM);
+    shared_ptr<Runnable> runnable = make_shared<AndroidNativeThread>(account, preferences);
 
     mainThread = std::make_shared<AndroidThread>(platform->getNextThreadId(), nullptr, platform, runnable);
     mainThread->setActualDisplayWidth(screenWidth);
