@@ -3,6 +3,7 @@
 #include <PlatformThread.h>
 #include <SysEvent.h>
 #include <StringUtils.h>
+#include <FWApplication.h>
 
 #include <cassert>
 #include <iostream>
@@ -78,14 +79,6 @@ FWPlatform::postEvent(int internal_id, Event & ev) {
     s << "Failed to dispatch event " << typeid(ev).name() << " id: " << internal_id;
     getApplication().getLogger().println(s.str());
   }
-}
-
-Logger &
-FWPlatform::getLogger() {
-  if (!logger.get()) {
-    logger = getThread().createLogger("Framework");
-  }
-  return *logger;
 }
 
 void
