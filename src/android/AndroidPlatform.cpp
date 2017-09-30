@@ -110,7 +110,7 @@ public:
   AndroidPlatform(JNIEnv * _env, jobject _mgr, jobject _framework, float _display_scale, JavaVM * _javaVM, MobileAccount * _account)
    : FWPlatform(_display_scale),
      account(_account),
-    javaCache(JavaCache(_env)),
+    javaCache(_env),
     gJavaVM(_javaVM) {
       
     framework = _env->NewGlobalRef(_framework);
@@ -124,8 +124,10 @@ public:
   }
 
   ~AndroidPlatform() {
+#if 0
     auto env = getEnv();
     env->DeleteGlobalRef(framework);
+#endif
   }
 
   std::string getBundleFilename(const char * filename) override;
@@ -158,8 +160,6 @@ public:
   bool initializeRenderer(int opengl_es_version, ANativeWindow * _window);
   void deinitializeRenderer();
   void renderLoop();
-
-  JNIEnv* getEnv();
 
   void queueEvent(int internal_id, const Event & ev) {
     eventqueue.push(internal_id, ev);
@@ -276,7 +276,6 @@ protected:
     args.name = NULL; // you might want to give the java thread a name
     args.group = NULL; // you might want to assign the java thread to a ThreadGroup
 
-//    JNIEnv * myEnv = 0;
     javaVM->AttachCurrentThread(&myEnv, &args);
   }
   void deinitialize() override {
@@ -350,48 +349,6 @@ std::string AndroidPlatform::getLocalFilename(const char * filename, FileType ty
   }
   return "";
 }
-
-#if 0
-void
-AndroidPlatform::sendCommand2(const Command & command) {
-  if (command.getType() == Command::CREATE_FORMVIEW || command.getType() == Command::CREATE_OPENGL_VIEW) {
-    auto & app = getApplication();
-    if (!app.getActiveViewId()) {
-      app.setActiveViewId(command.getChildInternalId());
-    }
-  }
-  
-  auto env = getEnv();
-  int commandTypeId = int(command.getType());
-  auto textValue = command.getTextValue();
-  auto textValue2 = command.getTextValue2();
-  jbyteArray jtextValue = 0, jtextValue2 = 0;
-  if (!textValue.empty()) jtextValue = convertToByteArray(env, textValue);
-  if (!textValue2.empty()) jtextValue2 = convertToByteArray(env, textValue2);
-  
-  // SET_TEXT_VALUE check and new listcommand constructor should be refactored. ListView creation needs work
-  jobject jcommand;
-//  if (command.getType() == Command::SET_TEXT_DATA || command.getType() == Command::ADD_SHEET) {
-    jcommand = env->NewObject(javaCache.nativeCommandClass, javaCache.nativeListCommandConstructor, framework, commandTypeId, command.getInternalId(), command.getChildInternalId(), command.getValue(), jtextValue, jtextValue2, command.getFlags(), command.getRow(), command.getColumn(), command.getSheet(), command.getWidth(), command.getHeight());
-//  } else {
-//    jcommand = env->NewObject(javaCache.nativeCommandClass, javaCache.nativeCommandConstructor, framework, commandTypeId, command.getInternalId(), command.getChildInternalId(), command.getValue(), jtextValue, jtextValue2, command.getFlags());
-//  }
-  env->CallStaticVoidMethod(javaCache.frameworkClass, javaCache.sendCommandMethod, framework, jcommand);
-  
-  env->DeleteLocalRef(jcommand);
-  if (jtextValue) env->DeleteLocalRef(jtextValue);
-  if (jtextValue2) env->DeleteLocalRef(jtextValue2);
-  
-  if (command.getType() == Command::SHOW_DIALOG ||
-      command.getType() == Command::SHOW_MESSAGE_DIALOG ||
-      command.getType() == Command::SHOW_INPUT_DIALOG ||
-      command.getType() == Command::SHOW_ACTION_SHEET) {
-    startModal();
-  } else if (command.getType() == Command::END_MODAL) {
-    endModal();
-  }
-}
-#endif
 
 std::shared_ptr<PlatformThread>
 AndroidPlatform::createThread(std::shared_ptr<Runnable> & runnable) {
@@ -607,22 +564,6 @@ AndroidPlatform::onSysEvent(SysEvent & ev) {
   case SysEvent::THREAD_TERMINATED:
     //TODO
     break;
-  }
-}
-
-JNIEnv * AndroidPlatform::getEnv() {
-  if (gJavaVM->GetEnv((void**)&stored_env, JNI_VERSION_1_6) != 0) {
-    return stored_env;
-  } else {
-    JNIEnv * env = 0;
-    JavaVMAttachArgs args;
-    args.version = JNI_VERSION_1_6; // choose your JNI version
-    args.name = NULL; // you might want to give the java thread a name
-    args.group = NULL; // you might want to assign the java thread to a ThreadGroup
-    gJavaVM->AttachCurrentThread(&env, &args);
-
-    stored_env = env;
-    return stored_env;
   }
 }
 
