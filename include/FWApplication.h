@@ -3,7 +3,7 @@
 
 #include <Element.h>
 #include <Command.h>
-#include <FWPlatform.h>
+#include <PlatformThread.h>
 
 #include <SysEvent.h>
 
@@ -22,7 +22,7 @@ public:
   
   Logger & getLogger() {
     if (!logger.get()) {
-      logger = getPlatform().createLogger(name);
+      logger = getThread().createLogger(name);
     }
     return *logger;
   }

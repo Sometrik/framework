@@ -64,7 +64,6 @@ class PlatformGtk : public FWPlatform {
 public:
   PlatformGtk() : FWPlatform(1.0f) {
     CurlClientFactory::globalInit();
-    sendCommand2(Command(Command::CREATE_PLATFORM, getParentInternalId(), getInternalId()));
   }
 
   void pushEvent(int internal_id, const Event & ev) override {

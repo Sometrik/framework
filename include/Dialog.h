@@ -26,12 +26,11 @@ class Dialog : public Element {
   int showModal(Element * parent) override {
     if (!isInitialized()) {
       setParent(parent);
-      initialize(&(parent->getPlatform()), &(parent->getThread()));
+      initialize(&(parent->getThread()));
       initializeChildren();
       load();
     }
-    sendCommand(Command(Command::SHOW_DIALOG, getInternalId()));
-    return getPlatform().getModalResultValue();
+    return sendCommand(Command(Command::SHOW_DIALOG, getInternalId()));
   }
 
  protected:

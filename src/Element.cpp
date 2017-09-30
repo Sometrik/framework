@@ -15,18 +15,22 @@ atomic<int> Element::nextInternalId(1);
 
 Element::~Element() {
   // the platform itself cannot be unregistered at this point
-  if (platform && this != platform) {
-    platform->unregisterElement(this);
+  if (thread) {
+    auto & platform = thread->getPlatform();
+    if (this != &platform) {
+      platform.unregisterElement(this);
+    }
   }
 }
 
 void
-Element::initialize(FWPlatform * _platform, PlatformThread * _thread) {
-  assert(_platform);
-  if (_platform) {
-    platform = _platform;
+Element::initialize(PlatformThread * _thread) {
+  assert(_thread);
+  if (_thread) {
     thread = _thread;
-    platform->registerElement(this);
+    if (this != &(thread->getPlatform())) {
+      thread->getPlatform().registerElement(this);
+    }
     create();
     for (auto & c : pendingCommands) {
       sendCommand(c);
@@ -41,7 +45,7 @@ Element::initializeChildren() {
   assert(isInitialized());
   if (isInitialized()) {
     for (auto & c : getChildren()) {
-      c->initialize(platform, thread);
+      c->initialize(thread);
       c->initializeChildren();
     }    
   }
@@ -91,12 +95,13 @@ Element::style(const std::string & key, const std::string & value) {
   sendCommand(c);
 }
   
-void
+int
 Element::sendCommand(const Command & command) {
   if (thread) {
-    thread->sendCommand(command);
+    return thread->sendCommand(command);
   } else {
     pendingCommands.push_back(command);
+    return 0;
   }
 }
 
@@ -146,8 +151,11 @@ Element::showInputDialog(const std::string & title, const std::string & text) {
   Command c(Command::SHOW_INPUT_DIALOG, getParentInternalId(), getInternalId());
   c.setTextValue(title);
   c.setTextValue2(text);
-  sendCommand(c);
-  return platform->getModalResultText();
+  if (sendCommand(c) && thread) {
+    return thread->getPlatform().getModalResultText();
+  } else {
+    return "";
+  }
 }
 
 void
@@ -163,27 +171,17 @@ Element::launchBrowser(const std::string & input_url) {
   sendCommand(Command(Command::LAUNCH_BROWSER, getInternalId(), input_url));
 }
 
-FWPlatform &
-Element::getPlatform() {
-  if (!platform) throw ElementNotInitializedException();
-  return *platform;
-}
-
-const FWPlatform &
-Element::getPlatform() const {
-  if (!platform) throw ElementNotInitializedException();
-  return *platform;
-}
-
 FWApplication &
 Element::getApplication() {
-  auto p = getPlatform().getFirstChild();
+  if (!thread) throw ElementNotInitializedException();
+  auto p = thread->getPlatform().getFirstChild();
   return dynamic_cast<FWApplication&>(*p);
 }
 
 const FWApplication &
 Element::getApplication() const {
-  auto p = getPlatform().getFirstChild();
+  if (!thread) throw ElementNotInitializedException();
+  auto p = thread->getPlatform().getFirstChild();
   return dynamic_cast<const FWApplication&>(*p);
 }
 

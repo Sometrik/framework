@@ -8,7 +8,6 @@
 
 #include <atomic>
 
-class FWPlatform;
 class FWApplication;
 class PlatformThread;
 
@@ -44,7 +43,7 @@ class Element : public EventHandler {
   void setEnabled(bool enabled);
 
   void style(const std::string & key, const std::string & value);
-  void sendCommand(const Command & command);
+  int sendCommand(const Command & command);
 
   void onEvent(Event & ev) override;
   void onVisibilityEvent(VisibilityEvent & ev) override {
@@ -56,7 +55,7 @@ class Element : public EventHandler {
     children.insert(children.begin(), element);
 
     if (isInitialized()) {
-      element->initialize(platform, thread);
+      element->initialize(thread);
       element->initializeChildren();
       element->load();
     }
@@ -68,7 +67,7 @@ class Element : public EventHandler {
     children.push_back(element);
 
     if (isInitialized()) {
-      element->initialize(platform, thread);
+      element->initialize(thread);
       element->initializeChildren();
       element->load();
     }
@@ -87,9 +86,6 @@ class Element : public EventHandler {
   int getParentInternalId() const { return parent ? parent->getInternalId() : 0; }
 
   unsigned int getFlags() const { return flags; }
-
-  FWPlatform & getPlatform();
-  const FWPlatform & getPlatform() const;
 
   FWApplication & getApplication();
   const FWApplication & getApplication() const;
@@ -161,7 +157,7 @@ class Element : public EventHandler {
   const Element * getParent() const { return parent; }
   void setParent(Element * _parent) { parent = _parent; }
   size_t size() const { return children.size(); }
-  bool isInitialized() const { return platform != 0; }
+  bool isInitialized() const { return thread != 0; }
 
   void removeChild(Element * c);
 
@@ -169,24 +165,23 @@ class Element : public EventHandler {
 
   PlatformThread & getThread() { return *thread; }
   const PlatformThread & getThread() const { return *thread; }
-  void setThread(PlatformThread * _thread) { thread = _thread; }
+
+  virtual void initialize(PlatformThread * _thread);
+  virtual void create() { }
+  virtual void load() { }
+
+  void initializeChildren();
 
  protected:
   virtual bool isChildVisible(const Element & child) const {
     return is_visible;
   }
-  virtual void create() { }
-  virtual void initialize(FWPlatform * _platform, PlatformThread * _thread);
-  virtual void load() { }
-
-  void initializeChildren();
 
   bool is_visible = true;
 
  private:
   static int getNextInternalId() { return nextInternalId.fetch_add(1); }
 
-  FWPlatform * platform = 0;
   PlatformThread * thread = 0;
   Element * parent = 0;
   int internal_id, id = 0;

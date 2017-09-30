@@ -32,11 +32,7 @@ class FWPlatform : public Element {
     CACHE_DATABASE
   };
   
-  FWPlatform(float _display_scale) : display_scale(_display_scale) {
-    initialize(this, 0);
-    initializeChildren();
-    load();
-  }
+  FWPlatform(float _display_scale) : display_scale(_display_scale) { }
 
   bool isA(const std::string & className) const override {
     if (className == "FWPlatform") return true;
@@ -47,7 +43,7 @@ class FWPlatform : public Element {
   virtual std::string getLocalFilename(const char * filename, FileType type) = 0;
   virtual std::string loadTextAsset(const char * filename) = 0; 
   virtual void pushEvent(int internal_id, const Event & ev) = 0;
-  virtual void startModal() = 0;
+  virtual int startModal() = 0;
   virtual void endModal() = 0;
 
   virtual void createFBO(int flags) { }
@@ -80,19 +76,10 @@ class FWPlatform : public Element {
   bool run(std::shared_ptr<Runnable> runnable);
 
   void terminateThreads();
-
-  virtual std::unique_ptr<Logger> createLogger(const std::string & name) const {
-    return std::unique_ptr<Logger>(new BasicLogger(name));
-  }
  
   MobileAccount & getMobileAccount();
 
-  Logger & getLogger() {
-    if (!logger.get()) {
-      logger = createLogger("Framework");
-    }
-    return *logger;
-  }
+  Logger & getLogger();
 
   void dumpThreads() const;
 
@@ -113,6 +100,8 @@ class FWPlatform : public Element {
     }    
   }
   
+  void create() override;
+
  protected:
   Element * getRegisteredElement(int internal_id) {
     auto it = registered_elements.find(internal_id);

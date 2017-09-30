@@ -154,9 +154,6 @@ public:
   }
 #endif
 
-  std::unique_ptr<Logger> createLogger(const std::string & name) const override {
-    return std::unique_ptr<Logger>(new AndroidLogger(name));
-  }
   bool initializeRenderer(int opengl_es_version, ANativeWindow * _window);
   void deinitializeRenderer();
   void renderLoop();
@@ -170,12 +167,11 @@ public:
     queueEvent(internal_id, ev);
   }
 
-  void startModal() override {
+  int startModal() override {
     modal_result_value = 0;
     modal_result_text = "";
-    __android_log_print(ANDROID_LOG_INFO, "Sometrik", "starting modal run loop");
     renderLoop();
-    __android_log_print(ANDROID_LOG_INFO, "Sometrik", "ending modal run loop");
+    return modal_result_value;
   }
 
   void endModal() override {
@@ -236,7 +232,11 @@ public:
     const AndroidPlatform & androidPlatform = dynamic_cast<const AndroidPlatform&>(getPlatform());
     return std::unique_ptr<canvas::ContextFactory>(new canvas::AndroidContextFactory(androidPlatform.getAssetManager(), androidPlatform.getCanvasCache(), androidPlatform.getDisplayScale()));
   }
-  void sendCommand(const Command & command) override {
+  virtual std::unique_ptr<Logger> createLogger(const std::string & name) const override {
+    return std::unique_ptr<Logger>(new AndroidLogger(name));
+  }
+
+  int sendCommand(const Command & command) override {
     if (command.getType() == Command::CREATE_FORMVIEW || command.getType() == Command::CREATE_OPENGL_VIEW) {
       auto & app = getPlatform().getApplication();
       if (!app.getActiveViewId()) {
@@ -263,10 +263,11 @@ public:
         command.getType() == Command::SHOW_MESSAGE_DIALOG ||
         command.getType() == Command::SHOW_INPUT_DIALOG ||
         command.getType() == Command::SHOW_ACTION_SHEET) {
-      getPlatform().startModal();
+      return getPlatform().startModal();
     } else if (command.getType() == Command::END_MODAL) {
       getPlatform().endModal();
     }
+    return 0;
   }
 
 protected:
@@ -294,8 +295,10 @@ public:
     : platform(_platform) { }
 
   void run() override {
-    platform->setThread(getThreadPtr());
-    getThread().sendCommand(Command(Command::CREATE_PLATFORM, platform->getParentInternalId(), platform->getInternalId()));
+    platform->create();
+    platform->initialize(getThreadPtr());
+    platform->initializeChildren();
+    platform->load();
 
     FWApplication * application = applicationMain();
     platform->addChild(std::shared_ptr<Element>(application));

@@ -34,7 +34,7 @@ class PlatformThread {
   virtual bool start() = 0;
   virtual bool testDestroy() = 0;
   virtual void terminate() = 0;
-  virtual void sendCommand(const Command & command) = 0;
+  virtual int sendCommand(const Command & command) = 0;
   virtual void sleep(double t) = 0;
   virtual std::unique_ptr<HTTPClientFactory> createHTTPClientFactory() const = 0;
 #ifndef NO_CANVAS
@@ -58,8 +58,8 @@ class PlatformThread {
     return getPlatform().run(runnable);
   }
   
-  std::unique_ptr<Logger> createLogger(const std::string & name) const {
-    return getPlatform().createLogger(name);
+  virtual std::unique_ptr<Logger> createLogger(const std::string & name) const {
+    return std::unique_ptr<Logger>(new BasicLogger(name));
   }
 
   void exitApp() {

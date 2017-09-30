@@ -13,6 +13,11 @@ using namespace std;
 
 atomic<int> FWPlatform::next_thread_id(1);
 
+void
+FWPlatform::create() {
+  sendCommand(Command(Command::CREATE_PLATFORM, getParentInternalId(), getInternalId()));
+}
+
 bool
 FWPlatform::run(std::shared_ptr<Runnable> runnable) {
   auto thread = createThread(runnable);
@@ -73,6 +78,14 @@ FWPlatform::postEvent(int internal_id, Event & ev) {
     s << "Failed to dispatch event " << typeid(ev).name() << " id: " << internal_id;
     getLogger().println(s.str());
   }
+}
+
+Logger &
+FWPlatform::getLogger() {
+  if (!logger.get()) {
+    logger = getThread().createLogger("Framework");
+  }
+  return *logger;
 }
 
 void
