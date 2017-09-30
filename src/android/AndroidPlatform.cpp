@@ -148,8 +148,6 @@ public:
 
   void createFBO(int flags) { }
 
-  std::shared_ptr<PlatformThread> createThread(std::shared_ptr<Runnable> & runnable) override;
-
 #ifdef HAS_SOUNDCANVAS
   std::shared_ptr<SoundCanvas> createSoundCanvas() const override {
     return std::make_shared<AndroidSoundCanvas>(soundCache);
@@ -235,6 +233,11 @@ public:
     return std::unique_ptr<Logger>(new AndroidLogger(name));
   }
 
+  std::shared_ptr<PlatformThread> createThread(std::shared_ptr<Runnable> & runnable) {
+    AndroidPlatform & androidPlatform = dynamic_cast<AndroidPlatform&>(getPlatform());
+    return std::make_shared<AndroidThread>(getPlatform().getNextThreadId(), this, &androidPlatform, runnable);
+  }
+
   int sendCommand(const Command & command) override {
     if (command.getType() == Command::CREATE_FORMVIEW || command.getType() == Command::CREATE_OPENGL_VIEW) {
       auto & app = getPlatform().getApplication();
@@ -289,19 +292,13 @@ protected:
 };
 
 static AndroidPlatform * platform = 0;
-static PlatformThread * mainThread = 0;
+static std::shared_ptr<AndroidThread> mainThread;
 
 class AndroidNativeThread : public Runnable {
 public:
-  AndroidNativeThread(int _screenWidth, int _screenHeight, float _displayScale)
-  : screenWidth(_screenWidth), screenHeight(_screenHeight), displayScale(_displayScale) { }
+  AndroidNativeThread() { }
 
   void run() override {
-    mainThread = getThreadPtr();
-    mainThread->setActualDisplayWidth(screenWidth);
-    mainThread->setActualDisplayHeight(screenHeight);
-    mainThread->setDisplayScale(displayScale);
-
     AndroidPlatform & androidPlatform = dynamic_cast<AndroidPlatform&>(getThread().getPlatform());
 
     androidPlatform.create();
@@ -359,12 +356,6 @@ std::string AndroidPlatform::getLocalFilename(const char * filename, FileType ty
     return "";
   }
   return "";
-}
-
-std::shared_ptr<PlatformThread>
-AndroidPlatform::createThread(std::shared_ptr<Runnable> & runnable) {
-  std::shared_ptr<PlatformThread> thread = std::unique_ptr<AndroidThread>(new AndroidThread(getNextThreadId(), mainThread, this, runnable));
-  return thread;
 }
 
 bool
@@ -672,7 +663,13 @@ void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, job
     android_fopen_set_asset_manager(manager);
 
     platform = new AndroidPlatform(env, assetManager, thiz, gJavaVM, account);
-    platform->run(make_shared<AndroidNativeThread>(screenWidth, screenHeight, displayScale));
+    shared_ptr<Runnable> runnable = make_shared<AndroidNativeThread>();
+
+    mainThread = std::make_shared<AndroidThread>(platform->getNextThreadId(), nullptr, platform, runnable);
+    mainThread->setActualDisplayWidth(screenWidth);
+    mainThread->setActualDisplayHeight(screenHeight);
+    mainThread->setDisplayScale(displayScale);
+    mainThread->start();
 
 //    setenv("CPUPROFILE", "/data/data/com.sometrik.kraphio/files/gmon.out", 1);
 #ifdef PROFILING
@@ -731,7 +728,7 @@ void Java_com_sometrik_framework_FrameWork_nativeOnStart(JNIEnv* env, jobject th
   platform->queueEvent(appId, ev);
 }
 void Java_com_sometrik_framework_FrameWork_nativeOnDestroy(JNIEnv* env, jobject thiz, double timestamp, int appId) {
-  platform->terminateThreads();
+  mainThread->terminateThreads();
   SysEvent ev(SysEvent::DESTROY);
   platform->queueEvent(appId, ev);
   // TODO: Wait for threads to terminate

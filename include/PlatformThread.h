@@ -4,9 +4,11 @@
 #include <Logger.h>
 #include <Runnable.h>
 #include <SysEvent.h>
+#include <Mutex.h>
 
 #include <exception>
 #include <memory>
+#include <iostream>
 
 class Event;
 class FWPlatform;
@@ -57,7 +59,18 @@ class PlatformThread {
   }
 
   bool run(std::shared_ptr<Runnable> runnable) {
-    return getPlatform().run(runnable);
+    auto thread = createThread(runnable);
+    {
+      MutexLocker m(mutex);
+      subthreads[thread->getInternalId()] = thread;
+    }
+    if (thread->start()) {
+      return true;
+    } else {
+      MutexLocker m(mutex);
+      subthreads.erase(thread->getInternalId());
+      return false;
+    }
   }
   
   virtual std::unique_ptr<Logger> createLogger(const std::string & name) const {
@@ -76,6 +89,41 @@ class PlatformThread {
   int getActualDisplayWidth() const { return actual_display_width; }
   int getActualDisplayHeight() const { return actual_display_height; }
   float getDisplayScale() const { return display_scale; }
+
+  void terminateThreads() {
+    std::cerr << "terminating " << subthreads.size() << " threads:\n";
+    dumpThreads();
+
+    MutexLocker m(mutex);
+    for (auto & thread : subthreads) {
+      thread.second->terminate();
+    }
+  }
+  void dumpThreads() const {
+    MutexLocker m(mutex);
+    std::cerr << "running threads:\n";
+    for (auto & t : subthreads) {
+      auto & r = t.second->getRunnable();
+      std::cerr << "  thread " << t.second->getInternalId() << "/" << typeid(r).name() << ": " << r.getStatusText() << std::endl;
+    }
+  }
+
+  const PlatformThread * getThreadById(int id) const {
+    MutexLocker m(mutex);
+    auto it = subthreads.find(id);
+    if (it != subthreads.end()) {
+      return it->second.get();
+    } else {
+      return 0;
+    }
+  }
+
+  size_t getNumRunningThreads() const {
+    MutexLocker m(mutex);
+    return subthreads.size();
+  }
+
+  virtual std::shared_ptr<PlatformThread> createThread(std::shared_ptr<Runnable> & runnable) = 0;
 
  protected:
   virtual void initialize() { }  
@@ -97,12 +145,17 @@ class PlatformThread {
     postEvent(0, ev);
   }
 
+  bool exit_when_threads_terminated = false;
+
  private:
   int id;
   FWPlatform * platform;
   int actual_display_width = 0, actual_display_height = 0;
   float display_scale = 1.0f;
+  std::unordered_map<int, std::shared_ptr<PlatformThread> > subthreads;
   std::shared_ptr<Runnable> runnable;
+
+  mutable Mutex mutex;
 };
 
 #endif

@@ -5,7 +5,6 @@
 #include <Event.h>
 #include <FWPreferences.h>
 #include <MobileAccount.h>
-#include <Mutex.h>
 
 #ifdef HAS_SOUNDCANVAS
 #include <SoundCanvas.h>
@@ -16,7 +15,6 @@
 #include <atomic>
 
 class Runnable;
-class PlatformThread;
 
 class FWPlatform : public Element {
  public:
@@ -42,7 +40,9 @@ class FWPlatform : public Element {
 
   virtual void createFBO(int flags) { }
 
+#if 0
   void onSysEvent(SysEvent & ev) override;
+#endif
 
   std::string getBundleFilename(const std::string & filename) { return getBundleFilename(filename.c_str()); }
   
@@ -59,14 +59,8 @@ class FWPlatform : public Element {
       
   int getModalResultValue() const { return modal_result_value; }
   const std::string & getModalResultText() const { return modal_result_text; }
-
-  bool run(std::shared_ptr<Runnable> runnable);
-
-  void terminateThreads();
  
   MobileAccount & getMobileAccount();
-
-  void dumpThreads() const;
 
   void registerElement(Element * e) {
     registered_elements[e->getInternalId()] = e;
@@ -76,16 +70,11 @@ class FWPlatform : public Element {
     registered_elements.erase(e->getInternalId());
   }
 
-  const PlatformThread * getThreadById(int id) const {
-    auto it = threads.find(id);
-    if (it != threads.end()) {
-      return it->second.get();
-    } else {
-      return 0;
-    }    
+  void create() override {
+    sendCommand(Command(Command::CREATE_PLATFORM, getParentInternalId(), getInternalId()));
   }
-  
-  void create() override;
+
+  int getNextThreadId() { return next_thread_id.fetch_add(1); }
 
  protected:
   Element * getRegisteredElement(int internal_id) {
@@ -99,27 +88,15 @@ class FWPlatform : public Element {
   }
 #endif
 
-  size_t getNumRunningThreads() const {
-    MutexLocker m(mutex);
-    return threads.size();
-  }
-
-  int getNextThreadId() { return next_thread_id.fetch_add(1); }
-
-  virtual std::shared_ptr<PlatformThread> createThread(std::shared_ptr<Runnable> & runnable) = 0;
-
   FWPreferences preferences;
   int modal_result_value = 0;
   std::string modal_result_text;
-  bool exit_when_threads_terminated = false;
     
  private:
 #ifdef HAS_SOUNDCANVAS
   std::shared_ptr<SoundCanvas> soundCanvas;
 #endif
-  std::unordered_map<int, std::shared_ptr<PlatformThread> > threads;
   std::unordered_map<int, Element *> registered_elements;
-  mutable Mutex mutex;
 
   static std::atomic<int> next_thread_id;
 };

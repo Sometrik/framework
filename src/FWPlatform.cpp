@@ -1,6 +1,5 @@
 #include <FWPlatform.h>
 
-#include <PlatformThread.h>
 #include <SysEvent.h>
 #include <StringUtils.h>
 #include <FWApplication.h>
@@ -14,38 +13,7 @@ using namespace std;
 
 atomic<int> FWPlatform::next_thread_id(1);
 
-void
-FWPlatform::create() {
-  sendCommand(Command(Command::CREATE_PLATFORM, getParentInternalId(), getInternalId()));
-}
-
-bool
-FWPlatform::run(std::shared_ptr<Runnable> runnable) {
-  auto thread = createThread(runnable);
-  {
-    MutexLocker m(mutex);
-    threads[thread->getInternalId()] = thread;
-  }
-  if (thread->start()) {
-    return true;
-  } else {
-    MutexLocker m(mutex);
-    threads.erase(thread->getInternalId());
-    return false;
-  }
-}
-
-void
-FWPlatform::terminateThreads() {
-  cerr << "terminating " << threads.size() << " threads:\n";
-  dumpThreads();
-
-  MutexLocker m(mutex);
-  for (auto & thread : threads) {
-    thread.second->terminate();
-  }
-}
-
+#if 0
 void
 FWPlatform::onSysEvent(SysEvent & ev) {
   bool exit_app = false;
@@ -67,6 +35,7 @@ FWPlatform::onSysEvent(SysEvent & ev) {
     getThread().exitApp();
   }
 }
+#endif
 
 void
 FWPlatform::postEvent(int internal_id, Event & ev) {
@@ -78,15 +47,5 @@ FWPlatform::postEvent(int internal_id, Event & ev) {
     std::ostringstream s;
     s << "Failed to dispatch event " << typeid(ev).name() << " id: " << internal_id;
     getApplication().getLogger().println(s.str());
-  }
-}
-
-void
-FWPlatform::dumpThreads() const {
-  MutexLocker m(mutex);
-  cerr << "running threads:\n";
-  for (auto & t : threads) {
-    auto & r = t.second->getRunnable();
-    cerr << "  thread " << t.second->getInternalId() << "/" << typeid(r).name() << ": " << r.getStatusText() << endl;
   }
 }
