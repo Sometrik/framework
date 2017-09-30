@@ -113,6 +113,8 @@ public:
     javaCache(_env),
     gJavaVM(_javaVM) {
       
+    registerElement(this);
+
     framework = _env->NewGlobalRef(_framework);
     asset_manager = AAssetManager_fromJava(_env, _mgr);
     canvasCache = std::make_shared<canvas::AndroidCache>(_env, _mgr);
