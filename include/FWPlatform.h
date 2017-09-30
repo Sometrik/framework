@@ -3,21 +3,16 @@
 
 #include <Element.h>
 #include <Event.h>
-#include <Command.h>
 #include <Logger.h>
-#include <FWDefs.h>
 #include <FWPreferences.h>
 #include <MobileAccount.h>
 #include <Mutex.h>
-#include <Runnable.h>
 
 #ifdef HAS_SOUNDCANVAS
 #include <SoundCanvas.h>
 #endif
 
-#include <string>
 #include <memory>
-#include <list>
 #include <unordered_map>
 #include <atomic>
 
@@ -32,7 +27,7 @@ class FWPlatform : public Element {
     CACHE_DATABASE
   };
   
-  FWPlatform(float _display_scale) : display_scale(_display_scale) { }
+  FWPlatform() { }
 
   bool isA(const std::string & className) const override {
     if (className == "FWPlatform") return true;
@@ -63,13 +58,6 @@ class FWPlatform : public Element {
     
   void postEvent(int internal_id, Event & ev);
       
-  void setActualDisplayWidth(int w) { actual_display_width = w; }
-  void setActualDisplayHeight(int h) { actual_display_height = h; }
-
-  int getActualDisplayWidth() const { return actual_display_width; }
-  int getActualDisplayHeight() const { return actual_display_height; }
-  float getDisplayScale() const { return display_scale; }
-
   int getModalResultValue() const { return modal_result_value; }
   const std::string & getModalResultText() const { return modal_result_text; }
 
@@ -123,8 +111,6 @@ class FWPlatform : public Element {
 
   virtual std::shared_ptr<PlatformThread> createThread(std::shared_ptr<Runnable> & runnable) = 0;
 
-  int actual_display_width = 0, actual_display_height = 0;
-  float display_scale = 1.0f;
   FWPreferences preferences;
   int modal_result_value = 0;
   std::string modal_result_text;

@@ -19,12 +19,14 @@ namespace canvas {
 
 class PlatformThread {
  public:
- PlatformThread(int _id, FWPlatform * _platform, std::shared_ptr<Runnable> & _runnable)
-   : id(_id),
-    platform(_platform),
-    runnable(_runnable)
+ PlatformThread(int _id, PlatformThread * _parent_thread, FWPlatform * _platform, std::shared_ptr<Runnable> & _runnable)
+   : id(_id), platform(_platform), runnable(_runnable)
     {
-    
+    if (_parent_thread) {
+      setActualDisplayWidth(_parent_thread->getActualDisplayWidth());
+      setActualDisplayHeight(_parent_thread->getActualDisplayHeight());
+      setDisplayScale(_parent_thread->getDisplayScale());
+    }
   }
   PlatformThread(const PlatformThread & other) = delete;
   PlatformThread & operator=(const PlatformThread & other) = delete;
@@ -67,6 +69,14 @@ class PlatformThread {
     sendCommand(c);
   }
 
+  void setActualDisplayWidth(int w) { actual_display_width = w; }
+  void setActualDisplayHeight(int h) { actual_display_height = h; }
+  void setDisplayScale(float f) { display_scale = f; }
+
+  int getActualDisplayWidth() const { return actual_display_width; }
+  int getActualDisplayHeight() const { return actual_display_height; }
+  float getDisplayScale() const { return display_scale; }
+
  protected:
   virtual void initialize() { }  
   virtual void deinitialize() { }
@@ -89,6 +99,8 @@ class PlatformThread {
  private:
   int id;
   FWPlatform * platform;
+  int actual_display_width = 0, actual_display_height = 0;
+  float display_scale = 1.0f;
   std::shared_ptr<Runnable> runnable;
 };
 

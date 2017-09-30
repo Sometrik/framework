@@ -26,6 +26,7 @@
 #include <PosixThread.h>
 
 #include <FWApplication.h>
+#include <FWDefs.h>
 
 #include <TouchEvent.h>
 #include <PurchaseEvent.h>
@@ -107,9 +108,8 @@ class AndroidPlatform : public FWPlatform {
 public:
   friend class AndroidNativeThread;
   
-  AndroidPlatform(JNIEnv * _env, jobject _mgr, jobject _framework, float _display_scale, JavaVM * _javaVM, MobileAccount * _account)
-   : FWPlatform(_display_scale),
-     account(_account),
+  AndroidPlatform(JNIEnv * _env, jobject _mgr, jobject _framework, JavaVM * _javaVM, const MobileAccount & _account)
+   : account(_account),
     javaCache(_env),
     gJavaVM(_javaVM) {
       
@@ -201,25 +201,22 @@ private:
   std::shared_ptr<AndroidClientCache> clientCache;
   std::shared_ptr<AndroidSoundCache> soundCache;
 
-  MobileAccount * account;
+  MobileAccount account;
   ANativeWindow * window = 0;
   JavaVM * gJavaVM = 0;
-  JNIEnv * stored_env = 0;
   AAssetManager * asset_manager;
   jobject framework;
-  jobject handler;
   EventQueue eventqueue;
   bool canDraw = false, isPaused = false, isDestroyed = false;
   bool exit_loop = false;
 };
 
-
 extern FWApplication * applicationMain();
 
 class AndroidThread : public PosixThread {
 public:
-  AndroidThread(int _id, AndroidPlatform * _platform, std::shared_ptr<Runnable> & _runnable)
-    : PosixThread(_id, _platform, _runnable),
+  AndroidThread(int _id, PlatformThread * _parent_thread, AndroidPlatform * _platform, std::shared_ptr<Runnable> & _runnable)
+    : PosixThread(_id, _parent_thread, _platform, _runnable),
       javaVM(_platform->getJavaVM()),
       javaCache(&(_platform->getJavaCache())),
       framework(_platform->getFramework()) {
@@ -232,7 +229,7 @@ public:
   }
   std::unique_ptr<canvas::ContextFactory> createContextFactory() const override {
     const AndroidPlatform & androidPlatform = dynamic_cast<const AndroidPlatform&>(getPlatform());
-    return std::unique_ptr<canvas::ContextFactory>(new canvas::AndroidContextFactory(androidPlatform.getAssetManager(), androidPlatform.getCanvasCache(), androidPlatform.getDisplayScale()));
+    return std::unique_ptr<canvas::ContextFactory>(new canvas::AndroidContextFactory(androidPlatform.getAssetManager(), androidPlatform.getCanvasCache(), getDisplayScale()));
   }
   virtual std::unique_ptr<Logger> createLogger(const std::string & name) const override {
     return std::unique_ptr<Logger>(new AndroidLogger(name));
@@ -291,28 +288,37 @@ protected:
   jobject framework;
 };
 
+static AndroidPlatform * platform = 0;
+static PlatformThread * mainThread = 0;
+
 class AndroidNativeThread : public Runnable {
 public:
-  AndroidNativeThread(AndroidPlatform * _platform)
-    : platform(_platform) { }
+  AndroidNativeThread(int _screenWidth, int _screenHeight, float _displayScale)
+  : screenWidth(_screenWidth), screenHeight(_screenHeight), displayScale(_displayScale) { }
 
   void run() override {
-    platform->create();
-    platform->initialize(getThreadPtr());
-    platform->initializeChildren();
-    platform->load();
+    mainThread = getThreadPtr();
+    mainThread->setActualDisplayWidth(screenWidth);
+    mainThread->setActualDisplayHeight(screenHeight);
+    mainThread->setDisplayScale(displayScale);
+
+    AndroidPlatform & androidPlatform = dynamic_cast<AndroidPlatform&>(getThread().getPlatform());
+
+    androidPlatform.create();
+    androidPlatform.initialize(getThreadPtr());
+    androidPlatform.initializeChildren();
+    androidPlatform.load();
 
     FWApplication * application = applicationMain();
-    platform->addChild(std::shared_ptr<Element>(application));
-    platform->renderLoop();
-    __android_log_print(ANDROID_LOG_INFO, "Sometrik", "Application is exiting");
-    platform->deinitializeRenderer();
+    androidPlatform.addChild(std::shared_ptr<Element>(application));
+    androidPlatform.renderLoop();
+    androidPlatform.deinitializeRenderer();
   }
-  
-private:
-  AndroidPlatform * platform;
-};
 
+private:
+  int screenWidth, screenHeight;
+  float displayScale;
+};
 
 std::string AndroidPlatform::getBundleFilename(const char * filename) {
   return filename;
@@ -357,7 +363,7 @@ std::string AndroidPlatform::getLocalFilename(const char * filename, FileType ty
 
 std::shared_ptr<PlatformThread>
 AndroidPlatform::createThread(std::shared_ptr<Runnable> & runnable) {
-  std::shared_ptr<PlatformThread> thread = std::unique_ptr<AndroidThread>(new AndroidThread(getNextThreadId(), this, runnable));
+  std::shared_ptr<PlatformThread> thread = std::unique_ptr<AndroidThread>(new AndroidThread(getNextThreadId(), mainThread, this, runnable));
   return thread;
 }
 
@@ -572,8 +578,6 @@ AndroidPlatform::onSysEvent(SysEvent & ev) {
   }
 }
 
-static AndroidPlatform * platform = 0;
-
 #ifdef PROFILING
 extern "C" void monstartup( char const * );
 extern "C" void moncleanup();
@@ -581,10 +585,10 @@ extern "C" void moncleanup();
 extern "C" {
 
 void Java_com_sometrik_framework_FrameWork_onResize(JNIEnv* env, jclass clazz, double timestamp, float x, float y, int viewId) {
-  platform->setActualDisplayWidth(x);
-  platform->setActualDisplayHeight(y);
+  mainThread->setActualDisplayWidth(x);
+  mainThread->setActualDisplayHeight(y);
 
-  ResizeEvent ev(x / platform->getDisplayScale(), y / platform->getDisplayScale(), x, y);
+  ResizeEvent ev(x / mainThread->getDisplayScale(), y / mainThread->getDisplayScale(), x, y);
   platform->queueEvent(viewId, ev);
 }
 
@@ -602,8 +606,8 @@ void Java_com_sometrik_framework_FrameWork_keyPressed(JNIEnv* env, jobject thiz,
 }
 
 void Java_com_sometrik_framework_FrameWork_touchEvent(JNIEnv* env, jobject thiz, int viewId, int mode, int fingerIndex, double timestamp, float x, float y) {
-  x /= platform->getDisplayScale();
-  y /= platform->getDisplayScale();
+  x /= mainThread->getDisplayScale();
+  y /= mainThread->getDisplayScale();
   switch (mode) {
   case 1:
     {
@@ -661,7 +665,6 @@ void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, job
     __android_log_print(ANDROID_LOG_INFO, "onInit", "oninit screenWidth: %d", screenWidth);
     __android_log_print(ANDROID_LOG_INFO, "onInit", "oninit screenHeight: %d", screenHeight);
 
-
     const char * email = env->GetStringUTFChars(jemail, NULL);
     const char * language = env->GetStringUTFChars(jlanguage, NULL);
     const char * country = env->GetStringUTFChars(jcountry, NULL);
@@ -675,12 +678,9 @@ void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, job
     AAssetManager* manager = AAssetManager_fromJava(env, assetManager);
     android_fopen_set_asset_manager(manager);
 
-    platform = new AndroidPlatform(env, assetManager, thiz, displayScale, gJavaVM, &account);
-    platform->setActualDisplayWidth(screenWidth);
-    platform->setActualDisplayHeight(screenHeight);
+    platform = new AndroidPlatform(env, assetManager, thiz, gJavaVM, account);
+    platform->run(make_shared<AndroidNativeThread>(screenWidth, screenHeight, displayScale));
 
-    platform->run(make_shared<AndroidNativeThread>(platform));
-    
 //    setenv("CPUPROFILE", "/data/data/com.sometrik.kraphio/files/gmon.out", 1);
 #ifdef PROFILING
     monstartup("framework.so");
@@ -690,19 +690,17 @@ void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, job
   }
 }
 
-  void Java_com_sometrik_framework_FrameWork_nativeSetSurface(JNIEnv* env, jobject thiz, jobject surface, int surfaceId, int gl_version, int width, int height) {
+void Java_com_sometrik_framework_FrameWork_nativeSetSurface(JNIEnv* env, jobject thiz, jobject surface, int surfaceId, int gl_version, int width, int height) {
   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "setting native surface on androidPlatform");
-  platform->setActualDisplayWidth(width);
-  platform->setActualDisplayHeight(height);
+  mainThread->setActualDisplayWidth(width);
+  mainThread->setActualDisplayHeight(height);
   if (surface != 0) {
     ANativeWindow * window = 0;
     window = ANativeWindow_fromSurface(env, surface);
     AndroidOpenGLInitEvent ev(gl_version, true, window);
     platform->queueEvent(platform->getInternalId(), ev);
-
   }
 }
-
 
  void Java_com_sometrik_framework_FrameWork_nativeSurfaceDestroyed(JNIEnv* env, jobject thiz, int surfaceId, int gl_version) {
    __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "native surface destroyed on androidPlatform");
