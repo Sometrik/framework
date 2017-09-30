@@ -5,6 +5,8 @@
 #include <Command.h>
 #include <FWPlatform.h>
 
+#include <SysEvent.h>
+
 class FWApplication : public Element {
 public:
   FWApplication(const char * _name, bool _full_screen = false)
@@ -55,6 +57,20 @@ public:
     return id;    
   }
   
+  void onSysEvent(SysEvent & ev) {
+    if (ev.getType() == SysEvent::BACK) {
+      int poppedView = popViewBackHistory();
+      if (poppedView != 0) {
+        Command c(Command::SET_INT_VALUE, poppedView);
+        c.setValue(2);
+        sendCommand(c);
+      } else {
+        Command c(Command::QUIT_APP, poppedView);
+        sendCommand(c);
+      }
+    }
+  }
+
  protected:
   bool isChildVisible(const Element & child) const override {
     return activeViewId == child.getInternalId();
