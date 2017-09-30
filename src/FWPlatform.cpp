@@ -76,7 +76,7 @@ FWPlatform::postEvent(int internal_id, Event & ev) {
   } else {
     std::ostringstream s;
     s << "Failed to dispatch event " << typeid(ev).name() << " id: " << internal_id;
-    getLogger().println(s.str());
+    getApplication().getLogger().println(s.str());
   }
 }
 

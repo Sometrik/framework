@@ -3,7 +3,6 @@
 
 #include <Element.h>
 #include <Event.h>
-#include <Logger.h>
 #include <FWPreferences.h>
 #include <MobileAccount.h>
 #include <Mutex.h>
@@ -67,8 +66,6 @@ class FWPlatform : public Element {
  
   MobileAccount & getMobileAccount();
 
-  Logger & getLogger();
-
   void dumpThreads() const;
 
   void registerElement(Element * e) {
@@ -120,8 +117,6 @@ class FWPlatform : public Element {
 #ifdef HAS_SOUNDCANVAS
   std::shared_ptr<SoundCanvas> soundCanvas;
 #endif
-  std::shared_ptr<Logger> logger;
-
   std::unordered_map<int, std::shared_ptr<PlatformThread> > threads;
   std::unordered_map<int, Element *> registered_elements;
   mutable Mutex mutex;

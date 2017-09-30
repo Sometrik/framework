@@ -444,7 +444,6 @@ AndroidPlatform::initializeRenderer(int opengl_es_version, ANativeWindow * _wind
     surface = _surface;
     context = _context;
 
-    getLogger().println("renderer initialized");
     return true;
   } else {
     return false;
@@ -497,14 +496,10 @@ AndroidPlatform::renderLoop() {
       auto ev2 = dynamic_cast<SysEvent*>(ev.second.get());
       if (ev2) {
         if (ev2->getType() == SysEvent::END_MODAL) {
-          getLogger().println("exiting loop after SysEvent::END_MODAL");
           exit_loop = true;
         } else if (ev2->getType() == SysEvent::DESTROY) {
-          getLogger().println("exiting loop after SysEvent::DESTROY");
           exit_loop = true;
         } else if (ev2->getType() == SysEvent::PAUSE) {
-//          getLogger().println("exiting loop after SysEvent::PAUSE");
-//          exit_loop = true;
         }
       }
 
@@ -518,14 +513,12 @@ AndroidPlatform::renderLoop() {
       postEvent(getApplication().getActiveViewId(), dev);
       
       if (!eglSwapBuffers(display, surface)) {
-	getLogger().println("error eglSwapBuffers");
+        // Swap buffers failed
       }
     }
   }
 
   exit_loop = false;
-
-  getLogger().println("Looping Louie is out");
 }
 
 void AndroidPlatform::onOpenGLInitEvent(OpenGLInitEvent & _ev) {

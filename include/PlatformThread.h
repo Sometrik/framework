@@ -86,7 +86,8 @@ class PlatformThread {
     try {
       getRunnable().start(this);
     } catch (std::exception & e) {
-      getPlatform().getLogger().println("PlatformThread: Runnable threw an exception: " + std::string(e.what()));
+      auto logger = createLogger("PlatformThread");
+      logger->println("PlatformThread: Runnable threw an exception: " + std::string(e.what()));
     }
     deinitialize();
     
