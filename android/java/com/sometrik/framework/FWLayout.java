@@ -38,14 +38,12 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
  
   @Override
   public void addChild(final View view) {
-    System.out.println("addChild on FWLayout " + view.getId());
     addView(view);
     
     if (childListeners) {
       if (view instanceof AdapterView) {
 	return;
       } else {
-	System.out.println("set listener to " + view.getId());
 	view.setOnClickListener(new OnClickListener() {
 	  @Override
 	  public void onClick(View v) {
@@ -107,7 +105,6 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
       if (view instanceof AdapterView) {
 	return;
       } else {
-	System.out.println("set listener to " + view.getId());
 	view.setOnClickListener(new OnClickListener() {
 	  @Override
 	  public void onClick(View v) {
@@ -265,15 +262,12 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
 
   @Override
   public void reshape(int value, int size) {
-    System.out.println("FWLayout reshape: " + size + " current: " + getChildCount());
-//    
     if (size > getChildCount()) {
       System.out.println("FWLayout did nothing");
     }
     
     ArrayList<View> viewsToBeRemoved = new ArrayList<View>();
     for (int i = size; i < getChildCount(); i++) {
-      System.out.println("addView to reshape");
       View view = getChildAt(i);
       viewsToBeRemoved.add(view);
     }
@@ -300,7 +294,6 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
 
   @Override
   public void reshape(int size) {
-    System.out.println("FWLayout reshape: " + size + " current: " + getChildCount());
     ArrayList<View> viewsToBeRemoved = new ArrayList<View>();
     for (int i = size; i < getChildCount(); i++) {
       View view = getChildAt(i);

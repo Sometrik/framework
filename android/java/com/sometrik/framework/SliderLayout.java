@@ -100,14 +100,13 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
     FWScrollView scrollView = new FWScrollView(frame);
     scrollView.setViewVisibility(false);
     scrollView.setLayoutParams(listParams);
-    System.out.println("addChild on SliderLayout " + view.getId());
     scrollView.addChild(view);
     if (view instanceof FWLayout) {
       FWLayout.ChildClickListener listener = new FWLayout.ChildClickListener() {
 
 	@Override
 	public void onClick(int childIndex, int childId) {
-	  System.out.println("Child index " + childIndex);
+	  System.out.println("Clicked child index " + childIndex);
 	  frame.intChangedEvent(System.currentTimeMillis() / 1000.0, getId(), childIndex, 0);
 	}
       };
@@ -130,7 +129,6 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
 
   @Override
   public void addOption(int optionId, String text) {
-    System.out.println("Slider addOption: " + optionId + " " + text + " " + buttonList.size());
     if (optionId < buttonList.size()){
       SliderButton button = buttonList.get(optionId);
       button.setText(text);
@@ -206,12 +204,11 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
 
   @Override
   public void setValue(int v) {
-    System.out.println("setValue "  + v + " activeButton " + activeButton + " buttonList.size " + buttonList.size() + " " + getId());
-    if (buttonList.size() == 0){
+    if (buttonList.size() == 0) {
       activeButton = v;
       return;
     }
-    if (activeButton == v){
+    if (activeButton == v) {
       System.out.println("button already active");
       return;
     }
@@ -302,7 +299,6 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
   @Override
   public void reshape(int value, int size) {
     // RESHAPE_SHEET
-    System.out.println("reshape: " + value + " " + size);
     if (value < buttonList.size()) {
       SliderButton button = buttonList.get(value);
       button.getList().reshape(0, size);
@@ -315,8 +311,6 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
   @Override
   public void reshape(int size) {
     // RESHAPE_TABLE
-
-      System.out.println("size: " + size + " tableSize: " + tableSize + " buttonListSize: " + buttonList.size());
 
       if (tableSize == size) {
 	return;

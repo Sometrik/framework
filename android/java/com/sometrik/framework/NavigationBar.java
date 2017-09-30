@@ -43,7 +43,6 @@ public class NavigationBar extends FrameLayout implements NativeCommandHandler {
 
   @Override
   public void addChild(View view) {
-    System.out.println("addChild on NavigationBar " + view.getId());
     final int buttonId = view.getId();
     view.setLayoutParams(childParams);
     view.setOnClickListener(new OnClickListener() {
