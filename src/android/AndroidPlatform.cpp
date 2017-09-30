@@ -57,7 +57,11 @@ static jbyteArray convertToByteArray(JNIEnv * env, const std::string & s) {
 class JavaCache {
 
 public:
-  JavaCache(JNIEnv * env) {
+  JavaCache(JNIEnv * env, jobject & _framework) {
+    env->GetJavaVM(&javaVM);
+
+    framework = env->NewGlobalRef(_framework);
+
     nativeCommandClass = (jclass) env->NewGlobalRef(env->FindClass("com/sometrik/framework/NativeCommand"));
     frameworkClass = (jclass) env->NewGlobalRef(env->FindClass("com/sometrik/framework/FrameWork"));
     systemClass = (jclass) env->NewGlobalRef(env->FindClass("java/lang/System"));
@@ -81,11 +85,18 @@ public:
 
   ~JavaCache() {
 #if 0
+    env->DeleteGlobalRef(framework);
     env->DeleteGlobalRef(nativeCommandClass);
     env->DeleteGlobalRef(frameworkClass);
     env->DeleteGlobalRef(systemClass);
 #endif
   }
+
+  JavaVM & getJavaVM() { return *javaVM; }
+
+  JavaVM * javaVM = 0;
+
+  jobject framework;
 
   jclass nativeCommandClass;
   jclass frameworkClass;
@@ -108,23 +119,15 @@ class AndroidPlatform : public FWPlatform {
 public:
   friend class AndroidNativeThread;
   
-  AndroidPlatform(JNIEnv * _env, jobject _mgr, jobject _framework, JavaVM * _javaVM) : javaCache(_env), javaVM(_javaVM) {
+  AndroidPlatform(JNIEnv * _env, jobject & _mgr, jobject & _framework) : javaCache(_env, _framework) {
     registerElement(this);
 
-    framework = _env->NewGlobalRef(_framework);
     asset_manager = AAssetManager_fromJava(_env, _mgr);
     canvasCache = std::make_shared<canvas::AndroidCache>(_env, _mgr);
     clientCache = std::make_shared<AndroidClientCache>(_env);
 
 #ifdef HAS_SOUNDCANVAS
     soundCache = std::make_shared<AndroidSoundCache>(_env, _mgr);
-#endif
-  }
-
-  ~AndroidPlatform() {
-#if 0
-    auto env = getEnv();
-    env->DeleteGlobalRef(framework);
 #endif
   }
 
@@ -177,8 +180,6 @@ public:
   const std::shared_ptr<canvas::AndroidCache> & getCanvasCache() const { return canvasCache; }
   AAssetManager * getAssetManager() const { return asset_manager; }
   JavaCache & getJavaCache() { return javaCache; }
-  jobject & getFramework() { return framework; }
-  JavaVM * getJavaVM() { return javaVM; }
   
 private:
   JavaCache javaCache;
@@ -192,9 +193,7 @@ private:
   std::shared_ptr<AndroidSoundCache> soundCache;
 
   ANativeWindow * window = 0;
-  JavaVM * javaVM = 0;
   AAssetManager * asset_manager;
-  jobject framework;
   EventQueue eventqueue;
   bool canDraw = false, isPaused = false, isDestroyed = false;
   bool exit_loop = false;
@@ -205,11 +204,7 @@ extern FWApplication * applicationMain();
 class AndroidThread : public PosixThread {
 public:
   AndroidThread(int _id, PlatformThread * _parent_thread, AndroidPlatform * _platform, std::shared_ptr<Runnable> & _runnable)
-    : PosixThread(_id, _parent_thread, _platform, _runnable),
-      javaVM(_platform->getJavaVM()),
-      javaCache(&(_platform->getJavaCache())),
-      framework(_platform->getFramework()) {
-
+    : PosixThread(_id, _parent_thread, _platform, _runnable), javaCache(&(_platform->getJavaCache())) {
   }
 
   std::unique_ptr<HTTPClientFactory> createHTTPClientFactory() const override {
@@ -245,8 +240,8 @@ public:
     if (!textValue2.empty()) jtextValue2 = convertToByteArray(myEnv, textValue2);
 
     // SET_TEXT_VALUE check and new listcommand constructor should be refactored. ListView creation needs work
-    jobject jcommand = myEnv->NewObject(javaCache->nativeCommandClass, javaCache->nativeListCommandConstructor, framework, commandTypeId, command.getInternalId(), command.getChildInternalId(), command.getValue(), jtextValue, jtextValue2, command.getFlags(), command.getRow(), command.getColumn(), command.getSheet(), command.getWidth(), command.getHeight());
-    myEnv->CallStaticVoidMethod(javaCache->frameworkClass, javaCache->sendCommandMethod, framework, jcommand);
+    jobject jcommand = myEnv->NewObject(javaCache->nativeCommandClass, javaCache->nativeListCommandConstructor, javaCache->framework, commandTypeId, command.getInternalId(), command.getChildInternalId(), command.getValue(), jtextValue, jtextValue2, command.getFlags(), command.getRow(), command.getColumn(), command.getSheet(), command.getWidth(), command.getHeight());
+    myEnv->CallStaticVoidMethod(javaCache->frameworkClass, javaCache->sendCommandMethod, javaCache->framework, jcommand);
 
     myEnv->DeleteLocalRef(jcommand);
     if (jtextValue) myEnv->DeleteLocalRef(jtextValue);
@@ -270,16 +265,14 @@ protected:
     args.name = NULL; // you might want to give the java thread a name
     args.group = NULL; // you might want to assign the java thread to a ThreadGroup
 
-    javaVM->AttachCurrentThread(&myEnv, &args);
+    javaCache->getJavaVM().AttachCurrentThread(&myEnv, &args);
   }
   void deinitialize() override {
-    javaVM->DetachCurrentThread();
+    javaCache->getJavaVM().DetachCurrentThread();
   }
 
-  JavaVM * javaVM;
   JavaCache * javaCache;
   JNIEnv * myEnv = 0;
-  jobject framework;
 };
 
 static std::shared_ptr<AndroidThread> mainThread;
@@ -640,7 +633,6 @@ void Java_com_sometrik_framework_FrameWork_onUpdate(JNIEnv* env, jclass clazz, d
   mainThread->getPlatform().pushEvent(viewId, ev);
 }
 
-static JavaVM * gJavaVM = 0;
 void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, jobject assetManager, int screenWidth, int screenHeight, float displayScale, jstring jemail, jstring jlanguage, jstring jcountry) {
   if (!mainThread.get()) {
     __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Creating Platform");
@@ -661,7 +653,7 @@ void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, job
     AAssetManager* manager = AAssetManager_fromJava(env, assetManager);
     android_fopen_set_asset_manager(manager);
 
-    auto platform = new AndroidPlatform(env, assetManager, thiz, gJavaVM);
+    auto platform = new AndroidPlatform(env, assetManager, thiz);
     shared_ptr<Runnable> runnable = make_shared<AndroidNativeThread>(account, preferences);
 
     mainThread = std::make_shared<AndroidThread>(platform->getNextThreadId(), nullptr, platform, runnable);
@@ -803,8 +795,7 @@ void Java_com_sometrik_framework_FrameWork_OnPurchaseEvent(JNIEnv* env, jclass c
 }
 
 jint JNI_OnLoad(JavaVM *vm, void *reserved) {
-  __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "JNI_Onload on AndroidPlatform");
-  gJavaVM = vm;
   return JNI_VERSION_1_6;
 }
+
 }
