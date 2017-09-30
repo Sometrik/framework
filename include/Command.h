@@ -102,8 +102,6 @@ class Command {
   int getWidth() const { return width; }
   void setHeight(int _height) { height = _height; }
   int getHeight() const { return height; }
-  void setLayoutWeight(int _layout_weight) { layout_weight = _layout_weight; }
-  int getLayoutWeight() const { return layout_weight; }
 
   void setRow(int r) { row = r; }
   int getRow() const { return row; }
@@ -125,7 +123,7 @@ class Command {
   std::string textValue, textValue2;
   int row = 0, column = 0;
   unsigned short sheet = 0;
-  int width = 0, height = 0, layout_weight = 0;
+  int width = 0, height = 0;
   unsigned int flags = 0;
 };
 
