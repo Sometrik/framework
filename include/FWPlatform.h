@@ -33,7 +33,7 @@ class FWPlatform : public Element {
   };
   
   FWPlatform(float _display_scale) : display_scale(_display_scale) {
-    initialize(this);
+    initialize(this, 0);
     initializeChildren();
     load();
   }

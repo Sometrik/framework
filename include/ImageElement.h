@@ -33,7 +33,6 @@ class ImageElement : public Element {
   void create() override {
     Command c(Command::CREATE_IMAGEVIEW, getParentInternalId(), getInternalId());
     c.setTextValue(filename);
-    c.setLayoutWeight(getLayoutWeight());
     sendCommand(c);
   }
 

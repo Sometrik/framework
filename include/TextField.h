@@ -37,7 +37,6 @@ class TextField : public InputElement {
  protected:
   void create() override {
     Command c(Command::CREATE_TEXTFIELD, getParentInternalId(), getInternalId());
-    c.setLayoutWeight(getLayoutWeight());
     sendCommand(c);
   }
 

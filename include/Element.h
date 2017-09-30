@@ -10,6 +10,7 @@
 
 class FWPlatform;
 class FWApplication;
+class PlatformThread;
 
 class Element : public EventHandler {
  public:
@@ -55,7 +56,7 @@ class Element : public EventHandler {
     children.insert(children.begin(), element);
 
     if (isInitialized()) {
-      element->initialize(platform);
+      element->initialize(platform, thread);
       element->initializeChildren();
       element->load();
     }
@@ -67,7 +68,7 @@ class Element : public EventHandler {
     children.push_back(element);
 
     if (isInitialized()) {
-      element->initialize(platform);
+      element->initialize(platform, thread);
       element->initializeChildren();
       element->load();
     }
@@ -86,9 +87,6 @@ class Element : public EventHandler {
   int getParentInternalId() const { return parent ? parent->getInternalId() : 0; }
 
   unsigned int getFlags() const { return flags; }
-
-  void setLayoutWeight(int w) { layout_weight = w; }
-  int getLayoutWeight() const { return layout_weight; }
 
   FWPlatform & getPlatform();
   const FWPlatform & getPlatform() const;
@@ -168,16 +166,20 @@ class Element : public EventHandler {
   void removeChild(Element * c);
 
   int createTimer(int timeout_ms);
-		   
+
+  PlatformThread & getThread() { return *thread; }
+  const PlatformThread & getThread() const { return *thread; }
+  void setThread(PlatformThread * _thread) { thread = _thread; }
+
  protected:
   virtual bool isChildVisible(const Element & child) const {
     return is_visible;
   }
   virtual void create() { }
-  
-  virtual void initialize(FWPlatform * _platform);
-  void initializeChildren();
+  virtual void initialize(FWPlatform * _platform, PlatformThread * _thread);
   virtual void load() { }
+
+  void initializeChildren();
 
   bool is_visible = true;
 
@@ -185,10 +187,10 @@ class Element : public EventHandler {
   static int getNextInternalId() { return nextInternalId.fetch_add(1); }
 
   FWPlatform * platform = 0;
+  PlatformThread * thread = 0;
   Element * parent = 0;
   int internal_id, id = 0;
   std::vector<std::shared_ptr<Element> > children;
-  int layout_weight = 0;
   unsigned int flags; // initialized in constructor
   bool has_error = false;
   std::vector<Command> pendingCommands;

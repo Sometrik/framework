@@ -26,7 +26,7 @@ class Dialog : public Element {
   int showModal(Element * parent) override {
     if (!isInitialized()) {
       setParent(parent);
-      initialize(&(parent->getPlatform()));
+      initialize(&(parent->getPlatform()), &(parent->getThread()));
       initializeChildren();
       load();
     }

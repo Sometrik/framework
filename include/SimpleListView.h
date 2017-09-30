@@ -55,7 +55,6 @@ class SimpleListView : public Element {
  protected: 
   void create() override {
     Command c(Command::CREATE_SIMPLELISTVIEW, getParentInternalId(), getInternalId());
-    c.setLayoutWeight(getLayoutWeight());
     c.setFlags(getFlags());
     sendCommand(c);
   }

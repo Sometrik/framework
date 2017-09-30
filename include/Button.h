@@ -70,7 +70,6 @@ protected:
   void create() override {
     Command c(Command::CREATE_BUTTON, getParentInternalId(), getInternalId());
     c.setTextValue(label);
-    c.setLayoutWeight(getLayoutWeight());
     sendCommand(c);
   }
 

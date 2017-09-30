@@ -20,10 +20,11 @@ Element::~Element() {
 }
 
 void
-Element::initialize(FWPlatform * _platform) {
+Element::initialize(FWPlatform * _platform, PlatformThread * _thread) {
   assert(_platform);
   if (_platform) {
     platform = _platform;
+    thread = _thread;
     platform->registerElement(this);
     create();
     for (auto & c : pendingCommands) {
@@ -39,7 +40,7 @@ Element::initializeChildren() {
   assert(isInitialized());
   if (isInitialized()) {
     for (auto & c : getChildren()) {
-      c->initialize(platform);
+      c->initialize(platform, thread);
       c->initializeChildren();
     }    
   }
