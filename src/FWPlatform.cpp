@@ -58,7 +58,7 @@ FWPlatform::onSysEvent(SysEvent & ev) {
   }
   if (exit_app) {
     cerr << "threads exited, terminating\n";
-    exitApp();
+    getThread().exitApp();
   }
 }
 

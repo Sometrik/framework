@@ -47,7 +47,9 @@ class FWPlatform : public Element {
   virtual std::string getLocalFilename(const char * filename, FileType type) = 0;
   virtual std::string loadTextAsset(const char * filename) = 0; 
   virtual void pushEvent(int internal_id, const Event & ev) = 0;
-  virtual void sendCommand2(const Command & command) = 0;
+  virtual void startModal() = 0;
+  virtual void endModal() = 0;
+
   virtual void createFBO(int flags) { }
 
   void onSysEvent(SysEvent & ev) override;
@@ -74,11 +76,6 @@ class FWPlatform : public Element {
 
   int getModalResultValue() const { return modal_result_value; }
   const std::string & getModalResultText() const { return modal_result_text; }
-
-  void exitApp() {
-    Command c(Command::QUIT_APP, getInternalId());
-    sendCommand2(c);
-  }
 
   bool run(std::shared_ptr<Runnable> runnable);
 

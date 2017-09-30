@@ -18,7 +18,8 @@ public:
     MEMORY_WARNING,
     THREAD_TERMINATED,
     END_MODAL,
-    LANGUAGE_CHANGED
+    LANGUAGE_CHANGED,
+    BACK
   };
  SysEvent(Type _type) : type(_type) { }
 

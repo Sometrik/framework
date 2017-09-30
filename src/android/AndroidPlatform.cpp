@@ -46,10 +46,17 @@
 
 using namespace std;
 
+static jbyteArray convertToByteArray(JNIEnv * env, const std::string & s) {
+  const jbyte * pNativeMessage = reinterpret_cast<const jbyte*>(s.c_str());
+  jbyteArray bytes = env->NewByteArray(s.size());
+  env->SetByteArrayRegion(bytes, 0, s.size(), pNativeMessage);
+  return bytes;
+}
+
 class JavaCache {
 
 public:
-  JavaCache(JNIEnv * _env) : env(_env) {
+  JavaCache(JNIEnv * env) {
     nativeCommandClass = (jclass) env->NewGlobalRef(env->FindClass("com/sometrik/framework/NativeCommand"));
     frameworkClass = (jclass) env->NewGlobalRef(env->FindClass("com/sometrik/framework/FrameWork"));
     systemClass = (jclass) env->NewGlobalRef(env->FindClass("java/lang/System"));
@@ -72,8 +79,11 @@ public:
   }
 
   ~JavaCache() {
-      env->DeleteGlobalRef(nativeCommandClass);
-      env->DeleteGlobalRef(frameworkClass);
+#if 0
+    env->DeleteGlobalRef(nativeCommandClass);
+    env->DeleteGlobalRef(frameworkClass);
+    env->DeleteGlobalRef(systemClass);
+#endif
   }
 
   jclass nativeCommandClass;
@@ -88,9 +98,6 @@ public:
   jmethodID sendCommandMethod;
   jmethodID getDatabasePathMethod;
   jmethodID getPathMethod;
-
-private:
-  JNIEnv * env;
 };
 
 class AndroidThread;
@@ -100,22 +107,25 @@ class AndroidPlatform : public FWPlatform {
 public:
   friend class AndroidNativeThread;
   
- AndroidPlatform(JNIEnv * _env, jobject _mgr, jobject _framework, float _display_scale, JavaVM * _javaVM, MobileAccount * _account)
+  AndroidPlatform(JNIEnv * _env, jobject _mgr, jobject _framework, float _display_scale, JavaVM * _javaVM, MobileAccount * _account)
    : FWPlatform(_display_scale),
      account(_account),
     javaCache(JavaCache(_env)),
-    gJavaVM(_javaVM){
+    gJavaVM(_javaVM) {
       
     framework = _env->NewGlobalRef(_framework);
     asset_manager = AAssetManager_fromJava(_env, _mgr);
     canvasCache = std::make_shared<canvas::AndroidCache>(_env, _mgr);
     clientCache = std::make_shared<AndroidClientCache>(_env);
-    sendCommand2(Command(Command::CREATE_PLATFORM, getParentInternalId(), getInternalId()));
-
 
 #ifdef HAS_SOUNDCANVAS
     soundCache = std::make_shared<AndroidSoundCache>(_env, _mgr);
 #endif
+  }
+
+  ~AndroidPlatform() {
+    auto env = getEnv();
+    env->DeleteGlobalRef(framework);
   }
 
   std::string getBundleFilename(const char * filename) override;
@@ -145,7 +155,6 @@ public:
   std::unique_ptr<Logger> createLogger(const std::string & name) const override {
     return std::unique_ptr<Logger>(new AndroidLogger(name));
   }
-  void sendCommand2(const Command & command) override;
   bool initializeRenderer(int opengl_es_version, ANativeWindow * _window);
   void deinitializeRenderer();
   void renderLoop();
@@ -161,16 +170,28 @@ public:
     queueEvent(internal_id, ev);
   }
 
+  void startModal() override {
+    modal_result_value = 0;
+    modal_result_text = "";
+    __android_log_print(ANDROID_LOG_INFO, "Sometrik", "starting modal run loop");
+    renderLoop();
+    __android_log_print(ANDROID_LOG_INFO, "Sometrik", "ending modal run loop");
+  }
+
+  void endModal() override {
+    exit_loop = true;
+  }
+
   void onOpenGLInitEvent(OpenGLInitEvent & _ev) override;
   void onSysEvent(SysEvent & ev) override;
 
   const std::shared_ptr<AndroidClientCache> & getClientCache() const { return clientCache; }
   const std::shared_ptr<canvas::AndroidCache> & getCanvasCache() const { return canvasCache; }
   AAssetManager * getAssetManager() const { return asset_manager; }
+  JavaCache & getJavaCache() { return javaCache; }
+  jobject & getFramework() { return framework; }
+  JavaVM * getJavaVM() { return gJavaVM; }
   
- protected:
-  jbyteArray convertToByteArray(const std::string & s);
-
 private:
   JavaCache javaCache;
   std::string databasePath;
@@ -199,8 +220,13 @@ extern FWApplication * applicationMain();
 
 class AndroidThread : public PosixThread {
 public:
-  AndroidThread(int _id, AndroidPlatform * _platform, std::shared_ptr<Runnable> & _runnable, JavaVM * _javaVM)
-    : PosixThread(_id, _platform, _runnable), javaVM(_javaVM) { }
+  AndroidThread(int _id, AndroidPlatform * _platform, std::shared_ptr<Runnable> & _runnable)
+    : PosixThread(_id, _platform, _runnable),
+      javaVM(_platform->getJavaVM()),
+      javaCache(&(_platform->getJavaCache())),
+      framework(_platform->getFramework()) {
+
+  }
 
   std::unique_ptr<HTTPClientFactory> createHTTPClientFactory() const override {
     const AndroidPlatform & androidPlatform = dynamic_cast<const AndroidPlatform&>(getPlatform());
@@ -209,6 +235,38 @@ public:
   std::unique_ptr<canvas::ContextFactory> createContextFactory() const override {
     const AndroidPlatform & androidPlatform = dynamic_cast<const AndroidPlatform&>(getPlatform());
     return std::unique_ptr<canvas::ContextFactory>(new canvas::AndroidContextFactory(androidPlatform.getAssetManager(), androidPlatform.getCanvasCache(), androidPlatform.getDisplayScale()));
+  }
+  void sendCommand(const Command & command) override {
+    if (command.getType() == Command::CREATE_FORMVIEW || command.getType() == Command::CREATE_OPENGL_VIEW) {
+      auto & app = getPlatform().getApplication();
+      if (!app.getActiveViewId()) {
+        app.setActiveViewId(command.getChildInternalId());
+      }
+    }
+
+    int commandTypeId = int(command.getType());
+    auto textValue = command.getTextValue();
+    auto textValue2 = command.getTextValue2();
+    jbyteArray jtextValue = 0, jtextValue2 = 0;
+    if (!textValue.empty()) jtextValue = convertToByteArray(myEnv, textValue);
+    if (!textValue2.empty()) jtextValue2 = convertToByteArray(myEnv, textValue2);
+
+    // SET_TEXT_VALUE check and new listcommand constructor should be refactored. ListView creation needs work
+    jobject jcommand = myEnv->NewObject(javaCache->nativeCommandClass, javaCache->nativeListCommandConstructor, framework, commandTypeId, command.getInternalId(), command.getChildInternalId(), command.getValue(), jtextValue, jtextValue2, command.getFlags(), command.getRow(), command.getColumn(), command.getSheet(), command.getWidth(), command.getHeight());
+    myEnv->CallStaticVoidMethod(javaCache->frameworkClass, javaCache->sendCommandMethod, framework, jcommand);
+
+    myEnv->DeleteLocalRef(jcommand);
+    if (jtextValue) myEnv->DeleteLocalRef(jtextValue);
+    if (jtextValue2) myEnv->DeleteLocalRef(jtextValue2);
+
+    if (command.getType() == Command::SHOW_DIALOG ||
+        command.getType() == Command::SHOW_MESSAGE_DIALOG ||
+        command.getType() == Command::SHOW_INPUT_DIALOG ||
+        command.getType() == Command::SHOW_ACTION_SHEET) {
+      getPlatform().startModal();
+    } else if (command.getType() == Command::END_MODAL) {
+      getPlatform().endModal();
+    }
   }
 
 protected:
@@ -226,7 +284,9 @@ protected:
   }
 
   JavaVM * javaVM;
+  JavaCache * javaCache;
   JNIEnv * myEnv = 0;
+  jobject framework;
 };
 
 class AndroidNativeThread : public Runnable {
@@ -235,6 +295,9 @@ public:
     : platform(_platform) { }
 
   void run() override {
+    platform->setThread(getThreadPtr());
+    getThread().sendCommand(Command(Command::CREATE_PLATFORM, platform->getParentInternalId(), platform->getInternalId()));
+
     FWApplication * application = applicationMain();
     platform->addChild(std::shared_ptr<Element>(application));
     platform->renderLoop();
@@ -288,15 +351,7 @@ std::string AndroidPlatform::getLocalFilename(const char * filename, FileType ty
   return "";
 }
 
-jbyteArray
-AndroidPlatform::convertToByteArray(const std::string & s) {
-  auto env = getEnv();
-  const jbyte * pNativeMessage = reinterpret_cast<const jbyte*>(s.c_str());
-  jbyteArray bytes = env->NewByteArray(s.size());
-  env->SetByteArrayRegion(bytes, 0, s.size(), pNativeMessage);
-  return bytes;
-}
-
+#if 0
 void
 AndroidPlatform::sendCommand2(const Command & command) {
   if (command.getType() == Command::CREATE_FORMVIEW || command.getType() == Command::CREATE_OPENGL_VIEW) {
@@ -311,8 +366,8 @@ AndroidPlatform::sendCommand2(const Command & command) {
   auto textValue = command.getTextValue();
   auto textValue2 = command.getTextValue2();
   jbyteArray jtextValue = 0, jtextValue2 = 0;
-  if (!textValue.empty()) jtextValue = convertToByteArray(textValue);
-  if (!textValue2.empty()) jtextValue2 = convertToByteArray(textValue2);
+  if (!textValue.empty()) jtextValue = convertToByteArray(env, textValue);
+  if (!textValue2.empty()) jtextValue2 = convertToByteArray(env, textValue2);
   
   // SET_TEXT_VALUE check and new listcommand constructor should be refactored. ListView creation needs work
   jobject jcommand;
@@ -331,22 +386,16 @@ AndroidPlatform::sendCommand2(const Command & command) {
       command.getType() == Command::SHOW_MESSAGE_DIALOG ||
       command.getType() == Command::SHOW_INPUT_DIALOG ||
       command.getType() == Command::SHOW_ACTION_SHEET) {
-    modal_result_value = 0;
-    modal_result_text = "";
-    __android_log_print(ANDROID_LOG_INFO, "Sometrik", "starting modal run loop");
-    renderLoop();
-    __android_log_print(ANDROID_LOG_INFO, "Sometrik", "ending modal run loop");
+    startModal();
   } else if (command.getType() == Command::END_MODAL) {
-    exit_loop = true;
+    endModal();
   }
 }
-
+#endif
 
 std::shared_ptr<PlatformThread>
 AndroidPlatform::createThread(std::shared_ptr<Runnable> & runnable) {
-//    shared_ptr<PlatformThread> thread = make_shared<AndroidThread>(this, runnable);
-  std::shared_ptr<PlatformThread> thread = std::unique_ptr<AndroidThread>(new AndroidThread(getNextThreadId(), this, runnable, gJavaVM));
-//    <Logger>(new AndroidLogger(name));
+  std::shared_ptr<PlatformThread> thread = std::unique_ptr<AndroidThread>(new AndroidThread(getNextThreadId(), this, runnable));
   return thread;
 }
 
@@ -595,17 +644,8 @@ void Java_com_sometrik_framework_FrameWork_onResize(JNIEnv* env, jclass clazz, d
 
 void Java_com_sometrik_framework_FrameWork_keyPressed(JNIEnv* env, jobject thiz, double timestamp, int keyId, int viewId) {
   if (keyId == 4) {
-    int poppedView = platform->getApplication().popViewBackHistory();
-    if (poppedView != 0) {
-      Command co(Command::SET_INT_VALUE, poppedView);
-      co.setValue(2);
-      platform->sendCommand2(co);
-    } else {
-      //TODO
-      // Wrong Thread
-      Command co(Command::QUIT_APP, poppedView);
-      platform->sendCommand2(co);
-    }
+    SysEvent ev(SysEvent::BACK);
+    platform->queueEvent(platform->getApplication().getInternalId(), ev);
   } else if (keyId == 82) {
     CommandEvent ce(FW_ID_MENU);
     platform->queueEvent(platform->getApplication().getActiveViewId(), ce);

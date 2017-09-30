@@ -5,6 +5,7 @@
 #include <LinearLayout.h>
 #include <FWApplication.h>
 #include <ElementNotInitializedException.h>
+#include <PlatformThread.h>
 
 #include <cassert>
 
@@ -92,8 +93,8 @@ Element::style(const std::string & key, const std::string & value) {
   
 void
 Element::sendCommand(const Command & command) {
-  if (platform) {
-    platform->sendCommand2(command);
+  if (thread) {
+    thread->sendCommand(command);
   } else {
     pendingCommands.push_back(command);
   }
