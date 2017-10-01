@@ -1,7 +1,8 @@
 #ifndef _FWPREFERENCES_H_
 #define _FWPREFERENCES_H_
 
-#include <map>
+#include <unordered_map>
+#include <unordered_set>
 #include <string>
 
 class FWPreferences {
@@ -12,7 +13,7 @@ class FWPreferences {
     data[key] = value;
   }
 
-  const std::string & getText(const char * key) const {
+  const std::string & getText(const std::string & key) const {
     auto it = data.find(key);
     if (it != data.end()) return it->second;
     else return empty_string;
@@ -24,16 +25,44 @@ class FWPreferences {
     else return defaultValue;
   }
 
-  int getInt(const char * key, int defaultValue = 0) const {
+  int getInt(const std::string & key, int defaultValue = 0) const {
     return std::stoi(getText(key, std::to_string(defaultValue)));
+  }
+
+  long long getLong(const std::string & key, long long defaultValue = 0) const {
+    return std::stoi(getText(key, std::to_string(defaultValue)));
+  }
+
+  void setText(const std::string & key, const std::string & value) {
+    data[key] = value;
+    changedKeys.insert(key);
+  }
+  
+  void setInt(const std::string & key, int value) {
+    setText(key, std::to_string(value));
+  }
+
+  void setLong(const std::string & key, long long value) {
+    setText(key, std::to_string(value));
   }
 
   bool empty() const { return data.empty(); }
   size_t size() const { return data.size(); }
+
+  std::unordered_map<std::string, std::string> getChanges() const {
+    std::unordered_map<std::string, std::string> r;
+    for (auto & key : changedKeys) {
+      r[key] = getText(key);
+    }
+    return r;
+  }
+  
+  void clearChanges() { changedKeys.clear(); }
   
  private:
-  std::map<std::string, std::string> data;
+  std::unordered_map<std::string, std::string> data;
   std::string empty_string;
+  std::unordered_set<std::string> changedKeys;
 };
 
 #endif
