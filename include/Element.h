@@ -33,9 +33,8 @@ class Element : public EventHandler {
   virtual int showModal(Element * parent) { return 0; }
 
   virtual bool isVisible() const {
-    if (!is_visible) return false;
-    else if (parent) return parent->isChildVisible(*this);
-    else return true;
+    if (parent) return parent->isChildVisible(*this);
+    else return is_visible;
   }
   
   void setError(bool t) override;
@@ -174,7 +173,9 @@ class Element : public EventHandler {
 
  protected:
   virtual bool isChildVisible(const Element & child) const {
-    return is_visible;
+    if (!child.is_visible) return false;
+    else if (parent) return parent->isChildVisible(*this);
+    else return true;
   }
 
   bool is_visible = true;

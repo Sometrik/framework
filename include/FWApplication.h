@@ -81,7 +81,8 @@ public:
   
  protected:
   bool isChildVisible(const Element & child) const override {
-    return activeViewId == child.getInternalId();
+    if (!isVisible()) return false;
+    else return activeViewId == child.getInternalId();
   }
 
   void create() override {
