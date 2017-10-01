@@ -62,6 +62,7 @@ class Command {
     SET_IMAGE,
     FLUSH_VIEW, // Flushes GridView content
     UPDATE_PREFERENCE,
+    COMMIT_PREFERENCES,
     ADD_OPTION,
     ADD_SHEET,
     ADD_COLUMN,
