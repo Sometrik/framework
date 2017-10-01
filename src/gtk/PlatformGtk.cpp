@@ -50,6 +50,7 @@ struct event_data_s {
 class PlatformGtk : public FWPlatform {
 public:
   friend class GtkThread;
+  friend class GtkMainThread;
   
   PlatformGtk() {
     CurlClientFactory::globalInit();
@@ -1092,10 +1093,52 @@ public:
 
 };
 
+class GtkMainThread : public PlatformThread {
+public:
+  GtkMainThread(int _id, FWPlatform * _platform, std::shared_ptr<Runnable> & _runnable)
+   : PlatformThread(_id, 0, _platform, _runnable)
+  {
+    
+  }
+  
+  std::unique_ptr<canvas::ContextFactory> createContextFactory() const override {
+    return std::unique_ptr<canvas::ContextFactory>(new canvas::CairoContextFactory);
+  }
+  std::unique_ptr<HTTPClientFactory> createHTTPClientFactory() const override {
+    return std::unique_ptr<HTTPClientFactory>(new CurlClientFactory);
+  }
+
+  bool start() override { return false; }
+  bool testDestroy() override { return false; }
+  void terminate() override { }
+
+  std::shared_ptr<PlatformThread> createThread(std::shared_ptr<Runnable> & runnable) override {
+    return make_shared<GtkThread>(getPlatform().getNextThreadId(), this, &(getPlatform()), runnable);
+  }
+  int sendCommand(const Command & command) {
+    auto & gtkPlatform = dynamic_cast<PlatformGtk&>(getPlatform());
+    return gtkPlatform.handleCommand(command);
+  }
+
+  void sleep(double t) override {
+    usleep((unsigned int)(t * 1000000));
+  }
+};
+
 static void activate(GtkApplication * gtk_app, gpointer user_data) {
   cerr << "activate\n";
   PlatformGtk * platform = (PlatformGtk*)user_data;
+
+  std::shared_ptr<Runnable> runnable(0);
+  auto mainThread = new GtkMainThread(platform->getNextThreadId(), platform, runnable);
+
+  platform->create();
+  platform->initialize(mainThread);
+  platform->initializeChildren();
+  platform->load();
+
   platform->activate(gtk_app);
+
   FWApplication * application = applicationMain();
   platform->addChild(std::shared_ptr<Element>(application));  
 }
