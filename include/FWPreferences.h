@@ -12,10 +12,20 @@ class FWPreferences {
     data[key] = value;
   }
 
-  const std::string & getValue(const std::string & key) const {
+  const std::string & getText(const char * key) const {
     auto it = data.find(key);
     if (it != data.end()) return it->second;
     else return empty_string;
+  }
+
+  const std::string & getText(const std::string & key, const std::string & defaultValue) const {
+    auto it = data.find(key);
+    if (it != data.end()) return it->second;
+    else return defaultValue;
+  }
+
+  int getInt(const char * key, int defaultValue = 0) {
+    return stoi(getText(key, to_string(defaultValue)));
   }
 
   bool empty() const { return data.empty(); }
