@@ -76,8 +76,9 @@ public:
   const MobileAccount getMobileAccount() const { return mobileAccount; }
 
   void setPreferences(const FWPreferences & _preferences) { preferences = _preferences; }
+  FWPreferences & getPreferences() { return preferences; }
   const FWPreferences & getPreferences() const { return preferences; }
-
+  
  protected:
   bool isChildVisible(const Element & child) const override {
     return activeViewId == child.getInternalId();
@@ -89,6 +90,17 @@ public:
     c.setTextValue(name);
     c.setTextValue2(iap_public_key);
     sendCommand(c);
+  }
+
+  void savePreferences() {
+    for (auto & row : preferences.getChanges()) {
+      Command c(Command::UPDATE_PREFERENCE, getInternalId());
+      c.setTextValue(row.first);
+      c.setTextValue2(row.second);
+      sendCommand(c);
+    }
+    sendCommand(Command(Command::COMMIT_PREFERENCES, getInternalId()));
+    preferences.clearChanges();
   }
 
  private:
