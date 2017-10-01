@@ -42,6 +42,8 @@ class Element : public EventHandler {
   void setEnabled(bool enabled);
 
   void style(const std::string & key, const std::string & value);
+  void style(const std::string & key, int value) { style(key, std::to_string(value)); }
+
   int sendCommand(const Command & command);
 
   void onEvent(Event & ev) override;
