@@ -30,19 +30,6 @@
 
 using namespace std;
 
-class GtkThread : public PosixThread {
-public:
-  GtkThread(int _id, FWPlatform * _platform, std::shared_ptr<Runnable> & _runnable)
-    : PosixThread(_id, _platform, _runnable) { }
-
-  std::unique_ptr<HTTPClientFactory> createHTTPClientFactory() const override {
-    return std::unique_ptr<HTTPClientFactory>(new CurlClientFactory);
-  }
-  std::unique_ptr<canvas::ContextFactory> createContextFactory() const override {
-    return std::unique_ptr<canvas::ContextFactory>(new canvas::CairoContextFactory);
-  }
-};
-
 struct sheet_data_s {
   string name;
   bool is_created;
@@ -62,7 +49,9 @@ struct event_data_s {
 
 class PlatformGtk : public FWPlatform {
 public:
-  PlatformGtk() : FWPlatform(1.0f) {
+  friend class GtkThread;
+  
+  PlatformGtk() {
     CurlClientFactory::globalInit();
     registerElement(this);
   }
@@ -74,17 +63,49 @@ public:
     ed->internal_id = internal_id;
     g_idle_add(idle_callback, ed);
   }
-
-  std::shared_ptr<PlatformThread> createThread(std::shared_ptr<Runnable> & runnable) override {
-    return make_shared<GtkThread>(getNextThreadId(), this, runnable);
-  }
   
   string getLocalFilename(const char * fn, FileType type) override {
     string s = "assets/";
     return s + fn;
   }
-  
-  void sendCommand2(const Command & command) override {
+
+#ifdef HAS_SOUNDCANVAS
+  std::shared_ptr<SoundCanvas> createSoundCanvas() const override {
+    return std::make_shared<SDLSoundCanvas>();
+  }
+#endif
+
+  int startModal() override {
+    return 0;
+  }
+
+  void endModal() override {
+
+  }
+    
+  std::string getBundleFilename(const char * filename) override {
+    string s = "assets/";
+    return s + filename;
+  }
+
+  std::string loadTextAsset(const char * filename) override {
+    std::ifstream t(getBundleFilename(filename));
+    std::stringstream buffer;
+    buffer << t.rdbuf();
+    return buffer.str();
+  }
+
+  void activate(GtkApplication * _gtk_app) {
+    gtk_app = _gtk_app;
+        
+    window = gtk_application_window_new(gtk_app);
+    gtk_window_set_title (GTK_WINDOW(window), "Window");
+    gtk_window_set_default_size (GTK_WINDOW(window), width, height);
+    g_signal_connect(window, "delete-event", G_CALLBACK(delete_window), this);
+  }
+
+protected:
+  int handleCommand(const Command & command) {
     if (command.getType() == Command::CREATE_FORMVIEW || command.getType() == Command::CREATE_OPENGL_VIEW) {
       auto & app = getApplication();
       if (!app.getActiveViewId()) {
@@ -633,6 +654,8 @@ public:
 	break;
       }
       gtk_widget_destroy (dialog);
+      
+      return modal_result_value;
     }
       break;
 
@@ -696,35 +719,9 @@ public:
     default:
       break;
     }
+    return 0;
   }
   
-#ifdef HAS_SOUNDCANVAS
-    std::shared_ptr<SoundCanvas> createSoundCanvas() const override {
-    return std::make_shared<SDLSoundCanvas>();
-  }
-#endif
-    
-  std::string getBundleFilename(const char * filename) override {
-    string s = "assets/";
-    return s + filename;
-  }
-
-  std::string loadTextAsset(const char * filename) override {
-    std::ifstream t(getBundleFilename(filename));
-    std::stringstream buffer;
-    buffer << t.rdbuf();
-    return buffer.str();
-  }
-
-  void activate(GtkApplication * _gtk_app) {
-    gtk_app = _gtk_app;
-        
-    window = gtk_application_window_new(gtk_app);
-    gtk_window_set_title (GTK_WINDOW(window), "Window");
-    gtk_window_set_default_size (GTK_WINDOW(window), width, height);
-    g_signal_connect(window, "delete-event", G_CALLBACK(delete_window), this);
-  }
-
   void addView(int parent_id, int id, GtkWidget * widget, bool expand = false) {
     assert(widget);
     if (initial_view_shown) gtk_widget_show(widget);    
@@ -793,7 +790,6 @@ public:
     }
   }
 
-protected:
   static string getTextProperty(gpointer object, const char * key);
   static string getTextProperty(GtkContainer * c, GtkWidget * w, const char * key);
 
@@ -1012,14 +1008,14 @@ PlatformGtk::send_activation_value(GtkTreeView * treeview, GtkTreePath * path, G
 void
 PlatformGtk::on_previous_button(GtkWidget * widget, gpointer data) {
   PlatformGtk * platform = (PlatformGtk*)data;
-  platform->sendCommand2(Command(Command::HISTORY_GO_BACK, 0));  
+  platform->handleCommand(Command(Command::HISTORY_GO_BACK, 0));  
 }
 
 void
 PlatformGtk::on_next_button(GtkWidget * widget, gpointer data) {
   cerr << "got next\n";
   PlatformGtk * platform = (PlatformGtk*)data;
-  platform->sendCommand2(Command(Command::HISTORY_GO_FORWARD, 0));  
+  platform->handleCommand(Command(Command::HISTORY_GO_FORWARD, 0));  
 }
 
 void
@@ -1054,6 +1050,9 @@ PlatformGtk::idle_callback(gpointer data) {
 gboolean
 PlatformGtk::delete_window(GtkWidget *widget, GdkEvent  *event, gpointer user_data) {
   PlatformGtk * platform = (PlatformGtk*)user_data;
+#if 1
+  return FALSE; // FIXME
+#else
   platform->terminateThreads();
   if (platform->getNumRunningThreads()) {
     platform->exit_when_threads_terminated = true;
@@ -1061,6 +1060,7 @@ PlatformGtk::delete_window(GtkWidget *widget, GdkEvent  *event, gpointer user_da
   } else {
     return FALSE;
   }
+#endif
 }
 
 gboolean
@@ -1070,6 +1070,27 @@ PlatformGtk::timer_callback(gpointer data) {
   platform->postEvent(platform->getInternalId(), ev);
   return TRUE;
 }
+
+class GtkThread : public PosixThread {
+public:
+  GtkThread(int _id, PlatformThread * _parent_thread, FWPlatform * _platform, std::shared_ptr<Runnable> & _runnable)
+    : PosixThread(_id, _parent_thread, _platform, _runnable) { }
+
+  std::unique_ptr<HTTPClientFactory> createHTTPClientFactory() const override {
+    return std::unique_ptr<HTTPClientFactory>(new CurlClientFactory);
+  }
+  std::unique_ptr<canvas::ContextFactory> createContextFactory() const override {
+    return std::unique_ptr<canvas::ContextFactory>(new canvas::CairoContextFactory);
+  }
+  std::shared_ptr<PlatformThread> createThread(std::shared_ptr<Runnable> & runnable) override {
+    return make_shared<GtkThread>(getPlatform().getNextThreadId(), this, &(getPlatform()), runnable);
+  }
+  int sendCommand(const Command & command) {
+    auto & gtkPlatform = dynamic_cast<PlatformGtk&>(getPlatform());
+    return gtkPlatform.handleCommand(command);
+  }
+
+};
 
 static void activate(GtkApplication * gtk_app, gpointer user_data) {
   cerr << "activate\n";
@@ -1083,8 +1104,8 @@ int main (int argc, char *argv[]) {
   GtkApplication * gtk_app;
 
   PlatformGtk platform;  
-  platform.setActualDisplayWidth(width);
-  platform.setActualDisplayHeight(height);
+  // platform.setActualDisplayWidth(width); // FIXME
+  // platform.setActualDisplayHeight(height);
 
   cerr << "creating application\n";
   
