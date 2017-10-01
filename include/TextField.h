@@ -26,7 +26,7 @@ class TextField : public InputElement {
   bool call(bool t) override { return call(t ? "true" : "false"); }
   bool call(const std::string & s) override {
     value = s;
-    Command c(Command::SET_TEXT_VALUE, getParentInternalId(), getInternalId());
+    Command c(Command::SET_TEXT_VALUE, getInternalId());
     c.setTextValue(value);
     sendCommand(c);
     return true;
