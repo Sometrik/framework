@@ -24,8 +24,8 @@ class FWPreferences {
     else return defaultValue;
   }
 
-  int getInt(const char * key, int defaultValue = 0) {
-    return stoi(getText(key, to_string(defaultValue)));
+  int getInt(const char * key, int defaultValue = 0) const {
+    return std::stoi(getText(key, std::to_string(defaultValue)));
   }
 
   bool empty() const { return data.empty(); }
