@@ -22,7 +22,7 @@ class Checkbox : public InputElement {
 
   bool call(bool t) override {
     value = t;
-    Command c(Command::SET_INT_VALUE, getParentInternalId(), getInternalId());
+    Command c(Command::SET_INT_VALUE, getInternalId());
     c.setValue(value);
     sendCommand(c);
     return true;
