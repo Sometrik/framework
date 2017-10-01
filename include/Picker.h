@@ -20,7 +20,7 @@ class Picker : public Element {
     }
     options.push_back(std::pair<int, std::string>(id, name));
 
-    Command c(Command::ADD_OPTION, getInternalId(), 0);
+    Command c(Command::ADD_OPTION, getInternalId());
     c.setValue(id);
     c.setTextValue(name);
     sendCommand(c);
