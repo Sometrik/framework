@@ -4,7 +4,6 @@
 #include <Logger.h>
 #include <Runnable.h>
 #include <SysEvent.h>
-#include <Mutex.h>
 
 #include <exception>
 #include <memory>
@@ -60,14 +59,10 @@ class PlatformThread {
 
   bool run(std::shared_ptr<Runnable> runnable) {
     auto thread = createThread(runnable);
-    {
-      MutexLocker m(mutex);
-      subthreads[thread->getInternalId()] = thread;
-    }
+    subthreads[thread->getInternalId()] = thread;
     if (thread->start()) {
       return true;
     } else {
-      MutexLocker m(mutex);
       subthreads.erase(thread->getInternalId());
       return false;
     }
@@ -94,13 +89,11 @@ class PlatformThread {
     std::cerr << "terminating " << subthreads.size() << " threads:\n";
     dumpThreads();
 
-    MutexLocker m(mutex);
     for (auto & thread : subthreads) {
       thread.second->terminate();
     }
   }
   void dumpThreads() const {
-    MutexLocker m(mutex);
     std::cerr << "running threads:\n";
     for (auto & t : subthreads) {
       auto & r = t.second->getRunnable();
@@ -109,7 +102,6 @@ class PlatformThread {
   }
 
   const PlatformThread * getThreadById(int id) const {
-    MutexLocker m(mutex);
     auto it = subthreads.find(id);
     if (it != subthreads.end()) {
       return it->second.get();
@@ -119,7 +111,6 @@ class PlatformThread {
   }
 
   size_t getNumRunningThreads() const {
-    MutexLocker m(mutex);
     return subthreads.size();
   }
 
@@ -129,7 +120,6 @@ class PlatformThread {
   void onSysEvent(SysEvent & ev) {
     bool exit_app = false;
     if (ev.getType() == SysEvent::THREAD_TERMINATED) {
-      MutexLocker m(mutex);
       bool r = false;
       auto it = threads.find(ev.getThreadId());
       if (it != threads.end()) {
@@ -177,8 +167,6 @@ class PlatformThread {
   float display_scale = 1.0f;
   std::unordered_map<int, std::shared_ptr<PlatformThread> > subthreads;
   std::shared_ptr<Runnable> runnable;
-
-  mutable Mutex mutex;
 };
 
 #endif
