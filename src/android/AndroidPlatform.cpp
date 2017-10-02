@@ -103,8 +103,6 @@ public:
   jclass systemClass;
 
   jmethodID loadPrefsValueMethod;
-  // jmethodID addPrefsValueMethod;
-  jmethodID storeValueMethod;
   jmethodID nativeCommandConstructor;
   jmethodID nativeListCommandConstructor;
   jmethodID sendCommandMethod;
