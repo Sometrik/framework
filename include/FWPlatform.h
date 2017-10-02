@@ -12,8 +12,6 @@
 #include <unordered_map>
 #include <atomic>
 
-class Runnable;
-
 class FWPlatform : public Element {
  public:
   enum FileType {
@@ -22,7 +20,7 @@ class FWPlatform : public Element {
     CACHE_DATABASE
   };
   
-  FWPlatform() { }
+  FWPlatform() : next_thread_id(1) { }
 
   bool isA(const std::string & className) const override {
     if (className == "FWPlatform") return true;
@@ -53,7 +51,12 @@ class FWPlatform : public Element {
   }
 #endif
     
-  void postEvent(int internal_id, Event & ev);
+  void postEvent(int internal_id, Event & ev) {
+    auto e = getRegisteredElement(internal_id);
+    if (e) {
+      ev.dispatch(*e);
+    }
+  }
       
   int getModalResultValue() const { return modal_result_value; }
   const std::string & getModalResultText() const { return modal_result_text; }
@@ -93,7 +96,7 @@ class FWPlatform : public Element {
 #endif
   std::unordered_map<int, Element *> registered_elements;
 
-  static std::atomic<int> next_thread_id;
+  std::atomic<int> next_thread_id;  
 };
 
 #endif

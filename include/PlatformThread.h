@@ -125,6 +125,29 @@ class PlatformThread {
 
   virtual std::shared_ptr<PlatformThread> createThread(std::shared_ptr<Runnable> & runnable) = 0;
 
+#if 0
+  void onSysEvent(SysEvent & ev) {
+    bool exit_app = false;
+    if (ev.getType() == SysEvent::THREAD_TERMINATED) {
+      MutexLocker m(mutex);
+      bool r = false;
+      auto it = threads.find(ev.getThreadId());
+      if (it != threads.end()) {
+	threads.erase(it);
+	r = true;
+      }
+      if (exit_when_threads_terminated && threads.empty()) {
+	exit_app = true;
+      }
+      assert(r);
+    }
+    if (exit_app) {
+      cerr << "threads exited, terminating\n";
+      getThread().exitApp();
+    }
+  }
+#endif
+
  protected:
   virtual void initialize() { }  
   virtual void deinitialize() { }
