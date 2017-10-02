@@ -3,6 +3,7 @@
 
 #include <Element.h>
 #include <Event.h>
+#include <Mutex.h>
 
 #ifdef HAS_SOUNDCANVAS
 #include <SoundCanvas.h>
@@ -62,10 +63,12 @@ class FWPlatform : public Element {
   const std::string & getModalResultText() const { return modal_result_text; }
  
   void registerElement(Element * e) {
+    MutexLocker m(mutex);
     registered_elements[e->getInternalId()] = e;
   }
 
   void unregisterElement(Element * e) {
+    MutexLocker m(mutex);
     registered_elements.erase(e->getInternalId());
   }
 
@@ -77,6 +80,7 @@ class FWPlatform : public Element {
 
  protected:
   Element * getRegisteredElement(int internal_id) {
+    MutexLocker m(mutex);
     auto it = registered_elements.find(internal_id);
     return it != registered_elements.end() ? it->second : 0;
   }
@@ -96,7 +100,9 @@ class FWPlatform : public Element {
 #endif
   std::unordered_map<int, Element *> registered_elements;
 
-  std::atomic<int> next_thread_id;  
+  std::atomic<int> next_thread_id;
+
+  Mutex mutex;
 };
 
 #endif
