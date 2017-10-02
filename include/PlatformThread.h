@@ -28,7 +28,7 @@ class PlatformThread : public Element {
   };
 
  PlatformThread(PlatformThread * _parent_thread, FWPlatform * _platform, std::shared_ptr<Runnable> & _runnable)
-   : platform(_platform), runnable(_runnable)
+   : platform(_platform), parent_thread(_parent_thread), runnable(_runnable)
     {
     if (_parent_thread) {
       setActualDisplayWidth(_parent_thread->getActualDisplayWidth());
@@ -36,10 +36,11 @@ class PlatformThread : public Element {
       setDisplayScale(_parent_thread->getDisplayScale());
     }
   }
-  PlatformThread(const PlatformThread & other) = delete;
-  PlatformThread & operator=(const PlatformThread & other) = delete;
-  
-  virtual ~PlatformThread() { }  
+
+  bool isA(const std::string & className) const override {
+    if (className == "PlatformThread") return true;
+    else return Element::isA(className);
+  }  
   
   virtual bool start() = 0;
   virtual bool testDestroy() = 0;
@@ -126,27 +127,25 @@ class PlatformThread : public Element {
 
   virtual std::shared_ptr<PlatformThread> createThread(std::shared_ptr<Runnable> & runnable) = 0;
 
-#if 0
-  void onSysEvent(SysEvent & ev) {
-    bool exit_app = false;
+  void onSysEvent(SysEvent & ev) override {
+    bool exit_thread = false;
     if (ev.getType() == SysEvent::THREAD_TERMINATED) {
-      bool r = false;
-      auto it = threads.find(ev.getThreadId());
-      if (it != threads.end()) {
-	threads.erase(it);
-	r = true;
+      auto it = subthreads.find(ev.getThreadId());
+      if (it != subthreads.end()) {
+	subthreads.erase(it);
       }
-      if (exit_when_threads_terminated && threads.empty()) {
-	exit_app = true;
+      if (exit_when_threads_terminated && subthreads.empty()) {
+	exit_thread = true;
       }
-      assert(r);
     }
-    if (exit_app) {
-      cerr << "threads exited, terminating\n";
-      getThread().exitApp();
+    if (exit_thread) {
+      if (parent_thread) {
+	terminate();
+      } else {
+	exitApp();
+      }
     }
   }
-#endif
 
  protected:
   virtual void initialize() { }  
@@ -161,11 +160,13 @@ class PlatformThread : public Element {
       logger->println("PlatformThread: Runnable threw an exception: " + std::string(e.what()));
     }
     deinitialize();
-    
-    SysEvent ev(SysEvent::THREAD_TERMINATED);
-    ev.setThreadId(getInternalId());
-    ev.setRunnable(runnable.get());
-    postEvent(0, ev);
+
+    if (parent_thread) {
+      SysEvent ev(SysEvent::THREAD_TERMINATED);
+      ev.setThreadId(getInternalId());
+      ev.setRunnable(runnable.get());
+      postEvent(0, ev);
+    }
   }
 
   bool exit_when_threads_terminated = false;
@@ -173,6 +174,7 @@ class PlatformThread : public Element {
  private:
   int id;
   FWPlatform * platform;
+  PlatformThread * parent_thread;
   int actual_display_width = 0, actual_display_height = 0;
   float display_scale = 1.0f;
   std::unordered_map<int, std::shared_ptr<PlatformThread> > subthreads;
