@@ -1034,17 +1034,14 @@ PlatformGtk::idle_callback(gpointer data) {
 gboolean
 PlatformGtk::delete_window(GtkWidget *widget, GdkEvent  *event, gpointer user_data) {
   PlatformGtk * platform = (PlatformGtk*)user_data;
-#if 1
-  return FALSE; // FIXME
-#else
-  platform->terminateThreads();
-  if (platform->getNumRunningThreads()) {
-    platform->exit_when_threads_terminated = true;
+  auto & thread = platform->getThread();
+  thread.terminateThreads();
+  if (thread.getNumRunningThreads()) {
+    // platform->exit_when_threads_terminated = true; // FIXME
     return TRUE;
   } else {
     return FALSE;
   }
-#endif
 }
 
 gboolean
@@ -1142,6 +1139,8 @@ static void activate(GtkApplication * gtk_app, gpointer user_data) {
 
   std::shared_ptr<Runnable> runnable(0);
   auto mainThread = new GtkMainThread(platform, runnable);
+  mainThread->setActualDisplayWidth(width);
+  mainThread->setActualDisplayHeight(height);
 
   platform->create();
   platform->initialize(mainThread);
@@ -1158,8 +1157,6 @@ int main (int argc, char *argv[]) {
   GtkApplication * gtk_app;
 
   PlatformGtk platform;  
-  // platform.setActualDisplayWidth(width); // FIXME
-  // platform.setActualDisplayHeight(height);
 
   cerr << "creating application\n";
   
