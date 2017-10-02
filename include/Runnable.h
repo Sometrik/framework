@@ -4,7 +4,6 @@
 #include "EventHandler.h"
 
 #include <EventQueue.h>
-#include <FWPlatform.h>
 #include <Mutex.h>
 
 #include <string>
