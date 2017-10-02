@@ -1,16 +1,17 @@
 #ifndef _PLATFORMTHREAD_H_
 #define _PLATFORMTHREAD_H_
 
+#include <Element.h>
 #include <Logger.h>
 #include <Runnable.h>
 #include <SysEvent.h>
+#include <FWPlatform.h>
 
 #include <exception>
 #include <memory>
 #include <iostream>
 
 class Event;
-class FWPlatform;
 class HTTPClientFactory;
 class Logger;
 
@@ -18,10 +19,10 @@ namespace canvas {
   class ContextFactory;
 };
 
-class PlatformThread {
+class PlatformThread : public Element {
  public:
- PlatformThread(int _id, PlatformThread * _parent_thread, FWPlatform * _platform, std::shared_ptr<Runnable> & _runnable)
-   : id(_id), platform(_platform), runnable(_runnable)
+ PlatformThread(PlatformThread * _parent_thread, FWPlatform * _platform, std::shared_ptr<Runnable> & _runnable)
+   : platform(_platform), runnable(_runnable)
     {
     if (_parent_thread) {
       setActualDisplayWidth(_parent_thread->getActualDisplayWidth());
@@ -51,8 +52,6 @@ class PlatformThread {
   FWPlatform & getPlatform() { return *platform; }
   const FWPlatform & getPlatform() const { return *platform; }
   
-  int getInternalId() const { return id; }
-
   void postEvent(int internal_id, const Event & ev) {
     getPlatform().pushEvent(internal_id, ev);
   }

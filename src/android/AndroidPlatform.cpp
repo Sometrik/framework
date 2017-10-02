@@ -221,7 +221,7 @@ public:
 
   std::shared_ptr<PlatformThread> createThread(std::shared_ptr<Runnable> & runnable) {
     AndroidPlatform & androidPlatform = dynamic_cast<AndroidPlatform&>(getPlatform());
-    return std::make_shared<AndroidThread>(getPlatform().getNextThreadId(), this, &androidPlatform, runnable);
+    return std::make_shared<AndroidThread>(this, &androidPlatform, runnable);
   }
 
   int sendCommand(const Command & command) override {
@@ -656,7 +656,7 @@ void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, job
     auto platform = new AndroidPlatform(env, assetManager, thiz);
     shared_ptr<Runnable> runnable = make_shared<AndroidNativeThread>(account, preferences);
 
-    mainThread = std::make_shared<AndroidThread>(platform->getNextThreadId(), nullptr, platform, runnable);
+    mainThread = std::make_shared<AndroidThread>(nullptr, platform, runnable);
     mainThread->setActualDisplayWidth(screenWidth);
     mainThread->setActualDisplayHeight(screenHeight);
     mainThread->setDisplayScale(displayScale);

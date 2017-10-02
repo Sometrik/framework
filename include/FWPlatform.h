@@ -11,7 +11,6 @@
 
 #include <memory>
 #include <unordered_map>
-#include <atomic>
 
 class FWPlatform : public Element {
  public:
@@ -21,7 +20,7 @@ class FWPlatform : public Element {
     CACHE_DATABASE
   };
   
-  FWPlatform() : next_thread_id(1) { }
+  FWPlatform() { }
 
   bool isA(const std::string & className) const override {
     if (className == "FWPlatform") return true;
@@ -76,8 +75,6 @@ class FWPlatform : public Element {
     sendCommand(Command(Command::CREATE_PLATFORM, getParentInternalId(), getInternalId()));
   }
 
-  int getNextThreadId() { return next_thread_id.fetch_add(1); }
-
  protected:
   Element * getRegisteredElement(int internal_id) {
     MutexLocker m(mutex);
@@ -99,8 +96,6 @@ class FWPlatform : public Element {
   std::shared_ptr<SoundCanvas> soundCanvas;
 #endif
   std::unordered_map<int, Element *> registered_elements;
-
-  std::atomic<int> next_thread_id;
 
   Mutex mutex;
 };

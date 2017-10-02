@@ -1074,8 +1074,8 @@ PlatformGtk::timer_callback(gpointer data) {
 
 class GtkThread : public PosixThread {
 public:
-  GtkThread(int _id, PlatformThread * _parent_thread, FWPlatform * _platform, std::shared_ptr<Runnable> & _runnable)
-    : PosixThread(_id, _parent_thread, _platform, _runnable) { }
+  GtkThread(PlatformThread * _parent_thread, FWPlatform * _platform, std::shared_ptr<Runnable> & _runnable)
+    : PosixThread(_parent_thread, _platform, _runnable) { }
 
   std::unique_ptr<HTTPClientFactory> createHTTPClientFactory() const override {
     return std::unique_ptr<HTTPClientFactory>(new CurlClientFactory);
@@ -1084,7 +1084,7 @@ public:
     return std::unique_ptr<canvas::ContextFactory>(new canvas::CairoContextFactory);
   }
   std::shared_ptr<PlatformThread> createThread(std::shared_ptr<Runnable> & runnable) override {
-    return make_shared<GtkThread>(getPlatform().getNextThreadId(), this, &(getPlatform()), runnable);
+    return make_shared<GtkThread>(this, &(getPlatform()), runnable);
   }
   int sendCommand(const Command & command) {
     auto & gtkPlatform = dynamic_cast<PlatformGtk&>(getPlatform());
@@ -1095,8 +1095,8 @@ public:
 
 class GtkMainThread : public PlatformThread {
 public:
-  GtkMainThread(int _id, FWPlatform * _platform, std::shared_ptr<Runnable> & _runnable)
-   : PlatformThread(_id, 0, _platform, _runnable)
+  GtkMainThread(FWPlatform * _platform, std::shared_ptr<Runnable> & _runnable)
+   : PlatformThread(0, _platform, _runnable)
   {
     
   }
@@ -1113,7 +1113,7 @@ public:
   void terminate() override { }
 
   std::shared_ptr<PlatformThread> createThread(std::shared_ptr<Runnable> & runnable) override {
-    return make_shared<GtkThread>(getPlatform().getNextThreadId(), this, &(getPlatform()), runnable);
+    return make_shared<GtkThread>(this, &(getPlatform()), runnable);
   }
   int sendCommand(const Command & command) {
     auto & gtkPlatform = dynamic_cast<PlatformGtk&>(getPlatform());
@@ -1130,7 +1130,7 @@ static void activate(GtkApplication * gtk_app, gpointer user_data) {
   PlatformGtk * platform = (PlatformGtk*)user_data;
 
   std::shared_ptr<Runnable> runnable(0);
-  auto mainThread = new GtkMainThread(platform->getNextThreadId(), platform, runnable);
+  auto mainThread = new GtkMainThread(platform, runnable);
 
   platform->create();
   platform->initialize(mainThread);
