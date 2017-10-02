@@ -13,13 +13,7 @@
 #include <unordered_map>
 
 class FWPlatform : public Element {
- public:
-  enum FileType {
-    NORMAL = 1,
-    DATABASE,
-    CACHE_DATABASE
-  };
-  
+ public:  
   FWPlatform() { }
 
   bool isA(const std::string & className) const override {
@@ -27,20 +21,11 @@ class FWPlatform : public Element {
     return Element::isA(className);
   }
   
-  virtual std::string getBundleFilename(const char * filename) = 0;
-  virtual std::string getLocalFilename(const char * filename, FileType type) = 0;
-  virtual std::string loadTextAsset(const char * filename) = 0; 
   virtual void pushEvent(int internal_id, const Event & ev) = 0;
   virtual int startModal() = 0;
   virtual void endModal() = 0;
 
   virtual void createFBO(int flags) { }
-
-#if 0
-  void onSysEvent(SysEvent & ev) override;
-#endif
-
-  std::string getBundleFilename(const std::string & filename) { return getBundleFilename(filename.c_str()); }
   
 #ifdef HAS_SOUNDCANVAS
   SoundCanvas & getSoundCanvas() {

@@ -131,20 +131,6 @@ public:
 #endif
   }
 
-  std::string getBundleFilename(const char * filename) override;
-  std::string getLocalFilename(const char * filename, FileType type) override;
-  std::string loadTextAsset(const char * filename) override {
-    string text;
-    FILE * in = android_fopen(filename, "r");
-    while (!feof(in)) {
-      char b[256];
-      size_t n = fread(b, 1, 256, in);
-      text += string(b, n);
-    }
-    fclose(in);
-    return text;
-  }
-
   void createFBO(int flags) { }
 
 #ifdef HAS_SOUNDCANVAS
@@ -215,7 +201,31 @@ public:
     const AndroidPlatform & androidPlatform = dynamic_cast<const AndroidPlatform&>(getPlatform());
     return std::unique_ptr<canvas::ContextFactory>(new canvas::AndroidContextFactory(androidPlatform.getAssetManager(), androidPlatform.getCanvasCache(), getDisplayScale()));
   }
-  virtual std::unique_ptr<Logger> createLogger(const std::string & name) const override {
+
+  std::string getBundleFilename(const char * filename) override {
+    return filename;
+  }
+  std::string getLocalFilename(const char * filename, FileType type) override {
+    switch (type) {
+    case DATABASE: return "/data/data/com.sometrik.kraphio/databases/" + std::string(filename);
+    case CACHE_DATABASE: return "";
+    case NORMAL: return "";
+    }
+    return "";
+  }
+  std::string loadTextAsset(const char * filename) override {
+    string text;
+    FILE * in = android_fopen(filename, "r");
+    while (!feof(in)) {
+      char b[256];
+      size_t n = fread(b, 1, 256, in);
+      text += string(b, n);
+    }
+    fclose(in);
+    return text;
+  }
+
+  std::unique_ptr<Logger> createLogger(const std::string & name) const override {
     return std::unique_ptr<Logger>(new AndroidLogger(name));
   }
 
@@ -303,47 +313,6 @@ private:
   MobileAccount mobileAccount;
   FWPreferences preferences;
 };
-
-std::string AndroidPlatform::getBundleFilename(const char * filename) {
-  return filename;
-}
-
-std::string AndroidPlatform::getLocalFilename(const char * filename, FileType type) {
-
-//  auto env = javaCache.getEnv();
-  __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "getLocalFilename");
-
-//  jstring path;
-//  jstring jfilename;
-  std::string result;
-  switch (type) {
-  case DATABASE:{
-
-//    __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "getting database path");
-//    jstring jfilename = env->NewStringUTF(filename);
-//    jobject file = env->CallObjectMethod(framework, javaCache.getDatabasePathMethod, jfilename);
-//    jstring jdatabasePath = (jstring)env->CallObjectMethod(file, javaCache.getPathMethod);
-//    const char * cdatabasePath = env->GetStringUTFChars(jdatabasePath, JNI_FALSE);
-//    std::string databasePath = std::string(cdatabasePath);
-//    env->DeleteLocalRef(jfilename);
-//    env->ReleaseStringUTFChars(jdatabasePath, cdatabasePath);
-//    env->DeleteLocalRef(jdatabasePath);
-//    env->DeleteLocalRef(file);
-//    __android_log_print(ANDROID_LOG_INFO, "Sometrik", "database path = %s", databasePath.c_str());
-
-    //put database here
-    databasePath = "/data/data/com.sometrik.kraphio/databases/" + std::string(filename);
-    return databasePath;
-  }
-  case CACHE_DATABASE:
-    __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "case: cache_database");
-    return "";
-  case NORMAL:
-    __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "case: normal");
-    return "";
-  }
-  return "";
-}
 
 bool
 AndroidPlatform::initializeRenderer(int opengl_es_version, ANativeWindow * _window) {

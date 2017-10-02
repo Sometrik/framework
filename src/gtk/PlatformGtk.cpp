@@ -65,11 +65,6 @@ public:
     g_idle_add(idle_callback, ed);
   }
   
-  string getLocalFilename(const char * fn, FileType type) override {
-    string s = "assets/";
-    return s + fn;
-  }
-
 #ifdef HAS_SOUNDCANVAS
   std::shared_ptr<SoundCanvas> createSoundCanvas() const override {
     return std::make_shared<SDLSoundCanvas>();
@@ -83,19 +78,7 @@ public:
   void endModal() override {
 
   }
-    
-  std::string getBundleFilename(const char * filename) override {
-    string s = "assets/";
-    return s + filename;
-  }
-
-  std::string loadTextAsset(const char * filename) override {
-    std::ifstream t(getBundleFilename(filename));
-    std::stringstream buffer;
-    buffer << t.rdbuf();
-    return buffer.str();
-  }
-
+  
   void activate(GtkApplication * _gtk_app) {
     gtk_app = _gtk_app;
         
@@ -1090,7 +1073,20 @@ public:
     auto & gtkPlatform = dynamic_cast<PlatformGtk&>(getPlatform());
     return gtkPlatform.handleCommand(command);
   }
-
+  string getLocalFilename(const char * fn, FileType type) override {
+    string s = "assets/";
+    return s + fn;
+  }
+  std::string getBundleFilename(const char * filename) override {
+    string s = "assets/";
+    return s + filename;
+  }
+  std::string loadTextAsset(const char * filename) override {
+    std::ifstream t(getBundleFilename(filename));
+    std::stringstream buffer;
+    buffer << t.rdbuf();
+    return buffer.str();
+  }
 };
 
 class GtkMainThread : public PlatformThread {
@@ -1106,6 +1102,21 @@ public:
   }
   std::unique_ptr<HTTPClientFactory> createHTTPClientFactory() const override {
     return std::unique_ptr<HTTPClientFactory>(new CurlClientFactory);
+  }
+
+  string getLocalFilename(const char * fn, FileType type) override {
+    string s = "assets/";
+    return s + fn;
+  }
+  std::string getBundleFilename(const char * filename) override {
+    string s = "assets/";
+    return s + filename;
+  }
+  std::string loadTextAsset(const char * filename) override {
+    std::ifstream t(getBundleFilename(filename));
+    std::stringstream buffer;
+    buffer << t.rdbuf();
+    return buffer.str();
   }
 
   bool start() override { return false; }

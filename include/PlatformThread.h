@@ -21,6 +21,12 @@ namespace canvas {
 
 class PlatformThread : public Element {
  public:
+  enum FileType {
+    NORMAL = 1,
+    DATABASE,
+    CACHE_DATABASE
+  };
+
  PlatformThread(PlatformThread * _parent_thread, FWPlatform * _platform, std::shared_ptr<Runnable> & _runnable)
    : platform(_platform), runnable(_runnable)
     {
@@ -44,7 +50,12 @@ class PlatformThread : public Element {
 #ifndef NO_CANVAS
   virtual std::unique_ptr<canvas::ContextFactory> createContextFactory() const = 0;
 #endif
-  
+  virtual std::string loadTextAsset(const char * filename) = 0; 
+  virtual std::string getBundleFilename(const char * filename) = 0;
+  virtual std::string getLocalFilename(const char * filename, FileType type) = 0;
+
+  std::string getBundleFilename(const std::string & filename) { return getBundleFilename(filename.c_str()); }
+
   Runnable & getRunnable() { return *runnable; }
   Runnable * getRunnablePtr() { return runnable.get(); }
   const Runnable * getRunnablePtr() const { return runnable.get(); }
