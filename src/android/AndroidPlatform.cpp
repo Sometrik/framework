@@ -187,8 +187,8 @@ extern FWApplication * applicationMain();
 
 class AndroidThread : public PosixThread {
 public:
-  AndroidThread(int _id, PlatformThread * _parent_thread, AndroidPlatform * _platform, std::shared_ptr<Runnable> & _runnable)
-    : PosixThread(_id, _parent_thread, _platform, _runnable), javaCache(&(_platform->getJavaCache())) {
+  AndroidThread(PlatformThread * _parent_thread, AndroidPlatform * _platform, std::shared_ptr<Runnable> & _runnable)
+    : PosixThread(_parent_thread, _platform, _runnable), javaCache(&(_platform->getJavaCache())) {
   }
 
   std::unique_ptr<HTTPClientFactory> createHTTPClientFactory() const override {
@@ -198,6 +198,11 @@ public:
   std::unique_ptr<canvas::ContextFactory> createContextFactory() const override {
     const AndroidPlatform & androidPlatform = dynamic_cast<const AndroidPlatform&>(getPlatform());
     return std::unique_ptr<canvas::ContextFactory>(new canvas::AndroidContextFactory(androidPlatform.getAssetManager(), androidPlatform.getCanvasCache(), getDisplayScale()));
+  }
+
+  void setPreference(const char * key, const char * value) {
+    auto & app = getPlatform().getApplication();
+    app.getPreferences().setValue(string(key), string(value));
   }
 
   std::string getBundleFilename(const char * filename) override {
@@ -734,6 +739,15 @@ void Java_com_sometrik_framework_FrameWork_visibilityChangedEvent(JNIEnv* env, j
   __android_log_print(ANDROID_LOG_INFO, "Sometrik", "visibilityChangedEvent on %u", id);
   VisibilityEvent ev(visible);
   mainThread->getPlatform().pushEvent(id, ev);
+}
+
+void Java_com_sometrik_framework_FrameWork_nativeAddPreference(JNIEnv* env, jobject thiz, jstring jkey, jstring jvalue) {
+
+  const char * key = env->GetStringUTFChars(jkey, NULL);
+  const char * value = env->GetStringUTFChars(jvalue, NULL);
+  mainThread->setPreference(key, value);
+  env->ReleaseStringUTFChars(jkey, key);
+  env->ReleaseStringUTFChars(jvalue, value);
 }
 
 void Java_com_sometrik_framework_FrameWork_timerEvent(JNIEnv* env, jobject thiz, double timestamp, jint viewId, jint timerId){

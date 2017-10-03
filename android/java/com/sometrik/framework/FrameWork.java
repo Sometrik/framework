@@ -3,6 +3,8 @@ package com.sometrik.framework;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import com.android.trivialdrivesample.util.IabException;
 import com.android.trivialdrivesample.util.IabHelper;
@@ -21,6 +23,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.ConfigurationInfo;
 import android.content.res.AssetManager;
 import android.content.res.Configuration;
@@ -97,6 +100,7 @@ public class FrameWork extends Activity {
   public native void nativeOnStop(double timestamp, int appId);
   public native void nativeOnStart(double timestamp, int appId);
   public native void nativeOnDestroy(double timestamp, int appId);
+  public native void nativeAddPreference(String key, String value);
   private native void setNativeActiveView(double timestamp, int activeView, boolean recordHistory);
   private native void languageChanged(double timestamp, int appId, String language);
   private native void memoryWarning(double timestamp, int appId);
@@ -152,7 +156,6 @@ public class FrameWork extends Activity {
 	
 	NativeCommand command = (NativeCommand) msg.obj;
 	command.apply(FrameWork.views.get(command.getInternalId()));
-
       }
 
     };
@@ -207,6 +210,23 @@ public class FrameWork extends Activity {
     int ySize = displayMetrics.heightPixels;
     System.out.println("oninit w: " + xSize + " h:" + ySize);
     onInit(getAssets(), xSize, ySize, displayMetrics.scaledDensity, getUserGoogleAccountEmail(), defaultLocale.getLanguage(), defaultLocale.getCountry());
+  }
+  
+  public void initNativePreferences() {
+    Map<String, String> allPrefs = (Map<String, String>) prefs.getAll();
+    if (allPrefs == null || allPrefs.size() == 0) {
+      System.out.println("no preferences found");
+    }
+    for (Entry<String, String> entry : allPrefs.entrySet()) {
+      System.out.println("found pref - key: " + entry.getKey() + " value: " + entry.getValue());
+      nativeAddPreference(entry.getKey(), entry.getValue());
+    }
+  }
+  
+  public static String getApplicationName(Context context) {
+    ApplicationInfo applicationInfo = context.getApplicationInfo();
+    int stringId = applicationInfo.labelRes;
+    return stringId == 0 ? applicationInfo.nonLocalizedLabel.toString() : context.getString(stringId);
   }
 
   // Get screen settings
