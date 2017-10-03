@@ -200,7 +200,7 @@ public class NativeCommand {
   
   public void apply(NativeCommandHandler view) {
 
-    // System.out.println("Processing message " + command + " id: " + internalId + " Child id: " + getChildInternalId());
+//     System.out.println("Processing message " + command + " id: " + internalId + " Child id: " + getChildInternalId());
     
     switch (command) {
 
@@ -399,6 +399,7 @@ public class NativeCommand {
     case CREATE_APPLICATION:
       frame.setAppId(getInternalId());
       frame.setSharedPreferences(getTextValueAsString());
+      frame.initNativePreferences();
       if (isSet(FLAG_USE_PURCHASES_API)) {
 	System.out.println("Initializing purchaseHelper");
 	frame.initializePurchaseHelper(getTextValue2AsString(), new IabHelper.OnIabSetupFinishedListener() {
@@ -499,6 +500,7 @@ public class NativeCommand {
       frame.finish();
       break;
     case UPDATE_PREFERENCE: // Now stores String value to string key
+      System.out.println("UPDATE_PREFERENCE: " + getTextValueAsString() + " " + getTextValue2AsString());
       frame.getPreferencesEditor().putString(getTextValueAsString(), getTextValue2AsString());
       break;
     case COMMIT_PREFERENCES:
