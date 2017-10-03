@@ -128,6 +128,8 @@ public class FWTextView extends TextView implements NativeCommandHandler {
 	setTextAlignment(TEXT_ALIGNMENT_TEXT_START);
       } else if (value.equals("center")) {
 	setTextAlignment(TEXT_ALIGNMENT_CENTER);
+      } else if (value.equals("right")) {
+	setTextAlignment(TEXT_ALIGNMENT_TEXT_END);
       }
     } else if (key.equals("single-line")) {
       setSingleLine();
