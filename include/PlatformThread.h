@@ -66,8 +66,11 @@ class PlatformThread : public Element {
   const FWPlatform & getPlatform() const { return *platform; }
   
   void postEvent(int internal_id, const Event & ev) {
+    if (internal_id == 0) internal_id = getPlatform().getInternalId();
     getPlatform().pushEvent(internal_id, ev);
   }
+
+  void postEvent(const Event & ev) { postEvent(0, ev); }
 
   void sendEvent(const Event & ev) { sendEvent(0, ev); }
   void sendEvent(int internal_id, const Event & ev) { event_queue.push(internal_id, ev); }
