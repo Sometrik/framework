@@ -134,6 +134,8 @@ public class FrameWork extends Activity {
     System.out.println("Users preferred locale: " + defaultLocale.getCountry() + " Language: " + defaultLocale.getLanguage());
     
 
+    prefs = getSharedPreferences("app", Context.MODE_PRIVATE);
+    editor = prefs.edit();
     
     // ActionBar is hidden by default with this
 //    actionBar = getActionBar();
@@ -209,6 +211,7 @@ public class FrameWork extends Activity {
     int xSize = displayMetrics.widthPixels;
     int ySize = displayMetrics.heightPixels;
     System.out.println("oninit w: " + xSize + " h:" + ySize);
+    initNativePreferences();
     onInit(getAssets(), xSize, ySize, displayMetrics.scaledDensity, getUserGoogleAccountEmail(), defaultLocale.getLanguage(), defaultLocale.getCountry());
   }
   
@@ -245,12 +248,7 @@ public class FrameWork extends Activity {
 
     return displayMetrics;
   }
-
-  public void setSharedPreferences(String textValue) {
-    prefs = getSharedPreferences(textValue, Context.MODE_PRIVATE);
-    editor = prefs.edit();
-  }
-
+  
   public SharedPreferences.Editor getPreferencesEditor() { return editor; }
 
   public static void addToViewList(NativeCommandHandler view) {
