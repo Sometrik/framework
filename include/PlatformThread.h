@@ -68,14 +68,14 @@ class PlatformThread : public Element {
     getPlatform().pushEvent(internal_id, ev);
   }
 
-  bool run(std::shared_ptr<Runnable> runnable) {
+  std::shared_ptr<PlatformThread> run(std::shared_ptr<Runnable> runnable) {
     auto thread = createThread(runnable);
     subthreads[thread->getInternalId()] = thread;
     if (thread->start()) {
-      return true;
+      return thread;
     } else {
       subthreads.erase(thread->getInternalId());
-      return false;
+      return std::shared_ptr<PlatformThread>();
     }
   }
   
