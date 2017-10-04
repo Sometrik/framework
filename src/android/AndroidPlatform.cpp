@@ -200,11 +200,6 @@ public:
     return std::unique_ptr<canvas::ContextFactory>(new canvas::AndroidContextFactory(androidPlatform.getAssetManager(), androidPlatform.getCanvasCache(), getDisplayScale()));
   }
 
-  void setPreference(const char * key, const char * value) {
-    auto & app = getPlatform().getApplication();
-    app.getPreferences().setValue(string(key), string(value));
-  }
-
   std::string getBundleFilename(const char * filename) override {
     return filename;
   }
@@ -289,6 +284,7 @@ protected:
 };
 
 static std::shared_ptr<AndroidThread> mainThread;
+static FWPreferences initialPrefs;
 
 class AndroidNativeThread : public Runnable {
 public:
@@ -616,7 +612,6 @@ void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, job
     const char * country = env->GetStringUTFChars(jcountry, NULL);
 
     MobileAccount account = MobileAccount(email, language, country);
-    FWPreferences preferences;
 
     env->ReleaseStringUTFChars(jlanguage, language);
     env->ReleaseStringUTFChars(jemail, email);
@@ -626,7 +621,7 @@ void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, job
     android_fopen_set_asset_manager(manager);
 
     auto platform = new AndroidPlatform(env, assetManager, thiz);
-    shared_ptr<Runnable> runnable = make_shared<AndroidNativeThread>(account, preferences);
+    shared_ptr<Runnable> runnable = make_shared<AndroidNativeThread>(account, initialPrefs);
 
     mainThread = std::make_shared<AndroidThread>(nullptr, platform, runnable);
     mainThread->setActualDisplayWidth(screenWidth);
@@ -730,22 +725,21 @@ void Java_com_sometrik_framework_FrameWork_textChangedEvent(JNIEnv* env, jobject
 }
 
 void Java_com_sometrik_framework_FrameWork_intChangedEvent(JNIEnv* env, jobject thiz, double timestamp, jint id, jint changedInt, jint changedInt2) {
-  __android_log_print(ANDROID_LOG_INFO, "Sometrik", "intChangedEvent: %u %u", changedInt, changedInt2);
+  __android_log_print(ANDROID_LOG_INFO, "Sometrik", "intChangedEvent: %d %d", changedInt, changedInt2);
   ValueEvent ev(changedInt, changedInt2);
   mainThread->getPlatform().pushEvent(id, ev);
 }
 
 void Java_com_sometrik_framework_FrameWork_visibilityChangedEvent(JNIEnv* env, jobject thiz, double timestamp, jint id, bool visible) {
-  __android_log_print(ANDROID_LOG_INFO, "Sometrik", "visibilityChangedEvent on %u", id);
+  __android_log_print(ANDROID_LOG_INFO, "Sometrik", "visibilityChangedEvent on %d", id);
   VisibilityEvent ev(visible);
   mainThread->getPlatform().pushEvent(id, ev);
 }
 
 void Java_com_sometrik_framework_FrameWork_nativeAddPreference(JNIEnv* env, jobject thiz, jstring jkey, jstring jvalue) {
-
   const char * key = env->GetStringUTFChars(jkey, NULL);
   const char * value = env->GetStringUTFChars(jvalue, NULL);
-  mainThread->setPreference(key, value);
+  initialPrefs.setText(key, value);
   env->ReleaseStringUTFChars(jkey, key);
   env->ReleaseStringUTFChars(jvalue, value);
 }
