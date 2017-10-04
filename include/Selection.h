@@ -20,6 +20,7 @@ class Selection {
   Selection & remove();
   Selection & refresh();
   Selection & setEnabled(bool enabled);
+  Selection & text(const std::string & text);
   Selection & style(const std::string & key, const std::string & value);
   Selection & style(const std::string & key, int value) { style(key, std::to_string(value)); }
 

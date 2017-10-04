@@ -55,6 +55,13 @@ Selection::setEnabled(bool enabled) {
   return *this;
 }
 
+Selection &
+Selection::text(const std::string & text) {
+  for (auto & e : data) {
+    e->text(text);
+  }
+  return *this;
+}
 
 Selection
 Selection::parent() const {
