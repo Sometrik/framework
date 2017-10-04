@@ -22,7 +22,10 @@ class Selection {
   Selection & setEnabled(bool enabled);
   Selection & text(const std::string & text);
   Selection & style(const std::string & key, const std::string & value);
-  Selection & style(const std::string & key, int value) { style(key, std::to_string(value)); }
+  Selection & style(const std::string & key, int value) {
+    style(key, std::to_string(value));
+    return *this;
+  }
 
   Selection parent() const;
   Selection parents() const;
