@@ -143,7 +143,7 @@ public:
 
   void pushEvent(int internal_id, const Event & ev) override {
     if (internal_id == 0) internal_id = getInternalId();
-    eventqueue.push(internal_id, ev);
+    getThread().sendEvent(internal_id, ev);
   }
 
   int startModal() override {
@@ -178,7 +178,6 @@ private:
 
   ANativeWindow * window = 0;
   AAssetManager * asset_manager;
-  EventQueue eventqueue;
   bool canDraw = false, isPaused = false, isDestroyed = false;
   bool exit_loop = false;
 };
@@ -425,6 +424,7 @@ AndroidPlatform::renderLoop() {
   
   while (!isDestroyed && !exit_loop) {
     std::vector<std::pair<int, std::shared_ptr<Event> > > evs;
+    auto & eventqueue = getThread().getEventQueue();
     evs.push_back(eventqueue.pop());
     while (!eventqueue.empty()) {
       evs.push_back(eventqueue.pop());
