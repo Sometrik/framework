@@ -46,7 +46,7 @@ class Button : public UIElement {
     }
   }
 
-  void setLabel(const std::string & l) {
+  void text(const std::string & l) override {
     if (l != label) {
       label = l;
       if (context) context->clear();
