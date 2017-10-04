@@ -69,9 +69,8 @@ class PlatformThread : public Element {
     getPlatform().pushEvent(internal_id, ev);
   }
 
-  void sendEvent(const Event & ev) {
-    event_queue.push(0, ev);
-  }
+  void sendEvent(const Event & ev) { sendEvent(0, ev); }
+  void sendEvent(int internal_id, const Event & ev) { event_queue.push(internal_id, ev); }
 
   EventQueue & getEventQueue() { return event_queue; }
 
