@@ -50,7 +50,6 @@ public class FWImageView extends ImageView implements NativeCommandHandler {
   @Override
   public void addChild(View view) {
     // TODO Auto-generated method stub
-    
   }
 
   @Override
@@ -115,6 +114,10 @@ public class FWImageView extends ImageView implements NativeCommandHandler {
 	params.gravity = Gravity.RIGHT;
       } else if (value.equals("center")) {
 	params.gravity = Gravity.CENTER;
+      } else if (value.equals("center-horizontal")) {
+	params.gravity = Gravity.CENTER_HORIZONTAL;
+      } else if (value.equals("center-vertical")) {
+	params.gravity = Gravity.CENTER_VERTICAL;
       }
       setLayoutParams(params);
     } else if (key.equals("width")) {
