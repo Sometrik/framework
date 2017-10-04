@@ -25,7 +25,8 @@ class Element : public EventHandler {
   virtual void show();
   virtual void hide();
   virtual void refresh() { }
-    
+  virtual void text(const std::string & text) { }
+
   virtual bool isA(const std::string & className) const {
     return className == "*" || className == "Element";
   }  
@@ -38,7 +39,6 @@ class Element : public EventHandler {
   }
   
   void setError(bool t) override;
-
   void setEnabled(bool enabled);
 
   void style(const std::string & key, const std::string & value);
@@ -57,8 +57,8 @@ class Element : public EventHandler {
 
     if (isInitialized()) {
       element->initialize(thread);
+      element->load(); // Element must be loaded before it's children
       element->initializeChildren();
-      element->load();
     }
     return *element;
   }  
@@ -69,8 +69,8 @@ class Element : public EventHandler {
 
     if (isInitialized()) {
       element->initialize(thread);
+      element->load(); // Element must be loaded before it's children
       element->initializeChildren();
-      element->load();
     }
     return *element;
   }  

@@ -46,8 +46,9 @@ Element::initializeChildren() {
   if (isInitialized()) {
     for (auto & c : getChildren()) {
       c->initialize(thread);
+      c->load(); // Element must be loaded before it's children
       c->initializeChildren();
-    }    
+    }
   }
 }
 
