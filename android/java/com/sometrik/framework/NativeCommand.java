@@ -396,6 +396,7 @@ public class NativeCommand {
     case ADD_SHEET:
       System.out.println("add_sheet: " + getTextValueAsString() + " " + rowNumber + " " + columnNumber + " " + sheet);
       view.setValue(getTextValueAsString());
+      break;
     case CREATE_APPLICATION:
       frame.setAppId(getInternalId());
       frame.setSharedPreferences(getTextValueAsString());
