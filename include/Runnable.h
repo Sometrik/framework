@@ -3,7 +3,6 @@
 
 #include "EventHandler.h"
 
-#include <EventQueue.h>
 #include <Mutex.h>
 
 #include <string>
@@ -25,12 +24,6 @@ class Runnable : public EventHandler {
     }
   }
 
-#if 1
-  void sendEvent(const Event & ev) {
-    event_queue.push(0, ev);
-  }
-#endif
-
   PlatformThread & getThread() { return *thread; }
   const PlatformThread & getThread() const { return *thread; }
   PlatformThread * getThreadPtr() { return thread; }
@@ -51,8 +44,6 @@ class Runnable : public EventHandler {
     MutexLocker m(mutex);
     status_text = s;
   }
-
-  EventQueue event_queue;
 
  private:
   PlatformThread * thread = 0;

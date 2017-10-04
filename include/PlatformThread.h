@@ -6,6 +6,7 @@
 #include <Runnable.h>
 #include <SysEvent.h>
 #include <FWPlatform.h>
+#include <EventQueue.h>
 
 #include <exception>
 #include <memory>
@@ -67,6 +68,12 @@ class PlatformThread : public Element {
   void postEvent(int internal_id, const Event & ev) {
     getPlatform().pushEvent(internal_id, ev);
   }
+
+  void sendEvent(const Event & ev) {
+    event_queue.push(0, ev);
+  }
+
+  EventQueue & getEventQueue() { return event_queue; }
 
   std::shared_ptr<PlatformThread> run(std::shared_ptr<Runnable> runnable) {
     auto thread = createThread(runnable);
@@ -179,6 +186,7 @@ class PlatformThread : public Element {
   float display_scale = 1.0f;
   std::unordered_map<int, std::shared_ptr<PlatformThread> > subthreads;
   std::shared_ptr<Runnable> runnable;
+  EventQueue event_queue;
 };
 
 #endif
