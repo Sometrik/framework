@@ -399,8 +399,6 @@ public class NativeCommand {
       break;
     case CREATE_APPLICATION:
       frame.setAppId(getInternalId());
-      frame.setSharedPreferences(getTextValueAsString());
-      frame.initNativePreferences();
       if (isSet(FLAG_USE_PURCHASES_API)) {
 	System.out.println("Initializing purchaseHelper");
 	frame.initializePurchaseHelper(getTextValue2AsString(), new IabHelper.OnIabSetupFinishedListener() {
@@ -524,8 +522,9 @@ public class NativeCommand {
     case RESHAPE_TABLE:
       System.out.println("reshape table: " + value);
       view.reshape(value);
+      break;
     default:
-      System.out.println("Message couldn't be handled");
+      System.out.println("Command couldn't be handled "  + command + " id: " + internalId + " Child id: " + getChildInternalId());
       break;
     }
   }
