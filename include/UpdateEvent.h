@@ -5,7 +5,7 @@
 
 class UpdateEvent : public Event {
 public:
-  UpdateEvent() { }
+  UpdateEvent(double _timestamp) : timestamp(_timestamp) { }
 
   Event * dup() const override { return new UpdateEvent(*this); }
   void dispatch(EventHandler & element) override {
@@ -18,6 +18,11 @@ public:
     Event::dispatch(element);
   }
   bool isBroadcast() const override { return true; }
+
+  double getTimestamp() const { return timestamp; }
+
+private:
+  double timestamp;
 };
 
 #endif
