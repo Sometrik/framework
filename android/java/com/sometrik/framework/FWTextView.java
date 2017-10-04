@@ -68,7 +68,23 @@ public class FWTextView extends TextView implements NativeCommandHandler {
       setPadding(Integer.parseInt(value), getPaddingTop(), getPaddingRight(), getPaddingBottom());
     } else if (key.equals("padding-right")) {
       setPadding(getPaddingLeft(), getPaddingTop(), Integer.parseInt(value), getPaddingBottom());
-    }  else if (key.equals("width")) {
+    } else if (key.equals("margin-right")) {
+      LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
+      params.rightMargin = Integer.parseInt(value);
+      setLayoutParams(params);
+    } else if (key.equals("margin-left")) {
+      LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
+      params.leftMargin = Integer.parseInt(value);
+      setLayoutParams(params);
+    } else if (key.equals("margin-top")) {
+      LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
+      params.topMargin = Integer.parseInt(value);
+      setLayoutParams(params);
+    } else if (key.equals("margin-bottom")) {
+      LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
+      params.bottomMargin = Integer.parseInt(value);
+      setLayoutParams(params);
+    } else if (key.equals("width")) {
       LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
       if (value.equals("wrap-content")) {
 	params.width = LinearLayout.LayoutParams.WRAP_CONTENT;
