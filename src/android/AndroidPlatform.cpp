@@ -597,7 +597,7 @@ void Java_com_sometrik_framework_FrameWork_flushTouchEvent(JNIEnv* env, jobject 
 }
 
 void Java_com_sometrik_framework_FrameWork_onUpdate(JNIEnv* env, jclass clazz, double timestamp, int viewId) {
-  UpdateEvent ev;
+  UpdateEvent ev(timestamp);
   mainThread->getPlatform().pushEvent(viewId, ev);
 }
 
