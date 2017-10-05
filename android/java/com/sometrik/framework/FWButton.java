@@ -50,7 +50,7 @@ public class FWButton extends Button implements NativeCommandHandler {
     r.setDuration(100);
     r.setRepeatCount(10);
     r.setRepeatMode(RotateAnimation.REVERSE);
-    startAnimation(r);
+//    startAnimation(r);
   }
   
   @Override
