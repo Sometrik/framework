@@ -688,6 +688,8 @@ void Java_com_sometrik_framework_FrameWork_nativeOnStart(JNIEnv* env, jobject th
   if (mainThread.get()) {
     SysEvent ev(SysEvent::START);
     mainThread->getPlatform().pushEvent(appId, ev);
+  } else {
+    __android_log_print(ANDROID_LOG_INFO, "Sometrik", "NO THREAD FOR SysEvent::START");
   }
 }
 void Java_com_sometrik_framework_FrameWork_nativeOnDestroy(JNIEnv* env, jobject thiz, double timestamp, int appId) {
