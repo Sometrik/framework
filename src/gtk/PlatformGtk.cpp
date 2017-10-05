@@ -163,27 +163,32 @@ protected:
       break;
 
     case Command::RESHAPE_TABLE: {
+      cerr << "RESHAPE_TABLE\n";
       size_t max_size = command.getValue();
       auto view = views_by_id[command.getInternalId()];
       if (view) {
-	auto treeview = gtk_bin_get_child(GTK_BIN(view));
-	auto model = gtk_tree_view_get_model((GtkTreeView*)treeview);
-
-	auto & sheets = sheets_by_id[command.getInternalId()];
-	for (int i = int(sheets.size()) - 1; i >= max_size; i--) {
-	  auto & sheet = sheets[i];
-	  if (sheet.is_created) {
-	    sheet.is_created = false;
-	    GtkTreeIter parent;
-	    gtk_tree_model_iter_nth_child(model, &parent, 0, i);
-	    gtk_tree_store_remove(GTK_TREE_STORE(model), &parent);
-	  }	  
+	if (GTK_IS_BIN(view)) {
+	  cerr << "is bin\n";
+	  auto treeview = gtk_bin_get_child(GTK_BIN(view));
+	  auto model = gtk_tree_view_get_model((GtkTreeView*)treeview);
+	  
+	  auto & sheets = sheets_by_id[command.getInternalId()];
+	  for (int i = int(sheets.size()) - 1; i >= max_size; i--) {
+	    auto & sheet = sheets[i];
+	    if (sheet.is_created) {
+	      sheet.is_created = false;
+	      GtkTreeIter parent;
+	      gtk_tree_model_iter_nth_child(model, &parent, 0, i);
+	      gtk_tree_store_remove(GTK_TREE_STORE(model), &parent);
+	    }	  
+	  }
 	}
       }
     }
       break;
       
     case Command::RESHAPE_SHEET: {
+      cerr << "RESHAPE_SHEET\n";
       size_t max_size = command.getValue();
       auto view = views_by_id[command.getInternalId()];
       assert(view);
@@ -252,6 +257,7 @@ protected:
       break;
 
     case Command::ADD_OPTION: {
+      cerr << "ADD_OPTION\n";
       auto view = views_by_id[command.getInternalId()];
       if (view) {
 	if (GTK_IS_HEADER_BAR(view)) {
@@ -310,7 +316,13 @@ protected:
     };
       break;
 #endif
-      
+
+    case Command::CREATE_SIMPLELISTVIEW: {
+      auto box = gtk_box_new(command.getValue() == 1 ? GTK_ORIENTATION_VERTICAL : GTK_ORIENTATION_HORIZONTAL, 5); // FIXME: spacing
+      addView(command, box);
+    }
+      break;
+
     case Command::CREATE_LINEAR_LAYOUT: {
       auto box = gtk_box_new(command.getValue() == 1 ? GTK_ORIENTATION_VERTICAL : GTK_ORIENTATION_HORIZONTAL, 5); // FIXME: spacing
       addView(command, box);
@@ -1130,6 +1142,14 @@ public:
 
   void sleep(double t) override {
     usleep((unsigned int)(t * 1000000));
+  }
+
+  void sendEvent(int internal_id, const Event & ev) {
+
+  }
+
+  void recvEvents(EventHandler & evh) override {
+
   }
 };
 
