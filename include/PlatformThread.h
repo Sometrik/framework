@@ -6,7 +6,6 @@
 #include <Runnable.h>
 #include <SysEvent.h>
 #include <FWPlatform.h>
-#include <EventQueue.h>
 
 #include <exception>
 #include <memory>
@@ -55,6 +54,8 @@ class PlatformThread : public Element {
   virtual std::string loadTextAsset(const char * filename) = 0; 
   virtual std::string getBundleFilename(const char * filename) = 0;
   virtual std::string getLocalFilename(const char * filename, FileType type) = 0;
+  virtual void sendEvent(int internal_id, const Event & ev) = 0;
+  virtual void recvEvents(EventHandler & evh) = 0;
 
   std::string getBundleFilename(const std::string & filename) { return getBundleFilename(filename.c_str()); }
 
@@ -69,13 +70,7 @@ class PlatformThread : public Element {
     if (internal_id == 0) internal_id = getPlatform().getInternalId();
     getPlatform().pushEvent(internal_id, ev);
   }
-
   void postEvent(const Event & ev) { postEvent(0, ev); }
-
-  void sendEvent(const Event & ev) { sendEvent(0, ev); }
-  void sendEvent(int internal_id, const Event & ev) { event_queue.push(internal_id, ev); }
-
-  EventQueue & getEventQueue() { return event_queue; }
 
   std::shared_ptr<PlatformThread> run(std::shared_ptr<Runnable> runnable) {
     auto thread = createThread(runnable);
@@ -188,7 +183,6 @@ class PlatformThread : public Element {
   float display_scale = 1.0f;
   std::unordered_map<int, std::shared_ptr<PlatformThread> > subthreads;
   std::shared_ptr<Runnable> runnable;
-  EventQueue event_queue;
 };
 
 #endif

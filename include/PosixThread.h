@@ -2,6 +2,7 @@
 #define _POSIXTHREAD_H_
 
 #include <PlatformThread.h>
+#include <EventQueue.h>
 
 #include <unistd.h>
 #include <pthread.h>
@@ -34,11 +35,23 @@ public:
     usleep((unsigned int)(t * 1000000));
   }
 
+  void sendEvent(int internal_id, const Event & ev) override {
+    event_queue.push(internal_id, ev);
+  }
+
+  void recvEvents(EventHandler & evh) override {
+    event_queue.recvOne(evh);
+    while (!event_queue.empty() && !testDestroy()) {
+      event_queue.recvOne(evh);
+    }
+  }
+  
 private:
   static void * entryPoint(void * pthis);
   
   pthread_t thread;
   std::atomic<bool> terminate_thread;
+  EventQueue event_queue;
 };
 
 #endif
