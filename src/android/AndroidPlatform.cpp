@@ -423,12 +423,7 @@ AndroidPlatform::renderLoop() {
   exit_loop = false;
   
   while (!isDestroyed && !exit_loop) {
-    std::vector<std::pair<int, std::shared_ptr<Event> > > evs;
-    auto & eventqueue = getThread().getEventQueue();
-    evs.push_back(eventqueue.pop());
-    while (!eventqueue.empty()) {
-      evs.push_back(eventqueue.pop());
-    }
+    auto evs = getThread().pollEvents();
 
     bool redraw = false, update_sent = false;    
     for (auto & ev : evs) {

@@ -46,6 +46,15 @@ public:
     }
   }
   
+  std::vector<std::pair<int, std::shared_ptr<Event> > > pollEvents() override {
+    std::vector<std::pair<int, std::shared_ptr<Event> > > r;
+    r.push_back(event_queue.pop());
+    while (!event_queue.empty()) {
+      r.push_back(event_queue.pop());
+    }
+    return r;
+  }
+
 private:
   static void * entryPoint(void * pthis);
   
