@@ -53,7 +53,6 @@ static jbyteArray convertToByteArray(JNIEnv * env, const std::string & s) {
 }
 
 class JavaCache {
-
 public:
   JavaCache(JNIEnv * env, jobject & _framework) {
     env->GetJavaVM(&javaVM);
@@ -111,7 +110,7 @@ class AndroidMainThread;
 
 class AndroidPlatform : public FWPlatform {
 public:
-  AndroidPlatform(JNIEnv * _env, jobject & _framework) : javaCache(_env, _framework) {
+  AndroidPlatform() {
     registerElement(this);
   }
 
@@ -124,19 +123,14 @@ public:
     FWPlatform::onSysEvent(ev);
     getThread().onSysEvent(ev);
   }
-
-  JavaCache & getJavaCache() { return javaCache; }
-  
-private:
-  JavaCache javaCache;
 };
 
 extern FWApplication * applicationMain();
 
 class AndroidThread : public PosixThread {
 public:
-  AndroidThread(PlatformThread * _parent_thread, AndroidPlatform * _platform, AAssetManager * _asset_manager, std::shared_ptr<Runnable> & _runnable)
-    : PosixThread(_parent_thread, _platform, _runnable), asset_manager(_asset_manager), javaCache(&(_platform->getJavaCache())) {
+  AndroidThread(PlatformThread * _parent_thread, FWPlatform * _platform, std::shared_ptr<JavaCache> & _cache, AAssetManager * _asset_manager, std::shared_ptr<Runnable> & _runnable)
+    : PosixThread(_parent_thread, _platform, _runnable), javaCache(_cache), asset_manager(_asset_manager) {
   }
 
   std::unique_ptr<HTTPClientFactory> createHTTPClientFactory() const override {
@@ -177,7 +171,7 @@ public:
 
   std::shared_ptr<PlatformThread> createThread(std::shared_ptr<Runnable> & runnable) {
     AndroidPlatform & androidPlatform = dynamic_cast<AndroidPlatform&>(getPlatform());
-    return std::make_shared<AndroidThread>(this, &androidPlatform, asset_manager, runnable);
+    return std::make_shared<AndroidThread>(this, &androidPlatform, javaCache, asset_manager, runnable);
   }
 
   int sendCommand(const Command & command) override {
@@ -232,16 +226,16 @@ protected:
     javaCache->getJavaVM().DetachCurrentThread();
   }
 
-  JavaCache * javaCache;
   JNIEnv * myEnv = 0;
+  std::shared_ptr<JavaCache> javaCache;
   AAssetManager * asset_manager;
   bool exit_loop = false;
 };
 
 class AndroidMainThread : public AndroidThread {
 public:
-  AndroidMainThread(AndroidPlatform * _platform, AAssetManager * _asset_manager, std::shared_ptr<Runnable> & _runnable, const MobileAccount & _mobileAccount, const FWPreferences & _preferences)
-  : AndroidThread(nullptr, _platform, _asset_manager, _runnable), mobileAccount(_mobileAccount), preferences(_preferences) { }
+  AndroidMainThread(AndroidPlatform * _platform, std::shared_ptr<JavaCache> & _cache, AAssetManager * _asset_manager, std::shared_ptr<Runnable> & _runnable, const MobileAccount & _mobileAccount, const FWPreferences & _preferences)
+  : AndroidThread(nullptr, _platform, _cache, _asset_manager, _runnable), mobileAccount(_mobileAccount), preferences(_preferences) { }
 
   void startRunnable() override {
     auto & androidPlatform = dynamic_cast<AndroidPlatform&>(getPlatform());
@@ -568,10 +562,12 @@ void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, job
     AndroidClientFactory::initialize(env);
     canvas::AndroidContextFactory::initialize(env, assetManager);
 
+    auto cache = make_shared<JavaCache>(env, thiz);
+
     shared_ptr<Runnable> runnable;
 
-    auto platform = new AndroidPlatform(env, thiz);
-    mainThread = make_shared<AndroidMainThread>(platform, manager, runnable, account, initialPrefs);
+    auto platform = new AndroidPlatform;
+    mainThread = make_shared<AndroidMainThread>(platform, cache, manager, runnable, account, initialPrefs);
     mainThread->setActualDisplayWidth(screenWidth);
     mainThread->setActualDisplayHeight(screenHeight);
     mainThread->setDisplayScale(displayScale);
