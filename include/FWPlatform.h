@@ -21,7 +21,6 @@ class FWPlatform : public Element {
     return Element::isA(className);
   }
   
-  virtual void pushEvent(int internal_id, const Event & ev) = 0;
   virtual void startModal() = 0;
   virtual void endModal() = 0;
 

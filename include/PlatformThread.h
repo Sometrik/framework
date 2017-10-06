@@ -69,7 +69,7 @@ class PlatformThread : public Element {
   
   void postEvent(int internal_id, const Event & ev) {
     if (internal_id == 0) internal_id = getPlatform().getInternalId();
-    getPlatform().pushEvent(internal_id, ev);
+    getPlatform().getThread().sendEvent(internal_id, ev);
   }
   void postEvent(const Event & ev) { postEvent(0, ev); }
 
