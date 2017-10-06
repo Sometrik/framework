@@ -252,32 +252,12 @@ public:
   void onSysEvent(SysEvent & ev) override {
     PlatformThread::onSysEvent(ev);
 
-    switch (ev.getType()) {
-    case SysEvent::PAUSE:
+    if (ev.getType() == SysEvent::PAUSE) {
       isPaused = true;
-      break;
-    case SysEvent::RESUME:
+    } else if (ev.getType() == SysEvent::RESUME) {
       isPaused = false;
-      break;
-    case SysEvent::END_MODAL:
-      setModalResultValue(ev.getValue());
-      setModalResultText(ev.getTextValue());
-      break;
-    case SysEvent::DESTROY:
+    } else if (ev.getType() == SysEvent::DESTROY) {
       isDestroyed = true;
-      break;
-    case SysEvent::MEMORY_WARNING:
-      //TODO
-      break;
-    case SysEvent::START:
-      //TODO
-      break;
-    case SysEvent::STOP:
-      //TODO
-      break;
-    case SysEvent::THREAD_TERMINATED:
-      //TODO
-      break;
     }
   }
 
