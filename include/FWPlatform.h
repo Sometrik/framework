@@ -4,12 +4,6 @@
 #include <Element.h>
 #include <Event.h>
 #include <Mutex.h>
-
-#ifdef HAS_SOUNDCANVAS
-#include <SoundCanvas.h>
-#endif
-
-#include <memory>
 #include <unordered_map>
 
 class FWPlatform : public Element {
@@ -23,15 +17,6 @@ class FWPlatform : public Element {
   
   virtual void createFBO(int flags) { }
   
-#ifdef HAS_SOUNDCANVAS
-  SoundCanvas & getSoundCanvas() {
-    if (soundCanvas == 0){
-      soundCanvas = createSoundCanvas();
-    }
-    return *soundCanvas;
-  }
-#endif
-    
   void postEvent(int internal_id, Event & ev) {
     auto e = getRegisteredElement(internal_id);
     if (e) {
@@ -59,19 +44,9 @@ class FWPlatform : public Element {
     auto it = registered_elements.find(internal_id);
     return it != registered_elements.end() ? it->second : 0;
   }
-  
-#ifdef HAS_SOUNDCANVAS
-  virtual std::shared_ptr<SoundCanvas> createSoundCanvas() const {
-    return std::make_shared<DummySoundCanvas>();
-  }
-#endif
     
  private:
-#ifdef HAS_SOUNDCANVAS
-  std::shared_ptr<SoundCanvas> soundCanvas;
-#endif
   std::unordered_map<int, Element *> registered_elements;
-
   Mutex mutex;
 };
 

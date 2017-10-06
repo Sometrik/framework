@@ -15,7 +15,6 @@
 
 #include <FWPlatform.h>
 #include <AndroidClient.h>
-#include <AndroidSoundCanvas.h>
 #include <AndroidLogger.h>
 #include <android/native_window_jni.h>
 #include <android/native_window.h>
@@ -117,19 +116,9 @@ public:
 
     canvasCache = std::make_shared<canvas::AndroidCache>(_env, _mgr);
     clientCache = std::make_shared<AndroidClientCache>(_env);
-
-#ifdef HAS_SOUNDCANVAS
-    soundCache = std::make_shared<AndroidSoundCache>(_env, _mgr);
-#endif
   }
 
   void createFBO(int flags) { }
-
-#ifdef HAS_SOUNDCANVAS
-  std::shared_ptr<SoundCanvas> createSoundCanvas() const override {
-    return std::make_shared<AndroidSoundCanvas>(soundCache);
-  }
-#endif
 
   void onOpenGLInitEvent(OpenGLInitEvent & _ev) override {
     getThread().onOpenGLInitEvent(_ev);
@@ -149,7 +138,6 @@ private:
   JavaCache javaCache;
   std::shared_ptr<canvas::AndroidCache> canvasCache;
   std::shared_ptr<AndroidClientCache> clientCache;
-  std::shared_ptr<AndroidSoundCache> soundCache;
 };
 
 extern FWApplication * applicationMain();
