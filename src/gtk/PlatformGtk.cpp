@@ -469,7 +469,7 @@ protected:
       break;
 
     case Command::CREATE_IMAGEVIEW: {
-      string s = "assets/" + command.getTextValue();
+      string s = getBundleFilename(command.getTextValue().c_str());
       auto image = gtk_image_new_from_file(s.c_str());
       addView(command, image);
     }
@@ -643,6 +643,12 @@ protected:
     }
       break;
 
+    case Command::SET_STYLE: {
+      auto view = views_by_id[command.getInternalId()];
+      if (view) setStyle(view, command.getTextValue(), command.getTextValue2());
+    }
+      break;
+
     case Command::CREATE_DIALOG: {
       GtkDialogFlags flags = GtkDialogFlags(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT);
       auto dlg = gtk_dialog_new_with_buttons(command.getTextValue().c_str(),
@@ -795,6 +801,25 @@ protected:
       break;
     }
     return 0;
+  }
+
+  void setStyle(GtkWidget * widget, const std::string & key, const std::string & value) {
+    if (GTK_IS_LABEL(widget)) {
+      auto label = GTK_LABEL(widget);
+      if (key == "white-space") {
+	bool wrap = true;
+	if (value == "no-wrap") {
+	  wrap = false;
+	}
+	gtk_label_set_line_wrap(label, wrap);
+      } else if (key == "text-align") {
+	GtkJustification j = GTK_JUSTIFY_LEFT;
+	if (value == "right") j = GTK_JUSTIFY_RIGHT;
+	else if (value == "center") j = GTK_JUSTIFY_CENTER;
+	else if (value == "justify") j = GTK_JUSTIFY_FILL;
+	gtk_label_set_justify(label, j);
+      }
+    }
   }
   
   void addView(int parent_id, int id, GtkWidget * widget, bool expand = false) {
