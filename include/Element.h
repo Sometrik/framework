@@ -169,7 +169,6 @@ class Element : public EventHandler {
   const PlatformThread & getThread() const { return *thread; }
 
   virtual void initialize(PlatformThread * _thread);
-  virtual void create() { }
   virtual void load() { }
 
   void initializeChildren();
@@ -177,6 +176,8 @@ class Element : public EventHandler {
   Logger & getLogger();
 
  protected:
+  virtual void create() = 0;
+
   virtual bool isChildVisible(const Element & child) const {
     if (!child.is_visible) return false;
     else if (parent) return parent->isChildVisible(*this);
