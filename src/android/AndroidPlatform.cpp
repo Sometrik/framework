@@ -20,7 +20,6 @@
 #include <android/native_window_jni.h>
 #include <android/native_window.h>
 #include <EGL/egl.h>
-#include <EventQueue.h>
 #include <GL.h>
 
 #include <PosixThread.h>
@@ -72,7 +71,6 @@ public:
     nativeCommandConstructor = env->GetMethodID(nativeCommandClass, "<init>", "(Lcom/sometrik/framework/FrameWork;IIII[B[BI)V");
     nativeListCommandConstructor = env->GetMethodID(nativeCommandClass, "<init>", "(Lcom/sometrik/framework/FrameWork;IIII[B[BIIIIII)V");
     sendCommandMethod = env->GetStaticMethodID(frameworkClass, "sendMessage", "(Lcom/sometrik/framework/FrameWork;Lcom/sometrik/framework/NativeCommand;)V");
-    getDatabasePathMethod = env->GetMethodID(contextWrapperClass, "getDatabasePath", "(Ljava/lang/String;)Ljava/io/File;");
     getPathMethod = env->GetMethodID(fileClass, "getPath", "()Ljava/lang/String;");
 
     env->DeleteLocalRef(fileClass);
@@ -106,7 +104,6 @@ public:
   jmethodID nativeCommandConstructor;
   jmethodID nativeListCommandConstructor;
   jmethodID sendCommandMethod;
-  jmethodID getDatabasePathMethod;
   jmethodID getPathMethod;
 };
 
@@ -164,7 +161,6 @@ public:
   
 private:
   JavaCache javaCache;
-  std::string databasePath;
 
   EGLDisplay display = 0;
   EGLSurface surface = 0;
