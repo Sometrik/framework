@@ -42,9 +42,17 @@ static int width = 800, height = 600;
 class PlatformGtk;
 
 struct event_data_s {
+  event_data_s(PlatformGtk * _platform, Event * _event, int _internal_id) : platform(_platform), event(_event), internal_id(_internal_id) { }
   PlatformGtk * platform;
   Event * event;
   int internal_id;
+};
+
+struct command_data_s {
+  command_data_s(PlatformGtk * _platform, Command _command) : platform(_platform), command(_command) { }
+  
+  PlatformGtk * platform;
+  Command command;  
 };
 
 class PlatformGtk : public FWPlatform {
@@ -58,11 +66,8 @@ public:
   }
 
   void pushEvent(int internal_id, const Event & ev) override {
-    event_data_s * ed = new event_data_s;
-    ed->platform = this;
-    ed->event = ev.dup();
-    ed->internal_id = internal_id;
-    g_idle_add(idle_callback, ed);
+    event_data_s * ed = new event_data_s(this, ev.dup(), internal_id);
+    g_idle_add(event_callback, ed);
   }
   
 #ifdef HAS_SOUNDCANVAS
@@ -793,7 +798,8 @@ protected:
   static void on_previous_button(GtkWidget * widget, gpointer data);
   static void on_next_button(GtkWidget * widget, gpointer data);
   static void on_bar_button(GtkWidget * widget, gpointer data);
-  static gboolean idle_callback(gpointer data);
+  static gboolean event_callback(gpointer data);
+  static gboolean command_callback(gpointer data);
   static gboolean delete_window(GtkWidget *widget, GdkEvent  *event, gpointer user_data);
   static gboolean timer_callback(gpointer data);
   
@@ -1024,7 +1030,7 @@ PlatformGtk::on_bar_button(GtkWidget * widget, gpointer data) {
 }
 
 gboolean
-PlatformGtk::idle_callback(gpointer data) {
+PlatformGtk::event_callback(gpointer data) {
   event_data_s * ed = (event_data_s*)data;
   PlatformGtk * platform = ed->platform;
   Event * ev = ed->event;
@@ -1032,6 +1038,16 @@ PlatformGtk::idle_callback(gpointer data) {
   delete ed;
   platform->postEvent(internal_id ? internal_id : platform->getInternalId(), *ev);
   delete ev;
+  return FALSE;
+}
+
+gboolean
+PlatformGtk::command_callback(gpointer data) {
+  command_data_s * cd = (command_data_s*)data;
+  PlatformGtk * platform = cd->platform;
+  auto & command = cd->command;
+  platform->handleCommand(cd->command);
+  delete cd;
   return FALSE;
 }
 
@@ -1072,7 +1088,9 @@ public:
   }
   int sendCommand(const Command & command) {
     auto & gtkPlatform = dynamic_cast<PlatformGtk&>(getPlatform());
-    return gtkPlatform.handleCommand(command);
+    command_data_s * cd = new command_data_s(&gtkPlatform, command);
+    g_idle_add(PlatformGtk::command_callback, cd);
+    return 0;
   }
   string getLocalFilename(const char * fn, FileType type) override {
     string s = "assets/";
