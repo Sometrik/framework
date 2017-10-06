@@ -179,7 +179,7 @@ class PlatformThread : public Element {
       SysEvent ev(SysEvent::THREAD_TERMINATED);
       ev.setThreadId(getInternalId());
       ev.setRunnable(runnable.get());
-      postEvent(0, ev);
+      parent_thread->sendEvent(parent_thread->getInternalId(), ev);
     }
   }
 
