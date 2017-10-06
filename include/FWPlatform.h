@@ -8,7 +8,9 @@
 
 class FWPlatform : public Element {
  public:  
-  FWPlatform() { }
+  FWPlatform() {
+    registerElement(this);
+  }
 
   bool isA(const std::string & className) const override {
     if (className == "FWPlatform") return true;

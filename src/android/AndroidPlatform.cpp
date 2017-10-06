@@ -108,23 +108,6 @@ public:
 class AndroidThread;
 class AndroidMainThread;
 
-class AndroidPlatform : public FWPlatform {
-public:
-  AndroidPlatform() {
-    registerElement(this);
-  }
-
-  void onOpenGLInitEvent(OpenGLInitEvent & _ev) override {
-    getThread().onOpenGLInitEvent(_ev);
-    FWPlatform::onOpenGLInitEvent(_ev);
-  }
-
-  void onSysEvent(SysEvent & ev) override {
-    FWPlatform::onSysEvent(ev);
-    getThread().onSysEvent(ev);
-  }
-};
-
 extern FWApplication * applicationMain();
 
 class AndroidThread : public PosixThread {
@@ -134,11 +117,9 @@ public:
   }
 
   std::unique_ptr<HTTPClientFactory> createHTTPClientFactory() const override {
-    const AndroidPlatform & androidPlatform = dynamic_cast<const AndroidPlatform&>(getPlatform());
     return std::unique_ptr<HTTPClientFactory>(new AndroidClientFactory);
   }
   std::unique_ptr<canvas::ContextFactory> createContextFactory() const override {
-    const AndroidPlatform & androidPlatform = dynamic_cast<const AndroidPlatform&>(getPlatform());
     return std::unique_ptr<canvas::ContextFactory>(new canvas::AndroidContextFactory(getAssetManager(), getDisplayScale()));
   }
 
@@ -170,8 +151,7 @@ public:
   }
 
   std::shared_ptr<PlatformThread> createThread(std::shared_ptr<Runnable> & runnable) {
-    AndroidPlatform & androidPlatform = dynamic_cast<AndroidPlatform&>(getPlatform());
-    return std::make_shared<AndroidThread>(this, &androidPlatform, javaCache, asset_manager, runnable);
+    return std::make_shared<AndroidThread>(this, &(getPlatform()), javaCache, asset_manager, runnable);
   }
 
   int sendCommand(const Command & command) override {
@@ -234,22 +214,22 @@ protected:
 
 class AndroidMainThread : public AndroidThread {
 public:
-  AndroidMainThread(AndroidPlatform * _platform, std::shared_ptr<JavaCache> & _cache, AAssetManager * _asset_manager, std::shared_ptr<Runnable> & _runnable, const MobileAccount & _mobileAccount, const FWPreferences & _preferences)
-  : AndroidThread(nullptr, _platform, _cache, _asset_manager, _runnable), mobileAccount(_mobileAccount), preferences(_preferences) { }
+  AndroidMainThread(std::shared_ptr<JavaCache> & _cache, AAssetManager * _asset_manager, std::shared_ptr<Runnable> & _runnable, const MobileAccount & _mobileAccount, const FWPreferences & _preferences)
+  : AndroidThread(nullptr, new FWPlatform, _cache, _asset_manager, _runnable), mobileAccount(_mobileAccount), preferences(_preferences) { }
 
   void startRunnable() override {
-    auto & androidPlatform = dynamic_cast<AndroidPlatform&>(getPlatform());
+    auto & _platform = getPlatform();
 
-    androidPlatform.create();
-    androidPlatform.initialize(this);
-    androidPlatform.initializeChildren();
-    androidPlatform.load();
+    _platform.create();
+    _platform.initialize(this);
+    _platform.initializeChildren();
+    _platform.load();
 
     shared_ptr<FWApplication> application(applicationMain());
     application->setPreferences(preferences);
     application->setMobileAccount(mobileAccount);
 
-    androidPlatform.addChild(application);
+    _platform.addChild(application);
 
     startEventLoop();
     deinitializeRenderer();
@@ -566,8 +546,7 @@ void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, job
 
     shared_ptr<Runnable> runnable;
 
-    auto platform = new AndroidPlatform;
-    mainThread = make_shared<AndroidMainThread>(platform, cache, manager, runnable, account, initialPrefs);
+    mainThread = make_shared<AndroidMainThread>(cache, manager, runnable, account, initialPrefs);
     mainThread->setActualDisplayWidth(screenWidth);
     mainThread->setActualDisplayHeight(screenHeight);
     mainThread->setDisplayScale(displayScale);
@@ -582,7 +561,6 @@ void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, job
 }
 
 void Java_com_sometrik_framework_FrameWork_nativeSetSurface(JNIEnv* env, jobject thiz, jobject surface, int surfaceId, int gl_version, int width, int height) {
-  __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "setting native surface on androidPlatform");
   mainThread->setActualDisplayWidth(width);
   mainThread->setActualDisplayHeight(height);
   if (surface != 0) {
@@ -590,12 +568,12 @@ void Java_com_sometrik_framework_FrameWork_nativeSetSurface(JNIEnv* env, jobject
     window = ANativeWindow_fromSurface(env, surface);
     AndroidOpenGLInitEvent ev(gl_version, true, window);
     auto & platform = mainThread->getPlatform();
+    mainThread->sendEvent(mainThread->getInternalId(), ev);
     mainThread->sendEvent(platform.getInternalId(), ev);
   }
 }
 
  void Java_com_sometrik_framework_FrameWork_nativeSurfaceDestroyed(JNIEnv* env, jobject thiz, int surfaceId, int gl_version) {
-   __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "native surface destroyed on androidPlatform");
    mainThread->deinitializeRenderer();
  }
 
@@ -612,6 +590,7 @@ void Java_com_sometrik_framework_FrameWork_nativeSetSurface(JNIEnv* env, jobject
    ev.setTextValue(text);
    auto & platform = mainThread->getPlatform();
    mainThread->sendEvent(platform.getInternalId(), ev);
+   mainThread->sendEvent(mainThread->getInternalId(), ev);
  }
 
 void Java_com_sometrik_framework_FrameWork_nativeOnResume(JNIEnv* env, jobject thiz, double timestamp, int appId) {

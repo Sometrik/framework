@@ -62,7 +62,6 @@ public:
   
   PlatformGtk() {
     CurlClientFactory::globalInit();
-    registerElement(this);
   }
 
   void pushEvent(int internal_id, const Event & ev) override {
