@@ -161,15 +161,17 @@ class PlatformThread : public Element {
  protected:
   virtual void initialize() { }  
   virtual void deinitialize() { }
-
-  void start2() {
-    initialize();
+  virtual void startRunnable() {
     try {
       getRunnable().start(this);
     } catch (std::exception & e) {
       auto logger = createLogger("PlatformThread");
       logger->println("PlatformThread: Runnable threw an exception: " + std::string(e.what()));
     }
+  }
+  void start2() {
+    initialize();
+    startRunnable();
     deinitialize();
 
     if (parent_thread) {
