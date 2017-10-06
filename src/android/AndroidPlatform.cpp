@@ -108,12 +108,10 @@ public:
 };
 
 class AndroidThread;
-class AndroidNativeThread;
+class AndroidMainThread;
 
 class AndroidPlatform : public FWPlatform {
 public:
-  friend class AndroidNativeThread;
-  
   AndroidPlatform(JNIEnv * _env, jobject & _mgr, jobject & _framework) : javaCache(_env, _framework) {
     registerElement(this);
 
@@ -133,62 +131,14 @@ public:
   }
 #endif
 
-  bool initializeRenderer(int opengl_es_version, ANativeWindow * _window);
-  void deinitializeRenderer();
-  void renderLoop();
-
-  void startModal() override {
-    renderLoop();
-  }
-
-  void endModal() override {
-    exit_loop = true;
-  }
-
   void onOpenGLInitEvent(OpenGLInitEvent & _ev) override {
-    if (_ev.getOpenGLVersion() < 190000) {
-      importGLInit();
-    } else {
-      importGLInit();
-    }
-    auto & ev = dynamic_cast<AndroidOpenGLInitEvent&>(_ev);
-    if (ev.getWindow()) {
-      initializeRenderer(ev.getOpenGLVersion(), ev.getWindow());
-      ev.requestRedraw();
-      FWPlatform::onOpenGLInitEvent(_ev);
-    }
+    getThread().onOpenGLInitEvent(_ev);
+    FWPlatform::onOpenGLInitEvent(_ev);
   }
 
   void onSysEvent(SysEvent & ev) override {
     FWPlatform::onSysEvent(ev);
-
-    switch (ev.getType()) {
-    case SysEvent::PAUSE:
-      isPaused = true;
-      break;
-    case SysEvent::RESUME:
-      isPaused = false;
-      break;
-    case SysEvent::END_MODAL:
-      getThread().setModalResultValue(ev.getValue());
-      getThread().setModalResultText(ev.getTextValue());
-      break;
-    case SysEvent::DESTROY:
-      isDestroyed = true;
-      break;
-    case SysEvent::MEMORY_WARNING:
-      //TODO
-      break;
-    case SysEvent::START:
-      //TODO
-      break;
-    case SysEvent::STOP:
-      //TODO
-      break;
-    case SysEvent::THREAD_TERMINATED:
-      //TODO
-      break;
-    }
+    getThread().onSysEvent(ev);
   }
 
   const std::shared_ptr<AndroidClientCache> & getClientCache() const { return clientCache; }
@@ -197,17 +147,9 @@ public:
   
 private:
   JavaCache javaCache;
-
-  EGLDisplay display = 0;
-  EGLSurface surface = 0;
-  EGLContext context = 0;
   std::shared_ptr<canvas::AndroidCache> canvasCache;
   std::shared_ptr<AndroidClientCache> clientCache;
   std::shared_ptr<AndroidSoundCache> soundCache;
-
-  ANativeWindow * window = 0;
-  bool canDraw = false, isPaused = false, isDestroyed = false;
-  bool exit_loop = false;
 };
 
 extern FWApplication * applicationMain();
@@ -288,10 +230,10 @@ public:
         command.getType() == Command::SHOW_ACTION_SHEET) {
       setModalResultValue(0);
       setModalResultText("");
-      getPlatform().startModal();
+      startEventLoop();
       return getModalResultValue();
     } else if (command.getType() == Command::END_MODAL) {
-      getPlatform().endModal();
+      exit_loop = true;
     }
     return 0;
   }
@@ -314,6 +256,7 @@ protected:
   JavaCache * javaCache;
   JNIEnv * myEnv = 0;
   AAssetManager * asset_manager;
+  bool exit_loop = false;
 };
 
 class AndroidMainThread : public AndroidThread {
@@ -334,167 +277,216 @@ public:
     application->setMobileAccount(mobileAccount);
 
     androidPlatform.addChild(application);
-    androidPlatform.renderLoop();
-    androidPlatform.deinitializeRenderer();
+
+    startEventLoop();
+    deinitializeRenderer();
+  }
+
+  void onOpenGLInitEvent(OpenGLInitEvent & _ev) override {
+    if (_ev.getOpenGLVersion() < 190000) {
+      importGLInit();
+    } else {
+      importGLInit();
+    }
+    auto & ev = dynamic_cast<AndroidOpenGLInitEvent&>(_ev);
+    if (ev.getWindow()) {
+      initializeRenderer(ev.getOpenGLVersion(), ev.getWindow());
+      ev.requestRedraw();
+      AndroidThread::onOpenGLInitEvent(_ev);
+    }
+  }
+
+  void onSysEvent(SysEvent & ev) override {
+    PlatformThread::onSysEvent(ev);
+
+    switch (ev.getType()) {
+    case SysEvent::PAUSE:
+      isPaused = true;
+      break;
+    case SysEvent::RESUME:
+      isPaused = false;
+      break;
+    case SysEvent::END_MODAL:
+      setModalResultValue(ev.getValue());
+      setModalResultText(ev.getTextValue());
+      break;
+    case SysEvent::DESTROY:
+      isDestroyed = true;
+      break;
+    case SysEvent::MEMORY_WARNING:
+      //TODO
+      break;
+    case SysEvent::START:
+      //TODO
+      break;
+    case SysEvent::STOP:
+      //TODO
+      break;
+    case SysEvent::THREAD_TERMINATED:
+      //TODO
+      break;
+    }
+  }
+
+  bool initializeRenderer(int opengl_es_version, ANativeWindow * _window) {
+    canDraw = true;
+    window = _window;
+
+    if (window) {
+      const EGLint attribs[] = {
+        EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
+        EGL_BLUE_SIZE, 8,
+        EGL_GREEN_SIZE, 8,
+        EGL_RED_SIZE, 8,
+        EGL_NONE
+      };
+      EGLDisplay _display;
+      EGLConfig _config;
+      EGLint numConfigs;
+      EGLint format;
+      EGLSurface _surface;
+      EGLContext _context;
+      EGLint width;
+      EGLint height;
+      int version = opengl_es_version >> 16;
+
+      __android_log_print(ANDROID_LOG_INFO, "Sometrik", "version check: %d", version);
+      EGLint contextAttribs[] = { EGL_CONTEXT_CLIENT_VERSION, version, EGL_NONE };
+
+      if ((_display = eglGetDisplay(EGL_DEFAULT_DISPLAY)) == EGL_NO_DISPLAY) {
+        __android_log_print(ANDROID_LOG_INFO, "Sometrik", "eglGetDisplay() returned error %d", eglGetError());
+        return false;
+      }
+      if (!eglInitialize(_display, 0, 0)) {
+        __android_log_print(ANDROID_LOG_INFO, "Sometrik", "eglInitialize() returned error %d", eglGetError());
+        return false;
+      }
+
+      if (!eglChooseConfig(_display, attribs, &_config, 1, &numConfigs)) {
+        __android_log_print(ANDROID_LOG_INFO, "Sometrik", "eglChooseConfig() returned error %d", eglGetError());
+        //         destroy();
+        return false;
+      }
+
+      if (!eglGetConfigAttrib(_display, _config, EGL_NATIVE_VISUAL_ID, &format)) {
+        __android_log_print(ANDROID_LOG_INFO, "Sometrik", "eglGetConfigAttrib() returned error %d", eglGetError());
+        //         destroy();
+        return false;
+      }
+
+      ANativeWindow_setBuffersGeometry(window, 0, 0, format);
+
+      if (!(_surface = eglCreateWindowSurface(_display, _config, window, 0))) {
+        __android_log_print(ANDROID_LOG_INFO, "Sometrik", "eglCreateWindowSurface() returned error %d", eglGetError());
+        //         destroy();
+        return false;
+      }
+
+      if (!(_context = eglCreateContext(_display, _config, 0, contextAttribs))) {
+        __android_log_print(ANDROID_LOG_INFO, "Sometrik", "eglCreateContext() returned error %d", eglGetError());
+        //         destroy();
+        return false;
+      }
+
+      if (!eglMakeCurrent(_display, _surface, _surface, _context)) {
+        __android_log_print(ANDROID_LOG_INFO, "Sometrik", "eglMakeCurrent() returned error %d", eglGetError());
+        //         destroy();
+        return false;
+      }
+
+      if (!eglQuerySurface(_display, _surface, EGL_WIDTH, &width) || !eglQuerySurface(_display, _surface, EGL_HEIGHT, &height)) {
+        __android_log_print(ANDROID_LOG_INFO, "Sometrik", "eglQuerySurface() returned error %d", eglGetError());
+        //         destroy();
+        return false;
+      }
+
+      display = _display;
+      surface = _surface;
+      context = _context;
+
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  void deinitializeRenderer() {
+    canDraw = false;
+
+    if (display) {
+      eglMakeCurrent(display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+      eglDestroyContext(display, context);
+      eglDestroySurface(display, surface);
+      eglTerminate(display);
+
+      display = EGL_NO_DISPLAY;
+      surface = EGL_NO_SURFACE;
+      context = EGL_NO_CONTEXT;
+    }
+
+    if (window) {
+      ANativeWindow_release(window);
+      window = 0;
+    }
+  }
+
+  void startEventLoop() override {
+    exit_loop = false;
+    
+    while (!isDestroyed && !exit_loop) {
+      auto evs = pollEvents();
+
+      bool redraw = false, update_sent = false;
+      for (auto & ev : evs) {
+        if (dynamic_cast<UpdateEvent*>(ev.second.get())) {
+          if (update_sent) continue;
+          update_sent = true;
+        }
+
+        getPlatform().postEvent(ev.first, *ev.second.get());
+
+        auto ev2 = dynamic_cast<SysEvent*>(ev.second.get());
+        if (ev2) {
+          if (ev2->getType() == SysEvent::END_MODAL) {
+            exit_loop = true;
+          } else if (ev2->getType() == SysEvent::DESTROY) {
+            exit_loop = true;
+          } else if (ev2->getType() == SysEvent::PAUSE) {
+          }
+        }
+
+        if (ev.second.get()->isRedrawNeeded()) {
+          redraw = true;
+        }
+      }
+
+      if (canDraw && surface && redraw) {
+        DrawEvent dev;
+        postEvent(getApplication().getActiveViewId(), dev);
+
+        if (!eglSwapBuffers(display, surface)) {
+          // Swap buffers failed
+        }
+      }
+    }
+
+    exit_loop = false;
   }
 
 private:
+  EGLDisplay display = 0;
+  EGLSurface surface = 0;
+  EGLContext context = 0;
+
+  ANativeWindow * window = 0;
+  bool canDraw = false, isPaused = false, isDestroyed = false;
+
   MobileAccount mobileAccount;
   FWPreferences preferences;
 };
 
 static std::shared_ptr<AndroidMainThread> mainThread;
 static FWPreferences initialPrefs;
-
-bool
-AndroidPlatform::initializeRenderer(int opengl_es_version, ANativeWindow * _window) {
-  canDraw = true;
-  window = _window;
-
-  if (window) {
-    const EGLint attribs[] = {
-      EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
-      EGL_BLUE_SIZE, 8,
-      EGL_GREEN_SIZE, 8,
-      EGL_RED_SIZE, 8,
-      EGL_NONE
-    };
-    EGLDisplay _display;
-    EGLConfig _config;
-    EGLint numConfigs;
-    EGLint format;
-    EGLSurface _surface;
-    EGLContext _context;
-    EGLint width;
-    EGLint height;
-    int version = opengl_es_version >> 16;
-
-    __android_log_print(ANDROID_LOG_INFO, "Sometrik", "version check: %d", version);
-    EGLint contextAttribs[] = { EGL_CONTEXT_CLIENT_VERSION, version, EGL_NONE };
-
-    if ((_display = eglGetDisplay(EGL_DEFAULT_DISPLAY)) == EGL_NO_DISPLAY) {
-      __android_log_print(ANDROID_LOG_INFO, "Sometrik", "eglGetDisplay() returned error %d", eglGetError());
-      return false;
-    }
-    if (!eglInitialize(_display, 0, 0)) {
-      __android_log_print(ANDROID_LOG_INFO, "Sometrik", "eglInitialize() returned error %d", eglGetError());
-      return false;
-    }
-
-    if (!eglChooseConfig(_display, attribs, &_config, 1, &numConfigs)) {
-      __android_log_print(ANDROID_LOG_INFO, "Sometrik", "eglChooseConfig() returned error %d", eglGetError());
-      //         destroy();
-      return false;
-    }
-
-    if (!eglGetConfigAttrib(_display, _config, EGL_NATIVE_VISUAL_ID, &format)) {
-      __android_log_print(ANDROID_LOG_INFO, "Sometrik", "eglGetConfigAttrib() returned error %d", eglGetError());
-      //         destroy();
-      return false;
-    }
-
-    ANativeWindow_setBuffersGeometry(window, 0, 0, format);
-
-    if (!(_surface = eglCreateWindowSurface(_display, _config, window, 0))) {
-      __android_log_print(ANDROID_LOG_INFO, "Sometrik", "eglCreateWindowSurface() returned error %d", eglGetError());
-      //         destroy();
-      return false;
-    }
-
-    if (!(_context = eglCreateContext(_display, _config, 0, contextAttribs))) {
-      __android_log_print(ANDROID_LOG_INFO, "Sometrik", "eglCreateContext() returned error %d", eglGetError());
-      //         destroy();
-      return false;
-    }
-
-    if (!eglMakeCurrent(_display, _surface, _surface, _context)) {
-      __android_log_print(ANDROID_LOG_INFO, "Sometrik", "eglMakeCurrent() returned error %d", eglGetError());
-      //         destroy();
-      return false;
-    }
-
-    if (!eglQuerySurface(_display, _surface, EGL_WIDTH, &width) || !eglQuerySurface(_display, _surface, EGL_HEIGHT, &height)) {
-      __android_log_print(ANDROID_LOG_INFO, "Sometrik", "eglQuerySurface() returned error %d", eglGetError());
-      //         destroy();
-      return false;
-    }
-
-    display = _display;
-    surface = _surface;
-    context = _context;
-
-    return true;
-  } else {
-    return false;
-  }
-}
-
-void
-AndroidPlatform::deinitializeRenderer() {
-  canDraw = false;
-
-  if (display) {
-    eglMakeCurrent(display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
-    eglDestroyContext(display, context);
-    eglDestroySurface(display, surface);
-    eglTerminate(display);
-    
-    display = EGL_NO_DISPLAY;
-    surface = EGL_NO_SURFACE;
-    context = EGL_NO_CONTEXT;
-  }
-
-  if (window) {
-    ANativeWindow_release(window);
-    window = 0;
-  }
-}
-
-void
-AndroidPlatform::renderLoop() {
-  __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Looping louie");
-  
-  exit_loop = false;
-  
-  while (!isDestroyed && !exit_loop) {
-    auto evs = getThread().pollEvents();
-
-    bool redraw = false, update_sent = false;    
-    for (auto & ev : evs) {
-      if (dynamic_cast<UpdateEvent*>(ev.second.get())) {
-	if (update_sent) continue;
-	update_sent = true;
-      }
-      
-      postEvent(ev.first, *ev.second.get());
-      
-      auto ev2 = dynamic_cast<SysEvent*>(ev.second.get());
-      if (ev2) {
-        if (ev2->getType() == SysEvent::END_MODAL) {
-          exit_loop = true;
-        } else if (ev2->getType() == SysEvent::DESTROY) {
-          exit_loop = true;
-        } else if (ev2->getType() == SysEvent::PAUSE) {
-        }
-      }
-
-      if (ev.second.get()->isRedrawNeeded()) {
-	redraw = true;
-      }
-    }
-
-    if (canDraw && surface && redraw) {
-      DrawEvent dev;
-      postEvent(getApplication().getActiveViewId(), dev);
-      
-      if (!eglSwapBuffers(display, surface)) {
-        // Swap buffers failed
-      }
-    }
-  }
-
-  exit_loop = false;
-}
 
 #ifdef PROFILING
 extern "C" void monstartup( char const * );
@@ -631,8 +623,7 @@ void Java_com_sometrik_framework_FrameWork_nativeSetSurface(JNIEnv* env, jobject
 
  void Java_com_sometrik_framework_FrameWork_nativeSurfaceDestroyed(JNIEnv* env, jobject thiz, int surfaceId, int gl_version) {
    __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "native surface destroyed on androidPlatform");
-   auto & androidPlatform = dynamic_cast<AndroidPlatform&>(mainThread->getPlatform());
-   androidPlatform.deinitializeRenderer();
+   mainThread->deinitializeRenderer();
  }
 
  void Java_com_sometrik_framework_FrameWork_endModal(JNIEnv* env, jobject thiz, double timestamp, int value, jbyteArray jarray) {
