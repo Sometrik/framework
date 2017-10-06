@@ -21,9 +21,6 @@ class FWPlatform : public Element {
     return Element::isA(className);
   }
   
-  virtual void startModal() = 0;
-  virtual void endModal() = 0;
-
   virtual void createFBO(int flags) { }
   
 #ifdef HAS_SOUNDCANVAS
