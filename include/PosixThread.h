@@ -39,10 +39,13 @@ public:
     event_queue.push(internal_id, ev);
   }
 
-  void recvEvents(EventHandler & evh) override {
-    event_queue.recvOne(evh);
-    while (!event_queue.empty() && !testDestroy()) {
-      event_queue.recvOne(evh);
+  void startEventLoop() override {
+    auto & runnable = getRunnable();
+    while (!testDestroy()) {
+      event_queue.recvOne(runnable);
+      while (!event_queue.empty() && !testDestroy()) {
+        event_queue.recvOne(runnable);
+      }
     }
   }
   

@@ -55,9 +55,8 @@ class PlatformThread : public Element {
   virtual std::string getBundleFilename(const char * filename) = 0;
   virtual std::string getLocalFilename(const char * filename, FileType type) = 0;
   virtual void sendEvent(int internal_id, const Event & ev) = 0;
-  virtual void recvEvents(EventHandler & evh) = 0;
   virtual std::vector<std::pair<int, std::shared_ptr<Event> > > pollEvents() = 0;
-  virtual void startEventLoop() { }
+  virtual void startEventLoop() = 0;
 
   std::string getBundleFilename(const std::string & filename) { return getBundleFilename(filename.c_str()); }
 
