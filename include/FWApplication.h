@@ -71,6 +71,7 @@ public:
   FWPreferences & getPreferences() { return preferences; }
   const FWPreferences & getPreferences() const { return preferences; }
 
+ protected:
   void create() override {
     Command c(Command::CREATE_APPLICATION, getParentInternalId(), getInternalId());
     c.setFlags(iap_public_key.empty() ? 0 : 128);
@@ -79,7 +80,6 @@ public:
     sendCommand(c);
   }
 
- protected:
   bool isChildVisible(const Element & child) const override {
     return activeViewId == child.getInternalId();
   }
