@@ -112,7 +112,7 @@ public class FWTextView extends TextView implements NativeCommandHandler {
     } else if (key.equals("text-overflow")) {
       if (value.equals("ellipsis")) {
 	setEllipsize(TruncateAt.END);
-      }
+      }   
     } else if (key.equals("font-weight")) {
       if (value.equals("bold")) {
         setTypeface(null, Typeface.BOLD);
@@ -127,7 +127,7 @@ public class FWTextView extends TextView implements NativeCommandHandler {
       }
     } else if (key.equals("border")) {
       if (value.equals("none")) {
-	// TODO: clear border
+	setBackgroundResource(0);
       } else {
 	GradientDrawable gd = new GradientDrawable();
 	gd.setColor(Color.parseColor("#ffffff")); // Changes this drawbale to use a single color instead of a gradient
@@ -169,16 +169,6 @@ public class FWTextView extends TextView implements NativeCommandHandler {
 	setGravity(Gravity.CENTER_HORIZONTAL);
       }
       setLayoutParams(params);
-    } else if (key.equals("ellipsis")) {
-      if (value.equals("end")) {
-	setEllipsize(TruncateAt.END);
-      } else if (value.equals("start")) {
-	setEllipsize(TruncateAt.START);
-      } else if (value.equals("middle")) {
-	setEllipsize(TruncateAt.MIDDLE);
-      } else if (value.equals("marquee")) {
-	setEllipsize(TruncateAt.MARQUEE);
-      }
     } else if (key.equals("max-lines")) {
       setMaxLines(Integer.parseInt(value));
     }
