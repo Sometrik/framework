@@ -407,6 +407,15 @@ protected:
 
     case Command::CREATE_LINEAR_LAYOUT: {
       auto box = gtk_box_new(command.getValue() == 1 ? GTK_ORIENTATION_VERTICAL : GTK_ORIENTATION_HORIZONTAL, 5); // FIXME: spacing
+
+#if 0
+      event_box = gtk_event_box_new ();
+      gtk_container_add (GTK_CONTAINER (event_box), image);
+      g_signal_connect(G_OBJECT (event_box),
+		       "button_press_event",
+		       G_CALLBACK (button_press_callback),
+		       image);
+#endif
       addView(command, box);
     }
       break;
@@ -424,6 +433,12 @@ protected:
       gtk_orientable_set_orientation((GtkOrientable*)layout, GTK_ORIENTATION_HORIZONTAL);
       gtk_flow_box_set_selection_mode((GtkFlowBox*)layout, GTK_SELECTION_NONE);
       addView(command, layout);
+    }
+      break;
+
+    case Command::CREATE_PANEL: {
+      auto frame = gtk_frame_new(0);
+      addView(command, frame);
     }
       break;
 
@@ -818,6 +833,25 @@ protected:
 	else if (value == "center") j = GTK_JUSTIFY_CENTER;
 	else if (value == "justify") j = GTK_JUSTIFY_FILL;
 	gtk_label_set_justify(label, j);
+      } else if (key == "font-size") {
+      } else if (key == "font-weight") {
+      } else if (key == "font-style") {
+      } else if (key == "text-overflow") {
+	PangoEllipsizeMode m = PANGO_ELLIPSIZE_NONE;
+	if (value == "ellipsis") m = PANGO_ELLIPSIZE_END;
+	gtk_label_set_ellipsize(label, m);
+      } else if (key == "border") {
+      } else if (key == "single-line") {
+	gtk_label_set_single_line_mode(label, true);
+      }
+    } else if (GTK_IS_FRAME(widget)) {
+      auto frame = GTK_FRAME(widget);
+      if (key == "shadow") {
+	GtkShadowType s = GTK_SHADOW_NONE;
+	if (!value.empty()) {
+	  s = GTK_SHADOW_ETCHED_OUT;
+	}
+	gtk_frame_set_shadow_type(frame, s);
       }
     }
   }
