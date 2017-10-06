@@ -117,7 +117,6 @@ public:
   AndroidPlatform(JNIEnv * _env, jobject & _mgr, jobject & _framework) : javaCache(_env, _framework) {
     registerElement(this);
 
-    asset_manager = AAssetManager_fromJava(_env, _mgr);
     canvasCache = std::make_shared<canvas::AndroidCache>(_env, _mgr);
     clientCache = std::make_shared<AndroidClientCache>(_env);
 
@@ -194,7 +193,6 @@ public:
 
   const std::shared_ptr<AndroidClientCache> & getClientCache() const { return clientCache; }
   const std::shared_ptr<canvas::AndroidCache> & getCanvasCache() const { return canvasCache; }
-  AAssetManager * getAssetManager() const { return asset_manager; }
   JavaCache & getJavaCache() { return javaCache; }
   
 private:
@@ -208,7 +206,6 @@ private:
   std::shared_ptr<AndroidSoundCache> soundCache;
 
   ANativeWindow * window = 0;
-  AAssetManager * asset_manager;
   bool canDraw = false, isPaused = false, isDestroyed = false;
   bool exit_loop = false;
 };
@@ -217,8 +214,8 @@ extern FWApplication * applicationMain();
 
 class AndroidThread : public PosixThread {
 public:
-  AndroidThread(PlatformThread * _parent_thread, AndroidPlatform * _platform, std::shared_ptr<Runnable> & _runnable)
-    : PosixThread(_parent_thread, _platform, _runnable), javaCache(&(_platform->getJavaCache())) {
+  AndroidThread(PlatformThread * _parent_thread, AndroidPlatform * _platform, AAssetManager * _asset_manager, std::shared_ptr<Runnable> & _runnable)
+    : PosixThread(_parent_thread, _platform, _runnable), asset_manager(_asset_manager), javaCache(&(_platform->getJavaCache())) {
   }
 
   std::unique_ptr<HTTPClientFactory> createHTTPClientFactory() const override {
@@ -227,7 +224,7 @@ public:
   }
   std::unique_ptr<canvas::ContextFactory> createContextFactory() const override {
     const AndroidPlatform & androidPlatform = dynamic_cast<const AndroidPlatform&>(getPlatform());
-    return std::unique_ptr<canvas::ContextFactory>(new canvas::AndroidContextFactory(androidPlatform.getAssetManager(), androidPlatform.getCanvasCache(), getDisplayScale()));
+    return std::unique_ptr<canvas::ContextFactory>(new canvas::AndroidContextFactory(getAssetManager(), androidPlatform.getCanvasCache(), getDisplayScale()));
   }
 
   std::string getBundleFilename(const char * filename) override {
@@ -259,7 +256,7 @@ public:
 
   std::shared_ptr<PlatformThread> createThread(std::shared_ptr<Runnable> & runnable) {
     AndroidPlatform & androidPlatform = dynamic_cast<AndroidPlatform&>(getPlatform());
-    return std::make_shared<AndroidThread>(this, &androidPlatform, runnable);
+    return std::make_shared<AndroidThread>(this, &androidPlatform, asset_manager, runnable);
   }
 
   int sendCommand(const Command & command) override {
@@ -299,6 +296,8 @@ public:
     return 0;
   }
 
+  AAssetManager * getAssetManager() const { return asset_manager; }
+
 protected:
   void initialize() override {
     JavaVMAttachArgs args;
@@ -314,12 +313,13 @@ protected:
 
   JavaCache * javaCache;
   JNIEnv * myEnv = 0;
+  AAssetManager * asset_manager;
 };
 
 class AndroidMainThread : public AndroidThread {
 public:
-  AndroidMainThread(AndroidPlatform * _platform, std::shared_ptr<Runnable> & _runnable, const MobileAccount & _mobileAccount, const FWPreferences & _preferences)
-  : AndroidThread(nullptr, _platform, _runnable), mobileAccount(_mobileAccount), preferences(_preferences) { }
+  AndroidMainThread(AndroidPlatform * _platform, AAssetManager * _asset_manager, std::shared_ptr<Runnable> & _runnable, const MobileAccount & _mobileAccount, const FWPreferences & _preferences)
+  : AndroidThread(nullptr, _platform, _asset_manager, _runnable), mobileAccount(_mobileAccount), preferences(_preferences) { }
 
   void startRunnable() override {
     auto & androidPlatform = dynamic_cast<AndroidPlatform&>(getPlatform());
@@ -601,7 +601,7 @@ void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, job
     shared_ptr<Runnable> runnable;
 
     auto platform = new AndroidPlatform(env, assetManager, thiz);
-    mainThread = make_shared<AndroidMainThread>(platform, runnable, account, initialPrefs);
+    mainThread = make_shared<AndroidMainThread>(platform, manager, runnable, account, initialPrefs);
     mainThread->setActualDisplayWidth(screenWidth);
     mainThread->setActualDisplayHeight(screenHeight);
     mainThread->setDisplayScale(displayScale);
