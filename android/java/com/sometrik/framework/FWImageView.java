@@ -101,7 +101,7 @@ public class FWImageView extends ImageView implements NativeCommandHandler {
 
   @Override
   public void setStyle(String key, String value) {
-	final float scale = getContext().getResources().getDisplayMetrics().density;
+    final float scale = getContext().getResources().getDisplayMetrics().density;
     if (key.equals("gravity")) {
       LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
       if (value.equals("bottom")) {
