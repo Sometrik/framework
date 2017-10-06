@@ -218,7 +218,6 @@ public:
   : AndroidThread(nullptr, new FWPlatform, _application, _cache, _asset_manager, _runnable) { }
 
   void startRunnable() override {
-    application->create();
     application->initialize(this);
     application->initializeChildren();
     application->load();
