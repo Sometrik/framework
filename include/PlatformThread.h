@@ -133,22 +133,23 @@ class PlatformThread : public Element {
   virtual std::shared_ptr<PlatformThread> createThread(std::shared_ptr<Runnable> & runnable) = 0;
 
   void onSysEvent(SysEvent & ev) override {
-    bool exit_thread = false;
+    Element::onSysEvent(ev);
+
     if (ev.getType() == SysEvent::THREAD_TERMINATED) {
       auto it = subthreads.find(ev.getThreadId());
       if (it != subthreads.end()) {
 	subthreads.erase(it);
       }
       if (exit_when_threads_terminated && subthreads.empty()) {
-	exit_thread = true;
+        if (parent_thread) {
+          terminate();
+        } else {
+          exitApp();
+        }
       }
-    }
-    if (exit_thread) {
-      if (parent_thread) {
-	terminate();
-      } else {
-	exitApp();
-      }
+    } else if (ev.getType() == SysEvent::END_MODAL) {
+      setModalResultValue(ev.getValue());
+      setModalResultText(ev.getTextValue());
     }
   }
 
