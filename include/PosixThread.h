@@ -23,13 +23,10 @@ public:
     return terminate_thread;
   }
 
-  void terminate() override {
-    terminate_thread = true;    
+  bool terminate() override {
+    terminate_thread = true;
+    return PlatformThread::terminate();    
   }
-
-  // void postEventToThread(Event & event) {
-  //   event.dispatch(getRunnable());
-  // }
 
   void sleep(double t) override {
     usleep((unsigned int)(t * 1000000));
@@ -41,9 +38,9 @@ public:
 
   void startEventLoop() override {
     auto & runnable = getRunnable();
-    while (!testDestroy()) {
+    while (getNumRunningThreads() != 0 || !testDestroy()) {
       event_queue.recvOne(runnable);
-      while (!event_queue.empty() && !testDestroy()) {
+      while (!event_queue.empty() && (getNumRunningThreads() != 0 || !testDestroy())) {
         event_queue.recvOne(runnable);
       }
     }
