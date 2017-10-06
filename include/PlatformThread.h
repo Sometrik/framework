@@ -57,6 +57,7 @@ class PlatformThread : public Element {
   virtual void sendEvent(int internal_id, const Event & ev) = 0;
   virtual void recvEvents(EventHandler & evh) = 0;
   virtual std::vector<std::pair<int, std::shared_ptr<Event> > > pollEvents() = 0;
+  virtual void startEventLoop() { }
 
   std::string getBundleFilename(const std::string & filename) { return getBundleFilename(filename.c_str()); }
 
