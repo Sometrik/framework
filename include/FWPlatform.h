@@ -22,7 +22,7 @@ class FWPlatform : public Element {
   }
   
   virtual void pushEvent(int internal_id, const Event & ev) = 0;
-  virtual int startModal() = 0;
+  virtual void startModal() = 0;
   virtual void endModal() = 0;
 
   virtual void createFBO(int flags) { }
@@ -42,10 +42,7 @@ class FWPlatform : public Element {
       ev.dispatch(*e);
     }
   }
-      
-  int getModalResultValue() const { return modal_result_value; }
-  const std::string & getModalResultText() const { return modal_result_text; }
- 
+  
   void registerElement(Element * e) {
     MutexLocker m(mutex);
     registered_elements[e->getInternalId()] = e;
@@ -72,9 +69,6 @@ class FWPlatform : public Element {
     return std::make_shared<DummySoundCanvas>();
   }
 #endif
-
-  int modal_result_value = 0;
-  std::string modal_result_text;
     
  private:
 #ifdef HAS_SOUNDCANVAS

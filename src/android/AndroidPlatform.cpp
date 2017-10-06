@@ -146,11 +146,8 @@ public:
     getThread().sendEvent(internal_id, ev);
   }
 
-  int startModal() override {
-    modal_result_value = 0;
-    modal_result_text = "";
+  void startModal() override {
     renderLoop();
-    return modal_result_value;
   }
 
   void endModal() override {
@@ -258,7 +255,10 @@ public:
         command.getType() == Command::SHOW_MESSAGE_DIALOG ||
         command.getType() == Command::SHOW_INPUT_DIALOG ||
         command.getType() == Command::SHOW_ACTION_SHEET) {
-      return getPlatform().startModal();
+      setModalResultValue(0);
+      setModalResultText("");
+      getPlatform().startModal();
+      return getModalResultValue();
     } else if (command.getType() == Command::END_MODAL) {
       getPlatform().endModal();
     }
@@ -492,8 +492,8 @@ AndroidPlatform::onSysEvent(SysEvent & ev) {
     isPaused = false;
     break;
   case SysEvent::END_MODAL:
-    modal_result_value = ev.getValue();
-    modal_result_text = ev.getTextValue();
+    getThread().setModalResultValue(ev.getValue());
+    getThread().setModalResultText(ev.getTextValue());    
     break;
   case SysEvent::DESTROY:
     isDestroyed = true;

@@ -153,7 +153,7 @@ Element::showInputDialog(const std::string & title, const std::string & text) {
   c.setTextValue(title);
   c.setTextValue2(text);
   if (sendCommand(c) && thread) {
-    return thread->getPlatform().getModalResultText();
+    return thread->getModalResultText();
   } else {
     return "";
   }

@@ -152,6 +152,12 @@ class PlatformThread : public Element {
     }
   }
 
+  void setModalResultValue(int v) { modal_result_value = v; }
+  void setModalResultText(const std::string & t) { modal_result_text = t; }
+  
+  int getModalResultValue() const { return modal_result_value; }
+  const std::string & getModalResultText() const { return modal_result_text; }
+
  protected:
   virtual void initialize() { }  
   virtual void deinitialize() { }
@@ -184,6 +190,8 @@ class PlatformThread : public Element {
   float display_scale = 1.0f;
   std::unordered_map<int, std::shared_ptr<PlatformThread> > subthreads;
   std::shared_ptr<Runnable> runnable;
+  int modal_result_value = 0;
+  std::string modal_result_text;
 };
 
 #endif

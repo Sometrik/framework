@@ -71,13 +71,9 @@ public:
   }
 #endif
 
-  int startModal() override {
-    return 0;
-  }
+  void startModal() override { }
 
-  void endModal() override {
-
-  }
+  void endModal() override { }
   
   void activate(GtkApplication * _gtk_app) {
     gtk_app = _gtk_app;
@@ -638,20 +634,16 @@ protected:
       gtk_container_add(GTK_CONTAINER(a), vbox);
 
       gint result = gtk_dialog_run(GTK_DIALOG (dialog));
-      switch (result) {
-      case GTK_RESPONSE_ACCEPT: {
-	modal_result_text = gtk_entry_get_text((GtkEntry*)entry);
-	modal_result_value = 1;
-      }
-	break;
-      default:
-	modal_result_text.clear();
-	modal_result_value = 0;	
-	break;
+      if (result == GTK_RESPONSE_ACCEPT) {
+	getThread().setModalResultValue(1);
+	getThread().setModalResultText(gtk_entry_get_text((GtkEntry*)entry));
+      } else {
+	getThread().setModalResultValue(0);
+	getThread().setModalResultText("");
       }
       gtk_widget_destroy (dialog);
       
-      return modal_result_value;
+      return getThread().getModalResultValue();
     }
       break;
 
@@ -1150,6 +1142,11 @@ public:
 
   void recvEvents(EventHandler & evh) override {
 
+  }
+
+  std::vector<std::pair<int, std::shared_ptr<Event> > > pollEvents() {
+    std::vector<std::pair<int, std::shared_ptr<Event> > > r;
+    return r;
   }
 };
 
