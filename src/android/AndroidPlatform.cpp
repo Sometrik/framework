@@ -278,19 +278,16 @@ protected:
   JNIEnv * myEnv = 0;
 };
 
-static std::shared_ptr<AndroidThread> mainThread;
-static FWPreferences initialPrefs;
-
-class AndroidNativeThread : public Runnable {
+class AndroidMainThread : public AndroidThread {
 public:
-  AndroidNativeThread(const MobileAccount & _mobileAccount, const FWPreferences & _preferences)
-  : mobileAccount(_mobileAccount), preferences(_preferences) { }
+  AndroidMainThread(AndroidPlatform * _platform, std::shared_ptr<Runnable> & _runnable, const MobileAccount & _mobileAccount, const FWPreferences & _preferences)
+  : AndroidThread(nullptr, _platform, _runnable), mobileAccount(_mobileAccount), preferences(_preferences) { }
 
-  void run() override {
-    AndroidPlatform & androidPlatform = dynamic_cast<AndroidPlatform&>(getThread().getPlatform());
+  void startRunnable() override {
+    auto & androidPlatform = dynamic_cast<AndroidPlatform&>(getPlatform());
 
     androidPlatform.create();
-    androidPlatform.initialize(getThreadPtr());
+    androidPlatform.initialize(this);
     androidPlatform.initializeChildren();
     androidPlatform.load();
 
@@ -307,6 +304,9 @@ private:
   MobileAccount mobileAccount;
   FWPreferences preferences;
 };
+
+static std::shared_ptr<AndroidMainThread> mainThread;
+static FWPreferences initialPrefs;
 
 bool
 AndroidPlatform::initializeRenderer(int opengl_es_version, ANativeWindow * _window) {
@@ -611,10 +611,10 @@ void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, job
     AAssetManager* manager = AAssetManager_fromJava(env, assetManager);
     android_fopen_set_asset_manager(manager);
 
-    auto platform = new AndroidPlatform(env, assetManager, thiz);
-    shared_ptr<Runnable> runnable = make_shared<AndroidNativeThread>(account, initialPrefs);
+    shared_ptr<Runnable> runnable;
 
-    mainThread = std::make_shared<AndroidThread>(nullptr, platform, runnable);
+    auto platform = new AndroidPlatform(env, assetManager, thiz);
+    mainThread = make_shared<AndroidMainThread>(platform, runnable, account, initialPrefs);
     mainThread->setActualDisplayWidth(screenWidth);
     mainThread->setActualDisplayHeight(screenHeight);
     mainThread->setDisplayScale(displayScale);
@@ -693,7 +693,7 @@ void Java_com_sometrik_framework_FrameWork_nativeOnDestroy(JNIEnv* env, jobject 
   moncleanup();
 #endif
 
-  mainThread = shared_ptr<AndroidThread>(0);
+  mainThread = shared_ptr<AndroidMainThread>(0);
   delete &platform;
 }
 void Java_com_sometrik_framework_FrameWork_languageChanged(JNIEnv* env, jobject thiz, double timestamp, int appId, jstring language) {
