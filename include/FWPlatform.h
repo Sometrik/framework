@@ -28,7 +28,6 @@ class FWPlatform {
     registered_elements.erase(e->getInternalId());
   }
 
- protected:
   Element * getRegisteredElement(int internal_id) {
     MutexLocker m(mutex);
     auto it = registered_elements.find(internal_id);
