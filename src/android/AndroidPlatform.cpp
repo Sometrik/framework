@@ -551,12 +551,12 @@ void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, job
     mainThread->setActualDisplayHeight(screenHeight);
     mainThread->setDisplayScale(displayScale);
 
-    mainThread->start();
-
 //    setenv("CPUPROFILE", "/data/data/com.sometrik.kraphio/files/gmon.out", 1);
 #ifdef PROFILING
     monstartup("framework.so");
 #endif
+
+    mainThread->start();
   }
 }
 
