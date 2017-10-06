@@ -151,8 +151,51 @@ public:
     exit_loop = true;
   }
 
-  void onOpenGLInitEvent(OpenGLInitEvent & _ev) override;
-  void onSysEvent(SysEvent & ev) override;
+  void onOpenGLInitEvent(OpenGLInitEvent & _ev) override {
+    if (_ev.getOpenGLVersion() < 190000) {
+      importGLInit();
+    } else {
+      importGLInit();
+    }
+    auto & ev = dynamic_cast<AndroidOpenGLInitEvent&>(_ev);
+    if (ev.getWindow()) {
+      initializeRenderer(ev.getOpenGLVersion(), ev.getWindow());
+      ev.requestRedraw();
+      FWPlatform::onOpenGLInitEvent(_ev);
+    }
+  }
+
+  void onSysEvent(SysEvent & ev) override {
+    FWPlatform::onSysEvent(ev);
+
+    switch (ev.getType()) {
+    case SysEvent::PAUSE:
+      isPaused = true;
+      break;
+    case SysEvent::RESUME:
+      isPaused = false;
+      break;
+    case SysEvent::END_MODAL:
+      getThread().setModalResultValue(ev.getValue());
+      getThread().setModalResultText(ev.getTextValue());
+      break;
+    case SysEvent::DESTROY:
+      isDestroyed = true;
+      break;
+    case SysEvent::MEMORY_WARNING:
+      //TODO
+      break;
+    case SysEvent::START:
+      //TODO
+      break;
+    case SysEvent::STOP:
+      //TODO
+      break;
+    case SysEvent::THREAD_TERMINATED:
+      //TODO
+      break;
+    }
+  }
 
   const std::shared_ptr<AndroidClientCache> & getClientCache() const { return clientCache; }
   const std::shared_ptr<canvas::AndroidCache> & getCanvasCache() const { return canvasCache; }
@@ -291,11 +334,11 @@ public:
     androidPlatform.initializeChildren();
     androidPlatform.load();
 
-    FWApplication * application = applicationMain();
+    shared_ptr<FWApplication> application(applicationMain());
     application->setPreferences(preferences);
     application->setMobileAccount(mobileAccount);
 
-    androidPlatform.addChild(std::shared_ptr<Element>(application));
+    androidPlatform.addChild(application);
     androidPlatform.renderLoop();
     androidPlatform.deinitializeRenderer();
   }
@@ -456,57 +499,6 @@ AndroidPlatform::renderLoop() {
   }
 
   exit_loop = false;
-}
-
-void
-AndroidPlatform::onOpenGLInitEvent(OpenGLInitEvent & _ev) {
-  __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "platform OpenGLInitEvent");
-  if (_ev.getOpenGLVersion() < 190000) {
-    int results = importGLInit();
-    __android_log_print(ANDROID_LOG_INFO, "Sometrik", "opengl 2 importResult = %u", results);
-  } else {
-    int results = importGLInit();
-    __android_log_print(ANDROID_LOG_INFO, "Sometrik", "opengl 3 importResult = %u", results);
-  }
-  auto & ev = dynamic_cast<AndroidOpenGLInitEvent&>(_ev);
-  if (ev.getWindow()) {
-    initializeRenderer(ev.getOpenGLVersion(), ev.getWindow());
-    ev.requestRedraw();
-    FWPlatform::onOpenGLInitEvent(_ev);
-  }
-}
-
-void
-AndroidPlatform::onSysEvent(SysEvent & ev) {
-  FWPlatform::onSysEvent(ev);
-
-  switch (ev.getType()) {
-  case SysEvent::PAUSE:
-    isPaused = true;
-    break;
-  case SysEvent::RESUME:
-    isPaused = false;
-    break;
-  case SysEvent::END_MODAL:
-    getThread().setModalResultValue(ev.getValue());
-    getThread().setModalResultText(ev.getTextValue());    
-    break;
-  case SysEvent::DESTROY:
-    isDestroyed = true;
-    break;
-  case SysEvent::MEMORY_WARNING:
-    //TODO
-    break;
-  case SysEvent::START:
-    //TODO
-    break;
-  case SysEvent::STOP:
-    //TODO
-    break;
-  case SysEvent::THREAD_TERMINATED:
-    //TODO
-    break;
-  }
 }
 
 #ifdef PROFILING
