@@ -10,6 +10,7 @@
 
 class FWApplication;
 class PlatformThread;
+class Logger;
 
 class Element : public EventHandler {
  public:
@@ -173,6 +174,8 @@ class Element : public EventHandler {
 
   void initializeChildren();
 
+  Logger & getLogger();
+
  protected:
   virtual bool isChildVisible(const Element & child) const {
     if (!child.is_visible) return false;
@@ -193,6 +196,7 @@ class Element : public EventHandler {
   bool has_error = false;
   std::vector<Command> pendingCommands;
   bool is_enabled = true;
+  std::shared_ptr<Logger> logger;
 
   static std::atomic<int> nextInternalId;
 };

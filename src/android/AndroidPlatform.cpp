@@ -112,8 +112,8 @@ extern FWApplication * applicationMain();
 
 class AndroidThread : public PosixThread {
 public:
-  AndroidThread(PlatformThread * _parent_thread, FWPlatform * _platform, std::shared_ptr<JavaCache> & _cache, AAssetManager * _asset_manager, std::shared_ptr<Runnable> & _runnable)
-    : PosixThread(_parent_thread, _platform, _runnable), javaCache(_cache), asset_manager(_asset_manager) {
+  AndroidThread(PlatformThread * _parent_thread, FWPlatform * _platform, std::shared_ptr<FWApplication> & _application, std::shared_ptr<JavaCache> & _cache, AAssetManager * _asset_manager, std::shared_ptr<Runnable> & _runnable)
+    : PosixThread(_parent_thread, _platform, _application, _runnable), javaCache(_cache), asset_manager(_asset_manager) {
   }
 
   std::unique_ptr<HTTPClientFactory> createHTTPClientFactory() const override {
@@ -151,12 +151,12 @@ public:
   }
 
   std::shared_ptr<PlatformThread> createThread(std::shared_ptr<Runnable> & runnable) {
-    return std::make_shared<AndroidThread>(this, &(getPlatform()), javaCache, asset_manager, runnable);
+    return std::make_shared<AndroidThread>(this, &(getPlatform()), application, javaCache, asset_manager, runnable);
   }
 
   int sendCommand(const Command & command) override {
     if (command.getType() == Command::CREATE_FORMVIEW || command.getType() == Command::CREATE_OPENGL_VIEW) {
-      auto & app = getPlatform().getApplication();
+      auto & app = getApplication();
       if (!app.getActiveViewId()) {
         app.setActiveViewId(command.getChildInternalId());
       }
@@ -214,22 +214,14 @@ protected:
 
 class AndroidMainThread : public AndroidThread {
 public:
-  AndroidMainThread(std::shared_ptr<JavaCache> & _cache, AAssetManager * _asset_manager, std::shared_ptr<Runnable> & _runnable, const MobileAccount & _mobileAccount, const FWPreferences & _preferences)
-  : AndroidThread(nullptr, new FWPlatform, _cache, _asset_manager, _runnable), mobileAccount(_mobileAccount), preferences(_preferences) { }
+  AndroidMainThread(std::shared_ptr<FWApplication> & _application, std::shared_ptr<JavaCache> & _cache, AAssetManager * _asset_manager, std::shared_ptr<Runnable> & _runnable)
+  : AndroidThread(nullptr, new FWPlatform, _application, _cache, _asset_manager, _runnable) { }
 
   void startRunnable() override {
-    auto & _platform = getPlatform();
-
-    _platform.create();
-    _platform.initialize(this);
-    _platform.initializeChildren();
-    _platform.load();
-
-    shared_ptr<FWApplication> application(applicationMain());
-    application->setPreferences(preferences);
-    application->setMobileAccount(mobileAccount);
-
-    _platform.addChild(application);
+    application->create();
+    application->initialize(this);
+    application->initializeChildren();
+    application->load();
 
     startEventLoop();
     deinitializeRenderer();
@@ -436,13 +428,13 @@ void Java_com_sometrik_framework_FrameWork_onResize(JNIEnv* env, jclass clazz, d
 }
 
 void Java_com_sometrik_framework_FrameWork_keyPressed(JNIEnv* env, jobject thiz, double timestamp, int keyId, int viewId) {
-  auto & platform = mainThread->getPlatform();
+  auto & application = mainThread->getApplication();
   if (keyId == 4) {
     SysEvent ev(SysEvent::BACK);
-    mainThread->sendEvent(platform.getApplication().getInternalId(), ev);
+    mainThread->sendEvent(application.getInternalId(), ev);
   } else if (keyId == 82) {
     CommandEvent ce(FW_ID_MENU);
-    mainThread->sendEvent(platform.getApplication().getActiveViewId(), ce);
+    mainThread->sendEvent(application.getActiveViewId(), ce);
   } else {
     CommandEvent ce(keyId);
     mainThread->sendEvent(viewId, ce);
@@ -452,7 +444,6 @@ void Java_com_sometrik_framework_FrameWork_keyPressed(JNIEnv* env, jobject thiz,
 void Java_com_sometrik_framework_FrameWork_touchEvent(JNIEnv* env, jobject thiz, int viewId, int mode, int fingerIndex, double timestamp, float x, float y) {
   x /= mainThread->getDisplayScale();
   y /= mainThread->getDisplayScale();
-  auto & platform = mainThread->getPlatform();
   switch (mode) {
   case 1:
     {
@@ -476,7 +467,6 @@ void Java_com_sometrik_framework_FrameWork_touchEvent(JNIEnv* env, jobject thiz,
 }
 
 void Java_com_sometrik_framework_FrameWork_flushTouchEvent(JNIEnv* env, jobject thiz, double timestamp, int viewId, int mode) {
-  auto & platform = mainThread->getPlatform();
   switch (mode) {
   case 1:
     {
@@ -522,11 +512,15 @@ void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, job
     AndroidClientFactory::initialize(env);
     canvas::AndroidContextFactory::initialize(env, assetManager);
 
+    shared_ptr<FWApplication> application(applicationMain());
+    application->setPreferences(initialPrefs);
+    application->setMobileAccount(account);
+
     auto cache = make_shared<JavaCache>(env, thiz);
 
     shared_ptr<Runnable> runnable;
 
-    mainThread = make_shared<AndroidMainThread>(cache, manager, runnable, account, initialPrefs);
+    mainThread = make_shared<AndroidMainThread>(application, cache, manager, runnable);
     mainThread->setActualDisplayWidth(screenWidth);
     mainThread->setActualDisplayHeight(screenHeight);
     mainThread->setDisplayScale(displayScale);
@@ -547,9 +541,8 @@ void Java_com_sometrik_framework_FrameWork_nativeSetSurface(JNIEnv* env, jobject
     ANativeWindow * window = 0;
     window = ANativeWindow_fromSurface(env, surface);
     AndroidOpenGLInitEvent ev(gl_version, true, window);
-    auto & platform = mainThread->getPlatform();
     mainThread->sendEvent(mainThread->getInternalId(), ev);
-    mainThread->sendEvent(platform.getInternalId(), ev);
+    mainThread->sendEvent(mainThread->getApplication().getInternalId(), ev);
   }
 }
 
@@ -568,9 +561,8 @@ void Java_com_sometrik_framework_FrameWork_nativeSetSurface(JNIEnv* env, jobject
    SysEvent ev(SysEvent::END_MODAL);
    ev.setValue(value);
    ev.setTextValue(text);
-   auto & platform = mainThread->getPlatform();
-   mainThread->sendEvent(platform.getInternalId(), ev);
    mainThread->sendEvent(mainThread->getInternalId(), ev);
+   mainThread->sendEvent(mainThread->getApplication().getInternalId(), ev);
  }
 
 void Java_com_sometrik_framework_FrameWork_nativeOnResume(JNIEnv* env, jobject thiz, double timestamp, int appId) {
@@ -596,7 +588,6 @@ void Java_com_sometrik_framework_FrameWork_nativeOnStart(JNIEnv* env, jobject th
 void Java_com_sometrik_framework_FrameWork_nativeOnDestroy(JNIEnv* env, jobject thiz, double timestamp, int appId) {
   mainThread->terminateThreads();
   SysEvent ev(SysEvent::DESTROY);
-  auto & platform = mainThread->getPlatform();
   mainThread->sendEvent(appId, ev);
   // TODO: Wait for threads to terminate
 #ifdef PROFILING
@@ -604,7 +595,6 @@ void Java_com_sometrik_framework_FrameWork_nativeOnDestroy(JNIEnv* env, jobject 
 #endif
 
   mainThread = shared_ptr<AndroidMainThread>(0);
-  delete &platform;
 }
 void Java_com_sometrik_framework_FrameWork_languageChanged(JNIEnv* env, jobject thiz, double timestamp, int appId, jstring language) {
   const char * clanguage = env->GetStringUTFChars(language, NULL);
@@ -656,7 +646,7 @@ void Java_com_sometrik_framework_FrameWork_timerEvent(JNIEnv* env, jobject thiz,
 
 void Java_com_sometrik_framework_FrameWork_setNativeActiveView(JNIEnv* env, jobject thiz, double timestamp, jint activeView, bool recordHistory) {
   __android_log_print(ANDROID_LOG_INFO, "Sometrik", "setActivewView: %u", activeView);
-  auto & app = mainThread->getPlatform().getApplication();
+  auto & app = mainThread->getApplication();
   if (app.getActiveViewId() != 0 && recordHistory) {
     app.addToHistory(app.getActiveViewId());
   }

@@ -3,7 +3,6 @@
 
 #include <Element.h>
 #include <Command.h>
-#include <PlatformThread.h>
 #include <FWPreferences.h>
 #include <MobileAccount.h>
 #include <SysEvent.h>
@@ -21,13 +20,6 @@ public:
     return Element::isA(className);
   }
   
-  Logger & getLogger() {
-    if (!logger.get()) {
-      logger = getThread().createLogger(name);
-    }
-    return *logger;
-  }
-
   const std::string & getName() const { return name; }
 
   void setActiveViewId(int id) { activeViewId = id; }
@@ -78,11 +70,6 @@ public:
   void setPreferences(const FWPreferences & _preferences) { preferences = _preferences; }
   FWPreferences & getPreferences() { return preferences; }
   const FWPreferences & getPreferences() const { return preferences; }
-  
- protected:
-  bool isChildVisible(const Element & child) const override {
-    return activeViewId == child.getInternalId();
-  }
 
   void create() override {
     Command c(Command::CREATE_APPLICATION, getParentInternalId(), getInternalId());
@@ -90,6 +77,11 @@ public:
     c.setTextValue(name);
     c.setTextValue2(iap_public_key);
     sendCommand(c);
+  }
+
+ protected:
+  bool isChildVisible(const Element & child) const override {
+    return activeViewId == child.getInternalId();
   }
 
   void savePreferences() {
@@ -106,7 +98,6 @@ public:
  private:
   std::string name, iap_public_key;
   bool full_screen;
-  std::shared_ptr<Logger> logger;
   int activeViewId = 0;
   std::vector<int> view_back_history, view_forward_history;
   FWPreferences preferences;

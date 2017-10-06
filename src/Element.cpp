@@ -17,9 +17,7 @@ Element::~Element() {
   // the platform itself cannot be unregistered at this point
   if (thread) {
     auto & platform = thread->getPlatform();
-    if (this != &platform) {
-      platform.unregisterElement(this);
-    }
+    platform.unregisterElement(this);
   }
 }
 
@@ -28,9 +26,7 @@ Element::initialize(PlatformThread * _thread) {
   assert(_thread);
   if (_thread) {
     thread = _thread;
-    if (this != &(thread->getPlatform())) {
-      thread->getPlatform().registerElement(this);
-    }
+    thread->getPlatform().registerElement(this);
     create();
     for (auto & c : pendingCommands) {
       sendCommand(c);
@@ -175,15 +171,13 @@ Element::launchBrowser(const std::string & input_url) {
 FWApplication &
 Element::getApplication() {
   if (!thread) throw ElementNotInitializedException();
-  auto p = thread->getPlatform().getFirstChild();
-  return dynamic_cast<FWApplication&>(*p);
+  return thread->getApplication();
 }
 
 const FWApplication &
 Element::getApplication() const {
   if (!thread) throw ElementNotInitializedException();
-  auto p = thread->getPlatform().getFirstChild();
-  return dynamic_cast<const FWApplication&>(*p);
+  return thread->getApplication();
 }
 
 void
@@ -205,4 +199,12 @@ Element::createTimer(int timeout_ms) {
   sendCommand(c);
 
   return timer_id;
+}
+
+Logger &
+Element::getLogger() {
+  if (!logger.get()) {
+    logger = getThread().createLogger("app"); // name);
+  }
+  return *logger;
 }

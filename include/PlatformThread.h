@@ -6,6 +6,7 @@
 #include <Runnable.h>
 #include <SysEvent.h>
 #include <FWPlatform.h>
+#include <FWApplication.h>
 
 #include <exception>
 #include <memory>
@@ -27,8 +28,8 @@ class PlatformThread : public Element {
     CACHE_DATABASE
   };
 
- PlatformThread(PlatformThread * _parent_thread, FWPlatform * _platform, std::shared_ptr<Runnable> & _runnable)
-   : platform(_platform), parent_thread(_parent_thread), runnable(_runnable)
+ PlatformThread(PlatformThread * _parent_thread, FWPlatform * _platform, std::shared_ptr<FWApplication> & _application, std::shared_ptr<Runnable> & _runnable)
+   : platform(_platform), application(_application), parent_thread(_parent_thread), runnable(_runnable)
     {
     if (_parent_thread) {
       setActualDisplayWidth(_parent_thread->getActualDisplayWidth());
@@ -66,10 +67,13 @@ class PlatformThread : public Element {
 
   FWPlatform & getPlatform() { return *platform; }
   const FWPlatform & getPlatform() const { return *platform; }
-  
+
+  FWApplication & getApplication() { return *application; }
+  const FWApplication & getApplication() const { return *application; }
+
   void postEvent(int internal_id, const Event & ev) {
-    if (internal_id == 0) internal_id = getPlatform().getInternalId();
-    getPlatform().getThread().sendEvent(internal_id, ev);
+    if (internal_id == 0) internal_id = getApplication().getInternalId();
+    getApplication().getThread().sendEvent(internal_id, ev);
   }
   void postEvent(const Event & ev) { postEvent(0, ev); }
 
@@ -184,6 +188,9 @@ class PlatformThread : public Element {
   }
 
   bool exit_when_threads_terminated = false;
+
+ protected:
+  std::shared_ptr<FWApplication> application;
 
  private:
   int id;

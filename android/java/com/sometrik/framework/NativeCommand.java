@@ -74,7 +74,6 @@ public class NativeCommand {
   private final int FLAG_STICKY_HEADER = 512;
  
   public enum CommandType {
-    CREATE_PLATFORM,
     CREATE_APPLICATION,
     CREATE_BASICVIEW,
     CREATE_FORMVIEW,

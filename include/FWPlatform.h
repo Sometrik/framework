@@ -1,23 +1,15 @@
 #ifndef _FWPLATFORM_H_
 #define _FWPLATFORM_H_
 
-#include <Element.h>
 #include <Event.h>
 #include <Mutex.h>
+#include <Element.h>
+
 #include <unordered_map>
 
-class FWPlatform : public Element {
+class FWPlatform {
  public:  
-  FWPlatform() {
-    registerElement(this);
-  }
-
-  bool isA(const std::string & className) const override {
-    if (className == "FWPlatform") return true;
-    return Element::isA(className);
-  }
-  
-  virtual void createFBO(int flags) { }
+  FWPlatform() { }
   
   void postEvent(int internal_id, Event & ev) {
     auto e = getRegisteredElement(internal_id);
@@ -34,10 +26,6 @@ class FWPlatform : public Element {
   void unregisterElement(Element * e) {
     MutexLocker m(mutex);
     registered_elements.erase(e->getInternalId());
-  }
-
-  void create() override {
-    sendCommand(Command(Command::CREATE_PLATFORM, getParentInternalId(), getInternalId()));
   }
 
  protected:
