@@ -91,6 +91,7 @@ public class NativeCommand {
     CREATE_RELATIVE_LAYOUT,
     CREATE_TABLE_LAYOUT,
     CREATE_AUTO_COLUMN_LAYOUT,
+    CREATE_PANEL,
     CREATE_HEADING_TEXT,
     CREATE_TEXT,
     CREATE_DIALOG,
@@ -229,8 +230,8 @@ public class NativeCommand {
       }
       break;
     case CREATE_BASICVIEW:
-    case CREATE_LINEAR_LAYOUT:{
-
+    case CREATE_LINEAR_LAYOUT:
+    case CREATE_PANEL: {
       FWLayout layout = createLinearLayout();
       if (view != null) {
 	view.addChild(layout);
@@ -397,7 +398,7 @@ public class NativeCommand {
       view.setValue(getTextValueAsString());
       break;
     case CREATE_APPLICATION:
-      frame.setAppId(getInternalId());
+      frame.setAppId(getChildInternalId());
       if (isSet(FLAG_USE_PURCHASES_API)) {
 	System.out.println("Initializing purchaseHelper");
 	frame.initializePurchaseHelper(getTextValue2AsString(), new IabHelper.OnIabSetupFinishedListener() {
