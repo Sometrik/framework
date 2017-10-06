@@ -45,7 +45,6 @@ class PlatformThread : public Element {
   
   virtual bool start() = 0;
   virtual bool testDestroy() = 0;
-  virtual void terminate() = 0;
   virtual int sendCommand(const Command & command) = 0;
   virtual void sleep(double t) = 0;
   virtual std::unique_ptr<HTTPClientFactory> createHTTPClientFactory() const = 0;
@@ -59,6 +58,18 @@ class PlatformThread : public Element {
   virtual std::vector<std::pair<int, std::shared_ptr<Event> > > pollEvents() = 0;
   virtual void startEventLoop() = 0;
 
+  virtual bool terminate() {
+    std::cerr << "terminating " << subthreads.size() << " threads:\n";
+    dumpThreads();
+    
+    for (auto & thread : subthreads) {
+      thread.second->terminate();
+    }
+    exit_when_threads_terminated = true;
+
+    return getNumRunningThreads() == 0;
+  }
+  
   std::string getBundleFilename(const std::string & filename) { return getBundleFilename(filename.c_str()); }
 
   Runnable & getRunnable() { return *runnable; }
@@ -105,14 +116,6 @@ class PlatformThread : public Element {
   int getActualDisplayHeight() const { return actual_display_height; }
   float getDisplayScale() const { return display_scale; }
 
-  void terminateThreads() {
-    std::cerr << "terminating " << subthreads.size() << " threads:\n";
-    dumpThreads();
-
-    for (auto & thread : subthreads) {
-      thread.second->terminate();
-    }
-  }
   void dumpThreads() const {
     std::cerr << "running threads:\n";
     for (auto & t : subthreads) {
