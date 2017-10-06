@@ -2,7 +2,6 @@
 #include <CurlClient.h>
 #include <Logger.h>
 #include <ContextCairo.h>
-#include <SDLSoundCanvas.h>
 #include <Command.h>
 #include <FWApplication.h>
 #include <FWViewBase.h>
@@ -39,57 +38,144 @@ extern FWApplication * applicationMain();
 
 static int width = 800, height = 600;
 
-class PlatformGtk;
+class GtkMainThread;
 
 struct event_data_s {
-  event_data_s(PlatformGtk * _platform, Event * _event, int _internal_id) : platform(_platform), event(_event), internal_id(_internal_id) { }
-  PlatformGtk * platform;
+  event_data_s(GtkMainThread * _mainThread, Event * _event, int _internal_id) : mainThread(_mainThread), event(_event), internal_id(_internal_id) { }
+  GtkMainThread * mainThread;
   Event * event;
   int internal_id;
 };
 
 struct command_data_s {
-  command_data_s(PlatformGtk * _platform, Command _command) : platform(_platform), command(_command) { }
+  command_data_s(PlatformThread * _mainThread, Command _command) : mainThread(_mainThread), command(_command) { }
   
-  PlatformGtk * platform;
+  PlatformThread * mainThread;
   Command command;  
 };
 
-class PlatformGtk : public FWPlatform {
+static gboolean command_callback(gpointer data) {
+  command_data_s * cd = (command_data_s*)data;
+  cd->mainThread->sendCommand(cd->command);
+  delete cd;
+  return FALSE;
+}
+
+class GtkThread : public PosixThread {
 public:
-  friend class GtkThread;
-  friend class GtkMainThread;
-  
-  PlatformGtk() {
+  GtkThread(PlatformThread * _parent_thread, FWPlatform * _platform, std::shared_ptr<FWApplication> & _application, std::shared_ptr<Runnable> & _runnable)
+    : PosixThread(_parent_thread, _platform, _application, _runnable) { }
+
+  std::unique_ptr<HTTPClientFactory> createHTTPClientFactory() const override {
+    return std::unique_ptr<HTTPClientFactory>(new CurlClientFactory);
+  }
+  std::unique_ptr<canvas::ContextFactory> createContextFactory() const override {
+    return std::unique_ptr<canvas::ContextFactory>(new canvas::CairoContextFactory);
+  }
+  std::shared_ptr<PlatformThread> createThread(std::shared_ptr<Runnable> & runnable) override {
+    return make_shared<GtkThread>(this, &(getPlatform()), application, runnable);
+  }
+  int sendCommand(const Command & command) {
+    command_data_s * cd = new command_data_s(&(getApplication().getThread()), command);
+    g_idle_add(command_callback, cd);
+    return 0;
+  }
+  string getLocalFilename(const char * fn, FileType type) override {
+    string s = "assets/";
+    return s + fn;
+  }
+  std::string getBundleFilename(const char * filename) override {
+    string s = "assets/";
+    return s + filename;
+  }
+  std::string loadTextAsset(const char * filename) override {
+    std::ifstream t(getBundleFilename(filename));
+    std::stringstream buffer;
+    buffer << t.rdbuf();
+    return buffer.str();
+  }
+};
+
+class GtkMainThread : public PlatformThread {
+public:
+  GtkMainThread(std::shared_ptr<FWApplication> & _application, std::shared_ptr<Runnable> & _runnable)
+    : PlatformThread(nullptr, new FWPlatform, _application, _runnable) {
     CurlClientFactory::globalInit();
   }
+  
+  std::unique_ptr<canvas::ContextFactory> createContextFactory() const override {
+    return std::unique_ptr<canvas::ContextFactory>(new canvas::CairoContextFactory);
+  }
+  std::unique_ptr<HTTPClientFactory> createHTTPClientFactory() const override {
+    return std::unique_ptr<HTTPClientFactory>(new CurlClientFactory);
+  }
 
-  void pushEvent(int internal_id, const Event & ev) override {
+  string getLocalFilename(const char * fn, FileType type) override {
+    string s = "assets/";
+    return s + fn;
+  }
+  
+  std::string getBundleFilename(const char * filename) override {
+    string s = "assets/";
+    return s + filename;
+  }
+  
+  std::string loadTextAsset(const char * filename) override {
+    std::ifstream t(getBundleFilename(filename));
+    std::stringstream buffer;
+    buffer << t.rdbuf();
+    return buffer.str();
+  }
+
+  bool start() override { return false; }
+  bool testDestroy() override { return false; }
+
+  std::shared_ptr<PlatformThread> createThread(std::shared_ptr<Runnable> & runnable) override {
+    return make_shared<GtkThread>(this, &(getPlatform()), application, runnable);
+  }
+  
+  void sleep(double t) override {
+    usleep((unsigned int)(t * 1000000));
+  }
+
+  void sendEvent(int internal_id, const Event & ev) override {
     event_data_s * ed = new event_data_s(this, ev.dup(), internal_id);
     g_idle_add(event_callback, ed);
   }
-  
-#ifdef HAS_SOUNDCANVAS
-  std::shared_ptr<SoundCanvas> createSoundCanvas() const override {
-    return std::make_shared<SDLSoundCanvas>();
+
+  std::vector<std::pair<int, std::shared_ptr<Event> > > pollEvents() {
+    std::vector<std::pair<int, std::shared_ptr<Event> > > r;
+    return r;
   }
-#endif
-
-  void startModal() override { }
-
-  void endModal() override { }
-  
+      
   void activate(GtkApplication * _gtk_app) {
+    cerr << "creating window\n";
+    
     gtk_app = _gtk_app;
         
     window = gtk_application_window_new(gtk_app);
     gtk_window_set_title (GTK_WINDOW(window), "Window");
     gtk_window_set_default_size (GTK_WINDOW(window), width, height);
     g_signal_connect(window, "delete-event", G_CALLBACK(delete_window), this);
+    
+    auto & app = getApplication();
+
+    cerr << "initializing app\n";
+    app.initialize(this);
+
+    cerr << "initializing app children\n";
+    app.initializeChildren();
+
+    cerr << "loading app\n";
+    app.load();
+
+    cerr << "activate done\n";
   }
 
+  void startEventLoop() override { }
+  
 protected:
-  int handleCommand(const Command & command) {
+  int sendCommand(const Command & command) {
     if (command.getType() == Command::CREATE_FORMVIEW || command.getType() == Command::CREATE_OPENGL_VIEW) {
       auto & app = getApplication();
       if (!app.getActiveViewId()) {
@@ -98,10 +184,6 @@ protected:
     }
     
     switch (command.getType()) {
-    case Command::CREATE_PLATFORM:
-      cerr << "ignore CREATE_PLATFORM\n";
-      break;
-
     case Command::QUIT_APP:
       exit(0);
       break;
@@ -413,7 +495,7 @@ protected:
 
 	  if (header) {
 	    string title;
-	    auto e = getRegisteredElement(id);
+	    auto e = getPlatform().getRegisteredElement(id);
 	    if (e) {
 	      auto e2 = dynamic_cast<FWViewBase*>(e);
 	      if (e2) title = e2->getTitle().c_str();
@@ -636,18 +718,19 @@ protected:
 
       auto a = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
       gtk_container_add(GTK_CONTAINER(a), vbox);
-
+      
       gint result = gtk_dialog_run(GTK_DIALOG (dialog));
       if (result == GTK_RESPONSE_ACCEPT) {
-	getThread().setModalResultValue(1);
-	getThread().setModalResultText(gtk_entry_get_text((GtkEntry*)entry));
+	setModalResultValue(1);
+	setModalResultText(gtk_entry_get_text((GtkEntry*)entry));
       } else {
-	getThread().setModalResultValue(0);
-	getThread().setModalResultText("");
+	setModalResultValue(0);
+	setModalResultText("");
       }
-      gtk_widget_destroy (dialog);
       
-      return getThread().getModalResultValue();
+      gtk_widget_destroy (dialog);
+
+      return getModalResultValue();
     }
       break;
 
@@ -798,7 +881,6 @@ protected:
   static void on_next_button(GtkWidget * widget, gpointer data);
   static void on_bar_button(GtkWidget * widget, gpointer data);
   static gboolean event_callback(gpointer data);
-  static gboolean command_callback(gpointer data);
   static gboolean delete_window(GtkWidget *widget, GdkEvent  *event, gpointer user_data);
   static gboolean timer_callback(gpointer data);
   
@@ -816,7 +898,7 @@ private:
 };
 
 string
-PlatformGtk::getTextProperty(gpointer object, const char * key) {
+GtkMainThread::getTextProperty(gpointer object, const char * key) {
   gchar * strval = 0;
   g_object_get(object, key, &strval, NULL);
   string s;
@@ -828,7 +910,7 @@ PlatformGtk::getTextProperty(gpointer object, const char * key) {
 }
 
 string
-PlatformGtk::getTextProperty(GtkContainer * c, GtkWidget * w, const char * key) {
+GtkMainThread::getTextProperty(GtkContainer * c, GtkWidget * w, const char * key) {
   gchar * strval = 0;
   gtk_container_child_get(c, w, key, &strval, NULL);
   string s;
@@ -840,7 +922,7 @@ PlatformGtk::getTextProperty(GtkContainer * c, GtkWidget * w, const char * key) 
 }
 
 size_t
-PlatformGtk::getChildCount(GtkContainer * widget) {
+GtkMainThread::getChildCount(GtkContainer * widget) {
   size_t n = 0;
   if (GTK_IS_CONTAINER(widget)) {
     auto children = gtk_container_get_children(GTK_CONTAINER(widget));
@@ -850,21 +932,21 @@ PlatformGtk::getChildCount(GtkContainer * widget) {
 }
 
 void
-PlatformGtk::send_int_value(GtkWidget * widget, gpointer data) {
-  PlatformGtk * platform = (PlatformGtk*)data;
-  int id = platform->getId(widget);
+GtkMainThread::send_int_value(GtkWidget * widget, gpointer data) {
+  GtkMainThread * mainThread = (GtkMainThread*)data;
+  int id = mainThread->getId(widget);
   assert(id);
   if (id) {
     cerr << "int value: id = " << id << endl;
     ValueEvent ev(1);
-    platform->postEvent(id, ev);
+    mainThread->getPlatform().postEvent(id, ev);
   }
 }
 
 void
-PlatformGtk::send_bool_value(GtkWidget * widget, GParamSpec *pspec, gpointer data) {
-  PlatformGtk * platform = (PlatformGtk*)data;
-  int id = platform->getId(widget);
+GtkMainThread::send_bool_value(GtkWidget * widget, GParamSpec *pspec, gpointer data) {
+  GtkMainThread * mainThread = (GtkMainThread*)data;
+  int id = mainThread->getId(widget);
   assert(id);
   if (id) {
     bool v;
@@ -875,28 +957,28 @@ PlatformGtk::send_bool_value(GtkWidget * widget, GParamSpec *pspec, gpointer dat
     }
     cerr << "bool value: id = " << id << ", v = " << v << endl;
     ValueEvent ev(v ? 1 : 0);
-    platform->postEvent(id, ev);
+    mainThread->getPlatform().postEvent(id, ev);
   }
 }
 
 void
-PlatformGtk::send_combo_value(GtkWidget * widget, gpointer data) {
-  PlatformGtk * platform = (PlatformGtk*)data;
-  int id = platform->getId(widget);
+GtkMainThread::send_combo_value(GtkWidget * widget, gpointer data) {
+  GtkMainThread * mainThread = (GtkMainThread*)data;
+  int id = mainThread->getId(widget);
   assert(id);
   if (id) {
     string v0 = gtk_combo_box_text_get_active_text((GtkComboBoxText*)widget);
     cerr << "combo value: id = " << id << ", v = " << v0 << endl;
     int v = atoi(v0.c_str());
     ValueEvent ev(v ? 1 : 0);
-    platform->postEvent(id, ev);
+    mainThread->getPlatform().postEvent(id, ev);
   }
 }
 
 void
-PlatformGtk::send_toggled_value(GtkWidget * widget, gpointer data) {
-  PlatformGtk * platform = (PlatformGtk*)data;
-  int id = platform->getId(widget);
+GtkMainThread::send_toggled_value(GtkWidget * widget, gpointer data) {
+  GtkMainThread * mainThread = (GtkMainThread*)data;
+  int id = mainThread->getId(widget);
   assert(id);
   if (id) {
     bool v;
@@ -908,14 +990,14 @@ PlatformGtk::send_toggled_value(GtkWidget * widget, gpointer data) {
     }
     cerr << "toggled value: id = " << id << ", v = " << v << endl;
     ValueEvent ev(v ? 1 : 0);
-    platform->postEvent(id, ev);
+    mainThread->getPlatform().postEvent(id, ev);
   }
 }
 
 void
-PlatformGtk::send_text_value(GtkWidget * widget, gpointer data) {
-  PlatformGtk * platform = (PlatformGtk*)data;
-  int id = platform->getId(widget);
+GtkMainThread::send_text_value(GtkWidget * widget, gpointer data) {
+  GtkMainThread * mainThread = (GtkMainThread*)data;
+  int id = mainThread->getId(widget);
   assert(id);
   if (id) {
     string s;
@@ -926,17 +1008,17 @@ PlatformGtk::send_text_value(GtkWidget * widget, gpointer data) {
     }
     cerr << "text value: id = " << id << ", text = " << s << endl;
     ValueEvent ev(s);
-    platform->postEvent(id, ev);
+    mainThread->getPlatform().postEvent(id, ev);
   }
 }
 
 void
-PlatformGtk::send_selection_value(GtkWidget * widget, gpointer data) {
-  PlatformGtk * platform = (PlatformGtk*)data;
+GtkMainThread::send_selection_value(GtkWidget * widget, gpointer data) {
+  GtkMainThread * mainThread = (GtkMainThread*)data;
   assert(GTK_IS_TREE_VIEW(widget));
   auto treeview = (GtkTreeView*)widget;
   auto selection = gtk_tree_view_get_selection(treeview);
-  int id = platform->getId(gtk_widget_get_parent(widget));
+  int id = mainThread->getId(gtk_widget_get_parent(widget));
   assert(id);
   if (id) {
     GtkTreeModel * model;
@@ -947,7 +1029,7 @@ PlatformGtk::send_selection_value(GtkWidget * widget, gpointer data) {
       int depth;
       auto i = gtk_tree_path_get_indices_with_depth(path, &depth);
       assert(i);
-      auto & sheets = platform->getSheetsById(id);
+      auto & sheets = mainThread->getSheetsById(id);
 
       int sheet = 0, row = 0;
       if (sheets.empty() && depth == 1) {
@@ -961,7 +1043,7 @@ PlatformGtk::send_selection_value(GtkWidget * widget, gpointer data) {
       }
       
       ValueEvent ev(row, sheet);
-      platform->postEvent(id, ev);
+      mainThread->getPlatform().postEvent(id, ev);
       
       g_list_free_full(l, (GDestroyNotify)gtk_tree_path_free);
     }
@@ -969,16 +1051,16 @@ PlatformGtk::send_selection_value(GtkWidget * widget, gpointer data) {
 }
 
 void
-PlatformGtk::send_activation_value(GtkTreeView * treeview, GtkTreePath * path, GtkTreeViewColumn * column, gpointer data) {
-  PlatformGtk * platform = (PlatformGtk*)data;
+GtkMainThread::send_activation_value(GtkTreeView * treeview, GtkTreePath * path, GtkTreeViewColumn * column, gpointer data) {
+  GtkMainThread * mainThread = (GtkMainThread*)data;
   // auto selection = gtk_tree_view_get_selection(treeview);
-  int id = platform->getId(gtk_widget_get_parent(GTK_WIDGET(treeview)));
+  int id = mainThread->getId(gtk_widget_get_parent(GTK_WIDGET(treeview)));
   assert(id);
   if (id) {
     int depth;
     auto i = gtk_tree_path_get_indices_with_depth(path, &depth);
     assert(i);
-    auto & sheets = platform->getSheetsById(id);
+    auto & sheets = mainThread->getSheetsById(id);
 
     int sheet = 0, row = 0;
     if (sheets.empty() && depth == 1) {
@@ -992,71 +1074,58 @@ PlatformGtk::send_activation_value(GtkTreeView * treeview, GtkTreePath * path, G
     }
       
     ValueEvent ev(row, sheet);
-    platform->postEvent(id, ev);
+    mainThread->getPlatform().postEvent(id, ev);
     
     // g_list_free_full(l, (GDestroyNotify)gtk_tree_path_free);
   }
 }
 
 void
-PlatformGtk::on_previous_button(GtkWidget * widget, gpointer data) {
-  PlatformGtk * platform = (PlatformGtk*)data;
-  platform->handleCommand(Command(Command::HISTORY_GO_BACK, 0));  
+GtkMainThread::on_previous_button(GtkWidget * widget, gpointer data) {
+  GtkMainThread * mainThread = (GtkMainThread*)data;
+  mainThread->sendCommand(Command(Command::HISTORY_GO_BACK, 0));  
 }
 
 void
-PlatformGtk::on_next_button(GtkWidget * widget, gpointer data) {
+GtkMainThread::on_next_button(GtkWidget * widget, gpointer data) {
   cerr << "got next\n";
-  PlatformGtk * platform = (PlatformGtk*)data;
-  platform->handleCommand(Command(Command::HISTORY_GO_FORWARD, 0));  
+  GtkMainThread * mainThread = (GtkMainThread*)data;
+  mainThread->sendCommand(Command(Command::HISTORY_GO_FORWARD, 0));  
 }
 
 void
-PlatformGtk::on_bar_button(GtkWidget * widget, gpointer data) {
-  PlatformGtk * platform = (PlatformGtk*)data;
+GtkMainThread::on_bar_button(GtkWidget * widget, gpointer data) {
+  GtkMainThread * mainThread = (GtkMainThread*)data;
   int id = 0;
   for (GtkWidget * w = widget; !id && w; w = gtk_widget_get_parent(w)) {
     // cerr << "trying to get id from " << (long long)w << endl;
-    id = platform->getId(w);
+    id = mainThread->getId(w);
   }
   assert(id);
   if (id) {
-    int value = platform->getValue(widget);
+    int value = mainThread->getValue(widget);
     cerr << "sending bar button click value: " << value << endl;
     ValueEvent ev(value, value);
-    platform->postEvent(id, ev);
+    mainThread->getPlatform().postEvent(id, ev);
   }
 }
 
 gboolean
-PlatformGtk::event_callback(gpointer data) {
+GtkMainThread::event_callback(gpointer data) {
   event_data_s * ed = (event_data_s*)data;
-  PlatformGtk * platform = ed->platform;
+  GtkMainThread * mainThread = ed->mainThread;
   Event * ev = ed->event;
   int internal_id = ed->internal_id;
   delete ed;
-  platform->postEvent(internal_id ? internal_id : platform->getInternalId(), *ev);
+  mainThread->getPlatform().postEvent(internal_id ? internal_id : mainThread->getApplication().getInternalId(), *ev);
   delete ev;
   return FALSE;
 }
 
 gboolean
-PlatformGtk::command_callback(gpointer data) {
-  command_data_s * cd = (command_data_s*)data;
-  PlatformGtk * platform = cd->platform;
-  auto & command = cd->command;
-  platform->handleCommand(cd->command);
-  delete cd;
-  return FALSE;
-}
-
-gboolean
-PlatformGtk::delete_window(GtkWidget *widget, GdkEvent  *event, gpointer user_data) {
-  PlatformGtk * platform = (PlatformGtk*)user_data;
-  auto & thread = platform->getThread();
-  thread.terminateThreads();
-  if (thread.getNumRunningThreads()) {
-    // platform->exit_when_threads_terminated = true; // FIXME
+GtkMainThread::delete_window(GtkWidget *widget, GdkEvent  *event, gpointer user_data) {
+  GtkMainThread * mainThread = (GtkMainThread*)user_data;
+  if (!mainThread->terminate()) {
     return TRUE;
   } else {
     return FALSE;
@@ -1064,139 +1133,34 @@ PlatformGtk::delete_window(GtkWidget *widget, GdkEvent  *event, gpointer user_da
 }
 
 gboolean
-PlatformGtk::timer_callback(gpointer data) {
-  PlatformGtk * platform = (PlatformGtk*)data;
+GtkMainThread::timer_callback(gpointer data) {
+  GtkMainThread * mainThread = (GtkMainThread*)data;
   TimerEvent ev(0);
-  platform->postEvent(platform->getInternalId(), ev);
+  mainThread->getPlatform().postEvent(mainThread->getApplication().getInternalId(), ev);
   return TRUE;
 }
 
-class GtkThread : public PosixThread {
-public:
-  GtkThread(PlatformThread * _parent_thread, FWPlatform * _platform, std::shared_ptr<Runnable> & _runnable)
-    : PosixThread(_parent_thread, _platform, _runnable) { }
-
-  std::unique_ptr<HTTPClientFactory> createHTTPClientFactory() const override {
-    return std::unique_ptr<HTTPClientFactory>(new CurlClientFactory);
-  }
-  std::unique_ptr<canvas::ContextFactory> createContextFactory() const override {
-    return std::unique_ptr<canvas::ContextFactory>(new canvas::CairoContextFactory);
-  }
-  std::shared_ptr<PlatformThread> createThread(std::shared_ptr<Runnable> & runnable) override {
-    return make_shared<GtkThread>(this, &(getPlatform()), runnable);
-  }
-  int sendCommand(const Command & command) {
-    auto & gtkPlatform = dynamic_cast<PlatformGtk&>(getPlatform());
-    command_data_s * cd = new command_data_s(&gtkPlatform, command);
-    g_idle_add(PlatformGtk::command_callback, cd);
-    return 0;
-  }
-  string getLocalFilename(const char * fn, FileType type) override {
-    string s = "assets/";
-    return s + fn;
-  }
-  std::string getBundleFilename(const char * filename) override {
-    string s = "assets/";
-    return s + filename;
-  }
-  std::string loadTextAsset(const char * filename) override {
-    std::ifstream t(getBundleFilename(filename));
-    std::stringstream buffer;
-    buffer << t.rdbuf();
-    return buffer.str();
-  }
-};
-
-class GtkMainThread : public PlatformThread {
-public:
-  GtkMainThread(FWPlatform * _platform, std::shared_ptr<Runnable> & _runnable)
-   : PlatformThread(0, _platform, _runnable)
-  {
-    
-  }
-  
-  std::unique_ptr<canvas::ContextFactory> createContextFactory() const override {
-    return std::unique_ptr<canvas::ContextFactory>(new canvas::CairoContextFactory);
-  }
-  std::unique_ptr<HTTPClientFactory> createHTTPClientFactory() const override {
-    return std::unique_ptr<HTTPClientFactory>(new CurlClientFactory);
-  }
-
-  string getLocalFilename(const char * fn, FileType type) override {
-    string s = "assets/";
-    return s + fn;
-  }
-  std::string getBundleFilename(const char * filename) override {
-    string s = "assets/";
-    return s + filename;
-  }
-  std::string loadTextAsset(const char * filename) override {
-    std::ifstream t(getBundleFilename(filename));
-    std::stringstream buffer;
-    buffer << t.rdbuf();
-    return buffer.str();
-  }
-
-  bool start() override { return false; }
-  bool testDestroy() override { return false; }
-  void terminate() override { }
-
-  std::shared_ptr<PlatformThread> createThread(std::shared_ptr<Runnable> & runnable) override {
-    return make_shared<GtkThread>(this, &(getPlatform()), runnable);
-  }
-  int sendCommand(const Command & command) {
-    auto & gtkPlatform = dynamic_cast<PlatformGtk&>(getPlatform());
-    return gtkPlatform.handleCommand(command);
-  }
-
-  void sleep(double t) override {
-    usleep((unsigned int)(t * 1000000));
-  }
-
-  void sendEvent(int internal_id, const Event & ev) {
-
-  }
-
-  void recvEvents(EventHandler & evh) override {
-
-  }
-
-  std::vector<std::pair<int, std::shared_ptr<Event> > > pollEvents() {
-    std::vector<std::pair<int, std::shared_ptr<Event> > > r;
-    return r;
-  }
-};
-
 static void activate(GtkApplication * gtk_app, gpointer user_data) {
   cerr << "activate\n";
-  PlatformGtk * platform = (PlatformGtk*)user_data;
-
-  std::shared_ptr<Runnable> runnable(0);
-  auto mainThread = new GtkMainThread(platform, runnable);
-  mainThread->setActualDisplayWidth(width);
-  mainThread->setActualDisplayHeight(height);
-
-  platform->create();
-  platform->initialize(mainThread);
-  platform->initializeChildren();
-  platform->load();
-
-  platform->activate(gtk_app);
-
-  FWApplication * application = applicationMain();
-  platform->addChild(std::shared_ptr<Element>(application));  
+  GtkMainThread * mainThread = (GtkMainThread*)user_data;
+  mainThread->activate(gtk_app);
 }
 
 int main (int argc, char *argv[]) {
-  GtkApplication * gtk_app;
-
-  PlatformGtk platform;  
-
-  cerr << "creating application\n";
+  cerr << "creating app\n";
   
-  gtk_app = gtk_application_new("com.sometrik.test", G_APPLICATION_FLAGS_NONE); // FIXME: add correct name
-  g_signal_connect (gtk_app, "activate", G_CALLBACK (activate), &platform);
-  int status = g_application_run (G_APPLICATION(gtk_app), argc, argv);
+  std::shared_ptr<FWApplication> application(applicationMain());
+
+  cerr << "creating mainloop\n";
+  
+  std::shared_ptr<Runnable> runnable(0);
+  GtkMainThread mainThread(application, runnable);
+  mainThread.setActualDisplayWidth(width);
+  mainThread.setActualDisplayHeight(height);
+  
+  auto gtk_app = gtk_application_new("com.sometrik.test", G_APPLICATION_FLAGS_NONE); // FIXME: add correct name
+  g_signal_connect (gtk_app, "activate", G_CALLBACK (activate), &mainThread);
+  int status = g_application_run(G_APPLICATION(gtk_app), argc, argv);
   g_object_unref(gtk_app);
     
 #if 0
