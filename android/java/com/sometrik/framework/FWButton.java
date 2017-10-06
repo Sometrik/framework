@@ -147,6 +147,12 @@ public class FWButton extends Button implements NativeCommandHandler {
     } else if (key.equals("border")) {
       if (value.equals("none")) {
 	setBackgroundResource(0);
+      } else {
+	GradientDrawable gd = new GradientDrawable();
+	gd.setColor(Color.parseColor("#ffffff")); // Changes this drawbale to use a single color instead of a gradient
+	gd.setCornerRadius(5);
+	gd.setStroke(1, Color.parseColor(value));
+	setBackgroundDrawable(gd);
       }
     } else if (key.equals("single-line")) {
       this.setSingleLine();
@@ -178,12 +184,6 @@ public class FWButton extends Button implements NativeCommandHandler {
       LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
       params.bottomMargin = Integer.parseInt(value);
       setLayoutParams(params);
-    } else if (key.equals("borders")) {
-      GradientDrawable gd = new GradientDrawable();
-      gd.setColor(Color.parseColor("#ffffff")); // Changes this drawbale to use a single color instead of a gradient
-      gd.setCornerRadius(5);
-      gd.setStroke(1, Color.parseColor(value));
-      setBackgroundDrawable(gd);
     } 
   }
 
