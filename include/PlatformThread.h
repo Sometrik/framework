@@ -167,6 +167,8 @@ class PlatformThread : public Element {
   const std::string & getModalResultText() const { return modal_result_text; }
 
  protected:
+  void create() override { }
+  
   virtual void initialize() { }  
   virtual void deinitialize() { }
   virtual void startRunnable() {
