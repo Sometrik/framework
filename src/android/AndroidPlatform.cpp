@@ -111,14 +111,9 @@ class AndroidMainThread;
 
 class AndroidPlatform : public FWPlatform {
 public:
-  AndroidPlatform(JNIEnv * _env, jobject & _mgr, jobject & _framework) : javaCache(_env, _framework) {
+  AndroidPlatform(JNIEnv * _env, jobject & _framework) : javaCache(_env, _framework) {
     registerElement(this);
-
-    canvasCache = std::make_shared<canvas::AndroidCache>(_env, _mgr);
-    clientCache = std::make_shared<AndroidClientCache>(_env);
   }
-
-  void createFBO(int flags) { }
 
   void onOpenGLInitEvent(OpenGLInitEvent & _ev) override {
     getThread().onOpenGLInitEvent(_ev);
@@ -130,14 +125,10 @@ public:
     getThread().onSysEvent(ev);
   }
 
-  const std::shared_ptr<AndroidClientCache> & getClientCache() const { return clientCache; }
-  const std::shared_ptr<canvas::AndroidCache> & getCanvasCache() const { return canvasCache; }
   JavaCache & getJavaCache() { return javaCache; }
   
 private:
   JavaCache javaCache;
-  std::shared_ptr<canvas::AndroidCache> canvasCache;
-  std::shared_ptr<AndroidClientCache> clientCache;
 };
 
 extern FWApplication * applicationMain();
@@ -150,11 +141,11 @@ public:
 
   std::unique_ptr<HTTPClientFactory> createHTTPClientFactory() const override {
     const AndroidPlatform & androidPlatform = dynamic_cast<const AndroidPlatform&>(getPlatform());
-    return std::unique_ptr<HTTPClientFactory>(new AndroidClientFactory(androidPlatform.getClientCache()));
+    return std::unique_ptr<HTTPClientFactory>(new AndroidClientFactory);
   }
   std::unique_ptr<canvas::ContextFactory> createContextFactory() const override {
     const AndroidPlatform & androidPlatform = dynamic_cast<const AndroidPlatform&>(getPlatform());
-    return std::unique_ptr<canvas::ContextFactory>(new canvas::AndroidContextFactory(getAssetManager(), androidPlatform.getCanvasCache(), getDisplayScale()));
+    return std::unique_ptr<canvas::ContextFactory>(new canvas::AndroidContextFactory(getAssetManager(), getDisplayScale()));
   }
 
   std::string getBundleFilename(const char * filename) override {
@@ -561,10 +552,6 @@ void Java_com_sometrik_framework_FrameWork_onUpdate(JNIEnv* env, jclass clazz, d
 
 void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, jobject assetManager, int screenWidth, int screenHeight, float displayScale, jstring jemail, jstring jlanguage, jstring jcountry) {
   if (!mainThread.get()) {
-    __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Creating Platform");
-    __android_log_print(ANDROID_LOG_INFO, "onInit", "oninit screenWidth: %d", screenWidth);
-    __android_log_print(ANDROID_LOG_INFO, "onInit", "oninit screenHeight: %d", screenHeight);
-
     const char * email = env->GetStringUTFChars(jemail, NULL);
     const char * language = env->GetStringUTFChars(jlanguage, NULL);
     const char * country = env->GetStringUTFChars(jcountry, NULL);
@@ -578,21 +565,23 @@ void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, job
     AAssetManager* manager = AAssetManager_fromJava(env, assetManager);
     android_fopen_set_asset_manager(manager);
 
+    AndroidClientFactory::initialize(env);
+    canvas::AndroidContextFactory::initialize(env, assetManager);
+
     shared_ptr<Runnable> runnable;
 
-    auto platform = new AndroidPlatform(env, assetManager, thiz);
+    auto platform = new AndroidPlatform(env, thiz);
     mainThread = make_shared<AndroidMainThread>(platform, manager, runnable, account, initialPrefs);
     mainThread->setActualDisplayWidth(screenWidth);
     mainThread->setActualDisplayHeight(screenHeight);
     mainThread->setDisplayScale(displayScale);
+
     mainThread->start();
 
 //    setenv("CPUPROFILE", "/data/data/com.sometrik.kraphio/files/gmon.out", 1);
 #ifdef PROFILING
     monstartup("framework.so");
 #endif
-
-    __android_log_print(ANDROID_LOG_VERBOSE, "Sometrik", "Init end");
   }
 }
 
