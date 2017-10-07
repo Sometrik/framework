@@ -385,15 +385,6 @@ protected:
     }
       break;
       
-    case Command::CREATE_HEADING_TEXT: {
-      string s = "<b>" + command.getTextValue() + "</b>";
-      auto label = gtk_label_new(0);
-      gtk_label_set_markup(GTK_LABEL(label), s.c_str());
-      gtk_label_set_line_wrap((GtkLabel*)label, true);
-      addView(command, label);
-    }
-      break;
-
 #if 0
     case Command::CREATE_LINK: {
       auto link = gtk_link_button_new_with_label(uri, label);
