@@ -24,13 +24,25 @@ public class FWButton extends Button implements NativeCommandHandler {
   BitmapDrawable rightDraw;
   BitmapDrawable bottomDraw;
   BitmapDrawable topDraw;
-  
+  Animation animation = null;
+      
   public FWButton(FrameWork frameWork) {
     super(frameWork);
     this.frame = frameWork;
 //    this.setBackground(frame.getResources().getDrawable(android.R.drawable.dialog_holo_light_frame));
-  }
 
+    FWButton button;
+    
+    setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View arg0) {
+	if (!FrameWork.transitionAnimation) {
+	  frame.intChangedEvent(System.currentTimeMillis() / 1000.0, getElementId(), 1, 0);
+	  if (animation != null) button.startAnimation(animation);
+	}
+      }
+    });
+  }
 
   @Override
   public void addChild(View view) {
@@ -45,12 +57,6 @@ public class FWButton extends Button implements NativeCommandHandler {
   @Override
   public void setValue(String v) {
     setText(v);
-    //FIXME Debug animation
-    RotateAnimation r = new RotateAnimation(-5f, 5f,50,50); 
-    r.setDuration(100);
-    r.setRepeatCount(10);
-    r.setRepeatMode(RotateAnimation.REVERSE);
-//    startAnimation(r);
   }
   
   @Override
@@ -86,7 +92,7 @@ public class FWButton extends Button implements NativeCommandHandler {
       LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
       if (value.equals("bottom")) {
 	params.gravity = Gravity.BOTTOM;
-	      Log.d("button", " to bottom");
+	Log.d("button", " to bottom");
       } else if (value.equals("top")) {
 	params.gravity = Gravity.TOP;
       } else if (value.equals("left")) {
@@ -130,16 +136,16 @@ public class FWButton extends Button implements NativeCommandHandler {
         InputStream stream = mgr.open(value);
         BitmapDrawable draw = new BitmapDrawable(stream);
         this.setGravity(Gravity.CENTER);
-      if (key.equals("icon-right")){
-        rightDraw = draw;
-      } else if (key.equals("icon-top")){
-        topDraw = draw;
-      } else if (key.equals("icon-bottom")){
-        bottomDraw = draw;
-      } else if (key.equals("icon-left")){
-	leftDraw = draw;
-      }
-      this.setCompoundDrawablesWithIntrinsicBounds(leftDraw, topDraw, rightDraw, bottomDraw);
+        if (key.equals("icon-right")){
+          rightDraw = draw;
+        } else if (key.equals("icon-top")){
+          topDraw = draw;
+        } else if (key.equals("icon-bottom")){
+          bottomDraw = draw;
+        } else if (key.equals("icon-left")){
+	  leftDraw = draw;
+        }
+        this.setCompoundDrawablesWithIntrinsicBounds(leftDraw, topDraw, rightDraw, bottomDraw);
       } catch (IOException e) {
         System.out.println("no picture found: " + value);
         e.printStackTrace();
@@ -184,7 +190,15 @@ public class FWButton extends Button implements NativeCommandHandler {
       LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
       params.bottomMargin = Integer.parseInt(value);
       setLayoutParams(params);
-    } 
+    } else if (key.equals("animation")) {
+      if (value.equals("rotate")) {
+	RotateAnimation r = new RotateAnimation(-5f, 5f,50,50); 
+	r.setDuration(100);
+	r.setRepeatCount(10);
+	r.setRepeatMode(RotateAnimation.REVERSE);
+	animation = r;
+      }
+    }
   }
 
   @Override

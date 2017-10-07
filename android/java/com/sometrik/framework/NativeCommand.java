@@ -634,16 +634,6 @@ public class NativeCommand {
 //    params.weight = 1;
 //    params.gravity = Gravity.BOTTOM;
     button.setLayoutParams(params);
-
-    button.setOnClickListener(new OnClickListener() {
-      @Override
-      public void onClick(View arg0) {
-	System.out.println("Java: my button was clicked with id " + getChildInternalId());
-	if (!FrameWork.transitionAnimation) {
-	  frame.intChangedEvent(System.currentTimeMillis() / 1000.0, getChildInternalId(), 1, 0);
-	}
-      }
-    });
     FrameWork.addToViewList(button);
     return button;
   }
