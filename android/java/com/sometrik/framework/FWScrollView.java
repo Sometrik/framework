@@ -1,6 +1,7 @@
 package com.sometrik.framework;
 
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.graphics.Bitmap.Config;
 import android.util.TypedValue;
 import android.view.View;
@@ -87,7 +88,9 @@ public class FWScrollView extends ScrollView implements NativeCommandHandler {
 
   @Override
   public void setStyle(String key, String value) {
-    if (key.equals("animation")) {
+    if (key.equals("background-color")) {
+      this.setBackgroundColor(Color.parseColor(value));
+    } else if (key.equals("animation")) {
       if (value.equals("from-left")) {
 	TranslateAnimation r;
 	// if (recordHistory) {
