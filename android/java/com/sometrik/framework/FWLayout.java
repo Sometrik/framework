@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.GradientDrawable;
 import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -218,7 +219,17 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
       setLayoutParams(params);
     } else if (key.equals("shadow")) {
       setElevation(Integer.parseInt(value));
-    }
+    } else if (key.equals("border")) {
+      if (value.equals("none")) {
+	setBackgroundResource(0);
+      } else {
+	GradientDrawable gd = new GradientDrawable();
+	gd.setColor(Color.parseColor("#ffffff")); // Changes this drawbale to use a single color instead of a gradient
+	gd.setCornerRadius(5);
+	gd.setStroke(1, Color.parseColor(value));
+	setBackgroundDrawable(gd);
+      }
+    } 
   }
 
   @Override
