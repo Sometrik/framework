@@ -850,7 +850,17 @@ protected:
   }
 
   void setStyle(GtkWidget * widget, const std::string & key, const std::string & value) {
-    if (GTK_IS_LABEL(widget)) {
+    if (key == "color") {
+      GdkRGBA color;
+      if (gdk_rgba_parse(&color, value.c_str())) {
+	gtk_widget_override_color(widget, GTK_STATE_FLAG_NORMAL, &color);
+      }
+    } else if (key == "background-color") {
+      GdkRGBA color;
+      if (gdk_rgba_parse(&color, value.c_str())) {
+	gtk_widget_override_background_color(widget, GTK_STATE_FLAG_NORMAL, &color);
+      }
+    } else if (GTK_IS_LABEL(widget)) {
       auto label = GTK_LABEL(widget);
       if (key == "white-space") {
 	bool wrap = true;
