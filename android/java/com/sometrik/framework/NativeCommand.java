@@ -92,7 +92,6 @@ public class NativeCommand {
     CREATE_TABLE_LAYOUT,
     CREATE_AUTO_COLUMN_LAYOUT,
     CREATE_PANEL,
-    CREATE_HEADING_TEXT,
     CREATE_TEXT,
     CREATE_DIALOG,
     CREATE_IMAGEVIEW,
@@ -364,10 +363,6 @@ public class NativeCommand {
       radioGroup.setId(childInternalId);
       break;
       
-    case CREATE_HEADING_TEXT:
-      FWTextView headingText = createTextView(true);
-      view.addChild(headingText);
-      break;
     case CREATE_TEXT:
       FWTextView textView = createTextView(false);
       view.addChild(textView);
@@ -706,12 +701,9 @@ public class NativeCommand {
     return checkBox;
   }
 
-  private FWTextView createTextView(boolean bolded) {
+  private FWTextView createTextView() {
     FWTextView textView = new FWTextView(frame);
     textView.setId(getChildInternalId());
-    if (bolded) {
-      textView.setTypeface(null, Typeface.BOLD);
-    }
     if (isSet(FLAG_HYPERLINK)) {
       textView.setMovementMethod(LinkMovementMethod.getInstance());
       String text = "<a href='" + getTextValue2AsString() + "'>" + getTextValueAsString() + "</a>";

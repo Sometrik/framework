@@ -1,6 +1,5 @@
 #include <Element.h>
 #include <FWPlatform.h>
-#include <HeadingText.h>
 #include <TextLabel.h>
 #include <LinearLayout.h>
 #include <FWApplication.h>
@@ -100,11 +99,6 @@ Element::sendCommand(const Command & command) {
     pendingCommands.push_back(command);
     return 0;
   }
-}
-
-Element &
-Element::addHeading(const std::string & text) {
-  return addChild(make_shared<HeadingText>(text));
 }
 
 Element &

@@ -76,7 +76,6 @@ class Element : public EventHandler {
     return *element;
   }  
     
-  Element & addHeading(const std::string & text);
   Element & addText(const std::string & text);
   Element & addHorizontalLayout(int _id = 0);
   Element & addVerticalLayout(int _id = 0);
