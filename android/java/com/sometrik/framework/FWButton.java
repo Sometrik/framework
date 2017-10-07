@@ -12,6 +12,7 @@ import android.graphics.drawable.ScaleDrawable;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -31,7 +32,7 @@ public class FWButton extends Button implements NativeCommandHandler {
     this.frame = frameWork;
 //    this.setBackground(frame.getResources().getDrawable(android.R.drawable.dialog_holo_light_frame));
 
-    FWButton button;
+    final FWButton button = this;
     
     setOnClickListener(new OnClickListener() {
       @Override
