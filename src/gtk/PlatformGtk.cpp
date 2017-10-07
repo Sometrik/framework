@@ -379,6 +379,7 @@ protected:
       auto label = gtk_label_new(command.getTextValue().c_str());
       gtk_label_set_line_wrap((GtkLabel*)label, true);
       gtk_label_set_yalign((GtkLabel*)label, 0.0f);
+      gtk_label_set_justify((GtkLabel*)label, GTK_JUSTIFY_LEFT);
       addView(command, label);
     }
       break;
@@ -400,7 +401,7 @@ protected:
 #endif
 
     case Command::CREATE_SIMPLELISTVIEW: {
-      auto box = gtk_box_new(command.getValue() == 1 ? GTK_ORIENTATION_VERTICAL : GTK_ORIENTATION_HORIZONTAL, 5); // FIXME: spacing
+      auto box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5); // FIXME: spacing
       addView(command, box);
     }
       break;
@@ -484,9 +485,38 @@ protected:
       break;
 
     case Command::CREATE_IMAGEVIEW: {
-      string s = getBundleFilename(command.getTextValue().c_str());
-      auto image = gtk_image_new_from_file(s.c_str());
+      GtkWidget * image;
+      if (!command.getTextValue().empty()) {
+	string s = getBundleFilename(command.getTextValue().c_str());
+	image = gtk_image_new_from_file(s.c_str());
+      } else {
+	image = gtk_image_new();
+      }
       addView(command, image);
+    }
+      break;
+
+    case Command::SET_IMAGE: {
+      auto view = views_by_id[command.getInternalId()];
+      if (view) {
+	GdkPixbuf * pixbuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB,
+					    true,
+					    8,
+					    command.getWidth(),
+					    command.getHeight());
+	assert(pixbuf);
+	auto pixels = gdk_pixbuf_get_pixels(pixbuf);
+	size_t n = command.getWidth() * command.getHeight() * 4;
+	auto input = command.getTextValue().data();
+	for (size_t i = 0; i < n; i += 4) {
+	  pixels[i + 0] = input[i + 2];
+	  pixels[i + 1] = input[i + 1];
+	  pixels[i + 2] = input[i + 0];
+	  pixels[i + 3] = input[i + 3];
+	}
+	auto image = GTK_IMAGE(view);
+	gtk_image_set_from_pixbuf(image, pixbuf);
+      }
     }
       break;
 
