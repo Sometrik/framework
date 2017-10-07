@@ -585,7 +585,7 @@ void Java_com_sometrik_framework_FrameWork_nativeOnStart(JNIEnv* env, jobject th
   }
 }
 void Java_com_sometrik_framework_FrameWork_nativeOnDestroy(JNIEnv* env, jobject thiz, double timestamp, int appId) {
-  mainThread->terminateThreads();
+  mainThread->terminate();
   SysEvent ev(SysEvent::DESTROY);
   mainThread->sendEvent(appId, ev);
   // TODO: Wait for threads to terminate
