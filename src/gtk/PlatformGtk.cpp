@@ -378,6 +378,7 @@ protected:
     case Command::CREATE_TEXT: {
       auto label = gtk_label_new(command.getTextValue().c_str());
       gtk_label_set_line_wrap((GtkLabel*)label, true);
+      gtk_label_set_xalign((GtkLabel*)label, 0.0f);
       gtk_label_set_yalign((GtkLabel*)label, 0.0f);
       gtk_label_set_justify((GtkLabel*)label, GTK_JUSTIFY_LEFT);
       addView(command, label);
@@ -859,10 +860,18 @@ protected:
 	gtk_label_set_line_wrap(label, wrap);
       } else if (key == "text-align") {
 	GtkJustification j = GTK_JUSTIFY_LEFT;
-	if (value == "right") j = GTK_JUSTIFY_RIGHT;
-	else if (value == "center") j = GTK_JUSTIFY_CENTER;
-	else if (value == "justify") j = GTK_JUSTIFY_FILL;
+	float align = 0.0f;
+	if (value == "right") {
+	  j = GTK_JUSTIFY_RIGHT;
+	  align = 1.0f;
+	} else if (value == "center") {
+	  j = GTK_JUSTIFY_CENTER;
+	  align = 0.5f;
+	} else if (value == "justify") {
+	  j = GTK_JUSTIFY_FILL;
+	}
 	gtk_label_set_justify(label, j);
+	gtk_label_set_xalign((GtkLabel*)label, align);
       } else if (key == "font-size") {
       } else if (key == "font-weight") {
       } else if (key == "font-style") {
