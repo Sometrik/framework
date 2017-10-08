@@ -206,7 +206,6 @@ public class NativeCommand {
     case CREATE_FORMVIEW:
       FWScrollView scrollView = new FWScrollView(frame, getTextValueAsString());
       scrollView.setId(getChildInternalId());
-      scrollView.setPadding(10, 10, 10, 10);
       scrollView.setBackground(frame.getResources().getDrawable(android.R.drawable.screen_background_light));
       FrameWork.addToViewList(scrollView);
       
