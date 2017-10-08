@@ -161,8 +161,10 @@ public class FWButton extends Button implements NativeCommandHandler {
 	gd.setStroke(1, Color.parseColor(value));
 	setBackgroundDrawable(gd);
       }
-    } else if (key.equals("single-line")) {
-      this.setSingleLine();
+    } else if (key.equals("white-space")) {
+      boolean single = false;
+      if (value.equals("nowrap")) single = true;
+      setSingleLine(single);
     } else if (key.equals("color")) {
       setTextColor(Color.parseColor(value));
     } else if (key.equals("background-color")) {

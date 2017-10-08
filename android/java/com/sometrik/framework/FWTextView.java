@@ -147,8 +147,10 @@ public class FWTextView extends TextView implements NativeCommandHandler {
       } else if (value.equals("right")) {
 	setTextAlignment(TEXT_ALIGNMENT_TEXT_END);
       }
-    } else if (key.equals("single-line")) {
-      setSingleLine();
+    } else if (key.equals("white-space")) {
+      boolean single = false;
+      if (value.equals("nowrap")) single = true;
+      setSingleLine(single);
     } else if (key.equals("color")) {
       this.setTextColor(Color.parseColor(value));
     } else if (key.equals("gravity")) {
