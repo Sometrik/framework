@@ -9,7 +9,6 @@ import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.ScaleDrawable;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -27,6 +26,7 @@ public class FWButton extends Button implements NativeCommandHandler {
   BitmapDrawable bottomDraw;
   BitmapDrawable topDraw;
   Animation animation = null;
+  private GradientDrawable currentBackground = null;
       
   public FWButton(FrameWork frameWork) {
     super(frameWork);
@@ -48,17 +48,14 @@ public class FWButton extends Button implements NativeCommandHandler {
 
   private GradientDrawable createBackground() {
     GradientDrawable gd;
-    Drawable drawable = getBackground();
-    if (drawable == null) {
-      gd = new GradientDrawable();
-      gd.setColor(Color.parseColor("#ffffff")); // Changes this drawable to use a single color instead of a gradient
-      setBackground(gd);
-      return gd;
-    } else {
-      return (GradientDrawable)drawable;
+    if (currentBackground == null) {
+      currentBackground = new GradientDrawable();
+      setBackground(currentBackground);
     }
+    currentBackground.setColor(Color.parseColor("#ffffff")); // Changes this drawable to use a single color instead of a gradient
+    return currentBackground;
   }    
-
+  
   @Override
   public void addChild(View view) {
     System.out.println("FWButton couldn't handle command");

@@ -3,7 +3,6 @@ package com.sometrik.framework;
 import android.graphics.Bitmap.Config;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.text.TextUtils.TruncateAt;
 import android.view.Gravity;
@@ -15,6 +14,7 @@ import android.widget.TextView;
 public class FWTextView extends TextView implements NativeCommandHandler {
 
   private FrameWork frame;
+  private GradientDrawable currentBackground = null;
   
   public FWTextView(FrameWork frame) {
     super(frame);
@@ -26,15 +26,12 @@ public class FWTextView extends TextView implements NativeCommandHandler {
 
   private GradientDrawable createBackground() {
     GradientDrawable gd;
-    Drawable drawable = getBackground();
-    if (drawable == null) {
-      gd = new GradientDrawable();
-      gd.setColor(Color.parseColor("#ffffff")); // Changes this drawable to use a single color instead of a gradient
-      setBackground(gd);
-      return gd;
-    } else {
-      return (GradientDrawable)drawable;
+    if (currentBackground == null) {
+      currentBackground = new GradientDrawable();
+      setBackground(currentBackground);
     }
+    currentBackground.setColor(Color.parseColor("#ffffff")); // Changes this drawable to use a single color instead of a gradient
+    return currentBackground;
   }    
     
   @Override

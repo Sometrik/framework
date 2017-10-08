@@ -11,19 +11,17 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.view.Gravity;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
-import android.widget.LinearLayout.LayoutParams;
 
 public class FWLayout extends LinearLayout implements NativeCommandHandler {
   
   private FrameWork frame;
   private boolean childListeners = false;
   private ChildClickListener hostListener;
+  private GradientDrawable currentBackground = null;
   
   public FWLayout(FrameWork frameWork) {
     super(frameWork);
@@ -34,17 +32,14 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
 
   private GradientDrawable createBackground() {
     GradientDrawable gd;
-    Drawable drawable = getBackground();
-    if (drawable == null) {
-      gd = new GradientDrawable();
-      gd.setColor(Color.parseColor("#ffffff")); // Changes this drawable to use a single color instead of a gradient
-      setBackground(gd);
-      return gd;
-    } else {
-      return (GradientDrawable)drawable;
+    if (currentBackground == null) {
+      currentBackground = new GradientDrawable();
+      setBackground(currentBackground);
     }
+    currentBackground.setColor(Color.parseColor("#ffffff")); // Changes this drawable to use a single color instead of a gradient
+    return currentBackground;
   }    
-
+  
   @Override
   public int getElementId() {
     return getId();
