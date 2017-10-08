@@ -19,7 +19,7 @@ public class NavigationBar extends FrameLayout implements NativeCommandHandler {
     super(frame);
     this.frame = frame;
 //    this.setBackground(frame.getResources().getDrawable(android.R.drawable.dialog_holo_light_frame));
-    setBackgroundColor(Color.parseColor("#ffffff"));
+//    setBackgroundColor(Color.parseColor("#ffffff"));
     baseLayout = new LinearLayout(frame);
     baseLayout.setOrientation(LinearLayout.HORIZONTAL);
     LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
