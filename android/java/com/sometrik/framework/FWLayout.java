@@ -31,7 +31,6 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
   }
 
   private GradientDrawable createBackground() {
-    GradientDrawable gd;
     if (currentBackground == null) {
       currentBackground = new GradientDrawable();
       setBackground(currentBackground);

@@ -21,11 +21,9 @@ public class FWTextView extends TextView implements NativeCommandHandler {
     this.frame = frame;
 //    Color color = new Color();
     this.setBackground(null);
-    this.setBackgroundColor(Color.rgb(255, 255, 255));
   }
 
   private GradientDrawable createBackground() {
-    GradientDrawable gd;
     if (currentBackground == null) {
       currentBackground = new GradientDrawable();
       setBackground(currentBackground);
