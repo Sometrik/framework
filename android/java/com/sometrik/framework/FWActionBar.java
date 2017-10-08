@@ -227,7 +227,7 @@ public class FWActionBar implements NativeCommandHandler {
   public void setStyle(String key, String value) {
     if (key.equals("subtitle")) {
       subtitleView.setText(value);
-      if (value == "" || value == " ") {
+      if (value.isEmpty()) {
 	subtitleView.setVisibility(TextView.GONE);
       } else if (subtitleView.getVisibility() == TextView.GONE) {
 	subtitleView.setVisibility(TextView.VISIBLE);

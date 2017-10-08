@@ -184,7 +184,7 @@ public class FrameWork extends Activity {
 	break;
       }
     }
-    if (gmail == "") {
+    if (gmail.isEmpty()) {
       Log.d("accountFinder", "No user Google Account found");
     }
     return gmail;
