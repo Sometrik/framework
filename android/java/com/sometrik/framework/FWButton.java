@@ -7,6 +7,7 @@ import android.content.res.AssetManager;
 import android.graphics.Bitmap.Config;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.ScaleDrawable;
 import android.util.Log;
@@ -172,6 +173,7 @@ public class FWButton extends Button implements NativeCommandHandler {
 	gd.setStroke(1, Color.parseColor(value));
       }
     } else if (key.equals("border-radius")) {
+      final float scale = getContext().getResources().getDisplayMetrics().density;
       int pixels = (int) (Integer.parseInt(value) * scale + 0.5f);
       GradientDrawable gd = createBackground();
       gd.setCornerRadius(pixels);      

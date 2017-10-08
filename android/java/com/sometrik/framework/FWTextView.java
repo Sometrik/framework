@@ -3,6 +3,7 @@ package com.sometrik.framework;
 import android.graphics.Bitmap.Config;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.text.TextUtils.TruncateAt;
 import android.view.Gravity;
@@ -146,6 +147,7 @@ public class FWTextView extends TextView implements NativeCommandHandler {
 	gd.setStroke(1, Color.parseColor(value));
       }
     } else if (key.equals("border-radius")) {
+      final float scale = getContext().getResources().getDisplayMetrics().density;
       int pixels = (int) (Integer.parseInt(value) * scale + 0.5f);
       GradientDrawable gd = createBackground();
       gd.setCornerRadius(pixels);      
@@ -153,7 +155,7 @@ public class FWTextView extends TextView implements NativeCommandHandler {
       LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
       params.weight = Integer.parseInt(value);
       setLayoutParams(params);
-    } else if (key.equals("align-text")) {
+    } else if (key.equals("text-align")) {
       if (value.equals("left")) {
 	setTextAlignment(TEXT_ALIGNMENT_TEXT_START);
       } else if (value.equals("center")) {
