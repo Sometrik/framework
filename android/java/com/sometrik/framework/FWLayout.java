@@ -29,7 +29,6 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
     this.frame = frameWork;
     setDividerDrawable(frame.getResources().getDrawable(android.R.drawable.divider_horizontal_bright));
 //    setDividerDrawable(frame.getResources().getDrawable(android.R.drawable.divider_horizontal_textfield));
-    this.setBackgroundColor(Color.rgb(255, 255, 255));
   }
 
   private GradientDrawable createBackground() {
