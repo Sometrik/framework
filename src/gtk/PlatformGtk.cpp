@@ -388,7 +388,7 @@ protected:
 #if 0
     case Command::CREATE_LINK: {
       auto link = gtk_link_button_new_with_label(uri, label);
-    };
+    }
       break;
 #endif
 
@@ -681,8 +681,7 @@ protected:
       break;
 
     case Command::SET_STYLE: {
-      auto view = views_by_id[command.getInternalId()];
-      if (view) setStyle(view, command.getTextValue(), command.getTextValue2());
+      setStyle(command.getInternalId(), command.getTextValue(), command.getTextValue2());
     }
       break;
 
@@ -840,7 +839,21 @@ protected:
     return 0;
   }
 
-  void setStyle(GtkWidget * widget, const std::string & key, const std::string & value) {
+  PangoFontDescription * getFont(int view_id) {
+    auto it = fonts_by_id.find(view_id);
+    if (it != fonts_by_id.end()) {
+      return it->second;
+    } else {
+      auto font = pango_font_description_new(); // FIXME: NOT FREED
+      fonts_by_id[view_id] = font;
+      return font;
+    }
+  }
+  
+  void setStyle(int id, const std::string & key, const std::string & value) {
+    auto widget = views_by_id[id];
+    if (!widget) return;
+    
     if (key == "color") {
       GdkRGBA color;
       if (gdk_rgba_parse(&color, value.c_str())) {
@@ -851,6 +864,52 @@ protected:
       if (gdk_rgba_parse(&color, value.c_str())) {
 	gtk_widget_override_background_color(widget, GTK_STATE_FLAG_NORMAL, &color);
       }
+    } else if (key == "font-size") {
+      int size = 0;
+      if (value == "small") {
+	size = 9;
+      } else if (value == "medium") {
+	size = 12;
+      } else if (value == "large") {
+	size = 15;
+      } else {
+	size = stoi(value);
+      }
+      if (size) {
+	auto font = getFont(id);
+	pango_font_description_set_size(font, size * PANGO_SCALE);
+	gtk_widget_override_font(widget, font);
+      }
+    } else if (key == "font-weight") {
+      auto font = getFont(id);
+      PangoWeight weight = PANGO_WEIGHT_NORMAL;
+      if (value == "bold") {
+	weight = PANGO_WEIGHT_BOLD;
+      }
+      pango_font_description_set_weight(font, weight);
+      gtk_widget_override_font(widget, font);
+    } else if (key == "font-variant") {
+      auto font = getFont(id);
+      PangoVariant variant = PANGO_VARIANT_NORMAL;
+      if (value == "small-caps") {
+	variant = PANGO_VARIANT_SMALL_CAPS;
+      }
+      pango_font_description_set_variant(font, variant);
+      gtk_widget_override_font(widget, font);
+    } else if (key == "font-style") {
+      auto font = getFont(id);
+      PangoStyle style = PANGO_STYLE_NORMAL;
+      if (value == "italic") {
+	style = PANGO_STYLE_ITALIC;
+      } else if (value == "oblique") {
+	style = PANGO_STYLE_OBLIQUE;
+      }
+      pango_font_description_set_style(font, style);
+      gtk_widget_override_font(widget, font);
+    } else if (key == "font-family") {
+      auto font = getFont(id);
+      pango_font_description_set_family(font, value.c_str());
+      gtk_widget_override_font(widget, font);
     } else if (GTK_IS_LABEL(widget)) {
       auto label = GTK_LABEL(widget);
       if (key == "white-space") {
@@ -990,6 +1049,7 @@ private:
   GtkWidget * footer = nullptr;
   GtkWidget * stack = nullptr;
   unordered_map<int, GtkWidget *> views_by_id;
+  unordered_map<int, PangoFontDescription *> fonts_by_id;
   bool initial_view_shown = false;
   unordered_map<int, vector<sheet_data_s> > sheets_by_id;
   vector<sheet_data_s> null_sheets;
