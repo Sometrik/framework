@@ -32,6 +32,19 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
     this.setBackgroundColor(Color.rgb(255, 255, 255));
   }
 
+  private GradientDrawable createBackground() {
+    GradientDrawable gd;
+    Drawable drawable = getBackground();
+    if (drawable == null) {
+      gd = new GradientDrawable();
+      gd.setColor(Color.parseColor("#ffffff")); // Changes this drawable to use a single color instead of a gradient
+      setBackground(gd);
+      return gd;
+    } else {
+      return (GradientDrawable)drawable;
+    }
+  }    
+
   @Override
   public int getElementId() {
     return getId();
@@ -223,13 +236,14 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
       if (value.equals("none")) {
 	setBackgroundResource(0);
       } else {
-	GradientDrawable gd = new GradientDrawable();
-	gd.setColor(Color.parseColor("#ffffff")); // Changes this drawbale to use a single color instead of a gradient
-	gd.setCornerRadius(5);
+	GradientDrawable gd = createBackground();
 	gd.setStroke(1, Color.parseColor(value));
-	setBackgroundDrawable(gd);
       }
-    } 
+    } else if (key.equals("border-radius")) {
+      int pixels = (int) (Integer.parseInt(value) * scale + 0.5f);
+      GradientDrawable gd = createBackground();
+      gd.setCornerRadius(pixels);      
+    }
   }
 
   @Override

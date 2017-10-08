@@ -45,6 +45,19 @@ public class FWButton extends Button implements NativeCommandHandler {
     });
   }
 
+  private GradientDrawable createBackground() {
+    GradientDrawable gd;
+    Drawable drawable = getBackground();
+    if (drawable == null) {
+      gd = new GradientDrawable();
+      gd.setColor(Color.parseColor("#ffffff")); // Changes this drawable to use a single color instead of a gradient
+      setBackground(gd);
+      return gd;
+    } else {
+      return (GradientDrawable)drawable;
+    }
+  }    
+
   @Override
   public void addChild(View view) {
     System.out.println("FWButton couldn't handle command");
@@ -155,12 +168,13 @@ public class FWButton extends Button implements NativeCommandHandler {
       if (value.equals("none")) {
 	setBackgroundResource(0);
       } else {
-	GradientDrawable gd = new GradientDrawable();
-	gd.setColor(Color.parseColor("#ffffff")); // Changes this drawbale to use a single color instead of a gradient
-	gd.setCornerRadius(5);
+	GradientDrawable gd = createBackground();
 	gd.setStroke(1, Color.parseColor(value));
-	setBackgroundDrawable(gd);
       }
+    } else if (key.equals("border-radius")) {
+      int pixels = (int) (Integer.parseInt(value) * scale + 0.5f);
+      GradientDrawable gd = createBackground();
+      gd.setCornerRadius(pixels);      
     } else if (key.equals("white-space")) {
       boolean single = false;
       if (value.equals("nowrap")) single = true;
