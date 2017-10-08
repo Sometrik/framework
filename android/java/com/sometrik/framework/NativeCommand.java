@@ -364,7 +364,7 @@ public class NativeCommand {
       break;
       
     case CREATE_TEXT:
-      FWTextView textView = createTextView(false);
+      FWTextView textView = createTextView();
       view.addChild(textView);
       break;
 
