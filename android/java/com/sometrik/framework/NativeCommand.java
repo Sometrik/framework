@@ -422,11 +422,7 @@ public class NativeCommand {
       break;
     case SET_VISIBILITY:
       if (view != null) {
-	if (value == 0) {
-	  view.setViewVisibility(false);
-	} else {
-	  view.setViewVisibility(true);
-	}
+	view.setViewVisibility(value != 0);
       }
       break;
     case SET_ENABLED:
