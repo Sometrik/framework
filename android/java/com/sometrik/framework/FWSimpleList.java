@@ -34,7 +34,7 @@ public class FWSimpleList extends LinearLayout implements NativeCommandHandler {
       super(frame);
       this.frame = frame;
       defaultListParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
-      defaultListParams.setMargins(0, 10, 0, 10);
+      // defaultListParams.setMargins(0, 10, 0, 10);
       setOrientation(LinearLayout.VERTICAL);
       setDividerDrawable(frame.getResources().getDrawable(android.R.drawable.divider_horizontal_bright));
     }
