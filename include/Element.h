@@ -42,8 +42,16 @@ class Element : public EventHandler {
   void setError(bool t) override;
   void setEnabled(bool enabled);
 
-  void style(const std::string & key, const std::string & value);
-  void style(const std::string & key, int value) { style(key, std::to_string(value)); }
+  void style(Selector s, const std::string & key, const std::string & value);
+  void style(Selector s, const std::string & key, int value) {
+    style(s, key, std::to_string(value));
+  }
+  void style(const std::string & key, const std::string & value) {
+    style(Selector::NORMAL, key, value);
+  }
+  void style(const std::string & key, int value) {
+    style(Selector::NORMAL, key, value);
+  }
 
   int sendCommand(const Command & command);
 

@@ -172,6 +172,15 @@ public:
   void startEventLoop() override { }
   
 protected:
+  static inline GtkStateFlags getGtkState(Selector selector) {
+    switch (selector) {
+    case Selector::NORMAL: return GTK_STATE_FLAG_NORMAL;
+    case Selector::ACTIVE: return GTK_STATE_FLAG_ACTIVE;
+    case Selector::HOVER: return GTK_STATE_FLAG_PRELIGHT;
+    }
+    return GTK_STATE_FLAG_NORMAL;
+  }
+  
   int sendCommand(const Command & command) {
     if (command.getType() == Command::CREATE_FORMVIEW || command.getType() == Command::CREATE_OPENGL_VIEW) {
       auto & app = getApplication();
@@ -680,7 +689,7 @@ protected:
       break;
 
     case Command::SET_STYLE: {
-      setStyle(command.getInternalId(), command.getTextValue(), command.getTextValue2());
+      setStyle(command.getInternalId(), Selector(command.getValue()), command.getTextValue(), command.getTextValue2());
     }
       break;
 
@@ -849,19 +858,19 @@ protected:
     }
   }
   
-  void setStyle(int id, const std::string & key, const std::string & value) {
+  void setStyle(int id, Selector selector, const std::string & key, const std::string & value) {
     auto widget = views_by_id[id];
     if (!widget) return;
     
     if (key == "color") {
       GdkRGBA color;
       if (gdk_rgba_parse(&color, value.c_str())) {
-	gtk_widget_override_color(widget, GTK_STATE_FLAG_NORMAL, &color);
+	gtk_widget_override_color(widget, getGtkState(selector), &color);
       }
     } else if (key == "background-color") {
       GdkRGBA color;
       if (gdk_rgba_parse(&color, value.c_str())) {
-	gtk_widget_override_background_color(widget, GTK_STATE_FLAG_NORMAL, &color);
+	gtk_widget_override_background_color(widget, getGtkState(selector), &color);
       }
     } else if (key == "font-size") {
       int size = 0;

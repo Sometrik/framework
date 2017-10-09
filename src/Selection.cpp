@@ -40,9 +40,9 @@ Selection::refresh() {
 }
 
 Selection &
-Selection::style(const std::string & key, const std::string & value) {
+Selection::style(Selector selector, const std::string & key, const std::string & value) {
   for (auto & e : data) {
-    e->style(key, value);
+    e->style(selector, key, value);
   }
   return *this;
 }

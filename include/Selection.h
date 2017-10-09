@@ -1,6 +1,8 @@
 #ifndef _SELECTION_H_
 #define _SELECTION_H_
 
+#include <Selector.h>
+
 #include <memory>
 #include <vector>
 
@@ -21,9 +23,17 @@ class Selection {
   Selection & refresh();
   Selection & setEnabled(bool enabled);
   Selection & text(const std::string & text);
-  Selection & style(const std::string & key, const std::string & value);
-  Selection & style(const std::string & key, int value) {
+  Selection & style(Selector selector, const std::string & key, const std::string & value);
+  Selection & style(Selector selector, const std::string & key, int value) {
     style(key, std::to_string(value));
+    return *this;
+  }
+  Selection & style(const std::string & key, const std::string & value) {
+    style(Selector::NORMAL, key, value);
+    return *this;
+  }
+  Selection & style(const std::string & key, int value) {
+    style(Selector::NORMAL, key, value);
     return *this;
   }
 
