@@ -99,11 +99,9 @@ public class FWButton extends Button implements NativeCommandHandler {
 	setTextSize(Integer.parseInt(value));
       }
     } else if (key.equals("gravity")) {
-      Log.d("button", "setting gravity: ");
       LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
       if (value.equals("bottom")) {
 	params.gravity = Gravity.BOTTOM;
-	Log.d("button", " to bottom");
       } else if (value.equals("top")) {
 	params.gravity = Gravity.TOP;
       } else if (value.equals("left")) {
