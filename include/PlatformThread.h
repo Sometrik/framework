@@ -31,11 +31,16 @@ class PlatformThread : public Element {
  PlatformThread(PlatformThread * _parent_thread, FWPlatform * _platform, std::shared_ptr<FWApplication> & _application, std::shared_ptr<Runnable> & _runnable)
    : platform(_platform), application(_application), parent_thread(_parent_thread), runnable(_runnable)
     {
+    _platform->registerElement(this);
     if (_parent_thread) {
       setActualDisplayWidth(_parent_thread->getActualDisplayWidth());
       setActualDisplayHeight(_parent_thread->getActualDisplayHeight());
       setDisplayScale(_parent_thread->getDisplayScale());
     }
+  }
+
+  ~PlatformThread() {
+    platform->unregisterElement(this);
   }
 
   bool isA(const std::string & className) const override {
