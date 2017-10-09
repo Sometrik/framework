@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import android.content.res.AssetManager;
+import android.content.res.ColorStateList;
 import android.graphics.Bitmap.Config;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
@@ -32,7 +33,8 @@ public class FWButton extends Button implements NativeCommandHandler {
     super(frameWork);
     this.frame = frameWork;
 //    this.setBackground(frame.getResources().getDrawable(android.R.drawable.dialog_holo_light_frame));
-
+    setAlpha(1.0f);
+    
     final FWButton button = this;
     
     setOnClickListener(new OnClickListener() {
@@ -178,7 +180,20 @@ public class FWButton extends Button implements NativeCommandHandler {
     } else if (key.equals("color")) {
       setTextColor(Color.parseColor(value));
     } else if (key.equals("background-color")) {
-      setBackgroundColor(Color.parseColor(value));
+      String[] inputColors = value.split(",");
+//      setBackgroundColor(Color.parseColor(value));      
+      int[][] states = new int[][] {
+	new int[] {-android.R.attr.state_pressed},  // not pressed
+	new int[] { android.R.attr.state_pressed}  // pressed
+      };
+      int[] colors = new int[] { Color.WHITE, Color.WHITE };
+      int prevColor = Color.WHITE;
+      for (int i = 0; i < 2; i++) {
+	String s = i < inputColors.length ? inputColors[i].trim() : "";
+	if (!s.isEmpty()) colors[i] = prevColor = Color.parseColor(s); 
+	else colors[i] = prevColor;
+      }
+      this.setBackgroundTintList(new ColorStateList(states, colors));
     } else if (key.equals("padding-top")) {
       setPadding(getPaddingLeft(), Integer.parseInt(value), getPaddingRight(), getPaddingBottom());
     } else if (key.equals("padding-bottom")) {
