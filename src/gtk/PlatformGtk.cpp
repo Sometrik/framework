@@ -396,7 +396,7 @@ protected:
       break;
 
     case Command::CREATE_LINEAR_LAYOUT: {
-      auto box = gtk_box_new(command.getValue() == 1 ? GTK_ORIENTATION_VERTICAL : GTK_ORIENTATION_HORIZONTAL, 5); // FIXME: spacing
+      auto box = gtk_box_new(command.getValue() == 1 ? GTK_ORIENTATION_VERTICAL : GTK_ORIENTATION_HORIZONTAL, 0);
 
 #if 0
       event_box = gtk_event_box_new ();
@@ -879,6 +879,14 @@ protected:
 	pango_font_description_set_size(font, size * PANGO_SCALE);
 	gtk_widget_override_font(widget, font);
       }
+    } else if (key == "margin-left") {
+      gtk_widget_set_margin_start(widget, stoi(value));
+    } else if (key == "margin-right") {
+      gtk_widget_set_margin_end(widget, stoi(value));
+    } else if (key == "margin-top") {
+      gtk_widget_set_margin_top(widget, stoi(value));
+    } else if (key == "margin-bottom") {
+      gtk_widget_set_margin_bottom(widget, stoi(value));
     } else if (key == "font-weight") {
       auto font = getFont(id);
       PangoWeight weight = PANGO_WEIGHT_NORMAL;
@@ -966,7 +974,7 @@ protected:
 	auto a = gtk_dialog_get_content_area(GTK_DIALOG(parent));
 	gtk_container_add(GTK_CONTAINER(a), widget);
       } else if (GTK_IS_BOX(parent)) {
-	gtk_box_pack_start((GtkBox*)parent, widget, expand ? 1 : 0, 0, 5);
+	gtk_box_pack_start((GtkBox*)parent, widget, expand ? 1 : 0, 0, 0);
       } else if (GTK_IS_FLOW_BOX(parent)) {
 	gtk_flow_box_insert((GtkFlowBox*)parent, widget, -1);
       } else if (GTK_IS_TABLE(parent)) {
