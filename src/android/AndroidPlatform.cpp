@@ -220,7 +220,6 @@ public:
   void startRunnable() override {
     application->initialize(this);
     application->initializeChildren();
-    application->load();
 
     startEventLoop();
     deinitializeRenderer();

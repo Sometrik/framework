@@ -166,9 +166,6 @@ public:
     cerr << "initializing app children\n";
     app.initializeChildren();
 
-    cerr << "loading app\n";
-    app.load();
-
     cerr << "activate done\n";
   }
 
@@ -574,6 +571,8 @@ protected:
 				 command.getTextValue().size());
       } else if (GTK_IS_HEADER_BAR(view)) {
 	gtk_header_bar_set_subtitle((GtkHeaderBar*)view, command.getTextValue().c_str());
+      } else if (GTK_IS_BUTTON(view)) {
+	gtk_button_set_label(GTK_BUTTON(view), command.getTextValue().c_str());	
       } else {
 	cerr << "unable to set text value: " << command.getTextValue() << "\n";
 	// assert(0);

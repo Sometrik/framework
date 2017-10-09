@@ -28,7 +28,6 @@ class Dialog : public Element {
       setParent(parent);
       initialize(&(parent->getThread()));
       initializeChildren();
-      load();
     }
     return sendCommand(Command(Command::SHOW_DIALOG, getInternalId()));
   }

@@ -58,7 +58,6 @@ class Element : public EventHandler {
 
     if (isInitialized()) {
       element->initialize(thread);
-      element->load(); // Element must be loaded before it's children
       element->initializeChildren();
     }
     return *element;
@@ -70,7 +69,6 @@ class Element : public EventHandler {
 
     if (isInitialized()) {
       element->initialize(thread);
-      element->load(); // Element must be loaded before it's children
       element->initializeChildren();
     }
     return *element;
@@ -168,7 +166,6 @@ class Element : public EventHandler {
   const PlatformThread & getThread() const { return *thread; }
 
   virtual void initialize(PlatformThread * _thread);
-  virtual void load() { }
 
   void initializeChildren();
 
@@ -176,6 +173,7 @@ class Element : public EventHandler {
 
  protected:
   virtual void create() = 0;
+  virtual void load() { }
 
   virtual bool isChildVisible(const Element & child) const {
     if (!child.is_visible) return false;

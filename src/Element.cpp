@@ -27,6 +27,7 @@ Element::initialize(PlatformThread * _thread) {
     thread = _thread;
     thread->getPlatform().registerElement(this);
     create();
+    load();
     for (auto & c : pendingCommands) {
       sendCommand(c);
     }
@@ -41,7 +42,6 @@ Element::initializeChildren() {
   if (isInitialized()) {
     for (auto & c : getChildren()) {
       c->initialize(thread);
-      c->load(); // Element must be loaded before it's children
       c->initializeChildren();
     }
   }
