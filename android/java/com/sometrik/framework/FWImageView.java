@@ -1,6 +1,5 @@
 package com.sometrik.framework;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -10,9 +9,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.LinearLayout.LayoutParams;
 
 public class FWImageView extends ImageView implements NativeCommandHandler {
 
@@ -101,27 +100,32 @@ public class FWImageView extends ImageView implements NativeCommandHandler {
 
   @Override
   public void setStyle(String key, String value) {
+    System.out.println("ImageView style " + key + " " + value);
     final float scale = getContext().getResources().getDisplayMetrics().density;
     if (key.equals("gravity")) {
-      LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
-      if (value.equals("bottom")) {
-	params.gravity = Gravity.BOTTOM;
-      } else if (value.equals("top")) {
-	params.gravity = Gravity.TOP;
-      } else if (value.equals("left")) {
-	params.gravity = Gravity.LEFT;
-      } else if (value.equals("right")) {
-	params.gravity = Gravity.RIGHT;
-      } else if (value.equals("center")) {
-	params.gravity = Gravity.CENTER;
-      } else if (value.equals("center-horizontal")) {
-	params.gravity = Gravity.CENTER_HORIZONTAL;
-      } else if (value.equals("center-vertical")) {
-	params.gravity = Gravity.CENTER_VERTICAL;
+      if (getParent() instanceof LinearLayout) {
+	LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) getLayoutParams();
+	if (value.equals("bottom")) {
+	  params.gravity = Gravity.BOTTOM;
+	} else if (value.equals("top")) {
+	  params.gravity = Gravity.TOP;
+	} else if (value.equals("left")) {
+	  params.gravity = Gravity.LEFT;
+	} else if (value.equals("right")) {
+	  params.gravity = Gravity.RIGHT;
+	} else if (value.equals("center")) {
+	  params.gravity = Gravity.CENTER;
+	} else if (value.equals("center-horizontal")) {
+	  params.gravity = Gravity.CENTER_HORIZONTAL;
+	} else if (value.equals("center-vertical")) {
+	  params.gravity = Gravity.CENTER_VERTICAL;
+	}
+	setLayoutParams(params);
+      } else {
+	System.out.println("Gravity cannot be assigned to this FWImageView");
       }
-      setLayoutParams(params);
     } else if (key.equals("width")) {
-      LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
+      ViewGroup.LayoutParams params = getLayoutParams();
       if (value.equals("wrap-content")) {
 	params.width = LinearLayout.LayoutParams.WRAP_CONTENT;
       } else if (value.equals("match-parent")) {
@@ -132,7 +136,7 @@ public class FWImageView extends ImageView implements NativeCommandHandler {
       }
       setLayoutParams(params);
     } else if (key.equals("height")) {
-      LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
+      ViewGroup.LayoutParams params = getLayoutParams();
       if (value.equals("wrap-content")) {
 	params.height = LinearLayout.LayoutParams.WRAP_CONTENT;
       } else if (value.equals("match-parent")) {
@@ -143,9 +147,13 @@ public class FWImageView extends ImageView implements NativeCommandHandler {
       }
       setLayoutParams(params);
     } else if (key.equals("weight")) {
-      LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
-      params.weight = Integer.parseInt(value);
-      setLayoutParams(params);
+      if (getParent() instanceof LinearLayout) {
+	LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) getLayoutParams();
+	params.weight = Integer.parseInt(value);
+	setLayoutParams(params);
+      } else {
+	System.out.println("Weight cannot be assigned to this FWImageView");
+      }
     } else if (key.equals("padding-top")) {
       setPadding(getPaddingLeft(), (int) (Integer.parseInt(value) * scale + 0.5f), getPaddingRight(), getPaddingBottom());
     } else if (key.equals("padding-bottom")) {
@@ -163,24 +171,32 @@ public class FWImageView extends ImageView implements NativeCommandHandler {
 	setScaleType(ScaleType.FIT_CENTER);
       }
     } else if (key.equals("margin-right")) {
-      LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
-      params.rightMargin = Integer.parseInt(value);
-      setLayoutParams(params);
+      if (getParent() instanceof LinearLayout) {
+	LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) getLayoutParams();
+	params.rightMargin = Integer.parseInt(value);
+	setLayoutParams(params);
+      }
     } else if (key.equals("margin-left")) {
-      LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
-      params.leftMargin = Integer.parseInt(value);
-      setLayoutParams(params);
+      if (getParent() instanceof LinearLayout) {
+	LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) getLayoutParams();
+	params.leftMargin = Integer.parseInt(value);
+	setLayoutParams(params);
+      }
     } else if (key.equals("margin-top")) {
-      LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
-      params.topMargin = Integer.parseInt(value);
-      setLayoutParams(params);
+      if (getParent() instanceof LinearLayout) {
+	LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) getLayoutParams();
+	params.topMargin = Integer.parseInt(value);
+	setLayoutParams(params);
+      }
     } else if (key.equals("margin-bottom")) {
-      LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
-      params.bottomMargin = Integer.parseInt(value);
-      setLayoutParams(params);
+      if (getParent() instanceof LinearLayout) {
+	LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) getLayoutParams();
+	params.bottomMargin = Integer.parseInt(value);
+	setLayoutParams(params);
+      }
     }
   }
-
+  
   @Override
   public void setError(boolean hasError, String errorText) {
     // TODO Auto-generated method stub
