@@ -39,9 +39,11 @@ public:
   void startEventLoop() override {
     auto & runnable = getRunnable();
     while (getNumRunningThreads() != 0 || !testDestroy()) {
-      event_queue.recvOne(runnable);
-      while (!event_queue.empty() && (getNumRunningThreads() != 0 || !testDestroy())) {
-        event_queue.recvOne(runnable);
+      auto ed = event_queue.pop();
+      if (ed.first == getInternalId()) {
+	ed.second->dispatch(*this);
+      } else {
+	ed.second->dispatch(runnable);
       }
     }
   }
