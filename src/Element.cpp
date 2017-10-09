@@ -13,7 +13,6 @@ using namespace std;
 atomic<int> Element::nextInternalId(1);
 
 Element::~Element() {
-  // the platform itself cannot be unregistered at this point
   if (thread) {
     auto & platform = thread->getPlatform();
     platform.unregisterElement(this);
