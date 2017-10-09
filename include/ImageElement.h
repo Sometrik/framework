@@ -8,7 +8,7 @@
 
 class ImageElement : public Element {
  public:
- ImageElement(const std::string & _filename) : filename(_filename) { }
+ ImageElement(const std::string & _filename, int _id = 0) : Element(_id), filename(_filename) { }
 
   bool isA(const std::string & className) const override {
     if (className == "ImageElement") return true;
