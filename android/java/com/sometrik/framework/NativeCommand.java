@@ -241,6 +241,7 @@ public class NativeCommand {
       FWRelativeLayout layout = new FWRelativeLayout(frame);
       layout.setId(getChildInternalId());
       FrameWork.addToViewList(layout);
+      view.addChild(layout);
       
       break;
     }
