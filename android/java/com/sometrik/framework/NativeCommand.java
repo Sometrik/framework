@@ -71,7 +71,8 @@ public class NativeCommand {
   public enum Selector {
     NORMAL,
     ACTIVE,
-    HOVER
+    HOVER,
+    SELECTED
   };
  
   public enum CommandType {
