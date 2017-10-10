@@ -26,6 +26,12 @@ class ImageElement : public Element {
     sendCommand(c);
   }
 
+  void onValueEvent(ValueEvent & ev) override {
+    notify();
+    CommandEvent ev2(getId());
+    ev2.dispatch(*this);
+  }
+
   const std::string & getFilename() { return filename; }
   void setFilename(const std::string & _filename) { filename = filename; }
   
