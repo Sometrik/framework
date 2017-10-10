@@ -133,6 +133,7 @@ public class NativeCommand {
     SET_IMAGE,
     FLUSH_VIEW,
     UPDATE_PREFERENCE,
+    DELETE_PREFERENCE,
     COMMIT_PREFERENCES,
     ADD_OPTION,
     ADD_SHEET,
@@ -498,6 +499,9 @@ public class NativeCommand {
     case UPDATE_PREFERENCE: // Now stores String value to string key
       System.out.println("UPDATE_PREFERENCE: " + getTextValueAsString() + " " + getTextValue2AsString());
       frame.getPreferencesEditor().putString(getTextValueAsString(), getTextValue2AsString());
+      break;
+    case DELETE_PREFERENCE:
+      frame.getPreferencesEditor().remove(getTextValueAsString());
       break;
     case COMMIT_PREFERENCES:
       frame.getPreferencesEditor().apply();
