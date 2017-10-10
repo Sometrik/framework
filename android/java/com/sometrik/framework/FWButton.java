@@ -10,9 +10,7 @@ import android.content.res.ColorStateList;
 import android.graphics.Bitmap.Config;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.animation.Animation;
@@ -91,7 +89,6 @@ public class FWButton extends Button implements NativeCommandHandler {
 
   @Override
   public void setStyle(Selector selector, String key, String value) {
-    System.out.println("Button style " + key + " " + value);
     if (key.equals("font-size")){
       if (value.equals("small")){
 	this.setTextSize(9);
