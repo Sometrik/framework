@@ -13,8 +13,8 @@
 
 class BasicThread : public PosixThread {
  public:
- BasicThread(PlatformThread * _parent_thread, FWPlatform * _platform, std::shared_ptr<Runnable> & _runnable)
-   : PosixThread(_parent_thread, _platform, _runnable) { }
+ BasicThread(PlatformThread * _parent_thread, FWPlatform * _platform, std::shared_ptr<FWApplication> & _application, std::shared_ptr<Runnable> & _runnable)
+   : PosixThread(_parent_thread, _platform, _application, _runnable) { }
 
 #ifndef NO_CANVAS
   std::unique_ptr<canvas::ContextFactory> createContextFactory() const override {
@@ -27,7 +27,7 @@ class BasicThread : public PosixThread {
 
   std::shared_ptr<PlatformThread> createThread(std::shared_ptr<Runnable> & runnable) override {
     auto & platform = getPlatform();
-    return std::make_shared<BasicThread>(this, &platform, runnable);
+    return std::make_shared<BasicThread>(this, &platform, application, runnable);
   }
 
   void sleep(double t) override {
@@ -50,8 +50,8 @@ class BasicThread : public PosixThread {
 
 class BasicMainThread : public PlatformThread {
 public:
- BasicMainThread(FWPlatform * _platform, std::shared_ptr<Runnable> & _runnable)
-   : PlatformThread(0, _platform, _runnable)
+ BasicMainThread(std::shared_ptr<FWApplication> & _application, std::shared_ptr<Runnable> & _runnable)
+   : PlatformThread(0, new FWPlatform, _application, _runnable)
   {
     
   }
@@ -67,7 +67,7 @@ public:
 
   std::shared_ptr<PlatformThread> createThread(std::shared_ptr<Runnable> & runnable) override {
     auto & platform = getPlatform();
-    return std::make_shared<BasicThread>(this, &platform, runnable);
+    return std::make_shared<BasicThread>(this, &platform, application, runnable);
   }
 
   void sleep(double t) override {
@@ -89,18 +89,21 @@ public:
 
   bool start() override { return false; }
   bool testDestroy() override { return false; }
-  void terminate() override { }
-};
+  bool terminate() override {    
+    exit(0);
+  }
 
-class BasicPlatform : public FWPlatform {
- public:
- BasicPlatform() { }
+  void sendEvent(int internal_id, const Event & ev) override {
+  }
 
-  void pushEvent(int internal_id, const Event & ev) override {
+  void startEventLoop() override {
 
   }
-  int startModal() override { return 0; }
-  void endModal() override { }
+
+  std::vector<std::pair<int, std::shared_ptr<Event> > > pollEvents() override {
+    std::vector<std::pair<int, std::shared_ptr<Event> > > r;
+    return r;
+  }
 };
 
 #endif
