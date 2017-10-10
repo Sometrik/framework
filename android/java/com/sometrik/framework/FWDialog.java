@@ -18,6 +18,7 @@ public class FWDialog extends Dialog implements NativeCommandHandler{
   ViewGroup baseView;
   ScrollView scrollView;
   int id;
+  ViewStyleManager normalStyle, activeStyle, currentStyle;
   
   public FWDialog(final FrameWork frame, final int id) {
     super(frame);
@@ -30,6 +31,10 @@ public class FWDialog extends Dialog implements NativeCommandHandler{
     params.width = LayoutParams.MATCH_PARENT;
     getWindow().setAttributes((android.view.WindowManager.LayoutParams) params);
 
+    final float scale = getContext().getResources().getDisplayMetrics().density;
+    this.normalStyle = currentStyle = new ViewStyleManager(scale, true);
+    this.activeStyle = new ViewStyleManager(scale, false);
+    
     this.setOnCancelListener(new OnCancelListener(){
       @Override
       public void onCancel(DialogInterface arg0) {
@@ -109,6 +114,14 @@ public class FWDialog extends Dialog implements NativeCommandHandler{
 
   @Override
   public void setStyle(Selector selector, String key, String value) {
+    if (selector == Selector.NORMAL) {
+      normalStyle.setStyle(key, value);
+      // if (normalStyle == currentStyle) normalStyle.apply(this);
+    } else if (selector == Selector.ACTIVE) {
+      activeStyle.setStyle(key, value);      
+      // if (activeStyle == currentStyle) activeStyle.apply(this);
+    }
+    
     if (key.equals("width")) {
       ViewGroup.LayoutParams params = getWindow().getAttributes();
       if (value.equals("wrap-content")) {
