@@ -14,6 +14,7 @@ import android.widget.LinearLayout;
 public class NavigationLayout extends LinearLayout implements NativeCommandHandler {
 
   FrameWork frame;
+  ViewStyleManager normalStyle, activeStyle, currentStyle;
 
   public NavigationLayout(FrameWork frame) {
     super(frame);
@@ -27,6 +28,10 @@ public class NavigationLayout extends LinearLayout implements NativeCommandHandl
     ColorDrawable cd = new ColorDrawable();
     cd.setColor(Color.WHITE);
     setBackgroundDrawable(cd);
+    
+    final float scale = getContext().getResources().getDisplayMetrics().density;
+    this.normalStyle = currentStyle = new ViewStyleManager(scale, true);
+    this.activeStyle = new ViewStyleManager(scale, false);
   }
 
   @Override
@@ -100,36 +105,15 @@ public class NavigationLayout extends LinearLayout implements NativeCommandHandl
 
   @Override
   public void setStyle(Selector selector, String key, String value) {
-
-    if (key.equals("gravity")) {
-      LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
-      if (value.equals("bottom")) {
-	params.gravity = Gravity.BOTTOM;
-      } else if (value.equals("top")) {
-	params.gravity = Gravity.TOP;
-      } else if (value.equals("left")) {
-	params.gravity = Gravity.LEFT;
-      } else if (value.equals("right")) {
-	params.gravity = Gravity.RIGHT;
-      }
-      setLayoutParams(params);
-    } else if (key.equals("width")) {
-      LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
-      if (value.equals("wrap-content")) {
-	params.width = LinearLayout.LayoutParams.WRAP_CONTENT;
-      } else if (value.equals("match-parent")) {
-	params.width = LinearLayout.LayoutParams.MATCH_PARENT;
-      }
-      setLayoutParams(params);
-    } else if (key.equals("height")) {
-      LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
-      if (value.equals("wrap-content")) {
-	params.height = LinearLayout.LayoutParams.WRAP_CONTENT;
-      } else if (value.equals("match-parent")) {
-	params.height = LinearLayout.LayoutParams.MATCH_PARENT;
-      }
-      setLayoutParams(params);
-    } else if (key.equals("add-weight")) {
+    if (selector == Selector.NORMAL) {
+      normalStyle.setStyle(key, value);
+      if (normalStyle == currentStyle) normalStyle.apply(this);
+    } else if (selector == Selector.ACTIVE) {
+      activeStyle.setStyle(key, value);      
+      if (activeStyle == currentStyle) activeStyle.apply(this);
+    }
+    
+    if (key.equals("add-weight")) {
       LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
       params.weight += 1;
       setLayoutParams(params);
