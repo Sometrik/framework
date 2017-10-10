@@ -61,11 +61,6 @@ public class NativeCommand {
   private int width = 0;
   private int height = 0;
   
-
-  private final int FLAG_PADDING_LEFT = 1;
-  private final int FLAG_PADDING_RIGHT = 2;
-  private final int FLAG_PADDING_TOP = 4;
-  private final int FLAG_PADDING_BOTTOM = 8;
   private final int FLAG_PASSWORD = 16;
   private final int FLAG_NUMERIC = 32;
   private final int FLAG_HYPERLINK = 64;
