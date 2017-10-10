@@ -42,7 +42,7 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
 	if (event.getAction() == MotionEvent.ACTION_DOWN) {
 	  layout.currentStyle = layout.activeStyle;
 	  layout.currentStyle.apply(layout);
-	} else if (event.getAction() == MotionEvent.ACTION_UP) {
+	} else { // if (event.getAction() == MotionEvent.ACTION_UP)
 	  layout.currentStyle = layout.normalStyle;
 	  layout.currentStyle.apply(layout);
 	}
