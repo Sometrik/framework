@@ -1,5 +1,11 @@
 package com.sometrik.framework;
 
+import com.sometrik.framework.NativeCommand.Selector;
+
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.LinearLayout.LayoutParams;
+
 class ViewStyleManager {
   private float displayScale = 1.0f;
 
@@ -85,7 +91,7 @@ class ViewStyleManager {
 
   public void apply(View view) {
     if (alpha != null) view.setAlpha(alpha);
-    if (title != null) view.setTooltipText(title);
+//    if (title != null) view.setTooltipText(title);
 
     // Scaled parameters
     if (isPaddingSet) {
@@ -94,10 +100,10 @@ class ViewStyleManager {
 		      applyScale(paddingRight),
 		      applyScale(paddingBottom));
     }
-    if (positionLeft != null) view.setLeft(applyScale(leftPosition));
-    if (positionRight != null) view.setRight(applyScale(rightPosition));
-    if (positionTop != null) view.setTop(applyScale(topPosition));
-    if (positionBottom != null) view.setBottom(applyScale(bottomPosition));
+    if (leftPosition != null) view.setLeft(applyScale(leftPosition));
+    if (rightPosition != null) view.setRight(applyScale(rightPosition));
+    if (topPosition != null) view.setTop(applyScale(topPosition));
+    if (bottomPosition != null) view.setBottom(applyScale(bottomPosition));
     if (minWidth > 0) view.setMinimumWidth(applyScale(minWidth));
     if (minHeight > 0) view.setMinimumHeight(applyScale(minHeight));
 
@@ -105,7 +111,7 @@ class ViewStyleManager {
     if (weight != null || width != null || height != null ||
 	marginRight != null || marginLeft != null ||
 	marginTop != null || marginBottom != null) {
-      LinearLayout.LayoutParams params = (LayoutParams)getLayoutParams();
+      LinearLayout.LayoutParams params = (LayoutParams)view.getLayoutParams();
       if (weight != null) params.weight = weight;
       if (marginRight != null) params.rightMargin = applyScale(marginRight);
       if (marginLeft != null) params.leftMargin = applyScale(marginLeft);
@@ -113,16 +119,16 @@ class ViewStyleManager {
       if (marginBottom != null) params.bottomMargin = applyScale(marginBottom);
       if (width != null) params.width = applyScale(width);
       if (height != null) params.height = applyScale(height);
-      setLayoutParams(params);
+      view.setLayoutParams(params);
     }
   }
 
   protected int applyScale(int v) {
-    return (int)(v * scale + 0.5f);
+    return (int)(v * displayScale + 0.5f);
   }
 
   protected float applyScale(float v) {
-    return v * scale;
+    return v * displayScale;
   }
 
 }
