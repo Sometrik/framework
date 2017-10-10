@@ -17,6 +17,7 @@ public class NavigationBar extends FrameLayout implements NativeCommandHandler {
   LinearLayout baseLayout;
   LinearLayout.LayoutParams childParams;
   int displayScale = 1;
+  ViewStyleManager normalStyle, activeStyle, currentStyle;
   
   public NavigationBar(FrameWork frame) {
     super(frame);
@@ -34,8 +35,11 @@ public class NavigationBar extends FrameLayout implements NativeCommandHandler {
     childParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 60 * displayScale);
     childParams.weight = 1;
     
-    
     addView(baseLayout);
+    
+    final float scale = getContext().getResources().getDisplayMetrics().density;
+    this.normalStyle = currentStyle = new ViewStyleManager(scale, true);
+    this.activeStyle = new ViewStyleManager(scale, false);
   }
 
   @Override
@@ -106,31 +110,12 @@ public class NavigationBar extends FrameLayout implements NativeCommandHandler {
 
   @Override
   public void setStyle(Selector selector, String key, String value) {
-    if (key.equals("width")) {
-      LinearLayout.LayoutParams params = (android.widget.LinearLayout.LayoutParams) getLayoutParams();
-      if (value.equals("wrap-content")) {
-	params.width = LinearLayout.LayoutParams.WRAP_CONTENT;
-      } else if (value.equals("match-parent")) {
-	params.width = LinearLayout.LayoutParams.MATCH_PARENT;
-      } else {
-	final float scale = getContext().getResources().getDisplayMetrics().density;
-	int pixels = (int) (Integer.parseInt(value) * scale + 0.5f);
-	params.width = pixels;
-      }
-      setLayoutParams(params);
-    } else if (key.equals("height")) {
-      LinearLayout.LayoutParams params = (android.widget.LinearLayout.LayoutParams) getLayoutParams();
-      if (value.equals("wrap-content")) {
-	params.height = LinearLayout.LayoutParams.WRAP_CONTENT;
-      } else if (value.equals("match-parent")) {
-	params.height = LinearLayout.LayoutParams.MATCH_PARENT;
-      } else {
-
-	final float scale = getContext().getResources().getDisplayMetrics().density;
-	int pixels = (int) (Integer.parseInt(value) * scale + 0.5f);
-	params.height = pixels;
-      }
-      setLayoutParams(params);
+    if (selector == Selector.NORMAL) {
+      normalStyle.setStyle(key, value);
+      if (normalStyle == currentStyle) normalStyle.apply(this);
+    } else if (selector == Selector.ACTIVE) {
+      activeStyle.setStyle(key, value);      
+      if (activeStyle == currentStyle) activeStyle.apply(this);
     }
   }
 
