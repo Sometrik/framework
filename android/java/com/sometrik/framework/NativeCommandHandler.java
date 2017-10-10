@@ -1,5 +1,7 @@
 package com.sometrik.framework;
 
+import com.sometrik.framework.NativeCommand.Selector;
+
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.view.View;
@@ -17,7 +19,7 @@ public interface NativeCommandHandler {
   public void reshape(int size);
   public void setViewEnabled(Boolean enabled);
   public void setViewVisibility(boolean visible);
-  public void setStyle(String key, String value);
+  public void setStyle(Selector selector, String key, String value);
   public void setError(boolean hasError, String errorText);
   public void clear();
   public void flush();

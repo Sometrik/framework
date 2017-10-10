@@ -1,5 +1,7 @@
 package com.sometrik.framework;
 
+import com.sometrik.framework.NativeCommand.Selector;
+
 import android.content.Context;
 import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
@@ -194,7 +196,7 @@ public class FlowLayout extends ViewGroup implements NativeCommandHandler {
   }
 
   @Override
-  public void setStyle(String key, String value) {
+  public void setStyle(Selector selector, String key, String value) {
     System.out.println("FlowLayout coulnd't setStyle command");
   }
 

@@ -1,6 +1,9 @@
 package com.sometrik.framework;
 
 import android.graphics.Bitmap.Config;
+
+import com.sometrik.framework.NativeCommand.Selector;
+
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
@@ -58,7 +61,7 @@ public class FWTextView extends TextView implements NativeCommandHandler {
   }
 
   @Override
-  public void setStyle(String key, String value) {
+  public void setStyle(Selector selector, String key, String value) {
     if (key.equals("font-size")) {
       if (value.equals("small")) {
 	this.setTextSize(9);

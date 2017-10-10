@@ -1,5 +1,7 @@
 package com.sometrik.framework;
 
+import com.sometrik.framework.NativeCommand.Selector;
+
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.graphics.Bitmap.Config;
@@ -106,7 +108,7 @@ public class FWDialog extends Dialog implements NativeCommandHandler{
   }
 
   @Override
-  public void setStyle(String key, String value) {
+  public void setStyle(Selector selector, String key, String value) {
     if (key.equals("width")) {
       ViewGroup.LayoutParams params = getWindow().getAttributes();
       if (value.equals("wrap-content")) {

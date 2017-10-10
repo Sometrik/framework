@@ -3,6 +3,8 @@ package com.sometrik.framework;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import com.sometrik.framework.NativeCommand.Selector;
+
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.Color;
@@ -131,7 +133,7 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
   }
   
   @Override
-  public void setStyle(String key, String value) {
+  public void setStyle(Selector selector, String key, String value) {
     if (key.equals("gravity")) {
       LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
       if (value.equals("bottom")) {

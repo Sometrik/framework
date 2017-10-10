@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import com.sometrik.framework.NativeCommand.Selector;
+
 import android.content.Context;
 import android.graphics.Bitmap.Config;
 import android.text.Editable;
@@ -94,7 +96,7 @@ public class FWEditText extends EditText implements NativeCommandHandler {
   }
 
   @Override
-  public void setStyle(String key, String value) {
+  public void setStyle(Selector selector, String key, String value) {
     if (key.equals("weight")) {
       LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
       params.weight = Integer.parseInt(value);

@@ -72,6 +72,12 @@ public class NativeCommand {
   private final int FLAG_USE_PURCHASES_API = 128;
   private final int FLAG_SLIDERVIEW = 256;
   private final int FLAG_STICKY_HEADER = 512;
+  
+  public enum Selector {
+    NORMAL,
+    ACTIVE,
+    HOVER
+  };
  
   public enum CommandType {
     CREATE_APPLICATION,
@@ -429,7 +435,7 @@ public class NativeCommand {
       view.setViewEnabled(value != 0);
       break;
     case SET_STYLE:
-      view.setStyle(getTextValueAsString(), getTextValue2AsString());
+      view.setStyle(Selector.values()[value], getTextValueAsString(), getTextValue2AsString());
       break;
     case SET_LABEL:
       frame.actionBar.setValue(getTextValueAsString());

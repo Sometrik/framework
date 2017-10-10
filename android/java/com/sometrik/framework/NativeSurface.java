@@ -3,6 +3,8 @@ package com.sometrik.framework;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import com.sometrik.framework.NativeCommand.Selector;
+
 import android.graphics.Bitmap.Config;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -109,7 +111,7 @@ public class NativeSurface extends SurfaceView implements NativeCommandHandler {
   }
 
   @Override
-  public void setStyle(String key, String value) { }
+  public void setStyle(Selector selector, String key, String value) { }
 
   @Override
   public void setError(boolean hasError, String errorText) { }

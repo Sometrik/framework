@@ -2,6 +2,9 @@ package com.sometrik.framework;
 
 import java.util.ArrayList;
 import java.util.Map.Entry;
+
+import com.sometrik.framework.NativeCommand.Selector;
+
 import java.util.TreeMap;
 
 import android.content.Context;
@@ -73,7 +76,7 @@ public class FWPicker extends Spinner implements NativeCommandHandler {
   }
 
   @Override
-  public void setStyle(String key, String value) { }
+  public void setStyle(Selector selector, String key, String value) { }
 
   @Override
   public void setError(boolean hasError, String errorText) { }

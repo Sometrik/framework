@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 
+import com.sometrik.framework.NativeCommand.Selector;
+
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -99,7 +101,7 @@ public class FWImageView extends ImageView implements NativeCommandHandler {
   
 
   @Override
-  public void setStyle(String key, String value) {
+  public void setStyle(Selector selector, String key, String value) {
     System.out.println("ImageView style " + key + " " + value);
     final float scale = getContext().getResources().getDisplayMetrics().density;
     if (key.equals("gravity")) {

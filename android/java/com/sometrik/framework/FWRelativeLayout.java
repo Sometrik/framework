@@ -1,5 +1,7 @@
 package com.sometrik.framework;
 
+import com.sometrik.framework.NativeCommand.Selector;
+
 import android.graphics.Color;
 import android.graphics.Bitmap.Config;
 import android.graphics.drawable.GradientDrawable;
@@ -101,7 +103,7 @@ public class FWRelativeLayout extends RelativeLayout implements NativeCommandHan
   }
 
   @Override
-  public void setStyle(String key, String value) {
+  public void setStyle(Selector selector, String key, String value) {
     if (key.equals("gravity")) {
       LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) getLayoutParams();
       if (value.equals("bottom")) {

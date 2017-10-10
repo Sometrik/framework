@@ -1,5 +1,7 @@
 package com.sometrik.framework;
 
+import com.sometrik.framework.NativeCommand.Selector;
+
 import android.R;
 import android.graphics.Bitmap.Config;
 import android.view.Gravity;
@@ -85,7 +87,7 @@ public class FWPopupView extends PopupWindow implements NativeCommandHandler {
   }
 
   @Override
-  public void setStyle(String key, String value) {
+  public void setStyle(Selector selector, String key, String value) {
     System.out.println("command couldn't be handled by popupView");
   }
 

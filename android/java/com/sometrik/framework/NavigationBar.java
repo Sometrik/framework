@@ -1,6 +1,9 @@
 package com.sometrik.framework;
 
 import android.graphics.Bitmap.Config;
+
+import com.sometrik.framework.NativeCommand.Selector;
+
 import android.graphics.Color;
 import android.util.DisplayMetrics;
 import android.view.View;
@@ -102,7 +105,7 @@ public class NavigationBar extends FrameLayout implements NativeCommandHandler {
   }
 
   @Override
-  public void setStyle(String key, String value) {
+  public void setStyle(Selector selector, String key, String value) {
     if (key.equals("width")) {
       LinearLayout.LayoutParams params = (android.widget.LinearLayout.LayoutParams) getLayoutParams();
       if (value.equals("wrap-content")) {

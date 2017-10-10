@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import com.sometrik.framework.NativeCommand.Selector;
 import com.sometrik.framework.SliderButton.Position;
 
 import android.graphics.Bitmap.Config;
@@ -252,7 +253,7 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
   }
 
   @Override
-  public void setStyle(String key, String value) {
+  public void setStyle(Selector selector, String key, String value) {
     // TODO Auto-generated method stub
   }
 

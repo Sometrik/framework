@@ -2,6 +2,8 @@ package com.sometrik.framework;
 
 import java.util.ArrayList;
 
+import com.sometrik.framework.NativeCommand.Selector;
+
 import android.content.Context;
 import android.graphics.Bitmap.Config;
 import android.util.Log;
@@ -143,7 +145,7 @@ public class FWAuto extends LinearLayout implements NativeCommandHandler {
   }
 
   @Override
-  public void setStyle(String key, String value) {
+  public void setStyle(Selector selector, String key, String value) {
     // TODO Auto-generated method stub
     
   }

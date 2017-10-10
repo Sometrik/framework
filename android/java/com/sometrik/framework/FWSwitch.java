@@ -1,5 +1,7 @@
 package com.sometrik.framework;
 
+import com.sometrik.framework.NativeCommand.Selector;
+
 import android.content.Context;
 import android.graphics.Bitmap.Config;
 import android.view.View;
@@ -44,7 +46,7 @@ public class FWSwitch extends Switch implements NativeCommandHandler {
   }
 
   @Override
-  public void setStyle(String key, String value) {
+  public void setStyle(Selector selector, String key, String value) {
     System.out.println("FWSwitch coulnd't handle Command");
   }
 

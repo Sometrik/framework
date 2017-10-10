@@ -3,6 +3,8 @@ package com.sometrik.framework;
 import java.io.IOException;
 import java.io.InputStream;
 
+import com.sometrik.framework.NativeCommand.Selector;
+
 import android.content.res.AssetManager;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap.Config;
@@ -88,7 +90,7 @@ public class FWButton extends Button implements NativeCommandHandler {
   }
 
   @Override
-  public void setStyle(String key, String value) {
+  public void setStyle(Selector selector, String key, String value) {
     System.out.println("Button style " + key + " " + value);
     if (key.equals("font-size")){
       if (value.equals("small")){

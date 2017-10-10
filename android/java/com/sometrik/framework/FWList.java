@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.sometrik.framework.FWList.ColumnType;
+import com.sometrik.framework.NativeCommand.Selector;
 
 import android.graphics.Bitmap.Config;
 import android.graphics.Typeface;
@@ -108,7 +109,7 @@ public class FWList extends ListView implements NativeCommandHandler {
   }
 
   @Override
-  public void setStyle(String key, String value) {
+  public void setStyle(Selector selector, String key, String value) {
     // TODO Auto-generated method stub
 
   }

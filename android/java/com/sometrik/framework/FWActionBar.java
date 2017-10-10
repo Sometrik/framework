@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
+import com.sometrik.framework.NativeCommand.Selector;
+
 import android.app.ActionBar;
 import android.graphics.Bitmap.Config;
 import android.graphics.Color;
@@ -224,7 +226,7 @@ public class FWActionBar implements NativeCommandHandler {
   }
 
   @Override
-  public void setStyle(String key, String value) {
+  public void setStyle(Selector selector, String key, String value) {
     if (key.equals("subtitle")) {
       subtitleView.setText(value);
       if (value.isEmpty()) {

@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import com.sometrik.framework.NativeCommand.Selector;
+
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
@@ -215,7 +217,7 @@ public class FWSimpleList extends LinearLayout implements NativeCommandHandler {
     }
 
   @Override
-  public void setStyle(String key, String value) {
+  public void setStyle(Selector selector, String key, String value) {
     System.out.println("SimpleListView style " + key + " " + value);
     if (key.equals("divider")) {
       if (value.equals("middle")) {

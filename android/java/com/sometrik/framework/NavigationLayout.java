@@ -1,6 +1,9 @@
 package com.sometrik.framework;
 
 import android.graphics.Bitmap.Config;
+
+import com.sometrik.framework.NativeCommand.Selector;
+
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v4.widget.DrawerLayout;
@@ -96,7 +99,7 @@ public class NavigationLayout extends LinearLayout implements NativeCommandHandl
   }
 
   @Override
-  public void setStyle(String key, String value) {
+  public void setStyle(Selector selector, String key, String value) {
 
     if (key.equals("gravity")) {
       LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
