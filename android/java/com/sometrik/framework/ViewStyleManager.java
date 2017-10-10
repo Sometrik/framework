@@ -1,7 +1,6 @@
 package com.sometrik.framework;
 
-import com.sometrik.framework.NativeCommand.Selector;
-
+import android.graphics.Color;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.LinearLayout;
@@ -20,12 +19,15 @@ class ViewStyleManager {
   private int minWidth = 0, minHeight = 0;
   private String title = null;
   private Integer weight = null;
+  private Integer backgroundColor = null;
 
+  private Color color = null;
+  
   public ViewStyleManager(float displayScale) {
     this.displayScale = displayScale;
   }
     
-  public void setStyle(Selector selector, String key, String value) {
+  public void setStyle(String key, String value) {
     if (key.equals("padding-top")) {
       isPaddingSet = true;
       paddingTop = Integer.parseInt(value);
@@ -86,11 +88,15 @@ class ViewStyleManager {
       }
     } else if (key.equals("gravity")) {
       
+    } else if (key.equals("background-color")) {
+      backgroundColor = new Integer(Color.parseColor(value));
     }
   }
 
   public void apply(View view) {
     if (alpha != null) view.setAlpha(alpha);
+    if (backgroundColor != null) view.setBackgroundColor(backgroundColor);
+
 //    if (title != null) view.setTooltipText(title);
 
     // Scaled parameters
