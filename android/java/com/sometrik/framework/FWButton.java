@@ -12,6 +12,7 @@ import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.GradientDrawable;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
@@ -28,12 +29,16 @@ public class FWButton extends Button implements NativeCommandHandler {
   BitmapDrawable topDraw;
   Animation animation = null;
   private GradientDrawable currentBackground = null;
+  ViewStyleManager normalStyle, activeStyle, currentStyle;
       
   public FWButton(FrameWork frameWork) {
     super(frameWork);
     this.frame = frameWork;
-//    this.setBackground(frame.getResources().getDrawable(android.R.drawable.dialog_holo_light_frame));
-    setAlpha(1.0f);
+    
+    final float scale = getContext().getResources().getDisplayMetrics().density;
+
+    this.normalStyle = currentStyle = new ViewStyleManager(scale);
+    this.activeStyle = new ViewStyleManager(scale);
     
     final FWButton button = this;
     
@@ -44,6 +49,20 @@ public class FWButton extends Button implements NativeCommandHandler {
 	  frame.intChangedEvent(System.currentTimeMillis() / 1000.0, getElementId(), 1, 0);
 	  if (animation != null) button.startAnimation(animation);
 	}
+      }
+    });
+    
+    setOnTouchListener(new OnTouchListener() {
+      @Override
+      public boolean onTouch(View v, MotionEvent event) {
+	if (event.getAction() == MotionEvent.ACTION_DOWN) {
+	  button.currentStyle = button.activeStyle;
+	  button.currentStyle.apply(button);
+	} else if (event.getAction() == MotionEvent.ACTION_UP) {
+	  button.currentStyle = button.normalStyle;
+	  button.currentStyle.apply(button);
+	}
+	return false;
       }
     });
   }
@@ -89,6 +108,14 @@ public class FWButton extends Button implements NativeCommandHandler {
 
   @Override
   public void setStyle(Selector selector, String key, String value) {
+    if (selector == Selector.NORMAL) {
+      normalStyle.setStyle(key, value);
+      if (normalStyle == currentStyle) normalStyle.apply(this);
+    } else if (selector == Selector.ACTIVE) {
+      activeStyle.setStyle(key, value);      
+      if (activeStyle == currentStyle) activeStyle.apply(this);
+    }
+    
     if (key.equals("font-size")){
       if (value.equals("small")){
 	this.setTextSize(9);
@@ -99,39 +126,6 @@ public class FWButton extends Button implements NativeCommandHandler {
       } else {
 	setTextSize(Integer.parseInt(value));
       }
-    } else if (key.equals("gravity")) {
-      LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
-      if (value.equals("bottom")) {
-	params.gravity = Gravity.BOTTOM;
-      } else if (value.equals("top")) {
-	params.gravity = Gravity.TOP;
-      } else if (value.equals("left")) {
-	params.gravity = Gravity.LEFT;
-      } else if (value.equals("right")) {
-	params.gravity = Gravity.RIGHT;
-      }
-      setLayoutParams(params);
-    } else if (key.equals("width")) {
-      LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
-      if (value.equals("wrap-content")) {
-	params.width = LinearLayout.LayoutParams.WRAP_CONTENT;
-      } else if (value.equals("match-parent")) {
-	params.width = LinearLayout.LayoutParams.MATCH_PARENT;
-      }
-      setLayoutParams(params);
-    } else if (key.equals("height")) {
-      LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
-      if (value.equals("wrap-content")) {
-	params.height = LinearLayout.LayoutParams.WRAP_CONTENT;
-      } else if (value.equals("match-parent")) {
-	params.height = LinearLayout.LayoutParams.MATCH_PARENT;
-      }
-      setLayoutParams(params);
-    } else if (key.equals("weight")) {
-      LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
-      params.weight = Integer.parseInt(value);
-      setLayoutParams(params);
-      System.out.println("button weight: " + params.weight);
     } else if (key.equals("pressed")) {
       if (value.equals("true") || value.equals("1")) {
 	this.setPressed(true);
@@ -178,45 +172,6 @@ public class FWButton extends Button implements NativeCommandHandler {
       setSingleLine(single);
     } else if (key.equals("color")) {
       setTextColor(Color.parseColor(value));
-    } else if (key.equals("background-color")) {
-      String[] inputColors = value.split(",");
-//      setBackgroundColor(Color.parseColor(value));      
-      int[][] states = new int[][] {
-	new int[] {-android.R.attr.state_pressed},  // not pressed
-	new int[] { android.R.attr.state_pressed}  // pressed
-      };
-      int[] colors = new int[] { Color.WHITE, Color.WHITE };
-      int prevColor = Color.WHITE;
-      for (int i = 0; i < 2; i++) {
-	String s = i < inputColors.length ? inputColors[i].trim() : "";
-	if (!s.isEmpty()) colors[i] = prevColor = Color.parseColor(s); 
-	else colors[i] = prevColor;
-      }
-      this.setBackgroundTintList(new ColorStateList(states, colors));
-    } else if (key.equals("padding-top")) {
-      setPadding(getPaddingLeft(), Integer.parseInt(value), getPaddingRight(), getPaddingBottom());
-    } else if (key.equals("padding-bottom")) {
-      setPadding(getPaddingLeft(), getPaddingTop(), getPaddingRight(), Integer.parseInt(value));
-    } else if (key.equals("padding-left")) {
-      setPadding(Integer.parseInt(value), getPaddingTop(), getPaddingRight(), getPaddingBottom());
-    } else if (key.equals("padding-right")) {
-      setPadding(getPaddingLeft(), getPaddingTop(), Integer.parseInt(value), getPaddingBottom());
-    } else if (key.equals("margin-right")) {
-      LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
-      params.rightMargin = Integer.parseInt(value);
-      setLayoutParams(params);
-    } else if (key.equals("margin-left")) {
-      LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
-      params.leftMargin = Integer.parseInt(value);
-      setLayoutParams(params);
-    } else if (key.equals("margin-top")) {
-      LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
-      params.topMargin = Integer.parseInt(value);
-      setLayoutParams(params);
-    } else if (key.equals("margin-bottom")) {
-      LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
-      params.bottomMargin = Integer.parseInt(value);
-      setLayoutParams(params);
     } else if (key.equals("animation")) {
       if (value.equals("rotate")) {
 	RotateAnimation r = new RotateAnimation(-5f, 5f,50,50); 
