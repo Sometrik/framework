@@ -14,17 +14,27 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 public class FWImageView extends ImageView implements NativeCommandHandler {
 
   FrameWork frame;
   
-  public FWImageView(FrameWork frame) {
+  public FWImageView(final FrameWork frame) {
     super(frame);
     this.frame = frame;
     LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
     this.setLayoutParams(params);
     this.setScaleType(ScaleType.FIT_CENTER);
+    
+    setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View arg0) {
+	if (!FrameWork.transitionAnimation) {
+	  frame.intChangedEvent(System.currentTimeMillis() / 1000.0, getElementId(), 1, 0);
+	}
+      }
+    });
   }
   
   void setImageFromAssets(String filename) {
@@ -121,6 +131,18 @@ public class FWImageView extends ImageView implements NativeCommandHandler {
 	  params.gravity = Gravity.CENTER_HORIZONTAL;
 	} else if (value.equals("center-vertical")) {
 	  params.gravity = Gravity.CENTER_VERTICAL;
+	}
+	setLayoutParams(params);
+      } else if (getParent() instanceof RelativeLayout){
+	RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) getLayoutParams();
+	if (value.equals("left")) {
+	  params.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+	} else if (value.equals("top")) {
+	  params.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+	} else if (value.equals("bottom")) {
+	  params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+	} else if (value.equals("right")) {
+	  params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
 	}
 	setLayoutParams(params);
       } else {
