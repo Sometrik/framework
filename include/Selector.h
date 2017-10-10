@@ -4,7 +4,8 @@
 enum class Selector {
   NORMAL = 0,
   ACTIVE,
-  HOVER
+  HOVER,
+  SELECTED
 };
 
 #endif
