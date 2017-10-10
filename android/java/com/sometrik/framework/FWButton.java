@@ -28,7 +28,6 @@ public class FWButton extends Button implements NativeCommandHandler {
   BitmapDrawable bottomDraw;
   BitmapDrawable topDraw;
   Animation animation = null;
-  private GradientDrawable currentBackground = null;
   ViewStyleManager normalStyle, activeStyle, currentStyle;
       
   public FWButton(FrameWork frameWork) {
@@ -36,9 +35,8 @@ public class FWButton extends Button implements NativeCommandHandler {
     this.frame = frameWork;
     
     final float scale = getContext().getResources().getDisplayMetrics().density;
-
-    this.normalStyle = currentStyle = new ViewStyleManager(scale);
-    this.activeStyle = new ViewStyleManager(scale);
+    this.normalStyle = currentStyle = new ViewStyleManager(scale, true);
+    this.activeStyle = new ViewStyleManager(scale, false);
     
     final FWButton button = this;
     
@@ -66,15 +64,6 @@ public class FWButton extends Button implements NativeCommandHandler {
       }
     });
   }
-
-  private GradientDrawable createBackground() {
-    if (currentBackground == null) {
-      currentBackground = new GradientDrawable();
-      setBackground(currentBackground);
-    }
-    currentBackground.setColor(Color.parseColor("#ffffff")); // Changes this drawable to use a single color instead of a gradient
-    return currentBackground;
-  }    
   
   @Override
   public void addChild(View view) {
@@ -154,24 +143,10 @@ public class FWButton extends Button implements NativeCommandHandler {
         System.out.println("no picture found: " + value);
         e.printStackTrace();
       }
-    } else if (key.equals("border")) {
-      if (value.equals("none")) {
-	setBackgroundResource(0);
-      } else {
-	GradientDrawable gd = createBackground();
-	gd.setStroke(1, Color.parseColor(value));
-      }
-    } else if (key.equals("border-radius")) {
-      final float scale = getContext().getResources().getDisplayMetrics().density;
-      int pixels = (int) (Integer.parseInt(value) * scale + 0.5f);
-      GradientDrawable gd = createBackground();
-      gd.setCornerRadius(pixels);      
     } else if (key.equals("white-space")) {
       boolean single = false;
       if (value.equals("nowrap")) single = true;
       setSingleLine(single);
-    } else if (key.equals("color")) {
-      setTextColor(Color.parseColor(value));
     } else if (key.equals("animation")) {
       if (value.equals("rotate")) {
 	RotateAnimation r = new RotateAnimation(-5f, 5f,50,50); 
