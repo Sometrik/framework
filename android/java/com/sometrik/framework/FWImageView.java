@@ -10,8 +10,10 @@ import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.View.OnTouchListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -19,6 +21,7 @@ import android.widget.RelativeLayout;
 public class FWImageView extends ImageView implements NativeCommandHandler {
 
   FrameWork frame;
+  ViewStyleManager normalStyle, activeStyle, currentStyle;
   
   public FWImageView(final FrameWork frame) {
     super(frame);
@@ -26,13 +29,34 @@ public class FWImageView extends ImageView implements NativeCommandHandler {
     LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
     this.setLayoutParams(params);
     this.setScaleType(ScaleType.FIT_CENTER);
+    this.setClipToOutline(true);
     
+    final float scale = getContext().getResources().getDisplayMetrics().density;
+    this.normalStyle = currentStyle = new ViewStyleManager(scale, true);
+    this.activeStyle = new ViewStyleManager(scale, false);
+    
+    final FWImageView image = this;
+
     setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View arg0) {
 	if (!FrameWork.transitionAnimation) {
 	  frame.intChangedEvent(System.currentTimeMillis() / 1000.0, getElementId(), 1, 0);
 	}
+      }
+    });
+    
+    setOnTouchListener(new OnTouchListener() {
+      @Override
+      public boolean onTouch(View v, MotionEvent event) {
+	if (event.getAction() == MotionEvent.ACTION_DOWN) {
+	  image.currentStyle = image.activeStyle;
+	  image.currentStyle.apply(image);
+	} else if (event.getAction() == MotionEvent.ACTION_UP) {
+	  image.currentStyle = image.normalStyle;
+	  image.currentStyle.apply(image);
+	}
+	return false;
       }
     });
   }
@@ -112,111 +136,21 @@ public class FWImageView extends ImageView implements NativeCommandHandler {
 
   @Override
   public void setStyle(Selector selector, String key, String value) {
-    System.out.println("ImageView style " + key + " " + value);
-    final float scale = getContext().getResources().getDisplayMetrics().density;
-    if (key.equals("gravity")) {
-      if (getParent() instanceof LinearLayout) {
-	LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) getLayoutParams();
-	if (value.equals("bottom")) {
-	  params.gravity = Gravity.BOTTOM;
-	} else if (value.equals("top")) {
-	  params.gravity = Gravity.TOP;
-	} else if (value.equals("left")) {
-	  params.gravity = Gravity.LEFT;
-	} else if (value.equals("right")) {
-	  params.gravity = Gravity.RIGHT;
-	} else if (value.equals("center")) {
-	  params.gravity = Gravity.CENTER;
-	} else if (value.equals("center-horizontal")) {
-	  params.gravity = Gravity.CENTER_HORIZONTAL;
-	} else if (value.equals("center-vertical")) {
-	  params.gravity = Gravity.CENTER_VERTICAL;
-	}
-	setLayoutParams(params);
-      } else if (getParent() instanceof RelativeLayout){
-	RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) getLayoutParams();
-	if (value.equals("left")) {
-	  params.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-	} else if (value.equals("top")) {
-	  params.addRule(RelativeLayout.ALIGN_PARENT_TOP);
-	} else if (value.equals("bottom")) {
-	  params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-	} else if (value.equals("right")) {
-	  params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-	}
-	setLayoutParams(params);
-      } else {
-	System.out.println("Gravity cannot be assigned to this FWImageView");
-      }
-    } else if (key.equals("width")) {
-      ViewGroup.LayoutParams params = getLayoutParams();
-      if (value.equals("wrap-content")) {
-	params.width = LinearLayout.LayoutParams.WRAP_CONTENT;
-      } else if (value.equals("match-parent")) {
-	params.width = LinearLayout.LayoutParams.MATCH_PARENT;
-      } else {
-	int pixels = (int) (Integer.parseInt(value) * scale + 0.5f);
-	params.width = pixels;
-      }
-      setLayoutParams(params);
-    } else if (key.equals("height")) {
-      ViewGroup.LayoutParams params = getLayoutParams();
-      if (value.equals("wrap-content")) {
-	params.height = LinearLayout.LayoutParams.WRAP_CONTENT;
-      } else if (value.equals("match-parent")) {
-	params.height = LinearLayout.LayoutParams.MATCH_PARENT;
-      } else {
-	int pixels = (int) (Integer.parseInt(value) * scale + 0.5f);
-	params.height = pixels;
-      }
-      setLayoutParams(params);
-    } else if (key.equals("weight")) {
-      if (getParent() instanceof LinearLayout) {
-	LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) getLayoutParams();
-	params.weight = Integer.parseInt(value);
-	setLayoutParams(params);
-      } else {
-	System.out.println("Weight cannot be assigned to this FWImageView");
-      }
-    } else if (key.equals("padding-top")) {
-      setPadding(getPaddingLeft(), (int) (Integer.parseInt(value) * scale + 0.5f), getPaddingRight(), getPaddingBottom());
-    } else if (key.equals("padding-bottom")) {
-      setPadding(getPaddingLeft(), getPaddingTop(), getPaddingRight(), (int) (Integer.parseInt(value) * scale + 0.5f));
-    } else if (key.equals("padding-left")) {
-      setPadding((int) (Integer.parseInt(value) * scale + 0.5f), getPaddingTop(), getPaddingRight(), getPaddingBottom());
-    } else if (key.equals("padding-right")) {
-      setPadding(getPaddingLeft(), getPaddingTop(), (int) (Integer.parseInt(value) * scale + 0.5f), getPaddingBottom());
-    } else if (key.equals("scale")) {
+    if (selector == Selector.NORMAL) {
+      normalStyle.setStyle(key, value);
+      if (normalStyle == currentStyle) normalStyle.apply(this);
+    } else if (selector == Selector.ACTIVE) {
+      activeStyle.setStyle(key, value);      
+      if (activeStyle == currentStyle) activeStyle.apply(this);
+    }
+    
+    if (key.equals("scale")) {
       if (value.equals("start")) {
 	setScaleType(ScaleType.FIT_START);
       } else if (value.equals("end")) {
 	setScaleType(ScaleType.FIT_END);
       } else if (value.equals("center")) {
 	setScaleType(ScaleType.FIT_CENTER);
-      }
-    } else if (key.equals("margin-right")) {
-      if (getParent() instanceof LinearLayout) {
-	LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) getLayoutParams();
-	params.rightMargin = Integer.parseInt(value);
-	setLayoutParams(params);
-      }
-    } else if (key.equals("margin-left")) {
-      if (getParent() instanceof LinearLayout) {
-	LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) getLayoutParams();
-	params.leftMargin = Integer.parseInt(value);
-	setLayoutParams(params);
-      }
-    } else if (key.equals("margin-top")) {
-      if (getParent() instanceof LinearLayout) {
-	LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) getLayoutParams();
-	params.topMargin = Integer.parseInt(value);
-	setLayoutParams(params);
-      }
-    } else if (key.equals("margin-bottom")) {
-      if (getParent() instanceof LinearLayout) {
-	LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) getLayoutParams();
-	params.bottomMargin = Integer.parseInt(value);
-	setLayoutParams(params);
       }
     }
   }
