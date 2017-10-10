@@ -6,13 +6,13 @@ import java.util.TimerTask;
 
 import com.sometrik.framework.NativeCommand.Selector;
 
-import android.content.Context;
 import android.graphics.Bitmap.Config;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
+import android.view.View.OnTouchListener;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
@@ -21,11 +21,32 @@ public class FWEditText extends EditText implements NativeCommandHandler {
 
   private FrameWork frame;
   private Date lastTypeTime;
+  ViewStyleManager normalStyle, activeStyle, currentStyle;
   
   public FWEditText(FrameWork frameWork) {
     super(frameWork);
     this.frame = frameWork;
 
+    final float scale = getContext().getResources().getDisplayMetrics().density;
+    this.normalStyle = currentStyle = new ViewStyleManager(scale, true);
+    this.activeStyle = new ViewStyleManager(scale, false);
+    
+    final FWEditText editText = this;
+    
+    setOnTouchListener(new OnTouchListener() {
+      @Override
+      public boolean onTouch(View v, MotionEvent event) {
+	if (event.getAction() == MotionEvent.ACTION_DOWN) {
+	  editText.currentStyle = editText.activeStyle;
+	  editText.currentStyle.apply(editText);
+	} else if (event.getAction() == MotionEvent.ACTION_UP) {
+	  editText.currentStyle = editText.normalStyle;
+	  editText.currentStyle.apply(editText);
+	}
+	return false;
+      }
+    });
+    
     LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
     setLayoutParams(params);
   }
@@ -97,41 +118,15 @@ public class FWEditText extends EditText implements NativeCommandHandler {
 
   @Override
   public void setStyle(Selector selector, String key, String value) {
-    if (key.equals("weight")) {
-      LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
-      params.weight = Integer.parseInt(value);
-      setLayoutParams(params);
-    } else if (key.equals("width")) {
-      LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
-      if (value.equals("wrap-content")) {
-	params.width = LinearLayout.LayoutParams.WRAP_CONTENT;
-      } else if (value.equals("match-parent")) {
-	params.width = LinearLayout.LayoutParams.MATCH_PARENT;
-      }
-      setLayoutParams(params);
-    } else if (key.equals("height")) {
-      LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
-      if (value.equals("wrap-content")) {
-	params.height = LinearLayout.LayoutParams.WRAP_CONTENT;
-      } else if (value.equals("match-parent")) {
-	params.height = LinearLayout.LayoutParams.MATCH_PARENT;
-      }
-      setLayoutParams(params);
-    } else if (key.equals("gravity")) {
-      LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
-      params.weight = 1;
-      if (value.equals("bottom")) {
-	params.gravity = Gravity.BOTTOM;
-      } else if (value.equals("top")) {
-	params.gravity = Gravity.TOP;
-      } else if (value.equals("left")) {
-	params.gravity = Gravity.LEFT;
-      } else if (value.equals("right")) {
-	params.gravity = Gravity.RIGHT;
-      }
-    } else if (key.equals("minimun-width")) {
-      setMinimumWidth(Integer.parseInt(value));
-    } else if (key.equals("hint")) {
+    if (selector == Selector.NORMAL) {
+      normalStyle.setStyle(key, value);
+      if (normalStyle == currentStyle) normalStyle.apply(this);
+    } else if (selector == Selector.ACTIVE) {
+      activeStyle.setStyle(key, value);      
+      if (activeStyle == currentStyle) activeStyle.apply(this);
+    }
+    
+    if (key.equals("hint")) {
       setHint(value);
     }
   }
