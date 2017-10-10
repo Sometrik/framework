@@ -38,7 +38,7 @@ public class FWSimpleList extends LinearLayout implements NativeCommandHandler {
       defaultListParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
       // defaultListParams.setMargins(0, 10, 0, 10);
       setOrientation(LinearLayout.VERTICAL);
-      setDividerDrawable(frame.getResources().getDrawable(android.R.drawable.divider_horizontal_bright));
+//      setDividerDrawable(frame.getResources().getDrawable(android.R.drawable.divider_horizontal_bright));
     }
     
     @Override
@@ -221,11 +221,11 @@ public class FWSimpleList extends LinearLayout implements NativeCommandHandler {
     System.out.println("SimpleListView style " + key + " " + value);
     if (key.equals("divider")) {
       if (value.equals("middle")) {
-	this.setShowDividers(LinearLayout.SHOW_DIVIDER_MIDDLE);
+	// this.setShowDividers(LinearLayout.SHOW_DIVIDER_MIDDLE);
       } else if (value.equals("end")) {
-	this.setShowDividers(LinearLayout.SHOW_DIVIDER_END);
+	// this.setShowDividers(LinearLayout.SHOW_DIVIDER_END);
       } else if (value.equals("beginning")) {
-	this.setShowDividers(LinearLayout.SHOW_DIVIDER_BEGINNING);
+	// this.setShowDividers(LinearLayout.SHOW_DIVIDER_BEGINNING);
       }
     } else if (key.equals("background-color")) {
       this.setBackgroundColor(Color.parseColor(value));
