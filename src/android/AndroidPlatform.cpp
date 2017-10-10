@@ -510,6 +510,8 @@ void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, job
     AndroidClientFactory::initialize(env);
     canvas::AndroidContextFactory::initialize(env, assetManager);
 
+    initialPrefs.clearChanges();
+
     shared_ptr<FWApplication> application(applicationMain());
     application->setPreferences(initialPrefs);
     application->setMobileAccount(account);
