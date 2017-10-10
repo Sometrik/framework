@@ -31,7 +31,7 @@ public class FWActionBar implements NativeCommandHandler {
   private ImageButton drawerButton;
   private LinearLayout mainLayout;
   private FWLayout alternativeButtonLayout;
-  
+  ViewStyleManager normalStyle, activeStyle, currentStyle;
 
   public FWActionBar(final FrameWork frame, String title, int id){
     this.frame = frame;
@@ -125,7 +125,6 @@ public class FWActionBar implements NativeCommandHandler {
 //    cd.setColor(Color.WHITE);
 //    actionBar.setBackgroundDrawable(cd);
 //
-//	final float scale = frame.getResources().getDisplayMetrics().density;
 //    try {
 //        Field f = actionBar.getClass().getSuperclass().getDeclaredField("mContentHeight");
 //        f.setAccessible(true);
@@ -136,6 +135,8 @@ public class FWActionBar implements NativeCommandHandler {
 //      e.printStackTrace();
 //    }
     
+    this.normalStyle = currentStyle = new ViewStyleManager(scale, true);
+    this.activeStyle = new ViewStyleManager(scale, false);
     
     itemList = new ArrayList<ActionBarItem>();
     this.id = id;
@@ -227,6 +228,14 @@ public class FWActionBar implements NativeCommandHandler {
 
   @Override
   public void setStyle(Selector selector, String key, String value) {
+    if (selector == Selector.NORMAL) {
+      normalStyle.setStyle(key, value);
+      // if (normalStyle == currentStyle) normalStyle.apply(this);
+    } else if (selector == Selector.ACTIVE) {
+      activeStyle.setStyle(key, value);      
+      // if (activeStyle == currentStyle) activeStyle.apply(this);
+    }
+    
     if (key.equals("subtitle")) {
       subtitleView.setText(value);
       if (value.isEmpty()) {
