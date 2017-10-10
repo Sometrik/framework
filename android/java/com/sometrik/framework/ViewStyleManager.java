@@ -1,6 +1,7 @@
 package com.sometrik.framework;
 
 import android.graphics.Color;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.LinearLayout;
@@ -20,8 +21,8 @@ class ViewStyleManager {
   private String title = null;
   private Integer weight = null;
   private Integer backgroundColor = null;
-
   private Color color = null;
+  private Integer gravity = null;
   
   public ViewStyleManager(float displayScale) {
     this.displayScale = displayScale;
@@ -90,6 +91,16 @@ class ViewStyleManager {
       
     } else if (key.equals("background-color")) {
       backgroundColor = new Integer(Color.parseColor(value));
+    } else if (key.equals("gravity")) {
+      if (value.equals("bottom")) {
+	gravity = new Integer(Gravity.BOTTOM);
+      } else if (value.equals("top")) {
+	gravity = new Integer(Gravity.TOP);
+      } else if (value.equals("left")) {
+	gravity = new Integer(Gravity.LEFT);
+      } else if (value.equals("right")) {
+	gravity = new Integer(Gravity.RIGHT);
+      }
     }
   }
 
@@ -116,7 +127,8 @@ class ViewStyleManager {
     // Layout parameters
     if (weight != null || width != null || height != null ||
 	marginRight != null || marginLeft != null ||
-	marginTop != null || marginBottom != null) {
+	marginTop != null || marginBottom != null ||
+	gravity != null) {
       
       if (view.getParent() instanceof LinearLayout) {
       LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)view.getLayoutParams();
@@ -127,6 +139,7 @@ class ViewStyleManager {
       	if (marginBottom != null) params.bottomMargin = applyScale(marginBottom);
       	if (width != null) params.width = applyScale(width);
       	if (height != null) params.height = applyScale(height);
+      	if (gravity != null) params.gravity = gravity;
       	view.setLayoutParams(params);
       } else {
 	System.out.println("this style cannot be applied to view that doesn't have LinearLayout as parent");
