@@ -3,8 +3,8 @@ package com.sometrik.framework;
 import com.sometrik.framework.NativeCommand.Selector;
 
 import android.view.View;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.LinearLayout;
-import android.widget.LinearLayout.LayoutParams;
 
 class ViewStyleManager {
   private float displayScale = 1.0f;
@@ -70,17 +70,17 @@ class ViewStyleManager {
       title = value;
     } else if (key.equals("width")) {
       if (value.equals("wrap-content")) {
-	width = new Integer(LinearLayout.LayoutParams.WRAP_CONTENT);
+	width = new Integer(LayoutParams.WRAP_CONTENT);
       } else if (value.equals("match-parent")) {
-	width = new Integer(LinearLayout.LayoutParams.MATCH_PARENT);
+	width = new Integer(LayoutParams.MATCH_PARENT);
       } else {
 	width = new Integer(value);
       }
     } else if (key.equals("height")) {
       if (value.equals("wrap-content")) {
-	height = new Integer(LinearLayout.LayoutParams.WRAP_CONTENT);
+	height = new Integer(LayoutParams.WRAP_CONTENT);
       } else if (value.equals("match-parent")) {
-	height = new Integer(LinearLayout.LayoutParams.MATCH_PARENT);
+	height = new Integer(LayoutParams.MATCH_PARENT);
       } else {
 	height = new Integer(value);
       }
@@ -111,15 +111,20 @@ class ViewStyleManager {
     if (weight != null || width != null || height != null ||
 	marginRight != null || marginLeft != null ||
 	marginTop != null || marginBottom != null) {
-      LinearLayout.LayoutParams params = (LayoutParams)view.getLayoutParams();
-      if (weight != null) params.weight = weight;
-      if (marginRight != null) params.rightMargin = applyScale(marginRight);
-      if (marginLeft != null) params.leftMargin = applyScale(marginLeft);
-      if (marginTop != null) params.rightMargin = applyScale(marginTop);
-      if (marginBottom != null) params.bottomMargin = applyScale(marginBottom);
-      if (width != null) params.width = applyScale(width);
-      if (height != null) params.height = applyScale(height);
-      view.setLayoutParams(params);
+      
+      if (view.getParent() instanceof LinearLayout) {
+      LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)view.getLayoutParams();
+      	if (weight != null) params.weight = weight;
+      	if (marginRight != null) params.rightMargin = applyScale(marginRight);
+      	if (marginLeft != null) params.leftMargin = applyScale(marginLeft);
+      	if (marginTop != null) params.rightMargin = applyScale(marginTop);
+      	if (marginBottom != null) params.bottomMargin = applyScale(marginBottom);
+      	if (width != null) params.width = applyScale(width);
+      	if (height != null) params.height = applyScale(height);
+      	view.setLayoutParams(params);
+      } else {
+	System.out.println("this style cannot be applied to view that doesn't have LinearLayout as parent");
+      }
     }
   }
 
