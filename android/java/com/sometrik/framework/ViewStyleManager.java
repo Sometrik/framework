@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 class ViewStyleManager {
@@ -205,7 +206,10 @@ class ViewStyleManager {
 	marginTop != null || marginBottom != null ||
 	gravity != null) {
       
-      if (view.getParent() instanceof LinearLayout) {
+      if (view.getParent() instanceof ScrollView) { // stupid hack
+	FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+	view.setLayoutParams(params);
+      } else if (view.getParent() instanceof LinearLayout) {
 	LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)view.getLayoutParams();
       	if (weight != null) params.weight = weight;
       	if (marginRight != null) params.rightMargin = applyScale(marginRight);
