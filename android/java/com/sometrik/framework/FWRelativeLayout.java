@@ -36,16 +36,16 @@ public class FWRelativeLayout extends RelativeLayout implements NativeCommandHan
 
   @Override
   public void addOption(int optionId, String text) {
-    for (int i = 0; i < getChildCount(); i++) {
-      if (optionId == getChildAt(i).getId()) {
-	System.out.println("relative: child found");
-	View view = getChildAt(i);
-	LayoutParams params = (LayoutParams) view.getLayoutParams();
-	if (text.equals("parent-left")) {
-	  params.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-	}
-      }
-    }
+//    for (int i = 0; i < getChildCount(); i++) {
+//      if (optionId == getChildAt(i).getId()) {
+//	System.out.println("relative: child found");
+//	View view = getChildAt(i);
+//	LayoutParams params = (LayoutParams) view.getLayoutParams();
+//	if (text.equals("parent-left")) {
+//	  params.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+//	}
+//      }
+//    }
   }
 
   @Override
