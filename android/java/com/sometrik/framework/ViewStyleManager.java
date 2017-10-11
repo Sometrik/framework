@@ -214,7 +214,7 @@ class ViewStyleManager {
       	if (weight != null) params.weight = weight;
       	if (marginRight != null) params.rightMargin = applyScale(marginRight);
       	if (marginLeft != null) params.leftMargin = applyScale(marginLeft);
-      	if (marginTop != null) params.rightMargin = applyScale(marginTop);
+      	if (marginTop != null) params.topMargin = applyScale(marginTop);
       	if (marginBottom != null) params.bottomMargin = applyScale(marginBottom);
       	if (width != null) params.width = applyScale(width);
       	if (height != null) params.height = applyScale(height);
@@ -224,7 +224,7 @@ class ViewStyleManager {
 	FrameLayout.LayoutParams params = (FrameLayout.LayoutParams)view.getLayoutParams();
       	if (marginRight != null) params.rightMargin = applyScale(marginRight);
       	if (marginLeft != null) params.leftMargin = applyScale(marginLeft);
-      	if (marginTop != null) params.rightMargin = applyScale(marginTop);
+      	if (marginTop != null) params.topMargin = applyScale(marginTop);
       	if (marginBottom != null) params.bottomMargin = applyScale(marginBottom);
       	if (width != null) params.width = applyScale(width);
       	if (height != null) params.height = applyScale(height);
@@ -234,7 +234,7 @@ class ViewStyleManager {
 	RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)view.getLayoutParams();
       	if (marginRight != null) params.rightMargin = applyScale(marginRight);
       	if (marginLeft != null) params.leftMargin = applyScale(marginLeft);
-      	if (marginTop != null) params.rightMargin = applyScale(marginTop);
+      	if (marginTop != null) params.topMargin = applyScale(marginTop);
       	if (marginBottom != null) params.bottomMargin = applyScale(marginBottom);
       	if (width != null) params.width = applyScale(width);
       	if (height != null) params.height = applyScale(height);
