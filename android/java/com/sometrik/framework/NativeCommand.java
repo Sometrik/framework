@@ -696,8 +696,8 @@ public class NativeCommand {
     return checkBox;
   }
 
-  private FWTextView createTextView() {
-    FWTextView textView = new FWTextView(frame);
+  private FWTextView createTextView(boolean autolink) {
+    FWTextView textView = new FWTextView(frame, getValue() != 0);
     textView.setId(getChildInternalId());
     if (isSet(FLAG_HYPERLINK)) {
       textView.setMovementMethod(LinkMovementMethod.getInstance());

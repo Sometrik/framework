@@ -22,7 +22,7 @@ public class FWTextView extends TextView implements NativeCommandHandler {
   private FrameWork frame;
   ViewStyleManager normalStyle, activeStyle, currentStyle;
   
-  public FWTextView(FrameWork frame) {
+  public FWTextView(FrameWork frame, boolean autolink) {
     super(frame);
     this.frame = frame;
     this.setBackground(null);
@@ -30,6 +30,12 @@ public class FWTextView extends TextView implements NativeCommandHandler {
     final float scale = getContext().getResources().getDisplayMetrics().density;
     this.normalStyle = currentStyle = new ViewStyleManager(scale, true);
     this.activeStyle = new ViewStyleManager(scale, false);
+    this.linkStyle = new ViewStyleManager(scale, false);
+
+    if (autolink) {
+      this.setLinksClickable(true);
+      this.setAutoLinkMask(15);
+    }
     
     final FWTextView textView = this;
 
@@ -76,6 +82,9 @@ public class FWTextView extends TextView implements NativeCommandHandler {
     } else if (selector == Selector.ACTIVE) {
       activeStyle.setStyle(key, value);      
       if (activeStyle == currentStyle) activeStyle.apply(this);
+    } else if (selector == Selector.LINK) {
+      linkStyle.setStyle(key, value);
+      linkStyle.applyLinkColor(this);
     }
 
     if (key.equals("max-lines")) {
@@ -84,10 +93,7 @@ public class FWTextView extends TextView implements NativeCommandHandler {
   }
 
   @Override
-  public void setError(boolean hasError, String errorText) {
-    //TODO
-    System.out.println("FWTextView couldn't handle command");
-  }
+  public void setError(boolean hasError, String errorText) { }
 
   @Override
   public int getElementId() {

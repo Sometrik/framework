@@ -364,6 +364,14 @@ class ViewStyleManager {
     }
   }
 
+  public void applyLinkColor(View view) {
+    if (view instanceof TextView) { // also Buttons
+      TextView textView = (TextView)view;
+
+      if (color != null) textView.setLinkTextColor(color);
+    }
+  }
+
   protected int applyScale(int v) {
     return (int)(v * displayScale + 0.5f);
   }
