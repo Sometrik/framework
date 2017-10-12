@@ -145,12 +145,14 @@ public class FWImageView extends ImageView implements NativeCommandHandler {
     }
     
     if (key.equals("scale")) {
-      if (value.equals("start")) {
+      if (value.equals("fit-start")) {
 	setScaleType(ScaleType.FIT_START);
-      } else if (value.equals("end")) {
+      } else if (value.equals("fit-end")) {
 	setScaleType(ScaleType.FIT_END);
-      } else if (value.equals("center")) {
+      } else if (value.equals("fit-center")) {
 	setScaleType(ScaleType.FIT_CENTER);
+      } else if (value.equals("center")) {
+	setScaleType(ScaleType.CENTER);
       }
     }
   }
