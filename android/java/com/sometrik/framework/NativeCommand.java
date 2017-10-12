@@ -73,7 +73,8 @@ public class NativeCommand {
     ACTIVE,
     HOVER,
     SELECTED,
-    DISABLED
+    DISABLED,
+    LINK
   };
  
   public enum CommandType {
