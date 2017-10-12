@@ -204,4 +204,10 @@ public class FWButton extends Button implements NativeCommandHandler {
     // TODO Auto-generated method stub
     
   }
+
+  @Override
+  public void deinitialize() {
+    // TODO Auto-generated method stub
+    
+  }
 }

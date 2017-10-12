@@ -565,7 +565,7 @@ public class NativeCommand {
   }
   
   private void deleteElement(NativeCommandHandler parent, int childId) {
-    FrameWork.views.remove(childInternalId);
+    FrameWork.removeViewFromList(childInternalId);
     if (parent instanceof ViewGroup) {
       ViewGroup group = (ViewGroup) parent;
       int childCount = group.getChildCount();

@@ -148,4 +148,10 @@ public class NavigationBar extends FrameLayout implements NativeCommandHandler {
     
   }
 
+  @Override
+  public void deinitialize() {
+    // TODO Auto-generated method stub
+    
+  }
+
 }

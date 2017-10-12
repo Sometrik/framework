@@ -345,4 +345,10 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
     
   }
 
+  @Override
+  public void deinitialize() {
+    // TODO Auto-generated method stub
+    
+  }
+
 }

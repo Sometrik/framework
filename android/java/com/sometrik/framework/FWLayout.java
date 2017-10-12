@@ -250,4 +250,10 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
       removeView(v);
    }
   }
+
+  @Override
+  public void deinitialize() {
+    // TODO Auto-generated method stub
+    
+  }
 }

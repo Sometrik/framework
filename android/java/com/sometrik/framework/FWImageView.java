@@ -19,9 +19,9 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 public class FWImageView extends ImageView implements NativeCommandHandler {
-
   FrameWork frame;
   ViewStyleManager normalStyle, activeStyle, currentStyle;
+  Bitmap ownedBitmap = null;
   
   public FWImageView(final FrameWork frame) {
     super(frame);
@@ -63,12 +63,13 @@ public class FWImageView extends ImageView implements NativeCommandHandler {
   
   void setImageFromAssets(String filename) {
     try {
+      deinitialize();
+      
       AssetManager mgr = frame.getAssets();
       InputStream stream = mgr.open(filename);
       if (stream != null) {
-	Bitmap bitmap = BitmapFactory.decodeStream(stream);
-	setImageBitmap(bitmap);
-	bitmap = null;
+	ownedBitmap = BitmapFactory.decodeStream(stream);
+	setImageBitmap(ownedBitmap);
       }
       stream.close();
     } catch (IOException e) {
@@ -176,29 +177,13 @@ public class FWImageView extends ImageView implements NativeCommandHandler {
   
   @Override
   public void setImage(byte[] bytes, int width, int height, Bitmap.Config config) {
-    System.out.println("SetImage " + bytes.length + " " + getWidth());
-//    Bitmap map = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-//    BitmapFactory.decodeStream(bytes);
-//    BitmapFactory.de
-//    InputStream myInputStream = new ByteArrayInputStream(bytes); 
-//
-//  Bitmap map = BitmapFactory.decodeStream(myInputStream);
-//    if (map == null) {
-//      System.out.println("shieet");
-//    } else {
-//      System.out.println("mappi: " + map.getHeight());
-//    } 
-
-	final float scale = getContext().getResources().getDisplayMetrics().density;
-//      System.out.println("picture scale: " + scale + " " + width + " " + height);
-//    Bitmap bmp = Bitmap.createBitmap((int)scale * width, (int)scale * height, config);
-    Bitmap bmp = Bitmap.createBitmap(width, height, config);
-//  Bitmap bmp = Bitmap.createBitmap((int[])bytes, 32, 32, Bitmap.Config.ARGB_8888)
+    deinitialize();
+    
+    ownedBitmap = Bitmap.createBitmap(width, height, config);
     ByteBuffer buffer = ByteBuffer.wrap(bytes);
-    bmp.copyPixelsFromBuffer(buffer);
-//    Bitmap map = Bitmap.create
-    this.setImageBitmap(bmp);
-//    map = null;
+    ownedBitmap.copyPixelsFromBuffer(buffer);
+    this.setImageBitmap(ownedBitmap);
+    
     invalidate();
   }
 
@@ -206,6 +191,14 @@ public class FWImageView extends ImageView implements NativeCommandHandler {
   public void reshape(int size) {
     // TODO Auto-generated method stub
     
+  }
+
+  @Override
+  public void deinitialize() {
+    if (ownedBitmap != null) {
+      ownedBitmap.recycle();
+      ownedBitmap = null;
+    }
   }
 
 }

@@ -161,4 +161,10 @@ public class NavigationLayout extends LinearLayout implements NativeCommandHandl
 
   }
 
+  @Override
+  public void deinitialize() {
+    // TODO Auto-generated method stub
+    
+  }
+
 }

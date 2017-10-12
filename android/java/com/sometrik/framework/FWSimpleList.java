@@ -373,5 +373,11 @@ public class FWSimpleList extends LinearLayout implements NativeCommandHandler {
     }
   }
 
+    @Override
+    public void deinitialize() {
+      // TODO Auto-generated method stub
+      
+    }
+
   }
 

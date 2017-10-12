@@ -260,7 +260,9 @@ public class FrameWork extends Activity {
     startActivity(browserIntent);
   }
   
-  public void removeViewFromList(int viewId){
+  static public void removeViewFromList(int viewId) {
+    NativeCommandHandler view = FrameWork.views.get(viewId);
+    if (view != null) view.deinitialize();
     FrameWork.views.remove(viewId);
   }
 

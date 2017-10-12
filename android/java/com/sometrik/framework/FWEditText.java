@@ -187,4 +187,10 @@ public class FWEditText extends EditText implements NativeCommandHandler {
     // TODO Auto-generated method stub
     
   }
+
+  @Override
+  public void deinitialize() {
+    // TODO Auto-generated method stub
+    
+  }
 }

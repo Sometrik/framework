@@ -22,6 +22,7 @@ public interface NativeCommandHandler {
   public void setError(boolean hasError, String errorText);
   public void clear();
   public void flush();
+  public void deinitialize();
   
   public int getElementId();
 }

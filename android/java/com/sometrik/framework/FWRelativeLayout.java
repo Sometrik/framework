@@ -230,4 +230,10 @@ public class FWRelativeLayout extends RelativeLayout implements NativeCommandHan
     return getId();
   }
 
+  @Override
+  public void deinitialize() {
+    // TODO Auto-generated method stub
+    
+  }
+
 }

@@ -148,4 +148,10 @@ public class FWTextView extends TextView implements NativeCommandHandler {
     // TODO Auto-generated method stub
     
   }
+
+  @Override
+  public void deinitialize() {
+    // TODO Auto-generated method stub
+    
+  }
 }

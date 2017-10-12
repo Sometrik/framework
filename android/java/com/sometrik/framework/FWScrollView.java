@@ -205,4 +205,10 @@ public class FWScrollView extends ScrollView implements NativeCommandHandler {
       }
     }
   }
+
+  @Override
+  public void deinitialize() {
+    // TODO Auto-generated method stub
+    
+  }
 }

@@ -322,4 +322,11 @@ public class FWActionBar implements NativeCommandHandler {
     // TODO Auto-generated method stub
     
   }
+
+
+  @Override
+  public void deinitialize() {
+    // TODO Auto-generated method stub
+    
+  }
 }
