@@ -143,7 +143,7 @@ public:
     g_idle_add(event_callback, ed);
   }
 
-  std::vector<std::pair<int, std::shared_ptr<Event> > > pollEvents() {
+  std::vector<std::pair<int, std::shared_ptr<Event> > > pollEvents(bool blocking = true) {
     std::vector<std::pair<int, std::shared_ptr<Event> > > r;
     return r;
   }
@@ -177,6 +177,7 @@ protected:
     case Selector::NORMAL: return GTK_STATE_FLAG_NORMAL;
     case Selector::ACTIVE: return GTK_STATE_FLAG_ACTIVE;
     case Selector::HOVER: return GTK_STATE_FLAG_PRELIGHT;
+    case Selector::SELECTED: return GTK_STATE_FLAG_SELECTED;
     }
     return GTK_STATE_FLAG_NORMAL;
   }
