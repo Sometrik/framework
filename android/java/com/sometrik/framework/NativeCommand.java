@@ -63,7 +63,6 @@ public class NativeCommand {
   
   private final int FLAG_PASSWORD = 16;
   private final int FLAG_NUMERIC = 32;
-  private final int FLAG_HYPERLINK = 64;
   private final int FLAG_USE_PURCHASES_API = 128;
   private final int FLAG_SLIDERVIEW = 256;
   private final int FLAG_STICKY_HEADER = 512;
@@ -97,6 +96,7 @@ public class NativeCommand {
     CREATE_AUTO_COLUMN_LAYOUT,
     CREATE_PANEL,
     CREATE_TEXT,
+    CREATE_LINK,
     CREATE_DIALOG,
     CREATE_IMAGEVIEW,
     CREATE_ACTION_SHEET,
@@ -366,7 +366,20 @@ public class NativeCommand {
       break;
       
     case CREATE_TEXT:
-      FWTextView textView = createTextView();
+      FWTextView textView = new FWTextView(frame, getValue() != 0);
+      textView.setId(getChildInternalId());
+      textView.setText(getTextValueAsString());
+      FrameWork.addToViewList(textView);
+      view.addChild(textView);
+      break;
+
+    case CREATE_LINK:
+      FWTextView textView = new FWTextView(frame, false);
+      textView.setId(getChildInternalId());
+      textView.setMovementMethod(LinkMovementMethod.getInstance());
+      String text = "<a href='" + getTextValue2AsString() + "'>" + getTextValueAsString() + "</a>";
+      textView.setText(Html.fromHtml(text));
+      FrameWork.addToViewList(textView);
       view.addChild(textView);
       break;
 
@@ -376,7 +389,6 @@ public class NativeCommand {
       if (getTextValueAsString() != null && getTextValueAsString() != "") {
 	imageView.setImageFromAssets(getTextValueAsString());
       }
-//      imageView.setImage(getTextValueAsBinary());
       FrameWork.addToViewList(imageView);
       view.addChild(imageView);
       break;
@@ -694,21 +706,6 @@ public class NativeCommand {
       }
     });
     return checkBox;
-  }
-
-  private FWTextView createTextView(boolean autolink) {
-    FWTextView textView = new FWTextView(frame, getValue() != 0);
-    textView.setId(getChildInternalId());
-    if (isSet(FLAG_HYPERLINK)) {
-      textView.setMovementMethod(LinkMovementMethod.getInstance());
-      String text = "<a href='" + getTextValue2AsString() + "'>" + getTextValueAsString() + "</a>";
-      textView.setText(Html.fromHtml(text));
-    } else {
-      textView.setText(getTextValueAsString());
-    }
-
-    FrameWork.addToViewList(textView);
-    return textView;
   }
 
  // Create dialog with user text input
