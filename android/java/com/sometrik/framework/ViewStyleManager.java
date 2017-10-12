@@ -2,9 +2,11 @@ package com.sometrik.framework;
 
 import android.app.Dialog;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RoundRectShape;
+import android.text.TextUtils.TruncateAt;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +19,10 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 class ViewStyleManager {
+  private enum WhiteSpace { NORMAL, NOWRAP };
+  private enum HorizontalAlignment { LEFT, CENTER, RIGHT };
+  private enum TextOverflow { CLIP, ELLIPSIS };
+  private enum FontStyle { NORMAL, ITALIC, OBLIQUE };
   private float displayScale = 1.0f;
   
   private boolean isPaddingSet = false;
@@ -37,6 +43,14 @@ class ViewStyleManager {
   private Integer shadow = null;
   private float[] borderRadius = null;
   private Integer borderWidth = null, borderColor = null;
+  private Integer fontSize = null;
+  private WhiteSpace whiteSpace = null;
+  private HorizontalAlignment textAlign = null;
+  private TextOverflow textOverflow = null;
+  private Integer fontWeight = null;
+  private FontStyle fontStyle = null;
+  private String fontFamily = null;
+  private String hint = null;
   
   public ViewStyleManager(float displayScale, boolean isDefault) {
     this.displayScale = displayScale;
@@ -155,7 +169,51 @@ class ViewStyleManager {
 	if (i < values.length) prev = Float.valueOf(values[i].trim());
 	borderRadius[i] = prev;
       }
-    } 
+    } else if (key.equals("font-size")) {
+      if (value.equals("small")){
+	fontSize = new Integer(9);
+      } else if (value.equals("medium")){
+	fontSize = new Integer(12);
+      } else if (value.equals("large")){
+	fontSize = new Integer(15);
+      } else {
+	fontSize = new Integer(value);
+      }
+    } else if (key.equals("white-space")) {
+      if (value.equals("nowrap")) whiteSpace = WhiteSpace.NOWRAP;
+    } else if (key.equals("text-overflow")) {
+      if (value.equals("ellipsis")) {
+	textOverflow = TextOverflow.ELLIPSIS;
+      }
+    } else if (key.equals("font-weight")) {
+      if (value.equals("normal")) {
+	fontWeight = new Integer(400);
+      } else if (value.equals("bold")) {
+	fontWeight = new Integer(700);
+      } else {
+	fontWeight = new Integer(value);
+      }
+    } else if (key.equals("font-style")) {
+      if (value.equals("italic")) {
+	fontStyle = FontStyle.ITALIC;
+      } else if (value.equals("oblique")) {
+	fontStyle = FontStyle.OBLIQUE;
+      } else {
+	fontStyle = FontStyle.NORMAL;
+      }
+    } else if (key.equals("text-align")) {
+      if (value.equals("left")) {
+	textAlign = HorizontalAlignment.LEFT;
+      } else if (value.equals("center")) {
+	textAlign = HorizontalAlignment.CENTER;
+      } else if (value.equals("right")) {
+	textAlign = HorizontalAlignment.RIGHT;
+      }
+    } else if (key.equals("font-family")) {
+      fontFamily = value;
+    } else if (key.equals("hint")) {
+      hint = value;
+    }
   }
 
   public void apply(Dialog dialog) {
@@ -262,6 +320,47 @@ class ViewStyleManager {
       TextView textView = (TextView)view;
 
       if (color != null) textView.setTextColor(color);
+      if (fontSize != null) textView.setTextSize(fontSize);
+      if (whiteSpace != null) {
+	switch (whiteSpace) {
+	case NORMAL:
+	  textView.setSingleLine(false);
+	  break;
+	case NOWRAP:
+	  textView.setSingleLine(true);
+	  break;
+	}
+      }
+      if (textAlign != null) {
+	switch (textAlign) {
+	case LEFT:
+	  textView.setTextAlignment(TextView.TEXT_ALIGNMENT_TEXT_START);
+	  break;
+	case CENTER:
+	  textView.setTextAlignment(TextView.TEXT_ALIGNMENT_CENTER);
+	  break;
+	case RIGHT:
+  	  textView.setTextAlignment(TextView.TEXT_ALIGNMENT_TEXT_END);
+  	  break;
+	}
+      }
+      if (textOverflow != null) {
+	switch (textOverflow) {
+	case CLIP:
+	  textView.setEllipsize(null);
+	  break;
+	case ELLIPSIS:
+	  textView.setEllipsize(TruncateAt.END);
+	  break;
+	} 
+      }
+      if (fontFamily != null || fontWeight != null || fontStyle != null) {
+	int flags = 0;
+	if (fontWeight != null && fontWeight < 550) flags |= Typeface.BOLD;
+	if (fontStyle != null && (fontStyle == FontStyle.ITALIC || fontStyle == FontStyle.OBLIQUE)) flags |= Typeface.ITALIC;
+	textView.setTypeface(Typeface.create(fontFamily, flags), flags); 
+      }
+      if (hint != null) textView.setHint(hint);
     }
   }
 

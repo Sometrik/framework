@@ -105,17 +105,7 @@ public class FWButton extends Button implements NativeCommandHandler {
       if (activeStyle == currentStyle) activeStyle.apply(this);
     }
     
-    if (key.equals("font-size")){
-      if (value.equals("small")){
-	this.setTextSize(9);
-      } else if (value.equals("medium")){
-	this.setTextSize(12);
-      } else if (value.equals("large")){
-	this.setTextSize(15);
-      } else {
-	setTextSize(Integer.parseInt(value));
-      }
-    } else if (key.equals("pressed")) {
+    if (key.equals("pressed")) {
       if (value.equals("true") || value.equals("1")) {
 	this.setPressed(true);
 	this.setTextColor(Color.RED);
@@ -143,10 +133,6 @@ public class FWButton extends Button implements NativeCommandHandler {
         System.out.println("no picture found: " + value);
         e.printStackTrace();
       }
-    } else if (key.equals("white-space")) {
-      boolean single = false;
-      if (value.equals("nowrap")) single = true;
-      setSingleLine(single);
     } else if (key.equals("animation")) {
       if (value.equals("rotate")) {
 	RotateAnimation r = new RotateAnimation(-5f, 5f,50,50); 

@@ -125,10 +125,6 @@ public class FWEditText extends EditText implements NativeCommandHandler {
       activeStyle.setStyle(key, value);      
       if (activeStyle == currentStyle) activeStyle.apply(this);
     }
-    
-    if (key.equals("hint")) {
-      setHint(value);
-    }
   }
 
   @Override

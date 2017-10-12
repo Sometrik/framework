@@ -25,7 +25,6 @@ public class FWTextView extends TextView implements NativeCommandHandler {
   public FWTextView(FrameWork frame) {
     super(frame);
     this.frame = frame;
-//    Color color = new Color();
     this.setBackground(null);
     
     final float scale = getContext().getResources().getDisplayMetrics().density;
@@ -84,45 +83,7 @@ public class FWTextView extends TextView implements NativeCommandHandler {
       if (activeStyle == currentStyle) activeStyle.apply(this);
     }
 
-    if (key.equals("font-size")) {
-      if (value.equals("small")) {
-	this.setTextSize(9);
-      } else if (value.equals("medium")) {
-	this.setTextSize(12);
-      } else if (value.equals("large")) {
-	this.setTextSize(15);
-      } else {
-	setTextSize(Integer.parseInt(value));
-      }
-    } else if (key.equals("text-overflow")) {
-      if (value.equals("ellipsis")) {
-	setEllipsize(TruncateAt.END);
-      }   
-    } else if (key.equals("font-weight")) {
-      if (value.equals("bold")) {
-        setTypeface(null, Typeface.BOLD);
-      } else if (value.equals("normal")) {
-	setTypeface(null, Typeface.NORMAL);
-      }
-    } else if (key.equals("font-style")) {
-      if (value.equals("italic") || value.equals("oblique")) {
-        setTypeface(null, Typeface.ITALIC);
-      } else if (value.equals("normal")) {
-	setTypeface(null, Typeface.NORMAL);
-      }
-    } else if (key.equals("text-align")) {
-      if (value.equals("left")) {
-	setTextAlignment(TEXT_ALIGNMENT_TEXT_START);
-      } else if (value.equals("center")) {
-	setTextAlignment(TEXT_ALIGNMENT_CENTER);
-      } else if (value.equals("right")) {
-	setTextAlignment(TEXT_ALIGNMENT_TEXT_END);
-      }
-    } else if (key.equals("white-space")) {
-      boolean single = false;
-      if (value.equals("nowrap")) single = true;
-      setSingleLine(single);
-    } else if (key.equals("max-lines")) {
+    if (key.equals("max-lines")) {
       setMaxLines(Integer.parseInt(value));
     }
   }
