@@ -60,9 +60,7 @@ class PlatformThread : public Element {
   virtual void startEventLoop() = 0;
 
   virtual bool terminate() {
-    std::cerr << "terminating " << subthreads.size() << " threads:\n";
-    dumpThreads();
-    
+    std::cerr << "terminating " << subthreads.size() << " threads:\n";    
     for (auto & thread : subthreads) {
       thread.second->terminate();
     }
@@ -117,14 +115,6 @@ class PlatformThread : public Element {
   int getActualDisplayHeight() const { return actual_display_height; }
   float getDisplayScale() const { return display_scale; }
 
-  void dumpThreads() const {
-    std::cerr << "running threads:\n";
-    for (auto & t : subthreads) {
-      auto & r = t.second->getRunnable();
-      std::cerr << "  thread " << t.second->getInternalId() << "/" << typeid(r).name() << ": " << r.getStatusText() << std::endl;
-    }
-  }
-
   const PlatformThread * getThreadById(int id) const {
     auto it = subthreads.find(id);
     if (it != subthreads.end()) {
@@ -136,6 +126,10 @@ class PlatformThread : public Element {
 
   size_t getNumRunningThreads() const {
     return subthreads.size();
+  }
+
+  const std::unordered_map<int, std::shared_ptr<PlatformThread> > & getSubThreads() const {
+    return subthreads;
   }
 
   virtual std::shared_ptr<PlatformThread> createThread(std::shared_ptr<Runnable> & runnable) = 0;
