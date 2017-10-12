@@ -138,11 +138,6 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
   }
   
   @Override
-  public void setViewEnabled(Boolean enabled) {
-    System.out.println("FWLayout couldn't handle command");
-  }
-  
-  @Override
   public void setStyle(Selector selector, String key, String value) {
     if (selector == Selector.NORMAL) {
       normalStyle.setStyle(key, value);

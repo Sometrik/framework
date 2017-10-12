@@ -84,11 +84,6 @@ public class FWScrollView extends ScrollView implements NativeCommandHandler {
   }
 
   @Override
-  public void setViewEnabled(Boolean enabled) {
-    System.out.println("FWScrollView couldn't handle command");
-  }
-
-  @Override
   public void setStyle(Selector selector, String key, String value) {
     if (key.equals("background-color")) {
       this.setBackgroundColor(Color.parseColor(value));

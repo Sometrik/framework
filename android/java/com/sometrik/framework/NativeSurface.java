@@ -106,11 +106,6 @@ public class NativeSurface extends SurfaceView implements NativeCommandHandler {
   }
 
   @Override
-  public void setViewEnabled(Boolean enabled) {
-    System.out.println("FrameWork couldn't handle command");
-  }
-
-  @Override
   public void setStyle(Selector selector, String key, String value) { }
 
   @Override
@@ -137,9 +132,7 @@ public class NativeSurface extends SurfaceView implements NativeCommandHandler {
   }
 
   @Override
-  public void clear() {
-    System.out.println("Native Surface couldn't handle command");
-  }
+  public void clear() { }
 
   @Override
   public void flush() {

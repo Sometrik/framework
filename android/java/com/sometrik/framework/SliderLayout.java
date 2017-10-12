@@ -46,7 +46,7 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
     for (SliderButton button : buttonList){
       button.disableOnClick = true;
       button.child.setViewVisibility(false);
-      button.child.setViewEnabled(false);
+      // button.child.setViewEnabled(false);
     }
     
     Timer timer = new Timer();
@@ -55,7 +55,7 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
       public void run() {
 	for (SliderButton button : buttonList) {
 	  button.disableOnClick = false;
-	  button.child.setViewEnabled(true);
+	  // button.child.setViewEnabled(true);
 	}
       }
     };
@@ -238,18 +238,8 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
   }
   
   @Override
-  public void setViewEnabled(Boolean enabled) {
-    // TODO Auto-generated method stub
-    
-  }
-
-  @Override
   public void setViewVisibility(boolean visible) {
-    if (visible){
-      this.setVisibility(VISIBLE);
-    } else{
-      this.setVisibility(GONE);
-    }
+    this.setVisibility(visible ? VISIBLE : GONE);
   }
 
   @Override

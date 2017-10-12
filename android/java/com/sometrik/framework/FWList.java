@@ -103,12 +103,6 @@ public class FWList extends ListView implements NativeCommandHandler {
   }
 
   @Override
-  public void setViewEnabled(Boolean enabled) {
-    // TODO Auto-generated method stub
-
-  }
-
-  @Override
   public void setStyle(Selector selector, String key, String value) {
     // TODO Auto-generated method stub
 

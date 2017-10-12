@@ -54,11 +54,6 @@ public class FWRadioGroup extends RadioGroup implements NativeCommandHandler {
   }
 
   @Override
-  public void setViewEnabled(Boolean enabled) {
-    setEnabled(enabled);
-  }
-
-  @Override
   public void setStyle(Selector selector, String key, String value) { }
 
   @Override

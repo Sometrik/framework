@@ -51,8 +51,6 @@ class Command {
     SET_TEXT_VALUE, // Sets value of textfields and labels
     SET_INT_DATA,
     SET_TEXT_DATA, // Sets the cell value of GridView
-    SET_ENABLED,
-    SET_READONLY,
     SET_VISIBILITY,
     SET_SHAPE, // Specifies the number of rows and columns in a GridView
     SET_STYLE,

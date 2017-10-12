@@ -91,11 +91,6 @@ public class FWButton extends Button implements NativeCommandHandler {
   }
 
   @Override
-  public void setViewEnabled(Boolean enabled) {
-    setEnabled(enabled);
-  }
-
-  @Override
   public void setStyle(Selector selector, String key, String value) {
     if (selector == Selector.NORMAL) {
       normalStyle.setStyle(key, value);

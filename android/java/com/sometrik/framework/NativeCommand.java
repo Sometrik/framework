@@ -119,8 +119,6 @@ public class NativeCommand {
     SET_TEXT_VALUE, // Sets value of textfields, labels and images
     SET_INT_DATA,
     SET_TEXT_DATA,
-    SET_ENABLED,
-    SET_READONLY,
     SET_VISIBILITY,
     SET_SHAPE, // Specifies the number of rows and columns in a GridView
     SET_STYLE,
@@ -426,9 +424,6 @@ public class NativeCommand {
       if (view != null) {
 	view.setViewVisibility(value != 0);
       }
-      break;
-    case SET_ENABLED:
-      view.setViewEnabled(value != 0);
       break;
     case SET_STYLE:
       view.setStyle(Selector.values()[value], getTextValueAsString(), getTextValue2AsString());

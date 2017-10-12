@@ -92,12 +92,6 @@ public class NavigationLayout extends LinearLayout implements NativeCommandHandl
   }
 
   @Override
-  public void setViewEnabled(Boolean enabled) {
-    // TODO Auto-generated method stub
-
-  }
-
-  @Override
   public void setViewVisibility(boolean visible) {
     System.out.println("Drawer visibility");
     frame.getDrawerLayout().setDrawerVisibility(this, visible);

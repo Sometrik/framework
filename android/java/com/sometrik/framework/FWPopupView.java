@@ -69,15 +69,6 @@ public class FWPopupView extends PopupWindow implements NativeCommandHandler {
   }
 
   @Override
-  public void setViewEnabled(Boolean enabled) {
-    if (enabled){
-      showAtLocation((View)frame.views.get(frame.getCurrentViewId()), Gravity.CENTER, 0, 0);
-    } else {
-      dismiss();
-    }
-  }
-
-  @Override
     public void setViewVisibility(boolean visible) {
     if (visible){
       showAtLocation((View)frame.views.get(frame.getCurrentViewId()), Gravity.CENTER, 0, 0);

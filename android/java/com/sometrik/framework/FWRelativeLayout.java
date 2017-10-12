@@ -16,7 +16,6 @@ public class FWRelativeLayout extends RelativeLayout implements NativeCommandHan
 
   private FrameWork frame;
   private GradientDrawable currentBackground = null;
-
   
   public FWRelativeLayout(FrameWork frame) {
     super(frame);
@@ -86,12 +85,6 @@ public class FWRelativeLayout extends RelativeLayout implements NativeCommandHan
 
   @Override
   public void reshape(int size) {
-    // TODO Auto-generated method stub
-    
-  }
-
-  @Override
-  public void setViewEnabled(Boolean enabled) {
     // TODO Auto-generated method stub
     
   }

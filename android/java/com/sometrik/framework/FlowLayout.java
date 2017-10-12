@@ -191,11 +191,6 @@ public class FlowLayout extends ViewGroup implements NativeCommandHandler {
   }
 
   @Override
-  public void setViewEnabled(Boolean enabled) {
-    System.out.println("FlowLayout coulnd't handle command");
-  }
-
-  @Override
   public void setStyle(Selector selector, String key, String value) {
     System.out.println("FlowLayout coulnd't setStyle command");
   }

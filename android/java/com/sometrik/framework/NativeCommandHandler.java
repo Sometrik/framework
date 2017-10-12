@@ -17,7 +17,6 @@ public interface NativeCommandHandler {
   public void setValue(int v);
   public void reshape(int value, int size);
   public void reshape(int size);
-  public void setViewEnabled(Boolean enabled);
   public void setViewVisibility(boolean visible);
   public void setStyle(Selector selector, String key, String value);
   public void setError(boolean hasError, String errorText);

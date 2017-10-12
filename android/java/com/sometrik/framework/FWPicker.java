@@ -20,7 +20,6 @@ public class FWPicker extends Spinner implements NativeCommandHandler {
   private ArrayAdapter<String> adapter;
   private ArrayList<Integer> idList;
   private final int id;
-  
 
   public FWPicker(FrameWork frameWork) {
     super(frameWork);
@@ -68,11 +67,6 @@ public class FWPicker extends Spinner implements NativeCommandHandler {
   @Override
   public void setValue(int v) {
 
-  }
-
-  @Override
-  public void setViewEnabled(Boolean enabled) {
-    setEnabled(enabled);
   }
 
   @Override

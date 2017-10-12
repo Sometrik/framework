@@ -209,17 +209,8 @@ public class FWActionBar implements NativeCommandHandler {
   }
 
   @Override
-  public void setViewEnabled(Boolean enabled) {
-    if (!enabled){
-      actionBar.hide();
-    } else {
-      actionBar.show();
-    }
-  }
-
-  @Override
   public void setViewVisibility(boolean visible) {
-    if (!visible){
+    if (!visible) {
       actionBar.hide();
     } else {
       actionBar.show();

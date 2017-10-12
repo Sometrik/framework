@@ -123,12 +123,6 @@ public class FWImageView extends ImageView implements NativeCommandHandler {
   }
 
   @Override
-  public void setViewEnabled(Boolean enabled) {
-    // TODO Auto-generated method stub
-    
-  }
-
-  @Override
   public void setViewVisibility(boolean visible) {
     // TODO Auto-generated method stub
   }

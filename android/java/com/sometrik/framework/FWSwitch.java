@@ -41,11 +41,6 @@ public class FWSwitch extends Switch implements NativeCommandHandler {
   }
 
   @Override
-  public void setViewEnabled(Boolean enabled) {
-    setEnabled(enabled);
-  }
-
-  @Override
   public void setStyle(Selector selector, String key, String value) {
     System.out.println("FWSwitch coulnd't handle Command");
   }

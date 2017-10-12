@@ -95,15 +95,6 @@ public class FWDialog extends Dialog implements NativeCommandHandler{
   }
 
   @Override
-  public void setViewEnabled(Boolean enabled) {
-    if (enabled){
-      show();
-    } else {
-      dismiss();
-    }
-  }
-
-  @Override
   public void setViewVisibility(boolean visible) {
     if (visible){
       show();
