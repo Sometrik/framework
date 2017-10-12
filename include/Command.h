@@ -51,7 +51,6 @@ class Command {
     SET_TEXT_VALUE, // Sets value of textfields and labels
     SET_INT_DATA,
     SET_TEXT_DATA, // Sets the cell value of GridView
-    SET_LABEL, // Sets label for buttons and checkboxes
     SET_ENABLED,
     SET_READONLY,
     SET_VISIBILITY,

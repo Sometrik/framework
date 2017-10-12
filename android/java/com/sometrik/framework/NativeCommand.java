@@ -119,7 +119,6 @@ public class NativeCommand {
     SET_TEXT_VALUE, // Sets value of textfields, labels and images
     SET_INT_DATA,
     SET_TEXT_DATA,
-    SET_LABEL, // Sets label for buttons and checkboxes
     SET_ENABLED,
     SET_READONLY,
     SET_VISIBILITY,
@@ -433,9 +432,6 @@ public class NativeCommand {
       break;
     case SET_STYLE:
       view.setStyle(Selector.values()[value], getTextValueAsString(), getTextValue2AsString());
-      break;
-    case SET_LABEL:
-      frame.actionBar.setValue(getTextValueAsString());
       break;
     case SET_ERROR:
       view.setError(value != 0, getTextValueAsString());
