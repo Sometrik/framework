@@ -1,11 +1,13 @@
 package com.sometrik.framework;
 
+import android.app.Dialog;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RoundRectShape;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -156,6 +158,15 @@ class ViewStyleManager {
     } 
   }
 
+  public void apply(Dialog dialog) {
+    if (width != null || height != null) {
+      ViewGroup.LayoutParams params = dialog.getWindow().getAttributes();
+      if (width != null) params.width = applyScale(width);
+      if (height != null) params.height = applyScale(height);
+      dialog.getWindow().setAttributes((android.view.WindowManager.LayoutParams) params);
+    }
+  }
+  
   public void apply(View view) {
     if (opacity != null) view.setAlpha(opacity);
     if (zoom != null) {
