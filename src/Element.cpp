@@ -186,11 +186,3 @@ Element::createTimer(int timeout_ms) {
 
   return timer_id;
 }
-
-Logger &
-Element::getLogger() {
-  if (!logger.get()) {
-    logger = getThread().createLogger("app"); // name);
-  }
-  return *logger;
-}

@@ -5,7 +5,8 @@
 #include <Command.h>
 #include <FWPreferences.h>
 #include <MobileAccount.h>
-#include <SysEvent.h>
+
+class Logger;
 
 class FWApplication : public Element {
 public:
@@ -51,7 +52,9 @@ public:
   }
   
   void onSysEvent(SysEvent & ev) override;
-  
+
+  Logger & getLogger();
+
   void setMobileAccount(const MobileAccount & account) { mobileAccount = account; }
   const MobileAccount getMobileAccount() const { return mobileAccount; }
 
@@ -90,6 +93,7 @@ public:
   std::vector<int> view_back_history, view_forward_history;
   FWPreferences preferences;
   MobileAccount mobileAccount;
+  std::shared_ptr<Logger> logger;
 };
 
 #endif

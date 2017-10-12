@@ -4,6 +4,7 @@
 #include <GridView.h>
 #include <TableLayout.h>
 #include <PlatformThread.h>
+#include <SysEvent.h>
 
 using namespace std;
 
@@ -57,4 +58,12 @@ FWApplication::onSysEvent(SysEvent & ev) {
       sendCommand(c);
     }
   }
+}
+
+Logger &
+FWApplication::getLogger() {
+  if (!logger.get()) {
+    logger = getThread().createLogger(name);
+  }
+  return *logger;
 }
