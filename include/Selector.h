@@ -5,7 +5,8 @@ enum class Selector {
   NORMAL = 0,
   ACTIVE,
   HOVER,
-  SELECTED
+  SELECTED,
+  DISABLED
 };
 
 #endif
