@@ -178,6 +178,8 @@ protected:
     case Selector::ACTIVE: return GTK_STATE_FLAG_ACTIVE;
     case Selector::HOVER: return GTK_STATE_FLAG_PRELIGHT;
     case Selector::SELECTED: return GTK_STATE_FLAG_SELECTED;
+    case Selector::DISABLED: return GTK_STATE_FLAG_INSENSITIVE;
+    case Selector::LINK: return GTK_STATE_FLAG_LINK;
     }
     return GTK_STATE_FLAG_NORMAL;
   }
@@ -660,13 +662,15 @@ protected:
       }
     }
       break;
-    
+
+#if 0
     case Command::SET_ENABLED: {
       auto view = views_by_id[command.getInternalId()];
       if (view) gtk_widget_set_sensitive(view, command.getValue() ? 1 : 0);
     }
       break;
-
+#endif
+      
     case Command::SET_VISIBILITY: {
       auto view = views_by_id[command.getInternalId()];
       if (view) {
