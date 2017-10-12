@@ -40,7 +40,6 @@ class Element : public EventHandler {
   }
   
   void setError(bool t) override;
-  void setEnabled(bool enabled);
 
   void style(Selector s, const std::string & key, const std::string & value);
   void style(Selector s, const std::string & key, int value) {

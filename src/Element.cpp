@@ -59,14 +59,6 @@ Element::setError(bool t) {
 }
 
 void
-Element::setEnabled(bool _is_enabled) {
-  is_enabled = _is_enabled;
-  Command c(Command::SET_ENABLED, getInternalId());
-  c.setValue(is_enabled ? 1 : 0);
-  sendCommand(c);
-}
-
-void
 Element::show() {
   is_visible = true;
   Command c(Command::SET_VISIBILITY, getInternalId());

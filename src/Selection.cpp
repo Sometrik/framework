@@ -48,14 +48,6 @@ Selection::style(Selector selector, const std::string & key, const std::string &
 }
 
 Selection &
-Selection::setEnabled(bool enabled) {
-  for (auto & e : data) {
-    e->setEnabled(enabled);
-  }
-  return *this;
-}
-
-Selection &
 Selection::text(const std::string & text) {
   for (auto & e : data) {
     e->text(text);

@@ -21,7 +21,6 @@ class Selection {
   Selection & hide();
   Selection & remove();
   Selection & refresh();
-  Selection & setEnabled(bool enabled);
   Selection & text(const std::string & text);
   Selection & style(Selector selector, const std::string & key, const std::string & value);
   Selection & style(Selector selector, const std::string & key, int value) {
