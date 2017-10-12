@@ -100,15 +100,7 @@ public class FWButton extends Button implements NativeCommandHandler {
       if (activeStyle == currentStyle) activeStyle.apply(this);
     }
     
-    if (key.equals("pressed")) {
-      if (value.equals("true") || value.equals("1")) {
-	this.setPressed(true);
-	this.setTextColor(Color.RED);
-      } else {
-	this.setTextColor(Color.BLACK);
-	this.setPressed(false);
-      }
-    } else if (key.equals("icon-left") || key.equals("icon-right") || key.equals("icon-top") || key.equals("icon-bottom")){
+    if (key.equals("icon-left") || key.equals("icon-right") || key.equals("icon-top") || key.equals("icon-bottom")){
       AssetManager mgr = frame.getAssets();
       try {
         InputStream stream = mgr.open(value);
