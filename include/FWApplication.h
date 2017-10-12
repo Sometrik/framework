@@ -50,20 +50,8 @@ public:
     return id;    
   }
   
-  void onSysEvent(SysEvent & ev) {
-    if (ev.getType() == SysEvent::BACK) {
-      int poppedView = popViewBackHistory();
-      if (poppedView != 0) {
-        Command c(Command::SET_INT_VALUE, poppedView);
-        c.setValue(2);
-        sendCommand(c);
-      } else {
-        Command c(Command::QUIT_APP, poppedView);
-        sendCommand(c);
-      }
-    }
-  }
-
+  void onSysEvent(SysEvent & ev) override;
+  
   void setMobileAccount(const MobileAccount & account) { mobileAccount = account; }
   const MobileAccount getMobileAccount() const { return mobileAccount; }
 
