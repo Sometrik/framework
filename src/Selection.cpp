@@ -57,14 +57,45 @@ Selection::text(const std::string & text) {
 
 Selection
 Selection::parent() const {
-  // TODO: return a selection of parents of current selection
-  return Selection();
+  Selection r;
+  for (auto & e : data) {
+    // Get the shared_ptr from grandparents
+    Element * parent = e->getParent();
+    if (parent) {
+      Element * grandparent = parent->getParent();
+      if (grandparent) {
+        for (auto & sibling : grandparent->getChildren()) {
+          if (sibling.get() == parent) {
+            r.add(sibling);
+          }
+        }
+      }
+    }
+  }
+  return r;
 }
 
 Selection
 Selection::parents() const {
-  // TODO: return a selection of all parents of current selection
-  return Selection();
+  Selection r;
+  auto queue = data;
+  for (size_t i = 0; i < queue.size(); i++) {
+    auto & e = queue[i];
+    // Get the shared_ptr from grandparents
+    Element * parent = e->getParent();
+    if (parent) {
+      Element * grandparent = parent->getParent();
+      if (grandparent) {
+        for (auto & sibling : grandparent->getChildren()) {
+          if (sibling.get() == parent) {
+            r.add(sibling);
+            queue.push_back(sibling);
+          }
+        }
+      }
+    }
+  }
+  return r;
 }
 
 Selection
