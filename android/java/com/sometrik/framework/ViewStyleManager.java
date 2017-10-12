@@ -190,7 +190,10 @@ class ViewStyleManager {
       } else {
 	GradientDrawable gd = new GradientDrawable();
 	if (backgroundColor != null) gd.setColor(backgroundColor);
-	if (borderRadius != null) gd.setCornerRadii(expandRadii(borderRadius));
+	if (borderRadius != null) {
+	  gd.setCornerRadius(2); // Might be necessary for zero radiuses to work
+	  gd.setCornerRadii(expandRadii(borderRadius));
+	}
 	if (borderColor != null && borderWidth != null) {
 	  gd.setStroke(borderWidth, borderColor);
 	}
