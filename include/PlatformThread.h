@@ -31,16 +31,12 @@ class PlatformThread : public Element {
  PlatformThread(PlatformThread * _parent_thread, FWPlatform * _platform, std::shared_ptr<FWApplication> & _application, std::shared_ptr<Runnable> & _runnable)
    : platform(_platform), application(_application), parent_thread(_parent_thread), runnable(_runnable)
     {
-    _platform->registerElement(this);
+    initialize(this);
     if (_parent_thread) {
       setActualDisplayWidth(_parent_thread->getActualDisplayWidth());
       setActualDisplayHeight(_parent_thread->getActualDisplayHeight());
       setDisplayScale(_parent_thread->getDisplayScale());
     }
-  }
-
-  ~PlatformThread() {
-    platform->unregisterElement(this);
   }
 
   bool isA(const std::string & className) const override {
@@ -174,8 +170,8 @@ class PlatformThread : public Element {
  protected:
   void create() override { }
   
-  virtual void initialize() { }  
-  virtual void deinitialize() { }
+  virtual void initializeThread() { }  
+  virtual void deinitializeThread() { }
   virtual void startRunnable() {
     try {
       getRunnable().start(this);
@@ -185,9 +181,9 @@ class PlatformThread : public Element {
     }
   }
   void start2() {
-    initialize();
+    initializeThread();
     startRunnable();
-    deinitialize();
+    deinitializeThread();
 
     if (parent_thread) {
       SysEvent ev(SysEvent::THREAD_TERMINATED);

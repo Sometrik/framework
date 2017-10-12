@@ -194,7 +194,7 @@ public:
   AAssetManager * getAssetManager() const { return asset_manager; }
 
 protected:
-  void initialize() override {
+  void initializeThread() override {
     JavaVMAttachArgs args;
     args.version = JNI_VERSION_1_6; // choose your JNI version
     args.name = NULL; // you might want to give the java thread a name
@@ -202,7 +202,7 @@ protected:
 
     javaCache->getJavaVM().AttachCurrentThread(&myEnv, &args);
   }
-  void deinitialize() override {
+  void deinitializeThread() override {
     javaCache->getJavaVM().DetachCurrentThread();
   }
 
