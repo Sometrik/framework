@@ -155,13 +155,7 @@ public class FWSimpleList extends LinearLayout implements NativeCommandHandler {
       Iterator<View> i = viewsToBeRemoved.iterator();
       while (i.hasNext()) {
 	View v = i.next();
-	if (v instanceof FWImageView) {
-	  Bitmap drawable = ((BitmapDrawable) v.getBackground()).getBitmap();
-	  if (drawable != null) {
-	    drawable.recycle();
-	  }
-	}
-	frame.removeViewFromList(v.getId());
+	FrameWork.removeViewFromList(v.getId());
 	layout.removeView(v);
       }
     } else {

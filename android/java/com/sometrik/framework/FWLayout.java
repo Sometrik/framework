@@ -5,17 +5,11 @@ import java.util.Iterator;
 
 import com.sometrik.framework.NativeCommand.Selector;
 
-import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
-import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.GradientDrawable;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 
 public class FWLayout extends LinearLayout implements NativeCommandHandler {
   
@@ -219,13 +213,7 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
     Iterator<View> i = viewsToBeRemoved.iterator();
     while (i.hasNext()) {
       View v = i.next();
-      if (v instanceof FWImageView) {
-	  Bitmap drawable = ((BitmapDrawable) v.getBackground()).getBitmap();
-	  if (drawable != null) {
-	    drawable.recycle();
-	  }
-	}
-      frame.removeViewFromList(v.getId());
+      FrameWork.removeViewFromList(v.getId());
       removeView(v);
     }
   }
