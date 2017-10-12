@@ -72,7 +72,8 @@ public class NativeCommand {
     NORMAL,
     ACTIVE,
     HOVER,
-    SELECTED
+    SELECTED,
+    DISABLED
   };
  
   public enum CommandType {
