@@ -26,6 +26,15 @@ class ImageElement : public Element {
     sendCommand(c);
   }
 
+  void setImageFile(std::string _filename){
+    filename = _filename;
+
+    Command c(Command::SET_TEXT_VALUE, getInternalId());
+    c.setTextValue(filename);
+    sendCommand(c);
+
+  }
+
   void onValueEvent(ValueEvent & ev) override {
     notify();
     CommandEvent ev2(getId());
