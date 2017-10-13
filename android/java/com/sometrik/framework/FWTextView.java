@@ -20,7 +20,7 @@ import android.widget.TextView;
 public class FWTextView extends TextView implements NativeCommandHandler {
 
   private FrameWork frame;
-  ViewStyleManager normalStyle, activeStyle, currentStyle;
+  ViewStyleManager normalStyle, activeStyle, currentStyle, linkStyle;
   
   public FWTextView(FrameWork frame, boolean autolink) {
     super(frame);

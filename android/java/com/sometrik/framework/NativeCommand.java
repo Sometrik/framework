@@ -367,15 +367,16 @@ public class NativeCommand {
       view.addChild(radioGroup);
       break;
       
-    case CREATE_TEXT:
+    case CREATE_TEXT: {
       FWTextView textView = new FWTextView(frame, getValue() != 0);
       textView.setId(getChildInternalId());
       textView.setText(getTextValueAsString());
       FrameWork.addToViewList(textView);
       view.addChild(textView);
       break;
+    }
 
-    case CREATE_LINK:
+    case CREATE_LINK: {
       FWTextView textView = new FWTextView(frame, false);
       textView.setId(getChildInternalId());
       textView.setMovementMethod(LinkMovementMethod.getInstance());
@@ -384,6 +385,7 @@ public class NativeCommand {
       FrameWork.addToViewList(textView);
       view.addChild(textView);
       break;
+    }
 
     case CREATE_IMAGEVIEW:
       FWImageView imageView = new FWImageView(frame);

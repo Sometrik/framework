@@ -294,7 +294,7 @@ public class FWSimpleList extends LinearLayout implements NativeCommandHandler {
 	sheetLayout.setOrientation(LinearLayout.HORIZONTAL);
 	sheetLayout.setFocusable(false);
 	
-        name = new FWTextView(frame);
+        name = new FWTextView(frame, false);
 	LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
 	params.weight = 1;
         name.setTextSize(24);
@@ -311,7 +311,7 @@ public class FWSimpleList extends LinearLayout implements NativeCommandHandler {
       
 
     private void setRightIconText(RelativeLayout layout, ImageView iconView, String text) {
-      FWTextView textView = new FWTextView(frame);
+      FWTextView textView = new FWTextView(frame, false);
       RelativeLayout.LayoutParams listParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
 //      listParams.addRule(RelativeLayout.LEFT_OF, iconView.getId());
       textView.setLayoutParams(listParams);
