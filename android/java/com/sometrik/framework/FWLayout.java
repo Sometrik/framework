@@ -16,7 +16,7 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
   private FrameWork frame;
   private boolean childListeners = false;
   private ChildClickListener hostListener;
-  ViewStyleManager normalStyle, activeStyle, currentStyle;
+  private ViewStyleManager normalStyle, activeStyle, currentStyle;
   
   public FWLayout(FrameWork frameWork) {
     super(frameWork);
