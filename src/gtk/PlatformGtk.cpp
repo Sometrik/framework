@@ -393,16 +393,16 @@ protected:
       addView(command, label);
     }
       break;
-      
-#if 0
+
     case Command::CREATE_LINK: {
-      auto link = gtk_link_button_new_with_label(uri, label);
+      auto link = gtk_link_button_new_with_label(command.getTextValue().c_str(),
+						 command.getTextValue2().c_str());
+      addView(command, link);
     }
-      break;
-#endif
+      break;      
 
     case Command::CREATE_SIMPLELISTVIEW: {
-      auto box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5); // FIXME: spacing
+      auto box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
       addView(command, box);
     }
       break;
