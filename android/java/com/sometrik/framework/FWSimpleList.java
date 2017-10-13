@@ -31,6 +31,7 @@ public class FWSimpleList extends LinearLayout implements NativeCommandHandler {
   private ArrayList<Sheet> sheets = new ArrayList<Sheet>();
   private ArrayList<String> sheetMemory = new ArrayList<String>();
   private String sheeticon_right = "";
+  private ViewStyleManager normalStyle, activeStyle, currentStyle;
   
     public FWSimpleList(FrameWork frame) {
       super(frame);
@@ -39,6 +40,10 @@ public class FWSimpleList extends LinearLayout implements NativeCommandHandler {
       // defaultListParams.setMargins(0, 10, 0, 10);
       setOrientation(LinearLayout.VERTICAL);
 //      setDividerDrawable(frame.getResources().getDrawable(android.R.drawable.divider_horizontal_bright));
+      
+      final float scale = getContext().getResources().getDisplayMetrics().density;
+      this.normalStyle = currentStyle = new ViewStyleManager(scale, true);
+      this.activeStyle = new ViewStyleManager(scale, false);
     }
     
     @Override
@@ -205,7 +210,14 @@ public class FWSimpleList extends LinearLayout implements NativeCommandHandler {
 
   @Override
   public void setStyle(Selector selector, String key, String value) {
-    System.out.println("SimpleListView style " + key + " " + value);
+    if (selector == Selector.NORMAL) {
+      normalStyle.setStyle(key, value);
+      if (normalStyle == currentStyle) normalStyle.apply(this);
+    } else if (selector == Selector.ACTIVE) {
+      activeStyle.setStyle(key, value);      
+      if (activeStyle == currentStyle) activeStyle.apply(this);
+    }
+    
     if (key.equals("divider")) {
       if (value.equals("middle")) {
 	// this.setShowDividers(LinearLayout.SHOW_DIVIDER_MIDDLE);
@@ -214,33 +226,6 @@ public class FWSimpleList extends LinearLayout implements NativeCommandHandler {
       } else if (value.equals("beginning")) {
 	// this.setShowDividers(LinearLayout.SHOW_DIVIDER_BEGINNING);
       }
-    } else if (key.equals("background-color")) {
-      this.setBackgroundColor(Color.parseColor(value));
-    } else if (key.equals("width")) {
-      FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) getLayoutParams();
-      if (value.equals("wrap-content")) {
-	params.width = LinearLayout.LayoutParams.WRAP_CONTENT;
-      } else if (value.equals("match-parent")) {
-	params.width = LinearLayout.LayoutParams.MATCH_PARENT;
-      } else {
-	final float scale = getContext().getResources().getDisplayMetrics().density;
-	int pixels = (int) (Integer.parseInt(value) * scale + 0.5f);
-	params.width = pixels;
-      }
-      setLayoutParams(params);
-    } else if (key.equals("height")) {
-      FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) getLayoutParams();
-      if (value.equals("wrap-content")) {
-	params.height = LinearLayout.LayoutParams.WRAP_CONTENT;
-      } else if (value.equals("match-parent")) {
-	params.height = LinearLayout.LayoutParams.MATCH_PARENT;
-      } else {
-
-	final float scale = getContext().getResources().getDisplayMetrics().density;
-	int pixels = (int) (Integer.parseInt(value) * scale + 0.5f);
-	params.height = pixels;
-      }
-      setLayoutParams(params);
     } else if (key.equals("sheeticon-right")) {
       System.out.println("setting right icon");
 	sheeticon_right = value;
