@@ -363,6 +363,8 @@ public class NativeCommand {
     case CREATE_RADIO_GROUP:
       FWRadioGroup radioGroup = new FWRadioGroup(frame);
       radioGroup.setId(childInternalId);
+      FrameWork.addToViewList(radioGroup);
+      view.addChild(radioGroup);
       break;
       
     case CREATE_TEXT:
@@ -490,6 +492,7 @@ public class NativeCommand {
       bar.setId(childInternalId);
       view.addChild(bar);
       FrameWork.addToViewList(bar);
+      break;
     case FLUSH_VIEW:
       view.flush();
       break;
