@@ -84,6 +84,7 @@ public class FrameWork extends Activity {
   private int appId = 0;
   private int currentView = 0;
   public static boolean transitionAnimation = false;
+  public static BitmapCache BitmapCache = new BitmapCache;
 
   public native void endModal(double timestamp, int value, byte[] textValue);
   public native void textChangedEvent(double timestamp, int id, byte[] textValue);
@@ -151,7 +152,9 @@ public class FrameWork extends Activity {
     
     // Init for screen settings
     setupDisplayMetrics();
-    
+
+    bitmapCache = new BitmapCache(getAssets(), displayMetrics.scaledDensity);
+
     mainHandler = new Handler() {
 
       public void handleMessage(Message msg) {
@@ -202,7 +205,7 @@ public class FrameWork extends Activity {
     return null;
   }
 
-  private void initNative() {    
+  private void initNative() {
     System.out.println("Display scale: " + displayMetrics.scaledDensity);
 //    float xSize = displayMetrics.widthPixels / displayMetrics.scaledDensity;
 //    float ySize = displayMetrics.heightPixels / displayMetrics.scaledDensity;

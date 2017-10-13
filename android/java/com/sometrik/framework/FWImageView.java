@@ -60,21 +60,20 @@ public class FWImageView extends ImageView implements NativeCommandHandler {
       }
     });
   }
-  
-  void setImageFromAssets(String filename) {
+
+  private String getProtocol(String filename) {
     try {
-      deinitialize();
-      
-      AssetManager mgr = frame.getAssets();
-      InputStream stream = mgr.open(filename);
-      if (stream != null) {
-	ownedBitmap = BitmapFactory.decodeStream(stream);
-	setImageBitmap(ownedBitmap);
-      }
-      stream.close();
-    } catch (IOException e) {
-      e.printStackTrace();
+      URI uri = new uri(filename);
+      return uri.getScheme();
+    } catch (URISyntaxException & e) {
+      return "asset";
     }
+  }
+    
+  private void setImageFromAssets(String filename) {
+    deinitialize();
+    Bitmap bitmap = frame.bitmapCache.loadImage(filename);
+    setImageBitmap(bitmap);
   }
 
   @Override
@@ -108,7 +107,10 @@ public class FWImageView extends ImageView implements NativeCommandHandler {
 
   @Override
   public void setValue(String v) {
-    setImageFromAssets(v);
+    deinitialize();
+    if (getProtocol(v) == "asset") {
+      setImageFromAssets(v);
+    }
   }
 
   @Override
