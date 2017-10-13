@@ -108,7 +108,7 @@ public class FWImageView extends ImageView implements NativeCommandHandler {
 
   @Override
   public void setValue(String v) {
-    
+    setImageFromAssets(v);
   }
 
   @Override
