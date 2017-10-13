@@ -21,14 +21,13 @@ import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 
 public class FWButton extends Button implements NativeCommandHandler {
-
-  FrameWork frame;
-  BitmapDrawable leftDraw;
-  BitmapDrawable rightDraw;
-  BitmapDrawable bottomDraw;
-  BitmapDrawable topDraw;
-  Animation animation = null;
-  ViewStyleManager normalStyle, activeStyle, currentStyle;
+  private FrameWork frame;
+  private BitmapDrawable leftDraw;
+  private BitmapDrawable rightDraw;
+  private BitmapDrawable bottomDraw;
+  private BitmapDrawable topDraw;
+  private Animation animation = null;
+  private ViewStyleManager normalStyle, activeStyle, currentStyle;
       
   public FWButton(FrameWork frameWork) {
     super(frameWork);
