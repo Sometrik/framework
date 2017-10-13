@@ -11,7 +11,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
-import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -63,6 +63,7 @@ class ViewStyleManager {
     shadow = new Integer(0);
     color = new Integer(Color.parseColor("#000000"));
     backgroundColor = new Integer(0);
+    fontWeight = new Integer(400);
   }
     
   public void setStyle(String key, String value) {
@@ -180,7 +181,8 @@ class ViewStyleManager {
 	fontSize = new Integer(value);
       }
     } else if (key.equals("white-space")) {
-      if (value.equals("nowrap")) whiteSpace = WhiteSpace.NOWRAP;
+      if (value.equals("normal")) whiteSpace = WhiteSpace.NORMAL;
+      else if (value.equals("nowrap")) whiteSpace = WhiteSpace.NOWRAP;
     } else if (key.equals("text-overflow")) {
       if (value.equals("ellipsis")) {
 	textOverflow = TextOverflow.ELLIPSIS;
@@ -315,6 +317,21 @@ class ViewStyleManager {
 	System.out.println("this style cannot be applied to view that doesn't have valid layout as parent");
       }
     }
+    
+    if (view instanceof EditText) {
+      EditText editText = (EditText) view;
+      if (whiteSpace != null) {
+	switch (whiteSpace) {
+	case NORMAL:
+	  editText.setSingleLine(false);
+//	  editText.setInputType(InputType.TYPE_TEXT_FLAG_MULTI_LINE);
+	  break;
+	case NOWRAP:
+	  editText.setSingleLine(true);
+	  break;
+	}
+      }
+    }
 
     if (view instanceof TextView) { // also Buttons
       TextView textView = (TextView)view;
@@ -356,9 +373,13 @@ class ViewStyleManager {
       }
       if (fontFamily != null || fontWeight != null || fontStyle != null) {
 	int flags = 0;
-	if (fontWeight != null && fontWeight < 550) flags |= Typeface.BOLD;
+	if (fontWeight != null && fontWeight > 550) flags |= Typeface.BOLD;
 	if (fontStyle != null && (fontStyle == FontStyle.ITALIC || fontStyle == FontStyle.OBLIQUE)) flags |= Typeface.ITALIC;
-	textView.setTypeface(Typeface.create(fontFamily, flags), flags); 
+	if (fontFamily != null) {
+	  textView.setTypeface(Typeface.create(fontFamily, flags), flags);
+	} else {
+	  textView.setTypeface(null, flags);  
+	}
       }
       if (hint != null) textView.setHint(hint);
     }
