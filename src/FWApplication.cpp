@@ -5,19 +5,34 @@
 #include <TableLayout.h>
 #include <PlatformThread.h>
 #include <SysEvent.h>
+#include <LinearLayout.h>
 
 using namespace std;
 
 class DebugDialog : public Dialog {
 public:
   DebugDialog() : Dialog("Debug") {
-    auto table = make_shared<TableLayout>(2);
-    addChild(table);
+    auto mainLayout = make_shared<LinearLayout>(FW_VERTICAL);
+    addChild(mainLayout);
+
+    mainLayout->addText("Debug screen").style("font-size", "14")
+      .style("white-space", "nowrap")
+      .style("margin", 5);
+
+    mainLayout->addText("Stuff").style("font-size", "12").style("margin", 5);
+
     
+    auto table = make_shared<TableLayout>(2);
+    table->style("margin", 5);
+    mainLayout->addChild(table);
+
+    mainLayout->addText("Threads").style("font-size", "12").style("margin", 5);
+
     auto grid = make_shared<GridView>();
+    grid->style("margin", 5);
     grid->addColumn("Runnable");
     grid->addColumn("State");
-    addChild(grid);
+    mainLayout->addChild(grid);
   }
 
   void load() {
