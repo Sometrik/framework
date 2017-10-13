@@ -41,7 +41,7 @@ public class FWImageView extends ImageView implements NativeCommandHandler {
       @Override
       public void onClick(View arg0) {
 	if (!FrameWork.transitionAnimation) {
-	  frame.intChangedEvent(System.currentTimeMillis() / 1000.0, getElementId(), 1, 0);
+	  frame.intChangedEvent(System.currentTimeMillis() / 1000.0, getElementId(), 0, 0);
 	}
       }
     });
