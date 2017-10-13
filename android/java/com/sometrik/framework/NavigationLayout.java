@@ -1,33 +1,41 @@
 package com.sometrik.framework;
 
-import android.graphics.Bitmap.Config;
-
 import com.sometrik.framework.NativeCommand.Selector;
 
+import android.graphics.Bitmap.Config;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 
-public class NavigationLayout extends LinearLayout implements NativeCommandHandler {
+public class NavigationLayout extends ScrollView implements NativeCommandHandler {
 
   FrameWork frame;
   ViewStyleManager normalStyle, activeStyle, currentStyle;
+  LinearLayout base;
 
   public NavigationLayout(FrameWork frame) {
     super(frame);
     this.frame = frame;
+    base = new LinearLayout(frame);
 
+    FrameLayout.LayoutParams scrollParams = new FrameLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.FILL_PARENT);
     DrawerLayout.LayoutParams lp = new DrawerLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
     lp.gravity = Gravity.START;
     setLayoutParams(lp);
-    setBackgroundColor(Color.parseColor("#dddbd6"));
-    // setBackground(frame.getResources().getDrawable(android.R.drawable.dialog_holo_light_frame));
-    ColorDrawable cd = new ColorDrawable();
-    cd.setColor(Color.WHITE);
-    setBackgroundDrawable(cd);
+    addView(base);
+    base.setLayoutParams(scrollParams);
+    base.setBackgroundColor(Color.parseColor("#ffffff"));
+    setBackgroundColor(Color.parseColor("#ffffff"));
+
+//    ColorDrawable cd = new ColorDrawable();
+//    cd.setColor(Color.WHITE);
+//    base.setBackgroundDrawable(cd);
+//    setBackgroundDrawable(cd);
     
     final float scale = getContext().getResources().getDisplayMetrics().density;
     this.normalStyle = currentStyle = new ViewStyleManager(scale, true);
@@ -56,7 +64,7 @@ public class NavigationLayout extends LinearLayout implements NativeCommandHandl
 
   @Override
   public void addChild(View view) {
-    addView(view);
+    base.addView(view);
   }
 
   @Override
@@ -105,12 +113,6 @@ public class NavigationLayout extends LinearLayout implements NativeCommandHandl
     } else if (selector == Selector.ACTIVE) {
       activeStyle.setStyle(key, value);      
       if (activeStyle == currentStyle) activeStyle.apply(this);
-    }
-    
-    if (key.equals("add-weight")) {
-      LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
-      params.weight += 1;
-      setLayoutParams(params);
     }
   }
 
