@@ -461,11 +461,15 @@ protected:
 	gtk_style_context_add_class(gtk_widget_get_style_context(box), "linked");
 	auto previous = gtk_button_new_from_icon_name("go-previous", GTK_ICON_SIZE_BUTTON);
 	auto next = gtk_button_new_from_icon_name("go-next", GTK_ICON_SIZE_BUTTON);
+	auto settings = gtk_button_new_from_icon_name("settings", GTK_ICON_SIZE_BUTTON);
+
 	g_signal_connect(previous, "clicked", G_CALLBACK(on_previous_button), this);
 	g_signal_connect(next, "clicked", G_CALLBACK(on_next_button), this);
+	g_signal_connect(settings, "clicked", G_CALLBACK(on_settings_button), this);
 
 	gtk_box_pack_start((GtkBox*)box, previous, 0, 0, 0);
 	gtk_box_pack_start((GtkBox*)box, next, 0, 0, 0);
+	gtk_box_pack_start((GtkBox*)box, settings, 0, 0, 0);
 	
 	gtk_header_bar_pack_start((GtkHeaderBar*)header, box);
 	
@@ -1058,6 +1062,7 @@ protected:
   static void send_activation_value(GtkTreeView * treeview, GtkTreePath * path, GtkTreeViewColumn * column, gpointer data);
   static void on_previous_button(GtkWidget * widget, gpointer data);
   static void on_next_button(GtkWidget * widget, gpointer data);
+  static void on_settings_button(GtkWidget * widget, gpointer data);
   static void on_bar_button(GtkWidget * widget, gpointer data);
   static gboolean event_callback(gpointer data);
   static gboolean delete_window(GtkWidget *widget, GdkEvent  *event, gpointer user_data);
@@ -1271,6 +1276,14 @@ GtkMainThread::on_next_button(GtkWidget * widget, gpointer data) {
   cerr << "got next\n";
   GtkMainThread * mainThread = (GtkMainThread*)data;
   mainThread->sendCommand(Command(Command::HISTORY_GO_FORWARD, 0));  
+}
+
+void
+GtkMainThread::on_settings_button(GtkWidget * widget, gpointer data) {
+  cerr << "got settings\n";
+  GtkMainThread * mainThread = (GtkMainThread*)data;
+  SysEvent ev(SysEvent::DEBUG);
+  mainThread->getPlatform().postEvent(mainThread->getApplication().getInternalId(), ev);
 }
 
 void

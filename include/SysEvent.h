@@ -19,7 +19,8 @@ public:
     THREAD_TERMINATED,
     END_MODAL,
     LANGUAGE_CHANGED,
-    BACK
+    BACK,
+    DEBUG
   };
  SysEvent(Type _type) : type(_type) { }
 
