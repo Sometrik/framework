@@ -19,6 +19,7 @@ public class FWScrollView extends ScrollView implements NativeCommandHandler {
   private String title;
   private int maxHeight = 0;
   private Animation enterAnimation = null;
+  private ViewStyleManager normalStyle, activeStyle, currentStyle;
   
   public FWScrollView(FrameWork frameWork, String title) {
     super(frameWork);
@@ -27,6 +28,10 @@ public class FWScrollView extends ScrollView implements NativeCommandHandler {
     LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
     this.setLayoutParams(params);
     this.setFillViewport(true);
+    
+    final float scale = getContext().getResources().getDisplayMetrics().density;
+    this.normalStyle = currentStyle = new ViewStyleManager(scale, true);
+    this.activeStyle = new ViewStyleManager(scale, false);
   }
   
   public FWScrollView(FrameWork frameWork) {
@@ -35,6 +40,10 @@ public class FWScrollView extends ScrollView implements NativeCommandHandler {
     LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
     this.setLayoutParams(params);
     this.setFillViewport(true);
+    
+    final float scale = getContext().getResources().getDisplayMetrics().density;
+    this.normalStyle = currentStyle = new ViewStyleManager(scale, true);
+    this.activeStyle = new ViewStyleManager(scale, false);
   }
   
   @Override
@@ -85,9 +94,15 @@ public class FWScrollView extends ScrollView implements NativeCommandHandler {
 
   @Override
   public void setStyle(Selector selector, String key, String value) {
-    if (key.equals("background-color")) {
-      this.setBackgroundColor(Color.parseColor(value));
-    } else if (key.equals("animation")) {
+    if (selector == Selector.NORMAL) {
+      normalStyle.setStyle(key, value);
+      if (normalStyle == currentStyle) normalStyle.apply(this);
+    } else if (selector == Selector.ACTIVE) {
+      activeStyle.setStyle(key, value);      
+      if (activeStyle == currentStyle) activeStyle.apply(this);
+    }
+    
+    if (key.equals("animation")) {
       if (value.equals("from-left")) {
 	TranslateAnimation r;
 	// if (recordHistory) {
