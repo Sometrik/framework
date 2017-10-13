@@ -291,18 +291,15 @@ public class NativeCommand {
       FWScrollView simpleListScroller = new FWScrollView(frame);
       simpleListScroller.setFillViewport(true);
       FWSimpleList simpleList = new FWSimpleList(frame);
-	final float scale = frame.getResources().getDisplayMetrics().density;
-	int widthPixels = (int) (350 * scale + 0.5f);
-	int heightPixels = (int) (300 * scale + 0.5f);
-	simpleListScroller.setMaxHeight(450);
-	LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(widthPixels, LinearLayout.LayoutParams.WRAP_CONTENT);
-	FrameLayout.LayoutParams params2 = new FrameLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-	simpleListScroller.setLayoutParams(params);
-	simpleListScroller.addView(simpleList);
-	simpleList.setLayoutParams(params2);
-	simpleList.setId(childInternalId);
-	view.addChild(simpleListScroller);
-	FrameWork.addToViewList(simpleList);
+      simpleListScroller.setMaxHeight(450);
+      LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+      FrameLayout.LayoutParams params2 = new FrameLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+      simpleListScroller.setLayoutParams(params);
+      simpleListScroller.addView(simpleList);
+      simpleList.setLayoutParams(params2);
+      simpleList.setId(childInternalId);
+      view.addChild(simpleListScroller);
+      FrameWork.addToViewList(simpleList);
       break;
     }
     case CREATE_LISTVIEW:
