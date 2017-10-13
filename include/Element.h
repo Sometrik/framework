@@ -40,15 +40,15 @@ class Element : public EventHandler {
   
   void setError(bool t) override;
 
-  void style(Selector s, const std::string & key, const std::string & value);
-  void style(Selector s, const std::string & key, int value) {
-    style(s, key, std::to_string(value));
+  Element & style(Selector s, const std::string & key, const std::string & value);
+  Element & style(Selector s, const std::string & key, int value) {
+    return style(s, key, std::to_string(value));
   }
-  void style(const std::string & key, const std::string & value) {
-    style(Selector::NORMAL, key, value);
+  Element & style(const std::string & key, const std::string & value) {
+    return style(Selector::NORMAL, key, value);
   }
-  void style(const std::string & key, int value) {
-    style(Selector::NORMAL, key, value);
+  Element & style(const std::string & key, int value) {
+    return style(Selector::NORMAL, key, value);
   }
 
   int sendCommand(const Command & command);

@@ -74,13 +74,14 @@ Element::hide() {
   sendCommand(c);
 }
 
-void
+Element &
 Element::style(Selector s, const std::string & key, const std::string & value) {
   Command c(Command::SET_STYLE, getInternalId());
   c.setValue(int(s));
   c.setTextValue(key);
   c.setTextValue2(value);
   sendCommand(c);
+  return *this;
 }
   
 int
