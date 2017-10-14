@@ -54,8 +54,8 @@ public class FWActionBar implements NativeCommandHandler {
 
     drawerButton = new ImageButton(frame);
     try {
-      InputStream stream = frame.getAssets().open("icons_hamburger-menu.png");
-      Drawable draw = new BitmapDrawable(stream);
+      Bitmap bitmap = frame.bitmapCache.loadBitmap("icons_hamburger-menu.png");
+      Drawable draw = new BitmapDrawable(bitmap);
       stream.close();
 
       drawerButton.setImageDrawable(draw);
@@ -248,16 +248,6 @@ public class FWActionBar implements NativeCommandHandler {
       }
       mainLayout.setLayoutParams(params);
     }
-//    if (key.equals("icon")){
-//      try {
-//	InputStream stream = frame.getAssets().open(value);
-//	Bitmap b = BitmapFactory.decodeStream(stream);
-//	Drawable d = new BitmapDrawable(b);
-//	actionBar.setIcon(d);
-//      } catch (IOException e) {
-//	e.printStackTrace();
-//      }
-//    }
   }
 
   @Override
