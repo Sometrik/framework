@@ -56,6 +56,12 @@ class Button : public UIElement {
     }
   }
 
+  void setValue(bool s) {
+    Command c(Command::SET_INT_VALUE, getInternalId());
+    c.setValue(s ? 1 : 0);
+    sendCommand(c);
+  }
+
   bool call() override {
     sendCommand(Command(Command::SET_INT_VALUE, getInternalId()));
     return true;

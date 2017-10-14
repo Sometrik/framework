@@ -27,7 +27,9 @@ public class FWButton extends Button implements NativeCommandHandler {
   private BitmapDrawable bottomDraw;
   private BitmapDrawable topDraw;
   private Animation animation = null;
-  private ViewStyleManager normalStyle, activeStyle, currentStyle;
+  private ViewStyleManager normalStyle, activeStyle, selectedStyle;
+  private ViewStyleManager currentStyle;
+  private boolean isSelected = false;
       
   public FWButton(FrameWork frameWork) {
     super(frameWork);
@@ -36,6 +38,7 @@ public class FWButton extends Button implements NativeCommandHandler {
     final float scale = getContext().getResources().getDisplayMetrics().density;
     this.normalStyle = currentStyle = new ViewStyleManager(scale, true);
     this.activeStyle = new ViewStyleManager(scale, false);
+    this.selectedStyle = new ViewStyleManager(scale, false);
     
     final FWButton button = this;
     
@@ -56,7 +59,7 @@ public class FWButton extends Button implements NativeCommandHandler {
 	  button.currentStyle = button.activeStyle;
 	  button.currentStyle.apply(button);
 	} else if (event.getAction() == MotionEvent.ACTION_UP) {
-	  button.currentStyle = button.normalStyle;
+	  button.currentStyle = isSelected ? button.selectedStyle : button.normalStyle;
 	  button.currentStyle.apply(button);
 	}
 	return false;
@@ -81,7 +84,13 @@ public class FWButton extends Button implements NativeCommandHandler {
   
   @Override
   public void setValue(int v) {
-    System.out.println("FWButton couldn't handle command");
+    boolean b = v != 0;
+    if (b != isSelected) {  
+      isSelected = b;
+      if (isSelected) currentStyle = selectedStyle;
+      else currentStyle = normalStyle;
+      currentStyle.apply(his);
+    }
   }
 
   @Override
@@ -97,6 +106,9 @@ public class FWButton extends Button implements NativeCommandHandler {
     } else if (selector == Selector.ACTIVE) {
       activeStyle.setStyle(key, value);      
       if (activeStyle == currentStyle) activeStyle.apply(this);
+    } else if (selector == Selector.SELECTED) {
+      selectedStyle.setStyle(key, value);      
+      if (selectedStyle == currentStyle) selectedStyle.apply(this);
     }
     
     if (key.equals("icon-left") || key.equals("icon-right") || key.equals("icon-top") || key.equals("icon-bottom")){
