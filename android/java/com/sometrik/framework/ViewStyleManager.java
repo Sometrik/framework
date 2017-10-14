@@ -23,6 +23,8 @@ class ViewStyleManager {
   private enum HorizontalAlignment { LEFT, CENTER, RIGHT };
   private enum TextOverflow { CLIP, ELLIPSIS };
   private enum FontStyle { NORMAL, ITALIC, OBLIQUE };
+
+  private BitmapCache bitmapCache;
   private float displayScale = 1.0f;
   
   private boolean isPaddingSet = false;
@@ -51,8 +53,10 @@ class ViewStyleManager {
   private FontStyle fontStyle = null;
   private String fontFamily = null;
   private String hint = null;
+  private String iconFile = null;
   
-  public ViewStyleManager(float displayScale, boolean isDefault) {
+  public ViewStyleManager(BitmapCache bitmapCache, float displayScale, boolean isDefault) {
+    this.bitmapCache = bitmapCache;
     this.displayScale = displayScale;
     if (isDefault) setDefaults();
   }
@@ -64,6 +68,7 @@ class ViewStyleManager {
     color = new Integer(Color.parseColor("#000000"));
     backgroundColor = new Integer(0);
     fontWeight = new Integer(400);
+    iconFile = "";
   }
     
   public void setStyle(String key, String value) {
@@ -215,6 +220,14 @@ class ViewStyleManager {
       fontFamily = value;
     } else if (key.equals("hint")) {
       hint = value;
+    } else if (key.equals("icon-attachment")) {
+      // right, top, bottom, left
+    } else if (key.equals("icon")) {
+      if (value.equals("none")) {
+	iconFile = "";
+      } else {
+	iconFile = value;
+      }
     }
   }
 
@@ -332,7 +345,7 @@ class ViewStyleManager {
 	}
       }
     }
-
+						   
     if (view instanceof TextView) { // also Buttons
       TextView textView = (TextView)view;
 
@@ -382,6 +395,14 @@ class ViewStyleManager {
 	}
       }
       if (hint != null) textView.setHint(hint);
+      if (iconFile != null) {
+	BitmapDrawable drawable = null;
+	if (!iconFile.isEmpty()) {
+	  Bitmap bitmap = bitmapCache.loadBitmap(iconFile);
+	  if (bitmap != null) drawable = new BitmapDrawable(bitmap);
+	}
+        textView.setCompoundDrawablesWithIntrinsicBounds(null, drawable, null, null);
+      }
     }
   }
 

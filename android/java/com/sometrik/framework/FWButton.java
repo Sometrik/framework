@@ -22,10 +22,6 @@ import android.widget.LinearLayout.LayoutParams;
 
 public class FWButton extends Button implements NativeCommandHandler {
   private FrameWork frame;
-  private BitmapDrawable leftDraw;
-  private BitmapDrawable rightDraw;
-  private BitmapDrawable bottomDraw;
-  private BitmapDrawable topDraw;
   private Animation animation = null;
   private ViewStyleManager normalStyle, activeStyle, selectedStyle;
   private ViewStyleManager currentStyle;
@@ -34,11 +30,12 @@ public class FWButton extends Button implements NativeCommandHandler {
   public FWButton(FrameWork frameWork) {
     super(frameWork);
     this.frame = frameWork;
-    
+
+    BitmapCache bitmapCache = frameWork.bitmapCache;
     final float scale = getContext().getResources().getDisplayMetrics().density;
-    this.normalStyle = currentStyle = new ViewStyleManager(scale, true);
-    this.activeStyle = new ViewStyleManager(scale, false);
-    this.selectedStyle = new ViewStyleManager(scale, false);
+    this.normalStyle = currentStyle = new ViewStyleManager(bitmapCache, scale, true);
+    this.activeStyle = new ViewStyleManager(bitmapCache, scale, false);
+    this.selectedStyle = new ViewStyleManager(bitmapCache, scale, false);
     
     final FWButton button = this;
     
@@ -111,27 +108,7 @@ public class FWButton extends Button implements NativeCommandHandler {
       if (selectedStyle == currentStyle) selectedStyle.apply(this);
     }
     
-    if (key.equals("icon-left") || key.equals("icon-right") || key.equals("icon-top") || key.equals("icon-bottom")){
-      AssetManager mgr = frame.getAssets();
-      try {
-        InputStream stream = mgr.open(value);
-        BitmapDrawable draw = new BitmapDrawable(stream);
-        this.setGravity(Gravity.CENTER);
-        if (key.equals("icon-right")){
-          rightDraw = draw;
-        } else if (key.equals("icon-top")){
-          topDraw = draw;
-        } else if (key.equals("icon-bottom")){
-          bottomDraw = draw;
-        } else if (key.equals("icon-left")){
-	  leftDraw = draw;
-        }
-        this.setCompoundDrawablesWithIntrinsicBounds(leftDraw, topDraw, rightDraw, bottomDraw);
-      } catch (IOException e) {
-        System.out.println("no picture found: " + value);
-        e.printStackTrace();
-      }
-    } else if (key.equals("animation")) {
+    if (key.equals("animation")) {
       if (value.equals("rotate")) {
 	RotateAnimation r = new RotateAnimation(-5f, 5f,50,50); 
 	r.setDuration(100);
@@ -186,7 +163,6 @@ public class FWButton extends Button implements NativeCommandHandler {
     // TODO Auto-generated method stub
     
   }
-
 
   @Override
   public void reshape(int value, int size) {
