@@ -86,7 +86,7 @@ public class FWButton extends Button implements NativeCommandHandler {
       isSelected = b;
       if (isSelected) currentStyle = selectedStyle;
       else currentStyle = normalStyle;
-      currentStyle.apply(his);
+      currentStyle.apply(this);
     }
   }
 
