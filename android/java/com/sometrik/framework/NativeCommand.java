@@ -250,22 +250,20 @@ public class NativeCommand {
       }
     }
       break;
-
     case CREATE_SCROLL_LAYOUT: {
-      FWScrollView scrollView = new FWScrollView(frame, getTextValueAsString());
-      scrollView.setId(getChildInternalId());
-      FrameWork.addToViewList(scrollView);
-      view.addChild(scrollView);
-      break;
-
+      FWScrollView scrollLayout = new FWScrollView(frame, getTextValueAsString());
+      scrollLayout.setId(getChildInternalId());
+      FrameWork.addToViewList(scrollLayout);
+      view.addChild(scrollLayout);
+    }
+    break;
     case CREATE_RELATIVE_LAYOUT: {
       FWRelativeLayout layout = new FWRelativeLayout(frame);
       layout.setId(getChildInternalId());
       FrameWork.addToViewList(layout);
       view.addChild(layout);
-      
-      break;
     }
+    break;
     case CREATE_AUTO_COLUMN_LAYOUT:{
       FWAuto auto  = new FWAuto(frame);
       auto.setId(getChildInternalId());
@@ -403,7 +401,7 @@ public class NativeCommand {
       break;
     }
 
-    case CREATE_IMAGEVIEW:
+    case CREATE_IMAGEVIEW: {
       FWImageView imageView = new FWImageView(frame);
       imageView.setId(childInternalId);
       if (getTextValueAsString() != null && getTextValueAsString() != "") {
@@ -411,6 +409,7 @@ public class NativeCommand {
       }
       FrameWork.addToViewList(imageView);
       view.addChild(imageView);
+    }
       break;
     case CREATE_TOAST:
       Toast toast = Toast.makeText(frame, getTextValueAsString(), getValue() != 0 ? getValue() : 2);
