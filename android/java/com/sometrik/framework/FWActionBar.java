@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import com.sometrik.framework.NativeCommand.Selector;
 
 import android.app.ActionBar;
+import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
@@ -53,10 +54,10 @@ public class FWActionBar implements NativeCommandHandler {
     mainLayout.setLayoutParams(params);
 
     drawerButton = new ImageButton(frame);
-    try {
-      Bitmap bitmap = frame.bitmapCache.loadBitmap("icons_hamburger-menu.png");
+    Bitmap bitmap = frame.bitmapCache.loadBitmap("icons_hamburger-menu.png");
+    
+    if (bitmap != null) {
       Drawable draw = new BitmapDrawable(bitmap);
-      stream.close();
 
       drawerButton.setImageDrawable(draw);
       drawerButton.setScaleType(ScaleType.FIT_START);
@@ -77,9 +78,6 @@ public class FWActionBar implements NativeCommandHandler {
 	}
       });
       mainLayout.addView(drawerButton);
-
-    } catch (IOException e) {
-      e.printStackTrace();
     }
     
     titleView = new TextView(frame);
@@ -135,8 +133,8 @@ public class FWActionBar implements NativeCommandHandler {
 //      e.printStackTrace();
 //    }
     
-    this.normalStyle = currentStyle = new ViewStyleManager(scale, true);
-    this.activeStyle = new ViewStyleManager(scale, false);
+    this.normalStyle = currentStyle = new ViewStyleManager(frame.bitmapCache, scale, true);
+    this.activeStyle = new ViewStyleManager(frame.bitmapCache, scale, false);
     
     itemList = new ArrayList<ActionBarItem>();
     this.id = id;
