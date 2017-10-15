@@ -1,9 +1,17 @@
 package com.sometrik.framework;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+
+import android.content.res.AssetManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+
 class BitmapCache {
   private AssetManager assetManager;
   private float displayScale;
-  private HashMap<String, Bitmap> bitmaps = new HashMap<>();
+  private HashMap<String, Bitmap> bitmaps = new HashMap<String, Bitmap>();
 
   public BitmapCache(AssetManager assetManager, float displayScale) {
     this.assetManager = assetManager;
@@ -17,7 +25,7 @@ class BitmapCache {
 	InputStream stream = assetManager.open(filename);
 	if (stream != null) {
 	  bitmap = BitmapFactory.decodeStream(stream);
-	  bitmaps.set(filename, bitmap);
+	  bitmaps.put(filename, bitmap);
 	  stream.close();
 	}
       } catch (IOException e) {
