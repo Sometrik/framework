@@ -78,7 +78,7 @@ public class NativeCommand {
  
   public enum CommandType {
     CREATE_APPLICATION,
-    CREATE_BASICVIEW,
+    CREATE_FRAMEVIEW,
     CREATE_FORMVIEW,
     CREATE_NAVIGATIONVIEW,
     CREATE_OPENGL_VIEW,
@@ -210,7 +210,7 @@ public class NativeCommand {
     case CREATE_FORMVIEW:
       FWScrollView scrollView = new FWScrollView(frame, getTextValueAsString());
       scrollView.setId(getChildInternalId());
-      scrollView.setBackground(frame.getResources().getDrawable(android.R.drawable.screen_background_light));
+      // scrollView.setBackground(frame.getResources().getDrawable(android.R.drawable.screen_background_light));
       frame.addToViewList(scrollView);
       
       if (view == null){
@@ -222,6 +222,23 @@ public class NativeCommand {
 	view.addChild(scrollView);
       }
       break;
+      
+    case CREATE_FRAMEVIEW: {
+      FWFrameView frameView = new FWFrameView(frame, getTextValueAsString());
+      frameView.setId(getChildInternalId());
+      frame.addToViewList(frameView);
+
+      if (view == null){
+	System.out.println("view was null");
+	if (frame.getCurrentViewId() == 0){
+	  frameView.setValue(2);
+	}
+      } else {
+	view.addChild(frameView);
+      }
+    }
+     break;
+     
     case CREATE_NAVIGATIONVIEW:
       NavigationLayout navigationLayout = new NavigationLayout(frame);
       navigationLayout.setId(getChildInternalId());
@@ -231,7 +248,7 @@ public class NativeCommand {
 	frame.setCurrentDrawerViewId(getChildInternalId());
       }
       break;
-    case CREATE_BASICVIEW:
+      
     case CREATE_LINEAR_LAYOUT:
     case CREATE_PANEL: {
       FWLayout layout = createLinearLayout();
@@ -308,7 +325,6 @@ public class NativeCommand {
       FWScrollView simpleListScroller = new FWScrollView(frame);
       simpleListScroller.setFillViewport(true);
       FWSimpleList simpleList = new FWSimpleList(frame);
-      simpleListScroller.setMaxHeight(450);
       LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
       FrameLayout.LayoutParams params2 = new FrameLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
       simpleListScroller.setLayoutParams(params);
