@@ -251,7 +251,7 @@ public class NativeCommand {
       
     case CREATE_LINEAR_LAYOUT:
     case CREATE_PANEL: {
-      FWLayout layout = createLinearLayout();
+      FWLayout layout = createLinearLayout(getValue());
       if (view != null) {
 	view.addChild(layout);
       }
@@ -268,8 +268,7 @@ public class NativeCommand {
     }
       break;
     case CREATE_SCROLL_LAYOUT: {
-      FWScrollView scrollLayout = new FWScrollView(frame, getTextValueAsString());
-      scrollLayout.setId(getChildInternalId());
+      FWScrollLayout scrollLayout = new FWScrollLayout(frame, getChildInternalId());
       frame.addToViewList(scrollLayout);
       view.addChild(scrollLayout);
     }
@@ -322,16 +321,17 @@ public class NativeCommand {
       view.addChild(debugList);
       break;
     case CREATE_SIMPLELISTVIEW:{
-      FWScrollView simpleListScroller = new FWScrollView(frame);
-      simpleListScroller.setFillViewport(true);
+      // FWScrollView simpleListScroller = new FWScrollView(frame);
+      // simpleListScroller.setFillViewport(true);
       FWSimpleList simpleList = new FWSimpleList(frame);
       LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
       FrameLayout.LayoutParams params2 = new FrameLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-      simpleListScroller.setLayoutParams(params);
-      simpleListScroller.addView(simpleList);
+      // simpleListScroller.setLayoutParams(params);
+      // simpleListScroller.addView(simpleList);
       simpleList.setLayoutParams(params2);
       simpleList.setId(childInternalId);
-      view.addChild(simpleListScroller);
+      // view.addChild(simpleListScroller);
+      view.addChild(simpleList);
       frame.addToViewList(simpleList);
       break;
     }
@@ -521,7 +521,7 @@ public class NativeCommand {
       frame.addToViewList(ab);
       break;
     case CREATE_NAVIGATIONBAR:
-      NavigationBar bar = new NavigationBar(frame);
+      FWLayout bar = createLinearLayout(2);
       bar.setId(childInternalId);
       view.addChild(bar);
       frame.addToViewList(bar);
@@ -646,11 +646,11 @@ public class NativeCommand {
     return null;
   }
   
-  private FWLayout createLinearLayout() {
+  private FWLayout createLinearLayout(int direction) {
     FWLayout layout = new FWLayout(frame);
     layout.setId(getChildInternalId());
     frame.addToViewList(layout);
-    if (getValue() == 2) {
+    if (direction == 2) {
       LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
       params.weight = 1.0f;
       layout.setLayoutParams(params);
