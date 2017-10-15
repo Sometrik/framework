@@ -2,6 +2,8 @@ package com.sometrik.framework;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
 
 import com.sometrik.framework.NativeCommand.Selector;
@@ -32,8 +34,8 @@ public class FWImageView extends ImageView implements NativeCommandHandler {
     this.setClipToOutline(true);
     
     final float scale = getContext().getResources().getDisplayMetrics().density;
-    this.normalStyle = currentStyle = new ViewStyleManager(scale, true);
-    this.activeStyle = new ViewStyleManager(scale, false);
+    this.normalStyle = currentStyle = new ViewStyleManager(frame.bitmapCache, scale, true);
+    this.activeStyle = new ViewStyleManager(frame.bitmapCache, scale, false);
     
     final FWImageView image = this;
 
@@ -63,16 +65,16 @@ public class FWImageView extends ImageView implements NativeCommandHandler {
 
   private String getProtocol(String filename) {
     try {
-      URI uri = new uri(filename);
+      URI uri = new URI(filename);
       return uri.getScheme();
-    } catch (URISyntaxException & e) {
+    } catch (URISyntaxException e) {
       return "asset";
     }
   }
     
-  private void setImageFromAssets(String filename) {
+  public void setImageFromAssets(String filename) {
     deinitialize();
-    Bitmap bitmap = frame.bitmapCache.loadImage(filename);
+    Bitmap bitmap = frame.bitmapCache.loadBitmap(filename);
     setImageBitmap(bitmap);
   }
 
