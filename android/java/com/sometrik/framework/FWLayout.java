@@ -25,8 +25,8 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
 //    setDividerDrawable(frame.getResources().getDrawable(android.R.drawable.divider_horizontal_textfield));
     
     final float scale = getContext().getResources().getDisplayMetrics().density;
-    this.normalStyle = currentStyle = new ViewStyleManager(scale, true);
-    this.activeStyle = new ViewStyleManager(scale, false);
+    this.normalStyle = currentStyle = new ViewStyleManager(frame.bitmapCache, scale, true);
+    this.activeStyle = new ViewStyleManager(frame.bitmapCache, scale, false);
 
     final FWLayout layout = this;
     

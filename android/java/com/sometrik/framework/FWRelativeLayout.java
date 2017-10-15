@@ -23,8 +23,8 @@ public class FWRelativeLayout extends RelativeLayout implements NativeCommandHan
     this.frame = frame;
     
     final float scale = getContext().getResources().getDisplayMetrics().density;
-    this.normalStyle = currentStyle = new ViewStyleManager(scale, true);
-    this.activeStyle = new ViewStyleManager(scale, false);
+    this.normalStyle = currentStyle = new ViewStyleManager(frame.bitmapCache, scale, true);
+    this.activeStyle = new ViewStyleManager(frame.bitmapCache, scale, false);
   }
 
   @Override

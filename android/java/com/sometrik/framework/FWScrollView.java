@@ -30,8 +30,8 @@ public class FWScrollView extends ScrollView implements NativeCommandHandler {
     this.setFillViewport(true);
     
     final float scale = getContext().getResources().getDisplayMetrics().density;
-    this.normalStyle = currentStyle = new ViewStyleManager(scale, true);
-    this.activeStyle = new ViewStyleManager(scale, false);
+    this.normalStyle = currentStyle = new ViewStyleManager(frame.bitmapCache, scale, true);
+    this.activeStyle = new ViewStyleManager(frame.bitmapCache, scale, false);
   }
   
   public FWScrollView(FrameWork frameWork) {
@@ -42,8 +42,8 @@ public class FWScrollView extends ScrollView implements NativeCommandHandler {
     this.setFillViewport(true);
     
     final float scale = getContext().getResources().getDisplayMetrics().density;
-    this.normalStyle = currentStyle = new ViewStyleManager(scale, true);
-    this.activeStyle = new ViewStyleManager(scale, false);
+    this.normalStyle = currentStyle = new ViewStyleManager(frame.bitmapCache, scale, true);
+    this.activeStyle = new ViewStyleManager(frame.bitmapCache, scale, false);
   }
   
   @Override
