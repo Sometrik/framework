@@ -3,22 +3,17 @@ package com.sometrik.framework;
 import com.sometrik.framework.NativeCommand.Selector;
 
 import android.content.res.Resources;
-import android.graphics.Color;
 import android.graphics.Bitmap.Config;
 import android.util.TypedValue;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
-import android.widget.ScrollView;
 
 public class FWFrameView extends FrameLayout implements NativeCommandHandler {
 
   FrameWork frame;
   private String title;
-  private int maxHeight = 0;
   private Animation enterAnimation = null;
   private ViewStyleManager normalStyle, activeStyle, currentStyle;
   
@@ -26,8 +21,8 @@ public class FWFrameView extends FrameLayout implements NativeCommandHandler {
     super(frameWork);
     this.frame = frameWork;
     this.title = title;
-    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
-    this.setLayoutParams(params);
+    // LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+    // this.setLayoutParams(params);
     // this.setFillViewport(true);
     
     final float scale = getContext().getResources().getDisplayMetrics().density;
@@ -38,8 +33,8 @@ public class FWFrameView extends FrameLayout implements NativeCommandHandler {
   public FWFrameView(FrameWork frameWork) {
     super(frameWork);
     this.frame = frameWork;
-    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-    this.setLayoutParams(params);
+    // LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+    // this.setLayoutParams(params);
     // this.setFillViewport(true);
     
     final float scale = getContext().getResources().getDisplayMetrics().density;
@@ -62,11 +57,7 @@ public class FWFrameView extends FrameLayout implements NativeCommandHandler {
 
   @Override
   public void addChild(View view) {
-    if (this.getChildCount() > 0) {
-      System.out.println("ScrollView already has a child");
-    } else {
-      addView(view);
-    }
+    addView(view);
   }
   
   @Override
@@ -177,34 +168,9 @@ public class FWFrameView extends FrameLayout implements NativeCommandHandler {
   }
   
   @Override
-  protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-    if (maxHeight != 0) {
-      heightMeasureSpec = MeasureSpec.makeMeasureSpec(dpToPx(getResources(),maxHeight), MeasureSpec.AT_MOST);
-      super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-    } else {
-      super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-    }
-  }
-
-  private int dpToPx(Resources res, int dp) {
-    return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, res.getDisplayMetrics());
-  }
-
-  @Override
   public void reshape(int value, int size) {
-    if (getChildCount() > 0) {
-      View view = getChildAt(0);
-      if (view instanceof NativeCommandHandler) {
-	NativeCommandHandler handler = (NativeCommandHandler)view;
-	handler.reshape(value, size);
-      }
-    }
   }
   
-  public void setMaxHeight(int maxHeight) {
-    this.maxHeight = maxHeight;
-  }
-
   @Override
   public void setImage(byte[] bytes, int width, int height, Config config) {
     // TODO Auto-generated method stub
@@ -213,13 +179,6 @@ public class FWFrameView extends FrameLayout implements NativeCommandHandler {
 
   @Override
   public void reshape(int size) {
-    if (getChildCount() > 0) {
-      View view = getChildAt(0);
-      if (view instanceof NativeCommandHandler) {
-	NativeCommandHandler handler = (NativeCommandHandler)view;
-	handler.reshape(size);
-      }
-    }
   }
 
   @Override
