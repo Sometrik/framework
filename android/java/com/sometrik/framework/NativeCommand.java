@@ -211,7 +211,7 @@ public class NativeCommand {
       FWScrollView scrollView = new FWScrollView(frame, getTextValueAsString());
       scrollView.setId(getChildInternalId());
       scrollView.setBackground(frame.getResources().getDrawable(android.R.drawable.screen_background_light));
-      FrameWork.addToViewList(scrollView);
+      frame.addToViewList(scrollView);
       
       if (view == null){
 	System.out.println("view was null");
@@ -225,7 +225,7 @@ public class NativeCommand {
     case CREATE_NAVIGATIONVIEW:
       NavigationLayout navigationLayout = new NavigationLayout(frame);
       navigationLayout.setId(getChildInternalId());
-      FrameWork.addToViewList(navigationLayout);
+      frame.addToViewList(navigationLayout);
       if (frame.getCurrentDrawerViewId() == 0){
 	System.out.println("setting current navigationDrawer to " + getChildInternalId());
 	frame.setCurrentDrawerViewId(getChildInternalId());
@@ -244,7 +244,7 @@ public class NativeCommand {
     case CREATE_FRAME_LAYOUT: {
       FWFrameLayout layout = new FWFrameLayout(frame);
       layout.setId(getChildInternalId());
-      FrameWork.addToViewList(layout);
+      frame.addToViewList(layout);
       if (view != null) {
 	view.addChild(layout);
       }
@@ -253,21 +253,21 @@ public class NativeCommand {
     case CREATE_SCROLL_LAYOUT: {
       FWScrollView scrollLayout = new FWScrollView(frame, getTextValueAsString());
       scrollLayout.setId(getChildInternalId());
-      FrameWork.addToViewList(scrollLayout);
+      frame.addToViewList(scrollLayout);
       view.addChild(scrollLayout);
     }
     break;
     case CREATE_RELATIVE_LAYOUT: {
       FWRelativeLayout layout = new FWRelativeLayout(frame);
       layout.setId(getChildInternalId());
-      FrameWork.addToViewList(layout);
+      frame.addToViewList(layout);
       view.addChild(layout);
     }
     break;
     case CREATE_AUTO_COLUMN_LAYOUT:{
       FWAuto auto  = new FWAuto(frame);
       auto.setId(getChildInternalId());
-      FrameWork.addToViewList(auto);
+      frame.addToViewList(auto);
       view.addChild(auto);
     }
       break;
@@ -301,7 +301,7 @@ public class NativeCommand {
 //      FWLayout debugList = createDebugResultsScreen();
       FWList debugList = new FWList(frame, new FWAdapter2(frame, null));
       debugList.setId(childInternalId);
-      FrameWork.addToViewList(debugList);
+      frame.addToViewList(debugList);
       view.addChild(debugList);
       break;
     case CREATE_SIMPLELISTVIEW:{
@@ -316,7 +316,7 @@ public class NativeCommand {
       simpleList.setLayoutParams(params2);
       simpleList.setId(childInternalId);
       view.addChild(simpleListScroller);
-      FrameWork.addToViewList(simpleList);
+      frame.addToViewList(simpleList);
       break;
     }
     case CREATE_LISTVIEW:
@@ -325,7 +325,7 @@ public class NativeCommand {
 //	Real slider stuff
 	SliderLayout slider = new SliderLayout(frame);
 	slider.setId(childInternalId);
-	FrameWork.addToViewList(slider);
+	frame.addToViewList(slider);
 	view.addChild(slider);
       } else {
 	FWList listView = new FWList(frame, new FWAdapter2(frame, null));
@@ -341,7 +341,7 @@ public class NativeCommand {
 	    frame.intChangedEvent(System.currentTimeMillis() / 1000.0, childInternalId, (groupPosition - 1), 0);
 	  }
 	});
-	FrameWork.addToViewList(listView);
+	frame.addToViewList(listView);
 	view.addChild(listView);
       }
       break;
@@ -351,13 +351,13 @@ public class NativeCommand {
       timer.scheduleAtFixedRate((new TimerTask() {
 	@Override
 	public void run() {
-	  FrameWork.timerEvent(System.currentTimeMillis() / 1000, internalId, childInternalId);
+	  frame.timerEvent(System.currentTimeMillis() / 1000, internalId, childInternalId);
 	}
       }), 1000, 1000);
       break;
     case CREATE_CHECKBOX:
       FWCheckBox checkBox = createCheckBox();
-      FrameWork.addToViewList(checkBox);
+      frame.addToViewList(checkBox);
       view.addChild(checkBox);
       break;
     case CREATE_OPENGL_VIEW:
@@ -377,7 +377,7 @@ public class NativeCommand {
     case CREATE_RADIO_GROUP:
       FWRadioGroup radioGroup = new FWRadioGroup(frame);
       radioGroup.setId(childInternalId);
-      FrameWork.addToViewList(radioGroup);
+      frame.addToViewList(radioGroup);
       view.addChild(radioGroup);
       break;
       
@@ -385,7 +385,7 @@ public class NativeCommand {
       FWTextView textView = new FWTextView(frame, getValue() != 0);
       textView.setId(getChildInternalId());
       textView.setText(getTextValueAsString());
-      FrameWork.addToViewList(textView);
+      frame.addToViewList(textView);
       view.addChild(textView);
       break;
     }
@@ -396,7 +396,7 @@ public class NativeCommand {
       textView.setMovementMethod(LinkMovementMethod.getInstance());
       String text = "<a href='" + getTextValue2AsString() + "'>" + getTextValueAsString() + "</a>";
       textView.setText(Html.fromHtml(text));
-      FrameWork.addToViewList(textView);
+      frame.addToViewList(textView);
       view.addChild(textView);
       break;
     }
@@ -407,7 +407,7 @@ public class NativeCommand {
       if (getTextValueAsString() != null && getTextValueAsString() != "") {
 	imageView.setImageFromAssets(getTextValueAsString());
       }
-      FrameWork.addToViewList(imageView);
+      frame.addToViewList(imageView);
       view.addChild(imageView);
     }
       break;
@@ -494,7 +494,7 @@ public class NativeCommand {
     case CREATE_DIALOG:
       FWDialog dialog = new FWDialog(frame, childInternalId);
       dialog.setTitle(getTextValueAsString());
-      FrameWork.addToViewList(dialog);
+      frame.addToViewList(dialog);
       break;
     case CREATE_ACTION_SHEET:
       createActionSheet();
@@ -502,13 +502,13 @@ public class NativeCommand {
     case CREATE_ACTIONBAR:
       FWActionBar ab = new FWActionBar(frame, getTextValueAsString(), childInternalId);
       frame.actionBar = ab;
-      FrameWork.addToViewList(ab);
+      frame.addToViewList(ab);
       break;
     case CREATE_NAVIGATIONBAR:
       NavigationBar bar = new NavigationBar(frame);
       bar.setId(childInternalId);
       view.addChild(bar);
-      FrameWork.addToViewList(bar);
+      frame.addToViewList(bar);
       break;
     case FLUSH_VIEW:
       view.flush();
@@ -574,7 +574,7 @@ public class NativeCommand {
     }
     table.setStretchAllColumns(true);
     table.setShrinkAllColumns(true);
-    FrameWork.addToViewList(table);
+    frame.addToViewList(table);
     return table;
   }
   
@@ -593,12 +593,12 @@ public class NativeCommand {
 	frame.intChangedEvent(System.currentTimeMillis() / 1000.0, buttonView.getId(), isChecked ? 1 : 0, 0);
       }
     });
-    FrameWork.addToViewList(click);
+    frame.addToViewList(click);
     return click;
   }
   
   private void deleteElement(NativeCommandHandler parent, int childId) {
-    FrameWork.removeViewFromList(childInternalId);
+    frame.removeViewFromList(childInternalId);
     if (parent instanceof ViewGroup) {
       ViewGroup group = (ViewGroup) parent;
       int childCount = group.getChildCount();
@@ -633,7 +633,7 @@ public class NativeCommand {
   private FWLayout createLinearLayout() {
     FWLayout layout = new FWLayout(frame);
     layout.setId(getChildInternalId());
-    FrameWork.addToViewList(layout);
+    frame.addToViewList(layout);
     if (getValue() == 2) {
       LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
       params.weight = 1.0f;
@@ -656,7 +656,7 @@ public class NativeCommand {
 //    params.weight = 1;
 //    params.gravity = Gravity.BOTTOM;
     button.setLayoutParams(params);
-    FrameWork.addToViewList(button);
+    frame.addToViewList(button);
     return button;
   }
   
@@ -685,7 +685,7 @@ public class NativeCommand {
       public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
       public void onTextChanged(CharSequence s, int start, int before, int count) {}
    });
-    FrameWork.addToViewList(editText);
+    frame.addToViewList(editText);
     return editText;
   }
   
@@ -700,14 +700,14 @@ public class NativeCommand {
     editText.setVerticalScrollBarEnabled(true);
     editText.setMovementMethod(new ScrollingMovementMethod());
     editText.addDelayedChangeListener(getChildInternalId());
-    FrameWork.addToViewList(editText);
+    frame.addToViewList(editText);
     return editText;
   }
 
   private FWPicker createSpinner(){
     FWPicker picker = new FWPicker(frame);
     picker.setId(getChildInternalId());
-    FrameWork.addToViewList(picker);
+    frame.addToViewList(picker);
     
     return picker;
   }
@@ -820,7 +820,7 @@ public class NativeCommand {
       public void onIabPurchaseFinished(IabResult result, Purchase info) {
 	if (result.isSuccess()) {
 	  System.out.println("Purchase of product id " + productId + " completed");
-	  FrameWork.onPurchaseEvent(System.currentTimeMillis() / 1000.0, frame.getAppId(), info.getSku(), true, info.getPurchaseTime() / 1000.0);
+	  frame.onPurchaseEvent(System.currentTimeMillis() / 1000.0, frame.getAppId(), info.getSku(), true, info.getPurchaseTime() / 1000.0);
 	  // TODO
 	} else {
 	  System.out.println("Purchase of product id " + productId + " failed");
@@ -835,7 +835,7 @@ public class NativeCommand {
     List<Purchase> purchaseList = inventory.getAllPurchases();
     System.out.println("getting purchase history. Purchase child size: " + purchaseList.size());
     for (Purchase purchase : inventory.getAllPurchases()) {
-      FrameWork.onPurchaseEvent(System.currentTimeMillis() / 1000.0, frame.getAppId(), purchase.getSku(), false, purchase.getPurchaseTime() / 1000.0);
+      frame.onPurchaseEvent(System.currentTimeMillis() / 1000.0, frame.getAppId(), purchase.getSku(), false, purchase.getPurchaseTime() / 1000.0);
     }
   }
   

@@ -213,7 +213,7 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
     Iterator<View> i = viewsToBeRemoved.iterator();
     while (i.hasNext()) {
       View v = i.next();
-      FrameWork.removeViewFromList(v.getId());
+      frame.removeViewFromList(v.getId());
       removeView(v);
     }
   }

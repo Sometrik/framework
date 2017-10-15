@@ -80,7 +80,7 @@ public class FrameWork extends Activity {
   private AlertDialog.Builder builder;
   private AlertDialog alert;
   private float windowYcoords;
-  public static HashMap<Integer, NativeCommandHandler> views = new HashMap<Integer, NativeCommandHandler>();
+  public HashMap<Integer, NativeCommandHandler> views = new HashMap<Integer, NativeCommandHandler>();
   private int appId = 0;
   private int currentView = 0;
   public static boolean transitionAnimation = false;
@@ -155,12 +155,14 @@ public class FrameWork extends Activity {
 
     bitmapCache = new BitmapCache(getAssets(), displayMetrics.scaledDensity);
 
+    final FrameWork framework = this;
+    
     mainHandler = new Handler() {
 
       public void handleMessage(Message msg) {
 	
 	NativeCommand command = (NativeCommand) msg.obj;
-	command.apply(FrameWork.views.get(command.getInternalId()));
+	command.apply(framework.views.get(command.getInternalId()));
       }
 
     };
@@ -254,7 +256,7 @@ public class FrameWork extends Activity {
   
   public SharedPreferences.Editor getPreferencesEditor() { return editor; }
 
-  public static void addToViewList(NativeCommandHandler view) {
+  public void addToViewList(NativeCommandHandler view) {
     views.put(view.getElementId(), view);
   }
 
@@ -263,10 +265,10 @@ public class FrameWork extends Activity {
     startActivity(browserIntent);
   }
   
-  static public void removeViewFromList(int viewId) {
-    NativeCommandHandler view = FrameWork.views.get(viewId);
+  public void removeViewFromList(int viewId) {
+    NativeCommandHandler view = views.get(viewId);
     if (view != null) view.deinitialize();
-    FrameWork.views.remove(viewId);
+    views.remove(viewId);
   }
 
   public void setCurrentView(final View view, final boolean recordHistory, Animation animation) {
@@ -324,7 +326,7 @@ public class FrameWork extends Activity {
 	}
     });
 
-    View sadas = (View) FrameWork.views.get(currentView);
+    View sadas = (View) views.get(currentView);
     sadas.startAnimation(animation);
   }
 
