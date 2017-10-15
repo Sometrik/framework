@@ -26,11 +26,19 @@ class FWPreferences {
   }
 
   int getInt(const std::string & key, int defaultValue = 0) const {
-    return std::stoi(getText(key, std::to_string(defaultValue)));
+    try {
+      return std::stoi(getText(key, std::to_string(defaultValue)));
+    } catch (std::invalid_argument & e) {
+      return 0;
+    }
   }
 
   long long getLong(const std::string & key, long long defaultValue = 0) const {
-    return std::stoi(getText(key, std::to_string(defaultValue)));
+    try {
+      return std::stoi(getText(key, std::to_string(defaultValue)));
+    } catch (std::invalid_argument & e) {
+      return 0;
+    }
   }
 
   void setText(const std::string & key, const std::string & value) {
