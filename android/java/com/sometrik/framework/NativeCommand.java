@@ -222,8 +222,7 @@ public class NativeCommand {
      break;
      
     case CREATE_NAVIGATIONVIEW:
-      NavigationLayout navigationLayout = new NavigationLayout(frame);
-      navigationLayout.setId(getChildInternalId());
+      NavigationLayout navigationLayout = new NavigationLayout(frame, getChildInternalId());
       frame.addToViewList(navigationLayout);
       if (frame.getCurrentDrawerViewId() == 0){
 	System.out.println("setting current navigationDrawer to " + getChildInternalId());

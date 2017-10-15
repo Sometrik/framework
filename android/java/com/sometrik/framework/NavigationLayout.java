@@ -4,38 +4,27 @@ import com.sometrik.framework.NativeCommand.Selector;
 
 import android.graphics.Bitmap.Config;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 
-public class NavigationLayout extends ScrollView implements NativeCommandHandler {
+public class NavigationLayout extends FrameLayout implements NativeCommandHandler {
 
   FrameWork frame;
   ViewStyleManager normalStyle, activeStyle, currentStyle;
   LinearLayout base;
 
-  public NavigationLayout(FrameWork frame) {
+  public NavigationLayout(FrameWork frame, int id) {
     super(frame);
     this.frame = frame;
-    base = new LinearLayout(frame);
-
-    FrameLayout.LayoutParams scrollParams = new FrameLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.FILL_PARENT);
+    this.setId(id);;
+    
     DrawerLayout.LayoutParams lp = new DrawerLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
     lp.gravity = Gravity.START;
     setLayoutParams(lp);
-    addView(base);
-    base.setLayoutParams(scrollParams);
-    base.setBackgroundColor(Color.parseColor("#ffffff"));
     setBackgroundColor(Color.parseColor("#ffffff"));
-
-//    ColorDrawable cd = new ColorDrawable();
-//    cd.setColor(Color.WHITE);
-//    base.setBackgroundDrawable(cd);
-//    setBackgroundDrawable(cd);
     
     final float scale = getContext().getResources().getDisplayMetrics().density;
     this.normalStyle = currentStyle = new ViewStyleManager(frame.bitmapCache, scale, true);
@@ -64,20 +53,14 @@ public class NavigationLayout extends ScrollView implements NativeCommandHandler
 
   @Override
   public void addChild(View view) {
-    base.addView(view);
+    addView(view);
   }
 
   @Override
-  public void addOption(int optionId, String text) {
-    // TODO Auto-generated method stub
-
-  }
+  public void addOption(int optionId, String text) { }
 
   @Override
-  public void addData(String text, int row, int column, int sheet) {
-    // TODO Auto-generated method stub
-
-  }
+  public void addData(String text, int row, int column, int sheet) { }
 
   @Override
   public void setValue(String v) {
@@ -101,7 +84,6 @@ public class NavigationLayout extends ScrollView implements NativeCommandHandler
 
   @Override
   public void setViewVisibility(boolean visible) {
-    System.out.println("Drawer visibility");
     frame.getDrawerLayout().setDrawerVisibility(this, visible);
   }
 
@@ -117,16 +99,10 @@ public class NavigationLayout extends ScrollView implements NativeCommandHandler
   }
 
   @Override
-  public void setError(boolean hasError, String errorText) {
-    // TODO Auto-generated method stub
-
-  }
+  public void setError(boolean hasError, String errorText) { }
 
   @Override
-  public void clear() {
-    // TODO Auto-generated method stub
-
-  }
+  public void clear() { }
 
   @Override
   public int getElementId() {
@@ -134,39 +110,21 @@ public class NavigationLayout extends ScrollView implements NativeCommandHandler
   }
 
   @Override
-  public void flush() {
-    // TODO Auto-generated method stub
-
-  }
+  public void flush() { }
 
   @Override
-  public void addColumn(String text, int columnType) {
-    // TODO Auto-generated method stub
-
-  }
+  public void addColumn(String text, int columnType) { }
 
   @Override
-  public void reshape(int value, int size) {
-    // TODO Auto-generated method stub
-
-  }
+  public void reshape(int value, int size) { }
 
   @Override
-  public void setImage(byte[] bytes, int width, int height, Config config) {
-    // TODO Auto-generated method stub
-
-  }
+  public void setImage(byte[] bytes, int width, int height, Config config) { }
 
   @Override
-  public void reshape(int size) {
-    // TODO Auto-generated method stub
-
-  }
+  public void reshape(int size) { }
 
   @Override
-  public void deinitialize() {
-    // TODO Auto-generated method stub
-    
-  }
+  public void deinitialize() { }
 
 }
