@@ -185,7 +185,7 @@ protected:
   }
   
   int sendCommand(const Command & command) {
-    if (command.getType() == Command::CREATE_FORMVIEW || command.getType() == Command::CREATE_OPENGL_VIEW) {
+    if (command.getType() == Command::CREATE_FRAMEVIEW || command.getType() == Command::CREATE_OPENGL_VIEW) {
       auto & app = getApplication();
       if (!app.getActiveViewId()) {
 	app.setActiveViewId(command.getChildInternalId());
@@ -805,24 +805,29 @@ protected:
       g_object_unref (notification);
     }
       break;
-            
-    case Command::CREATE_FORMVIEW: {
-      auto sw = gtk_scrolled_window_new(0, 0);
-      gtk_container_set_border_width((GtkContainer*)sw, 10);
-      gtk_scrolled_window_set_policy((GtkScrolledWindow*)sw,
-				     GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
-      addView(0, command.getChildInternalId(), sw);
+
+    case Command::CREATE_FRAMEVIEW: {
+      auto box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+      addView(0, command.getChildInternalId(), box);
       string s = "form" + to_string(command.getChildInternalId());
-      gtk_stack_add_named((GtkStack *)stack, sw, s.c_str());
-      
+      gtk_stack_add_named((GtkStack *)stack, box, s.c_str());
+
       if (!initial_view_shown) {
 	if (header) {
 	  gtk_header_bar_set_subtitle((GtkHeaderBar*)header, command.getTextValue().c_str());
 	}
-	gtk_stack_set_visible_child((GtkStack*)stack, sw);
+	gtk_stack_set_visible_child((GtkStack*)stack, box);
 	gtk_widget_show_all(window);
 	initial_view_shown = true;
       }
+}
+      break;
+      
+    case Command::CREATE_SCROLL_LAYOUT: {
+      auto sw = gtk_scrolled_window_new(0, 0);
+      // gtk_scrolled_window_set_min_content_height((GtkScrolledWindow*)sw, 400);
+      gtk_scrolled_window_set_policy((GtkScrolledWindow*)sw, GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
+      addView(command, sw, true);
     }
       break;      
 
@@ -870,8 +875,30 @@ protected:
   void setStyle(int id, Selector selector, const std::string & key, const std::string & value) {
     auto widget = views_by_id[id];
     if (!widget) return;
-    
-    if (key == "color") {
+
+    if (key == "height") {
+      GtkWidget * parent = gtk_widget_get_parent(widget);
+      bool match_parent = value == "match-parent";
+      if (GTK_IS_BOX(parent) && 0) {
+	gtk_box_set_child_packing(GTK_BOX(parent),
+				  widget,
+				  match_parent,
+				  match_parent,
+				  0,
+				  GTK_PACK_START);
+      }
+    } else if (key == "width") {
+      GtkWidget * parent = gtk_widget_get_parent(widget);
+      bool match_parent = value == "match-parent";
+      if (GTK_IS_BOX(parent) && 0) {
+	gtk_box_set_child_packing(GTK_BOX(parent),
+				  widget,
+				  match_parent,
+				  match_parent,
+				  0,
+				  GTK_PACK_START);
+      }      
+    } else if (key == "color") {
       GdkRGBA color;
       if (gdk_rgba_parse(&color, value.c_str())) {
 	gtk_widget_override_color(widget, getGtkState(selector), &color);
@@ -992,7 +1019,7 @@ protected:
 	auto a = gtk_dialog_get_content_area(GTK_DIALOG(parent));
 	gtk_container_add(GTK_CONTAINER(a), widget);
       } else if (GTK_IS_BOX(parent)) {
-	gtk_box_pack_start((GtkBox*)parent, widget, expand ? 1 : 0, 0, 0);
+	gtk_box_pack_start((GtkBox*)parent, widget, expand ? 1 : 0, expand ? 1 : 0, 0);
       } else if (GTK_IS_FLOW_BOX(parent)) {
 	gtk_flow_box_insert((GtkFlowBox*)parent, widget, -1);
       } else if (GTK_IS_TABLE(parent)) {
