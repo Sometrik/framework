@@ -92,6 +92,7 @@ public class NativeCommand {
     CREATE_PICKER, // called Spinner in Android
     CREATE_LINEAR_LAYOUT,
     CREATE_FRAME_LAYOUT,
+    CREATE_SCROLL_LAYOUT,
     CREATE_RELATIVE_LAYOUT,
     CREATE_TABLE_LAYOUT,
     CREATE_AUTO_COLUMN_LAYOUT,
@@ -248,6 +249,13 @@ public class NativeCommand {
 	view.addChild(layout);
       }
     }
+      break;
+
+    case CREATE_SCROLL_LAYOUT: {
+      FWScrollView scrollView = new FWScrollView(frame, getTextValueAsString());
+      scrollView.setId(getChildInternalId());
+      FrameWork.addToViewList(scrollView);
+      view.addChild(scrollView);
       break;
 
     case CREATE_RELATIVE_LAYOUT: {
