@@ -155,7 +155,7 @@ public:
   }
 
   int sendCommand(const Command & command) override {
-    if (command.getType() == Command::CREATE_FORMVIEW || command.getType() == Command::CREATE_OPENGL_VIEW) {
+    if (command.getType() == Command::CREATE_FRAMEVIEW || command.getType() == Command::CREATE_OPENGL_VIEW) {
       auto & app = getApplication();
       if (!app.getActiveViewId()) {
         app.setActiveViewId(command.getChildInternalId());
