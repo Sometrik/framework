@@ -17,6 +17,7 @@ class NavigationBar : public Element {
     return Element::isA(className);
   }
 
+#if 0
   void addButton(int buttonId, std::string imageFileName){
     Command c(Command::ADD_COLUMN, getInternalId());
     c.setTextValue(imageFileName);
@@ -30,6 +31,7 @@ class NavigationBar : public Element {
     c.setValue(buttonId);
     sendCommand(c);
   }
+#endif
 
   void onValueEvent(ValueEvent & ev) override {
     notify();
