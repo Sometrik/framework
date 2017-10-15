@@ -84,7 +84,7 @@ public class FrameWork extends Activity {
   private int appId = 0;
   private int currentView = 0;
   public static boolean transitionAnimation = false;
-  public static BitmapCache BitmapCache = new BitmapCache;
+  public BitmapCache bitmapCache;
 
   public native void endModal(double timestamp, int value, byte[] textValue);
   public native void textChangedEvent(double timestamp, int id, byte[] textValue);
