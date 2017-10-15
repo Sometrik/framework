@@ -3,40 +3,22 @@ package com.sometrik.framework;
 import android.graphics.Bitmap.Config;
 
 import com.sometrik.framework.NativeCommand.Selector;
-
-import android.graphics.Color;
 import android.util.DisplayMetrics;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.LinearLayout.LayoutParams;
 
-public class NavigationBar extends FrameLayout implements NativeCommandHandler {
-  
+public class NavigationBar extends LinearLayout implements NativeCommandHandler {  
   FrameWork frame;
-  LinearLayout baseLayout;
-  LinearLayout.LayoutParams childParams;
-  int displayScale = 1;
   ViewStyleManager normalStyle, activeStyle, currentStyle;
   
   public NavigationBar(FrameWork frame) {
     super(frame);
     this.frame = frame;
-//    this.setBackground(frame.getResources().getDrawable(android.R.drawable.dialog_holo_light_frame));
-//    setBackgroundColor(Color.parseColor("#ffffff"));
-    baseLayout = new LinearLayout(frame);
-    baseLayout.setOrientation(LinearLayout.HORIZONTAL);
+    setOrientation(LinearLayout.HORIZONTAL);
+    
     LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-    
-    baseLayout.setLayoutParams(params);
     setLayoutParams(params);
-    DisplayMetrics metrics = frame.setupDisplayMetrics();
-    displayScale = (int) metrics.scaledDensity;
-    childParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 60 * displayScale);
-    childParams.weight = 1;
-    
-    addView(baseLayout);
-    
+            
     final float scale = getContext().getResources().getDisplayMetrics().density;
     this.normalStyle = currentStyle = new ViewStyleManager(frame.bitmapCache, scale, true);
     this.activeStyle = new ViewStyleManager(frame.bitmapCache, scale, false);
@@ -51,7 +33,6 @@ public class NavigationBar extends FrameLayout implements NativeCommandHandler {
   @Override
   public void addChild(View view) {
     final int buttonId = view.getId();
-    view.setLayoutParams(childParams);
     view.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
@@ -59,13 +40,11 @@ public class NavigationBar extends FrameLayout implements NativeCommandHandler {
 	frame.intChangedEvent(System.currentTimeMillis() / 1000.0, getId(), 1, buttonId);
       }
     });
-    baseLayout.addView(view);
+    addView(view);
   }
 
   @Override
-  public void addOption(int optionId, String text) {
-    System.out.println("navigationBar couldn't handle command");
-  }
+  public void addOption(int optionId, String text) { }
 
   @Override
   public void addColumn(String text, int columnType) {
