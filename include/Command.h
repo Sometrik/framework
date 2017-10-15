@@ -10,7 +10,6 @@ class Command {
   enum Type {
     CREATE_APPLICATION = 0,
     CREATE_FRAMEVIEW,
-    CREATE_FORMVIEW,
     CREATE_NAVIGATIONVIEW,
     CREATE_OPENGL_VIEW,
     CREATE_TEXTFIELD, // For viewing single value

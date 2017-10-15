@@ -40,7 +40,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.PopupMenu.OnMenuItemClickListener;
-import android.widget.ScrollView;
 import android.widget.Toast;
 
 public class NativeCommand {
@@ -79,7 +78,6 @@ public class NativeCommand {
   public enum CommandType {
     CREATE_APPLICATION,
     CREATE_FRAMEVIEW,
-    CREATE_FORMVIEW,
     CREATE_NAVIGATIONVIEW,
     CREATE_OPENGL_VIEW,
     CREATE_TEXTFIELD, // For viewing single value
@@ -206,22 +204,6 @@ public class NativeCommand {
 //     System.out.println("Processing message " + command + " id: " + internalId + " Child id: " + getChildInternalId());
     
     switch (command) {
-
-    case CREATE_FORMVIEW:
-      FWScrollView scrollView = new FWScrollView(frame, getTextValueAsString());
-      scrollView.setId(getChildInternalId());
-      // scrollView.setBackground(frame.getResources().getDrawable(android.R.drawable.screen_background_light));
-      frame.addToViewList(scrollView);
-      
-      if (view == null){
-	System.out.println("view was null");
-	if (frame.getCurrentViewId() == 0){
-	  scrollView.setValue(2);
-	}
-      } else {
-	view.addChild(scrollView);
-      }
-      break;
       
     case CREATE_FRAMEVIEW: {
       FWFrameView frameView = new FWFrameView(frame, getTextValueAsString());
@@ -321,16 +303,10 @@ public class NativeCommand {
       view.addChild(debugList);
       break;
     case CREATE_SIMPLELISTVIEW:{
-      // FWScrollView simpleListScroller = new FWScrollView(frame);
-      // simpleListScroller.setFillViewport(true);
       FWSimpleList simpleList = new FWSimpleList(frame);
-      LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
       FrameLayout.LayoutParams params2 = new FrameLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-      // simpleListScroller.setLayoutParams(params);
-      // simpleListScroller.addView(simpleList);
       simpleList.setLayoutParams(params2);
       simpleList.setId(childInternalId);
-      // view.addChild(simpleListScroller);
       view.addChild(simpleList);
       frame.addToViewList(simpleList);
       break;
