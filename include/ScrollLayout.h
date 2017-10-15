@@ -8,7 +8,7 @@
 
 class ScrollLayout : public Element {
  public:
-  ScrollLayout(int _id = 0) : Element(_id), direction(_direction) { }
+  ScrollLayout(int _id = 0) : Element(_id) { }
 
   bool isA(const std::string & className) const override {
     if (className == "ScrollLayout") return true;
@@ -24,7 +24,6 @@ class ScrollLayout : public Element {
  protected:
   void create() override {
     Command c(Command::CREATE_SCROLL_LAYOUT, getParentInternalId(), getInternalId());
-    c.setValue(direction);
     sendCommand(c);
   }
 };
