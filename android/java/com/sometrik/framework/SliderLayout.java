@@ -98,7 +98,7 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
     if (bottomLayoutId != 0) {
       listParams.addRule(RelativeLayout.ABOVE, bottomLayoutId);
     }
-    FWScrollView scrollView = new FWScrollView(frame);
+    FWScrollLayout scrollView = new FWScrollLayout(frame, 0);
     scrollView.setViewVisibility(false);
     scrollView.setLayoutParams(listParams);
     scrollView.addChild(view);
