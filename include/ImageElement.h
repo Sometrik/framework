@@ -3,6 +3,7 @@
 
 #include <Element.h>
 #include <Command.h>
+#include <CommandEvent.h>
 
 #include <ImageResponseEvent.h>
 
