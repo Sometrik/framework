@@ -303,7 +303,10 @@ class ViewStyleManager {
     if (weight != null || width != null || height != null ||
 	margin != null || gravity != null) {
       
-      if (view.getParent() instanceof LinearLayout) {
+      if (view.getParent() instanceof ScrollView) { // stupid hack
+	FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+	view.setLayoutParams(params);
+      } else if (view.getParent() instanceof LinearLayout) {
 	LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)view.getLayoutParams();
       	if (weight != null) params.weight = weight;
       	if (margin != null) {
