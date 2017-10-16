@@ -8,15 +8,12 @@ import android.graphics.Bitmap.Config;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
-import android.view.Window;
-import android.widget.LinearLayout;
-import android.widget.ScrollView;
+import android.widget.FrameLayout;
 
 public class FWDialog extends Dialog implements NativeCommandHandler{
 
   FrameWork frame;
   ViewGroup baseView;
-  ScrollView scrollView;
   int id;
   ViewStyleManager normalStyle, activeStyle, currentStyle;
   
@@ -24,8 +21,8 @@ public class FWDialog extends Dialog implements NativeCommandHandler{
     super(frame);
     this.frame = frame;
     this.id = id;
-    scrollView = new ScrollView(frame);
-    setContentView(scrollView);
+    baseView = new FrameLayout(frame);
+    setContentView(baseView);
     LayoutParams params = getWindow().getAttributes();
     params.height = LayoutParams.WRAP_CONTENT;
     params.width = LayoutParams.MATCH_PARENT;
@@ -56,21 +53,14 @@ public class FWDialog extends Dialog implements NativeCommandHandler{
 
   @Override
   public void addChild(View view) {
-    if (baseView == null){
-      baseView = (ViewGroup) view;
-      scrollView.addView(baseView);
-    } else {
-      baseView.addView(view);
-    }
+    baseView.addView(view);
   }
 
   @Override
   public void addOption(int optionId, String text) { }
 
   @Override
-  public void addData(String text, int row, int column, int sheet) {
-    System.out.println("FWDialog couldn't handle the command");
-  }
+  public void addData(String text, int row, int column, int sheet) { }
 
   @Override
   public void setValue(String v) {
@@ -79,7 +69,7 @@ public class FWDialog extends Dialog implements NativeCommandHandler{
 
   @Override
   public void setValue(int v) {
-    if (v > 0){
+    if (v > 0) {
       show();
     } else {
       dismiss();
@@ -88,7 +78,7 @@ public class FWDialog extends Dialog implements NativeCommandHandler{
 
   @Override
   public void setViewVisibility(boolean visible) {
-    if (visible){
+    if (visible) {
       show();
     } else {
       dismiss();
@@ -107,9 +97,7 @@ public class FWDialog extends Dialog implements NativeCommandHandler{
   }
 
   @Override
-  public void setError(boolean hasError, String errorText) {
-    System.out.println("FWDialog couldn't handle the command");
-  }
+  public void setError(boolean hasError, String errorText) { }
 
   @Override
   public void clear() {
