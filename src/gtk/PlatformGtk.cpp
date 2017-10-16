@@ -1378,7 +1378,7 @@ int main (int argc, char *argv[]) {
   mainThread.setActualDisplayWidth(width);
   mainThread.setActualDisplayHeight(height);
   
-  auto gtk_app = gtk_application_new("com.sometrik.test", G_APPLICATION_FLAGS_NONE); // FIXME: add correct name
+  auto gtk_app = gtk_application_new(application->getName().c_str(), G_APPLICATION_FLAGS_NONE);
   g_signal_connect (gtk_app, "activate", G_CALLBACK (activate), &mainThread);
   int status = g_application_run(G_APPLICATION(gtk_app), argc, argv);
   g_object_unref(gtk_app);
