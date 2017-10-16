@@ -1,24 +1,16 @@
 package com.sometrik.framework;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
 
 import com.sometrik.framework.NativeCommand.Selector;
 
-import android.content.res.AssetManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.View.OnTouchListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 
 public class FWImageView extends ImageView implements NativeCommandHandler {
   FrameWork frame;
@@ -76,6 +68,7 @@ public class FWImageView extends ImageView implements NativeCommandHandler {
     deinitialize();
     Bitmap bitmap = frame.bitmapCache.loadBitmap(filename);
     setImageBitmap(bitmap);
+    invalidate();
   }
 
   @Override
@@ -110,7 +103,7 @@ public class FWImageView extends ImageView implements NativeCommandHandler {
   @Override
   public void setValue(String v) {
     deinitialize();
-    if (getProtocol(v) == "asset") {
+    if (getProtocol(v) != "http") {
       setImageFromAssets(v);
     }
   }
