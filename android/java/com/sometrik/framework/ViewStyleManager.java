@@ -29,10 +29,8 @@ class ViewStyleManager {
   private BitmapCache bitmapCache;
   private float displayScale = 1.0f;
   
-  private boolean isPaddingSet = false;
-  private int paddingLeft = 0, paddingTop = 0, paddingRight = 0, paddingBottom = 0;
-  private Integer marginLeft = null, marginTop = null;
-  private Integer marginRight = null, marginBottom = null;
+  private float[] padding = null;
+  private float[] margin = null;
   private Integer width = null, height = null;
   private Float opacity = null;
   private Integer leftPosition = null, topPosition = null;
@@ -63,6 +61,16 @@ class ViewStyleManager {
     if (isDefault) setDefaults();
   }
   
+  private void initPadding() {
+    padding = new float[4];
+    padding[0] = padding[1] = padding[2] = padding[3] = 0.0f;
+  }
+  
+  private void initMargin() {
+    margin = new float[4];
+    margin[0] = margin[1] = margin[2] = margin[3] = 0.0f;  
+  }
+  
   public void setDefaults() {
     zoom = new Float(1.0);
     opacity = new Float(1.0);
@@ -71,31 +79,39 @@ class ViewStyleManager {
     backgroundColor = new Integer(0);
     fontWeight = new Integer(400);
     iconFile = "";
+    initPadding();
+    initMargin();
   }
     
   public void setStyle(String key, String value) {
-    if (key.equals("padding-top")) {
-      isPaddingSet = true;
-      paddingTop = Integer.parseInt(value);
-    } else if (key.equals("padding-bottom")) {
-      isPaddingSet = true;
-      paddingBottom = Integer.parseInt(value);
-    } else if (key.equals("padding-left")) {
-      isPaddingSet = true;
-      paddingLeft = Integer.parseInt(value);
+    if (key.equals("padding")) {
+      padding = parseFloatArray(value, 4);
+    } else if (key.equals("padding-top")) {
+      if (padding == null) initPadding();
+      padding[0] = Float.parseFloat(value);
     } else if (key.equals("padding-right")) {
-      isPaddingSet = true;
-      paddingRight = Integer.parseInt(value);
+      if (padding == null) initPadding();
+      padding[1] = Float.parseFloat(value);
+    } else if (key.equals("padding-bottom")) {
+      if (padding == null) initPadding();
+      padding[2] = Float.parseFloat(value);
+    } else if (key.equals("padding-left")) {
+      if (padding == null) initPadding();
+      padding[3] = Float.parseFloat(value);
     } else if (key.equals("margin")) {
-      marginRight = marginLeft = marginTop = marginBottom = new Integer(value);
-    } else if (key.equals("margin-right")) {
-      marginRight = new Integer(value);
-    } else if (key.equals("margin-left")) {
-      marginLeft = new Integer(value);
+      margin = parseFloatArray(value, 4);
     } else if (key.equals("margin-top")) {
-      marginTop = new Integer(value);      
+      if (margin == null) initMargin();
+      margin[0] = Float.parseFloat(value);
+    } else if (key.equals("margin-right")) {
+      if (margin == null) initMargin();
+      margin[1] = Float.parseFloat(value);
     } else if (key.equals("margin-bottom")) {
-      marginBottom = new Integer(value);      
+      if (margin == null) initMargin();
+      margin[2] = Float.parseFloat(value);
+    } else if (key.equals("margin-left")) {
+      if (margin == null) initMargin();
+      margin[3] = Float.parseFloat(value);
     } else if (key.equals("weight")) {
       weight = new Integer(value);
     } else if (key.equals("opacity")) {
@@ -170,13 +186,7 @@ class ViewStyleManager {
 	borderColor = new Integer(Color.parseColor(value));
       }      
     } else if (key.equals("border-radius")) {
-      String[] values = value.split(" ");
-      borderRadius = new float[4];
-      float prev = 0.0f;
-      for (int i = 0; i < 4; i++) {
-	if (i < values.length) prev = Float.valueOf(values[i].trim());
-	borderRadius[i] = prev;
-      }
+      borderRadius = parseFloatArray(value, 4);
     } else if (key.equals("font-size")) {
       if (value.equals("small")){
 	fontSize = new Integer(9);
@@ -252,11 +262,11 @@ class ViewStyleManager {
 //    if (title != null) view.setTooltipText(title);
 
     // Scaled parameters
-    if (isPaddingSet) {
-      view.setPadding(applyScale(paddingLeft),
-		      applyScale(paddingTop),
-		      applyScale(paddingRight),
-		      applyScale(paddingBottom));
+    if (padding != null) {
+      view.setPadding((int)applyScale(padding[3]),
+		      (int)applyScale(padding[0]),
+		      (int)applyScale(padding[1]),
+		      (int)applyScale(padding[2]));
     }
     if (leftPosition != null) view.setLeft(applyScale(leftPosition));
     if (rightPosition != null) view.setRight(applyScale(rightPosition));
@@ -291,9 +301,7 @@ class ViewStyleManager {
     
     // Layout parameters
     if (weight != null || width != null || height != null ||
-	marginRight != null || marginLeft != null ||
-	marginTop != null || marginBottom != null ||
-	gravity != null) {
+	margin != null || gravity != null) {
       
       if (view.getParent() instanceof ScrollView) { // stupid hack
 	FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
@@ -301,30 +309,36 @@ class ViewStyleManager {
       } else if (view.getParent() instanceof LinearLayout) {
 	LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)view.getLayoutParams();
       	if (weight != null) params.weight = weight;
-      	if (marginRight != null) params.rightMargin = applyScale(marginRight);
-      	if (marginLeft != null) params.leftMargin = applyScale(marginLeft);
-      	if (marginTop != null) params.topMargin = applyScale(marginTop);
-      	if (marginBottom != null) params.bottomMargin = applyScale(marginBottom);
+      	if (margin != null) {
+      	  params.topMargin = (int)applyScale(margin[0]);
+      	  params.rightMargin = (int)applyScale(margin[1]);
+      	  params.bottomMargin = (int)applyScale(margin[2]);
+      	  params.leftMargin = (int)applyScale(margin[3]);
+      	}
       	if (width != null) params.width = applyScale(width);
       	if (height != null) params.height = applyScale(height);
       	if (gravity != null) params.gravity = gravity;
       	view.setLayoutParams(params);
       } else if (view.getParent() instanceof FrameLayout) {
 	FrameLayout.LayoutParams params = (FrameLayout.LayoutParams)view.getLayoutParams();
-      	if (marginRight != null) params.rightMargin = applyScale(marginRight);
-      	if (marginLeft != null) params.leftMargin = applyScale(marginLeft);
-      	if (marginTop != null) params.topMargin = applyScale(marginTop);
-      	if (marginBottom != null) params.bottomMargin = applyScale(marginBottom);
+	if (margin != null) {
+      	  params.topMargin = (int)applyScale(margin[0]);
+      	  params.rightMargin = (int)applyScale(margin[1]);
+      	  params.bottomMargin = (int)applyScale(margin[2]);
+      	  params.leftMargin = (int)applyScale(margin[3]);
+      	}
       	if (width != null) params.width = applyScale(width);
       	if (height != null) params.height = applyScale(height);
       	if (gravity != null) params.gravity = gravity;
       	view.setLayoutParams(params);	
       } else if (view.getParent() instanceof RelativeLayout) {
 	RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)view.getLayoutParams();
-      	if (marginRight != null) params.rightMargin = applyScale(marginRight);
-      	if (marginLeft != null) params.leftMargin = applyScale(marginLeft);
-      	if (marginTop != null) params.topMargin = applyScale(marginTop);
-      	if (marginBottom != null) params.bottomMargin = applyScale(marginBottom);
+	if (margin != null) {
+      	  params.topMargin = (int)applyScale(margin[0]);
+      	  params.rightMargin = (int)applyScale(margin[1]);
+      	  params.bottomMargin = (int)applyScale(margin[2]);
+      	  params.leftMargin = (int)applyScale(margin[3]);
+      	}
       	if (width != null) params.width = applyScale(width);
       	if (height != null) params.height = applyScale(height);
       	view.setLayoutParams(params);	
@@ -428,6 +442,17 @@ class ViewStyleManager {
     float[] r = new float[8];
     for (int i = 0; i < 4; i++) {
       r[2 * i] = r[2 * i + 1] = applyScale(borderRadius[i]);
+    }
+    return r;
+  }
+  
+  protected float[] parseFloatArray(String value, int size) {
+    String[] values = value.split(" ");
+    float[] r = new float[size];
+    float prev = 0.0f;
+    for (int i = 0; i < size; i++) {
+      if (i < values.length) prev = Float.valueOf(values[i].trim());
+      r[i] = prev;
     }
     return r;
   }
