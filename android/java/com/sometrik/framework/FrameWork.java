@@ -50,6 +50,7 @@ import android.view.View.OnTouchListener;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
 
 public class FrameWork extends Activity {
@@ -269,6 +270,12 @@ public class FrameWork extends Activity {
     NativeCommandHandler view = views.get(viewId);
     if (view != null) view.deinitialize();
     views.remove(viewId);
+  }
+  
+  public static void hideSoftKeyboard (Activity activity, View view) 
+  {
+      InputMethodManager imm = (InputMethodManager)activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+      imm.hideSoftInputFromWindow(view.getApplicationWindowToken(), 0);
   }
 
   public void setCurrentView(final View view, final boolean recordHistory, Animation animation) {
