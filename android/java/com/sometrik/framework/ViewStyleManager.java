@@ -283,7 +283,7 @@ class ViewStyleManager {
 	  (backgroundColor == null || backgroundColor == 0) &&
 	  (borderWidth == null || borderWidth == 0)) {
      	if (backgroundColor != null) view.setBackgroundColor(backgroundColor);
-	RoundRectShape shape = new RoundRectShape(expandRadii(borderRadius), null, null); 
+	RoundRectShape shape = new RoundRectShape(expandRadii(borderRadius), null, null);
      	ShapeDrawable sd = new ShapeDrawable(shape);
      	view.setBackground(sd);
       } else {
