@@ -54,6 +54,7 @@ class ViewStyleManager {
   private String fontFamily = null;
   private String hint = null;
   private String iconFile = null;
+  private String iconAttachment = null;
   
   public ViewStyleManager(BitmapCache bitmapCache, float displayScale, boolean isDefault) {
     this.bitmapCache = bitmapCache;
@@ -233,6 +234,7 @@ class ViewStyleManager {
     } else if (key.equals("hint")) {
       hint = value;
     } else if (key.equals("icon-attachment")) {
+      iconAttachment = value;
       // right, top, bottom, left
     } else if (key.equals("icon")) {
       if (value.equals("none")) {
@@ -417,7 +419,15 @@ class ViewStyleManager {
 	  Bitmap bitmap = bitmapCache.loadBitmap(iconFile);
 	  if (bitmap != null) drawable = new BitmapDrawable(bitmap);
 	}
-        textView.setCompoundDrawablesWithIntrinsicBounds(null, drawable, null, null);
+	if (iconAttachment == null || iconAttachment.equals("top")) {
+	  textView.setCompoundDrawablesWithIntrinsicBounds(null, drawable, null, null);
+	} else if (iconAttachment.equals("left")) {
+	  textView.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null);
+	} else if (iconAttachment.equals("right")) {
+	  textView.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable, null);
+	} else if (iconAttachment.equals("bottom")) {
+	  textView.setCompoundDrawablesWithIntrinsicBounds(null, null, null, drawable);
+	}
       }
     }
   }
