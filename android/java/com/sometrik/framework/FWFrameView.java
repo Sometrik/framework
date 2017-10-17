@@ -61,14 +61,10 @@ public class FWFrameView extends FrameLayout implements NativeCommandHandler {
   }
   
   @Override
-  public void addOption(int optionId, String text) {
-    System.out.println("FWScrollView couldn't handle command");
-  }
+  public void addOption(int optionId, String text) { }
 
   @Override
-  public void setValue(String v) {
-    System.out.println("FWScrollView couldn't handle command");
-  }
+  public void setValue(String v) { }
 
   @Override
   public void setValue(int v) {
@@ -137,9 +133,7 @@ public class FWFrameView extends FrameLayout implements NativeCommandHandler {
   }
 
   @Override
-  public void addData(String text, int row, int column, int sheet) {
-    System.out.println("FWScrollView couldn't handle command");
-  }
+  public void addData(String text, int row, int column, int sheet) { }
 
   @Override
   public void setViewVisibility(boolean visibility) {
