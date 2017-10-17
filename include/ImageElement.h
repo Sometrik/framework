@@ -18,12 +18,12 @@ class ImageElement : public Element {
 
   void handleImageResponseEvent(ImageResponseEvent & ev) override {
     Command c(Command::SET_IMAGE, getInternalId());
-    auto & data = ev.getImage()->getData();
-    std::string data2((const char *)data.getData(), data.calculateSize());
+    auto & image = ev.getImage();
+    std::string data2((const char *)image->getData(), image->calculateSize());
     c.setTextValue(data2);
-    c.setWidth(ev.getImage()->getData().getWidth());
-    c.setHeight(ev.getImage()->getData().getHeight());
-    c.setValue(int(ev.getImage()->getData().getInternalFormat()));
+    c.setWidth(image->getWidth());
+    c.setHeight(image->getHeight());
+    c.setValue(int(image->getInternalFormat()));
     sendCommand(c);
   }
 

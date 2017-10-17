@@ -2,15 +2,14 @@
 #define _IMAGEEVENT_H_
 
 #include <Event.h>
-
-#include <Image.h>
+#include <PackedImageData.h>
 
 #include <string>
 #include <memory>
 
 class ImageResponseEvent : public Event {
  public:
- ImageResponseEvent(const std::string & _image_url, const std::string & _actual_image_url, const std::shared_ptr<canvas::Image> & _image)
+ ImageResponseEvent(const std::string & _image_url, const std::string & _actual_image_url, const std::shared_ptr<canvas::PackedImageData> & _image)
    : image_url(_image_url), actual_image_url(_actual_image_url), image(_image) { }
  ImageResponseEvent(const std::string & _image_url, const std::string & _actual_image_url)
    : image_url(_image_url), actual_image_url(_actual_image_url) { }
@@ -23,7 +22,7 @@ class ImageResponseEvent : public Event {
   }
   bool isBroadcast() const override { return true; }
 
-  void setImage(const std::shared_ptr<canvas::Image> & _image) { image = _image; }
+  void setImage(const std::shared_ptr<canvas::PackedImageData> & _image) { image = _image; }
 
   void setIsLive(bool t) { is_live = t; }
   bool isLive() const { return is_live; }
@@ -33,13 +32,13 @@ class ImageResponseEvent : public Event {
   
   const std::string & getImageUrl() const { return image_url; }
   const std::string & getActualImageUrl() const { return actual_image_url; }
-  std::shared_ptr<canvas::Image> & getImage() { return image; }
+  std::shared_ptr<canvas::PackedImageData> & getImage() { return image; }
 
   bool hasImage() const { return image.get() != 0; }
   
  private:
   std::string image_url, actual_image_url;
-  std::shared_ptr<canvas::Image> image;
+  std::shared_ptr<canvas::PackedImageData> image;
   bool is_live = false;
   bool is_cancelled = false;
 };
