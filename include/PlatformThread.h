@@ -179,13 +179,15 @@ class PlatformThread : public Element {
     startRunnable();
     deinitializeThread();
 
+    SysEvent ev(SysEvent::THREAD_TERMINATED);
+    ev.setThreadId(getInternalId());
+    ev.setRunnable(runnable.get());
+
     if (parent_thread) {
-      SysEvent ev(SysEvent::THREAD_TERMINATED);
-      ev.setThreadId(getInternalId());
-      ev.setRunnable(runnable.get());
       parent_thread->sendEvent(parent_thread->getInternalId(), ev);
-      postEvent(0, ev);
     }
+
+    postEvent(0, ev);
   }
 
   bool exit_when_threads_terminated = false;
