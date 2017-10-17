@@ -1,7 +1,6 @@
 #ifndef _TEXTURE_H_
 #define _TEXTURE_H_
 
-#include <FilterMode.h>
 #include <InternalFormat.h>
 
 namespace canvas {
@@ -10,9 +9,14 @@ namespace canvas {
 
 class Texture {
  public:
-  friend class TextureRef;
+  enum FilterMode {
+    NEAREST = 1,
+    LINEAR,
+    LINEAR_MIPMAP_LINEAR
+  };
+
   
- Texture(unsigned int _logical_width, unsigned int _logical_height, unsigned int _actual_width, unsigned int _actual_height, canvas::FilterMode _min_filter, canvas::FilterMode _mag_filter, canvas::InternalFormat _internal_format, unsigned int _mipmap_levels)
+ Texture(unsigned int _logical_width, unsigned int _logical_height, unsigned int _actual_width, unsigned int _actual_height, FilterMode _min_filter, FilterMode _mag_filter, canvas::InternalFormat _internal_format, unsigned int _mipmap_levels)
    : logical_width(_logical_width), logical_height(_logical_height),
     actual_width(_actual_width), actual_height(_actual_height),
     mipmap_levels(_mipmap_levels),
@@ -33,8 +37,8 @@ class Texture {
   unsigned int getActualWidth() const { return actual_width; }
   unsigned int getActualHeight() const { return actual_height; }
   unsigned int getMipmapLevels() const { return mipmap_levels; }
-  canvas::FilterMode getMinFilter() const { return min_filter; }
-  canvas::FilterMode getMagFilter() const { return mag_filter; }
+  FilterMode getMinFilter() const { return min_filter; }
+  FilterMode getMagFilter() const { return mag_filter; }
   canvas::InternalFormat getInternalFormat() const { return internal_format; }
   bool isDefined() const { return getTextureId() != 0; }
   
@@ -43,8 +47,7 @@ class Texture {
   
  private:  
   unsigned int logical_width, logical_height, actual_width, actual_height, mipmap_levels;
-  canvas::FilterMode min_filter;
-  canvas::FilterMode mag_filter;
+  FilterMode min_filter, mag_filter;
   canvas::InternalFormat internal_format;
   int update_cursor = 0;
   };
