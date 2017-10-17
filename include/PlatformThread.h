@@ -184,6 +184,7 @@ class PlatformThread : public Element {
       ev.setThreadId(getInternalId());
       ev.setRunnable(runnable.get());
       parent_thread->sendEvent(parent_thread->getInternalId(), ev);
+      postEvent(0, ev);
     }
   }
 
