@@ -13,6 +13,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -427,6 +428,73 @@ class ViewStyleManager {
 	  textView.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable, null);
 	} else if (iconAttachment.equals("bottom")) {
 	  textView.setCompoundDrawablesWithIntrinsicBounds(null, null, null, drawable);
+	}
+      }
+    } 
+    	if (view instanceof Button) {
+
+      Button button = (Button)view;
+
+      if (color != null) button.setTextColor(color);
+      if (fontSize != null) button.setTextSize(fontSize);
+      if (whiteSpace != null) {
+	switch (whiteSpace) {
+	case NORMAL:
+	  button.setSingleLine(false);
+	  break;
+	case NOWRAP:
+	  button.setSingleLine(true);
+	  break;
+	}
+      }
+      if (textAlign != null) {
+	switch (textAlign) {
+	case LEFT:
+	  button.setTextAlignment(TextView.TEXT_ALIGNMENT_TEXT_START);
+	  break;
+	case CENTER:
+	  button.setTextAlignment(TextView.TEXT_ALIGNMENT_CENTER);
+	  break;
+	case RIGHT:
+	  button.setTextAlignment(TextView.TEXT_ALIGNMENT_TEXT_END);
+  	  break;
+	}
+      }
+      if (textOverflow != null) {
+	switch (textOverflow) {
+	case CLIP:
+	  button.setEllipsize(null);
+	  break;
+	case ELLIPSIS:
+	  button.setEllipsize(TruncateAt.END);
+	  break;
+	} 
+      }
+      if (fontFamily != null || fontWeight != null || fontStyle != null) {
+	int flags = 0;
+	if (fontWeight != null && fontWeight > 550) flags |= Typeface.BOLD;
+	if (fontStyle != null && (fontStyle == FontStyle.ITALIC || fontStyle == FontStyle.OBLIQUE)) flags |= Typeface.ITALIC;
+	if (fontFamily != null) {
+	  button.setTypeface(Typeface.create(fontFamily, flags), flags);
+	} else {
+	  button.setTypeface(null, flags);  
+	}
+      }
+      if (hint != null) button.setHint(hint);
+      if (iconFile != null) {
+	BitmapDrawable drawable = null;
+	if (!iconFile.isEmpty()) {
+	  Bitmap bitmap = bitmapCache.loadBitmap(iconFile);
+	  if (bitmap != null) drawable = new BitmapDrawable(bitmap);
+	}
+	if (iconAttachment == null || iconAttachment.equals("top")) {
+	  button.setCompoundDrawablesWithIntrinsicBounds(null, drawable, null, null);
+	} else if (iconAttachment.equals("left")) {
+	  button.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null);
+	} else if (iconAttachment.equals("right")) {
+	  button.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable, null);
+	} else if (iconAttachment.equals("bottom")) {
+	  button.setCompoundDrawablesWithIntrinsicBounds(null, null, null, drawable);
 	}
       }
     }
