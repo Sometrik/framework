@@ -16,6 +16,7 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
@@ -36,7 +37,7 @@ class ViewStyleManager {
   private Float opacity = null;
   private Integer leftPosition = null, topPosition = null;
   private Integer rightPosition = null, bottomPosition = null;
-  private int minWidth = 0, minHeight = 0;
+  private int minWidth = 0, minHeight = 0, maxWidth = 0, maxHeight = 0;
   private String title = null;
   private Integer weight = null;
   private Integer backgroundColor = null;
@@ -136,6 +137,10 @@ class ViewStyleManager {
       minWidth = Integer.parseInt(value);
     } else if (key.equals("min-height")) {
       minHeight = Integer.parseInt(value);
+    } else if (key.equals("max-width")) {
+      maxWidth = Integer.parseInt(value);
+    } else if (key.equals("max-height")) {
+      maxHeight = Integer.parseInt(value);
     } else if (key.equals("title")) {
       title = value;
     } else if (key.equals("width")) {
@@ -350,6 +355,13 @@ class ViewStyleManager {
       }
     }
     
+    if (view instanceof ImageView) {
+      ImageView imageView = (ImageView)view;
+      
+      if (maxWidth > 0) imageView.setMaxWidth(maxWidth);
+      if (maxHeight > 0) imageView.setMaxHeight(maxHeight);
+    }
+      
     if (view instanceof EditText) {
       EditText editText = (EditText) view;
       if (whiteSpace != null) {
@@ -431,8 +443,7 @@ class ViewStyleManager {
 	}
       }
     } 
-    	if (view instanceof Button) {
-
+    if (view instanceof Button) {
       Button button = (Button)view;
 
       if (color != null) button.setTextColor(color);
