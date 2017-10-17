@@ -20,11 +20,13 @@ public class FWImageView extends ImageView implements NativeCommandHandler {
   public FWImageView(final FrameWork frame) {
     super(frame);
     this.frame = frame;
-    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
-    this.setLayoutParams(params);
-    this.setScaleType(ScaleType.FIT_CENTER);
+    // LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+    // this.setLayoutParams(params);
+    // this.setScaleType(ScaleType.FIT_CENTER);
+    this.setScaleType(ScaleType.CENTER_CROP); // needed for parallax scrolling
     this.setClipToOutline(true);
-    
+    this.setAdjustViewBounds(true);
+        
     final float scale = getContext().getResources().getDisplayMetrics().density;
     this.normalStyle = currentStyle = new ViewStyleManager(frame.bitmapCache, scale, true);
     this.activeStyle = new ViewStyleManager(frame.bitmapCache, scale, false);
@@ -182,6 +184,8 @@ public class FWImageView extends ImageView implements NativeCommandHandler {
     this.setImageBitmap(ownedBitmap);
     
     invalidate();
+    
+    activeStyle.apply(this);
   }
 
   @Override
