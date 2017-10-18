@@ -30,6 +30,13 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
 
     final FWLayout layout = this;
     
+    setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View v) {
+	frame.intChangedEvent(System.currentTimeMillis() / 1000.0, getElementId(), 0, 0);
+      }
+    });
+    
     setOnTouchListener(new OnTouchListener() {
       @Override
       public boolean onTouch(View v, MotionEvent event) {
