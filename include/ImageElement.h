@@ -43,7 +43,7 @@ class ImageElement : public Element {
   }
 
   const std::string & getFilename() { return filename; }
-  void setFilename(const std::string & _filename) { filename = filename; }
+  void setFilename(const std::string & _filename) { filename = _filename; }
   
  protected:
   void create() override {
