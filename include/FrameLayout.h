@@ -8,7 +8,7 @@
 
 class FrameLayout : public Element {
  public:
-  FrameLayout(int _id = 0) : Element(_id), direction(_direction) { }
+  FrameLayout(int _id = 0) : Element(_id) { }
 
   bool isA(const std::string & className) const override {
     if (className == "FrameLayout") return true;
@@ -24,7 +24,6 @@ class FrameLayout : public Element {
  protected:
   void create() override {
     Command c(Command::CREATE_FRAME_LAYOUT, getParentInternalId(), getInternalId());
-    c.setValue(direction);
     sendCommand(c);
   }
 };
