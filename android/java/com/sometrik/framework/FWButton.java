@@ -1,24 +1,13 @@
 package com.sometrik.framework;
 
-import java.io.IOException;
-import java.io.InputStream;
-
 import com.sometrik.framework.NativeCommand.Selector;
 
-import android.content.res.AssetManager;
-import android.content.res.ColorStateList;
 import android.graphics.Bitmap.Config;
-import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.GradientDrawable;
-import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.LinearLayout.LayoutParams;
 
 public class FWButton extends Button implements NativeCommandHandler {
   private FrameWork frame;
