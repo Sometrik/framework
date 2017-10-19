@@ -106,6 +106,7 @@ public class NativeCommand {
     CREATE_SLIDER,
     CREATE_ACTIONBAR,
     CREATE_NAVIGATIONBAR,
+    CREATE_PROGRESSBAR,
     CREATE_TOAST,
     DELETE_ELEMENT,
     END_MODAL,
@@ -495,12 +496,20 @@ public class NativeCommand {
       frame.actionBar = ab;
       frame.addToViewList(ab);
       break;
-    case CREATE_NAVIGATIONBAR:
+    case CREATE_NAVIGATIONBAR: {
       FWLayout bar = createLinearLayout(2);
       bar.setId(childInternalId);
       view.addChild(bar);
       frame.addToViewList(bar);
       break;
+    }
+    case CREATE_PROGRESSBAR: {
+      FWProgressBar bar = new FWProgressBar(frame);
+      bar.setId(childInternalId);
+      view.addChild(bar);
+      frame.addToViewList(bar);
+      break;
+    }
     case FLUSH_VIEW:
       view.flush();
       break;
