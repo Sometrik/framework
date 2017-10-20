@@ -66,7 +66,7 @@ FWApplication::onSysEvent(SysEvent & ev) {
     int poppedView = popViewBackHistory();
     if (poppedView != 0) {
       Command c(Command::SET_INT_VALUE, poppedView);
-      c.setValue(2);
+      c.setValue(3);
       sendCommand(c);
     } else {
       Command c(Command::QUIT_APP, poppedView);

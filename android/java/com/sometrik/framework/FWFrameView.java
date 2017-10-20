@@ -2,9 +2,7 @@ package com.sometrik.framework;
 
 import com.sometrik.framework.NativeCommand.Selector;
 
-import android.content.res.Resources;
 import android.graphics.Bitmap.Config;
-import android.util.TypedValue;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
@@ -15,6 +13,9 @@ public class FWFrameView extends FrameLayout implements NativeCommandHandler {
   FrameWork frame;
   private String title;
   private Animation enterAnimation = null;
+  private int enterAnimationOtherViewFromX = 0;
+  private Animation returnAnimation = null;
+  private int returnAnimationOtherViewFromX = 0;
   private ViewStyleManager normalStyle, activeStyle, currentStyle;
   
   public FWFrameView(FrameWork frameWork, String title) {
@@ -68,15 +69,27 @@ public class FWFrameView extends FrameLayout implements NativeCommandHandler {
 
   @Override
   public void setValue(int v) {
+    System.out.println("FWFrameView setValue " + v);
     if (v == 1){
       if (enterAnimation != null) {
-	System.out.println("animation commencing");
-	frame.setCurrentView(this, true, enterAnimation);
+	frame.setCurrentView(this, true, enterAnimation, enterAnimationOtherViewFromX);
       } else {
 	frame.setCurrentView(this, true, title);
       }
-    } else if (v == 2){
-      frame.setCurrentView(this, false, title);
+    } else if (v == 2) {
+      if (enterAnimation != null) {
+	frame.setCurrentView(this, false, enterAnimation, enterAnimationOtherViewFromX);
+      } else {
+	frame.setCurrentView(this, false, title);
+      }
+    } else if (v == 3) {
+      if (returnAnimation != null) {
+	System.out.println("FWFrameView return animation");
+	frame.setCurrentView(this, false, returnAnimation, returnAnimationOtherViewFromX);
+      } else {
+	System.out.println("FWFrameView no animation");
+	frame.setCurrentView(this, false, title);
+      }
     }
   }
 
@@ -90,16 +103,36 @@ public class FWFrameView extends FrameLayout implements NativeCommandHandler {
       if (activeStyle == currentStyle) activeStyle.apply(this);
     }
     
-    if (key.equals("animation")) {
-      if (value.equals("from-left")) {
+    if (key.equals("enter-animation")) {
+      if (value.equals("from-right")) {
+	enterAnimationOtherViewFromX = 2000;
 	TranslateAnimation r;
-	// if (recordHistory) {
-	// r = new TranslateAnimation(0, -2000, 0, 0);
-	// } else {
-	r = new TranslateAnimation(0, -1000, 0, 0);
-	// }
+	r = new TranslateAnimation(0, -2000, 0, 0);
 	r.setDuration(100);
 	enterAnimation = r;
+	final View holderView = this;
+	r.setAnimationListener(new Animation.AnimationListener() {
+	  @Override
+	  public void onAnimationStart(Animation animation) {
+	  }
+
+	  @Override
+	  public void onAnimationEnd(Animation animation) {
+	      frame.setCurrentView(holderView, true, title);
+	  }
+
+	  @Override
+	  public void onAnimationRepeat(Animation arg0) {
+	  }
+	});
+      }
+    } else if (key.equals("return-animation")) {
+      if (value.equals("from-left")) {
+	returnAnimationOtherViewFromX = -2000;
+	TranslateAnimation r;
+	r = new TranslateAnimation(0, 2000, 0, 0);
+	r.setDuration(100);
+	returnAnimation = r;
 	final View holderView = this;
 	r.setAnimationListener(new Animation.AnimationListener() {
 	  @Override

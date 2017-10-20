@@ -278,7 +278,7 @@ public class FrameWork extends Activity {
       imm.hideSoftInputFromWindow(view.getApplicationWindowToken(), 0);
   }
 
-  public void setCurrentView(final View view, final boolean recordHistory, Animation animation) {
+  public void setCurrentView(final View view, final boolean recordHistory, Animation animation, final int newViewAnimationFromX) {
     animation.setAnimationListener(new Animation.AnimationListener() {
 	@Override
 	public void onAnimationStart(Animation animation) {
@@ -293,7 +293,6 @@ public class FrameWork extends Activity {
 	  drawerLayout.removeAllViews();
 	}
 
-	System.out.println("currentDrawerViewId: " + currentDrawerViewId);
 	if (currentDrawerViewId != 0) {
 	  NativeCommandHandler drawerView = views.get(currentDrawerViewId);
 	  if (drawerView != null) {
@@ -301,7 +300,6 @@ public class FrameWork extends Activity {
 	    drawerLayout.addView((View) drawerView);
 	    setContentView(drawerLayout);
 	  } else {
-	    System.out.println("no navigation drawer element found on id: " + currentDrawerViewId);
 	    setContentView(view);
 	  }
 	} else {
@@ -309,11 +307,11 @@ public class FrameWork extends Activity {
 	}
 	  
 	  TranslateAnimation q;
-	  if (recordHistory) {
-	    q = new TranslateAnimation(1000, 0, 0, 0);
-	  } else {
-	    q = new TranslateAnimation(-1000, 0, 0, 0);
-	  }
+//	  if (recordHistory) {
+	    q = new TranslateAnimation(newViewAnimationFromX, 0, 0, 0);
+//	  } else {
+//	    q = new TranslateAnimation(-1000, 0, 0, 0);
+//	  }
 	  setNativeActiveView(System.currentTimeMillis() / 1000.0, view.getId(), recordHistory);
 	  q.setAnimationListener(new Animation.AnimationListener() {
 	    @Override
