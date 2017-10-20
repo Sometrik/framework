@@ -38,7 +38,7 @@ public:
       view_back_history.pop_back();
       view_forward_history.push_back(id);
     }
-    return id;    
+    return id;
   }
 
   int popViewForwardHistory() {
