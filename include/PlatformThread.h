@@ -167,11 +167,13 @@ class PlatformThread : public Element {
   virtual void initializeThread() { }  
   virtual void deinitializeThread() { }
   virtual void startRunnable() {
-    try {
-      getRunnable().start(this);
-    } catch (std::exception & e) {
-      auto logger = createLogger("PlatformThread");
-      logger->println("PlatformThread: Runnable threw an exception: " + std::string(e.what()));
+    if (runnable.get()) {
+      try {
+	runnable->start(this);
+      } catch (std::exception & e) {
+	auto logger = createLogger("PlatformThread");
+	logger->println("PlatformThread: Runnable threw an exception: " + std::string(e.what()));
+      }
     }
   }
   void start2() {
@@ -196,7 +198,6 @@ class PlatformThread : public Element {
   std::shared_ptr<FWApplication> application;
 
  private:
-  int id;
   FWPlatform * platform;
   PlatformThread * parent_thread;
   int actual_display_width = 0, actual_display_height = 0;
