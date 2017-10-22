@@ -4,7 +4,6 @@
 #include <PlatformThread.h>
 #include <EventQueue.h>
 
-#include <unistd.h>
 #include <pthread.h>
 #include <atomic>
 
@@ -28,10 +27,8 @@ public:
     return PlatformThread::terminate();    
   }
 
-  void sleep(double t) override {
-    usleep((unsigned int)(t * 1000000));
-  }
-
+  void sleep(double t) override;
+  
   void sendEvent(int internal_id, const Event & ev) override {
     event_queue.push(internal_id, ev);
   }

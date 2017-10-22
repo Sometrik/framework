@@ -1,6 +1,8 @@
 #include <PosixThread.h>
 
 #include <iostream>
+#include <cassert>
+#include <unistd.h>
 
 using namespace std;
 
@@ -19,9 +21,15 @@ PosixThread::start() {
   }
 }
 
+void
+PosixThread::sleep(double t) {
+  usleep((unsigned int)(t * 1000000));
+}
+
 void *
 PosixThread::entryPoint(void * pthis) {
   PosixThread * pt = static_cast<PosixThread*>(pthis);
+  assert(pt);
   pt->start2();  
   pthread_exit(0);
   
