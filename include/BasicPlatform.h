@@ -100,7 +100,7 @@ public:
 
   }
 
-  std::vector<std::pair<int, std::shared_ptr<Event> > > pollEvents() override {
+  std::vector<std::pair<int, std::shared_ptr<Event> > > pollEvents(bool block) override {
     std::vector<std::pair<int, std::shared_ptr<Event> > > r;
     return r;
   }
