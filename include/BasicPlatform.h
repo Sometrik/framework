@@ -10,6 +10,7 @@
 #endif
 
 #include <fstream>
+#include <unistd.h>
 
 class BasicThread : public PosixThread {
  public:
@@ -28,10 +29,6 @@ class BasicThread : public PosixThread {
   std::shared_ptr<PlatformThread> createThread(std::shared_ptr<Runnable> & runnable) override {
     auto & platform = getPlatform();
     return std::make_shared<BasicThread>(this, &platform, application, runnable);
-  }
-
-  void sleep(double t) override {
-    usleep((unsigned int)(t * 1000000));
   }
 
   int sendCommand(const Command & command) override {
