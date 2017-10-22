@@ -8,13 +8,11 @@
 #include <FWPlatform.h>
 #include <FWApplication.h>
 
-#include <exception>
 #include <memory>
 #include <iostream>
 
 class Event;
 class HTTPClientFactory;
-class Logger;
 
 namespace canvas {
   class ContextFactory;
@@ -168,12 +166,7 @@ class PlatformThread : public Element {
   virtual void deinitializeThread() { }
   virtual void startRunnable() {
     if (runnable.get()) {
-      try {
-	runnable->start(this);
-      } catch (std::exception & e) {
-	auto logger = createLogger("PlatformThread");
-	logger->println("PlatformThread: Runnable threw an exception: " + std::string(e.what()));
-      }
+      runnable->start(this);
     }
   }
   void start2() {
