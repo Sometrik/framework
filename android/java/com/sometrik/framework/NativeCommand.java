@@ -83,7 +83,6 @@ public class NativeCommand {
     CREATE_TEXTFIELD, // For viewing single value
     CREATE_TEXTVIEW, // For viewing multiline text
     CREATE_LISTVIEW, // For viewing lists
-    CREATE_SIMPLELISTVIEW,
     CREATE_GRIDVIEW, // For viewing tables
     CREATE_BUTTON,
     CREATE_SWITCH,
@@ -302,15 +301,6 @@ public class NativeCommand {
       frame.addToViewList(debugList);
       view.addChild(debugList);
       break;
-    case CREATE_SIMPLELISTVIEW:{
-      FWSimpleList simpleList = new FWSimpleList(frame);
-      FrameLayout.LayoutParams params2 = new FrameLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-      simpleList.setLayoutParams(params2);
-      simpleList.setId(childInternalId);
-      view.addChild(simpleList);
-      frame.addToViewList(simpleList);
-      break;
-    }
     case CREATE_LISTVIEW:
       if (isSet(FLAG_SLIDERVIEW)) {
 	
