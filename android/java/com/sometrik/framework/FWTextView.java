@@ -22,7 +22,7 @@ public class FWTextView extends TextView implements NativeCommandHandler {
   private FrameWork frame;
   ViewStyleManager normalStyle, activeStyle, currentStyle, linkStyle;
   
-  public FWTextView(FrameWork frame, boolean autolink) {
+  public FWTextView(final FrameWork frame, boolean autolink) {
     super(frame);
     this.frame = frame;
     this.setBackground(null);
@@ -38,7 +38,15 @@ public class FWTextView extends TextView implements NativeCommandHandler {
     }
     
     final FWTextView textView = this;
-
+    
+    setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View v) {
+	System.out.println("OnClick TextView");
+	frame.intChangedEvent(System.currentTimeMillis() / 1000.0, getElementId(), 0, 0);
+      }
+    });
+    
     setOnTouchListener(new OnTouchListener() {
       @Override
       public boolean onTouch(View v, MotionEvent event) {
