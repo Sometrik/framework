@@ -1,5 +1,7 @@
 package com.sometrik.framework;
 
+import java.util.ArrayList;
+
 import android.app.Dialog;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -13,7 +15,6 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -57,6 +58,8 @@ class ViewStyleManager {
   private String hint = null;
   private String iconFile = null;
   private String iconAttachment = null;
+  private GradientDrawable gradientDrawable = null;
+  private ArrayList<Integer> gradientColors = new ArrayList<Integer>();
   
   public ViewStyleManager(BitmapCache bitmapCache, float displayScale, boolean isDefault) {
     this.bitmapCache = bitmapCache;
@@ -248,6 +251,11 @@ class ViewStyleManager {
       } else {
 	iconFile = value;
       }
+    } else if (key.equals("gradient-color")) {
+      if (gradientDrawable == null) {
+	gradientDrawable = new GradientDrawable();
+      }
+      gradientColors.add(Color.parseColor(value));
     }
   }
 
@@ -292,17 +300,32 @@ class ViewStyleManager {
      	ShapeDrawable sd = new ShapeDrawable(shape);
      	view.setBackground(sd);
       } else {
-	GradientDrawable gd = new GradientDrawable();
-	if (backgroundColor != null) gd.setColor(backgroundColor);
+	if (gradientDrawable == null) {
+	  gradientDrawable = new GradientDrawable();
+	}
+	if (gradientColors.size() != 0) {
+	  int[] colors = new int[gradientColors.size()];
+	  for (int i = 0; i < gradientColors.size(); i++) {
+	    colors[i] = gradientColors.get(i);
+	  }
+	  gradientDrawable.setColors(colors);
+	} else if (backgroundColor != null) gradientDrawable.setColor(backgroundColor);
 	if (borderRadius != null) {
-	  gd.setCornerRadius(2); // Might be necessary for zero radiuses to work
-	  gd.setCornerRadii(expandRadii(borderRadius));
+	  gradientDrawable.setCornerRadius(2); // Might be necessary for zero radiuses to work
+	  gradientDrawable.setCornerRadii(expandRadii(borderRadius));
 	}
 	if (borderColor != null && borderWidth != null) {
-	  gd.setStroke(borderWidth, borderColor);
+	  gradientDrawable.setStroke(borderWidth, borderColor);
 	}
-	view.setBackground(gd);
+	view.setBackground(gradientDrawable);
       }
+    } else if (gradientColors.size() != 0) {
+	int[] colors = new int[gradientColors.size()];
+	for (int i = 0; i < gradientColors.size(); i++) {
+	  colors[i] = gradientColors.get(i);
+	}
+	gradientDrawable.setColors(colors);
+	view.setBackground(gradientDrawable);
     } else if (backgroundColor != null) {
       view.setBackgroundColor(backgroundColor);
     }
