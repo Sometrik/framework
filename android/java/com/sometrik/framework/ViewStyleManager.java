@@ -26,7 +26,7 @@ import android.widget.TextView;
 
 class ViewStyleManager {
   private enum WhiteSpace { NORMAL, NOWRAP };
-  private enum HorizontalAlignment { LEFT, CENTER, RIGHT };
+  private enum HorizontalAlignment { INHERIT, LEFT, CENTER, RIGHT };
   private enum TextOverflow { CLIP, ELLIPSIS };
   private enum FontStyle { NORMAL, ITALIC, OBLIQUE };
 
@@ -244,7 +244,9 @@ class ViewStyleManager {
 	fontStyle = FontStyle.NORMAL;
       }
     } else if (key.equals("text-align")) {
-      if (value.equals("left")) {
+      if (value.equals("inherit")) {
+	textAlign = HorizontalAlignment.INHERIT;
+      } else if (value.equals("left")) {
 	textAlign = HorizontalAlignment.LEFT;
       } else if (value.equals("center")) {
 	textAlign = HorizontalAlignment.CENTER;
@@ -414,17 +416,7 @@ class ViewStyleManager {
 	}
       }
       if (textAlign != null) {
-	switch (textAlign) {
-	case LEFT:
-	  textView.setTextAlignment(TextView.TEXT_ALIGNMENT_TEXT_START);
-	  break;
-	case CENTER:
-	  textView.setTextAlignment(TextView.TEXT_ALIGNMENT_CENTER);
-	  break;
-	case RIGHT:
-  	  textView.setTextAlignment(TextView.TEXT_ALIGNMENT_TEXT_END);
-  	  break;
-	}
+	textView.setTextAlignment(convertTextAlignment(textAlign));
       }
       if (textOverflow != null) {
 	switch (textOverflow) {
@@ -499,6 +491,16 @@ class ViewStyleManager {
       r[i] = prev;
     }
     return r;
+  }
+  
+  protected int convertTextAlignment(HorizontalAlignment alignment) {
+    switch (textAlign) {
+    case INHERIT: return View.TEXT_ALIGNMENT_INHERIT;
+    case LEFT: return View.TEXT_ALIGNMENT_TEXT_START;
+    case CENTER: return View.TEXT_ALIGNMENT_CENTER;
+    case RIGHT: return View.TEXT_ALIGNMENT_TEXT_END;
+    }
+    return 0;
   }
   
   static {
