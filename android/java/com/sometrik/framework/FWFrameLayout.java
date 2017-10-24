@@ -82,8 +82,8 @@ public class FWFrameLayout extends FrameLayout implements NativeCommandHandler {
 
   @Override
   public void setViewVisibility(boolean visibility) {
-    if (visibility){
-      FrameWork.hideSoftKeyboard(frame, (View)frame.views.get(frame.getCurrentViewId()));
+    if (visibility) {
+      frame.hideSoftKeyboard();
      
       this.setVisibility(VISIBLE);
     } else {

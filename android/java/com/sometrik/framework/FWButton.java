@@ -34,7 +34,7 @@ public class FWButton extends Button implements NativeCommandHandler {
 	if (!FrameWork.transitionAnimation) {
 	  frame.intChangedEvent(System.currentTimeMillis() / 1000.0, getElementId(), 1, 0);
 	  if (animation != null) button.startAnimation(animation);
-	  FrameWork.hideSoftKeyboard(frame, (View)frame.views.get(frame.getCurrentViewId()));
+	  frame.hideSoftKeyboard();
 	}
       }
     });
