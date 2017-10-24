@@ -1,6 +1,7 @@
 package com.sometrik.framework;
 
-import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import android.app.Dialog;
 import android.graphics.Bitmap;
@@ -58,8 +59,9 @@ class ViewStyleManager {
   private String hint = null;
   private String iconFile = null;
   private String iconAttachment = null;
-  private GradientDrawable gradientDrawable = null;
-  private ArrayList<Integer> gradientColors = new ArrayList<Integer>();
+  private int[] gradientColors = null;
+  
+  private static Pattern gradientPattern;
   
   public ViewStyleManager(BitmapCache bitmapCache, float displayScale, boolean isDefault) {
     this.bitmapCache = bitmapCache;
@@ -162,9 +164,20 @@ class ViewStyleManager {
       } else {
 	height = new Integer(value);
       }
+    } else if (key.equals("background")) {
+      Matcher matcher = gradientPattern.matcher(value);
+      if (matcher.matches()) {
+	gradientColors = new int[2];
+	gradientColors[0] = Color.parseColor(matcher.group(1));
+	gradientColors[1] = Color.parseColor(matcher.group(2));
+      } else {
+	gradientColors = null;
+	backgroundColor = new Integer(Color.parseColor(value));
+      }
     } else if (key.equals("background-color")) {
+      gradientColors = null;
       backgroundColor = new Integer(Color.parseColor(value));
-    }  else if (key.equals("color")) {
+    } else if (key.equals("color")) {
       color = new Integer(Color.parseColor(value));
     } else if (key.equals("gravity")) {
       if (value.equals("bottom")) {
@@ -251,11 +264,6 @@ class ViewStyleManager {
       } else {
 	iconFile = value;
       }
-    } else if (key.equals("gradient-color")) {
-      if (gradientDrawable == null) {
-	gradientDrawable = new GradientDrawable();
-      }
-      gradientColors.add(Color.parseColor(value));
     }
   }
 
@@ -290,9 +298,10 @@ class ViewStyleManager {
     if (bottomPosition != null) view.setBottom(applyScale(bottomPosition));
     if (minWidth > 0) view.setMinimumWidth(applyScale(minWidth));
     if (minHeight > 0) view.setMinimumHeight(applyScale(minHeight));
-    if ((borderColor != null && borderWidth != null) || borderRadius != null) {
+    if ((borderColor != null && borderWidth != null) || borderRadius != null || gradientColors != null) {
       view.setBackgroundResource(0);
       if (borderRadius != null &&
+	  gradientColors == null &&
 	  (backgroundColor == null || backgroundColor == 0) &&
 	  (borderWidth == null || borderWidth == 0)) {
      	if (backgroundColor != null) view.setBackgroundColor(backgroundColor);
@@ -300,16 +309,12 @@ class ViewStyleManager {
      	ShapeDrawable sd = new ShapeDrawable(shape);
      	view.setBackground(sd);
       } else {
-	if (gradientDrawable == null) {
-	  gradientDrawable = new GradientDrawable();
+	GradientDrawable gradientDrawable = new GradientDrawable();
+	if (gradientColors != null) {
+	  gradientDrawable.setColors(gradientColors);
+	} else if (backgroundColor != null) {
+	  gradientDrawable.setColor(backgroundColor);
 	}
-	if (gradientColors.size() != 0) {
-	  int[] colors = new int[gradientColors.size()];
-	  for (int i = 0; i < gradientColors.size(); i++) {
-	    colors[i] = gradientColors.get(i);
-	  }
-	  gradientDrawable.setColors(colors);
-	} else if (backgroundColor != null) gradientDrawable.setColor(backgroundColor);
 	if (borderRadius != null) {
 	  gradientDrawable.setCornerRadius(2); // Might be necessary for zero radiuses to work
 	  gradientDrawable.setCornerRadii(expandRadii(borderRadius));
@@ -319,13 +324,6 @@ class ViewStyleManager {
 	}
 	view.setBackground(gradientDrawable);
       }
-    } else if (gradientColors.size() != 0) {
-	int[] colors = new int[gradientColors.size()];
-	for (int i = 0; i < gradientColors.size(); i++) {
-	  colors[i] = gradientColors.get(i);
-	}
-	gradientDrawable.setColors(colors);
-	view.setBackground(gradientDrawable);
     } else if (backgroundColor != null) {
       view.setBackgroundColor(backgroundColor);
     }
@@ -501,5 +499,9 @@ class ViewStyleManager {
       r[i] = prev;
     }
     return r;
+  }
+  
+  static {
+    gradientPattern = Pattern.compile("^linear-gradient\\(\\s*([^, ]+),\\s*([^, ]+)\\s*\\)$"); 
   }
 }
