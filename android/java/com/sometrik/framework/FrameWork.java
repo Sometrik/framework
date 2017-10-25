@@ -274,7 +274,9 @@ public class FrameWork extends Activity {
   
   public void hideSoftKeyboard() {
     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-    imm.hideSoftInputFromWindow(((View)views.get(getCurrentViewId())).getApplicationWindowToken(), 0);
+    if (views.get(getCurrentViewId()) instanceof View) {
+      imm.hideSoftInputFromWindow(((View)views.get(getCurrentViewId())).getApplicationWindowToken(), 0);
+    }
   }
 
   public void setCurrentView(final View view, final boolean recordHistory, Animation animation, final int newViewAnimationFromX) {
@@ -469,28 +471,6 @@ public class FrameWork extends Activity {
   }
   
   public void setActionBarTitle(String title){
-
-  }
-
- // TODO: Add icon and sound
-  public void createNotification(String title, String text) {
-
-    System.out.println("Creating notification");
-
-    Intent intent = new Intent(this, FrameWork.class);
-    PendingIntent pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, 0);
-
-    Notification.Builder builder = new Notification.Builder(this);
-
-    builder.setContentTitle(title);
-    builder.setContentText(text);
-//    builder.setSmallIcon(R.drawable.picture);
-    builder.setContentIntent(pIntent);
-    builder.setAutoCancel(true);
-    
-    Notification notif = builder.getNotification();
-    NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-    notificationManager.notify(0, notif);
 
   }
 

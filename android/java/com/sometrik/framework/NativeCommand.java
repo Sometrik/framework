@@ -107,6 +107,7 @@ public class NativeCommand {
     CREATE_NAVIGATIONBAR,
     CREATE_PROGRESSBAR,
     CREATE_TOAST,
+    CREATE_NOTIFICATION,
     DELETE_ELEMENT,
     END_MODAL,
     SHOW_DIALOG,
@@ -201,7 +202,7 @@ public class NativeCommand {
   
   public void apply(NativeCommandHandler view) {
 
-//     System.out.println("Processing message " + command + " id: " + internalId + " Child id: " + getChildInternalId());
+     System.out.println("Processing message " + command + " id: " + internalId + " Child id: " + getChildInternalId());
     
     switch (command) {
       
@@ -397,6 +398,12 @@ public class NativeCommand {
       Toast toast = Toast.makeText(frame, getTextValueAsString(), getValue() != 0 ? getValue() : 2);
       toast.show();
       break;
+    case CREATE_NOTIFICATION: {
+      FWNotification notif = new FWNotification(frame, getTextValueAsString(), getTextValue2AsString());
+      notif.setId(childInternalId);
+      frame.addToViewList(notif);
+      break;
+    }
     case ADD_OPTION:
       view.addOption(getValue(), getTextValueAsString());
       break;
