@@ -629,14 +629,8 @@ public class NativeCommand {
     layout.setId(getChildInternalId());
     frame.addToViewList(layout);
     if (direction == 2) {
-      LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-      params.weight = 1.0f;
-      layout.setLayoutParams(params);
       layout.setOrientation(LinearLayout.HORIZONTAL);
     } else {
-      LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT);
-      params.weight = 1.0f;
-      layout.setLayoutParams(params);
       layout.setOrientation(LinearLayout.VERTICAL);
     }
     return layout;
