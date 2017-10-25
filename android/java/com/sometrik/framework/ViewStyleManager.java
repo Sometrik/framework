@@ -6,6 +6,7 @@ import java.util.regex.Pattern;
 import android.app.Dialog;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Paint.Style;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.GradientDrawable;
@@ -152,7 +153,7 @@ class ViewStyleManager {
       if (value.equals("wrap-content")) {
 	width = new Integer(LayoutParams.WRAP_CONTENT);
       } else if (value.equals("match-parent")) {
-	width = new Integer(LayoutParams.MATCH_PARENT);
+	width = new Integer(LayoutParams.FILL_PARENT);
       } else {
 	width = new Integer(value);
       }
@@ -272,8 +273,20 @@ class ViewStyleManager {
   public void apply(Dialog dialog) {
     if (width != null || height != null) {
       ViewGroup.LayoutParams params = dialog.getWindow().getAttributes();
-      if (width != null) params.width = applyScale(width);
-      if (height != null) params.height = applyScale(height);
+      if (width != null) {
+	if (width == LayoutParams.MATCH_PARENT || width == LayoutParams.WRAP_CONTENT || width == LayoutParams.FILL_PARENT) {
+	  params.width = width;
+	} else {
+	  params.width = applyScale(width);
+	}
+      }
+      if (height != null) {
+	if (height == LayoutParams.MATCH_PARENT || height == LayoutParams.WRAP_CONTENT || height == LayoutParams.FILL_PARENT) {
+	  params.height = height;
+	} else {
+	  params.height = applyScale(height);
+	}
+      }
       dialog.getWindow().setAttributes((android.view.WindowManager.LayoutParams) params);
     }
   }
@@ -306,9 +319,10 @@ class ViewStyleManager {
 	  gradientColors == null &&
 	  (backgroundColor == null || backgroundColor == 0) &&
 	  (borderWidth == null || borderWidth == 0)) {
-     	if (backgroundColor != null) view.setBackgroundColor(backgroundColor);
 	RoundRectShape shape = new RoundRectShape(expandRadii(borderRadius), null, null);
      	ShapeDrawable sd = new ShapeDrawable(shape);
+     	sd.getPaint().setStyle(Style.FILL);
+     	sd.getPaint().setColor(Color.parseColor("#00000000"));
      	view.setBackground(sd);
       } else {
 	GradientDrawable gradientDrawable = new GradientDrawable();
@@ -346,8 +360,20 @@ class ViewStyleManager {
       	  params.bottomMargin = (int)applyScale(margin[2]);
       	  params.leftMargin = (int)applyScale(margin[3]);
       	}
-      	if (width != null) params.width = applyScale(width);
-      	if (height != null) params.height = applyScale(height);
+      	if (width != null) {
+	  if (width == LayoutParams.MATCH_PARENT || width == LayoutParams.WRAP_CONTENT || width == LayoutParams.FILL_PARENT) {
+	    params.width = width;
+	  } else {
+	    params.width = applyScale(width);
+	  }
+      	}
+	if (height != null) {
+	  if (height == LayoutParams.MATCH_PARENT || height == LayoutParams.WRAP_CONTENT || height == LayoutParams.FILL_PARENT) {
+	    params.height = height;
+	  } else {
+	    params.height = applyScale(height);
+	  }
+	}
       	if (gravity != null) params.gravity = gravity;
       	view.setLayoutParams(params);
       } else if (view.getParent() instanceof FrameLayout) {
@@ -358,8 +384,20 @@ class ViewStyleManager {
       	  params.bottomMargin = (int)applyScale(margin[2]);
       	  params.leftMargin = (int)applyScale(margin[3]);
       	}
-      	if (width != null) params.width = applyScale(width);
-      	if (height != null) params.height = applyScale(height);
+      	if (width != null) {
+	  if (width == LayoutParams.MATCH_PARENT || width == LayoutParams.WRAP_CONTENT || width == LayoutParams.FILL_PARENT) {
+	    params.width = width;
+	  } else {
+	    params.width = applyScale(width);
+	  }
+      	}
+	if (height != null) {
+	  if (height == LayoutParams.MATCH_PARENT || height == LayoutParams.WRAP_CONTENT || height == LayoutParams.FILL_PARENT) {
+	    params.height = height;
+	  } else {
+	    params.height = applyScale(height);
+	  }
+	}
       	if (gravity != null) params.gravity = gravity;
       	view.setLayoutParams(params);	
       } else if (view.getParent() instanceof RelativeLayout) {
@@ -370,9 +408,21 @@ class ViewStyleManager {
       	  params.bottomMargin = (int)applyScale(margin[2]);
       	  params.leftMargin = (int)applyScale(margin[3]);
       	}
-      	if (width != null) params.width = applyScale(width);
-      	if (height != null) params.height = applyScale(height);
-      	view.setLayoutParams(params);	
+      	if (width != null) {
+	  if (width == LayoutParams.MATCH_PARENT || width == LayoutParams.WRAP_CONTENT || width == LayoutParams.FILL_PARENT) {
+	    params.width = width;
+	  } else {
+	    params.width = applyScale(width);
+	  }
+	}
+	if (height != null) {
+	  if (height == LayoutParams.MATCH_PARENT || height == LayoutParams.WRAP_CONTENT || height == LayoutParams.FILL_PARENT) {
+	    params.height = height;
+	  } else {
+	    params.height = applyScale(height);
+	  }
+	}
+	view.setLayoutParams(params);
       } else {
 	System.out.println("this style cannot be applied to view that doesn't have valid layout as parent");
       }
