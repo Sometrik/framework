@@ -1,7 +1,5 @@
 package com.sometrik.framework;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 
 import com.sometrik.framework.NativeCommand.Selector;
@@ -19,6 +17,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class FWActionBar implements NativeCommandHandler {
@@ -30,7 +29,7 @@ public class FWActionBar implements NativeCommandHandler {
   private TextView titleView;
   private TextView subtitleView;
   private ImageButton drawerButton;
-  private LinearLayout mainLayout;
+  private RelativeLayout mainLayout;
   private FWLayout alternativeButtonLayout;
   ViewStyleManager normalStyle, activeStyle, currentStyle;
 
@@ -46,21 +45,24 @@ public class FWActionBar implements NativeCommandHandler {
     actionBar.setDisplayShowTitleEnabled(false);
     actionBar.setDisplayShowCustomEnabled(true);
     
-    mainLayout = new LinearLayout(frame);
-    mainLayout.setOrientation(LinearLayout.HORIZONTAL);
+    mainLayout = new RelativeLayout(frame);
+//    mainLayout.setOrientation(LinearLayout.HORIZONTAL);
     mainLayout.setBackgroundColor(Color.parseColor("#ffffff"));
     LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
     params.weight = 1;
     mainLayout.setLayoutParams(params);
 
+    final float scale = frame.getResources().getDisplayMetrics().density;
     drawerButton = new ImageButton(frame);
+    LinearLayout.LayoutParams drawerButtonParams = new LinearLayout.LayoutParams((int)(45 * scale), LayoutParams.MATCH_PARENT);
+    drawerButton.setLayoutParams(drawerButtonParams);
     Bitmap bitmap = frame.bitmapCache.loadBitmap("icons_hamburger-menu.png");
     
     if (bitmap != null) {
       Drawable draw = new BitmapDrawable(bitmap);
-
+      
       drawerButton.setImageDrawable(draw);
-      drawerButton.setScaleType(ScaleType.FIT_START);
+      drawerButton.setScaleType(ScaleType.FIT_CENTER);
       drawerButton.setBackgroundColor(Color.parseColor("#ffffff"));
       drawerButton.setOnClickListener(new OnClickListener() {
 	@Override
@@ -104,34 +106,16 @@ public class FWActionBar implements NativeCommandHandler {
     titleHolderLayout.addView(titleView);
     titleHolderLayout.addView(subtitleView);
     
-
-    final float scale = frame.getResources().getDisplayMetrics().density;
     int pixels = (int) (58 * scale + 0.5f);
 //    int pixels = drawerButton.getWidth();
-    titleView.setPadding(titleView.getPaddingLeft(), titleView.getPaddingRight(), pixels, titleView.getPaddingBottom());
-    subtitleView.setPadding(subtitleView.getPaddingLeft(), subtitleView.getPaddingRight(), pixels, subtitleView.getPaddingBottom());
+//    titleView.setPadding(titleView.getPaddingLeft(), titleView.getPaddingRight(), pixels, titleView.getPaddingBottom());
+//    subtitleView.setPadding(subtitleView.getPaddingLeft(), subtitleView.getPaddingRight(), pixels, subtitleView.getPaddingBottom());
 //    titleView.setGravity(Gravity.CENTER);
     mainLayout.addView(titleHolderLayout);
     
     
     actionBar.show();
     actionBar.setCustomView(mainLayout);
-//    actionBar.setDisplayUseLogoEnabled(false);
-//
-//    
-//    ColorDrawable cd = new ColorDrawable();
-//    cd.setColor(Color.WHITE);
-//    actionBar.setBackgroundDrawable(cd);
-//
-//    try {
-//        Field f = actionBar.getClass().getSuperclass().getDeclaredField("mContentHeight");
-//        f.setAccessible(true);
-//        f.set(actionBar, (106 * scale + 0.5f));
-//    } catch (NoSuchFieldException e) {
-//      e.printStackTrace();
-//    } catch (IllegalAccessException e) {
-//      e.printStackTrace();
-//    }
     
     this.normalStyle = currentStyle = new ViewStyleManager(frame.bitmapCache, scale, true);
     this.activeStyle = new ViewStyleManager(frame.bitmapCache, scale, false);
