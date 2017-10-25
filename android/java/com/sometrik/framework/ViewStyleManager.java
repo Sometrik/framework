@@ -493,7 +493,9 @@ class ViewStyleManager {
 	BitmapDrawable drawable = null;
 	if (!iconFile.isEmpty()) {
 	  Bitmap bitmap = bitmapCache.loadBitmap(iconFile);
-	  if (bitmap != null) drawable = new BitmapDrawable(bitmap);
+	  if (bitmap != null) {
+	    drawable = new BitmapDrawable(bitmap);
+	  }
 	}
 	if (iconAttachment == null || iconAttachment.equals("top")) {
 	  textView.setCompoundDrawablesWithIntrinsicBounds(null, drawable, null, null);
