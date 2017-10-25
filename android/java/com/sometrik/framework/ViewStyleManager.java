@@ -492,7 +492,7 @@ class ViewStyleManager {
       if (iconFile != null) {
 	BitmapDrawable drawable = null;
 	if (!iconFile.isEmpty()) {
-	  Bitmap bitmap = bitmapCache.loadBitmap(iconFile);
+	  Bitmap bitmap = bitmapCache.loadBitmapForButton(iconFile);
 	  if (bitmap != null) {
 	    drawable = new BitmapDrawable(bitmap);
 	  }
