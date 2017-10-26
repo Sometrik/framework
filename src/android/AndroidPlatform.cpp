@@ -639,7 +639,18 @@ void Java_com_sometrik_framework_FrameWork_nativeAddPreference(JNIEnv* env, jobj
   env->ReleaseStringUTFChars(jvalue, value);
 }
 
-void Java_com_sometrik_framework_FrameWork_timerEvent(JNIEnv* env, jobject thiz, double timestamp, jint viewId, jint timerId){
+void Java_com_sometrik_framework_FrameWork_sendImageRequest(JNIEnv* env, jobject thiz, jint viewId, jstring uri, jint width, jint height) {
+  const char * uri2 = env->GetStringUTFChars(uri, NULL);
+  ImageRequestEvent ev(ImageRequestEvent::REQUEST, viewId, image_url, ImageRequestEvent::NORMAL, width, height);
+  mainThread->sendEvent(mainThread->getApplication().getInternalId(), ev);
+  env->ReleaseStringUTFChars(uri, uri2);
+}
+
+void Java_com_sometrik_framework_Framework_cancelImageRequest(JNIEnv * env, jobject thiz, jint viewId) {
+  ImageRequestEvent ev(IamgeRequestEvent::CANCEL, viewId);
+  mainThread->sendEvent(mainThread->getApplication().getInternalId(), ev);
+}
+void Java_com_sometrik_framework_FrameWork_timerEvent(JNIEnv* env, jobject thiz, double timestamp, jint viewId, jint timerId) {
   TimerEvent ev(timerId);
   mainThread->sendEvent(viewId, ev);
 }

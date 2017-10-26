@@ -103,6 +103,8 @@ public class FrameWork extends Activity {
   public native void nativeOnStart(double timestamp, int appId);
   public native void nativeOnDestroy(double timestamp, int appId);
   public native void nativeAddPreference(String key, String value);
+  public native void sendImageRequest(int viewId, String url, int width, int height);
+  public native void cancelImageRequest(int viewId);
   private native void setNativeActiveView(double timestamp, int activeView, boolean recordHistory);
   private native void languageChanged(double timestamp, int appId, String language);
   private native void memoryWarning(double timestamp, int appId);
