@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import com.sometrik.framework.NativeCommand.Selector;
 
-import android.content.Context;
 import android.graphics.Bitmap.Config;
 import android.util.Log;
 import android.view.View;
@@ -22,11 +21,8 @@ public class FWAuto extends LinearLayout implements NativeCommandHandler {
     this.frame = frame;
     viewList = new ArrayList<View>();
     layoutList = new ArrayList<LinearLayout>();
-    params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-    setLayoutParams(params);
     setOrientation(LinearLayout.HORIZONTAL);
-  }
-  
+  }  
   
   private void buildAuto(int columns){
     
