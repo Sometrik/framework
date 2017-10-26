@@ -13,13 +13,16 @@ public class FWPopupView extends PopupWindow implements NativeCommandHandler {
 
   FrameWork frame;
   int id;
+  ViewStyleManager normalStyle, activeStyle, currentStyle;
   
   public FWPopupView(FrameWork frame, int id) {
     super(frame);
     this.frame = frame;
     this.id = id;
-    setWidth(ViewGroup.LayoutParams.WRAP_CONTENT);
-    setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
+    
+    final float scale = frame.getResources().getDisplayMetrics().density;
+    this.normalStyle = currentStyle = new ViewStyleManager(frame.bitmapCache, scale, true);
+    this.activeStyle = new ViewStyleManager(frame.bitmapCache, scale, false);
     
     //Default: Set background color as light rather than dark
     this.setBackgroundDrawable(frame.getResources().getDrawable(R.drawable.screen_background_light));
@@ -34,8 +37,6 @@ public class FWPopupView extends PopupWindow implements NativeCommandHandler {
   public void addChild(View view) {
     System.out.println("setting new contentView for popupView");
     this.setContentView(view);
-    //Some default padding
-    view.setPadding(20, 20, 20, 20);
   }
 
   @Override
@@ -79,7 +80,13 @@ public class FWPopupView extends PopupWindow implements NativeCommandHandler {
 
   @Override
   public void setStyle(Selector selector, String key, String value) {
-    System.out.println("command couldn't be handled by popupView");
+    if (selector == Selector.NORMAL) {
+      normalStyle.setStyle(key, value);
+      // if (normalStyle == currentStyle) normalStyle.apply(this);
+    } else if (selector == Selector.ACTIVE) {
+      activeStyle.setStyle(key, value);      
+      // if (activeStyle == currentStyle) activeStyle.apply(this);
+    }
   }
 
   @Override
