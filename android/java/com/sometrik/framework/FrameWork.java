@@ -273,10 +273,10 @@ public class FrameWork extends Activity {
   }
   
   public void hideSoftKeyboard() {
-    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-    if (views.get(getCurrentViewId()) instanceof View) {
-      imm.hideSoftInputFromWindow(((View)views.get(getCurrentViewId())).getApplicationWindowToken(), 0);
-    }
+//    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+//    if (views.get(getCurrentViewId()) instanceof View) {
+//      imm.hideSoftInputFromWindow(((View)views.get(getCurrentViewId())).getApplicationWindowToken(), 0);
+//    }
   }
 
   public void setCurrentView(final View view, final boolean recordHistory, Animation animation, final int newViewAnimationFromX) {
