@@ -24,7 +24,6 @@ public class NavigationLayout extends FrameLayout implements NativeCommandHandle
     DrawerLayout.LayoutParams lp = new DrawerLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
     lp.gravity = Gravity.START;
     setLayoutParams(lp);
-    setBackgroundColor(Color.parseColor("#ffffff"));
     
     final float scale = getContext().getResources().getDisplayMetrics().density;
     this.normalStyle = currentStyle = new ViewStyleManager(frame.bitmapCache, scale, true);
