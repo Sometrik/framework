@@ -2,15 +2,8 @@ package com.sometrik.framework;
 
 import com.sometrik.framework.NativeCommand.Selector;
 
-import android.content.res.Resources;
-import android.graphics.Color;
 import android.graphics.Bitmap.Config;
-import android.util.TypedValue;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.TranslateAnimation;
-import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
 public class FWScrollLayout extends ScrollView implements NativeCommandHandler {
@@ -22,9 +15,6 @@ public class FWScrollLayout extends ScrollView implements NativeCommandHandler {
     
     this.setId(id);
     this.frame = frameWork;
-    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-    this.setLayoutParams(params);
-    // this.setFillViewport(true);
     
     final float scale = getContext().getResources().getDisplayMetrics().density;
     this.normalStyle = currentStyle = new ViewStyleManager(frame.bitmapCache, scale, true);

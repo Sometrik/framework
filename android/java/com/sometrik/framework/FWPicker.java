@@ -1,32 +1,23 @@
 package com.sometrik.framework;
 
 import java.util.ArrayList;
-import java.util.Map.Entry;
-
 import com.sometrik.framework.NativeCommand.Selector;
-
-import java.util.TreeMap;
-
-import android.content.Context;
 import android.graphics.Bitmap.Config;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
-public class FWPicker extends Spinner implements NativeCommandHandler {
-  
+public class FWPicker extends Spinner implements NativeCommandHandler { 
   private FrameWork frame;
   private ArrayAdapter<String> adapter;
   private ArrayList<Integer> idList;
-  private final int id;
 
   public FWPicker(FrameWork frameWork) {
     super(frameWork);
     this.frame = frameWork;
     adapter = new ArrayAdapter<String>(frame, android.R.layout.simple_spinner_item);
     idList = new ArrayList<Integer>();
-    id = getId();
     
     setOnItemSelectedListener(new OnItemSelectedListener() {
 

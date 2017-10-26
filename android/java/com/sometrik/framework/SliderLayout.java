@@ -11,7 +11,6 @@ import com.sometrik.framework.SliderButton.Position;
 import android.graphics.Bitmap.Config;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.FrameLayout;
@@ -35,11 +34,7 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
 
     buttonList = new ArrayList<SliderButton>();
     labelList = new HashMap<Integer, String>();
-    this.frame = frame;
-
-    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
-    setLayoutParams(params);
- 
+    this.frame = frame; 
   }
   
   public void setAllButtonsDisabled(){

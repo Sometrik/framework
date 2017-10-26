@@ -8,9 +8,7 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
 import android.graphics.Bitmap.Config;
-import android.graphics.drawable.Drawable;
 import android.view.View;
 
 public class FWNotification extends Notification.Builder implements NativeCommandHandler {

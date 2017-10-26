@@ -5,12 +5,8 @@ import com.sometrik.framework.NativeCommand.Selector;
 import android.graphics.Color;
 import android.graphics.Bitmap.Config;
 import android.graphics.drawable.GradientDrawable;
-import android.view.Gravity;
 import android.view.View;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 
 public class FWRelativeLayout extends RelativeLayout implements NativeCommandHandler {
 

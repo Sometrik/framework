@@ -10,7 +10,6 @@ import android.graphics.Bitmap;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 
 public class FWImageView extends ImageView implements NativeCommandHandler {
   FrameWork frame;

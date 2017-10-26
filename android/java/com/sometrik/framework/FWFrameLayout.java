@@ -1,8 +1,5 @@
 package com.sometrik.framework;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-
 import com.sometrik.framework.NativeCommand.Selector;
 
 import android.graphics.Bitmap.Config;

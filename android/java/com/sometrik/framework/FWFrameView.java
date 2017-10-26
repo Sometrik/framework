@@ -22,9 +22,6 @@ public class FWFrameView extends FrameLayout implements NativeCommandHandler {
     super(frameWork);
     this.frame = frameWork;
     this.title = title;
-    // LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
-    // this.setLayoutParams(params);
-    // this.setFillViewport(true);
     
     final float scale = getContext().getResources().getDisplayMetrics().density;
     this.normalStyle = currentStyle = new ViewStyleManager(frame.bitmapCache, scale, true);

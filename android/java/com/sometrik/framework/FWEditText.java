@@ -9,13 +9,10 @@ import com.sometrik.framework.NativeCommand.Selector;
 import android.graphics.Bitmap.Config;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnTouchListener;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.LinearLayout.LayoutParams;
 
 public class FWEditText extends EditText implements NativeCommandHandler {
 

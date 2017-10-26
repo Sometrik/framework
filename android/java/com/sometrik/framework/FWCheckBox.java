@@ -2,12 +2,8 @@ package com.sometrik.framework;
 
 import com.sometrik.framework.NativeCommand.Selector;
 
-import android.content.Context;
 import android.graphics.Bitmap.Config;
-import android.text.TextUtils.TruncateAt;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.CheckBox;
 
 public class FWCheckBox extends CheckBox implements NativeCommandHandler {

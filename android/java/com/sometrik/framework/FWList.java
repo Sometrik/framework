@@ -3,14 +3,12 @@ package com.sometrik.framework;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import com.sometrik.framework.FWList.ColumnType;
 import com.sometrik.framework.NativeCommand.Selector;
 
 import android.graphics.Bitmap.Config;
 import android.graphics.Typeface;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
