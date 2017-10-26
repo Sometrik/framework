@@ -15,6 +15,8 @@
 #include <TimerEvent.h>
 #include <ValueEvent.h>
 #include <CommandEvent.h>
+#include <ImageRequestEvent.h>
+#include <URI.h>
 
 #include <PosixThread.h>
 
@@ -401,12 +403,8 @@ protected:
     }
       break;      
 
-    case Command::CREATE_SIMPLELISTVIEW: {
-      auto box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
-      addView(command, box);
-    }
-      break;
-
+    case Command::CREATE_FRAME_LAYOUT:
+    case Command::CREATE_RELATIVE_LAYOUT: 
     case Command::CREATE_LINEAR_LAYOUT: {
       auto box = gtk_box_new(command.getValue() == 1 ? GTK_ORIENTATION_VERTICAL : GTK_ORIENTATION_HORIZONTAL, 0);
 
@@ -490,14 +488,21 @@ protected:
       break;
 
     case Command::CREATE_IMAGEVIEW: {
-      GtkWidget * image;
-      if (!command.getTextValue().empty()) {
-	string s = getBundleFilename(command.getTextValue().c_str());
-	image = gtk_image_new_from_file(s.c_str());
-      } else {
-	image = gtk_image_new();
-      }
+      GtkWidget * image = gtk_image_new();
       addView(command, image);
+
+      auto & uri_text = command.getTextValue();
+      if (!uri_text.empty()) {
+	URI uri(uri_text);
+	if (uri.getScheme() == "http" || uri.getScheme() == "https") {
+	  requestImage(command.getChildInternalId(), uri_text);
+	} else {
+	  auto pixbuf = loadPixbuf(uri_text);
+	  if (pixbuf) {
+	    gtk_image_set_from_pixbuf(GTK_IMAGE(image), pixbuf);
+	  }
+	}
+      }
     }
       break;
 
@@ -588,7 +593,16 @@ protected:
       } else if (GTK_IS_HEADER_BAR(view)) {
 	gtk_header_bar_set_subtitle((GtkHeaderBar*)view, command.getTextValue().c_str());
       } else if (GTK_IS_BUTTON(view)) {
-	gtk_button_set_label(GTK_BUTTON(view), command.getTextValue().c_str());	
+	gtk_button_set_label(GTK_BUTTON(view), command.getTextValue().c_str());
+      } else if (GTK_IS_IMAGE(view)) {
+	auto & uri_text = command.getTextValue();
+	URI uri(uri_text);
+	if (uri.getScheme() == "http" || uri.getScheme() == "https") {
+	  requestImage(command.getInternalId(), uri_text);
+	} else {
+	  auto pixbuf = loadPixbuf(uri_text);
+	  gtk_image_set_from_pixbuf(GTK_IMAGE(view), pixbuf);
+	}
       } else {
 	cerr << "unable to set text value: " << command.getTextValue() << "\n";
 	// assert(0);
@@ -1046,6 +1060,35 @@ protected:
     views_by_id[id] = widget;
   }
 
+  void requestImage(int viewId, const std::string & uri, unsigned int width = 0, unsigned int height = 0) {
+    cerr << "requestImage(), viewId = " << viewId << ", uri = " << uri << endl;
+    ImageRequestEvent ev(ImageRequestEvent::REQUEST, viewId, uri, ImageRequestEvent::NORMAL, width, height);
+    sendEvent(getApplication().getInternalId(), ev);
+  }
+
+  void cancelImage(int viewId) {
+    ImageRequestEvent ev(ImageRequestEvent::CANCEL, viewId);
+    sendEvent(getApplication().getInternalId(), ev);
+  }
+
+  GdkPixbuf * loadPixbuf(const string & filename) {
+    string s = getBundleFilename(filename.c_str());
+    GError * error = 0;
+    GdkPixbuf * pixbuf = gdk_pixbuf_new_from_file(s.c_str(), &error);
+    assert(pixbuf);
+    if (getDisplayScale() < 2.0f) {
+      int new_w = int(getDisplayScale() * gdk_pixbuf_get_width(pixbuf) / 2.0f);
+      int new_h = int(getDisplayScale() * gdk_pixbuf_get_height(pixbuf) / 2.0f);
+      auto new_pixbuf = gdk_pixbuf_scale_simple(pixbuf, 
+						new_w,
+						new_h,
+						GDK_INTERP_BILINEAR);
+      gdk_pixbuf_unref(pixbuf);
+      pixbuf = new_pixbuf;
+    }
+    return pixbuf;
+  }
+  
   void addView(const Command & c, GtkWidget * widget, bool expand = false) {
     addView(c.getInternalId(), c.getChildInternalId(), widget, expand);
   }
