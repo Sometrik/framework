@@ -42,6 +42,11 @@ static int width = 800, height = 600;
 
 class GtkMainThread;
 
+struct image_data_s {
+  string url;
+  unsigned int width, height;
+};
+
 struct event_data_s {
   event_data_s(GtkMainThread * _mainThread, Event * _event, int _internal_id) : mainThread(_mainThread), event(_event), internal_id(_internal_id) { }
   GtkMainThread * mainThread;
@@ -491,11 +496,13 @@ protected:
       GtkWidget * image = gtk_image_new();
       addView(command, image);
 
+      g_signal_connect(G_OBJECT(image), "size-allocate", G_CALLBACK(on_size_allocate), this);
+
       auto & uri_text = command.getTextValue();
       if (!uri_text.empty()) {
 	URI uri(uri_text);
 	if (uri.getScheme() == "http" || uri.getScheme() == "https") {
-	  requestImage(command.getChildInternalId(), uri_text);
+	  setImageData(command.getChildInternalId(), uri_text, 0, 0);
 	} else {
 	  auto pixbuf = loadPixbuf(uri_text);
 	  if (pixbuf) {
@@ -598,7 +605,8 @@ protected:
 	auto & uri_text = command.getTextValue();
 	URI uri(uri_text);
 	if (uri.getScheme() == "http" || uri.getScheme() == "https") {
-	  requestImage(command.getInternalId(), uri_text);
+	  int w = gtk_widget_get_allocated_width(view);
+	  requestImage(command.getInternalId(), uri_text, w);
 	} else {
 	  auto pixbuf = loadPixbuf(uri_text);
 	  gtk_image_set_from_pixbuf(GTK_IMAGE(view), pixbuf);
@@ -889,7 +897,7 @@ protected:
   void setStyle(int id, Selector selector, const std::string & key, const std::string & value) {
     auto widget = views_by_id[id];
     if (!widget) return;
-
+    
     if (key == "height") {
       GtkWidget * parent = gtk_widget_get_parent(widget);
       bool match_parent = value == "match-parent";
@@ -938,6 +946,12 @@ protected:
 	pango_font_description_set_size(font, size * PANGO_SCALE);
 	gtk_widget_override_font(widget, font);
       }
+    } else if (key == "margin") {
+      int m = stoi(value);
+      gtk_widget_set_margin_start(widget, m);
+      gtk_widget_set_margin_end(widget, m);
+      gtk_widget_set_margin_top(widget, m);
+      gtk_widget_set_margin_bottom(widget, m);
     } else if (key == "margin-left") {
       gtk_widget_set_margin_start(widget, stoi(value));
     } else if (key == "margin-right") {
@@ -1083,7 +1097,7 @@ protected:
 						new_w,
 						new_h,
 						GDK_INTERP_BILINEAR);
-      gdk_pixbuf_unref(pixbuf);
+      g_object_unref(pixbuf);
       pixbuf = new_pixbuf;
     }
     return pixbuf;
@@ -1118,6 +1132,19 @@ protected:
     }
   }
 
+  void setImageData(int id, const std::string & url, unsigned int w = 0, unsigned int h = 0) {
+    image_data[id] = { url, w, h };
+  }
+		    
+  const image_data_s & getImageData(int id) const {
+    auto it = image_data.find(id);
+    if (it != image_data.end()) {
+      return it->second;
+    } else {
+      return null_image_data;
+    }
+  }
+
   static string getTextProperty(gpointer object, const char * key);
   static string getTextProperty(GtkContainer * c, GtkWidget * w, const char * key);
 
@@ -1134,6 +1161,7 @@ protected:
   static void on_next_button(GtkWidget * widget, gpointer data);
   static void on_settings_button(GtkWidget * widget, gpointer data);
   static void on_bar_button(GtkWidget * widget, gpointer data);
+  static void on_size_allocate(GtkWidget * widget, GtkAllocation * allocation, gpointer data);
   static gboolean event_callback(gpointer data);
   static gboolean delete_window(GtkWidget *widget, GdkEvent  *event, gpointer user_data);
   static gboolean timer_callback(gpointer data);
@@ -1150,6 +1178,8 @@ private:
   unordered_map<int, vector<sheet_data_s> > sheets_by_id;
   vector<sheet_data_s> null_sheets;
   map<GtkWidget *, int> widget_values;
+  unordered_map<int, image_data_s> image_data;
+  image_data_s null_image_data;
 };
 
 string
@@ -1370,6 +1400,20 @@ GtkMainThread::on_bar_button(GtkWidget * widget, gpointer data) {
     cerr << "sending bar button click value: " << value << endl;
     ValueEvent ev(value, value);
     mainThread->getPlatform().postEvent(id, ev);
+  }
+}
+
+void
+GtkMainThread::on_size_allocate(GtkWidget * widget, GtkAllocation * allocation, gpointer data) {
+  GtkMainThread * mainThread = (GtkMainThread*)data;
+  if (GTK_IS_IMAGE(widget)) {
+    int id = mainThread->getId(widget);
+    auto & d = mainThread->getImageData(id);
+    if (!d.url.empty() && d.width != allocation->width) {
+      cerr << "imageSize changed " << allocation->width << ", " << allocation->height << endl;
+      mainThread->setImageData(id, d.url, allocation->width, allocation->height);
+      mainThread->requestImage(id, d.url, allocation->width);
+    }
   }
 }
 
