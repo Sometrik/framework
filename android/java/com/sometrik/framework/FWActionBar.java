@@ -141,7 +141,7 @@ public class FWActionBar implements NativeCommandHandler {
       @Override
       public void onClick(View arg0) {
 	System.out.println("actionbar: view clicked " + view.getId());
-	frame.intChangedEvent(System.currentTimeMillis() / 1000.0, view.getId(), 1, 1);
+	frame.intChangedEvent(view.getId(), 1, 1);
       }
     });
   }

@@ -33,7 +33,7 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
     setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
-	frame.intChangedEvent(System.currentTimeMillis() / 1000.0, getElementId(), 0, 0);
+	frame.intChangedEvent(getElementId(), 0, 0);
       }
     });
     
@@ -79,7 +79,7 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
       view.setOnClickListener(new OnClickListener() {
 	  @Override
 	  public void onClick(View v) {
-	    frame.intChangedEvent(System.currentTimeMillis() / 1000.0, getElementId(), 0, 1);
+	    frame.intChangedEvent(getElementId(), 0, 1);
 	  }
       });
     }

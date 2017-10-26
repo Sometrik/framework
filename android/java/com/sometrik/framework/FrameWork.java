@@ -87,31 +87,31 @@ public class FrameWork extends Activity {
   public static boolean transitionAnimation = false;
   public BitmapCache bitmapCache;
 
-  public native void endModal(double timestamp, int value, byte[] textValue);
-  public native void textChangedEvent(double timestamp, int id, byte[] textValue);
-  public native void intChangedEvent(double timestamp, int id, int changedInt, int changedInt2);
-  public native void visibilityChangedEvent(double timestamp, int id, boolean visible);
-  public native void keyPressed(double timestamp, int keyId, int viewId);
+  public native void endModal(int value, byte[] textValue);
+  public native void textChangedEvent(int id, byte[] textValue);
+  public native void intChangedEvent(int id, int changedInt, int changedInt2);
+  public native void visibilityChangedEvent(int id, boolean visible);
+  public native void keyPressed(int keyId, int viewId);
   public native void touchEvent(int viewId, int mode, int fingerIndex, double timestamp, float x, float y);
   public native void flushTouchEvent(double timestamp, int viewId, int mode);
   public native void onInit(AssetManager assetManager, int xSize, int ySize, float displayScale, String email, String language, String country);
   public native void nativeSetSurface(Surface surface, int surfaceId, int gl_version, int width, int height);
-  public native void nativeSurfaceDestroyed(double timestamp, int surfaceId, int gl_version);
-  public native void nativeOnResume(double timestamp, int appId);
-  public native void nativeOnPause(double timestamp, int appId);
-  public native void nativeOnStop(double timestamp, int appId);
-  public native void nativeOnStart(double timestamp, int appId);
-  public native void nativeOnDestroy(double timestamp, int appId);
+  public native void nativeSurfaceDestroyed(int surfaceId, int gl_version);
+  public native void nativeOnResume(int appId);
+  public native void nativeOnPause(int appId);
+  public native void nativeOnStop(int appId);
+  public native void nativeOnStart(int appId);
+  public native void nativeOnDestroy(int appId);
   public native void nativeAddPreference(String key, String value);
   public native void sendImageRequest(int viewId, String url, int width, int height);
   public native void cancelImageRequest(int viewId);
-  private native void setNativeActiveView(double timestamp, int activeView, boolean recordHistory);
-  private native void languageChanged(double timestamp, int appId, String language);
-  private native void memoryWarning(double timestamp, int appId);
-  public static native void onPurchaseEvent(double timestamp, int applicationId, String orderId, boolean newPurchase, double purchaseTime);
-  public static native void onResize(double timestamp, float width, float height, int viewId);
+  private native void setNativeActiveView(int activeView, boolean recordHistory);
+  private native void languageChanged(int appId, String language);
+  private native void memoryWarning(int appId);
+  public static native void onPurchaseEvent(int applicationId, String orderId, boolean newPurchase, double purchaseTime);
+  public static native void onResize(float width, float height, int viewId);
   public static native void onUpdate(double timestamp, int viewId);
-  public static native void timerEvent(double timestamp, int viewId, int timerId);
+  public static native void timerEvent(int viewId, int timerId);
   
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -315,7 +315,7 @@ public class FrameWork extends Activity {
 //	  } else {
 //	    q = new TranslateAnimation(-1000, 0, 0, 0);
 //	  }
-	  setNativeActiveView(System.currentTimeMillis() / 1000.0, view.getId(), recordHistory);
+	  setNativeActiveView(view.getId(), recordHistory);
 	  q.setAnimationListener(new Animation.AnimationListener() {
 	    @Override
 	    public void onAnimationEnd(Animation animation) { transitionAnimation = false; }
@@ -418,9 +418,7 @@ public class FrameWork extends Activity {
       setContentView(view);
     }
      
-    
-      setNativeActiveView(System.currentTimeMillis() / 1000.0, view.getId(), recordHistory);
-//    }
+    setNativeActiveView(view.getId(), recordHistory);
   }
   
   public void setCurrentView(final View view, final boolean recordHistory, String title) {
@@ -445,7 +443,7 @@ public class FrameWork extends Activity {
 	holder.addCallback(new Callback() {
       public void surfaceDestroyed(SurfaceHolder holder) {
 	System.out.println("surfaceDestroyed");
-	nativeSurfaceDestroyed(System.currentTimeMillis() / 1000.0, id, gl_version);
+	nativeSurfaceDestroyed(id, gl_version);
       }
 
       public void surfaceCreated(SurfaceHolder holder) {
@@ -456,7 +454,7 @@ public class FrameWork extends Activity {
 
       public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
 	System.out.println("nativeSurfaceChanged. Width: " + width + " height: " + height + " id: " + id);
-	onResize(System.currentTimeMillis() / 1000.0, width, height, id);
+	onResize(width, height, id);
 	System.out.println("native surface has been set");
       }
     });
@@ -545,7 +543,7 @@ public class FrameWork extends Activity {
 
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
-    intChangedEvent(System.currentTimeMillis() / 1000.0, actionBar.getElementId(), item.getItemId(), 0);
+    intChangedEvent(actionBar.getElementId(), item.getItemId(), 0);
     if (item.getItemId() == 16908332){
       if (drawerLayout.isDrawerOpen(Gravity.LEFT)){
 	drawerLayout.closeDrawer(Gravity.LEFT);
@@ -560,7 +558,7 @@ public class FrameWork extends Activity {
   public boolean onKeyDown(int keycode, KeyEvent e) {
     System.out.println("KeyEvent. KeyCode: " + keycode + " ViewId: " + findViewById(android.R.id.content).getRootView().getId());
     if (!transitionAnimation){
-      keyPressed(System.currentTimeMillis() / 1000.0, e.getKeyCode(), currentView);
+      keyPressed(e.getKeyCode(), currentView);
     }
     return true;
   }
@@ -634,7 +632,7 @@ public class FrameWork extends Activity {
       System.out.println("Language change spotted");
       System.out.println("Previous locale: " + defaultLocale.getCountry() + " Language: " + defaultLocale.getLanguage());
       System.out.println("New locale: " + locale.getCountry() + " Language: " + locale.getLanguage());
-      languageChanged(System.currentTimeMillis() / 1000.0, appId, locale.getLanguage());
+      languageChanged(appId, locale.getLanguage());
       defaultLocale = locale;
     }
 
@@ -645,12 +643,12 @@ public class FrameWork extends Activity {
     if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
       System.out.println("Orientation conf portrait");
       isLandscape = false;
-      onResize(System.currentTimeMillis() / 1000.0, screenWidth, screenHeight, currentView);
+      onResize(screenWidth, screenHeight, currentView);
       System.out.println("Orientation conf portrait. SWidth: " + screenWidth + " SHeight: " + screenHeight + " currentView: " + currentView);
     } else if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
       System.out.println("Orientation conf landscape");
       isLandscape = true;
-      onResize(System.currentTimeMillis() / 1000.0, screenWidth, screenHeight, currentView);
+      onResize(screenWidth, screenHeight, currentView);
       System.out.println("Orientation conf landscape. SWidth: " + screenWidth + " SHeight: " + screenHeight + " currentView: " + currentView);
     }
     
@@ -690,34 +688,29 @@ public class FrameWork extends Activity {
   
   
   @Override 
-  public void onResume(){
-    Log.d("Framework", "onResume");
+  public void onResume() {
     super.onResume();
-    nativeOnResume(System.currentTimeMillis() / 1000.0, appId);
+    nativeOnResume(appId);
   }
   @Override 
-  public void onPause(){
-    Log.d("Framework", "onPause");
+  public void onPause() {
     super.onPause();
-    nativeOnPause(System.currentTimeMillis() / 1000.0, appId);
+    nativeOnPause(appId);
   }
   @Override 
-  public void onStop(){
-    Log.d("Framework", "onStop");
+  public void onStop() {
     super.onStop();
-    nativeOnStop(System.currentTimeMillis() / 1000.0, appId);
+    nativeOnStop(appId);
   }
   @Override 
-  public void onStart(){
-    Log.d("Framework", "onStart");
+  public void onStart() {
     super.onStart();
-    nativeOnStart(System.currentTimeMillis() / 1000.0, appId);
+    nativeOnStart(appId);
   }
   @Override
-  public void onLowMemory(){
-    Log.d("Framework", "Low Memory Detected");
+  public void onLowMemory() {
     super.onLowMemory();
-    memoryWarning(System.currentTimeMillis() / 1000.0, appId);
+    memoryWarning(appId);
   }
 
   @Override
@@ -728,7 +721,7 @@ public class FrameWork extends Activity {
     // native stuff may wish to use Framework functionality in their
     // destructors
 
-    nativeOnDestroy(System.currentTimeMillis() / 1000.0, appId);
+    nativeOnDestroy(appId);
     if (purchaseHelper != null) {
       try {
 	purchaseHelper.dispose();

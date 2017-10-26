@@ -318,7 +318,7 @@ public class NativeCommand {
 	  @Override
 	  public void onItemClick(AdapterView<?> arg0, View arg1, int groupPosition, long id) {
 	    System.out.println("row clicked. Sending intChangedEvent of " + (groupPosition - 1));
-	    frame.intChangedEvent(System.currentTimeMillis() / 1000.0, childInternalId, (groupPosition - 1), 0);
+	    frame.intChangedEvent(childInternalId, (groupPosition - 1), 0);
 	  }
 	});
 	frame.addToViewList(listView);
@@ -331,7 +331,7 @@ public class NativeCommand {
       timer.scheduleAtFixedRate((new TimerTask() {
 	@Override
 	public void run() {
-	  frame.timerEvent(System.currentTimeMillis() / 1000, internalId, childInternalId);
+	  frame.timerEvent(internalId, childInternalId);
 	}
       }), 1000, 1000);
       break;
@@ -584,7 +584,7 @@ public class NativeCommand {
     click.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
       @Override
       public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-	frame.intChangedEvent(System.currentTimeMillis() / 1000.0, buttonView.getId(), isChecked ? 1 : 0, 0);
+	frame.intChangedEvent(buttonView.getId(), isChecked ? 1 : 0, 0);
       }
     });
     frame.addToViewList(click);
@@ -668,7 +668,7 @@ public class NativeCommand {
       public void afterTextChanged(Editable editable) {
 	String inputText = editable.toString();
 	byte[] b = inputText.getBytes(frame.getCharset());
-	frame.textChangedEvent(System.currentTimeMillis() / 1000.0, getChildInternalId(), b);
+	frame.textChangedEvent(getChildInternalId(), b);
       }
       public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
       public void onTextChanged(CharSequence s, int start, int before, int count) {}
@@ -710,7 +710,7 @@ public class NativeCommand {
     checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
       @Override
       public void onCheckedChanged(CompoundButton box, boolean isChecked) {
-	frame.intChangedEvent(System.currentTimeMillis() / 1000.0, childInternalId, isChecked ? 1 : 0, 0);
+	frame.intChangedEvent(childInternalId, isChecked ? 1 : 0, 0);
       }
     });
     return checkBox;
@@ -736,14 +736,14 @@ public class NativeCommand {
 
       @Override
       public void onCancel(DialogInterface arg0) {
-	frame.endModal(System.currentTimeMillis() / 1000.0, 0, null);
+	frame.endModal(0, null);
       }
     });
 
     // Negative button listener
     builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
       public void onClick(DialogInterface dialog, int id) {
-	frame.endModal(System.currentTimeMillis() / 1000.0, 0, null);
+	frame.endModal(0, null);
 	dialog.dismiss();
       }
     });
@@ -753,7 +753,7 @@ public class NativeCommand {
       public void onClick(DialogInterface dialog, int id) {
 	String inputText = String.valueOf(input.getText());
 	byte[] b = inputText.getBytes(frame.getCharset());
-	frame.endModal(System.currentTimeMillis() / 1000.0, 1, b);
+	frame.endModal(1, b);
 	dialog.dismiss();
       }
     });
@@ -780,7 +780,7 @@ public class NativeCommand {
 
       @Override
       public void onCancel(DialogInterface arg0) {
-	frame.endModal(System.currentTimeMillis() / 1000.0, 0, null);
+	frame.endModal(0, null);
       }
       
     });
@@ -788,7 +788,7 @@ public class NativeCommand {
     // Positive button listener
     builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
       public void onClick(DialogInterface dialog, int id) {
-	frame.endModal(System.currentTimeMillis() / 1000.0, 1, null);
+	frame.endModal(1, null);
 	dialog.dismiss();
       }
     });
@@ -808,7 +808,7 @@ public class NativeCommand {
       public void onIabPurchaseFinished(IabResult result, Purchase info) {
 	if (result.isSuccess()) {
 	  System.out.println("Purchase of product id " + productId + " completed");
-	  frame.onPurchaseEvent(System.currentTimeMillis() / 1000.0, frame.getAppId(), info.getSku(), true, info.getPurchaseTime() / 1000.0);
+	  frame.onPurchaseEvent(frame.getAppId(), info.getSku(), true, info.getPurchaseTime() / 1000.0);
 	  // TODO
 	} else {
 	  System.out.println("Purchase of product id " + productId + " failed");
@@ -823,7 +823,7 @@ public class NativeCommand {
     List<Purchase> purchaseList = inventory.getAllPurchases();
     System.out.println("getting purchase history. Purchase child size: " + purchaseList.size());
     for (Purchase purchase : inventory.getAllPurchases()) {
-      frame.onPurchaseEvent(System.currentTimeMillis() / 1000.0, frame.getAppId(), purchase.getSku(), false, purchase.getPurchaseTime() / 1000.0);
+      frame.onPurchaseEvent(frame.getAppId(), purchase.getSku(), false, purchase.getPurchaseTime() / 1000.0);
     }
   }
   

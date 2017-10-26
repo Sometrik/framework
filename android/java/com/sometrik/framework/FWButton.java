@@ -32,7 +32,7 @@ public class FWButton extends Button implements NativeCommandHandler {
       @Override
       public void onClick(View arg0) {
 	if (!FrameWork.transitionAnimation) {
-	  frame.intChangedEvent(System.currentTimeMillis() / 1000.0, getElementId(), 1, 0);
+	  frame.intChangedEvent(getElementId(), 1, 0);
 	  if (animation != null) button.startAnimation(animation);
 	  frame.hideSoftKeyboard();
 	}

@@ -36,7 +36,7 @@ public class FWImageView extends ImageView implements NativeCommandHandler {
       @Override
       public void onClick(View arg0) {
 	if (!FrameWork.transitionAnimation) {
-	  frame.intChangedEvent(System.currentTimeMillis() / 1000.0, getElementId(), 0, 0);
+	  frame.intChangedEvent(getElementId(), 0, 0);
 	}
       }
     });
@@ -198,6 +198,8 @@ public class FWImageView extends ImageView implements NativeCommandHandler {
     if (ownedBitmap != null) {
       ownedBitmap.recycle();
       ownedBitmap = null;
+    } else {
+      frame.cancelImageRequest(getElementId());
     }
   }
 

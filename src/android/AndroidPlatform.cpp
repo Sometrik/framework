@@ -418,7 +418,7 @@ extern "C" void moncleanup();
 #endif
 extern "C" {
 
-void Java_com_sometrik_framework_FrameWork_onResize(JNIEnv* env, jclass clazz, double timestamp, float x, float y, int viewId) {
+void Java_com_sometrik_framework_FrameWork_onResize(JNIEnv* env, jclass clazz, float x, float y, int viewId) {
   mainThread->setActualDisplayWidth(x);
   mainThread->setActualDisplayHeight(y);
 
@@ -426,7 +426,7 @@ void Java_com_sometrik_framework_FrameWork_onResize(JNIEnv* env, jclass clazz, d
   mainThread->sendEvent(viewId, ev);
 }
 
-void Java_com_sometrik_framework_FrameWork_keyPressed(JNIEnv* env, jobject thiz, double timestamp, int keyId, int viewId) {
+void Java_com_sometrik_framework_FrameWork_keyPressed(JNIEnv* env, jobject thiz, int keyId, int viewId) {
   auto & application = mainThread->getApplication();
   if (keyId == 4) {
     SysEvent ev(SysEvent::BACK);
@@ -551,7 +551,7 @@ void Java_com_sometrik_framework_FrameWork_nativeSetSurface(JNIEnv* env, jobject
    mainThread->deinitializeRenderer();
  }
 
- void Java_com_sometrik_framework_FrameWork_endModal(JNIEnv* env, jobject thiz, double timestamp, int value, jbyteArray jarray) {
+ void Java_com_sometrik_framework_FrameWork_endModal(JNIEnv* env, jobject thiz, int value, jbyteArray jarray) {
    string text;
    if (jarray) {
      jbyte* content_array = env->GetByteArrayElements(jarray, NULL);
@@ -566,19 +566,19 @@ void Java_com_sometrik_framework_FrameWork_nativeSetSurface(JNIEnv* env, jobject
    mainThread->sendEvent(mainThread->getApplication().getInternalId(), ev);
  }
 
-void Java_com_sometrik_framework_FrameWork_nativeOnResume(JNIEnv* env, jobject thiz, double timestamp, int appId) {
+void Java_com_sometrik_framework_FrameWork_nativeOnResume(JNIEnv* env, jobject thiz, int appId) {
   SysEvent ev(SysEvent::RESUME);
   mainThread->sendEvent(appId, ev);
 }
-void Java_com_sometrik_framework_FrameWork_nativeOnPause(JNIEnv* env, jobject thiz, double timestamp, int appId) {
+void Java_com_sometrik_framework_FrameWork_nativeOnPause(JNIEnv* env, jobject thiz, int appId) {
   SysEvent ev(SysEvent::PAUSE);
   mainThread->sendEvent(appId, ev);
 }
-void Java_com_sometrik_framework_FrameWork_nativeOnStop(JNIEnv* env, jobject thiz, double timestamp, int appId) {
+void Java_com_sometrik_framework_FrameWork_nativeOnStop(JNIEnv* env, jobject thiz, int appId) {
   SysEvent ev(SysEvent::STOP);
   mainThread->sendEvent(appId, ev);
 }
-void Java_com_sometrik_framework_FrameWork_nativeOnStart(JNIEnv* env, jobject thiz, double timestamp, int appId) {
+void Java_com_sometrik_framework_FrameWork_nativeOnStart(JNIEnv* env, jobject thiz, int appId) {
   if (mainThread.get()) {
     SysEvent ev(SysEvent::START);
     mainThread->sendEvent(appId, ev);
@@ -586,7 +586,7 @@ void Java_com_sometrik_framework_FrameWork_nativeOnStart(JNIEnv* env, jobject th
     __android_log_print(ANDROID_LOG_INFO, "Sometrik", "NO THREAD FOR SysEvent::START");
   }
 }
-void Java_com_sometrik_framework_FrameWork_nativeOnDestroy(JNIEnv* env, jobject thiz, double timestamp, int appId) {
+void Java_com_sometrik_framework_FrameWork_nativeOnDestroy(JNIEnv* env, jobject thiz, int appId) {
   mainThread->terminate();
   SysEvent ev(SysEvent::DESTROY);
   mainThread->sendEvent(appId, ev);
@@ -597,19 +597,19 @@ void Java_com_sometrik_framework_FrameWork_nativeOnDestroy(JNIEnv* env, jobject 
 
   mainThread = shared_ptr<AndroidMainThread>(0);
 }
-void Java_com_sometrik_framework_FrameWork_languageChanged(JNIEnv* env, jobject thiz, double timestamp, int appId, jstring language) {
+void Java_com_sometrik_framework_FrameWork_languageChanged(JNIEnv* env, jobject thiz, int appId, jstring language) {
   const char * clanguage = env->GetStringUTFChars(language, NULL);
   SysEvent ev(SysEvent::LANGUAGE_CHANGED);
   ev.setTextValue(clanguage);
   mainThread->sendEvent(appId, ev);
   env->ReleaseStringUTFChars(language, clanguage);
 }
-void Java_com_sometrik_framework_FrameWork_memoryWarning(JNIEnv* env, jobject thiz, double timestamp, int appId) {
+void Java_com_sometrik_framework_FrameWork_memoryWarning(JNIEnv* env, jobject thiz, int appId) {
   SysEvent ev(SysEvent::MEMORY_WARNING);
   mainThread->sendEvent(appId, ev);
 }
   
-void Java_com_sometrik_framework_FrameWork_textChangedEvent(JNIEnv* env, jobject thiz, double timestamp, jint id, jbyteArray jarray) {
+void Java_com_sometrik_framework_FrameWork_textChangedEvent(JNIEnv* env, jobject thiz, jint id, jbyteArray jarray) {
   string text;
   if (jarray) {
     jbyte* content_array = env->GetByteArrayElements(jarray, NULL);
@@ -620,13 +620,13 @@ void Java_com_sometrik_framework_FrameWork_textChangedEvent(JNIEnv* env, jobject
   mainThread->sendEvent(id, ev);
 }
 
-void Java_com_sometrik_framework_FrameWork_intChangedEvent(JNIEnv* env, jobject thiz, double timestamp, jint id, jint changedInt, jint changedInt2) {
+void Java_com_sometrik_framework_FrameWork_intChangedEvent(JNIEnv* env, jobject thiz, jint id, jint changedInt, jint changedInt2) {
   __android_log_print(ANDROID_LOG_INFO, "Sometrik", "intChangedEvent: %d %d", changedInt, changedInt2);
   ValueEvent ev(changedInt, changedInt2);
   mainThread->sendEvent(id, ev);
 }
 
-void Java_com_sometrik_framework_FrameWork_visibilityChangedEvent(JNIEnv* env, jobject thiz, double timestamp, jint id, bool visible) {
+void Java_com_sometrik_framework_FrameWork_visibilityChangedEvent(JNIEnv* env, jobject thiz, jint id, bool visible) {
   __android_log_print(ANDROID_LOG_INFO, "Sometrik", "visibilityChangedEvent on %d", id);
   VisibilityEvent ev(visible);
   mainThread->sendEvent(id, ev);
@@ -647,16 +647,16 @@ void Java_com_sometrik_framework_FrameWork_sendImageRequest(JNIEnv* env, jobject
   env->ReleaseStringUTFChars(uri, uri2);
 }
 
-void Java_com_sometrik_framework_Framework_cancelImageRequest(JNIEnv * env, jobject thiz, jint viewId) {
+void Java_com_sometrik_framework_FrameWork_cancelImageRequest(JNIEnv * env, jobject thiz, jint viewId) {
   ImageRequestEvent ev(ImageRequestEvent::CANCEL, viewId);
   mainThread->sendEvent(mainThread->getApplication().getInternalId(), ev);
 }
-void Java_com_sometrik_framework_FrameWork_timerEvent(JNIEnv* env, jobject thiz, double timestamp, jint viewId, jint timerId) {
+void Java_com_sometrik_framework_FrameWork_timerEvent(JNIEnv* env, jobject thiz, jint viewId, jint timerId) {
   TimerEvent ev(timerId);
   mainThread->sendEvent(viewId, ev);
 }
 
-void Java_com_sometrik_framework_FrameWork_setNativeActiveView(JNIEnv* env, jobject thiz, double timestamp, jint activeView, bool recordHistory) {
+void Java_com_sometrik_framework_FrameWork_setNativeActiveView(JNIEnv* env, jobject thiz, jint activeView, bool recordHistory) {
   __android_log_print(ANDROID_LOG_INFO, "Sometrik", "setActivewView: %u", activeView);
   auto & app = mainThread->getApplication();
   if (app.getActiveViewId() != 0 && recordHistory) {
@@ -667,7 +667,7 @@ void Java_com_sometrik_framework_FrameWork_setNativeActiveView(JNIEnv* env, jobj
   // Wrong thread. Send event instead
 }
 
-void Java_com_sometrik_framework_FrameWork_OnPurchaseEvent(JNIEnv* env, jclass clazz, double timestamp, jint applicationId, jstring productId, bool newPurchase, double purchaseTime){
+void Java_com_sometrik_framework_FrameWork_OnPurchaseEvent(JNIEnv* env, jclass clazz, jint applicationId, jstring productId, bool newPurchase, double purchaseTime){
   const char * cstring = env->GetStringUTFChars(productId, 0);
   //PurchaseEvent Type not used yet. PurchaseTime is not sent //TODO
   PurchaseEvent ev(cstring, PurchaseEvent::PURCHASE_STATUS, newPurchase);

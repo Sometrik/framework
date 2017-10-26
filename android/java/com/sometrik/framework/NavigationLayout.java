@@ -40,12 +40,12 @@ public class NavigationLayout extends FrameLayout implements NativeCommandHandle
     switch (visibility) {
     case VISIBLE:
       System.out.println("DRAWER java: visible");
-      frame.visibilityChangedEvent(System.currentTimeMillis() / 1000.0, getId(), true);
+      frame.visibilityChangedEvent(getId(), true);
       break;
     case GONE:
     case INVISIBLE:
       System.out.println("DRAWER java: invisible");
-      frame.visibilityChangedEvent(System.currentTimeMillis() / 1000.0, getId(), false);
+      frame.visibilityChangedEvent(getId(), false);
       break;
     }
   }
