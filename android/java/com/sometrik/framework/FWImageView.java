@@ -15,16 +15,26 @@ public class FWImageView extends ImageView implements NativeCommandHandler {
   FrameWork frame;
   ViewStyleManager normalStyle, activeStyle, currentStyle;
   Bitmap ownedBitmap = null;
+  boolean imageRequestSent = false;
+  String currentUrl = null;
+  int currentWidth = 0, currentHeight = 0;
   
-  public FWImageView(final FrameWork frame) {
+  public FWImageView(final FrameWork frame, int id, String imageUrl) {
     super(frame);
     this.frame = frame;
-    // LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
-    // this.setLayoutParams(params);
-    // this.setScaleType(ScaleType.FIT_CENTER);
+    this.setId(id);
     this.setScaleType(ScaleType.CENTER_CROP); // needed for parallax scrolling
     this.setClipToOutline(true);
     this.setAdjustViewBounds(true);
+    
+    if (imageUrl != null) {
+      String protocol = getProtocol(imageUrl); 
+      if (protocol.equals("http") || protocol.equals("https")) {
+	currentUrl = imageUrl;
+      } else {
+	setImageFromAssets(imageUrl);
+      }
+    }
         
     final float scale = getContext().getResources().getDisplayMetrics().density;
     this.normalStyle = currentStyle = new ViewStyleManager(frame.bitmapCache, scale, true);
@@ -59,13 +69,14 @@ public class FWImageView extends ImageView implements NativeCommandHandler {
   private String getProtocol(String filename) {
     try {
       URI uri = new URI(filename);
-      return uri.getScheme();
+      String scheme = uri.getScheme();
+      return scheme != null ? scheme : "asset";
     } catch (URISyntaxException e) {
       return "asset";
     }
   }
     
-  public void setImageFromAssets(String filename) {
+  private void setImageFromAssets(String filename) {
     deinitialize();
     Bitmap bitmap = frame.bitmapCache.loadBitmap(filename);
     setImageBitmap(bitmap);
@@ -73,59 +84,41 @@ public class FWImageView extends ImageView implements NativeCommandHandler {
   }
 
   @Override
-  public void onScreenOrientationChange(boolean isLandscape) {
-    // TODO Auto-generated method stub
-    
-  }
+  public void onScreenOrientationChange(boolean isLandscape) { }
 
   @Override
-  public void addChild(View view) {
-    // TODO Auto-generated method stub
-  }
+  public void addChild(View view) { }
 
   @Override
-  public void addOption(int optionId, String text) {
-    // TODO Auto-generated method stub
-    
-  }
+  public void addOption(int optionId, String text) { }
 
   @Override
-  public void addColumn(String text, int columnType) {
-    // TODO Auto-generated method stub
-    
-  }
+  public void addColumn(String text, int columnType) { }
 
   @Override
-  public void addData(String text, int row, int column, int sheet) {
-    // TODO Auto-generated method stub
-    
-  }
+  public void addData(String text, int row, int column, int sheet) { }
 
   @Override
   public void setValue(String v) {
     deinitialize();
-    if (getProtocol(v) != "http") {
+    String protocol = getProtocol(v);
+    if (protocol.equals("http") || protocol.equals("https")) {
+      currentUrl = v;
+      if (currentWidth != 0 && currentHeight != 0) requestImage();
+    } else {
+      currentUrl = null;
       setImageFromAssets(v);
     }
   }
 
   @Override
-  public void setValue(int v) {
-    // TODO Auto-generated method stub
-    
-  }
+  public void setValue(int v) { }
 
   @Override
-  public void reshape(int value, int size) {
-    // TODO Auto-generated method stub
-    
-  }
+  public void reshape(int value, int size) { }
 
   @Override
-  public void setViewVisibility(boolean visible) {
-    // TODO Auto-generated method stub
-  }
-  
+  public void setViewVisibility(boolean visible) { }
 
   @Override
   public void setStyle(Selector selector, String key, String value) {
@@ -151,22 +144,13 @@ public class FWImageView extends ImageView implements NativeCommandHandler {
   }
   
   @Override
-  public void setError(boolean hasError, String errorText) {
-    // TODO Auto-generated method stub
-    
-  }
+  public void setError(boolean hasError, String errorText) { }
 
   @Override
-  public void clear() {
-    // TODO Auto-generated method stub
-    
-  }
+  public void clear() { }
 
   @Override
-  public void flush() {
-    // TODO Auto-generated method stub
-    
-  }
+  public void flush() { }
 
   @Override
   public int getElementId() {
@@ -188,19 +172,27 @@ public class FWImageView extends ImageView implements NativeCommandHandler {
   }
 
   @Override
-  public void reshape(int size) {
-    // TODO Auto-generated method stub
-    
-  }
+  public void reshape(int size) { }
 
   @Override
   public void deinitialize() {
     if (ownedBitmap != null) {
       ownedBitmap.recycle();
       ownedBitmap = null;
-    } else {
+    } else if (imageRequestSent) {
       frame.cancelImageRequest(getElementId());
     }
   }
 
+  @Override
+  protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+    currentWidth = w;
+    currentHeight = h;
+    if (currentUrl != null) requestImage();
+  }
+  
+  protected void requestImage() {
+    imageRequestSent = true;
+    frame.sendImageRequest(getElementId(), currentUrl, currentWidth, 0);
+  }
 }
