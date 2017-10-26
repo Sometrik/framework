@@ -195,6 +195,8 @@ class ViewStyleManager {
 	gravity = new Integer(Gravity.CENTER_VERTICAL);
       } else if (value.equals("center-horizontal")) {
 	gravity = new Integer(Gravity.CENTER_HORIZONTAL);
+      } else if (value.equals("start")) {
+	gravity = new Integer(Gravity.START);
       }
     } else if (key.equals("zoom")) {
       if (value.equals("inherit")) {
@@ -274,18 +276,10 @@ class ViewStyleManager {
     if (width != null || height != null) {
       ViewGroup.LayoutParams params = dialog.getWindow().getAttributes();
       if (width != null) {
-	if (width == LayoutParams.MATCH_PARENT || width == LayoutParams.WRAP_CONTENT || width == LayoutParams.FILL_PARENT) {
-	  params.width = width;
-	} else {
-	  params.width = applyScale(width);
-	}
+	params.width = applyScaleToDimension(width);  
       }
       if (height != null) {
-	if (height == LayoutParams.MATCH_PARENT || height == LayoutParams.WRAP_CONTENT || height == LayoutParams.FILL_PARENT) {
-	  params.height = height;
-	} else {
-	  params.height = applyScale(height);
-	}
+	params.height = applyScaleToDimension(height);
       }
       dialog.getWindow().setAttributes((android.view.WindowManager.LayoutParams) params);
     }
@@ -361,18 +355,10 @@ class ViewStyleManager {
       	  params.leftMargin = (int)applyScale(margin[3]);
       	}
       	if (width != null) {
-	  if (width == LayoutParams.MATCH_PARENT || width == LayoutParams.WRAP_CONTENT || width == LayoutParams.FILL_PARENT) {
-	    params.width = width;
-	  } else {
-	    params.width = applyScale(width);
-	  }
+      	  params.width = applyScaleToDimension(width);
       	}
 	if (height != null) {
-	  if (height == LayoutParams.MATCH_PARENT || height == LayoutParams.WRAP_CONTENT || height == LayoutParams.FILL_PARENT) {
-	    params.height = height;
-	  } else {
-	    params.height = applyScale(height);
-	  }
+	  params.height = applyScaleToDimension(height);
 	}
       	if (gravity != null) params.gravity = gravity;
       	view.setLayoutParams(params);
@@ -385,18 +371,10 @@ class ViewStyleManager {
       	  params.leftMargin = (int)applyScale(margin[3]);
       	}
       	if (width != null) {
-	  if (width == LayoutParams.MATCH_PARENT || width == LayoutParams.WRAP_CONTENT || width == LayoutParams.FILL_PARENT) {
-	    params.width = width;
-	  } else {
-	    params.width = applyScale(width);
-	  }
+      	  params.width = applyScaleToDimension(width);
       	}
 	if (height != null) {
-	  if (height == LayoutParams.MATCH_PARENT || height == LayoutParams.WRAP_CONTENT || height == LayoutParams.FILL_PARENT) {
-	    params.height = height;
-	  } else {
-	    params.height = applyScale(height);
-	  }
+	  params.height = applyScaleToDimension(height);
 	}
       	if (gravity != null) params.gravity = gravity;
       	view.setLayoutParams(params);	
@@ -409,18 +387,10 @@ class ViewStyleManager {
       	  params.leftMargin = (int)applyScale(margin[3]);
       	}
       	if (width != null) {
-	  if (width == LayoutParams.MATCH_PARENT || width == LayoutParams.WRAP_CONTENT || width == LayoutParams.FILL_PARENT) {
-	    params.width = width;
-	  } else {
-	    params.width = applyScale(width);
-	  }
+      	  params.width = applyScaleToDimension(width);
 	}
 	if (height != null) {
-	  if (height == LayoutParams.MATCH_PARENT || height == LayoutParams.WRAP_CONTENT || height == LayoutParams.FILL_PARENT) {
-	    params.height = height;
-	  } else {
-	    params.height = applyScale(height);
-	  }
+	  params.height = applyScaleToDimension(height);
 	}
 	view.setLayoutParams(params);
       } else {
@@ -518,6 +488,14 @@ class ViewStyleManager {
     }
   }
 
+  protected int applyScaleToDimension(int v) {
+    if (v == LayoutParams.MATCH_PARENT || v == LayoutParams.WRAP_CONTENT || v == LayoutParams.FILL_PARENT) {
+      return v;
+    } else {
+      return applyScale(v);
+    }
+  }
+  
   protected int applyScale(int v) {
     return (int)(v * displayScale + 0.5f);
   }
