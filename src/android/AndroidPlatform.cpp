@@ -644,6 +644,7 @@ void Java_com_sometrik_framework_FrameWork_sendImageRequest(JNIEnv* env, jobject
   const char * uri2 = env->GetStringUTFChars(uri, NULL);
   __android_log_print(ANDROID_LOG_INFO, "Sometrik", "sendImageRequest: %s %d %d", uri2, width, height);
   ImageRequestEvent ev(ImageRequestEvent::REQUEST, viewId, uri2, ImageRequestEvent::NORMAL, width, height);
+  ev.setInternalFormat(canvas::InternalFormat::RGB565);
   mainThread->sendEvent(mainThread->getApplication().getInternalId(), ev);
   env->ReleaseStringUTFChars(uri, uri2);
 }
