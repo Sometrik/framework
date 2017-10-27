@@ -6,7 +6,6 @@ import com.sometrik.framework.NativeCommand.Selector;
 
 import android.app.ActionBar;
 import android.graphics.Bitmap;
-import android.graphics.Bitmap.Config;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -284,10 +283,7 @@ public class FWActionBar implements NativeCommandHandler {
   }
 
   @Override
-  public void setImage(byte[] bytes, int width, int height, Config config) {
-    // TODO Auto-generated method stub
-    
-  }
+  public void setImage(byte[] bytes, int width, int height, int internalFormat) { }
 
   @Override
   public void reshape(int size) {

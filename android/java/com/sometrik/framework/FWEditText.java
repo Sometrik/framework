@@ -6,7 +6,6 @@ import java.util.TimerTask;
 
 import com.sometrik.framework.NativeCommand.Selector;
 
-import android.graphics.Bitmap.Config;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.MotionEvent;
@@ -174,10 +173,7 @@ public class FWEditText extends EditText implements NativeCommandHandler {
   }
 
   @Override
-  public void setImage(byte[] bytes, int width, int height, Config config) {
-    // TODO Auto-generated method stub
-    
-  }
+  public void setImage(byte[] bytes, int width, int height, int internalFormat) { }
 
   @Override
   public void reshape(int size) {

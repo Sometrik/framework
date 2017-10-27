@@ -2,12 +2,10 @@ package com.sometrik.framework;
 
 import com.sometrik.framework.NativeCommand.Selector;
 
-import android.graphics.Bitmap.Config;
 import android.view.View;
 import android.widget.ProgressBar;
 
 public class FWProgressBar extends ProgressBar implements NativeCommandHandler {
-
   private FrameWork frame;
   private ViewStyleManager normalStyle, activeStyle, selectedStyle;
   private ViewStyleManager currentStyle;
@@ -21,68 +19,38 @@ public class FWProgressBar extends ProgressBar implements NativeCommandHandler {
   }
 
   @Override
-  public void onScreenOrientationChange(boolean isLandscape) {
-    // TODO Auto-generated method stub
-    
-  }
+  public void onScreenOrientationChange(boolean isLandscape) { }
 
   @Override
-  public void addChild(View view) {
-    // TODO Auto-generated method stub
-    
-  }
+  public void addChild(View view) { }
 
   @Override
-  public void addOption(int optionId, String text) {
-    // TODO Auto-generated method stub
-    
-  }
+  public void addOption(int optionId, String text) { }
 
   @Override
-  public void addColumn(String text, int columnType) {
-    // TODO Auto-generated method stub
-    
-  }
+  public void addColumn(String text, int columnType) { }
 
   @Override
-  public void addData(String text, int row, int column, int sheet) {
-    // TODO Auto-generated method stub
-    
-  }
+  public void addData(String text, int row, int column, int sheet) { }
 
   @Override
-  public void setValue(String v) {
-    // TODO Auto-generated method stub
-    
-  }
+  public void setValue(String v) { }
 
   @Override
-  public void setImage(byte[] bytes, int width, int height, Config config) {
-    // TODO Auto-generated method stub
-    
-  }
+  public void setImage(byte[] bytes, int width, int height, int internalFormat) { }
 
   @Override
-  public void setValue(int v) {
-    // TODO Auto-generated method stub
-    
-  }
+  public void setValue(int v) { }
 
   @Override
-  public void reshape(int value, int size) {
-    // TODO Auto-generated method stub
-    
-  }
+  public void reshape(int value, int size) { }
 
   @Override
-  public void reshape(int size) {
-    // TODO Auto-generated method stub
-    
-  }
+  public void reshape(int size) { }
 
   @Override
   public void setViewVisibility(boolean visible) {
-    if (visible){
+    if (visible) {
       this.setVisibility(VISIBLE);
     } else {
       this.setVisibility(GONE);
@@ -104,28 +72,16 @@ public class FWProgressBar extends ProgressBar implements NativeCommandHandler {
   }
 
   @Override
-  public void setError(boolean hasError, String errorText) {
-    // TODO Auto-generated method stub
-    
-  }
+  public void setError(boolean hasError, String errorText) { }
+  
+  @Override
+  public void clear() { }
 
   @Override
-  public void clear() {
-    // TODO Auto-generated method stub
-    
-  }
+  public void flush() { }
 
   @Override
-  public void flush() {
-    // TODO Auto-generated method stub
-    
-  }
-
-  @Override
-  public void deinitialize() {
-    // TODO Auto-generated method stub
-    
-  }
+  public void deinitialize() { }
 
   @Override
   public int getElementId() {

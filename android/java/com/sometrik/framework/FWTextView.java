@@ -1,7 +1,5 @@
 package com.sometrik.framework;
 
-import android.graphics.Bitmap.Config;
-
 import com.sometrik.framework.NativeCommand.Selector;
 
 import android.graphics.Color;
@@ -152,10 +150,7 @@ public class FWTextView extends TextView implements NativeCommandHandler {
   }
 
   @Override
-  public void setImage(byte[] bytes, int width, int height, Config config) {
-    // TODO Auto-generated method stub
-    
-  }
+  public void setImage(byte[] bytes, int width, int height, int internalFormat) { }
 
   @Override
   public void reshape(int size) {

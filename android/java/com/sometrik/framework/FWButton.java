@@ -2,7 +2,6 @@ package com.sometrik.framework;
 
 import com.sometrik.framework.NativeCommand.Selector;
 
-import android.graphics.Bitmap.Config;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
@@ -162,10 +161,7 @@ public class FWButton extends Button implements NativeCommandHandler {
 
 
   @Override
-  public void setImage(byte[] bytes, int width, int height, Config config) {
-    // TODO Auto-generated method stub
-    
-  }
+  public void setImage(byte[] bytes, int width, int height, int internalFormat) { }
 
 
   @Override

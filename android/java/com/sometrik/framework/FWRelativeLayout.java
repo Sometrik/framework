@@ -3,15 +3,12 @@ package com.sometrik.framework;
 import com.sometrik.framework.NativeCommand.Selector;
 
 import android.graphics.Color;
-import android.graphics.Bitmap.Config;
-import android.graphics.drawable.GradientDrawable;
 import android.view.View;
 import android.widget.RelativeLayout;
 
 public class FWRelativeLayout extends RelativeLayout implements NativeCommandHandler {
 
   private FrameWork frame;
-  private GradientDrawable currentBackground = null;
   private ViewStyleManager normalStyle, activeStyle, currentStyle;
   
   public FWRelativeLayout(FrameWork frame) {
@@ -67,10 +64,7 @@ public class FWRelativeLayout extends RelativeLayout implements NativeCommandHan
   }
 
   @Override
-  public void setImage(byte[] bytes, int width, int height, Config config) {
-    // TODO Auto-generated method stub
-    
-  }
+  public void setImage(byte[] bytes, int width, int height, int internalFormat) { }
 
   @Override
   public void setValue(int v) {
@@ -116,15 +110,6 @@ public class FWRelativeLayout extends RelativeLayout implements NativeCommandHan
     }
   }
   
-  private GradientDrawable createBackground() {
-    if (currentBackground == null) {
-      currentBackground = new GradientDrawable();
-      setBackground(currentBackground);
-    }
-    currentBackground.setColor(Color.parseColor("#ffffff")); // Changes this drawable to use a single color instead of a gradient
-    return currentBackground;
-  }  
-
   @Override
   public void setError(boolean hasError, String errorText) {
     // TODO Auto-generated method stub

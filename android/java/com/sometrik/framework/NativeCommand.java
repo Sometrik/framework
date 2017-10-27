@@ -438,16 +438,7 @@ public class NativeCommand {
       view.setError(value != 0, getTextValueAsString());
       break;
     case SET_IMAGE:
-      switch (value) {
-      case 3:
-	  view.setImage(byteArray, width, height, Bitmap.Config.RGB_565);
-	  break;
-      case 5: case 6:
-	  view.setImage(byteArray, width, height, Bitmap.Config.ARGB_8888);
-	  break;
-      default:
-	  System.out.println("ERROR: unable to display format " + value);
-      }
+      view.setImage(byteArray, width, height, value);
       break;
     case LAUNCH_BROWSER:
       frame.launchBrowser(getTextValueAsString());

@@ -157,13 +157,25 @@ public class FWImageView extends ImageView implements NativeCommandHandler {
     return getId();
   }
   
+  private Bitmap createBitmap(int width, int height, int internalFormat) {
+    switch (internalFormat) {
+    case 3: return Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
+    case 4: return Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_4444);
+    case 5: case 6: return Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+    }
+    System.out.println("ERROR: unable to display format " + internalFormat);
+    return null;
+  }
+
   @Override
-  public void setImage(byte[] bytes, int width, int height, Bitmap.Config config) {
+  public void setImage(byte[] bytes, int width, int height, int internalFormat) {
     deinitialize();
     
-    ownedBitmap = Bitmap.createBitmap(width, height, config);
-    ByteBuffer buffer = ByteBuffer.wrap(bytes);
-    ownedBitmap.copyPixelsFromBuffer(buffer);
+    ownedBitmap = createBitmap(width, height, internalFormat);
+    if (ownedBitmap != null) {
+      ByteBuffer buffer = ByteBuffer.wrap(bytes);
+      ownedBitmap.copyPixelsFromBuffer(buffer);
+    }
     this.setImageBitmap(ownedBitmap);
     
     invalidate();

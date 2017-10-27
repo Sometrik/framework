@@ -2,7 +2,6 @@ package com.sometrik.framework;
 
 import java.util.ArrayList;
 import com.sometrik.framework.NativeCommand.Selector;
-import android.graphics.Bitmap.Config;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -110,10 +109,7 @@ public class FWPicker extends Spinner implements NativeCommandHandler {
   }
 
   @Override
-  public void setImage(byte[] bytes, int width, int height, Config config) {
-    // TODO Auto-generated method stub
-    
-  }
+  public void setImage(byte[] bytes, int width, int height, int internalFormat) { }
 
   @Override
   public void reshape(int size) {

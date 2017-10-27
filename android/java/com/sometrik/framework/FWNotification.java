@@ -8,7 +8,6 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
-import android.graphics.Bitmap.Config;
 import android.view.View;
 
 public class FWNotification extends Notification.Builder implements NativeCommandHandler {
@@ -77,10 +76,7 @@ public class FWNotification extends Notification.Builder implements NativeComman
   }
 
   @Override
-  public void setImage(byte[] bytes, int width, int height, Config config) {
-    // TODO Auto-generated method stub
-
-  }
+  public void setImage(byte[] bytes, int width, int height, int internalFormat) { }
 
   @Override
   public void setValue(int v) {

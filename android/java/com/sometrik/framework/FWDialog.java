@@ -4,13 +4,12 @@ import com.sometrik.framework.NativeCommand.Selector;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.graphics.Bitmap.Config;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.FrameLayout;
 
-public class FWDialog extends Dialog implements NativeCommandHandler{
+public class FWDialog extends Dialog implements NativeCommandHandler {
 
   FrameWork frame;
   ViewGroup baseView;
@@ -128,10 +127,7 @@ public class FWDialog extends Dialog implements NativeCommandHandler{
   }
 
   @Override
-  public void setImage(byte[] bytes, int width, int height, Config config) {
-    // TODO Auto-generated method stub
-    
-  }
+  public void setImage(byte[] bytes, int width, int height, int internalFormat) { }
 
   @Override
   public void reshape(int size) {

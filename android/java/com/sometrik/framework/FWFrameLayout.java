@@ -2,7 +2,6 @@ package com.sometrik.framework;
 
 import com.sometrik.framework.NativeCommand.Selector;
 
-import android.graphics.Bitmap.Config;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -101,7 +100,7 @@ public class FWFrameLayout extends FrameLayout implements NativeCommandHandler {
   public void reshape(int value, int size) { }
     
   @Override
-  public void setImage(byte[] bytes, int width, int height, Config config) { }
+  public void setImage(byte[] bytes, int width, int height, int internalFormat) { }
 
   @Override
   public void reshape(int size) { }
