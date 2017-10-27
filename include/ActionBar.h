@@ -39,6 +39,7 @@ class ActionBar : public Element {
     notify();
     CommandEvent ev2(getId());
     ev2.dispatch(*this);
+    ev.setHandled(true);
   }
 
   void setSubtitle(const std::string & _subtitle){

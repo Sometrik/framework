@@ -19,6 +19,7 @@ class Switch : public InputElement {
   void onValueEvent(ValueEvent & ev) override {
     value = ev.getValue() != 0;
     notify(value);
+    ev.setHandled(true);
   }
 
   bool getValue() const { return value; }

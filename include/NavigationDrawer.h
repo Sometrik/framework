@@ -20,6 +20,7 @@ class NavigationDrawer : public Element {
     notify();
     CommandEvent ev2(getId());
     ev2.dispatch(*this);
+    ev.setHandled(true);
   }
 
   void hide() override {

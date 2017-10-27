@@ -17,26 +17,11 @@ class NavigationBar : public Element {
     return Element::isA(className);
   }
 
-#if 0
-  void addButton(int buttonId, std::string imageFileName){
-    Command c(Command::ADD_COLUMN, getInternalId());
-    c.setTextValue(imageFileName);
-    c.setValue(buttonId);
-    sendCommand(c);
-  }
-
-  void changeButton(int buttonId, std::string imageFileName){
-    Command c(Command::ADD_OPTION, getInternalId());
-    c.setTextValue(imageFileName);
-    c.setValue(buttonId);
-    sendCommand(c);
-  }
-#endif
-
   void onValueEvent(ValueEvent & ev) override {
     notify();
     CommandEvent ev2(getId(), ev.getValue(), ev.getValue2());
     ev2.dispatch(*this);
+    ev.setHandled(true);
   }
 
 protected:

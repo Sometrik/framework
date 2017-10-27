@@ -29,6 +29,7 @@ class Picker : public Element {
   void onValueEvent(ValueEvent & ev) override {
     value = ev.getValue();
     notify(value);
+    ev.setHandled(true);
   }
 
   bool call() override { return call(value); }

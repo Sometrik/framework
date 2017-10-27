@@ -18,6 +18,7 @@ class Checkbox : public InputElement {
   void onValueEvent(ValueEvent & ev) override {
     value = ev.getValue() != 0;
     notify(value);
+    ev.setHandled(true);
   }
 
   bool call(bool t) override {

@@ -38,6 +38,7 @@ class Button : public UIElement {
     notify();
     CommandEvent ev2(getId());
     ev2.dispatch(*this);
+    ev.setHandled(true);
   }
   
   void renderContent() override {

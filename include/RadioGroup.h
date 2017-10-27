@@ -29,6 +29,7 @@ class RadioGroup : public Element {
   void onValueEvent(ValueEvent & ev) override {
     value = ev.getValue();
     notify(value);
+    ev.setHandled(true);
   }
 
   void call() override { call(value); }

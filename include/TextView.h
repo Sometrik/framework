@@ -17,6 +17,7 @@ class TextView : public InputElement {
   void onValueEvent(ValueEvent & ev) override {
     value = ev.getTextValue();
     notify(value);
+    ev.setHandled(true);
   }
 
   bool call(bool t) override { return call(t ? "true" : "false"); }

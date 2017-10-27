@@ -74,6 +74,7 @@ class ListView : public Element {
     notify();
     CommandEvent ev2(getId(), ev.getValue(), ev.getValue2());
     ev2.dispatch(*this);
+    ev.setHandled(true);
   }
 
  protected: 

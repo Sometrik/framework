@@ -17,6 +17,7 @@ class TextField : public InputElement {
   void onValueEvent(ValueEvent & ev) override {
     value = ev.getTextValue();
     notify(value);
+    ev.setHandled(true);
   }
 
   void clear() {

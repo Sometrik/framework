@@ -16,10 +16,11 @@ class FrameLayout : public Element {
   }
 
   void onValueEvent(ValueEvent & ev) override {
-     notify();
-     CommandEvent ev2(getId());
-     ev2.dispatch(*this);
-   }
+    notify();
+    CommandEvent ev2(getId());
+    ev2.dispatch(*this);
+    ev.setHandled(true);
+  }
 
  protected:
   void create() override {

@@ -4,6 +4,7 @@
 #include <Element.h>
 #include <Command.h>
 #include <CommandEvent.h>
+#include <ValueEvent.h>
 
 #include <ImageResponseEvent.h>
 
@@ -33,13 +34,13 @@ class ImageElement : public Element {
     Command c(Command::SET_TEXT_VALUE, getInternalId());
     c.setTextValue(filename);
     sendCommand(c);
-
   }
 
   void onValueEvent(ValueEvent & ev) override {
     notify();
     CommandEvent ev2(getId());
     ev2.dispatch(*this);
+    ev.setHandled(true);
   }
 
   const std::string & getFilename() { return filename; }

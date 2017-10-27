@@ -16,10 +16,11 @@ class RelativeLayout : public Element {
   }
 
   void onValueEvent(ValueEvent & ev) override {
-     notify();
-     CommandEvent ev2(getId());
-     ev2.dispatch(*this);
-   }
+    notify();
+    CommandEvent ev2(getId());
+    ev2.dispatch(*this);
+    ev.setHandled(true);
+  }
 
   void addRule(int childId, std::string rule) {
     Command c(Command::ADD_OPTION, getInternalId());
