@@ -172,6 +172,14 @@ class PlatformThread : public Element {
   void start2() {
     initializeThread();
     startRunnable();
+
+    while (!subthreads.empty()) {
+      auto evs = pollEvents(true);
+      for (auto & ed : evs) {
+        ed.second->dispatch(*this);
+      }
+    }
+
     deinitializeThread();
 
     SysEvent ev(SysEvent::THREAD_TERMINATED);
