@@ -11,7 +11,6 @@ import android.widget.AdapterView;
 import android.widget.LinearLayout;
 
 public class FWLayout extends LinearLayout implements NativeCommandHandler {
-  
   private FrameWork frame;
   private boolean childListeners = false;
   private ChildClickListener hostListener;
@@ -180,7 +179,7 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
 
   @Override
   public void setViewVisibility(boolean visibility) {
-    if (visibility){
+    if (visibility) {
       this.setVisibility(VISIBLE);
     } else {
       this.setVisibility(GONE);
@@ -243,8 +242,5 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
   }
 
   @Override
-  public void deinitialize() {
-    // TODO Auto-generated method stub
-    
-  }
+  public void deinitialize() { }
 }
