@@ -204,7 +204,13 @@ public class FWImageView extends ImageView implements NativeCommandHandler {
   }
   
   protected void requestImage() {
-    imageRequestSent = true;
-    frame.sendImageRequest(getElementId(), currentUrl, currentWidth, 0);
+    if (currentWidth > 0) {
+      System.out.println("Sending image request for " + currentUrl);
+      imageRequestSent = true;
+      final float scale = getContext().getResources().getDisplayMetrics().density;
+      frame.sendImageRequest(getElementId(), currentUrl, (int)(currentWidth / scale), 0);
+    } else {
+      System.out.println("Unable to sent image request for " + currentUrl);
+    }
   }
 }
