@@ -3,7 +3,6 @@
 
 #include <Element.h>
 #include <Command.h>
-#include <CommandEvent.h>
 #include <ValueEvent.h>
 #include <VisibilityEvent.h>
 
@@ -18,8 +17,6 @@ class NavigationDrawer : public Element {
 
   void onValueEvent(ValueEvent & ev) override {
     notify();
-    CommandEvent ev2(getId());
-    ev2.dispatch(*this);
     ev.setHandled(true);
   }
 
