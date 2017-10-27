@@ -26,6 +26,7 @@ public class FWImageView extends ImageView implements NativeCommandHandler {
     this.setScaleType(ScaleType.CENTER_CROP); // needed for parallax scrolling
     this.setClipToOutline(true);
     this.setAdjustViewBounds(true);
+    this.setClickable(true);
     
     if (imageUrl != null) {
       String protocol = getProtocol(imageUrl); 
