@@ -45,6 +45,7 @@ class GtkMainThread;
 struct image_data_s {
   string url;
   unsigned int width, height;
+  bool is_fixed;
 };
 
 struct event_data_s {
@@ -502,7 +503,7 @@ protected:
       if (!uri_text.empty()) {
 	URI uri(uri_text);
 	if (uri.getScheme() == "http" || uri.getScheme() == "https") {
-	  setImageData(command.getChildInternalId(), uri_text, 0, 0);
+	  setImageUrl(command.getChildInternalId(), uri_text);
 	} else {
 	  auto pixbuf = loadPixbuf(uri_text);
 	  if (pixbuf) {
@@ -901,6 +902,7 @@ protected:
     if (key == "height") {
       GtkWidget * parent = gtk_widget_get_parent(widget);
       bool match_parent = value == "match-parent";
+      bool wrap_content = value == "wrap-content";
       if (GTK_IS_BOX(parent) && 0) {
 	gtk_box_set_child_packing(GTK_BOX(parent),
 				  widget,
@@ -908,10 +910,13 @@ protected:
 				  match_parent,
 				  0,
 				  GTK_PACK_START);
+      } else if (!match_parent && !wrap_content && GTK_IS_IMAGE(widget)) {
+	setImageWidth(id, stoi(value), true);
       }
     } else if (key == "width") {
       GtkWidget * parent = gtk_widget_get_parent(widget);
       bool match_parent = value == "match-parent";
+      bool wrap_content = value == "wrap-content";
       if (GTK_IS_BOX(parent) && 0) {
 	gtk_box_set_child_packing(GTK_BOX(parent),
 				  widget,
@@ -919,7 +924,9 @@ protected:
 				  match_parent,
 				  0,
 				  GTK_PACK_START);
-      }      
+      } else if (!match_parent && !wrap_content && GTK_IS_IMAGE(widget)) {
+	setImageHeight(id, stoi(value), true);
+      }
     } else if (key == "color") {
       GdkRGBA color;
       if (gdk_rgba_parse(&color, value.c_str())) {
@@ -1132,10 +1139,20 @@ protected:
     }
   }
 
-  void setImageData(int id, const std::string & url, unsigned int w = 0, unsigned int h = 0) {
-    image_data[id] = { url, w, h };
+  void setImageUrl(int id, const std::string & url) {
+    image_data[id].url = url;
   }
-		    
+
+  void setImageWidth(int id, unsigned int w, bool fixed = false) {
+    image_data[id].width = w;
+    if (fixed) image_data[id].is_fixed = true;
+  }
+  
+  void setImageHeight(int id, unsigned int h, bool fixed = false) {
+    image_data[id].height = h;
+    if (fixed) image_data[id].is_fixed = true;
+  }
+
   const image_data_s & getImageData(int id) const {
     auto it = image_data.find(id);
     if (it != image_data.end()) {
@@ -1411,7 +1428,8 @@ GtkMainThread::on_size_allocate(GtkWidget * widget, GtkAllocation * allocation, 
     auto & d = mainThread->getImageData(id);
     if (!d.url.empty() && d.width != allocation->width) {
       cerr << "imageSize changed " << allocation->width << ", " << allocation->height << endl;
-      mainThread->setImageData(id, d.url, allocation->width, allocation->height);
+      mainThread->setImageWidth(id, allocation->width);
+      mainThread->setImageHeight(id, allocation->height);
       mainThread->requestImage(id, d.url, allocation->width);
     }
   }
