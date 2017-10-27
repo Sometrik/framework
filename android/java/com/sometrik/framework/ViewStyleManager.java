@@ -311,12 +311,15 @@ class ViewStyleManager {
       view.setBackgroundResource(0);
       if (borderRadius != null &&
 	  gradientColors == null &&
-	  (backgroundColor == null || backgroundColor == 0) &&
 	  (borderWidth == null || borderWidth == 0)) {
 	RoundRectShape shape = new RoundRectShape(expandRadii(borderRadius), null, null);
      	ShapeDrawable sd = new ShapeDrawable(shape);
      	sd.getPaint().setStyle(Style.FILL);
-     	sd.getPaint().setColor(Color.parseColor("#00000000"));
+     	if (backgroundColor == null || backgroundColor == 0) {
+     	  sd.getPaint().setColor(Color.parseColor("#00000000"));
+     	} else {
+     	  sd.getPaint().setColor(backgroundColor);
+     	}
      	view.setBackground(sd);
       } else {
 	GradientDrawable gradientDrawable = new GradientDrawable();
