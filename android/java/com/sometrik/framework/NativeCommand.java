@@ -1,7 +1,5 @@
 package com.sometrik.framework;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
@@ -17,7 +15,6 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.text.Editable;
 import android.text.Html;
 import android.text.InputType;
@@ -33,7 +30,6 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.PopupMenu.OnMenuItemClickListener;
@@ -90,6 +86,7 @@ public class NativeCommand {
     CREATE_RELATIVE_LAYOUT,
     CREATE_TABLE_LAYOUT,
     CREATE_AUTO_COLUMN_LAYOUT,
+    CREATE_PROXY_LAYOUT,
     CREATE_PANEL,
     CREATE_TEXT,
     CREATE_LINK,
@@ -145,7 +142,7 @@ public class NativeCommand {
     CONSUME_PURCHASE
   }
 
-  public NativeCommand(FrameWork frame, int messageTypeId, int internalId, int childInternalId, int value, byte[] textValue, byte[] textValue2, int flags, int row, int column, int sheet, int width, int height){
+  public NativeCommand(FrameWork frame, int messageTypeId, int internalId, int childInternalId, int value, byte[] textValue, byte[] textValue2, int flags, int row, int column, int sheet, int width, int height) {
 
     this.frame = frame;
     command = CommandType.values()[messageTypeId];
@@ -162,7 +159,7 @@ public class NativeCommand {
     byteArray2 = textValue2;
   }
   
-  public NativeCommand(FrameWork frame, int messageTypeId, int internalId, int childInternalId, int value, byte[] textValue, byte[] textValue2, int flags){
+  public NativeCommand(FrameWork frame, int messageTypeId, int internalId, int childInternalId, int value, byte[] textValue, byte[] textValue2, int flags) {
     this.frame = frame;
     command = CommandType.values()[messageTypeId];
     this.internalId = internalId;
@@ -181,20 +178,12 @@ public class NativeCommand {
     }
   }
 
-  private byte[] getTextValueAsBinary() {
-    return byteArray;
-  }
-
   private String getTextValue2AsString() {
     if (byteArray2 != null) {
       return new String(byteArray2, frame.getCharset());
     } else {
       return "";
     }
-  }
-
-  private byte[] getTextValue2AsBinary() {
-    return byteArray2;
   }
   
   public void apply(NativeCommandHandler view) {
@@ -299,6 +288,7 @@ public class NativeCommand {
       frame.addToViewList(debugList);
       view.addChild(debugList);
       break;
+      
     case CREATE_LISTVIEW:
       if (isSet(FLAG_SLIDERVIEW)) {
 	
@@ -604,23 +594,7 @@ public class NativeCommand {
       System.out.println("Deletion parent was not an instance of ViewGroup");
     }
   }
-  
-  private ImageView createImageView() {
-    ImageView imageView = new ImageView(frame);
-    imageView.setId(childInternalId);
-    try {
-      InputStream is = frame.getAssets().open(getTextValueAsString());
-      Bitmap bitmap = BitmapFactory.decodeStream(is);
-      imageView.setImageBitmap(bitmap);
-      return imageView;
-    } catch (IOException e) {
-      e.printStackTrace();
-      System.out.println("error loading asset file to imageView");
-      System.exit(1);
-    }
-    return null;
-  }
-  
+    
   private FWLayout createLinearLayout(int direction) {
     FWLayout layout = new FWLayout(frame);
     layout.setId(getChildInternalId());

@@ -15,6 +15,7 @@ class TimerEvent;
 class ValueEvent;
 class OpenGLInitEvent;
 class VisibilityEvent;
+class ProxyEvent;
 
 class WindowEvent;
 class UICommandEvent;
@@ -65,6 +66,7 @@ class EventHandler : public Notifier {
   virtual void onValueEvent(ValueEvent & ev) { }
   virtual void onOpenGLInitEvent(OpenGLInitEvent & ev) { }
   virtual void onVisibilityEvent(VisibilityEvent & ev) { }
+  virtual void onProxyEvent(ProxyEvent & ev) { }
 
   virtual void handleWindowEvent(WindowEvent & ev) { }
   virtual void handleUICommandEvent(UICommandEvent & ev) { }
