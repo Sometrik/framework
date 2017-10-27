@@ -252,6 +252,11 @@ public:
     }
   }
 
+  void onResizeEvent(ResizeEvent & ev) override {
+    setActualDisplayWidth(ev.getActualWidth());
+    setActualDisplayHeight(ev.getActualHeight());
+  }
+
   bool initializeRenderer(int opengl_es_version, ANativeWindow * _window) {
     canDraw = true;
     window = _window;
@@ -419,10 +424,8 @@ extern "C" void moncleanup();
 extern "C" {
 
 void Java_com_sometrik_framework_FrameWork_onResize(JNIEnv* env, jclass clazz, float x, float y, int viewId) {
-  mainThread->setActualDisplayWidth(x);
-  mainThread->setActualDisplayHeight(y);
-
   ResizeEvent ev(x / mainThread->getDisplayScale(), y / mainThread->getDisplayScale(), x, y);
+  mainThread->sendEvent(mainThread->getInternalId(), ev);
   mainThread->sendEvent(viewId, ev);
 }
 
@@ -536,9 +539,10 @@ void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, job
 }
 
 void Java_com_sometrik_framework_FrameWork_nativeSetSurface(JNIEnv* env, jobject thiz, jobject surface, int surfaceId, int gl_version, int width, int height) {
-  mainThread->setActualDisplayWidth(width);
-  mainThread->setActualDisplayHeight(height);
   if (surface != 0) {
+    ResizeEvent ev0(int(width / mainThread->getDisplayScale()), int(height / mainThread->getDisplayScale()), width, height);
+    mainThread->sendEvent(mainThread->getInternalId(), ev0);
+  
     ANativeWindow * window = 0;
     window = ANativeWindow_fromSurface(env, surface);
     AndroidOpenGLInitEvent ev(gl_version, true, window);
