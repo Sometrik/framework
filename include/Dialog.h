@@ -16,14 +16,6 @@ class Dialog : public Element {
     return Element::isA(className);
   }
 
-#if 0
-  void onValueEvent(ValueEvent & ev) override {
-    notify();
-    CommandEvent ev2(getId());
-    ev2.dispatch(*this);
-  }
-#endif
-
   int showModal(Element * parent) override {
     if (!isInitialized()) {
       setParent(parent);

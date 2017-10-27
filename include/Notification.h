@@ -15,12 +15,6 @@ class Notification : public Element {
     return Element::isA(className);
   }
 
-//  void onValueEvent(ValueEvent & ev) override {
-//     notify();
-//     CommandEvent ev2(getId());
-//     ev2.dispatch(*this);
-//   }
-
  protected:
   void create() override {
     Command c(Command::CREATE_NOTIFICATION, getParentInternalId(), getInternalId());
