@@ -88,4 +88,10 @@ public class FWProgressBar extends ProgressBar implements NativeCommandHandler {
     return getId();
   }
 
+  @Override
+  public void addImageUrl(String url, int width, int height) {
+    // TODO Auto-generated method stub
+    
+  }
+
 }

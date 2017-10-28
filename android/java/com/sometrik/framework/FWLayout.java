@@ -243,4 +243,10 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
 
   @Override
   public void deinitialize() { }
+
+  @Override
+  public void addImageUrl(String url, int width, int height) {
+    // TODO Auto-generated method stub
+    
+  }
 }

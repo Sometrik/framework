@@ -3,6 +3,7 @@ package com.sometrik.framework;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
+import java.util.TreeSet;
 
 import com.sometrik.framework.NativeCommand.Selector;
 
@@ -16,26 +17,17 @@ public class FWImageView extends ImageView implements NativeCommandHandler {
   ViewStyleManager normalStyle, activeStyle, currentStyle;
   Bitmap ownedBitmap = null;
   boolean imageRequestSent = false;
-  String currentUrl = null;
   int currentWidth = 0, currentHeight = 0;
+  TreeSet<ImageData> images = new TreeSet<ImageData>();
   
-  public FWImageView(final FrameWork frame, int id, String imageUrl) {
+  public FWImageView(final FrameWork frame, int id) {
     super(frame);
     this.frame = frame;
     this.setId(id);
     this.setScaleType(ScaleType.CENTER_CROP); // needed for parallax scrolling
     this.setClipToOutline(true);
     this.setAdjustViewBounds(true);
-    this.setClickable(true);
-    
-    if (imageUrl != null) {
-      String protocol = getProtocol(imageUrl); 
-      if (protocol.equals("http") || protocol.equals("https")) {
-	currentUrl = imageUrl;
-      } else {
-	setImageFromAssets(imageUrl);
-      }
-    }
+    this.setClickable(true);    
         
     final float scale = getContext().getResources().getDisplayMetrics().density;
     this.normalStyle = currentStyle = new ViewStyleManager(frame.bitmapCache, scale, true);
@@ -66,7 +58,17 @@ public class FWImageView extends ImageView implements NativeCommandHandler {
       }
     });
   }
-
+  
+  @Override
+  public void addImageUrl(String url, int width, int height) {
+    String protocol = getProtocol(url); 
+    if (protocol.equals("http") || protocol.equals("https")) {
+      images.add(new ImageData(width, height, url));
+    } else {
+      setImageFromAssets(url);
+    }
+  }
+  
   private String getProtocol(String filename) {
     try {
       URI uri = new URI(filename);
@@ -102,12 +104,12 @@ public class FWImageView extends ImageView implements NativeCommandHandler {
   @Override
   public void setValue(String v) {
     deinitialize();
+    images.clear();
     String protocol = getProtocol(v);
     if (protocol.equals("http") || protocol.equals("https")) {
-      currentUrl = v;
+      addImageUrl(v, 0, 0);
       if (currentWidth != 0 && currentHeight != 0) requestImage();
     } else {
-      currentUrl = null;
       setImageFromAssets(v);
     }
   }
@@ -148,7 +150,9 @@ public class FWImageView extends ImageView implements NativeCommandHandler {
   public void setError(boolean hasError, String errorText) { }
 
   @Override
-  public void clear() { }
+  public void clear() {
+    images.clear();
+  }
 
   @Override
   public void flush() { }
@@ -201,17 +205,52 @@ public class FWImageView extends ImageView implements NativeCommandHandler {
   protected void onSizeChanged(int w, int h, int oldw, int oldh) {
     currentWidth = w;
     currentHeight = h;
-    if (currentUrl != null) requestImage();
+    if (!images.isEmpty()) requestImage();
   }
   
   protected void requestImage() {
     if (currentWidth > 0) {
-      System.out.println("Sending image request for " + currentUrl);
-      imageRequestSent = true;
-      final float scale = getContext().getResources().getDisplayMetrics().density;
-      frame.sendImageRequest(getElementId(), currentUrl, (int)(currentWidth / scale), 0);
+      ImageData img = getSuitable(currentWidth);
+      if (img != null) {
+	System.out.println("Sending image request for " + img.url);
+	imageRequestSent = true;
+	final float scale = getContext().getResources().getDisplayMetrics().density;
+	frame.sendImageRequest(getElementId(), img.url, (int)(currentWidth / scale), 0);
+      } else {
+	System.out.println("No image found");	    
+      }
     } else {
-      System.out.println("Unable to sent image request for " + currentUrl);
+      System.out.println("Unable to sent image request");
+    }
+  }
+  
+  private ImageData getSuitable(int target_width) {
+    for (ImageData d : images) {
+      if (4 * d.width >= 3 * target_width) { // select image if it's at least 0.75 * target_width
+	return d;
+      }
+    }
+    if (!images.isEmpty()) {
+      return images.last();
+    } else {
+      return null;
+    }
+  }
+  
+  private class ImageData implements Comparable<ImageData> {
+    public int width;
+    public int height;
+    public String url;
+    
+    public ImageData(int width, int height, String url) {
+      this.width = width;
+      this.height = height;
+      this.url = url;
+    }
+
+    @Override
+    public int compareTo(ImageData other) {
+      return Integer.compare(width, other.width);
     }
   }
 }

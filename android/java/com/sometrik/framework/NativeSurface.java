@@ -168,4 +168,10 @@ public class NativeSurface extends SurfaceView implements NativeCommandHandler {
     // TODO Auto-generated method stub
     
   }
+
+  @Override
+  public void addImageUrl(String url, int width, int height) {
+    // TODO Auto-generated method stub
+    
+  }
 }

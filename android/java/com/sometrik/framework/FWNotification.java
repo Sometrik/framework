@@ -144,4 +144,10 @@ public class FWNotification extends Notification.Builder implements NativeComman
     return id;
   }
 
+  @Override
+  public void addImageUrl(String url, int width, int height) {
+    // TODO Auto-generated method stub
+    
+  }
+
 }

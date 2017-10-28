@@ -60,6 +60,7 @@ class Command {
     SET_STYLE,
     SET_ERROR,
     SET_IMAGE,
+    ADD_IMAGE_URL,
     FLUSH_VIEW, // Flushes GridView content
     UPDATE_PREFERENCE,
     DELETE_PREFERENCE,

@@ -139,4 +139,10 @@ public class FWRelativeLayout extends RelativeLayout implements NativeCommandHan
     
   }
 
+  @Override
+  public void addImageUrl(String url, int width, int height) {
+    // TODO Auto-generated method stub
+    
+  }
+
 }

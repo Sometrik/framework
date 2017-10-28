@@ -2,7 +2,6 @@ package com.sometrik.framework;
 
 import com.sometrik.framework.NativeCommand.Selector;
 
-import android.graphics.Bitmap.Config;
 import android.view.View;
 
 public interface NativeCommandHandler {
@@ -13,6 +12,7 @@ public interface NativeCommandHandler {
   public void addData(String text, int row, int column, int sheet);
   public void setValue(String v);
   public void setImage(byte[] bytes, int width, int height, int internalFormat);
+  public void addImageUrl(String url, int width, int height);
   public void setValue(int v);
   public void reshape(int value, int size);
   public void reshape(int size);

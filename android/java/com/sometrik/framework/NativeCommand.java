@@ -121,6 +121,7 @@ public class NativeCommand {
     SET_STYLE,
     SET_ERROR,
     SET_IMAGE,
+    ADD_IMAGE_URL,
     FLUSH_VIEW,
     UPDATE_PREFERENCE,
     DELETE_PREFERENCE,
@@ -371,8 +372,11 @@ public class NativeCommand {
     }
 
     case CREATE_IMAGEVIEW: {
+      FWImageView imageView = new FWImageView(frame, childInternalId);
       String imgFile = getTextValueAsString();
-      FWImageView imageView = new FWImageView(frame, childInternalId, imgFile != null && imgFile != "" ? imgFile : null );
+      if (!imgFile.isEmpty()) {
+	imageView.addImageUrl(imgFile, width, height);
+      }
       frame.addToViewList(imageView);
       view.addChild(imageView);
     }
@@ -438,6 +442,9 @@ public class NativeCommand {
       break;
     case SET_IMAGE:
       view.setImage(byteArray, width, height, value);
+      break;
+    case ADD_IMAGE_URL:
+      view.addImageUrl(getTextValueAsString(), width, height);
       break;
     case LAUNCH_BROWSER:
       frame.launchBrowser(getTextValueAsString());
@@ -550,13 +557,15 @@ public class NativeCommand {
   }
   
   private FWSwitch createSwitch() {
+    String s1 = getTextValueAsString();
+    String s2 = getTextValue2AsString();
     FWSwitch click = new FWSwitch(frame);
     click.setId(childInternalId);
-    if (getTextValueAsString() != "") {
-      click.setTextOn(getTextValueAsString());
+    if (!s1.isEmpty()) {
+      click.setTextOn(s1);
     }
-    if (getTextValue2AsString() != "") {
-      click.setTextOff(getTextValue2AsString());
+    if (!s2.isEmpty()) {
+      click.setTextOff(s2);
     }
     click.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
       @Override
@@ -662,11 +671,12 @@ public class NativeCommand {
   }
   
   private FWCheckBox createCheckBox() {
+    String s1 = getTextValueAsString();
     FWCheckBox checkBox = new FWCheckBox(frame);
     checkBox.setPadding(0, 0, 10, 0);
     checkBox.setId(childInternalId);
-    if (getTextValueAsString() != "") {
-      checkBox.setText(getTextValueAsString());
+    if (!s1.isEmpty()) {
+      checkBox.setText(s1);
     }
     checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
       @Override
