@@ -54,7 +54,7 @@ class ImageSet {
   }
 
   bool empty() const { return images.empty(); }
-
+  void clear() { images.clear(); }
   const std::set<image_url_s> & data() const { return images; }
   
  private:
