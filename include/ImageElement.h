@@ -47,7 +47,7 @@ class ImageElement : public Element {
     clear();
     images = _images;
 
-    for (auto it = images.begin(); it != images.end(); it++) {
+    for (auto it = images.data().begin(); it != images.data().end(); it++) {
       Command c(Command::SET_TEXT_VALUE, getInternalId());
       c.setWidth(it->width);
       c.setHeight(it->height);
@@ -63,11 +63,13 @@ class ImageElement : public Element {
     ev.setHandled(true);
   }
 
+#if 0
   void setFilename(const std::string & _filename) {
-    data.clear();
-    data.insert(_filename);
+    images.clear();
+    images.insert(_filename);
   }
-
+#endif
+  
   const ImageSet & getImages() const { return images; }
   
  protected:
@@ -82,7 +84,7 @@ class ImageElement : public Element {
       c.setHeight(it->height);
       sendCommand(c);
 
-      for (it++; it != images.end(); it++) {
+      for (it++; it != images.data().end(); it++) {
 	Command c(Command::SET_TEXT_VALUE, getInternalId());
 	c.setTextValue(it->url);
 	c.setWidth(it->width);
