@@ -175,6 +175,9 @@ class Element : public EventHandler {
 
   void initializeChildren();
 
+  void setClickable(bool t) { is_clickable = t; }
+  bool isClickable() const { return is_clickable; }
+
  protected:
   virtual void create() = 0;
   virtual void load() { }
@@ -197,7 +200,7 @@ class Element : public EventHandler {
   unsigned int flags; // initialized in constructor
   bool has_error = false;
   std::vector<Command> pendingCommands;
-  bool is_enabled = true;
+  bool is_enabled = true, is_clickable = false;
 
   static std::atomic<int> nextInternalId;
 };
