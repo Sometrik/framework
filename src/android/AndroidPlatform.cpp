@@ -644,11 +644,13 @@ void Java_com_sometrik_framework_FrameWork_nativeAddPreference(JNIEnv* env, jobj
   env->ReleaseStringUTFChars(jvalue, value);
 }
 
-void Java_com_sometrik_framework_FrameWork_sendImageRequest(JNIEnv* env, jobject thiz, jint viewId, jstring uri, jint width, jint height) {
+void Java_com_sometrik_framework_FrameWork_sendImageRequest(JNIEnv* env, jobject thiz, jint viewId, jstring uri, jint width, jint height, jint internalFormat) {
   const char * uri2 = env->GetStringUTFChars(uri, NULL);
   __android_log_print(ANDROID_LOG_INFO, "Sometrik", "sendImageRequest: %s %d %d", uri2, width, height);
   ImageRequestEvent ev(ImageRequestEvent::REQUEST, viewId, uri2, ImageRequestEvent::NORMAL, width, height);
-  ev.setInternalFormat(canvas::InternalFormat::RGB565);
+  if (internalFormat != 0) {
+    ev.setInternalFormat((canvas::InternalFormat)internalFormat);
+  }
   mainThread->sendEvent(mainThread->getApplication().getInternalId(), ev);
   env->ReleaseStringUTFChars(uri, uri2);
 }

@@ -13,6 +13,11 @@ import android.view.View;
 import android.widget.ImageView;
 
 public class FWImageView extends ImageView implements NativeCommandHandler {
+  final static int RGB565 = 3;
+  final static int RGBA4 = 4;
+  final static int RGBA8 = 5;
+  final static int RGB8 = 6;
+  
   FrameWork frame;
   ViewStyleManager normalStyle, activeStyle, currentStyle;
   Bitmap ownedBitmap = null;
@@ -164,9 +169,9 @@ public class FWImageView extends ImageView implements NativeCommandHandler {
   
   private Bitmap createBitmap(int width, int height, int internalFormat) {
     switch (internalFormat) {
-    case 3: return Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
-    case 4: return Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_4444);
-    case 5: case 6: return Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+    case RGB565: return Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
+    case RGBA4: return Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_4444);
+    case RGBA8: case RGB8: return Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
     }
     System.out.println("ERROR: unable to display format " + internalFormat);
     return null;
@@ -215,7 +220,13 @@ public class FWImageView extends ImageView implements NativeCommandHandler {
 	System.out.println("Sending image request for " + img.url);
 	imageRequestSent = true;
 	final float scale = getContext().getResources().getDisplayMetrics().density;
-	frame.sendImageRequest(getElementId(), img.url, (int)(currentWidth / scale), 0);
+	ImageData smallest = images.first();
+	if (smallest.width < img.width) {
+	  frame.sendImageRequest(getElementId(), smallest.url, (int)(currentWidth / scale), 0, 0);
+	}
+	if (true) {
+	  frame.sendImageRequest(getElementId(), img.url, (int)(currentWidth / scale), 0, RGB565);
+	}
       } else {
 	System.out.println("No image found");	    
       }
