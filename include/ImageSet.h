@@ -28,6 +28,7 @@ class ImageSet {
       return *it;
     }    
   }
+
   const image_url_s & getLargest() const {
     if (images.empty()) {
       return null_image;
@@ -37,9 +38,10 @@ class ImageSet {
       return *it;
     }
   }
-  const image_url_s & getSuitable(unsigned int width) const {
+
+  const image_url_s & getSuitable(unsigned int target_width) const {
     for (auto & i : images) {
-      if (i.width >= width) {
+      if (4 * (unsigned int)i.width >= 3 * target_width) { // select image if it's at least 0.75 * target_width
 	return i;
       }
     }
@@ -48,7 +50,7 @@ class ImageSet {
 
   void insert(const image_url_s & image) { images.insert(image); }
   void insert(const std::string & url) { insert(0, 0, url); }
-  void insert(unsigned int w, unsigned int h, const std::string & url) {
+  void insert(unsigned short w, unsigned short h, const std::string & url) {
     image_url_s u = { w, h, url };
     insert(u);
   }
