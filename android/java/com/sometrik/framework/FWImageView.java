@@ -223,7 +223,7 @@ public class FWImageView extends ImageView implements NativeCommandHandler {
 	imageRequestSent = true;
 	final float scale = getContext().getResources().getDisplayMetrics().density;
 	ImageData smallest = images.first();
-	if (smallest.width < img.width) {
+	if (false && smallest.width < img.width) {
 	  frame.sendImageRequest(getElementId(), smallest.url, (int)(currentWidth / scale), 0, 0);
 	}
 	if (true) {
