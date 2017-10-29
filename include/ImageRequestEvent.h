@@ -35,13 +35,10 @@ class ImageRequestEvent : public Event {
 
   RequestMode getRequestMode() const { return mode; }
   
-  void setAlternateImageUrl(const std::string & url) { alternate_image_url = url; }
   const std::string & getImageUrl() const { return image_url; }
-  const std::string & getAlternateImageUrl() const { return alternate_image_url; }
   unsigned int getRequestedWidth() const { return requested_width; }
   unsigned int getRequestedHeight() const { return requested_height; }
   unsigned int getRequestedLevels() const { return requested_levels; }
-  // bool doCompressImage() const { return compress_image; }
 
   RequestPriority getPriority() const { return priority; }
   void setSubPriority(int p) { sub_priority = p; }
@@ -57,9 +54,8 @@ class ImageRequestEvent : public Event {
   
  private:
   RequestMode mode;
-  std::string image_url, alternate_image_url;
+  std::string image_url;
   RequestPriority priority;
-  // bool compress_image;
   unsigned int requested_width, requested_height, requested_levels;
   int sub_priority = 0;
   // skey target_key;
