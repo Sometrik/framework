@@ -161,7 +161,6 @@ class Element : public EventHandler {
   Element * getParent() { return parent; }
   const Element * getParent() const { return parent; }
   void setParent(Element * _parent) { parent = _parent; }
-  size_t size() const { return children.size(); }
   bool isInitialized() const { return thread != 0; }
 
   void removeChild(Element * c);
