@@ -18,7 +18,7 @@ public class NavigationLayout extends FrameLayout implements NativeCommandHandle
   public NavigationLayout(FrameWork frame, int id) {
     super(frame);
     this.frame = frame;
-    this.setId(id);;
+    this.setId(id);
     
     DrawerLayout.LayoutParams lp = new DrawerLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
     lp.gravity = Gravity.START;
