@@ -21,15 +21,18 @@ class ImageElement : public Element {
     return Element::isA(className);
   }
 
-  void handleImageResponseEvent(ImageResponseEvent & ev) override {
+  void handleImageResponseEvent(ImageResponseEvent & ev) override {   
     Command c(Command::SET_IMAGE, getInternalId());
-    auto & image = ev.getImage();
-    std::string data2((const char *)image->getData(), image->calculateSize());
-    c.setTextValue(data2);
-    c.setWidth(image->getWidth());
-    c.setHeight(image->getHeight());
-    c.setValue(int(image->getInternalFormat()));
+    if (ev.isSuccess()) {
+      auto & image = ev.getImage();
+      std::string data2((const char *)image->getData(), image->calculateSize());
+      c.setTextValue(data2);
+      c.setWidth(image->getWidth());
+      c.setHeight(image->getHeight());
+      c.setValue(int(image->getInternalFormat()));
+    }
     sendCommand(c);
+    ev.setHandled(true);
   }
 
   void clear() {
