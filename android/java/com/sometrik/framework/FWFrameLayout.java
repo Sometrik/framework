@@ -10,9 +10,10 @@ public class FWFrameLayout extends FrameLayout implements NativeCommandHandler {
   private FrameWork frame;
   private ViewStyleManager normalStyle, activeStyle, currentStyle;
   
-  public FWFrameLayout(FrameWork frameWork) {
+  public FWFrameLayout(FrameWork frameWork, int id) {
     super(frameWork);
     this.frame = frameWork;
+    this.setId(id);
     
     final float scale = getContext().getResources().getDisplayMetrics().density;
     this.normalStyle = currentStyle = new ViewStyleManager(frame.bitmapCache, scale, true);
