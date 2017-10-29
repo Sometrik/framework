@@ -180,17 +180,19 @@ public class FWImageView extends ImageView implements NativeCommandHandler {
   @Override
   public void setImage(byte[] bytes, int width, int height, int internalFormat) {
     deinitialize();
+
+    if (bytes != null && internalFormat != 0) {
+      ownedBitmap = createBitmap(width, height, internalFormat);
+      if (ownedBitmap != null) {
+	ByteBuffer buffer = ByteBuffer.wrap(bytes);
+	ownedBitmap.copyPixelsFromBuffer(buffer);
+      }
+      this.setImageBitmap(ownedBitmap);
     
-    ownedBitmap = createBitmap(width, height, internalFormat);
-    if (ownedBitmap != null) {
-      ByteBuffer buffer = ByteBuffer.wrap(bytes);
-      ownedBitmap.copyPixelsFromBuffer(buffer);
+      invalidate();
+
+      activeStyle.apply(this);
     }
-    this.setImageBitmap(ownedBitmap);
-    
-    invalidate();
-    
-    activeStyle.apply(this);
   }
 
   @Override
