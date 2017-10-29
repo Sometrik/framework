@@ -17,8 +17,11 @@
 #include <CommandEvent.h>
 #include <ImageRequestEvent.h>
 #include <URI.h>
+#include <ImageSet.h>
 
 #include <PosixThread.h>
+
+#include <InternalFormat.h>
 
 #include <gtk/gtk.h>
 #include <gio/gio.h>
@@ -43,7 +46,7 @@ static int width = 800, height = 600;
 class GtkMainThread;
 
 struct image_data_s {
-  string url;
+  ImageSet images;
   unsigned int width, height;
   bool is_fixed;
 };
@@ -495,7 +498,7 @@ protected:
 
     case Command::CREATE_IMAGEVIEW: {
       GtkWidget * image = gtk_image_new();
-      addView(command, image);
+      addView(command, image, true);
 
       g_signal_connect(G_OBJECT(image), "size-allocate", G_CALLBACK(on_size_allocate), this);
 
@@ -503,7 +506,8 @@ protected:
       if (!uri_text.empty()) {
 	URI uri(uri_text);
 	if (uri.getScheme() == "http" || uri.getScheme() == "https") {
-	  setImageUrl(command.getChildInternalId(), uri_text);
+	  addImageUrl(command.getChildInternalId(),
+		      command.getWidth(), command.getHeight(), uri_text);
 	} else {
 	  auto pixbuf = loadPixbuf(uri_text);
 	  if (pixbuf) {
@@ -516,9 +520,11 @@ protected:
 
     case Command::SET_IMAGE: {
       auto view = views_by_id[command.getInternalId()];
-      if (view) {
+      if (view && command.getValue()) {
+	canvas::InternalFormat format = (canvas::InternalFormat)command.getValue();
+	bool has_alpha = true; // format == canvas::RGBA8;
 	GdkPixbuf * pixbuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB,
-					    true,
+					    has_alpha,
 					    8,
 					    command.getWidth(),
 					    command.getHeight());
@@ -526,12 +532,16 @@ protected:
 	auto pixels = gdk_pixbuf_get_pixels(pixbuf);
 	size_t n = command.getWidth() * command.getHeight() * 4;
 	auto input = command.getTextValue().data();
+#if 0
+	memcpy(pixels, input, n);
+#else
 	for (size_t i = 0; i < n; i += 4) {
 	  pixels[i + 0] = input[i + 2];
 	  pixels[i + 1] = input[i + 1];
 	  pixels[i + 2] = input[i + 0];
 	  pixels[i + 3] = input[i + 3];
 	}
+#endif
 	auto image = GTK_IMAGE(view);
 	gtk_image_set_from_pixbuf(image, pixbuf);
       }
@@ -1139,8 +1149,8 @@ protected:
     }
   }
 
-  void setImageUrl(int id, const std::string & url) {
-    image_data[id].url = url;
+  void addImageUrl(int id, unsigned short w, unsigned short h, const std::string & url) {
+    image_data[id].images.insert(w, h, url);
   }
 
   void setImageWidth(int id, unsigned int w, bool fixed = false) {
@@ -1426,11 +1436,12 @@ GtkMainThread::on_size_allocate(GtkWidget * widget, GtkAllocation * allocation, 
   if (GTK_IS_IMAGE(widget)) {
     int id = mainThread->getId(widget);
     auto & d = mainThread->getImageData(id);
-    if (!d.url.empty() && d.width != allocation->width) {
+    if (!d.images.empty() && d.width != allocation->width) {
       cerr << "imageSize changed " << allocation->width << ", " << allocation->height << endl;
+      auto & image = d.images.getSuitable(allocation->width);
       mainThread->setImageWidth(id, allocation->width);
       mainThread->setImageHeight(id, allocation->height);
-      mainThread->requestImage(id, d.url, allocation->width);
+      mainThread->requestImage(id, image.url, allocation->width);
     }
   }
 }
