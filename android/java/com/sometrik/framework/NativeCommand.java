@@ -227,8 +227,7 @@ public class NativeCommand {
     }
 
     case CREATE_FRAME_LAYOUT: {
-      FWFrameLayout layout = new FWFrameLayout(frame);
-      layout.setId(getChildInternalId());
+      FWFrameLayout layout = new FWFrameLayout(frame, getChildInternalId());
       frame.addToViewList(layout);
       if (view != null) {
 	view.addChild(layout);
@@ -475,8 +474,7 @@ public class NativeCommand {
       frame.addToViewList(ab);
       break;
     case CREATE_NAVIGATIONBAR: {
-      FWLayout bar = createLinearLayout(2);
-      bar.setId(childInternalId);
+      BlurLayout bar = new BlurLayout(frame, getChildInternalId());      
       view.addChild(bar);
       frame.addToViewList(bar);
       break;
