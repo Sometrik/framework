@@ -6,7 +6,7 @@
 
 class ProxyLayout : public Element {
 public:
-  ProxyLayout(int _id) : Element(_id) { }
+  ProxyLayout(int _id = 0) : Element(_id) { }
 
   bool isA(const std::string & className) const override {
     if (className == "ProxyLayout") return true;
@@ -23,7 +23,7 @@ public:
     case ProxyEvent::DELETE_CONTENT: {
       auto it = content.find(ev.getKey());
       if (it != content.end()) {
-        content.remove(it);
+        content.erase(it);
       }
     }
       break;
@@ -54,7 +54,6 @@ protected:
 
   void create() override {
     Command c(Command::CREATE_PROXY_LAYOUT, getParentInternalId(), getInternalId());
-    c.setValue(direction);
     sendCommand(c);
   }
   
