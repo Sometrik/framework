@@ -2,10 +2,17 @@
 #define _PROXYLAYOUT_H_
 
 #include <Element.h>
+#include <ProxyEvent.h>
+
 class ProxyLayout : public Element {
 public:
   ProxyLayout(int _id) : Element(_id) { }
-  
+
+  bool isA(const std::string & className) const override {
+    if (className == "ProxyLayout") return true;
+    return Element::isA(className);
+  }
+
   void onProxyEvent(ProxyEvent & ev) {
     switch (ev.getType()) {
     case ProxyEvent::REQUEST_CONTENT: {
@@ -43,7 +50,13 @@ protected:
     } else {
       return std::shared_ptr<Element>(0);
     }
-  }  
+  }
+
+  void create() override {
+    Command c(Command::CREATE_PROXY_LAYOUT, getParentInternalId(), getInternalId());
+    c.setValue(direction);
+    sendCommand(c);
+  }
   
 private:
   std::unordered_map<std::string, std::shared_ptr<Element> > content;
