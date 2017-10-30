@@ -216,7 +216,8 @@ public class NativeCommand {
 	frame.setCurrentDrawerViewId(getChildInternalId());
       }
       break;
-      
+
+    case CREATE_PROXY_LAYOUT:
     case CREATE_LINEAR_LAYOUT:
     case CREATE_PANEL: {
       FWLayout layout = createLinearLayout(getValue());
