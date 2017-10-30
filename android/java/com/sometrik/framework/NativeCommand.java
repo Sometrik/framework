@@ -217,7 +217,14 @@ public class NativeCommand {
       }
       break;
 
-    case CREATE_PROXY_LAYOUT:
+    case CREATE_PROXY_LAYOUT: {
+      FWLayout layout = createLinearLayout(1);
+      if (view != null) {
+	view.addChild(layout);
+      }
+    }
+      break;
+	
     case CREATE_LINEAR_LAYOUT:
     case CREATE_PANEL: {
       FWLayout layout = createLinearLayout(getValue());
