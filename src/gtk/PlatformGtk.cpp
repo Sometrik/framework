@@ -412,6 +412,7 @@ protected:
     }
       break;      
 
+    case Command::CREATE_PROXY_LAYOUT:
     case Command::CREATE_FRAME_LAYOUT:
     case Command::CREATE_RELATIVE_LAYOUT: 
     case Command::CREATE_LINEAR_LAYOUT: {
@@ -620,7 +621,9 @@ protected:
 	  requestImage(command.getInternalId(), uri_text, w);
 	} else {
 	  auto pixbuf = loadPixbuf(uri_text);
-	  gtk_image_set_from_pixbuf(GTK_IMAGE(view), pixbuf);
+	  if (pixbuf) {
+	    gtk_image_set_from_pixbuf(GTK_IMAGE(view), pixbuf);
+	  }
 	}
       } else {
 	cerr << "unable to set text value: " << command.getTextValue() << "\n";
@@ -1106,8 +1109,7 @@ protected:
     string s = getBundleFilename(filename.c_str());
     GError * error = 0;
     GdkPixbuf * pixbuf = gdk_pixbuf_new_from_file(s.c_str(), &error);
-    assert(pixbuf);
-    if (getDisplayScale() < 2.0f) {
+    if (pixbuf && getDisplayScale() < 2.0f) {
       int new_w = int(getDisplayScale() * gdk_pixbuf_get_width(pixbuf) / 2.0f);
       int new_h = int(getDisplayScale() * gdk_pixbuf_get_height(pixbuf) / 2.0f);
       auto new_pixbuf = gdk_pixbuf_scale_simple(pixbuf, 
