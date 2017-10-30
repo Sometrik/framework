@@ -7,7 +7,7 @@
 
 class ProxyEvent : public Event {
 public:
-  enum Type { REQUEST_CONTENT = 1, DELETE_CONTENT }
+  enum Type { REQUEST_CONTENT = 1, DELETE_CONTENT };
   
   ProxyEvent(Type _type, const std::string & _key) : type(_type), key(_key) { }
   
