@@ -27,10 +27,10 @@ Element::initialize(PlatformThread * _thread) {
     thread->getPlatform().registerElement(this);
     create();
     load();
-    for (auto & c : pendingCommands) {
-      sendCommand(c);
+    if (!pendingCommands.empty()) {
+      thread->sendCommands(pendingCommands);
+      pendingCommands.clear();
     }
-    pendingCommands.clear();
   }
   assert(isInitialized());
 }
@@ -83,7 +83,17 @@ Element::style(Selector s, const std::string & key, const std::string & value) {
   sendCommand(c);
   return *this;
 }
-  
+
+void
+Element::begin() {
+  if (thread) thread->beginBatch();
+}
+
+void
+Element::commit() {
+  if (thread) thread->commitBatch();
+}
+
 int
 Element::sendCommand(const Command & command) {
   if (thread) {

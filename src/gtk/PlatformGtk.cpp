@@ -59,15 +59,15 @@ struct event_data_s {
 };
 
 struct command_data_s {
-  command_data_s(PlatformThread * _mainThread, Command _command) : mainThread(_mainThread), command(_command) { }
+  command_data_s(PlatformThread * _mainThread, const std::vector<Command> & _commands) : mainThread(_mainThread), commands(_commands) { }
   
   PlatformThread * mainThread;
-  Command command;  
+  std::vector<Command> commands;
 };
 
 static gboolean command_callback(gpointer data) {
   command_data_s * cd = (command_data_s*)data;
-  cd->mainThread->sendCommand(cd->command);
+  cd->mainThread->sendCommands(cd->commands);
   delete cd;
   return FALSE;
 }
@@ -86,8 +86,8 @@ public:
   std::shared_ptr<PlatformThread> createThread(std::shared_ptr<Runnable> & runnable) override {
     return make_shared<GtkThread>(this, &(getPlatform()), application, runnable);
   }
-  int sendCommand(const Command & command) {
-    command_data_s * cd = new command_data_s(&(getApplication().getThread()), command);
+  int sendCommands(const vector<Command> & commands) override {
+    command_data_s * cd = new command_data_s(&(getApplication().getThread()), commands);
     g_idle_add(command_callback, cd);
     return 0;
   }
@@ -165,8 +165,11 @@ public:
     gtk_app = _gtk_app;
         
     window = gtk_application_window_new(gtk_app);
-    gtk_window_set_title (GTK_WINDOW(window), "Window");
-    gtk_window_set_default_size (GTK_WINDOW(window), width, height);
+
+    setDisplayScale(gtk_widget_get_scale_factor(window));
+  
+    gtk_window_set_title(GTK_WINDOW(window), "Window");
+    gtk_window_set_default_size(GTK_WINDOW(window), width, height);
     g_signal_connect(window, "delete-event", G_CALLBACK(delete_window), this);
     
     auto & app = getApplication();
@@ -195,705 +198,709 @@ protected:
     return GTK_STATE_FLAG_NORMAL;
   }
   
-  int sendCommand(const Command & command) {
-    if (command.getType() == Command::CREATE_FRAMEVIEW || command.getType() == Command::CREATE_OPENGL_VIEW) {
-      auto & app = getApplication();
-      if (!app.getActiveViewId()) {
-	app.setActiveViewId(command.getChildInternalId());
-      }
-    }
-    
-    switch (command.getType()) {
-    case Command::QUIT_APP:
-      exit(0);
-      break;
-
-    case Command::CREATE_APPLICATION: {
-      cerr << "creating stack\n";
-      assert(window);
-      stack = gtk_stack_new();
-      gtk_stack_set_transition_type((GtkStack*)stack, GTK_STACK_TRANSITION_TYPE_SLIDE_LEFT_RIGHT);
-      // ignore parent id
-      gtk_container_add(GTK_CONTAINER(window), stack);
-
-      addView(0, command.getChildInternalId(), stack);
-
-      gtk_widget_show_all(window);
-    }
-      break;
-
-    case Command::CREATE_TIMER: {
-      cerr << "creating timer for " << command.getValue() << endl;
-      g_timeout_add(command.getValue(), timer_callback, this);
-    }
-      break;
-      
-    case Command::CREATE_TEXTFIELD: {
-      auto textfield = gtk_entry_new();
-      g_signal_connect(textfield, "changed", G_CALLBACK(send_text_value), this);
-      addView(command, textfield);
-    }
-      break;
-
-    case Command::CREATE_TEXTVIEW: {
-      auto textview = gtk_text_view_new();
-      addView(command, textview);
-    }
-      break;
-
-    case Command::CREATE_GRIDVIEW:
-    case Command::CREATE_LISTVIEW: {
-      auto view = gtk_scrolled_window_new(0, 0);
-      gtk_scrolled_window_set_min_content_height((GtkScrolledWindow*)view, 400);
-      auto store = gtk_tree_store_new(5, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
-      auto gridview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(store));
-      gtk_tree_view_set_activate_on_single_click(GTK_TREE_VIEW(gridview), 1);
-      // gtk_widget_set_vexpand((GtkWidget*)gridview, 1);
-      // gtk_widget_set_hexpand((GtkWidget*)gridview, 1);
-      // g_signal_connect(gridview, "cursor-changed", G_CALLBACK(send_selection_value), this);
-      g_signal_connect(gridview, "row-activated", G_CALLBACK(send_activation_value), this);
-      gtk_container_add(GTK_CONTAINER(view), gridview);
-      addView(command, view, true);
-      if (initial_view_shown) gtk_widget_show(gridview);
-    }
-      break;
-
-    case Command::ADD_SHEET: {
-      auto & sheets = sheets_by_id[command.getInternalId()];
-      sheets.push_back({ command.getTextValue(), false });
-    }
-      break;
-
-    case Command::RESHAPE_TABLE: {
-      cerr << "RESHAPE_TABLE\n";
-      size_t max_size = command.getValue();
-      auto view = views_by_id[command.getInternalId()];
-      if (view) {
-	if (GTK_IS_BIN(view)) {
-	  cerr << "is bin\n";
-	  auto treeview = gtk_bin_get_child(GTK_BIN(view));
-	  auto model = gtk_tree_view_get_model((GtkTreeView*)treeview);
-	  
-	  auto & sheets = sheets_by_id[command.getInternalId()];
-	  for (int i = int(sheets.size()) - 1; i >= max_size; i--) {
-	    auto & sheet = sheets[i];
-	    if (sheet.is_created) {
-	      sheet.is_created = false;
-	      GtkTreeIter parent;
-	      gtk_tree_model_iter_nth_child(model, &parent, 0, i);
-	      gtk_tree_store_remove(GTK_TREE_STORE(model), &parent);
-	    }	  
-	  }
-	}
-      }
-    }
-      break;
-      
-    case Command::RESHAPE_SHEET: {
-      cerr << "RESHAPE_SHEET\n";
-      size_t max_size = command.getValue();
-      auto view = views_by_id[command.getInternalId()];
-      assert(view);
-      if (view) {
-	auto & sheets = sheets_by_id[command.getInternalId()];
-	if (command.getSheet() < sheets.size()) {
-	  auto treeview = gtk_bin_get_child(GTK_BIN(view));
-	  auto model = gtk_tree_view_get_model((GtkTreeView*)treeview);
-	  GtkTreeIter iter, parent;
-	  gtk_tree_model_iter_nth_child(model, &parent, 0, command.getSheet());
-	  while (gtk_tree_model_iter_nth_child(model, &iter, &parent, max_size)) {
-	    gtk_tree_store_remove(GTK_TREE_STORE(model), &iter);
-	  }
-	}	  
-      }
-    }
-      break;
-      
-    case Command::ADD_COLUMN: {
-      auto view = views_by_id[command.getInternalId()];
-      if (view) {
-	if (GTK_IS_ACTION_BAR(view)) {
-	  auto button = gtk_button_new_from_icon_name("properties", GTK_ICON_SIZE_BUTTON);
-	  widget_values[button] = command.getValue();
-	  g_signal_connect(button, "clicked", G_CALLBACK(on_bar_button), this);
-	  gtk_action_bar_pack_start((GtkActionBar*)view, button);
-	  gtk_widget_show(button);
-	} else {
-	  auto treeview = gtk_bin_get_child(GTK_BIN(view));
-	  if (!treeview) {
-	    cerr << "no actual child for ADD_COLUMN\n";
-	  } else if (!GTK_IS_TREE_VIEW(treeview)) {
-	    cerr << "actual child is not tree view\n";
-	  } else {
-	    int i = gtk_tree_view_get_n_columns(GTK_TREE_VIEW(treeview));
-	    auto renderer = gtk_cell_renderer_text_new();
-	    float xalign = 0.0f;
-	    bool autosize = false;
-	    if (command.getValue() == 2) {
-	      xalign = 1.0f;
-	      autosize = true;
-	    }
-	    gtk_cell_renderer_set_alignment(renderer, xalign, 0.0f);
-	    gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(treeview),
-							-1,
-							command.getTextValue().c_str(),
-							renderer,
-							"text", i, NULL);
-	    if (autosize) {
-	      auto column = gtk_tree_view_get_column(GTK_TREE_VIEW(treeview), i);
-	      gtk_tree_view_column_set_sizing(column, GTK_TREE_VIEW_COLUMN_AUTOSIZE);
-	    }
-	  }
-	}
-      } else {
-	cerr << "view not found for ADD_COLUMN\n";
-      }
-    }
-      break;
-
-    case Command::CREATE_PICKER: {
-      auto picker = gtk_combo_box_text_new();
-      g_signal_connect(picker, "changed", G_CALLBACK(send_combo_value), this);
-      addView(command, picker);
-    }
-      break;
-
-    case Command::ADD_OPTION: {
-      cerr << "ADD_OPTION\n";
-      auto view = views_by_id[command.getInternalId()];
-      if (view) {
-	if (GTK_IS_HEADER_BAR(view)) {
-	  auto button = gtk_button_new_from_icon_name("properties", GTK_ICON_SIZE_BUTTON);
-	  widget_values[button] = command.getValue(); 
-	  g_signal_connect(button, "clicked", G_CALLBACK(on_bar_button), this);
-	  gtk_header_bar_pack_start((GtkHeaderBar*)view, button);
-	  gtk_widget_show(button);
-	} else if (GTK_IS_COMBO_BOX_TEXT(view)) {
-	  auto av = gtk_combo_box_text_get_active_text((GtkComboBoxText*)view);
-	  string id = to_string(command.getValue());
-	  gtk_combo_box_text_append((GtkComboBoxText*)view,
-				    id.c_str(), command.getTextValue().c_str());
-	  if (!av) {
-	    gtk_combo_box_set_active((GtkComboBox*)view, 0);
-	  }		      
-	}
-      }
-    }
-      break;
-      
-    case Command::CREATE_BUTTON: {
-      auto button = gtk_button_new_with_label(command.getTextValue().c_str());
-      g_signal_connect(button, "clicked", G_CALLBACK(send_int_value), this);
-      addView(command, button);
-    }
-      break;
-      
-    case Command::CREATE_CHECKBOX: {
-      auto cb = gtk_check_button_new_with_label(command.getTextValue().c_str());
-      g_signal_connect(cb, "toggled", G_CALLBACK(send_toggled_value), this);
-      addView(command, cb);
-    }
-      break;
-      
-    case Command::CREATE_TEXT: {
-      auto label = gtk_label_new(command.getTextValue().c_str());
-      gtk_label_set_line_wrap((GtkLabel*)label, true);
-      gtk_label_set_xalign((GtkLabel*)label, 0.0f);
-      gtk_label_set_yalign((GtkLabel*)label, 0.0f);
-      gtk_label_set_justify((GtkLabel*)label, GTK_JUSTIFY_LEFT);
-      addView(command, label);
-    }
-      break;
-
-    case Command::CREATE_LINK: {
-      auto link = gtk_link_button_new_with_label(command.getTextValue().c_str(),
-						 command.getTextValue2().c_str());
-      addView(command, link);
-    }
-      break;      
-
-    case Command::CREATE_FRAME_LAYOUT:
-    case Command::CREATE_RELATIVE_LAYOUT: 
-    case Command::CREATE_LINEAR_LAYOUT: {
-      auto box = gtk_box_new(command.getValue() == 1 ? GTK_ORIENTATION_VERTICAL : GTK_ORIENTATION_HORIZONTAL, 0);
-
-#if 0
-      event_box = gtk_event_box_new ();
-      gtk_container_add (GTK_CONTAINER (event_box), image);
-      g_signal_connect(G_OBJECT (event_box),
-		       "button_press_event",
-		       G_CALLBACK (button_press_callback),
-		       image);
-#endif
-      addView(command, box);
-    }
-      break;
-	
-    case Command::CREATE_TABLE_LAYOUT: {
-      auto layout = gtk_table_new(1, command.getValue(), false);
-      gtk_table_set_homogeneous((GtkTable*)layout, false);
-      addView(command, layout);
-    }
-      break;
-
-    case Command::CREATE_AUTO_COLUMN_LAYOUT: {
-      auto layout = gtk_flow_box_new();
-      gtk_flow_box_set_homogeneous((GtkFlowBox*)layout, false);
-      gtk_orientable_set_orientation((GtkOrientable*)layout, GTK_ORIENTATION_HORIZONTAL);
-      gtk_flow_box_set_selection_mode((GtkFlowBox*)layout, GTK_SELECTION_NONE);
-      addView(command, layout);
-    }
-      break;
-
-    case Command::CREATE_PANEL: {
-      auto frame = gtk_frame_new(0);
-      addView(command, frame);
-    }
-      break;
-
-    case Command::CREATE_NAVIGATIONBAR: {
-      auto bar = gtk_action_bar_new();
-      addView(command, bar);
-    }
-      break;
-      
-    case Command::CREATE_ACTIONBAR: {
-      if (!header) {
-	header = gtk_header_bar_new();
-	gtk_header_bar_set_title((GtkHeaderBar*)header, "App");
-	gtk_header_bar_set_show_close_button((GtkHeaderBar*)header, 1);
-	gtk_header_bar_set_decoration_layout((GtkHeaderBar*)header, "close");
-
-	auto box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
-	gtk_style_context_add_class(gtk_widget_get_style_context(box), "linked");
-	auto previous = gtk_button_new_from_icon_name("go-previous", GTK_ICON_SIZE_BUTTON);
-	auto next = gtk_button_new_from_icon_name("go-next", GTK_ICON_SIZE_BUTTON);
-	auto settings = gtk_button_new_from_icon_name("settings", GTK_ICON_SIZE_BUTTON);
-
-	g_signal_connect(previous, "clicked", G_CALLBACK(on_previous_button), this);
-	g_signal_connect(next, "clicked", G_CALLBACK(on_next_button), this);
-	g_signal_connect(settings, "clicked", G_CALLBACK(on_settings_button), this);
-
-	gtk_box_pack_start((GtkBox*)box, previous, 0, 0, 0);
-	gtk_box_pack_start((GtkBox*)box, next, 0, 0, 0);
-	gtk_box_pack_start((GtkBox*)box, settings, 0, 0, 0);
-	
-	gtk_header_bar_pack_start((GtkHeaderBar*)header, box);
-	
-	gtk_widget_show_all(header);
-	gtk_window_set_titlebar(GTK_WINDOW(window), header);
-
-	addView(0, command.getChildInternalId(), header);
-      }
-    }
-      break;
-
-    case Command::CREATE_SWITCH: {
-      auto s = gtk_switch_new();
-      g_signal_connect(s, "notify::active", G_CALLBACK(send_bool_value), this);
-
-      addView(command, s);
-    }
-      break;
-
-    case Command::CREATE_IMAGEVIEW: {
-      GtkWidget * image = gtk_image_new();
-      addView(command, image, true);
-
-      g_signal_connect(G_OBJECT(image), "size-allocate", G_CALLBACK(on_size_allocate), this);
-
-      auto & uri_text = command.getTextValue();
-      if (!uri_text.empty()) {
-	URI uri(uri_text);
-	if (uri.getScheme() == "http" || uri.getScheme() == "https") {
-	  addImageUrl(command.getChildInternalId(),
-		      command.getWidth(), command.getHeight(), uri_text);
-	} else {
-	  auto pixbuf = loadPixbuf(uri_text);
-	  if (pixbuf) {
-	    gtk_image_set_from_pixbuf(GTK_IMAGE(image), pixbuf);
-	  }
-	}
-      }
-    }
-      break;
-
-    case Command::SET_IMAGE: {
-      auto view = views_by_id[command.getInternalId()];
-      if (view && command.getValue()) {
-	canvas::InternalFormat format = (canvas::InternalFormat)command.getValue();
-	bool has_alpha = true; // format == canvas::RGBA8;
-	GdkPixbuf * pixbuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB,
-					    has_alpha,
-					    8,
-					    command.getWidth(),
-					    command.getHeight());
-	assert(pixbuf);
-	auto pixels = gdk_pixbuf_get_pixels(pixbuf);
-	size_t n = command.getWidth() * command.getHeight() * 4;
-	auto input = command.getTextValue().data();
-#if 0
-	memcpy(pixels, input, n);
-#else
-	for (size_t i = 0; i < n; i += 4) {
-	  pixels[i + 0] = input[i + 2];
-	  pixels[i + 1] = input[i + 1];
-	  pixels[i + 2] = input[i + 0];
-	  pixels[i + 3] = input[i + 3];
-	}
-#endif
-	auto image = GTK_IMAGE(view);
-	gtk_image_set_from_pixbuf(image, pixbuf);
-      }
-    }
-      break;
-
-    case Command::HISTORY_GO_BACK:
-    case Command::HISTORY_GO_FORWARD: {
-      auto & app = getApplication();
-      int id;
-      if (command.getType() == Command::HISTORY_GO_BACK) {
-	id = app.popViewBackHistory();
-      } else {
-	id = app.popViewForwardHistory();
-      }
-      if (id) {
-	cerr << "id = " << id << endl;
-	auto view = views_by_id[id];
-	if (view) {
-	  cerr << "found view\n";
-	  auto & app = getApplication();
-	  app.setActiveViewId(id);
-	  gtk_stack_set_visible_child((GtkStack*)stack, view);
-
-	  if (header) {
-	    string title;
-	    auto e = getPlatform().getRegisteredElement(id);
-	    if (e) {
-	      auto e2 = dynamic_cast<FWViewBase*>(e);
-	      if (e2) title = e2->getTitle().c_str();
-	    }
-	    gtk_header_bar_set_subtitle((GtkHeaderBar*)header, title.c_str());
-	  }
-	}
-      }
-    }
-      break;
-      
-    case Command::SET_INT_VALUE: {
-      auto view = views_by_id[command.getInternalId()];
-      if (!view) {
-	cerr << "no view " << command.getInternalId() << " for SET_INT_VALUE\n";
-      } else if (gtk_widget_get_parent(view) == stack) {
+  int sendCommands(const vector<Command> & commands) {
+    int commandRv = 0;
+    for (auto & command : commands) {
+      if (command.getType() == Command::CREATE_FRAMEVIEW || command.getType() == Command::CREATE_OPENGL_VIEW) {
 	auto & app = getApplication();
-	app.addToHistory(app.getActiveViewId());
-	app.setActiveViewId(command.getInternalId());
-	gtk_stack_set_visible_child((GtkStack*)stack, view);
-	gtk_header_bar_set_subtitle((GtkHeaderBar*)header, command.getTextValue().c_str());
-      } else if (GTK_IS_SWITCH(view)) {
-	gtk_switch_set_active((GtkSwitch*)view, command.getValue() ? true : false);
-      } else {
-	cerr << "got spurious int value\n";
+	if (!app.getActiveViewId()) {
+	  app.setActiveViewId(command.getChildInternalId());
+	}
       }
-    }
-      break;
+    
+      switch (command.getType()) {
+      case Command::QUIT_APP:
+	exit(0);
+	break;
+
+      case Command::CREATE_APPLICATION: {
+	cerr << "creating stack\n";
+	assert(window);
+	stack = gtk_stack_new();
+	gtk_stack_set_transition_type((GtkStack*)stack, GTK_STACK_TRANSITION_TYPE_SLIDE_LEFT_RIGHT);
+	// ignore parent id
+	gtk_container_add(GTK_CONTAINER(window), stack);
+
+	addView(0, command.getChildInternalId(), stack);
+
+	gtk_widget_show_all(window);
+      }
+	break;
+
+      case Command::CREATE_TIMER: {
+	cerr << "creating timer for " << command.getValue() << endl;
+	g_timeout_add(command.getValue(), timer_callback, this);
+      }
+	break;
       
-    case Command::SET_TEXT_VALUE: {
-      auto view = views_by_id[command.getInternalId()];
-      if (!view) {
-	cerr << "view not found for SET_TEXT_VALUE\n";
-      } else if (GTK_IS_LABEL(view)) {
-	gtk_label_set_text((GtkLabel*)view, command.getTextValue().c_str());
-      } else if (GTK_IS_TEXT_VIEW(view)) {
-	auto buffer = gtk_text_view_get_buffer((GtkTextView*)view);
-	gtk_text_buffer_set_text(buffer, command.getTextValue().c_str(),
-				 command.getTextValue().size());
-      } else if (GTK_IS_HEADER_BAR(view)) {
-	gtk_header_bar_set_subtitle((GtkHeaderBar*)view, command.getTextValue().c_str());
-      } else if (GTK_IS_BUTTON(view)) {
-	gtk_button_set_label(GTK_BUTTON(view), command.getTextValue().c_str());
-      } else if (GTK_IS_IMAGE(view)) {
-	auto & uri_text = command.getTextValue();
-	URI uri(uri_text);
-	if (uri.getScheme() == "http" || uri.getScheme() == "https") {
-	  int w = gtk_widget_get_allocated_width(view);
-	  requestImage(command.getInternalId(), uri_text, w);
-	} else {
-	  auto pixbuf = loadPixbuf(uri_text);
-	  if (pixbuf) {
-	    gtk_image_set_from_pixbuf(GTK_IMAGE(view), pixbuf);
+      case Command::CREATE_TEXTFIELD: {
+	auto textfield = gtk_entry_new();
+	g_signal_connect(textfield, "changed", G_CALLBACK(send_text_value), this);
+	addView(command, textfield);
+      }
+	break;
+
+      case Command::CREATE_TEXTVIEW: {
+	auto textview = gtk_text_view_new();
+	addView(command, textview);
+      }
+	break;
+
+      case Command::CREATE_GRIDVIEW:
+      case Command::CREATE_LISTVIEW: {
+	auto view = gtk_scrolled_window_new(0, 0);
+	gtk_scrolled_window_set_min_content_height((GtkScrolledWindow*)view, 400);
+	auto store = gtk_tree_store_new(5, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
+	auto gridview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(store));
+	gtk_tree_view_set_activate_on_single_click(GTK_TREE_VIEW(gridview), 1);
+	// gtk_widget_set_vexpand((GtkWidget*)gridview, 1);
+	// gtk_widget_set_hexpand((GtkWidget*)gridview, 1);
+	// g_signal_connect(gridview, "cursor-changed", G_CALLBACK(send_selection_value), this);
+	g_signal_connect(gridview, "row-activated", G_CALLBACK(send_activation_value), this);
+	gtk_container_add(GTK_CONTAINER(view), gridview);
+	addView(command, view, true);
+	if (initial_view_shown) gtk_widget_show(gridview);
+      }
+	break;
+
+      case Command::ADD_SHEET: {
+	auto & sheets = sheets_by_id[command.getInternalId()];
+	sheets.push_back({ command.getTextValue(), false });
+      }
+	break;
+
+      case Command::RESHAPE_TABLE: {
+	cerr << "RESHAPE_TABLE\n";
+	size_t max_size = command.getValue();
+	auto view = views_by_id[command.getInternalId()];
+	if (view) {
+	  if (GTK_IS_BIN(view)) {
+	    cerr << "is bin\n";
+	    auto treeview = gtk_bin_get_child(GTK_BIN(view));
+	    auto model = gtk_tree_view_get_model((GtkTreeView*)treeview);
+	  
+	    auto & sheets = sheets_by_id[command.getInternalId()];
+	    for (int i = int(sheets.size()) - 1; i >= max_size; i--) {
+	      auto & sheet = sheets[i];
+	      if (sheet.is_created) {
+		sheet.is_created = false;
+		GtkTreeIter parent;
+		gtk_tree_model_iter_nth_child(model, &parent, 0, i);
+		gtk_tree_store_remove(GTK_TREE_STORE(model), &parent);
+	      }	  
+	    }
 	  }
 	}
-      } else {
-	cerr << "unable to set text value: " << command.getTextValue() << "\n";
-	// assert(0);
       }
-    }
-      break;
-
-    case Command::SET_TEXT_DATA: {
-      auto view = views_by_id[command.getInternalId()];
-      assert(view);
-      if (GTK_IS_BIN(view)) {
-	auto treeview = gtk_bin_get_child(GTK_BIN(view));
-	assert(GTK_IS_TREE_VIEW(treeview));
-	if (GTK_IS_TREE_VIEW(treeview)) {
+	break;
+      
+      case Command::RESHAPE_SHEET: {
+	cerr << "RESHAPE_SHEET\n";
+	size_t max_size = command.getValue();
+	auto view = views_by_id[command.getInternalId()];
+	assert(view);
+	if (view) {
 	  auto & sheets = sheets_by_id[command.getInternalId()];
-	  if (command.getSheet() < sheets.size() || sheets.empty()) {
+	  if (command.getSheet() < sheets.size()) {
+	    auto treeview = gtk_bin_get_child(GTK_BIN(view));
 	    auto model = gtk_tree_view_get_model((GtkTreeView*)treeview);
+	    GtkTreeIter iter, parent;
+	    gtk_tree_model_iter_nth_child(model, &parent, 0, command.getSheet());
+	    while (gtk_tree_model_iter_nth_child(model, &iter, &parent, max_size)) {
+	      gtk_tree_store_remove(GTK_TREE_STORE(model), &iter);
+	    }
+	  }	  
+	}
+      }
+	break;
+      
+      case Command::ADD_COLUMN: {
+	auto view = views_by_id[command.getInternalId()];
+	if (view) {
+	  if (GTK_IS_ACTION_BAR(view)) {
+	    auto button = gtk_button_new_from_icon_name("properties", GTK_ICON_SIZE_BUTTON);
+	    widget_values[button] = command.getValue();
+	    g_signal_connect(button, "clicked", G_CALLBACK(on_bar_button), this);
+	    gtk_action_bar_pack_start((GtkActionBar*)view, button);
+	    gtk_widget_show(button);
+	  } else {
+	    auto treeview = gtk_bin_get_child(GTK_BIN(view));
+	    if (!treeview) {
+	      cerr << "no actual child for ADD_COLUMN\n";
+	    } else if (!GTK_IS_TREE_VIEW(treeview)) {
+	      cerr << "actual child is not tree view\n";
+	    } else {
+	      int i = gtk_tree_view_get_n_columns(GTK_TREE_VIEW(treeview));
+	      auto renderer = gtk_cell_renderer_text_new();
+	      float xalign = 0.0f;
+	      bool autosize = false;
+	      if (command.getValue() == 2) {
+		xalign = 1.0f;
+		autosize = true;
+	      }
+	      gtk_cell_renderer_set_alignment(renderer, xalign, 0.0f);
+	      gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(treeview),
+							  -1,
+							  command.getTextValue().c_str(),
+							  renderer,
+							  "text", i, NULL);
+	      if (autosize) {
+		auto column = gtk_tree_view_get_column(GTK_TREE_VIEW(treeview), i);
+		gtk_tree_view_column_set_sizing(column, GTK_TREE_VIEW_COLUMN_AUTOSIZE);
+	      }
+	    }
+	  }
+	} else {
+	  cerr << "view not found for ADD_COLUMN\n";
+	}
+      }
+	break;
+
+      case Command::CREATE_PICKER: {
+	auto picker = gtk_combo_box_text_new();
+	g_signal_connect(picker, "changed", G_CALLBACK(send_combo_value), this);
+	addView(command, picker);
+      }
+	break;
+
+      case Command::ADD_OPTION: {
+	cerr << "ADD_OPTION\n";
+	auto view = views_by_id[command.getInternalId()];
+	if (view) {
+	  if (GTK_IS_HEADER_BAR(view)) {
+	    auto button = gtk_button_new_from_icon_name("properties", GTK_ICON_SIZE_BUTTON);
+	    widget_values[button] = command.getValue(); 
+	    g_signal_connect(button, "clicked", G_CALLBACK(on_bar_button), this);
+	    gtk_header_bar_pack_start((GtkHeaderBar*)view, button);
+	    gtk_widget_show(button);
+	  } else if (GTK_IS_COMBO_BOX_TEXT(view)) {
+	    auto av = gtk_combo_box_text_get_active_text((GtkComboBoxText*)view);
+	    string id = to_string(command.getValue());
+	    gtk_combo_box_text_append((GtkComboBoxText*)view,
+				      id.c_str(), command.getTextValue().c_str());
+	    if (!av) {
+	      gtk_combo_box_set_active((GtkComboBox*)view, 0);
+	    }		      
+	  }
+	}
+      }
+	break;
+      
+      case Command::CREATE_BUTTON: {
+	auto button = gtk_button_new_with_label(command.getTextValue().c_str());
+	g_signal_connect(button, "clicked", G_CALLBACK(send_int_value), this);
+	addView(command, button);
+      }
+	break;
+      
+      case Command::CREATE_CHECKBOX: {
+	auto cb = gtk_check_button_new_with_label(command.getTextValue().c_str());
+	g_signal_connect(cb, "toggled", G_CALLBACK(send_toggled_value), this);
+	addView(command, cb);
+      }
+	break;
+      
+      case Command::CREATE_TEXT: {
+	auto label = gtk_label_new(command.getTextValue().c_str());
+	gtk_label_set_line_wrap((GtkLabel*)label, true);
+	gtk_label_set_xalign((GtkLabel*)label, 0.0f);
+	gtk_label_set_yalign((GtkLabel*)label, 0.0f);
+	gtk_label_set_justify((GtkLabel*)label, GTK_JUSTIFY_LEFT);
+	addView(command, label);
+      }
+	break;
+
+      case Command::CREATE_LINK: {
+	auto link = gtk_link_button_new_with_label(command.getTextValue().c_str(),
+						   command.getTextValue2().c_str());
+	addView(command, link);
+      }
+	break;      
+
+      case Command::CREATE_FRAME_LAYOUT:
+      case Command::CREATE_RELATIVE_LAYOUT: 
+      case Command::CREATE_LINEAR_LAYOUT: {
+	auto box = gtk_box_new(command.getValue() == 1 ? GTK_ORIENTATION_VERTICAL : GTK_ORIENTATION_HORIZONTAL, 0);
+
+#if 0
+	event_box = gtk_event_box_new ();
+	gtk_container_add (GTK_CONTAINER (event_box), image);
+	g_signal_connect(G_OBJECT (event_box),
+			 "button_press_event",
+			 G_CALLBACK (button_press_callback),
+			 image);
+#endif
+	addView(command, box);
+      }
+	break;
+	
+      case Command::CREATE_TABLE_LAYOUT: {
+	auto layout = gtk_table_new(1, command.getValue(), false);
+	gtk_table_set_homogeneous((GtkTable*)layout, false);
+	addView(command, layout);
+      }
+	break;
+
+      case Command::CREATE_AUTO_COLUMN_LAYOUT: {
+	auto layout = gtk_flow_box_new();
+	gtk_flow_box_set_homogeneous((GtkFlowBox*)layout, false);
+	gtk_orientable_set_orientation((GtkOrientable*)layout, GTK_ORIENTATION_HORIZONTAL);
+	gtk_flow_box_set_selection_mode((GtkFlowBox*)layout, GTK_SELECTION_NONE);
+	addView(command, layout);
+      }
+	break;
+
+      case Command::CREATE_PANEL: {
+	auto frame = gtk_frame_new(0);
+	addView(command, frame);
+      }
+	break;
+
+      case Command::CREATE_NAVIGATIONBAR: {
+	auto bar = gtk_action_bar_new();
+	addView(command, bar);
+      }
+	break;
+      
+      case Command::CREATE_ACTIONBAR: {
+	if (!header) {
+	  header = gtk_header_bar_new();
+	  gtk_header_bar_set_title((GtkHeaderBar*)header, "App");
+	  gtk_header_bar_set_show_close_button((GtkHeaderBar*)header, 1);
+	  gtk_header_bar_set_decoration_layout((GtkHeaderBar*)header, "close");
+
+	  auto box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+	  gtk_style_context_add_class(gtk_widget_get_style_context(box), "linked");
+	  auto previous = gtk_button_new_from_icon_name("go-previous", GTK_ICON_SIZE_BUTTON);
+	  auto next = gtk_button_new_from_icon_name("go-next", GTK_ICON_SIZE_BUTTON);
+	  auto settings = gtk_button_new_from_icon_name("settings", GTK_ICON_SIZE_BUTTON);
+
+	  g_signal_connect(previous, "clicked", G_CALLBACK(on_previous_button), this);
+	  g_signal_connect(next, "clicked", G_CALLBACK(on_next_button), this);
+	  g_signal_connect(settings, "clicked", G_CALLBACK(on_settings_button), this);
+
+	  gtk_box_pack_start((GtkBox*)box, previous, 0, 0, 0);
+	  gtk_box_pack_start((GtkBox*)box, next, 0, 0, 0);
+	  gtk_box_pack_start((GtkBox*)box, settings, 0, 0, 0);
+	
+	  gtk_header_bar_pack_start((GtkHeaderBar*)header, box);
+	
+	  gtk_widget_show_all(header);
+	  gtk_window_set_titlebar(GTK_WINDOW(window), header);
+
+	  addView(0, command.getChildInternalId(), header);
+	}
+      }
+	break;
+
+      case Command::CREATE_SWITCH: {
+	auto s = gtk_switch_new();
+	g_signal_connect(s, "notify::active", G_CALLBACK(send_bool_value), this);
+
+	addView(command, s);
+      }
+	break;
+
+      case Command::CREATE_IMAGEVIEW: {
+	GtkWidget * image = gtk_image_new();
+	addView(command, image, true);
+
+	g_signal_connect(G_OBJECT(image), "size-allocate", G_CALLBACK(on_size_allocate), this);
+
+	auto & uri_text = command.getTextValue();
+	if (!uri_text.empty()) {
+	  URI uri(uri_text);
+	  if (uri.getScheme() == "http" || uri.getScheme() == "https") {
+	    addImageUrl(command.getChildInternalId(),
+			command.getWidth(), command.getHeight(), uri_text);
+	  } else {
+	    auto pixbuf = loadPixbuf(uri_text);
+	    if (pixbuf) {
+	      gtk_image_set_from_pixbuf(GTK_IMAGE(image), pixbuf);
+	    }
+	  }
+	}
+      }
+	break;
+
+      case Command::SET_IMAGE: {
+	auto view = views_by_id[command.getInternalId()];
+	if (view && command.getValue()) {
+	  canvas::InternalFormat format = (canvas::InternalFormat)command.getValue();
+	  bool has_alpha = true; // format == canvas::RGBA8;
+	  GdkPixbuf * pixbuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB,
+					      has_alpha,
+					      8,
+					      command.getWidth(),
+					      command.getHeight());
+	  assert(pixbuf);
+	  auto pixels = gdk_pixbuf_get_pixels(pixbuf);
+	  size_t n = command.getWidth() * command.getHeight() * 4;
+	  auto input = command.getTextValue().data();
+#if 0
+	  memcpy(pixels, input, n);
+#else
+	  for (size_t i = 0; i < n; i += 4) {
+	    pixels[i + 0] = input[i + 2];
+	    pixels[i + 1] = input[i + 1];
+	    pixels[i + 2] = input[i + 0];
+	    pixels[i + 3] = input[i + 3];
+	  }
+#endif
+	  auto image = GTK_IMAGE(view);
+	  gtk_image_set_from_pixbuf(image, pixbuf);
+	}
+      }
+	break;
+
+      case Command::HISTORY_GO_BACK:
+      case Command::HISTORY_GO_FORWARD: {
+	auto & app = getApplication();
+	int id;
+	if (command.getType() == Command::HISTORY_GO_BACK) {
+	  id = app.popViewBackHistory();
+	} else {
+	  id = app.popViewForwardHistory();
+	}
+	if (id) {
+	  cerr << "id = " << id << endl;
+	  auto view = views_by_id[id];
+	  if (view) {
+	    cerr << "found view\n";
+	    auto & app = getApplication();
+	    app.setActiveViewId(id);
+	    gtk_stack_set_visible_child((GtkStack*)stack, view);
+
+	    if (header) {
+	      string title;
+	      auto e = getPlatform().getRegisteredElement(id);
+	      if (e) {
+		auto e2 = dynamic_cast<FWViewBase*>(e);
+		if (e2) title = e2->getTitle().c_str();
+	      }
+	      gtk_header_bar_set_subtitle((GtkHeaderBar*)header, title.c_str());
+	    }
+	  }
+	}
+      }
+	break;
+      
+      case Command::SET_INT_VALUE: {
+	auto view = views_by_id[command.getInternalId()];
+	if (!view) {
+	  cerr << "no view " << command.getInternalId() << " for SET_INT_VALUE\n";
+	} else if (gtk_widget_get_parent(view) == stack) {
+	  auto & app = getApplication();
+	  app.addToHistory(app.getActiveViewId());
+	  app.setActiveViewId(command.getInternalId());
+	  gtk_stack_set_visible_child((GtkStack*)stack, view);
+	  gtk_header_bar_set_subtitle((GtkHeaderBar*)header, command.getTextValue().c_str());
+	} else if (GTK_IS_SWITCH(view)) {
+	  gtk_switch_set_active((GtkSwitch*)view, command.getValue() ? true : false);
+	} else {
+	  cerr << "got spurious int value\n";
+	}
+      }
+	break;
+      
+      case Command::SET_TEXT_VALUE: {
+	auto view = views_by_id[command.getInternalId()];
+	if (!view) {
+	  cerr << "view not found for SET_TEXT_VALUE\n";
+	} else if (GTK_IS_LABEL(view)) {
+	  gtk_label_set_text((GtkLabel*)view, command.getTextValue().c_str());
+	} else if (GTK_IS_TEXT_VIEW(view)) {
+	  auto buffer = gtk_text_view_get_buffer((GtkTextView*)view);
+	  gtk_text_buffer_set_text(buffer, command.getTextValue().c_str(),
+				   command.getTextValue().size());
+	} else if (GTK_IS_HEADER_BAR(view)) {
+	  gtk_header_bar_set_subtitle((GtkHeaderBar*)view, command.getTextValue().c_str());
+	} else if (GTK_IS_BUTTON(view)) {
+	  gtk_button_set_label(GTK_BUTTON(view), command.getTextValue().c_str());
+	} else if (GTK_IS_IMAGE(view)) {
+	  auto & uri_text = command.getTextValue();
+	  URI uri(uri_text);
+	  if (uri.getScheme() == "http" || uri.getScheme() == "https") {
+	    int w = gtk_widget_get_allocated_width(view);
+	    requestImage(command.getInternalId(), uri_text, w);
+	  } else {
+	    auto pixbuf = loadPixbuf(uri_text);
+	    if (pixbuf) {
+	      gtk_image_set_from_pixbuf(GTK_IMAGE(view), pixbuf);
+	    }
+	  }
+	} else {
+	  cerr << "unable to set text value: " << command.getTextValue() << "\n";
+	  // assert(0);
+	}
+      }
+	break;
+
+      case Command::SET_TEXT_DATA: {
+	auto view = views_by_id[command.getInternalId()];
+	assert(view);
+	if (GTK_IS_BIN(view)) {
+	  auto treeview = gtk_bin_get_child(GTK_BIN(view));
+	  assert(GTK_IS_TREE_VIEW(treeview));
+	  if (GTK_IS_TREE_VIEW(treeview)) {
+	    auto & sheets = sheets_by_id[command.getInternalId()];
+	    if (command.getSheet() < sheets.size() || sheets.empty()) {
+	      auto model = gtk_tree_view_get_model((GtkTreeView*)treeview);
 	      
-	    GtkTreeIter iter;
-	    if (!sheets.empty()) {
-	      for (unsigned int si = 0; si <= command.getSheet(); si++) {
-		auto & sheet = sheets[si];
-		if (!sheet.is_created) {
-		  sheet.is_created = true;
-		  GtkTreeIter iter;
+	      GtkTreeIter iter;
+	      if (!sheets.empty()) {
+		for (unsigned int si = 0; si <= command.getSheet(); si++) {
+		  auto & sheet = sheets[si];
+		  if (!sheet.is_created) {
+		    sheet.is_created = true;
+		    GtkTreeIter iter;
+		    gtk_tree_store_append((GtkTreeStore*)model, &iter, 0);
+		    gtk_tree_store_set((GtkTreeStore*)model, &iter,
+				       0,
+				       sheet.name.c_str(),
+				       -1);
+		  }
+		}
+		
+		GtkTreeIter parent;
+		gtk_tree_model_iter_nth_child(model, &parent, 0, command.getSheet());
+		while (!gtk_tree_model_iter_nth_child(model, &iter, &parent, command.getRow())) {
+		  gtk_tree_store_append((GtkTreeStore*)model, &iter, &parent);
+		}
+	      } else {
+		while (!gtk_tree_model_iter_nth_child(model, &iter, 0, command.getRow())) {
 		  gtk_tree_store_append((GtkTreeStore*)model, &iter, 0);
-		  gtk_tree_store_set((GtkTreeStore*)model, &iter,
-				     0,
-				     sheet.name.c_str(),
-				     -1);
 		}
 	      }
-		
-	      GtkTreeIter parent;
-	      gtk_tree_model_iter_nth_child(model, &parent, 0, command.getSheet());
-	      while (!gtk_tree_model_iter_nth_child(model, &iter, &parent, command.getRow())) {
-		gtk_tree_store_append((GtkTreeStore*)model, &iter, &parent);
-	      }
-	    } else {
-	      while (!gtk_tree_model_iter_nth_child(model, &iter, 0, command.getRow())) {
-		gtk_tree_store_append((GtkTreeStore*)model, &iter, 0);
-	      }
+	      gtk_tree_store_set((GtkTreeStore*)model, &iter,
+				 command.getColumn(),
+				 command.getTextValue().c_str(),
+				 -1);
 	    }
-	    gtk_tree_store_set((GtkTreeStore*)model, &iter,
-			       command.getColumn(),
-			       command.getTextValue().c_str(),
-			       -1);
-	  }
-	} else {
-	  cerr << "unable to handle SET_TEXT_DATA\n";
-	}
-      }
-    }
-      break;
-      
-    case Command::CLEAR: {
-      auto view = views_by_id[command.getInternalId()];
-      assert(view);
-      if (GTK_IS_BIN(view)) {
-	auto it = sheets_by_id.find(command.getInternalId());
-	if (it != sheets_by_id.end()) {
-	  for (auto & sd : it->second) {
-	    sd.is_created = false;
+	  } else {
+	    cerr << "unable to handle SET_TEXT_DATA\n";
 	  }
 	}
-      
-	auto treeview = gtk_bin_get_child(GTK_BIN(view));
-	assert(GTK_IS_TREE_VIEW(treeview));
-	if (GTK_IS_TREE_VIEW(treeview)) {
-	  auto model = gtk_tree_view_get_model((GtkTreeView*)view);
-	  gtk_tree_store_clear((GtkTreeStore*)model);
-	}
-      } else if (GTK_IS_ENTRY(view)) {
-	gtk_entry_set_text((GtkEntry*)view, "");
       }
-    }
-      break;
+	break;
+      
+      case Command::CLEAR: {
+	auto view = views_by_id[command.getInternalId()];
+	assert(view);
+	if (GTK_IS_BIN(view)) {
+	  auto it = sheets_by_id.find(command.getInternalId());
+	  if (it != sheets_by_id.end()) {
+	    for (auto & sd : it->second) {
+	      sd.is_created = false;
+	    }
+	  }
+      
+	  auto treeview = gtk_bin_get_child(GTK_BIN(view));
+	  assert(GTK_IS_TREE_VIEW(treeview));
+	  if (GTK_IS_TREE_VIEW(treeview)) {
+	    auto model = gtk_tree_view_get_model((GtkTreeView*)view);
+	    gtk_tree_store_clear((GtkTreeStore*)model);
+	  }
+	} else if (GTK_IS_ENTRY(view)) {
+	  gtk_entry_set_text((GtkEntry*)view, "");
+	}
+      }
+	break;
 
 #if 0
-    case Command::SET_ENABLED: {
-      auto view = views_by_id[command.getInternalId()];
-      if (view) gtk_widget_set_sensitive(view, command.getValue() ? 1 : 0);
-    }
-      break;
+      case Command::SET_ENABLED: {
+	auto view = views_by_id[command.getInternalId()];
+	if (view) gtk_widget_set_sensitive(view, command.getValue() ? 1 : 0);
+      }
+	break;
 #endif
       
-    case Command::SET_VISIBILITY: {
-      auto view = views_by_id[command.getInternalId()];
-      if (view) {
-	if (command.getValue()) gtk_widget_show(view);
-	else gtk_widget_hide(view);
-      }
-    }
-      break;
-
-    case Command::SET_ERROR: {
-      auto view = views_by_id[command.getInternalId()];
-      if (view) {
-	auto context = gtk_widget_get_style_context(view);
-	if (command.getValue() != 0) {
-	  gtk_style_context_add_class(context, "error");
-	} else {
-	  gtk_style_context_remove_class(context, "error");
+      case Command::SET_VISIBILITY: {
+	auto view = views_by_id[command.getInternalId()];
+	if (view) {
+	  if (command.getValue()) gtk_widget_show(view);
+	  else gtk_widget_hide(view);
 	}
       }
-    }
-      break;
+	break;
 
-    case Command::SET_STYLE: {
-      setStyle(command.getInternalId(), Selector(command.getValue()), command.getTextValue(), command.getTextValue2());
-    }
-      break;
+      case Command::SET_ERROR: {
+	auto view = views_by_id[command.getInternalId()];
+	if (view) {
+	  auto context = gtk_widget_get_style_context(view);
+	  if (command.getValue() != 0) {
+	    gtk_style_context_add_class(context, "error");
+	  } else {
+	    gtk_style_context_remove_class(context, "error");
+	  }
+	}
+      }
+	break;
 
-    case Command::CREATE_DIALOG: {
-      GtkDialogFlags flags = GtkDialogFlags(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT);
-      auto dlg = gtk_dialog_new_with_buttons(command.getTextValue().c_str(),
-					     GTK_WINDOW(window),
+      case Command::SET_STYLE: {
+	setStyle(command.getInternalId(), Selector(command.getValue()), command.getTextValue(), command.getTextValue2());
+      }
+	break;
+
+      case Command::CREATE_DIALOG: {
+	GtkDialogFlags flags = GtkDialogFlags(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT);
+	auto dlg = gtk_dialog_new_with_buttons(command.getTextValue().c_str(),
+					       GTK_WINDOW(window),
+					       flags,
+					       0
+					       );
+	// gtk_window_set_modal(GTK_WINDOW(dlg), 1);
+	// gtk_window_set_transient_for(GTK_WINDOW(dlg), GTK_WINDOW(parent));
+	addView(0, command.getChildInternalId(), dlg);
+      }
+	break;
+
+      case Command::END_MODAL: {
+	auto it = views_by_id.find(command.getInternalId());
+	assert(it != views_by_id.end());
+	if (it != views_by_id.end()) {
+	  auto dialog = it->second;
+	  gtk_dialog_response(GTK_DIALOG(dialog), 0);
+	}
+      }
+	break;
+      
+      case Command::SHOW_DIALOG: {
+	auto it = views_by_id.find(command.getInternalId());
+	assert(it != views_by_id.end());
+	if (it != views_by_id.end()) {
+	  auto dialog = it->second;
+	  gtk_dialog_run(GTK_DIALOG(dialog));
+	  gtk_widget_destroy(dialog);
+	  views_by_id.erase(command.getInternalId());
+	}
+      }
+	break;
+      
+      case Command::SHOW_MESSAGE_DIALOG: {
+	GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
+	auto dialog = gtk_message_dialog_new(GTK_WINDOW(window),
 					     flags,
-					     0
+					     GTK_MESSAGE_ERROR,
+					     GTK_BUTTONS_CLOSE,
+					     "%s",
+					     command.getTextValue2().c_str()
 					     );
-      // gtk_window_set_modal(GTK_WINDOW(dlg), 1);
-      // gtk_window_set_transient_for(GTK_WINDOW(dlg), GTK_WINDOW(parent));
-      addView(0, command.getChildInternalId(), dlg);
-    }
-      break;
-
-    case Command::END_MODAL: {
-      auto it = views_by_id.find(command.getInternalId());
-      assert(it != views_by_id.end());
-      if (it != views_by_id.end()) {
-	auto dialog = it->second;
-	gtk_dialog_response(GTK_DIALOG(dialog), 0);
+	gtk_dialog_run (GTK_DIALOG (dialog));
+	gtk_widget_destroy (dialog);
       }
-    }
-      break;
-      
-    case Command::SHOW_DIALOG: {
-      auto it = views_by_id.find(command.getInternalId());
-      assert(it != views_by_id.end());
-      if (it != views_by_id.end()) {
-	auto dialog = it->second;
-	gtk_dialog_run(GTK_DIALOG(dialog));
-	gtk_widget_destroy(dialog);
-	views_by_id.erase(command.getInternalId());
-      }
-    }
-      break;
-      
-    case Command::SHOW_MESSAGE_DIALOG: {
-      GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
-      auto dialog = gtk_message_dialog_new(GTK_WINDOW(window),
-					   flags,
-					   GTK_MESSAGE_ERROR,
-					   GTK_BUTTONS_CLOSE,
-					   "%s",
-					   command.getTextValue2().c_str()
-					   );
-      gtk_dialog_run (GTK_DIALOG (dialog));
-      gtk_widget_destroy (dialog);
-    }
-      break;
+	break;
 
-    case Command::SHOW_INPUT_DIALOG: {
-      GtkDialogFlags flags = GtkDialogFlags(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT);
-      auto dialog = gtk_dialog_new_with_buttons(command.getTextValue().c_str(),
-						GTK_WINDOW(window),
-						flags,
-						"_OK",
-						GTK_RESPONSE_ACCEPT,
-						"_Cancel",
-						GTK_RESPONSE_REJECT,
-						0
-						);
+      case Command::SHOW_INPUT_DIALOG: {
+	GtkDialogFlags flags = GtkDialogFlags(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT);
+	auto dialog = gtk_dialog_new_with_buttons(command.getTextValue().c_str(),
+						  GTK_WINDOW(window),
+						  flags,
+						  "_OK",
+						  GTK_RESPONSE_ACCEPT,
+						  "_Cancel",
+						  GTK_RESPONSE_REJECT,
+						  0
+						  );
 
-      auto vbox = gtk_vbox_new(TRUE, TRUE);
+	auto vbox = gtk_vbox_new(TRUE, TRUE);
       
-      auto label = gtk_label_new(command.getTextValue2().c_str());
-      gtk_widget_show(label);
+	auto label = gtk_label_new(command.getTextValue2().c_str());
+	gtk_widget_show(label);
  
-      auto entry = gtk_entry_new ();
-      gtk_widget_show(entry);
+	auto entry = gtk_entry_new ();
+	gtk_widget_show(entry);
 
-      gtk_box_pack_start(GTK_BOX(vbox), label, TRUE, TRUE, 0);
-      gtk_box_pack_start (GTK_BOX(vbox), entry, TRUE, TRUE, 0);
-      gtk_widget_show (vbox);
+	gtk_box_pack_start(GTK_BOX(vbox), label, TRUE, TRUE, 0);
+	gtk_box_pack_start (GTK_BOX(vbox), entry, TRUE, TRUE, 0);
+	gtk_widget_show (vbox);
 
-      auto a = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
-      gtk_container_add(GTK_CONTAINER(a), vbox);
+	auto a = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
+	gtk_container_add(GTK_CONTAINER(a), vbox);
       
-      gint result = gtk_dialog_run(GTK_DIALOG (dialog));
-      if (result == GTK_RESPONSE_ACCEPT) {
-	setModalResultValue(1);
-	setModalResultText(gtk_entry_get_text((GtkEntry*)entry));
-      } else {
-	setModalResultValue(0);
-	setModalResultText("");
-      }
-      
-      gtk_widget_destroy (dialog);
-
-      return getModalResultValue();
-    }
-      break;
-
-    case Command::CREATE_TOAST: {
-      // GApplication *application = g_application_new ("hello.world", G_APPLICATION_FLAGS_NONE);
-      // g_application_register (application, NULL, NULL);
-      GNotification * notification = g_notification_new(command.getTextValue().c_str());
-      g_notification_set_body(notification, command.getTextValue().c_str());
-      GIcon *icon = g_themed_icon_new ("dialog-information");
-      g_notification_set_icon (notification, icon);
-      g_application_send_notification(G_APPLICATION(gtk_app), NULL, notification);
-      g_object_unref (icon);
-      g_object_unref (notification);
-    }
-      break;
-
-    case Command::CREATE_FRAMEVIEW: {
-      auto box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
-      addView(0, command.getChildInternalId(), box);
-      string s = "form" + to_string(command.getChildInternalId());
-      gtk_stack_add_named((GtkStack *)stack, box, s.c_str());
-
-      if (!initial_view_shown) {
-	if (header) {
-	  gtk_header_bar_set_subtitle((GtkHeaderBar*)header, command.getTextValue().c_str());
+	gint result = gtk_dialog_run(GTK_DIALOG (dialog));
+	if (result == GTK_RESPONSE_ACCEPT) {
+	  setModalResultValue(1);
+	  setModalResultText(gtk_entry_get_text((GtkEntry*)entry));
+	} else {
+	  setModalResultValue(0);
+	  setModalResultText("");
 	}
-	gtk_stack_set_visible_child((GtkStack*)stack, box);
-	gtk_widget_show_all(window);
-	initial_view_shown = true;
-      }
-}
-      break;
       
-    case Command::CREATE_SCROLL_LAYOUT: {
-      auto sw = gtk_scrolled_window_new(0, 0);
-      // gtk_scrolled_window_set_min_content_height((GtkScrolledWindow*)sw, 400);
-      gtk_scrolled_window_set_policy((GtkScrolledWindow*)sw, GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
-      addView(command, sw, true);
-    }
-      break;      
+	gtk_widget_destroy (dialog);
 
-    case Command::DELETE_ELEMENT: {
-      auto it = views_by_id.find(command.getChildInternalId());
-      if (it != views_by_id.end()) {
-	gtk_widget_destroy(it->second); // autom. removed from container
-	views_by_id.erase(it);
+	commandRv = getModalResultValue();
+
       }
-    }
-      break;
+	break;
 
-    case Command::LAUNCH_BROWSER: {
+      case Command::CREATE_TOAST: {
+	// GApplication *application = g_application_new ("hello.world", G_APPLICATION_FLAGS_NONE);
+	// g_application_register (application, NULL, NULL);
+	GNotification * notification = g_notification_new(command.getTextValue().c_str());
+	g_notification_set_body(notification, command.getTextValue().c_str());
+	GIcon *icon = g_themed_icon_new ("dialog-information");
+	g_notification_set_icon (notification, icon);
+	g_application_send_notification(G_APPLICATION(gtk_app), NULL, notification);
+	g_object_unref (icon);
+	g_object_unref (notification);
+      }
+	break;
+
+      case Command::CREATE_FRAMEVIEW: {
+	auto box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+	addView(0, command.getChildInternalId(), box);
+	string s = "form" + to_string(command.getChildInternalId());
+	gtk_stack_add_named((GtkStack *)stack, box, s.c_str());
+
+	if (!initial_view_shown) {
+	  if (header) {
+	    gtk_header_bar_set_subtitle((GtkHeaderBar*)header, command.getTextValue().c_str());
+	  }
+	  gtk_stack_set_visible_child((GtkStack*)stack, box);
+	  gtk_widget_show_all(window);
+	  initial_view_shown = true;
+	}
+      }
+	break;
+      
+      case Command::CREATE_SCROLL_LAYOUT: {
+	auto sw = gtk_scrolled_window_new(0, 0);
+	// gtk_scrolled_window_set_min_content_height((GtkScrolledWindow*)sw, 400);
+	gtk_scrolled_window_set_policy((GtkScrolledWindow*)sw, GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
+	addView(command, sw, true);
+      }
+	break;      
+
+      case Command::DELETE_ELEMENT: {
+	auto it = views_by_id.find(command.getChildInternalId());
+	if (it != views_by_id.end()) {
+	  gtk_widget_destroy(it->second); // autom. removed from container
+	  views_by_id.erase(it);
+	}
+      }
+	break;
+
+      case Command::LAUNCH_BROWSER: {
 #if 0
-      gtk_show_uri_on_window(GTK_WINDOW(window),
-			     command.getTextValue().c_str(),
-			     GDK_CURRENT_TIME,
-			     0);
+	gtk_show_uri_on_window(GTK_WINDOW(window),
+			       command.getTextValue().c_str(),
+			       GDK_CURRENT_TIME,
+			       0);
 #else
-      gtk_show_uri(0,
-		   command.getTextValue().c_str(),
-		   GDK_CURRENT_TIME,
-		   0);
+	gtk_show_uri(0,
+		     command.getTextValue().c_str(),
+		     GDK_CURRENT_TIME,
+		     0);
 #endif
-    }
-      break;
+      }
+	break;
       
-    default:
-      break;
+      default:
+	break;
+      }
     }
-    return 0;
+    return commandRv;
   }
 
   PangoFontDescription * getFont(int view_id) {
@@ -1396,14 +1403,18 @@ GtkMainThread::send_activation_value(GtkTreeView * treeview, GtkTreePath * path,
 void
 GtkMainThread::on_previous_button(GtkWidget * widget, gpointer data) {
   GtkMainThread * mainThread = (GtkMainThread*)data;
-  mainThread->sendCommand(Command(Command::HISTORY_GO_BACK, 0));  
+  vector<Command> commands;
+  commands.push_back(Command(Command::HISTORY_GO_BACK, 0));
+  mainThread->sendCommands(commands);  
 }
 
 void
 GtkMainThread::on_next_button(GtkWidget * widget, gpointer data) {
   cerr << "got next\n";
   GtkMainThread * mainThread = (GtkMainThread*)data;
-  mainThread->sendCommand(Command(Command::HISTORY_GO_FORWARD, 0));  
+  vector<Command> commands;
+  commands.push_back(Command(Command::HISTORY_GO_FORWARD, 0));
+  mainThread->sendCommands(commands);
 }
 
 void

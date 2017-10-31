@@ -155,41 +155,43 @@ public:
     return std::make_shared<AndroidThread>(this, &(getPlatform()), application, javaCache, asset_manager, runnable);
   }
 
-  int sendCommand(const Command & command) override {
-    if (command.getType() == Command::CREATE_FRAMEVIEW || command.getType() == Command::CREATE_OPENGL_VIEW) {
-      auto & app = getApplication();
-      if (!app.getActiveViewId()) {
-        app.setActiveViewId(command.getChildInternalId());
+  int sendCommands(const vector<Command> & commands) override {
+    int commandRv = 0; 
+    for (auto & command : commands) {
+      if (command.getType() == Command::CREATE_FRAMEVIEW || command.getType() == Command::CREATE_OPENGL_VIEW) {
+	auto & app = getApplication();
+	if (!app.getActiveViewId()) {
+	  app.setActiveViewId(command.getChildInternalId());
+	}
+      }
+      
+      int commandTypeId = int(command.getType());
+      auto textValue = command.getTextValue();
+      auto textValue2 = command.getTextValue2();
+      jbyteArray jtextValue = 0, jtextValue2 = 0;
+      if (!textValue.empty()) jtextValue = convertToByteArray(myEnv, textValue);
+      if (!textValue2.empty()) jtextValue2 = convertToByteArray(myEnv, textValue2);
+      
+      jobject jcommand = myEnv->NewObject(javaCache->nativeCommandClass, javaCache->nativeListCommandConstructor, javaCache->framework, commandTypeId, command.getInternalId(), command.getChildInternalId(), command.getValue(), jtextValue, jtextValue2, command.getFlags(), command.getRow(), command.getColumn(), command.getSheet(), command.getWidth(), command.getHeight());
+      myEnv->CallStaticVoidMethod(javaCache->frameworkClass, javaCache->sendCommandMethod, javaCache->framework, jcommand);
+      
+      myEnv->DeleteLocalRef(jcommand);
+      if (jtextValue) myEnv->DeleteLocalRef(jtextValue);
+      if (jtextValue2) myEnv->DeleteLocalRef(jtextValue2);
+      
+      if (command.getType() == Command::SHOW_DIALOG ||
+	  command.getType() == Command::SHOW_MESSAGE_DIALOG ||
+	  command.getType() == Command::SHOW_INPUT_DIALOG ||
+	  command.getType() == Command::SHOW_ACTION_SHEET) {
+	setModalResultValue(0);
+	setModalResultText("");
+	startEventLoop();
+	commandRv = getModalResultValue();
+      } else if (command.getType() == Command::END_MODAL) {
+	exit_loop = true;
       }
     }
-
-    int commandTypeId = int(command.getType());
-    auto textValue = command.getTextValue();
-    auto textValue2 = command.getTextValue2();
-    jbyteArray jtextValue = 0, jtextValue2 = 0;
-    if (!textValue.empty()) jtextValue = convertToByteArray(myEnv, textValue);
-    if (!textValue2.empty()) jtextValue2 = convertToByteArray(myEnv, textValue2);
-
-    // SET_TEXT_VALUE check and new listcommand constructor should be refactored. ListView creation needs work
-    jobject jcommand = myEnv->NewObject(javaCache->nativeCommandClass, javaCache->nativeListCommandConstructor, javaCache->framework, commandTypeId, command.getInternalId(), command.getChildInternalId(), command.getValue(), jtextValue, jtextValue2, command.getFlags(), command.getRow(), command.getColumn(), command.getSheet(), command.getWidth(), command.getHeight());
-    myEnv->CallStaticVoidMethod(javaCache->frameworkClass, javaCache->sendCommandMethod, javaCache->framework, jcommand);
-
-    myEnv->DeleteLocalRef(jcommand);
-    if (jtextValue) myEnv->DeleteLocalRef(jtextValue);
-    if (jtextValue2) myEnv->DeleteLocalRef(jtextValue2);
-
-    if (command.getType() == Command::SHOW_DIALOG ||
-        command.getType() == Command::SHOW_MESSAGE_DIALOG ||
-        command.getType() == Command::SHOW_INPUT_DIALOG ||
-        command.getType() == Command::SHOW_ACTION_SHEET) {
-      setModalResultValue(0);
-      setModalResultText("");
-      startEventLoop();
-      return getModalResultValue();
-    } else if (command.getType() == Command::END_MODAL) {
-      exit_loop = true;
-    }
-    return 0;
+    return commandRv;
   }
 
   AAssetManager * getAssetManager() const { return asset_manager; }

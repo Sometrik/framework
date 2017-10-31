@@ -51,6 +51,8 @@ class Element : public EventHandler {
     return style(Selector::NORMAL, key, value);
   }
 
+  void begin();
+  void commit();
   int sendCommand(const Command & command);
 
   void onEvent(Event & ev) override;

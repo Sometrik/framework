@@ -44,7 +44,7 @@ class PlatformThread : public Element {
   
   virtual bool start() = 0;
   virtual bool testDestroy() = 0;
-  virtual int sendCommand(const Command & command) = 0;
+  virtual int sendCommands(const std::vector<Command> & commands) = 0;
   virtual void sleep(double t) = 0;
   virtual std::unique_ptr<HTTPClientFactory> createHTTPClientFactory() const = 0;
 #ifndef NO_CANVAS
@@ -159,6 +159,28 @@ class PlatformThread : public Element {
   int getModalResultValue() const { return modal_result_value; }
   const std::string & getModalResultText() const { return modal_result_text; }
 
+  void beginBatch() {
+    batchOpen = true;
+  }
+
+  void commitBatch() {
+    batchOpen = false;
+    if (!commandBatch.empty()) {
+      sendCommands(commandBatch);
+      commandBatch.clear();
+    }
+  }
+
+  int sendCommand(const Command & command) {
+    int rv = 0;
+    commandBatch.push_back(command);
+    if (!batchOpen) {
+      rv = sendCommands(commandBatch);
+      commandBatch.clear();
+    }
+    return rv;
+  }
+  
  protected:
   void create() override { }
   
@@ -207,6 +229,8 @@ class PlatformThread : public Element {
   std::shared_ptr<Runnable> runnable;
   int modal_result_value = 0;
   std::string modal_result_text;
+  bool batchOpen = false;
+  std::vector<Command> commandBatch;
 };
 
 #endif
