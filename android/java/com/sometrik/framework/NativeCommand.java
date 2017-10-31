@@ -506,6 +506,9 @@ public class NativeCommand {
     case DELETE_ELEMENT:
       deleteElement(view, childInternalId);
       break;
+    case REORDER_CHILD:
+      reorderChild(view, childInternalId, getValue());
+      break;
     case BUY_PRODUCT:
       try {
 	launchPurchase(getTextValueAsString());
@@ -576,19 +579,44 @@ public class NativeCommand {
   }
   
   private void deleteElement(NativeCommandHandler parent, int childId) {
-    frame.removeViewFromList(childInternalId);
+    frame.removeViewFromList(childId);
     if (parent instanceof ViewGroup) {
       ViewGroup group = (ViewGroup) parent;
       int childCount = group.getChildCount();
       for (int i = 0; i < childCount; i++) {
 	View view = group.getChildAt(i);
-	if (view.getId() == childInternalId) {
+	if (view.getId() == childId) {
 	  ((ViewGroup) parent).removeViewAt(i);
 	  break;
 	}
       }
     } else {
       System.out.println("Deletion parent was not an instance of ViewGroup");
+    }
+  }
+  
+  private void reorderChild(NativeCommandHandler parent, int childId, int newPosition) {
+    if (parent instanceof ViewGroup) {
+      ViewGroup group = (ViewGroup) parent;
+      int childCount = group.getChildCount();
+      if (newPosition >= childCount) {
+	System.out.println("REORDER: invalid position");
+      } else {
+	for (int i = 0; i < childCount; i++) {
+	  View view = group.getChildAt(i);
+	  if (view.getId() == childId) {
+	    ((ViewGroup) parent).removeViewAt(i);
+	    if (newPosition < group.getChildCount()) {
+	      ((ViewGroup) parent).addView(view, newPosition);
+	    } else {	    
+	      ((ViewGroup) parent).addView(view);
+	    }
+	    break;
+	  }
+	}
+      }
+    } else {
+      System.out.println("Reordering parent was not an instance of ViewGroup");
     }
   }
     

@@ -38,11 +38,15 @@ public:
   }
 
   void addProxy(const std::string & key, const std::string & data) {
+    int pos = (int)current_keys.size();
+
     current_keys.insert(key);
 
     auto orig = getContent(key);
     if (orig.get()) {
-
+      Command c(Command::REORDER_CHILD, getInternalId(), orig->getInternalId());
+      c.setValue(pos);
+      sendCommand(c);
     } else {
       auto e = createContent(key, data);
       content[key] = e;
