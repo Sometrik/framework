@@ -86,7 +86,6 @@ public class NativeCommand {
     CREATE_RELATIVE_LAYOUT,
     CREATE_TABLE_LAYOUT,
     CREATE_AUTO_COLUMN_LAYOUT,
-    CREATE_PROXY_LAYOUT,
     CREATE_PANEL,
     CREATE_TEXT,
     CREATE_LINK,
@@ -103,6 +102,7 @@ public class NativeCommand {
     CREATE_TOAST,
     CREATE_NOTIFICATION,
     DELETE_ELEMENT,
+    REORDER_CHILD,
     END_MODAL,
     SHOW_DIALOG,
     SHOW_MESSAGE_DIALOG,
@@ -215,14 +215,6 @@ public class NativeCommand {
 	System.out.println("setting current navigationDrawer to " + getChildInternalId());
 	frame.setCurrentDrawerViewId(getChildInternalId());
       }
-      break;
-
-    case CREATE_PROXY_LAYOUT: {
-      FWLayout layout = createLinearLayout(1);
-      if (view != null) {
-	view.addChild(layout);
-      }
-    }
       break;
 	
     case CREATE_LINEAR_LAYOUT:
