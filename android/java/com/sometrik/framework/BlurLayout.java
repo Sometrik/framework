@@ -23,7 +23,8 @@ public class BlurLayout extends FrameLayout implements NativeCommandHandler {
   private float downscaleFactor = 0.25f;
   private int blurRadius = 12;
   private int FPS = 60;
-
+  private Bitmap.Config blurConfig = Bitmap.Config.ARGB_4444;
+  
   private WeakReference<View> activityView;
 
   public BlurLayout(FrameWork frameWork, int id) {
@@ -95,20 +96,19 @@ public class BlurLayout extends FrameLayout implements NativeCommandHandler {
 
     // Padding to add to crop pre-blur.
     // Blurring straight to edges has side-effects so padding is added.
-    int xPadding = getWidth() / 8;
-    int yPadding = getHeight() / 8;
+    int padding = getWidth() > getHeight() ? getWidth() / 8 : getHeight() / 8;
 
     // Calculate padding independently for each side, checking edges.
-    int leftOffset = -xPadding;
+    int leftOffset = -padding;
     leftOffset = x + leftOffset >= 0 ? leftOffset : 0;
 
-    int rightOffset = xPadding;
+    int rightOffset = padding;
     rightOffset = x + getWidth() + rightOffset <= screenWidth ? rightOffset : screenWidth - getWidth() - x;
 
-    int topOffset = -yPadding;
+    int topOffset = -padding;
     topOffset = y + topOffset >= 0 ? topOffset : 0;
 
-    int bottomOffset = yPadding;
+    int bottomOffset = padding;
     bottomOffset = y + height + bottomOffset <= screenHeight ? bottomOffset : 0;
 
     // Create parent view bitmap, cropped to the BlurLayout area with above padding.
@@ -214,7 +214,7 @@ public class BlurLayout extends FrameLayout implements NativeCommandHandler {
     float dx = -crop.left * downscaleFactor;
     float dy = -crop.top * downscaleFactor;
 
-    Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_4444);
+    Bitmap bitmap = Bitmap.createBitmap(width, height, blurConfig);
     Canvas canvas = new Canvas(bitmap);
     Matrix matrix = new Matrix();
     matrix.preScale(downscaleFactor, downscaleFactor);

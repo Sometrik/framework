@@ -37,21 +37,21 @@ public class BlurKit {
     return src;
   }
 
-  public Bitmap blur(View src, int radius) {
-    Bitmap bitmap = getBitmapForView(src, 1f);
+  public Bitmap blur(View src, int radius, Bitmap.Config config) {
+    Bitmap bitmap = getBitmapForView(src, 1f, config);
     return blur(bitmap, radius);
   }
 
-  public Bitmap fastBlur(View src, int radius, float downscaleFactor) {
-    Bitmap bitmap = getBitmapForView(src, downscaleFactor);
+  public Bitmap fastBlur(View src, int radius, float downscaleFactor, Bitmap.Config config) {
+    Bitmap bitmap = getBitmapForView(src, downscaleFactor, config);
     return blur(bitmap, radius);
   }
 
-  private Bitmap getBitmapForView(View src, float downscaleFactor) {
+  private Bitmap getBitmapForView(View src, float downscaleFactor, Bitmap.Config config) {
     Bitmap bitmap = Bitmap.createBitmap(
                 (int) (src.getWidth() * downscaleFactor),
                 (int) (src.getHeight() * downscaleFactor),
-                Bitmap.Config.ARGB_4444
+                config
         );
 
     Canvas canvas = new Canvas(bitmap);
