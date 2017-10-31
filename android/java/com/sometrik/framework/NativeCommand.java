@@ -599,20 +599,16 @@ public class NativeCommand {
     if (parent instanceof ViewGroup) {
       ViewGroup group = (ViewGroup) parent;
       int childCount = group.getChildCount();
-      if (newPosition >= childCount) {
-	System.out.println("REORDER: invalid position");
-      } else {
-	for (int i = 0; i < childCount; i++) {
-	  View view = group.getChildAt(i);
-	  if (view.getId() == childId) {
-	    ((ViewGroup) parent).removeViewAt(i);
-	    if (newPosition < group.getChildCount()) {
-	      ((ViewGroup) parent).addView(view, newPosition);
-	    } else {	    
-	      ((ViewGroup) parent).addView(view);
-	    }
-	    break;
+      for (int i = 0; i < childCount; i++) {
+	View view = group.getChildAt(i);
+	if (view.getId() == childId && i != newPosition) {
+	  ((ViewGroup) parent).removeViewAt(i);
+	  if (newPosition < group.getChildCount()) {
+	    ((ViewGroup) parent).addView(view, newPosition);
+	  } else {	    
+	    ((ViewGroup) parent).addView(view);
 	  }
+	  break;
 	}
       }
     } else {
