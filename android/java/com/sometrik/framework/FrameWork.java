@@ -149,7 +149,7 @@ public class FrameWork extends Activity {
 //    getActionBar().setHomeButtonEnabled(true);
 
     
-    //Init NavigationBar
+    // Init NavigationBar
     drawerLayout = new FWDrawerLayout(this);
     currentDrawerViewId = 0;
     
