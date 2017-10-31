@@ -13,6 +13,7 @@ public:
     return Element::isA(className);
   }
 
+#if 0
   void onProxyEvent(ProxyEvent & ev) {
     switch (ev.getType()) {
     case ProxyEvent::REQUEST_CONTENT: {
@@ -29,19 +30,39 @@ public:
       break;
     }
   }
+#endif
   
   void clear() {
+    current_keys.clear();
     sendCommand(Command(Command::CLEAR, getInternalId()));
   }
-  
-  void addProxy(const std::string & key) {
-    Command c(Command::ADD_OPTION, getInternalId());
-    c.setTextValue(key);
-    sendCommand(c);
+
+  void addProxy(const std::string & key, const std::string & data) {
+    current_keys.insert(key);
+
+    auto orig = getContent(key);
+    if (orig.get()) {
+
+    } else {
+      auto e = createContent(key, data);
+      content[key] = e;
+      addChild(e);
+    }
   }
- 
+
+  void flush() {
+    for (auto it = content.begin(); it != content.end(); ) {
+      if (current_keys.count(it->first)) {
+        it++;
+      } else {
+        removeChild(it->second.get());
+        it = content.erase(it);
+      }
+    }
+  }
+
 protected:
-  virtual std::shared_ptr<Element> createContent(const std::string & key) = 0;
+  virtual std::shared_ptr<Element> createContent(const std::string & key, const std::string & data) = 0;
   
   std::shared_ptr<Element> getContent(const std::string & key) {
     auto it = content.find(key);
@@ -53,12 +74,16 @@ protected:
   }
 
   void create() override {
-    Command c(Command::CREATE_PROXY_LAYOUT, getParentInternalId(), getInternalId());
+    Command c(Command::CREATE_LINEAR_LAYOUT, getParentInternalId(), getInternalId());
+    c.setValue(1);
     sendCommand(c);
   }
   
+  size_t getProxyCount() const { return current_keys.size(); }
+
 private:
   std::unordered_map<std::string, std::shared_ptr<Element> > content;
+  std::unordered_set<std::string> current_keys;
 };
 
 #endif
