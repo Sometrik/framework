@@ -44,6 +44,8 @@ public:
 
     auto orig = getContent(key);
     if (orig.get()) {
+      updateContent(*orig, key, data);
+
       Command c(Command::REORDER_CHILD, getInternalId(), orig->getInternalId());
       c.setValue(pos);
       sendCommand(c);
@@ -67,6 +69,7 @@ public:
 
 protected:
   virtual std::shared_ptr<Element> createContent(const std::string & key, const std::string & data) = 0;
+  virtual void updateContent(Element & e, const std::string & key, const std::string & data) = 0;
   
   std::shared_ptr<Element> getContent(const std::string & key) {
     auto it = content.find(key);
