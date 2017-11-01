@@ -34,7 +34,7 @@ public:
   
   void clear() {
     current_keys.clear();
-    sendCommand(Command(Command::CLEAR, getInternalId()));
+    // sendCommand(Command(Command::CLEAR, getInternalId()));
   }
 
   void addProxy(const std::string & key, const std::string & data) {
