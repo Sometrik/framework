@@ -14,7 +14,6 @@ import com.android.trivialdrivesample.util.Purchase;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
-import android.graphics.Bitmap;
 import android.text.Editable;
 import android.text.Html;
 import android.text.InputType;
@@ -234,173 +233,214 @@ public class NativeCommand {
       }
     }
       break;
-    case CREATE_SCROLL_LAYOUT: {
-      FWScrollLayout scrollLayout = new FWScrollLayout(frame, getChildInternalId());
-      frame.addToViewList(scrollLayout);
-      view.addChild(scrollLayout);
-    }
+    case CREATE_SCROLL_LAYOUT:
+      if (view != null) {
+	FWScrollLayout scrollLayout = new FWScrollLayout(frame, getChildInternalId());
+	frame.addToViewList(scrollLayout);
+	view.addChild(scrollLayout);
+      }
     break;
-    case CREATE_RELATIVE_LAYOUT: {
-      FWRelativeLayout layout = new FWRelativeLayout(frame);
-      layout.setId(getChildInternalId());
-      frame.addToViewList(layout);
-      view.addChild(layout);
-    }
+    case CREATE_RELATIVE_LAYOUT:
+      if (view != null) {
+	FWRelativeLayout layout = new FWRelativeLayout(frame);
+	layout.setId(getChildInternalId());
+	frame.addToViewList(layout);
+	view.addChild(layout);
+      }
     break;
-    case CREATE_AUTO_COLUMN_LAYOUT:{
-      FWAuto auto  = new FWAuto(frame);
-      auto.setId(getChildInternalId());
-      frame.addToViewList(auto);
-      view.addChild(auto);
-    }
+    case CREATE_AUTO_COLUMN_LAYOUT:
+      if (view != null) {
+	FWAuto auto  = new FWAuto(frame);
+	auto.setId(getChildInternalId());
+	frame.addToViewList(auto);
+	view.addChild(auto);
+      }
       break;
     case CREATE_TABLE_LAYOUT:
-      FWTable table = createTableLayout(false);
-      view.addChild(table);
+      if (view != null) {
+	FWTable table = createTableLayout(false);
+	view.addChild(table);
+      }
       break;
 
     case CREATE_BUTTON:
-      FWButton button = createButton();
-      view.addChild(button);
+      if (view != null) {
+	FWButton button = createButton();
+	view.addChild(button);
+      }
       break;
 
     case CREATE_PICKER:
-      FWPicker picker = createSpinner();
-      view.addChild(picker);
-      break;
-      
-    case CREATE_SWITCH:
-      FWSwitch click = createSwitch();
-      view.addChild(click);
-      break;
-      
-    case CLEAR:
-      view.clear();
-      break;
-      
-    case CREATE_GRIDVIEW:
-      //TODO
-      //Fix from being debug status
-//      FWLayout debugList = createDebugResultsScreen();
-      FWList debugList = new FWList(frame, new FWAdapter2(frame, null));
-      debugList.setId(childInternalId);
-      frame.addToViewList(debugList);
-      view.addChild(debugList);
-      break;
-      
-    case CREATE_LISTVIEW:
-      if (isSet(FLAG_SLIDERVIEW)) {
-	
-//	Real slider stuff
-	SliderLayout slider = new SliderLayout(frame);
-	slider.setId(childInternalId);
-	frame.addToViewList(slider);
-	view.addChild(slider);
-      } else {
-	FWList listView = new FWList(frame, new FWAdapter2(frame, null));
-	LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-	params.weight = 1.0f;
-	// params.gravity = Gravity.TOP;
-	listView.setLayoutParams(params);
-	listView.setId(childInternalId);
-	listView.setOnItemClickListener(new OnItemClickListener() {
-	  @Override
-	  public void onItemClick(AdapterView<?> arg0, View arg1, int groupPosition, long id) {
-	    System.out.println("row clicked. Sending intChangedEvent of " + (groupPosition - 1));
-	    frame.intChangedEvent(childInternalId, (groupPosition - 1), 0);
-	  }
-	});
-	frame.addToViewList(listView);
-	view.addChild(listView);
+      if (view != null) {
+	FWPicker picker = createSpinner();
+	view.addChild(picker);
       }
       break;
       
-    case CREATE_TIMER:
-      Timer timer = new Timer();
-      timer.scheduleAtFixedRate((new TimerTask() {
-	@Override
-	public void run() {
-	  frame.timerEvent(internalId, childInternalId);
+    case CREATE_SWITCH:
+      if (view != null) {
+	FWSwitch click = createSwitch();
+	view.addChild(click);
+      }
+      break;
+      
+    case CLEAR:
+      if (view != null) {
+	view.clear();
+      }
+      break;
+      
+    case CREATE_GRIDVIEW:
+      if (view != null) {
+	// TODO
+	// Fix from being debug status
+	// FWLayout debugList = createDebugResultsScreen();
+	FWList debugList = new FWList(frame, new FWAdapter2(frame, null));
+	debugList.setId(childInternalId);
+	frame.addToViewList(debugList);
+	view.addChild(debugList);
+      }
+      break;
+      
+    case CREATE_LISTVIEW:
+      if (view != null) {
+	if (isSet(FLAG_SLIDERVIEW)) {
+	  // Real slider stuff
+	  SliderLayout slider = new SliderLayout(frame);
+	  slider.setId(childInternalId);
+	  frame.addToViewList(slider);
+	  view.addChild(slider);
+	} else {
+	  FWList listView = new FWList(frame, new FWAdapter2(frame, null));
+	  LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+	  params.weight = 1.0f;
+	  // params.gravity = Gravity.TOP;
+	  listView.setLayoutParams(params);
+	  listView.setId(childInternalId);
+	  listView.setOnItemClickListener(new OnItemClickListener() {
+	    @Override
+	    public void onItemClick(AdapterView<?> arg0, View arg1, int groupPosition, long id) {
+	      System.out.println("row clicked. Sending intChangedEvent of " + (groupPosition - 1));
+	      frame.intChangedEvent(childInternalId, (groupPosition - 1), 0);
+	    }
+	  });
+	  frame.addToViewList(listView);
+	  view.addChild(listView);
 	}
-      }), 1000, 1000);
+      }
+      break;
+      
+    case CREATE_TIMER: {
+      	Timer timer = new Timer();
+      	timer.scheduleAtFixedRate((new TimerTask() {
+      	  @Override
+      	  public void run() {
+      	    frame.timerEvent(internalId, childInternalId);
+      	  }
+      	}), 1000, 1000);
+    }
       break;
     case CREATE_CHECKBOX:
-      FWCheckBox checkBox = createCheckBox();
-      frame.addToViewList(checkBox);
-      view.addChild(checkBox);
+      if (view != null) {
+	FWCheckBox checkBox = createCheckBox();
+	frame.addToViewList(checkBox);
+	view.addChild(checkBox);
+      }
       break;
     case CREATE_OPENGL_VIEW:
       frame.createNativeOpenGLView(childInternalId);
       break;
 
     case CREATE_TEXTVIEW:
-      FWEditText editTextView = createBigEditText();
-      view.addChild(editTextView);
+      if (view != null) {
+	FWEditText editTextView = createBigEditText();
+	view.addChild(editTextView);
+      }
       break;
       
     case CREATE_TEXTFIELD:
-      FWEditText editText = createEditText();
-      view.addChild(editText);
+      if (view != null) {
+	FWEditText editText = createEditText();
+	view.addChild(editText);
+      }
       break;
       
     case CREATE_RADIO_GROUP:
-      FWRadioGroup radioGroup = new FWRadioGroup(frame);
-      radioGroup.setId(childInternalId);
-      frame.addToViewList(radioGroup);
-      view.addChild(radioGroup);
+      if (view != null) {
+	FWRadioGroup radioGroup = new FWRadioGroup(frame);
+	radioGroup.setId(childInternalId);
+	frame.addToViewList(radioGroup);
+	view.addChild(radioGroup);
+      }
       break;
       
-    case CREATE_TEXT: {
-      FWTextView textView = new FWTextView(frame, getValue() != 0);
-      textView.setId(getChildInternalId());
-      textView.setText(getTextValueAsString());
-      frame.addToViewList(textView);
-      view.addChild(textView);
-      break;
-    }
-
-    case CREATE_LINK: {
-      FWTextView textView = new FWTextView(frame, false);
-      textView.setId(getChildInternalId());
-      textView.setMovementMethod(LinkMovementMethod.getInstance());
-      String text = "<a href='" + getTextValue2AsString() + "'>" + getTextValueAsString() + "</a>";
-      textView.setText(Html.fromHtml(text));
-      frame.addToViewList(textView);
-      view.addChild(textView);
-      break;
-    }
-
-    case CREATE_IMAGEVIEW: {
-      FWImageView imageView = new FWImageView(frame, childInternalId);
-      String imgFile = getTextValueAsString();
-      if (!imgFile.isEmpty()) {
-	imageView.addImageUrl(imgFile, width, height);
+    case CREATE_TEXT:
+      if (view != null) {
+	FWTextView textView = new FWTextView(frame, getValue() != 0);
+	textView.setId(getChildInternalId());
+	textView.setText(getTextValueAsString());
+	frame.addToViewList(textView);
+	view.addChild(textView);
       }
-      frame.addToViewList(imageView);
-      view.addChild(imageView);
-    }
       break;
-    case CREATE_TOAST:
+
+    case CREATE_LINK:
+      if (view != null) {
+	FWTextView textView = new FWTextView(frame, false);
+	textView.setId(getChildInternalId());
+	textView.setMovementMethod(LinkMovementMethod.getInstance());
+	String text = "<a href='" + getTextValue2AsString() + "'>" + getTextValueAsString() + "</a>";
+	textView.setText(Html.fromHtml(text));
+	frame.addToViewList(textView);
+	view.addChild(textView);
+      }
+      break;
+
+    case CREATE_IMAGEVIEW:
+      if (view != null) {
+	FWImageView imageView = new FWImageView(frame, childInternalId);
+	String imgFile = getTextValueAsString();
+	if (!imgFile.isEmpty()) {
+	  imageView.addImageUrl(imgFile, width, height);
+	}
+	frame.addToViewList(imageView);
+	view.addChild(imageView);
+      }
+      break;
+      
+    case CREATE_TOAST: {
       Toast toast = Toast.makeText(frame, getTextValueAsString(), getValue() != 0 ? getValue() : 2);
       toast.show();
+    }
       break;
+      
     case CREATE_NOTIFICATION: {
       FWNotification notif = new FWNotification(frame, getTextValueAsString(), getTextValue2AsString());
       notif.setId(childInternalId);
       frame.addToViewList(notif);
       break;
     }
+    
     case ADD_OPTION:
-      view.addOption(getValue(), getTextValueAsString());
+      if (view != null) {
+	view.addOption(getValue(), getTextValueAsString());
+      }
       break;
+      
     case ADD_COLUMN:
-      view.addColumn(getTextValueAsString(), getValue());
+      if (view != null) {
+	view.addColumn(getTextValueAsString(), getValue());
+      }
       break;
+      
     case ADD_SHEET:
-      System.out.println("add_sheet: " + getTextValueAsString() + " " + rowNumber + " " + columnNumber + " " + sheet);
-      view.setValue(getTextValueAsString());
+      if (view != null) {
+	System.out.println("add_sheet: " + getTextValueAsString() + " " + rowNumber + " " + columnNumber + " " + sheet);
+	view.setValue(getTextValueAsString());
+      }
       break;
-    case CREATE_APPLICATION:
+      
+    case CREATE_APPLICATION: {
       frame.setAppId(getChildInternalId());
       if (isSet(FLAG_USE_PURCHASES_API)) {
 	System.out.println("Initializing purchaseHelper");
@@ -417,16 +457,23 @@ public class NativeCommand {
 	  }
 	});
       }
+    }
       break;
     case SET_INT_VALUE:
-      view.setValue(getValue());
+      if (view != null) {
+	view.setValue(getValue());
+      }
       break;
     case SET_TEXT_VALUE:
-      view.setValue(getTextValueAsString());
+      if (view != null) {
+	view.setValue(getTextValueAsString());
+      }
       break;
     case SET_TEXT_DATA:
-      System.out.println("set_text_data: " + getTextValueAsString() + " " + rowNumber + " " + columnNumber + " " + sheet);
-      view.addData(getTextValueAsString(), rowNumber, columnNumber, sheet);
+      if (view != null) {
+	System.out.println("set_text_data: " + getTextValueAsString() + " " + rowNumber + " " + columnNumber + " " + sheet);
+	view.addData(getTextValueAsString(), rowNumber, columnNumber, sheet);
+      }
       break;
     case SET_VISIBILITY:
       if (view != null) {
@@ -434,25 +481,37 @@ public class NativeCommand {
       }
       break;
     case SET_STYLE:
-      view.setStyle(Selector.values()[value], getTextValueAsString(), getTextValue2AsString());
+      if (view != null) {
+	view.setStyle(Selector.values()[value], getTextValueAsString(), getTextValue2AsString());
+      }
       break;
     case SET_ERROR:
-      view.setError(value != 0, getTextValueAsString());
+      if (view != null) {
+	view.setError(value != 0, getTextValueAsString());
+      }
       break;
     case SET_IMAGE:
-      view.setImage(byteArray, width, height, value);
+      if (view != null) {
+	view.setImage(byteArray, width, height, value);
+      }
       break;
     case ADD_IMAGE_URL:
-      view.addImageUrl(getTextValueAsString(), width, height);
+      if (view != null) {
+	view.addImageUrl(getTextValueAsString(), width, height);
+      }
       break;
     case LAUNCH_BROWSER:
       frame.launchBrowser(getTextValueAsString());
       break;
     case END_MODAL:
-      view.setValue(0);
+      if (view != null) {
+	view.setValue(0);
+      }
       break;
     case SHOW_DIALOG:
-      view.setValue(1);
+      if (view != null) {
+	view.setValue(1);
+      }
       break;
     case SHOW_MESSAGE_DIALOG:
       showMessageDialog(getTextValueAsString(), getTextValue2AsString());
@@ -468,26 +527,30 @@ public class NativeCommand {
     case CREATE_ACTION_SHEET:
       createActionSheet();
       break;
-    case CREATE_ACTIONBAR:
+    case CREATE_ACTIONBAR: {
       FWActionBar ab = new FWActionBar(frame, getTextValueAsString(), childInternalId);
       frame.actionBar = ab;
       frame.addToViewList(ab);
       break;
+    }
     case CREATE_NAVIGATIONBAR: {
       BlurLayout bar = new BlurLayout(frame, getChildInternalId());      
       view.addChild(bar);
       frame.addToViewList(bar);
       break;
     }
-    case CREATE_PROGRESSBAR: {
+    case CREATE_PROGRESSBAR:
+      if (view != null) {
       FWProgressBar bar = new FWProgressBar(frame);
       bar.setId(childInternalId);
       view.addChild(bar);
       frame.addToViewList(bar);
+      }
       break;
-    }
     case FLUSH_VIEW:
-      view.flush();
+      if (view != null) {
+	view.flush();
+      }
       break;
     case QUIT_APP:
       // TODO
@@ -504,10 +567,14 @@ public class NativeCommand {
       frame.getPreferencesEditor().apply();
       break;
     case DELETE_ELEMENT:
-      deleteElement(view, childInternalId);
+      if (view != null) {
+	deleteElement(view, childInternalId);
+      }
       break;
     case REORDER_CHILD:
-      reorderChild(view, childInternalId, getValue());
+      if (view != null) {
+	reorderChild(view, childInternalId, getValue());
+      }
       break;
     case BUY_PRODUCT:
       try {
@@ -518,11 +585,15 @@ public class NativeCommand {
       }
       break;
     case RESHAPE_SHEET:
-      view.reshape(sheet, value);
+      if (view != null) {
+	view.reshape(sheet, value);
+      }
       break;
     case RESHAPE_TABLE:
-      System.out.println("reshape table: " + value);
-      view.reshape(value);
+      if (view != null) {
+	System.out.println("reshape table: " + value);
+	view.reshape(value);
+      }
       break;
     default:
       System.out.println("Command couldn't be handled "  + command + " id: " + internalId + " Child id: " + getChildInternalId());
