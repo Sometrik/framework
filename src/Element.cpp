@@ -28,7 +28,13 @@ Element::initialize(PlatformThread * _thread) {
     create();
     load();
     if (!pendingCommands.empty()) {
-      thread->sendCommands(pendingCommands);
+      if (thread->isInTransaction()) {
+        for (auto & c : pendingCommands) {
+          thread->sendCommand(c);
+        }
+      } else {
+        thread->sendCommands(pendingCommands);
+      }
       pendingCommands.clear();
     }
   }
