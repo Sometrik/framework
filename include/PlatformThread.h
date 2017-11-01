@@ -166,15 +166,16 @@ class PlatformThread : public Element {
   void commitBatch() {
     batchOpen = false;
     if (!commandBatch.empty()) {
-      sendCommands(commandBatch);
+      std::vector<Command> tmp = commandBatch;
       commandBatch.clear();
+      sendCommands(tmp);
     }
   }
 
   int sendCommand(const Command & command) {
     int rv = 0;
     commandBatch.push_back(command);
-    if (!batchOpen) {
+    if (!isInTransaction()) {
       std::vector<Command> tmp = commandBatch;
       commandBatch.clear();
       rv = sendCommands(tmp);
@@ -182,6 +183,8 @@ class PlatformThread : public Element {
     return rv;
   }
   
+  bool isInTransaction() const { return batchOpen; }
+
  protected:
   void create() override { }
   
