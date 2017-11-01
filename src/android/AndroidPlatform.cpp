@@ -60,16 +60,17 @@ public:
 
     framework = env->NewGlobalRef(_framework);
 
+    nativeCommandTransactionClass = (jclass) env->NewGlobalRef(env->FindClass("com/sometrik/framework/NativeCommandTransaction"));
     nativeCommandClass = (jclass) env->NewGlobalRef(env->FindClass("com/sometrik/framework/NativeCommand"));
     frameworkClass = (jclass) env->NewGlobalRef(env->FindClass("com/sometrik/framework/FrameWork"));
-    systemClass = (jclass) env->NewGlobalRef(env->FindClass("java/lang/System"));
     jclass fileClass = env->FindClass("java/io/File");
     jclass contextWrapperClass = env->FindClass("android/content/ContextWrapper");
 
-    loadPrefsValueMethod = env->GetMethodID(frameworkClass, "addToPrefs", "(Ljava/lang/String;Ljava/lang/String;)V");
+    nativeCommandTransactionConstructor = env->GetMethodID(nativeCommandTransactionClass, "<init>", "()V");
+    addCommandMethod = env->GetMethodID(nativeCommandTransactionClass, "addCommand", "(Lcom/sometrik/framework/NativeCommand;)V");
     nativeCommandConstructor = env->GetMethodID(nativeCommandClass, "<init>", "(Lcom/sometrik/framework/FrameWork;IIII[B[BI)V");
     nativeListCommandConstructor = env->GetMethodID(nativeCommandClass, "<init>", "(Lcom/sometrik/framework/FrameWork;IIII[B[BIIIIII)V");
-    sendCommandMethod = env->GetStaticMethodID(frameworkClass, "sendMessage", "(Lcom/sometrik/framework/FrameWork;Lcom/sometrik/framework/NativeCommand;)V");
+    sendCommandTransactionMethod = env->GetStaticMethodID(frameworkClass, "sendTransaction", "(Lcom/sometrik/framework/FrameWork;Lcom/sometrik/framework/NativeCommandTransaction;)V");
     getPathMethod = env->GetMethodID(fileClass, "getPath", "()Ljava/lang/String;");
 
     env->DeleteLocalRef(fileClass);
@@ -85,7 +86,6 @@ public:
     env->DeleteGlobalRef(framework);
     env->DeleteGlobalRef(nativeCommandClass);
     env->DeleteGlobalRef(frameworkClass);
-    env->DeleteGlobalRef(systemClass);
 #endif
   }
 
@@ -95,14 +95,15 @@ public:
 
   jobject framework;
 
+  jclass nativeCommandTransactionClass;
   jclass nativeCommandClass;
   jclass frameworkClass;
-  jclass systemClass;
 
-  jmethodID loadPrefsValueMethod;
+  jmethodID nativeCommandTransactionConstructor;
+  jmethodID addCommandMethod;
   jmethodID nativeCommandConstructor;
   jmethodID nativeListCommandConstructor;
-  jmethodID sendCommandMethod;
+  jmethodID sendCommandTransactionMethod;
   jmethodID getPathMethod;
 };
 
@@ -156,42 +157,53 @@ public:
   }
 
   int sendCommands(const vector<Command> & commands) override {
-    int commandRv = 0; 
+    bool startLoop = false;
+
+    jobject jtransaction = myEnv->NewObject(javaCache->nativeCommandTransactionClass, javaCache->nativeCommandTransactionConstructor);
+
+    __android_log_print(ANDROID_LOG_INFO, "Sometrik", "SENDING TRANSACTION (%d)", (int)commands.size());
+
     for (auto & command : commands) {
       if (command.getType() == Command::CREATE_FRAMEVIEW || command.getType() == Command::CREATE_OPENGL_VIEW) {
 	auto & app = getApplication();
 	if (!app.getActiveViewId()) {
 	  app.setActiveViewId(command.getChildInternalId());
 	}
+      } else if (command.getType() == Command::SHOW_DIALOG ||
+          command.getType() == Command::SHOW_MESSAGE_DIALOG ||
+          command.getType() == Command::SHOW_INPUT_DIALOG ||
+          command.getType() == Command::SHOW_ACTION_SHEET) {
+        startLoop = true;
+      } else if (command.getType() == Command::END_MODAL) {
+        exit_loop = true;
       }
       
       int commandTypeId = int(command.getType());
-      auto textValue = command.getTextValue();
-      auto textValue2 = command.getTextValue2();
+      auto & textValue = command.getTextValue();
+      auto & textValue2 = command.getTextValue2();
       jbyteArray jtextValue = 0, jtextValue2 = 0;
       if (!textValue.empty()) jtextValue = convertToByteArray(myEnv, textValue);
       if (!textValue2.empty()) jtextValue2 = convertToByteArray(myEnv, textValue2);
       
       jobject jcommand = myEnv->NewObject(javaCache->nativeCommandClass, javaCache->nativeListCommandConstructor, javaCache->framework, commandTypeId, command.getInternalId(), command.getChildInternalId(), command.getValue(), jtextValue, jtextValue2, command.getFlags(), command.getRow(), command.getColumn(), command.getSheet(), command.getWidth(), command.getHeight());
-      myEnv->CallStaticVoidMethod(javaCache->frameworkClass, javaCache->sendCommandMethod, javaCache->framework, jcommand);
+      myEnv->CallVoidMethod(jtransaction, javaCache->addCommandMethod, jcommand);
       
       myEnv->DeleteLocalRef(jcommand);
       if (jtextValue) myEnv->DeleteLocalRef(jtextValue);
       if (jtextValue2) myEnv->DeleteLocalRef(jtextValue2);
-      
-      if (command.getType() == Command::SHOW_DIALOG ||
-	  command.getType() == Command::SHOW_MESSAGE_DIALOG ||
-	  command.getType() == Command::SHOW_INPUT_DIALOG ||
-	  command.getType() == Command::SHOW_ACTION_SHEET) {
-	setModalResultValue(0);
-	setModalResultText("");
-	startEventLoop();
-	commandRv = getModalResultValue();
-      } else if (command.getType() == Command::END_MODAL) {
-	exit_loop = true;
-      }
     }
-    return commandRv;
+
+    myEnv->CallStaticVoidMethod(javaCache->frameworkClass, javaCache->sendCommandTransactionMethod, javaCache->framework, jtransaction);
+    myEnv->DeleteLocalRef(jtransaction);
+
+    if (startLoop) {
+      setModalResultValue(0);
+      setModalResultText("");
+      startEventLoop();
+      return getModalResultValue();
+    } else {
+      return 0;
+    }
   }
 
   AAssetManager * getAssetManager() const { return asset_manager; }
