@@ -16,9 +16,6 @@ import android.accounts.AccountManager;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -50,7 +47,6 @@ import android.view.View.OnTouchListener;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
 
 public class FrameWork extends Activity {
@@ -163,9 +159,10 @@ public class FrameWork extends Activity {
     mainHandler = new Handler() {
 
       public void handleMessage(Message msg) {
-	
-	NativeCommand command = (NativeCommand) msg.obj;
-	command.apply(framework.views.get(command.getInternalId()));
+	NativeCommandTransaction transaction = (NativeCommandTransaction) msg.obj;
+	for (NativeCommand command : transaction.getCommands()) {
+	  command.apply(framework.views.get(command.getInternalId()));		
+	}
       }
 
     };
@@ -597,9 +594,9 @@ public class FrameWork extends Activity {
     System.out.println("getting DBPath _ db: " + dbName + " Path: " + String.valueOf(getDatabasePath(dbName)));
     return String.valueOf(getDatabasePath(dbName));
   }
-
-  public static void sendMessage(FrameWork frameWork, NativeCommand command) {
-    Message msg = Message.obtain(null, 1, command);
+  
+  public static void sendTransaction(FrameWork frameWork, NativeCommandTransaction commandTransaction) {
+    Message msg = Message.obtain(null, 1, commandTransaction);
     frameWork.mainHandler.sendMessage(msg);
   }
   
