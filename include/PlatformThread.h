@@ -175,8 +175,9 @@ class PlatformThread : public Element {
     int rv = 0;
     commandBatch.push_back(command);
     if (!batchOpen) {
-      rv = sendCommands(commandBatch);
+      std::vector<Command> tmp = commandBatch;
       commandBatch.clear();
+      rv = sendCommands(tmp);
     }
     return rv;
   }
