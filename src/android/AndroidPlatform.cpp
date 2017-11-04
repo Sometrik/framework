@@ -1,7 +1,7 @@
-/*
- * Copyright (C) Sometrik oy 2015
- *
+/**
+ * Copyright (C) Sometrik Oy 2015 - 2017
  */
+
 //#undef GL_GLES_PROTOTYPES
 #include <dlfcn.h>
 #include <string.h>
