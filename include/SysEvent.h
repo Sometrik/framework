@@ -16,6 +16,7 @@ public:
     STOP, // Called when app is no longer visible
     DESTROY, // Called just before the app is destroyed
     MEMORY_WARNING,
+    TERMINATE_THREAD,
     THREAD_TERMINATED,
     END_MODAL,
     LANGUAGE_CHANGED,

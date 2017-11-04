@@ -5,7 +5,6 @@
 #include <EventQueue.h>
 
 #include <pthread.h>
-#include <atomic>
 
 class PosixThread : public PlatformThread {
 public:
@@ -20,11 +19,6 @@ public:
   
   bool testDestroy() override {
     return terminate_thread;
-  }
-
-  bool terminate() override {
-    terminate_thread = true;
-    return PlatformThread::terminate();    
   }
 
   void sleep(double t) override;
@@ -57,10 +51,14 @@ public:
   }
 
 private:
+  void setDestroyed() override {
+    terminate_thread = true;
+  }
+
   static void * entryPoint(void * pthis);
   
   pthread_t thread;
-  std::atomic<bool> terminate_thread;
+  bool terminate_thread = false;
   EventQueue event_queue;
 };
 

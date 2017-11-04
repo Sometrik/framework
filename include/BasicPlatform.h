@@ -86,9 +86,6 @@ public:
 
   bool start() override { return false; }
   bool testDestroy() override { return false; }
-  bool terminate() override {    
-    exit(0);
-  }
 
   void sendEvent(int internal_id, const Event & ev) override {
   }
@@ -101,6 +98,9 @@ public:
     std::vector<std::pair<int, std::shared_ptr<Event> > > r;
     return r;
   }
+
+ protected:
+  void setDestroyed() override { }
 };
 
 #endif

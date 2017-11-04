@@ -186,6 +186,8 @@ public:
   void startEventLoop() override { }
   
 protected:
+  void setDestroyed() override { }
+  
   static inline GtkStateFlags getGtkState(Selector selector) {
     switch (selector) {
     case Selector::NORMAL: return GTK_STATE_FLAG_NORMAL;

@@ -57,7 +57,9 @@ class PlatformThread : public Element {
   virtual std::vector<std::pair<int, std::shared_ptr<Event> > > pollEvents(bool blocking = false) = 0;
   virtual void startEventLoop() = 0;
 
-  virtual bool terminate() {
+  bool terminate() {
+    sendEvent(getInternalId(), SysEvent(SysEvent::TERMINATE_THREAD));
+    
     std::cerr << "terminating " << subthreads.size() << " threads:\n";    
     for (auto & thread : subthreads) {
       thread.second->terminate();
@@ -135,7 +137,10 @@ class PlatformThread : public Element {
   void onSysEvent(SysEvent & ev) override {
     Element::onSysEvent(ev);
 
-    if (ev.getType() == SysEvent::THREAD_TERMINATED) {
+    if (ev.getType() == SysEvent::TERMINATE_THREAD) {
+      setDestroyed();
+      ev.setHandled(true);
+    } else if (ev.getType() == SysEvent::THREAD_TERMINATED) {
       auto it = subthreads.find(ev.getThreadId());
       if (it != subthreads.end()) {
 	subthreads.erase(it);
@@ -187,14 +192,15 @@ class PlatformThread : public Element {
 
  protected:
   void create() override { }
-  
+
+  virtual void setDestroyed() = 0;
   virtual void initializeThread() { }  
   virtual void deinitializeThread() { }
   virtual void startRunnable() {
     if (runnable.get()) {
       runnable->start(this);
     }
-  }
+  }  
   void start2() {
     initializeThread();
     startRunnable();
