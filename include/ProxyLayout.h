@@ -2,6 +2,7 @@
 #define _PROXYLAYOUT_H_
 
 #include <Element.h>
+#include <ScrollChangedEvent.h>
 
 class ProxyLayout : public Element {
 public:
@@ -13,33 +14,22 @@ public:
   }
   
   void clear() {
-    current_keys.clear();
+    visible_keys.clear();
+    all_keys.clear();
   }
 
   void addProxy(const std::string & key, const std::string & data) {
-    int pos = (int)current_keys.size();
-
-    current_keys.insert(key);
+    unsigned int pos = all_keys.size();
+    all_keys.push_back(std::pair<std::string, std::string>(key, data));
 
     if (pos < max_visible_count) {
-      auto orig = getContent(key);
-      if (orig.get()) {
-	updateContent(*orig, key, data);
-	
-	Command c(Command::REORDER_CHILD, getInternalId(), orig->getInternalId());
-	c.setValue(pos);
-	sendCommand(c);
-      } else {
-	auto e = createContent(key, data);
-	content[key] = e;
-	addChild(e);
-      }
+      showKey(pos, key, data);
     }
   }
 
   void flush() {
     for (auto it = content.begin(); it != content.end(); ) {
-      if (current_keys.count(it->first)) {
+      if (visible_keys.count(it->first)) {
         it++;
       } else {
         removeChild(it->second.get());
@@ -48,7 +38,35 @@ public:
     }
   }
 
+  void onScrollChangedEvent(ScrollChangedEvent & ev) override {
+    if (ev.getScrollRem() < 10) {
+      unsigned int c = 25;
+      for (unsigned int i = max_visible_count; i < max_visible_count + c && i < all_keys.size(); i++) {
+	auto & p = all_keys[i];
+	showKey(i, p.first, p.second);
+      }
+      max_visible_count += c;
+    }
+  }
+
 protected:
+  void showKey(unsigned int pos, const std::string & key, const std::string & data) {
+    visible_keys.insert(key);
+      
+    auto orig = getContent(key);
+    if (orig.get()) {
+      updateContent(*orig, key, data);
+      
+      Command c(Command::REORDER_CHILD, getInternalId(), orig->getInternalId());
+      c.setValue(pos);
+      sendCommand(c);
+    } else {
+      auto e = createContent(key, data);
+      content[key] = e;
+      addChild(e);
+    }
+  }
+  
   virtual std::shared_ptr<Element> createContent(const std::string & key, const std::string & data) = 0;
   virtual void updateContent(Element & e, const std::string & key, const std::string & data) = 0;
   
@@ -67,12 +85,13 @@ protected:
     sendCommand(c);
   }
   
-  size_t getProxyCount() const { return current_keys.size(); }
+  size_t getProxyCount() const { return all_keys.size(); }
 
 private:
   int max_visible_count = 25;
   std::unordered_map<std::string, std::shared_ptr<Element> > content;
-  std::unordered_set<std::string> current_keys;
+  std::unordered_set<std::string> visible_keys;
+  std::vector<std::pair<std::string, std::string> > all_keys;
 };
 
 #endif
