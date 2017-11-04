@@ -6,7 +6,7 @@
 
 class ProxyLayout : public Element {
 public:
-  ProxyLayout(int _id = 0) : Element(_id) { }
+  ProxyLayout(int _initial_visible_count, int _id = 0) : Element(_id), max_visible_count(_initial_visible_count) { }
 
   bool isA(const std::string & className) const override {
     if (className == "ProxyLayout") return true;
@@ -42,12 +42,14 @@ public:
     if (ev.getHeight() != current_content_height && ev.getScrollRem() < 10) {
       current_content_height = ev.getHeight();
 
+      begin();
       unsigned int c = 10;
       for (unsigned int i = max_visible_count; i < max_visible_count + c && i < all_keys.size(); i++) {
 	auto & p = all_keys[i];
 	showKey(i, p.first, p.second);
       }
       max_visible_count += c;
+      commit();
     }
   }
 
@@ -90,8 +92,8 @@ protected:
   size_t getProxyCount() const { return all_keys.size(); }
 
 private:
+  int max_visible_count;
   int current_content_height = 0;
-  int max_visible_count = 10;
   std::unordered_map<std::string, std::shared_ptr<Element> > content;
   std::unordered_set<std::string> visible_keys;
   std::vector<std::pair<std::string, std::string> > all_keys;
