@@ -27,7 +27,7 @@ class PlatformThread : public Element {
   };
 
  PlatformThread(PlatformThread * _parent_thread, FWPlatform * _platform, std::shared_ptr<FWApplication> & _application, std::shared_ptr<Runnable> & _runnable)
-   : platform(_platform), application(_application), parent_thread(_parent_thread), runnable(_runnable)
+   : application(_application), platform(_platform), parent_thread(_parent_thread), runnable(_runnable)
     {
     initialize(this);
     if (_parent_thread) {
