@@ -19,7 +19,22 @@ public class FWScrollLayout extends ScrollView implements NativeCommandHandler {
     this.normalStyle = currentStyle = new ViewStyleManager(frame.bitmapCache, scale, true);
     this.activeStyle = new ViewStyleManager(frame.bitmapCache, scale, false);
   }
-  
+
+  @Override
+  protected void onScrollChanged(int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+    if (scrollY != oldScrollY) {
+      // Grab the last child placed in the ScrollView, we need it to determinate the bottom position.
+      View view = (View) getChildAt(getChildCount()-1);
+
+      // Calculate the scrolldiff
+      int diff = view.getBottom()-(getHeight()+scrollY);
+
+      frame.nativeScrollChanged(getId(), scrollY, diff);
+    }      
+    
+    super.onScrollChanged(scrollX, scrollY, oldScrollX, oldScrollY);
+  }
+    
   @Override
   public void addChild(View view) {
     if (this.getChildCount() > 0) {

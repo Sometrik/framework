@@ -99,6 +99,7 @@ public class FrameWork extends Activity {
   public native void nativeOnStart(int appId);
   public native void nativeOnDestroy(int appId);
   public native void nativeAddPreference(String key, String value);
+  public native void nativeScrollChanged(int viewId, int scrollPos, int scrollRem);
   public native void sendImageRequest(int viewId, String url, int width, int height, int internalFormat);
   public native void cancelImageRequest(int viewId);
   private native void setNativeActiveView(int activeView, boolean recordHistory);
