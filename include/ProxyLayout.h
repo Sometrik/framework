@@ -39,8 +39,10 @@ public:
   }
 
   void onScrollChangedEvent(ScrollChangedEvent & ev) override {
-    if (ev.getScrollRem() < 10) {
-      unsigned int c = 25;
+    if (ev.getHeight() != current_content_height && ev.getScrollRem() < 10) {
+      current_content_height = ev.getHeight();
+
+      unsigned int c = 10;
       for (unsigned int i = max_visible_count; i < max_visible_count + c && i < all_keys.size(); i++) {
 	auto & p = all_keys[i];
 	showKey(i, p.first, p.second);
@@ -88,7 +90,8 @@ protected:
   size_t getProxyCount() const { return all_keys.size(); }
 
 private:
-  int max_visible_count = 25;
+  int current_content_height = 0;
+  int max_visible_count = 10;
   std::unordered_map<std::string, std::shared_ptr<Element> > content;
   std::unordered_set<std::string> visible_keys;
   std::vector<std::pair<std::string, std::string> > all_keys;

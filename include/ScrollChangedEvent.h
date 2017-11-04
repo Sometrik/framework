@@ -5,8 +5,8 @@
 
 class ScrollChangedEvent : public Event {
 public:
- ScrollChangedEvent(int _scroll_pos, int _scroll_rem)
-   : scroll_pos(_scroll_pos), scroll_rem(_scroll_rem) { }
+ ScrollChangedEvent(int _scroll_pos, int _scroll_rem, int _height)
+   : scroll_pos(_scroll_pos), scroll_rem(_scroll_rem), height(_height) { }
 
   Event * dup() const override { return new ScrollChangedEvent(*this); }
   void dispatch(EventHandler & element) override {
@@ -22,9 +22,10 @@ public:
 
   int getScrollPos() const { return scroll_pos; }
   int getScrollRem() const { return scroll_rem; }
+  int getHeight() const { return height; }
    
  private:
-  int scroll_pos, scroll_rem;
+  int scroll_pos, scroll_rem, height;
 };
 
 #endif

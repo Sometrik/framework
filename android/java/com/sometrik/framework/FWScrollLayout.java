@@ -29,7 +29,7 @@ public class FWScrollLayout extends ScrollView implements NativeCommandHandler {
       // Calculate the scrolldiff
       int diff = view.getBottom()-(getHeight()+scrollY);
 
-      frame.nativeScrollChanged(getId(), scrollY, diff);
+      frame.nativeScrollChanged(getId(), scrollY, diff, view.getHeight());
     }      
     
     super.onScrollChanged(scrollX, scrollY, oldScrollX, oldScrollY);

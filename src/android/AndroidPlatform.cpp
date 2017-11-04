@@ -659,9 +659,9 @@ void Java_com_sometrik_framework_FrameWork_nativeAddPreference(JNIEnv* env, jobj
   env->ReleaseStringUTFChars(jvalue, value);
 }
 
-void Java_com_sometrik_framework_FrameWork_nativeScrollChanged(JNIEnv * env, jobject thiz, int viewId, int scrollPos, int scrollRem) {
-  ScrollChangedEvent ev(scrollPos, scrollRem);
-  mainThread->sendEvent(viewId, ev);  
+void Java_com_sometrik_framework_FrameWork_nativeScrollChanged(JNIEnv * env, jobject thiz, int viewId, int scrollPos, int scrollRem, int height) {
+  ScrollChangedEvent ev(scrollPos, scrollRem, height);
+  mainThread->sendEvent(viewId, ev);
 }
 
 void Java_com_sometrik_framework_FrameWork_sendImageRequest(JNIEnv* env, jobject thiz, jint viewId, jstring uri, jint width, jint height, jint internalFormat) {
