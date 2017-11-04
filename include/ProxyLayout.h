@@ -2,7 +2,6 @@
 #define _PROXYLAYOUT_H_
 
 #include <Element.h>
-#include <ProxyEvent.h>
 
 class ProxyLayout : public Element {
 public:
@@ -12,29 +11,9 @@ public:
     if (className == "ProxyLayout") return true;
     return Element::isA(className);
   }
-
-#if 0
-  void onProxyEvent(ProxyEvent & ev) {
-    switch (ev.getType()) {
-    case ProxyEvent::REQUEST_CONTENT: {
-      auto e = createContent(ev.getKey());
-      addChild(e);
-    }
-      break;
-    case ProxyEvent::DELETE_CONTENT: {
-      auto it = content.find(ev.getKey());
-      if (it != content.end()) {
-        content.erase(it);
-      }
-    }
-      break;
-    }
-  }
-#endif
   
   void clear() {
     current_keys.clear();
-    // sendCommand(Command(Command::CLEAR, getInternalId()));
   }
 
   void addProxy(const std::string & key, const std::string & data) {
@@ -42,17 +21,19 @@ public:
 
     current_keys.insert(key);
 
-    auto orig = getContent(key);
-    if (orig.get()) {
-      updateContent(*orig, key, data);
-
-      Command c(Command::REORDER_CHILD, getInternalId(), orig->getInternalId());
-      c.setValue(pos);
-      sendCommand(c);
-    } else {
-      auto e = createContent(key, data);
-      content[key] = e;
-      addChild(e);
+    if (pos < max_visible_count) {
+      auto orig = getContent(key);
+      if (orig.get()) {
+	updateContent(*orig, key, data);
+	
+	Command c(Command::REORDER_CHILD, getInternalId(), orig->getInternalId());
+	c.setValue(pos);
+	sendCommand(c);
+      } else {
+	auto e = createContent(key, data);
+	content[key] = e;
+	addChild(e);
+      }
     }
   }
 
@@ -89,6 +70,7 @@ protected:
   size_t getProxyCount() const { return current_keys.size(); }
 
 private:
+  int max_visible_count = 25;
   std::unordered_map<std::string, std::shared_ptr<Element> > content;
   std::unordered_set<std::string> current_keys;
 };
