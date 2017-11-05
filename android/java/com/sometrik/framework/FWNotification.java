@@ -76,7 +76,7 @@ public class FWNotification extends Notification.Builder implements NativeComman
   }
 
   @Override
-  public void setImage(byte[] bytes, int width, int height, int internalFormat) { }
+  public void setBitmap(Bitmap bitmap) { }
 
   @Override
   public void setValue(int v) {

@@ -64,19 +64,30 @@ public:
     nativeCommandTransactionClass = (jclass) env->NewGlobalRef(env->FindClass("com/sometrik/framework/NativeCommandTransaction"));
     nativeCommandClass = (jclass) env->NewGlobalRef(env->FindClass("com/sometrik/framework/NativeCommand"));
     frameworkClass = (jclass) env->NewGlobalRef(env->FindClass("com/sometrik/framework/FrameWork"));
-    jclass fileClass = env->FindClass("java/io/File");
-    jclass contextWrapperClass = env->FindClass("android/content/ContextWrapper");
+    bitmapClass = (jclass) env->NewGlobalRef(env->FindClass("android/graphics/Bitmap"));
+    byteBufferClass = (jclass) env->NewGlobalRef(env->FindClass("java/nio/ByteBuffer"));
 
     nativeCommandTransactionConstructor = env->GetMethodID(nativeCommandTransactionClass, "<init>", "()V");
     addCommandMethod = env->GetMethodID(nativeCommandTransactionClass, "addCommand", "(Lcom/sometrik/framework/NativeCommand;)V");
     nativeCommandConstructor = env->GetMethodID(nativeCommandClass, "<init>", "(Lcom/sometrik/framework/FrameWork;IIII[B[BI)V");
     nativeListCommandConstructor = env->GetMethodID(nativeCommandClass, "<init>", "(Lcom/sometrik/framework/FrameWork;IIII[B[BIIIIII)V");
-    sendCommandTransactionMethod = env->GetStaticMethodID(frameworkClass, "sendTransaction", "(Lcom/sometrik/framework/FrameWork;Lcom/sometrik/framework/NativeCommandTransaction;)V");
-    getPathMethod = env->GetMethodID(fileClass, "getPath", "()Ljava/lang/String;");
+    sendTransactionMethod = env->GetStaticMethodID(frameworkClass, "sendTransaction", "(Lcom/sometrik/framework/FrameWork;Lcom/sometrik/framework/NativeCommandTransaction;)V");
+    sendBitmapMethod = env->GetStaticMethodID(frameworkClass, "sendBitmap", "(Lcom/sometrik/framework/FrameWork;ILandroid/graphics/Bitmap;)V");
+    bitmapCreateMethod = env->GetStaticMethodID(bitmapClass, "createBitmap", "(IILandroid/graphics/Bitmap$Config;)Landroid/graphics/Bitmap;");
+    copyPixelsFromBufferMethod = env->GetMethodID(bitmapClass, "copyPixelsFromBuffer", "(Ljava/nio/Buffer;)V");
+    wrapMethod = env->GetStaticMethodID(byteBufferClass, "wrap", "([B)Ljava/nio/ByteBuffer;");
+    
+    jclass bitmapConfigClass = (jclass)myEnv->FindClass("android/graphics/Bitmap$Config");
+    jfieldID field_argb_4444 = env->GetStaticFieldID(bitmapConfigClass, "ARGB_4444", "Landroid/graphics/Bitmap$Config;");
+    jfieldID field_argb_8888 = env->GetStaticFieldID(bitmapConfigClass, "ARGB_8888", "Landroid/graphics/Bitmap$Config;");
+    jfieldID field_rgb_565 = env->GetStaticFieldID(bitmapConfigClass, "RGB_565", "Landroid/graphics/Bitmap$Config;");
+    
+    config_argb_4444 = env->NewGlobalRef(env->GetStaticObjectField(cache->bitmapConfigClass, field_argb_4444));
+    config_argb_8888 = env->NewGlobalRef(env->GetStaticObjectField(cache->bitmapConfigClass, field_argb_8888));
+    config_rgb_565 = env->NewGlobalRef(env->GetStaticObjectField(cache->bitmapConfigClass, field_rgb_565));
 
-    env->DeleteLocalRef(fileClass);
-    env->DeleteLocalRef(contextWrapperClass);
-
+    env->DeleteLocalRef(bitmapConfigClass);
+      
     if (env->ExceptionCheck()){
 
     }
@@ -95,17 +106,24 @@ public:
   JavaVM * javaVM = 0;
 
   jobject framework;
-
+  jobject config_rgb_565;
+  jobject config_rgba_4444;
+  jobject config_rgba_8888;
+  
   jclass nativeCommandTransactionClass;
   jclass nativeCommandClass;
   jclass frameworkClass;
+  jclass bitmapClass;
+  jclass byteBufferClass;
 
   jmethodID nativeCommandTransactionConstructor;
   jmethodID addCommandMethod;
   jmethodID nativeCommandConstructor;
   jmethodID nativeListCommandConstructor;
-  jmethodID sendCommandTransactionMethod;
-  jmethodID getPathMethod;
+  jmethodID sendTransactionMethod;
+  jmethodID sendBitmapMethod;
+  jmethodID bitmapCreateMethod;
+  jmethodID copyPixelsFromBufferMethod;
 };
 
 class AndroidThread;
@@ -155,6 +173,38 @@ public:
 
   std::shared_ptr<PlatformThread> createThread(std::shared_ptr<Runnable> & runnable) {
     return std::make_shared<AndroidThread>(this, &(getPlatform()), application, javaCache, asset_manager, runnable);
+  }
+
+  void setImageData(int internal_id, std::shared_ptr<canvas::PackedImageData> image) const {
+    jobject config = 0;
+    switch (image->getInternalFormat()) {
+    case InternalFormat::RGB565:
+      config = javaCache->config_rgb_565;
+      break;
+    case InternalFormat::RGBA4:
+      config = javaCache->config_rgba_4444;
+      break;
+    case InternaFormat::RGBA8:
+      config = javaCache->config_rgba_8888;
+      break;
+    }
+
+    if (!config) return;
+
+    const jbyte * bytePtr = reinterpret_cast<const jbyte*>(image->getData());
+    size_t size = image->calculateSizeForFirstLevel();
+    jbyteArray bytes = env->NewByteArray(size);
+    env->SetByteArrayRegion(bytes, 0, size, bytePtr);
+
+    jobject buffer = myEnv->CallStaticObjectMethod(javaCache->byteBufferClass, javaCache->wrapMethod, bytes);
+    jobject bitmap = myEnv->CallStaticObjectMethod(javaCache->bitmapClass, javaCache->bitmapCreateMethod, (int)image->getWidth(), (int)image->getHeight(), config);
+
+    myEnv->CallVoidMethod(bitmap, javaCache->copyPixelsFromBufferMethod, buffer);
+    myEnv->CallStaticVoidMethod(javaCache->frameworkClass, javaCache->sendBitmapMethod, javaCache->framework, internal_id, bitmap);
+
+    myEnv->DeleteLocalRef(bitmap);
+    myEnv->DeleteLocalRef(buffer);
+    myEnv->DeleteLocalRef(bytes);   
   }
 
   int sendCommands(const vector<Command> & commands) override {

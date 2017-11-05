@@ -101,7 +101,7 @@ public class FWFrameLayout extends FrameLayout implements NativeCommandHandler {
   public void reshape(int value, int size) { }
     
   @Override
-  public void setImage(byte[] bytes, int width, int height, int internalFormat) { }
+  public void setBitmap(Bitmap bitmap) { }
 
   @Override
   public void reshape(int size) { }

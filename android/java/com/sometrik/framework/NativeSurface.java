@@ -152,10 +152,7 @@ public class NativeSurface extends SurfaceView implements NativeCommandHandler {
   }
 
   @Override
-  public void setImage(byte[] bytes, int width, int height, int internalFormat) {
-    // TODO Auto-generated method stub
-    
-  }
+  public void setBitmap(Bitmap bitmap) { }
 
   @Override
   public void reshape(int size) {

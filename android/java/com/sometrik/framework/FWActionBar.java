@@ -283,21 +283,17 @@ public class FWActionBar implements NativeCommandHandler {
   }
 
   @Override
-  public void setImage(byte[] bytes, int width, int height, int internalFormat) { }
+  public void setBitmap(Bitmap bitmap) { }
 
   @Override
   public void reshape(int size) {
     // TODO Auto-generated method stub
-    
   }
-
 
   @Override
   public void deinitialize() {
-    // TODO Auto-generated method stub
-    
+    // TODO Auto-generated method stub    
   }
-
 
   @Override
   public void addImageUrl(String url, int width, int height) {

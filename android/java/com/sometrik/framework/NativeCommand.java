@@ -119,7 +119,6 @@ public class NativeCommand {
     SET_SHAPE, // Specifies the number of rows and columns in a GridView
     SET_STYLE,
     SET_ERROR,
-    SET_IMAGE,
     ADD_IMAGE_URL,
     FLUSH_VIEW,
     UPDATE_PREFERENCE,
@@ -490,11 +489,6 @@ public class NativeCommand {
 	view.setError(value != 0, getTextValueAsString());
       }
       break;
-    case SET_IMAGE:
-      if (view != null) {
-	view.setImage(byteArray, width, height, value);
-      }
-      break;
     case ADD_IMAGE_URL:
       if (view != null) {
 	view.addImageUrl(getTextValueAsString(), width, height);
@@ -711,7 +705,7 @@ public class NativeCommand {
     return button;
   }
   
-  private FWEditText createEditText(){
+  private FWEditText createEditText() {
     
     final FWEditText editText = new FWEditText(frame);
     editText.setId(getChildInternalId());
@@ -720,7 +714,7 @@ public class NativeCommand {
     editText.setSingleLine();
     editText.setImeOptions(EditorInfo.IME_ACTION_DONE);
     
-    if (isSet(FLAG_PASSWORD) && isSet(FLAG_NUMERIC)){
+    if (isSet(FLAG_PASSWORD) && isSet(FLAG_NUMERIC)) {
       editText.setInputType(InputType.TYPE_NUMBER_VARIATION_PASSWORD);
     } else if (isSet(FLAG_PASSWORD)) {
       editText.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);

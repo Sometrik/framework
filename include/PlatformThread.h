@@ -9,13 +9,13 @@
 #include <FWApplication.h>
 
 #include <memory>
-#include <iostream>
 
 class Event;
 class HTTPClientFactory;
 
 namespace canvas {
   class ContextFactory;
+  class PackedImageData;
 };
 
 class PlatformThread : public Element {
@@ -56,11 +56,11 @@ class PlatformThread : public Element {
   virtual void sendEvent(int internal_id, const Event & ev) = 0;
   virtual std::vector<std::pair<int, std::shared_ptr<Event> > > pollEvents(bool blocking = false) = 0;
   virtual void startEventLoop() = 0;
-
+  virtual void setImageData(int internal_id, std::shared_ptr<canvas::PackedImageData> image) = 0;
+  
   bool terminate() {
     sendEvent(getInternalId(), SysEvent(SysEvent::TERMINATE_THREAD));
     
-    std::cerr << "terminating " << subthreads.size() << " threads:\n";    
     for (auto & thread : subthreads) {
       thread.second->terminate();
     }
@@ -126,6 +126,10 @@ class PlatformThread : public Element {
 
   size_t getNumRunningThreads() const {
     return subthreads.size();
+  }
+
+  bool hasRunningThreads() const {
+    return !subthreads.empty();
   }
 
   const std::unordered_map<int, std::shared_ptr<PlatformThread> > & getSubThreads() const {

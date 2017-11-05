@@ -98,7 +98,7 @@ public class FWSwitch extends Switch implements NativeCommandHandler {
   }
 
   @Override
-  public void setImage(byte[] bytes, int width, int height, int internalFormat) { }
+  public void setBitmap(Bitmap bitmap) { }
 
   @Override
   public void reshape(int size) {

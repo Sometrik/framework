@@ -6,6 +6,7 @@
 #include <CommandEvent.h>
 #include <ValueEvent.h>
 #include <ImageSet.h>
+#include <PlatformThread.h>
 
 #include <ImageResponseEvent.h>
 
@@ -21,17 +22,10 @@ class ImageElement : public Element {
     return Element::isA(className);
   }
 
-  void handleImageResponseEvent(ImageResponseEvent & ev) override {   
-    Command c(Command::SET_IMAGE, getInternalId());
+  void handleImageResponseEvent(ImageResponseEvent & ev) override {
     if (ev.isSuccess()) {
-      auto & image = ev.getImage();
-      std::string data2((const char *)image->getData(), image->calculateSize());
-      c.setTextValue(data2);
-      c.setWidth(image->getWidth());
-      c.setHeight(image->getHeight());
-      c.setValue(int(image->getInternalFormat()));
+      getThread().setImageData(getInternalId(), ev.getImage());
     }
-    sendCommand(c);
     ev.setHandled(true);
   }
 

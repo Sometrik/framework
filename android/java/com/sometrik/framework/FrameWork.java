@@ -73,7 +73,6 @@ public class FrameWork extends Activity {
   private float screenWidth;
   public Handler mainHandler;
   private Intent dialogIntent;
-  private Bitmap picture;
   private AlertDialog.Builder builder;
   private AlertDialog alert;
   private float windowYcoords;
@@ -160,9 +159,16 @@ public class FrameWork extends Activity {
     mainHandler = new Handler() {
 
       public void handleMessage(Message msg) {
-	NativeCommandTransaction transaction = (NativeCommandTransaction) msg.obj;
-	for (NativeCommand command : transaction.getCommands()) {
-	  command.apply(framework.views.get(command.getInternalId()));		
+	if (msg.what == 1) {
+	  NativeCommandTransaction transaction = (NativeCommandTransaction) msg.obj;
+	  for (NativeCommand command : transaction.getCommands()) {
+	    command.apply(framework.views.get(command.getInternalId()));
+	  }
+	} else if (msg.what == 2) {
+	  View view = framework.views.get(msg.arg1);
+	  if (view != null) {
+	    view.setBitmap((Bitmap)msg.obj);
+	  }
 	}
       }
 
@@ -595,12 +601,17 @@ public class FrameWork extends Activity {
     System.out.println("getting DBPath _ db: " + dbName + " Path: " + String.valueOf(getDatabasePath(dbName)));
     return String.valueOf(getDatabasePath(dbName));
   }
-  
+			       
   public static void sendTransaction(FrameWork frameWork, NativeCommandTransaction commandTransaction) {
     Message msg = Message.obtain(null, 1, commandTransaction);
     frameWork.mainHandler.sendMessage(msg);
   }
-  
+
+  public static void sendBitmap(FrameWork frameWork, int internalId, Bitmap bitmap) {
+    Message msg = Message.obtain(null, 2, internalId, 0, bitmap);
+    frameWork.mainHandler.sendMessage(msg);
+  }
+
   public void addToPrefs(String key, String value){
     editor.putString(key, value);
     editor.apply();

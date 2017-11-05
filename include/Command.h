@@ -59,7 +59,6 @@ class Command {
     SET_SHAPE, // Specifies the number of rows and columns in a GridView
     SET_STYLE,
     SET_ERROR,
-    SET_IMAGE,
     ADD_IMAGE_URL,
     FLUSH_VIEW, // Flushes GridView content
     UPDATE_PREFERENCE,

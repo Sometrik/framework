@@ -58,6 +58,14 @@ struct event_data_s {
   int internal_id;
 };
 
+struct bitmap_data_s {
+  bitmap_data_s(PlatformThread * _mainThread, int _internal_id, std::shared_ptr<canvas::PackedImageData> _image) : mainThread(_mainThread), internal_id(_internal_id), image(_image) { }
+  
+  PlatformThread * mainThread;
+  int internal_id;
+  std::shared_ptr<canvas::PackedImageData> image;  
+};
+
 struct command_data_s {
   command_data_s(PlatformThread * _mainThread, const std::vector<Command> & _commands) : mainThread(_mainThread), commands(_commands) { }
   
@@ -69,6 +77,13 @@ static gboolean command_callback(gpointer data) {
   command_data_s * cd = (command_data_s*)data;
   cd->mainThread->sendCommands(cd->commands);
   delete cd;
+  return FALSE;
+}
+
+static gboolean bitmap_callback(gpointer data) {
+  bitmap_data_s * bd = (bitmap_data_s*)data;
+  bd->mainThread->setImageData(bd->internal_id, bd->image);
+  delete bd;
   return FALSE;
 }
 
@@ -85,6 +100,10 @@ public:
   }
   std::shared_ptr<PlatformThread> createThread(std::shared_ptr<Runnable> & runnable) override {
     return make_shared<GtkThread>(this, &(getPlatform()), application, runnable);
+  }
+  void setImageData(int internal_id, std::shared_ptr<canvas::PackedImageData> image) override {
+    bitmap_data_s * bd = new bitmap_data_s(&(getApplication().getThread()), internal_id, image);
+    g_idle_add(bitmap_callback, bd);
   }
   int sendCommands(const vector<Command> & commands) override {
     command_data_s * cd = new command_data_s(&(getApplication().getThread()), commands);
@@ -199,7 +218,31 @@ protected:
     }
     return GTK_STATE_FLAG_NORMAL;
   }
-  
+
+  void setImageData(int internal_id, std::shared_ptr<canvas::PackedImageData> image) override {
+    auto view = views_by_id[internal_id];
+    if (view) {
+      bool has_alpha = true; // format == canvas::RGBA8;
+      GdkPixbuf * pixbuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB,
+					  has_alpha,
+					  8,
+					  image->getWidth(),
+					  image->getHeight());
+      assert(pixbuf);
+      auto pixels = gdk_pixbuf_get_pixels(pixbuf);
+      size_t n = image->calculateSizeForFirstLevel();
+      auto input = image->getData();
+      for (size_t i = 0; i < n; i += 4) {
+	pixels[i + 0] = input[i + 2];
+	pixels[i + 1] = input[i + 1];
+	pixels[i + 2] = input[i + 0];
+	pixels[i + 3] = input[i + 3];
+      }
+      auto image = GTK_IMAGE(view);
+      gtk_image_set_from_pixbuf(image, pixbuf);
+    }
+  }
+
   int sendCommands(const vector<Command> & commands) {
     int commandRv = 0;
     for (auto & command : commands) {
@@ -521,36 +564,6 @@ protected:
 	      gtk_image_set_from_pixbuf(GTK_IMAGE(image), pixbuf);
 	    }
 	  }
-	}
-      }
-	break;
-
-      case Command::SET_IMAGE: {
-	auto view = views_by_id[command.getInternalId()];
-	if (view && command.getValue()) {
-	  canvas::InternalFormat format = (canvas::InternalFormat)command.getValue();
-	  bool has_alpha = true; // format == canvas::RGBA8;
-	  GdkPixbuf * pixbuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB,
-					      has_alpha,
-					      8,
-					      command.getWidth(),
-					      command.getHeight());
-	  assert(pixbuf);
-	  auto pixels = gdk_pixbuf_get_pixels(pixbuf);
-	  size_t n = command.getWidth() * command.getHeight() * 4;
-	  auto input = command.getTextValue().data();
-#if 0
-	  memcpy(pixels, input, n);
-#else
-	  for (size_t i = 0; i < n; i += 4) {
-	    pixels[i + 0] = input[i + 2];
-	    pixels[i + 1] = input[i + 1];
-	    pixels[i + 2] = input[i + 0];
-	    pixels[i + 3] = input[i + 3];
-	  }
-#endif
-	  auto image = GTK_IMAGE(view);
-	  gtk_image_set_from_pixbuf(image, pixbuf);
 	}
       }
 	break;

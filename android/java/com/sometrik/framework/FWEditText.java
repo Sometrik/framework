@@ -173,7 +173,7 @@ public class FWEditText extends EditText implements NativeCommandHandler {
   }
 
   @Override
-  public void setImage(byte[] bytes, int width, int height, int internalFormat) { }
+  public void setBitmap(Bitmap bitmap) { }
 
   @Override
   public void reshape(int size) {

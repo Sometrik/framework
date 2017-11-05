@@ -37,7 +37,7 @@ public class FWProgressBar extends ProgressBar implements NativeCommandHandler {
   public void setValue(String v) { }
 
   @Override
-  public void setImage(byte[] bytes, int width, int height, int internalFormat) { }
+  public void setBitmap(Bitmap bitmap) { }
 
   @Override
   public void setValue(int v) { }

@@ -260,10 +260,7 @@ public class BlurLayout extends FrameLayout implements NativeCommandHandler {
   }
 
   @Override
-  public void setImage(byte[] bytes, int width, int height, int internalFormat) {
-    // TODO Auto-generated method stub
-    
-  }
+  public void setBitmap(Bitmap bitmap) { }
 
   @Override
   public void addImageUrl(String url, int width, int height) {

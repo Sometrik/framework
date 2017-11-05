@@ -11,7 +11,7 @@ public interface NativeCommandHandler {
   public void addColumn(String text, int columnType);
   public void addData(String text, int row, int column, int sheet);
   public void setValue(String v);
-  public void setImage(byte[] bytes, int width, int height, int internalFormat);
+  public void setBitmap(Bitmap bitmap);
   public void addImageUrl(String url, int width, int height);
   public void setValue(int v);
   public void reshape(int value, int size);
