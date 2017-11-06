@@ -165,7 +165,7 @@ public class FrameWork extends Activity {
 	    command.apply(framework.views.get(command.getInternalId()));
 	  }
 	} else if (msg.what == 2) {
-	  View view = framework.views.get(msg.arg1);
+	  NativeCommandHandler view = framework.views.get(msg.arg1);
 	  if (view != null) {
 	    view.setBitmap((Bitmap)msg.obj);
 	  }
