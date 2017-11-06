@@ -5,6 +5,7 @@ import java.util.Iterator;
 
 import com.sometrik.framework.NativeCommand.Selector;
 
+import android.graphics.Bitmap;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;

@@ -8,11 +8,12 @@ import java.util.TimerTask;
 import com.sometrik.framework.NativeCommand.Selector;
 import com.sometrik.framework.SliderButton.Position;
 
+import android.graphics.Bitmap;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.RelativeLayout;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
 
 public class SliderLayout extends RelativeLayout implements NativeCommandHandler {
 

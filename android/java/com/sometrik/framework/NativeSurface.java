@@ -5,7 +5,7 @@ import java.util.TimerTask;
 
 import com.sometrik.framework.NativeCommand.Selector;
 
-import android.view.SurfaceHolder;
+import android.graphics.Bitmap;
 import android.view.SurfaceView;
 import android.view.View;
 

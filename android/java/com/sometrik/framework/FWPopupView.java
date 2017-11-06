@@ -3,9 +3,9 @@ package com.sometrik.framework;
 import com.sometrik.framework.NativeCommand.Selector;
 
 import android.R;
+import android.graphics.Bitmap;
 import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.PopupWindow;
 
 public class FWPopupView extends PopupWindow implements NativeCommandHandler {

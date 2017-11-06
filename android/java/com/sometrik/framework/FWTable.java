@@ -4,15 +4,12 @@ import java.util.ArrayList;
 
 import com.sometrik.framework.NativeCommand.Selector;
 
-import android.content.Context;
+import android.graphics.Bitmap;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewParent;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
-import android.widget.TextView;
 
 public class FWTable extends TableLayout implements NativeCommandHandler {
   

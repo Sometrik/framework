@@ -1,7 +1,10 @@
 package com.sometrik.framework;
 
 import java.util.ArrayList;
+
 import com.sometrik.framework.NativeCommand.Selector;
+
+import android.graphics.Bitmap;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;

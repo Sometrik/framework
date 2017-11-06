@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import com.sometrik.framework.NativeCommand.Selector;
 
+import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.view.View;
 import android.view.ViewGroup;

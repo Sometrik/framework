@@ -2,7 +2,7 @@ package com.sometrik.framework;
 
 import com.sometrik.framework.NativeCommand.Selector;
 
-import android.content.Context;
+import android.graphics.Bitmap;
 import android.view.View;
 import android.widget.Switch;
 

@@ -1,13 +1,12 @@
 package com.sometrik.framework;
 
-import java.util.List;
-
 import com.sometrik.framework.NativeCommand.Selector;
 
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.view.View;
 
 public class FWNotification extends Notification.Builder implements NativeCommandHandler {

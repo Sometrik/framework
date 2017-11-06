@@ -2,7 +2,7 @@ package com.sometrik.framework;
 
 import com.sometrik.framework.NativeCommand.Selector;
 
-import android.graphics.Color;
+import android.graphics.Bitmap;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Gravity;
 import android.view.View;

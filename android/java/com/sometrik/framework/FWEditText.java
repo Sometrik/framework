@@ -6,6 +6,7 @@ import java.util.TimerTask;
 
 import com.sometrik.framework.NativeCommand.Selector;
 
+import android.graphics.Bitmap;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.MotionEvent;

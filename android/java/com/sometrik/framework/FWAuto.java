@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import com.sometrik.framework.NativeCommand.Selector;
 
+import android.graphics.Bitmap;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;

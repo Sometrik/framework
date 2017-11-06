@@ -2,6 +2,7 @@ package com.sometrik.framework;
 
 import com.sometrik.framework.NativeCommand.Selector;
 
+import android.graphics.Bitmap;
 import android.view.View;
 
 public interface NativeCommandHandler {
