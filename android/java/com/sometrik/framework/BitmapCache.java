@@ -37,7 +37,7 @@ class BitmapCache {
   }
   
   public Bitmap loadBitmapForButton(String filename) {
-    if (displayScale < 2.0f) {
+    if (displayScale != 2.0f) {
       Bitmap bitmap = scaledBitmaps.get(filename);
       if (bitmap == null) {
         try {       
