@@ -173,11 +173,11 @@ public:
     return std::unique_ptr<Logger>(new AndroidLogger(name));
   }
 
-  std::shared_ptr<PlatformThread> createThread(std::shared_ptr<Runnable> & runnable) {
+  std::shared_ptr<PlatformThread> createThread(std::shared_ptr<Runnable> & runnable) override {
     return std::make_shared<AndroidThread>(this, &(getPlatform()), application, javaCache, asset_manager, runnable);
   }
 
-  void setImageData(int internal_id, std::shared_ptr<canvas::PackedImageData> image) const {
+  void setImageData(int internal_id, std::shared_ptr<canvas::PackedImageData> image) override {
     jobject config = 0;
     switch (image->getInternalFormat()) {
     case canvas::InternalFormat::RGB565:
