@@ -30,6 +30,7 @@ class ViewStyleManager {
   private enum HorizontalAlignment { INHERIT, LEFT, CENTER, RIGHT };
   private enum TextOverflow { CLIP, ELLIPSIS };
   private enum FontStyle { NORMAL, ITALIC, OBLIQUE };
+  private enum IconAttachment { TOP, RIGHT, BOTTOM, LEFT };
 
   private BitmapCache bitmapCache;
   private float displayScale = 1.0f;
@@ -59,7 +60,7 @@ class ViewStyleManager {
   private String fontFamily = null;
   private String hint = null;
   private String iconFile = null;
-  private String iconAttachment = null;
+  private IconAttachment iconAttachment = null;
   private int[] gradientColors = null;
   
   private static Pattern gradientPattern;
@@ -261,7 +262,15 @@ class ViewStyleManager {
     } else if (key.equals("hint")) {
       hint = value;
     } else if (key.equals("icon-attachment")) {
-      iconAttachment = value;
+      if (value.equals("top")) {
+	iconAttachment = IconAttachment.TOP;
+      } else if (value.equals("right")) {
+	iconAttachment = IconAttachment.RIGHT;
+      } else if (value.equals("bottom")) {
+	iconAttachment = IconAttachment.BOTTOM;
+      } else if (value.equals("left")) {
+	iconAttachment = IconAttachment.LEFT;
+      }
       // right, top, bottom, left
     } else if (key.equals("icon")) {
       if (value.equals("none")) {
@@ -470,14 +479,14 @@ class ViewStyleManager {
 	    drawable = new BitmapDrawable(bitmap);
 	  }
 	}
-	if (iconAttachment == null || iconAttachment.equals("top")) {
+	if (iconAttachment == null || iconAttachment == IconAttachment.TOP) {
 	  textView.setCompoundDrawablesWithIntrinsicBounds(null, drawable, null, null);
-	} else if (iconAttachment.equals("left")) {
-	  textView.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null);
-	} else if (iconAttachment.equals("right")) {
+	} else if (iconAttachment == IconAttachment.RIGHT) {
 	  textView.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable, null);
-	} else if (iconAttachment.equals("bottom")) {
+	} else if (iconAttachment == IconAttachment.BOTTOM) {
 	  textView.setCompoundDrawablesWithIntrinsicBounds(null, null, null, drawable);
+	} else if (iconAttachment == IconAttachment.LEFT) {
+	  textView.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null);
 	}
       }
     }
