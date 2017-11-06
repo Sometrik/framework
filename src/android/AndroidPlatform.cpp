@@ -39,6 +39,7 @@
 #include <AndroidOpenGLInitEvent.h>
 #include <ImageRequestEvent.h>
 #include <ScrollChangedEvent.h>
+#include <InternalFormat.h>
 
 #include <android_fopen.h>
 #include <unistd.h>
@@ -77,14 +78,14 @@ public:
     copyPixelsFromBufferMethod = env->GetMethodID(bitmapClass, "copyPixelsFromBuffer", "(Ljava/nio/Buffer;)V");
     wrapMethod = env->GetStaticMethodID(byteBufferClass, "wrap", "([B)Ljava/nio/ByteBuffer;");
     
-    jclass bitmapConfigClass = (jclass)myEnv->FindClass("android/graphics/Bitmap$Config");
+    jclass bitmapConfigClass = (jclass)env->FindClass("android/graphics/Bitmap$Config");
     jfieldID field_argb_4444 = env->GetStaticFieldID(bitmapConfigClass, "ARGB_4444", "Landroid/graphics/Bitmap$Config;");
     jfieldID field_argb_8888 = env->GetStaticFieldID(bitmapConfigClass, "ARGB_8888", "Landroid/graphics/Bitmap$Config;");
     jfieldID field_rgb_565 = env->GetStaticFieldID(bitmapConfigClass, "RGB_565", "Landroid/graphics/Bitmap$Config;");
     
-    config_argb_4444 = env->NewGlobalRef(env->GetStaticObjectField(cache->bitmapConfigClass, field_argb_4444));
-    config_argb_8888 = env->NewGlobalRef(env->GetStaticObjectField(cache->bitmapConfigClass, field_argb_8888));
-    config_rgb_565 = env->NewGlobalRef(env->GetStaticObjectField(cache->bitmapConfigClass, field_rgb_565));
+    config_rgba_4444 = env->NewGlobalRef(env->GetStaticObjectField(bitmapConfigClass, field_argb_4444));
+    config_rgba_8888 = env->NewGlobalRef(env->GetStaticObjectField(bitmapConfigClass, field_argb_8888));
+    config_rgb_565 = env->NewGlobalRef(env->GetStaticObjectField(bitmapConfigClass, field_rgb_565));
 
     env->DeleteLocalRef(bitmapConfigClass);
       
@@ -124,6 +125,7 @@ public:
   jmethodID sendBitmapMethod;
   jmethodID bitmapCreateMethod;
   jmethodID copyPixelsFromBufferMethod;
+  jmethodID wrapMethod;
 };
 
 class AndroidThread;
@@ -178,13 +180,13 @@ public:
   void setImageData(int internal_id, std::shared_ptr<canvas::PackedImageData> image) const {
     jobject config = 0;
     switch (image->getInternalFormat()) {
-    case InternalFormat::RGB565:
+    case canvas::InternalFormat::RGB565:
       config = javaCache->config_rgb_565;
       break;
-    case InternalFormat::RGBA4:
+    case canvas::InternalFormat::RGBA4:
       config = javaCache->config_rgba_4444;
       break;
-    case InternaFormat::RGBA8:
+    case canvas::InternalFormat::RGBA8:
       config = javaCache->config_rgba_8888;
       break;
     }
@@ -193,8 +195,8 @@ public:
 
     const jbyte * bytePtr = reinterpret_cast<const jbyte*>(image->getData());
     size_t size = image->calculateSizeForFirstLevel();
-    jbyteArray bytes = env->NewByteArray(size);
-    env->SetByteArrayRegion(bytes, 0, size, bytePtr);
+    jbyteArray bytes = myEnv->NewByteArray(size);
+    myEnv->SetByteArrayRegion(bytes, 0, size, bytePtr);
 
     jobject buffer = myEnv->CallStaticObjectMethod(javaCache->byteBufferClass, javaCache->wrapMethod, bytes);
     jobject bitmap = myEnv->CallStaticObjectMethod(javaCache->bitmapClass, javaCache->bitmapCreateMethod, (int)image->getWidth(), (int)image->getHeight(), config);
@@ -244,7 +246,7 @@ public:
       if (jtextValue2) myEnv->DeleteLocalRef(jtextValue2);
     }
 
-    myEnv->CallStaticVoidMethod(javaCache->frameworkClass, javaCache->sendCommandTransactionMethod, javaCache->framework, jtransaction);
+    myEnv->CallStaticVoidMethod(javaCache->frameworkClass, javaCache->sendTransactionMethod, javaCache->framework, jtransaction);
     myEnv->DeleteLocalRef(jtransaction);
 
     if (startLoop) {
