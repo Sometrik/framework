@@ -36,13 +36,19 @@ class FWActionSheet : public Dialog {
   int showModal(Element * parent) override {
     if (!isInitialized()) {
       setParent(parent);
-      initialize(&(parent->getPlatform()));
+      initialize(&(parent->getThread()));
       initializeChildren();
-      load();
     }
-    Command c1(Command::SHOW_ACTION_SHEET, getInternalId());
-    sendCommand(c1);
-    return getPlatform().getModalResultValue();
+//    if (!isInitialized()) {
+//      setParent(parent);
+//      initialize(&(parent->getPlatform()));
+//      initializeChildren();
+//      load();
+//    }
+    return sendCommand(Command(Command::SHOW_ACTION_SHEET, getInternalId()));
+//    Command c1(Command::SHOW_ACTION_SHEET, getInternalId());
+//    sendCommand(c1);
+//    return getPlatform().getModalResultValue();
   }
 
  protected:

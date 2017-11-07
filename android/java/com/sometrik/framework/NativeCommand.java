@@ -479,6 +479,12 @@ public class NativeCommand {
 	view.setViewVisibility(value != 0);
       }
       break;
+    case SHOW_ACTION_SHEET:{
+      if (view != null) {
+	view.setValue(1);
+      }
+      break;
+    }
     case SET_STYLE:
       if (view != null) {
 	view.setStyle(Selector.values()[value], getTextValueAsString(), getTextValue2AsString());
@@ -519,7 +525,10 @@ public class NativeCommand {
       frame.addToViewList(dialog);
       break;
     case CREATE_ACTION_SHEET:
-      createActionSheet();
+      if (view instanceof View) {
+	FWActionSheet sheet = new FWActionSheet(frame, (View)view, childInternalId);
+	frame.addToViewList(sheet);
+      }
       break;
     case CREATE_ACTIONBAR: {
       FWActionBar ab = new FWActionBar(frame, getTextValueAsString(), childInternalId);
@@ -595,8 +604,8 @@ public class NativeCommand {
     }
   }
   
-  private void createActionSheet(){
-    PopupMenu menu = new PopupMenu(frame, null);
+  private void createActionSheet(View anchor) {
+    PopupMenu menu = new PopupMenu(frame, anchor);
     menu.setOnMenuItemClickListener(new OnMenuItemClickListener(){
       @Override
       public boolean onMenuItemClick(MenuItem item) {
@@ -605,6 +614,7 @@ public class NativeCommand {
       }
     });
     menuList.add(menu);
+    menu.show();
   }
   
   private FWTable createTableLayout(boolean autoSize){
