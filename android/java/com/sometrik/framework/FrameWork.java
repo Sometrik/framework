@@ -215,14 +215,13 @@ public class FrameWork extends Activity {
   }
 
   private void initNative() {
-    System.out.println("Display scale: " + displayMetrics.scaledDensity);
+    System.out.println("Display scale: density = " + displayMetrics.scaledDensity + ", dpi = " + displayMetrics.densityDpi);
 //    float xSize = displayMetrics.widthPixels / displayMetrics.scaledDensity;
 //    float ySize = displayMetrics.heightPixels / displayMetrics.scaledDensity;
 //    Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
 //    display.getRealMetrics(displayMetrics);
     int xSize = displayMetrics.widthPixels;
     int ySize = displayMetrics.heightPixels;
-    System.out.println("oninit w: " + xSize + " h:" + ySize);
     initNativePreferences();
     onInit(getAssets(), xSize, ySize, displayMetrics.scaledDensity, getUserGoogleAccountEmail(), defaultLocale.getLanguage(), defaultLocale.getCountry());
   }
