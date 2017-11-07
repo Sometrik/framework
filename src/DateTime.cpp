@@ -24,6 +24,10 @@ extern int daylight;
 
 static const char month_names[] = "JanFebMarAprMayJunJulAugSepOctNovDec";
 
+#ifndef WIN32
+#define _snscanf(input, size, format, ...) sscanf(input, format, __VA_ARGS__)
+#endif
+
 struct tm *
 DateTime::Localtime(const time_t * timep, struct tm * result) {
   assert(result);
@@ -90,31 +94,24 @@ DateTime::DateTime(const string & s) {
 
 bool
 DateTime::parseRSSTime(const string & s) {
+  if (s.size() >= 64) return false;
+
   //  Wed, 17 Dec 2014 09:07:50 EST
   // "Mon, 01 Jan 1900 00:00:00 +0200"
   // 19 Dec 2014 10:35:29 +0200
 
-  char s_weekday[5], s_month[5];
+  char s_weekday[64], s_month[64];
   s_weekday[0] = s_month[0] = 0;
 
   tz_offset = day_of_week = 0;  
   
   int yy, dd, hh, mm, ss;
-  char tz_text[16];
-  bool is_valid = false;
-#ifdef WIN32
-  is_valid = _snscanf(s.c_str(), s.size(), "%s %d %s %d %d:%d:%d %s", s_weekday, &dd, s_month, &yy, &hh, &mm, &ss, tz_text) == 8;
-#else
-  is_valid = sscanf(s.c_str(), "%s %d %s %d %d:%d:%d %s", s_weekday, &dd, s_month, &yy, &hh, &mm, &ss, tz_text) == 8;
-#endif
+  char tz_text[32];
+  bool is_valid = _snscanf(s.c_str(), s.size(), "%s %d %s %d %d:%d:%d %s", s_weekday, &dd, s_month, &yy, &hh, &mm, &ss, tz_text) == 8;
   if (!is_valid) {
-#ifdef WIN32
     is_valid = _snscanf(s.c_str(), s.size(), "%d %s %d %d:%d:%d %s", &dd, s_month, &yy, &hh, &mm, &ss, tz_text) == 7;
-#else
-    is_valid = sscanf(s.c_str(), "%d %s %d %d:%d:%d %s", &dd, s_month, &yy, &hh, &mm, &ss, tz_text) == 7;
-#endif  
   }
-    if (is_valid) {
+  if (is_valid) {
     if (StringUtils::isNumber(tz_text)) {
       int tz = atoi(tz_text);
       tz_offset = int(tz / 100) * 60; // minutes?
@@ -137,18 +134,16 @@ DateTime::parseRSSTime(const string & s) {
 
 bool
 DateTime::parseHTTPTime(const string & s) {
-  char s_weekday[5], s_month[5];
+  if (s.size() >= 64) return false;
+
+  char s_weekday[64], s_month[64];
   s_weekday[0] = s_month[0] = 0;
 
   tz_offset = day_of_week = 0;  
 
   // Wed Aug 27 13:08:45 +0000 2008
   int yy, dd, hh, mm, ss, tz;
-#ifdef WIN32
   int rv = _snscanf(s.c_str(), s.size(), "%s %s %d %d:%d:%d %d %d", s_weekday, s_month, &dd, &hh, &mm, &ss, &tz, &yy);
-#else
-  int rv = sscanf(s.c_str(), "%s %s %d %d:%d:%d %d %d", s_weekday, s_month, &dd, &hh, &mm, &ss, &tz, &yy);
-#endif
 
   if (rv == 8) {
     tz_offset = int(tz / 100) * 60; // minutes?
@@ -171,17 +166,9 @@ DateTime::parseISOTime(const string & s) {
 
   // 2011-10-06T17:59:06.000Z
   int yy, mo, dd, hh, mi, ss;
-#ifdef WIN32
   int rv = _snscanf(s.c_str(), s.size(), "%d-%d-%dT%d:%d:%d", &yy, &mo, &dd, &hh, &mi, &ss);
-#else
-  int rv = sscanf(s.c_str(), "%d-%d-%dT%d:%d:%d", &yy, &mo, &dd, &hh, &mi, &ss);
-#endif
   if (rv != 6) {
-#ifdef WIN32
     rv = _snscanf(s.c_str(), s.size(), "%d-%d-%d %d:%d:%d", &yy, &mo, &dd, &hh, &mi, &ss);
-#else
-    rv = sscanf(s.c_str(), "%d-%d-%d %d:%d:%d", &yy, &mo, &dd, &hh, &mi, &ss);
-#endif
   }
   if (rv == 6) {
     year = yy; month = mo; day = dd; hour = hh; min = mi; sec = ss;
