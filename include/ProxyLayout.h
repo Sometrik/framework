@@ -95,8 +95,8 @@ protected:
   size_t getProxyCount() const { return all_keys.size(); }
 
 private:
-  int max_visible_count;
-  int current_content_height = 0;
+  unsigned int max_visible_count;
+  unsigned int current_content_height = 0;
   std::unordered_map<T1, std::shared_ptr<Element> > content;
   std::unordered_set<T1> visible_keys;
   std::vector<std::pair<T1, T2> > all_keys;
