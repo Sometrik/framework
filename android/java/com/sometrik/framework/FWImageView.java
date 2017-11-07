@@ -169,33 +169,39 @@ public class FWImageView extends ImageView implements NativeCommandHandler {
   
   @Override
   public void setBitmap(Bitmap bitmap) {
-    deinitialize();
-
+    releaseBitmap();
+    
     if (bitmap != null) {
       ownedBitmap = bitmap;
       setImageBitmap(bitmap);
-    
-      invalidate();
-
-      activeStyle.apply(this);
     }
   }
 
   @Override
   public void reshape(int size) { }
 
-  @Override
-  public void deinitialize() {
+  private void releaseBitmap() {
     if (ownedBitmap != null) {
       ownedBitmap.recycle();
       ownedBitmap = null;
-    } else if (imageRequestSent) {
+    }
+  }
+  
+  private void cancelImageRequest() {
+    if (imageRequestSent) {
       frame.cancelImageRequest(getElementId());
     }
+  }
+  
+  @Override
+  public void deinitialize() {
+    releaseBitmap();
+    cancelImageRequest();    
   }
 
   @Override
   protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+    cancelImageRequest();
     currentWidth = w;
     currentHeight = h;
     if (!images.isEmpty()) requestImage();
