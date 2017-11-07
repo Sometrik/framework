@@ -1,13 +1,13 @@
 #ifndef _PROXYLAYOUT_H_
 #define _PROXYLAYOUT_H_
 
-#include <Element.h>
+#include <LinearLayout.h>
 #include <ScrollChangedEvent.h>
 
 template <class T1, class T2>
-class ProxyLayout : public Element {
+class ProxyLayout : public LinearLayout {
 public:
-  ProxyLayout(int _initial_visible_count, int _id = 0) : Element(_id), max_visible_count(_initial_visible_count) { }
+  ProxyLayout(int _direction, int _initial_visible_count, int _id = 0) : LinearLayout(_direction, _id), max_visible_count(_initial_visible_count) { }
 
   bool isA(const std::string & className) const override {
     if (className == "ProxyLayout") return true;
@@ -84,12 +84,6 @@ protected:
     } else {
       return std::shared_ptr<Element>(0);
     }
-  }
-
-  void create() override {
-    Command c(Command::CREATE_LINEAR_LAYOUT, getParentInternalId(), getInternalId());
-    c.setValue(1);
-    sendCommand(c);
   }
   
   size_t getProxyCount() const { return all_keys.size(); }
