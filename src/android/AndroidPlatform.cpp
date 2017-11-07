@@ -194,7 +194,7 @@ public:
     if (!config) return;
 
     const jbyte * bytePtr = reinterpret_cast<const jbyte*>(image->getData());
-    size_t size = image->calculateSize();
+    size_t size = image->calculateSizeForFirstLevel();
     jbyteArray bytes = myEnv->NewByteArray(size);
     myEnv->SetByteArrayRegion(bytes, 0, size, bytePtr);
 
