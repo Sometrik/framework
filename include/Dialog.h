@@ -36,7 +36,6 @@ class Dialog : public Element {
     sendCommand(c);
   }
 
- private:
   std::string title;
 };
 
