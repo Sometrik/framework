@@ -29,26 +29,34 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
 
     final FWLayout layout = this;
     
-    setOnClickListener(new OnClickListener() {
-      @Override
-      public void onClick(View v) {
-	frame.intChangedEvent(getElementId(), 0, 0);
-      }
-    });
-    
+//    setOnClickListener(new OnClickListener() {
+//      @Override
+//      public void onClick(View v) {
+////	frame.intChangedEvent(getElementId(), 0, 0);
+//      }
+//    });
+//    
     setOnTouchListener(new OnTouchListener() {
       @Override
       public boolean onTouch(View v, MotionEvent event) {
 	if (event.getAction() == MotionEvent.ACTION_DOWN) {
 	  layout.currentStyle = layout.activeStyle;
 	  layout.currentStyle.apply(layout);
-	} else { // if (event.getAction() == MotionEvent.ACTION_UP)
+	} else if (event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_POINTER_UP
+	    || event.getAction() == MotionEvent.ACTION_CANCEL || event.getAction() == MotionEvent.ACTION_OUTSIDE){ // if (event.getAction() == MotionEvent.ACTION_UP)
+	  System.out.println("Back to normal " + event.getAction());
 	  layout.currentStyle = layout.normalStyle;
 	  layout.currentStyle.apply(layout);
 	}
 	return false;
       }
     });
+  }
+
+  @Override
+  public boolean performClick() {
+    frame.intChangedEvent(getElementId(), 0, 0);
+    return super.performClick();
   }
   
   @Override

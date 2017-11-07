@@ -28,16 +28,16 @@ public class FWButton extends Button implements NativeCommandHandler {
     
     final FWButton button = this;
     
-    setOnClickListener(new OnClickListener() {
-      @Override
-      public void onClick(View arg0) {
-	if (!FrameWork.transitionAnimation) {
-	  frame.intChangedEvent(getElementId(), 1, 0);
-	  if (animation != null) button.startAnimation(animation);
-	  frame.hideSoftKeyboard();
-	}
-      }
-    });
+//    setOnClickListener(new OnClickListener() {
+//      @Override
+//      public void onClick(View arg0) {
+//	if (!FrameWork.transitionAnimation) {
+//	  frame.intChangedEvent(getElementId(), 1, 0);
+//	  if (animation != null) button.startAnimation(animation);
+//	  frame.hideSoftKeyboard();
+//	}
+//      }
+//    });
     
     setOnTouchListener(new OnTouchListener() {
       @Override
@@ -45,13 +45,23 @@ public class FWButton extends Button implements NativeCommandHandler {
 	if (event.getAction() == MotionEvent.ACTION_DOWN) {
 	  button.currentStyle = button.activeStyle;
 	  button.currentStyle.apply(button);
-	} else if (event.getAction() == MotionEvent.ACTION_UP) {
+	} else if (event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_POINTER_UP
+	    || event.getAction() == MotionEvent.ACTION_CANCEL || event.getAction() == MotionEvent.ACTION_OUTSIDE) {
 	  button.currentStyle = isSelected ? button.selectedStyle : button.normalStyle;
 	  button.currentStyle.apply(button);
 	}
 	return false;
       }
     });
+  }
+  
+
+  @Override
+  public boolean performClick() {
+    frame.intChangedEvent(getElementId(), 0, 0);
+    if (animation != null)  startAnimation(animation);
+    frame.hideSoftKeyboard();
+    return super.performClick();
   }
   
   @Override
@@ -71,6 +81,7 @@ public class FWButton extends Button implements NativeCommandHandler {
   
   @Override
   public void setValue(int v) {
+
     boolean b = v != 0;
     if (b != isSelected) {  
       isSelected = b;
