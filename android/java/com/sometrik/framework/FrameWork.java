@@ -1,6 +1,7 @@
 package com.sometrik.framework;
 
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -10,6 +11,7 @@ import com.android.trivialdrivesample.util.IabException;
 import com.android.trivialdrivesample.util.IabHelper;
 import com.android.trivialdrivesample.util.IabHelper.IabAsyncInProgressException;
 import com.android.trivialdrivesample.util.Inventory;
+import com.sometrik.framework.FWActionBar.ActionBarItem;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -534,13 +536,14 @@ public class FrameWork extends Activity {
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
-//    if (actionBar != null) {
-//      ArrayList<ActionBarItem> itemList = actionBar.getItemList();
-//      for (ActionBarItem item : itemList) {
-//	menu.add(0, item.id, 0, item.name).setIcon(android.R.drawable.ic_menu_manage).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-//      }
-//    }
-//    System.out.println("onCreateOptionsMenu");
+    if (actionBar != null) {
+      ArrayList<ActionBarItem> itemList = actionBar.getItemList();
+      for (ActionBarItem item : itemList) {
+	MenuItem newItem = menu.add(0, item.id, 0, "item");
+	newItem.setIcon(item.picture).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+      }
+    }
+    System.out.println("onCreateOptionsMenu");
     return true;
   }
 

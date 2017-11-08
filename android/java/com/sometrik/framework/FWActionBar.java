@@ -1,11 +1,14 @@
 package com.sometrik.framework;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 import com.sometrik.framework.NativeCommand.Selector;
 
 import android.app.ActionBar;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -150,7 +153,7 @@ public class FWActionBar implements NativeCommandHandler {
   }
   
   public ArrayList<ActionBarItem> getItemList(){
-    return null;
+    return itemList;
   }
   
   @Override
@@ -167,7 +170,7 @@ public class FWActionBar implements NativeCommandHandler {
 
   @Override
   public void addOption(int optionId, String text) {
-    itemList.add(new ActionBarItem(optionId, text, "default"));
+    itemList.add(new ActionBarItem(optionId, text));
   }
 
   @Override
@@ -245,13 +248,24 @@ public class FWActionBar implements NativeCommandHandler {
   public class ActionBarItem {
 
     int id;
-    String name;
     String pictureAsset;
+    BitmapDrawable picture;
 
-    public ActionBarItem(int id, String name, String pictureAsset) {
+    public ActionBarItem(int id, String pictureAsset) {
       this.id = id;
-      this.name = name;
       this.pictureAsset = pictureAsset;
+
+      try {
+	InputStream stream = frame.getAssets().open(pictureAsset);
+	if (stream != null) {
+	  Bitmap bitmap = BitmapFactory.decodeStream(stream);
+	  picture = new BitmapDrawable(frame.getResources(), bitmap);
+	  stream.close();
+	}
+      } catch (IOException e) {
+	e.printStackTrace();
+      }
+
     }
   }
 

@@ -34,6 +34,7 @@ class FWActionSheet : public Dialog {
   const std::vector<FWOption> & getOptions() const { return options; }
 
   int showModal(Element * parent) override {
+    sendCommand(Command(Command::SHOW_ACTION_SHEET, getInternalId()));
     if (!isInitialized()) {
       setParent(parent);
       initialize(&(parent->getThread()));
@@ -45,7 +46,7 @@ class FWActionSheet : public Dialog {
 //      initializeChildren();
 //      load();
 //    }
-    return sendCommand(Command(Command::SHOW_ACTION_SHEET, getInternalId()));
+    return 1;
 //    Command c1(Command::SHOW_ACTION_SHEET, getInternalId());
 //    sendCommand(c1);
 //    return getPlatform().getModalResultValue();
