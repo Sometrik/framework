@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
+import android.view.Window;
 import android.widget.FrameLayout;
 
 public class FWDialog extends Dialog implements NativeCommandHandler {
@@ -19,6 +20,7 @@ public class FWDialog extends Dialog implements NativeCommandHandler {
   
   public FWDialog(final FrameWork frame, final int id) {
     super(frame);
+    requestWindowFeature(Window.FEATURE_NO_TITLE);
     this.frame = frame;
     this.id = id;
     baseView = new FrameLayout(frame);
@@ -64,7 +66,7 @@ public class FWDialog extends Dialog implements NativeCommandHandler {
 
   @Override
   public void setValue(String v) {
-    setTitle(v);
+//    setTitle(v);
   }
 
   @Override
