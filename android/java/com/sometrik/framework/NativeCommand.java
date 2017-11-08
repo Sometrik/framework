@@ -537,7 +537,7 @@ public class NativeCommand {
       break;
     }
     case CREATE_NAVIGATIONBAR: {
-      BlurLayout bar = new BlurLayout(frame, getChildInternalId());      
+      FWFrameLayout bar = new FWFrameLayout(frame, getChildInternalId());      
       view.addChild(bar);
       frame.addToViewList(bar);
       break;
