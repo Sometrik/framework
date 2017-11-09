@@ -31,6 +31,7 @@
 #include <cstdlib>
 #include <cassert>
 #include <fstream>
+#include <iostream>
 
 using namespace std;
 
@@ -87,6 +88,15 @@ static gboolean bitmap_callback(gpointer data) {
   return FALSE;
 }
 
+class GtkLogger : public Logger {
+ public:
+  GtkLogger(const std::string & _name) : Logger(_name) { }
+  
+  void println(const char * s) override {
+    std::cerr << s << std::endl;
+  }
+};
+
 class GtkThread : public PosixThread {
 public:
   GtkThread(PlatformThread * _parent_thread, FWPlatform * _platform, std::shared_ptr<FWApplication> & _application, std::shared_ptr<Runnable> & _runnable)
@@ -123,6 +133,10 @@ public:
     std::stringstream buffer;
     buffer << t.rdbuf();
     return buffer.str();
+  }
+  
+  std::unique_ptr<Logger> createLogger(const std::string & name) const override {
+    return std::unique_ptr<Logger>(new GtkLogger(name));
   }
 };
 
@@ -203,7 +217,11 @@ public:
   }
 
   void startEventLoop() override { }
-  
+
+  std::unique_ptr<Logger> createLogger(const std::string & name) const override {
+    return std::unique_ptr<Logger>(new GtkLogger(name));
+  }
+
 protected:
   void setDestroyed() override { }
   
@@ -492,12 +510,6 @@ protected:
 	gtk_orientable_set_orientation((GtkOrientable*)layout, GTK_ORIENTATION_HORIZONTAL);
 	gtk_flow_box_set_selection_mode((GtkFlowBox*)layout, GTK_SELECTION_NONE);
 	addView(command, layout);
-      }
-	break;
-
-      case Command::CREATE_PANEL: {
-	auto frame = gtk_frame_new(0);
-	addView(command, frame);
       }
 	break;
 
