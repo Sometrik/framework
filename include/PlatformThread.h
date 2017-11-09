@@ -98,10 +98,8 @@ class PlatformThread : public Element {
     }
   }
   
-  virtual std::unique_ptr<Logger> createLogger(const std::string & name) const {
-    return std::unique_ptr<Logger>(new BasicLogger(name));
-  }
-
+  virtual std::unique_ptr<Logger> createLogger(const std::string & name) const = 0;
+  
   void exitApp() {
     Command c(Command::QUIT_APP, getInternalId());
     sendCommand(c);
