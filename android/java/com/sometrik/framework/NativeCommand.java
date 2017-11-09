@@ -85,7 +85,6 @@ public class NativeCommand {
     CREATE_RELATIVE_LAYOUT,
     CREATE_TABLE_LAYOUT,
     CREATE_AUTO_COLUMN_LAYOUT,
-    CREATE_PANEL,
     CREATE_TEXT,
     CREATE_LINK,
     CREATE_DIALOG,
@@ -215,8 +214,7 @@ public class NativeCommand {
       }
       break;
 	
-    case CREATE_LINEAR_LAYOUT:
-    case CREATE_PANEL: {
+    case CREATE_LINEAR_LAYOUT: {
       FWLayout layout = createLinearLayout(getValue());
       if (view != null) {
 	view.addChild(layout);
