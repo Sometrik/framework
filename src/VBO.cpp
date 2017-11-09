@@ -2,7 +2,6 @@
 #include "VBO.h"
 
 #include <cassert>
-#include <iostream>
 
 using namespace std;
 
@@ -283,7 +282,7 @@ VBO::ring(float outer_radius, float inner_radius, unsigned int n, float dx, floa
     data[vn++] = { glm::vec2(0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(x2, y2, 0.0f) };    
   }
 
-  cerr << "vbo ring vn = " << vn << ", in = " << in << endl;
+  // cerr << "vbo ring vn = " << vn << ", in = " << in << endl;
   
   upload(T2F_N3F_V3F, data.get(), vn * sizeof(vbo_data_s));  
   uploadIndexArray(indices.get(), in);

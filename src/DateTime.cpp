@@ -4,7 +4,6 @@
 #include <cassert>
 #include <ctime>
 #include <cstring>
-#include <iostream>
 
 #include <sys/time.h>
 
@@ -206,7 +205,7 @@ DateTime::setTime(const string & s) {
     // no milliseconds :(
     // Sun, 01 Sep 2013 10:12:00 +0300
     // 02 Sep 2013 05:00:00 +0300
-    cerr << "failed to parse time string \"" << s << "\"\n";
+    // cerr << "failed to parse time string \"" << s << "\"\n";
     assert(0);
   }
 

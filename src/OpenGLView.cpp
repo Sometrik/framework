@@ -7,8 +7,6 @@
 
 #include <OpenGLInitEvent.h>
 
-#include <sstream>
-
 #include <GL.h>
 
 using namespace std;
@@ -27,7 +25,6 @@ OpenGLView::create() {
 
 void
 OpenGLView::onResizeEvent(ResizeEvent & ev) {
-  cerr << "OpenGLView: got resizeevent\n";
   logical_width = ev.getLogicalWidth();
   logical_height = ev.getLogicalHeight();
   actual_width = ev.getActualWidth();
@@ -59,9 +56,7 @@ OpenGLView::checkGLError() {
     }
 
     errLast = err;
-
-    ostringstream s;
-    s << "got OpenGL error " << err;
-    getApplication().getLogger().println(s.str());
+    
+    getApplication().getLogger().println("got OpenGL error " + to_string((int)err));
   }
 }

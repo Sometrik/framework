@@ -6,8 +6,6 @@
 #include <StringUtils.h>
 #include <cstdlib>
 
-#include <iostream>
-
 using namespace std;
 
 static set<int> readCompressedFormats() {
@@ -117,20 +115,20 @@ PrimitiveRenderer::initializeBase() {
   if (version_str) { 
     // OpenGL ES 3.0 Apple A7 GPU - 75.9.3
     // 3.0 Mesa 11.0.2
-    cerr << "got version: " << version_str << endl;
+    // cerr << "got version: " << version_str << endl;
     vector<string> parts = StringUtils::split(version_str);
     if (parts.size() >= 2 && parts[0] == "OpenGL") {
       if (parts.size() >= 3 && parts[1] == "ES") {
 	float es_version = atof(parts[2].c_str());
-	cerr << "got OpenGL ES: " << es_version << endl;
+	// cerr << "got OpenGL ES: " << es_version << endl;
 	if (es_version >= 3.0) {
-	  cerr << "has etc1" << endl;
+	  // cerr << "has etc1" << endl;
 	  has_etc1 = is_es3 = is_modern = true;
 	}
 	has_rgb565 = true;
       } else {
 	float gl_version = atof(parts[1].c_str());
-	cerr << "got OpenGL: " << gl_version << endl;
+	// cerr << "got OpenGL: " << gl_version << endl;
 	if (gl_version >= 4.0) {
 	  has_rgb565 = is_modern = true;	
 	}
@@ -152,7 +150,7 @@ PrimitiveRenderer::initializeBase() {
   int ii;
   glGetIntegerv(GL_MAX_TEXTURE_SIZE, &ii);
   max_texture_size = ii;
-  cerr << "Maximum texture size is " << max_texture_size << endl;
+  // cerr << "Maximum texture size is " << max_texture_size << endl;
 
   // MAX_VERTEX_TEXTURE_IMAGE_UNITS => how many textures a vertex shader can read
 
@@ -235,7 +233,7 @@ void
 PrimitiveRenderer::bind(const Texture & texture) {
   int id = texture.getTextureId();
   if (!id) {
-    cerr << "trying to bind zero tex" << endl;
+    // cerr << "trying to bind zero tex" << endl;
     assert(0);
   } else if (id != current_texture_2d) {
     current_texture_2d = id;
@@ -248,7 +246,7 @@ PrimitiveRenderer::bind(const VBO & vbo) {
   if (vbo.hasVertexArrayObjects()) {
     int a = vbo.getVertexArrayId();
     if (!a) {
-      cerr << "trying to bind zero vao" << endl;
+      // cerr << "trying to bind zero vao" << endl;
       assert(0);
     } else if (a != current_vertex_array) {
       current_vertex_array = a;

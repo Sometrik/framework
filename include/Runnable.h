@@ -7,7 +7,6 @@
 
 #include <exception>
 #include <string>
-#include <iostream>
 
 class Event;
 class FWPlatform;
@@ -25,7 +24,7 @@ class Runnable : public EventHandler {
       try {
 	run();
       } catch (std::exception & e) {
-	std::cerr << "Runnable threw an exception: " + std::string(e.what()) + "\n";
+	// std::cerr << "Runnable threw an exception: " + std::string(e.what()) + "\n";
       }
     }
   }

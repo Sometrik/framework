@@ -56,7 +56,6 @@ void
 Element::setError(bool t) {
   if ((t && !has_error) || (!t && has_error)) {
     has_error = t;
-    cerr << "setting error to " << has_error << endl;
     Command c(Command::SET_ERROR, getInternalId());
     c.setValue(t ? 1 : 0);
     if (t) c.setTextValue("Arvo ei kelpaa!");

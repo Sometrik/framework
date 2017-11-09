@@ -1,6 +1,5 @@
 #include <PosixThread.h>
 
-#include <iostream>
 #include <cassert>
 #include <unistd.h>
 
@@ -16,7 +15,6 @@ PosixThread::start() {
   if (r == 0) {
     return true;
   } else {
-    cerr << "failed to create thread: " << r << "\n";
     return false;
   }
 }

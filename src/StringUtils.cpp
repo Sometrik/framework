@@ -3,7 +3,6 @@
 #include <cstring>
 #include <cctype>
 #include <algorithm>
-#include <iostream>
 #include <cassert>
 
 #include <character_tests.h>
@@ -556,7 +555,7 @@ StringUtils::encodePunycode(const string & input) {
   int h = basic.size(), b = basic.size();
   if (b > 0) output += basic;
 
-  cerr << "basic codepoints: " << output << endl;
+  // cerr << "basic codepoints: " << output << endl;
   
   if (h < input.size()) {
     output = PREFIX + output;
@@ -585,7 +584,7 @@ StringUtils::encodePunycode(const string & input) {
       } 
     }
     // my $m = min(grep { $_ >= $n } map ord, @input);
-    cerr << "next code point to insert is " << m << endl;
+    // cerr << "next code point to insert is " << m << endl;
     delta += (m - n) * (h + 1);
     n = m;
     for (vector<uint32_t>::iterator it = input2.begin(); it != input2.end(); it++) {
@@ -602,7 +601,7 @@ StringUtils::encodePunycode(const string & input) {
 	  }
 	  utf8::append(code_point(q), output_inserter);
 	  bias = adapt(delta, h + 1, h == b);
-	  cerr << "bias becomes " << bias << endl;
+	  // cerr << "bias becomes " << bias << endl;
 	  delta = 0;
 	  h++;
       }

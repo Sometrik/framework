@@ -2,13 +2,14 @@
 
 #include "shader_program.h"
 
-#include <iostream>
 #include <cassert>
 
 #include <glm/gtc/type_ptr.hpp>
 
 #ifdef __ANDROID__
 #include <android/log.h>
+#else
+#include <iostream>
 #endif
 
 using namespace std;
@@ -154,7 +155,7 @@ shader_program::getUniformLocation(const std::string & name) {
   if (it != uniform_locations.end()) {
     return it->second;
   } else {
-    cerr << "getUniformLocation(" << name << "): n = " << uniform_locations.size() << endl;
+    // cerr << "getUniformLocation(" << name << "): n = " << uniform_locations.size() << endl;
     if (!programObject) programObject = glCreateProgram();  
     int loc = glGetUniformLocation(programObject, name.c_str());
     uniform_locations[name] = loc;

@@ -4,7 +4,6 @@
 #include <Surface.h>
 
 #include <cassert>
-#include <iostream>
 
 using namespace std;
 using namespace canvas;
@@ -82,7 +81,7 @@ static format_description_s getFormatDescription(InternalFormat internal_format)
   default:
     break;
   }
-  cerr << "unhandled format: " << int(internal_format) << endl;
+  // cerr << "unhandled format: " << int(internal_format) << endl;
   assert(0);
   return { 0, 0, 0 };
 }
@@ -172,7 +171,7 @@ OpenGLTexture::updateData(const ImageData & image, unsigned int x, unsigned int 
     updateTextureData(image, x, y);
   } else {
     if (getInternalFormat() != LA44) {
-      cerr << "OpenGLTexture: doing online image conversion from " << int(image.getInternalFormat()) << " to " << int(getInternalFormat()) << " (SLOW)\n";
+      // cerr << "OpenGLTexture: doing online image conversion from " << int(image.getInternalFormat()) << " to " << int(getInternalFormat()) << " (SLOW)\n";
     }
     auto tmp_image = image.convert(getInternalFormat());
     updateTextureData(*tmp_image, x, y);
@@ -190,7 +189,7 @@ OpenGLTexture::generateMipmaps() {
     if (getInternalFormat() != RGB_DXT1 && getInternalFormat() != RGB_ETC1 && getInternalFormat() != LA44 && getInternalFormat() != RED_RGTC1 && getInternalFormat() != RG_RGTC2) {
       glGenerateMipmap(GL_TEXTURE_2D);
     } else {
-      cerr << "unable to generate mipmaps for compressed texture!\n";
+      // cerr << "unable to generate mipmaps for compressed texture!\n";
     }
     need_mipmaps = false;
   }
