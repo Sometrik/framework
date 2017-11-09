@@ -9,7 +9,6 @@
 class ActionBar : public Element {
  public:
   ActionBar() { }
-  ActionBar(const char * _title) : title(_title) { }
 
   bool isA(const std::string & className) const override {
     if (className == "ActionBar") return true;
@@ -20,13 +19,6 @@ class ActionBar : public Element {
     Command c(Command::ADD_OPTION, getInternalId());
     c.setValue(id);
     c.setTextValue(name);
-    sendCommand(c);
-  }
-
-  void setTitle(const std::string & _title) {
-    title = _title;
-    Command c(Command::SET_TEXT_VALUE, getInternalId());
-    c.setTextValue(title);
     sendCommand(c);
   }
 
@@ -42,21 +34,13 @@ class ActionBar : public Element {
     ev.setHandled(true);
   }
 
-  void setSubtitle(const std::string & _subtitle){
-    subtitle = _subtitle;
-    style("subtitle", _subtitle);
-  }
-
  protected:
   void create() override {
     Command c(Command::CREATE_ACTIONBAR, getParentInternalId(), getInternalId());
-    c.setTextValue(title);
     sendCommand(c);
   }
 
  protected:
-  std::string title;
-  std::string subtitle;
 };
 
 #endif

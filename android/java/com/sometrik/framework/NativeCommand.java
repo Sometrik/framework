@@ -528,7 +528,7 @@ public class NativeCommand {
       }
       break;
     case CREATE_ACTIONBAR: {
-      FWActionBar ab = new FWActionBar(frame, getTextValueAsString(), childInternalId);
+      FWActionBar ab = new FWActionBar(frame, childInternalId);
       frame.actionBar = ab;
       frame.addToViewList(ab);
       break;

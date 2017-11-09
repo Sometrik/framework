@@ -36,7 +36,7 @@ public class FWActionBar implements NativeCommandHandler {
   private FWLayout alternativeButtonLayout;
   ViewStyleManager normalStyle, activeStyle, currentStyle;
 
-  public FWActionBar(final FrameWork frame, String title, int id){
+  public FWActionBar(final FrameWork frame, int id){
     this.frame = frame;
     actionBar = frame.getActionBar();
 //    actionBar.setDisplayShowTitleEnabled(true);
