@@ -82,7 +82,6 @@ public class NativeCommand {
     CREATE_LINEAR_LAYOUT,
     CREATE_FRAME_LAYOUT,
     CREATE_SCROLL_LAYOUT,
-    CREATE_RELATIVE_LAYOUT,
     CREATE_TABLE_LAYOUT,
     CREATE_AUTO_COLUMN_LAYOUT,
     CREATE_TEXT,
@@ -235,14 +234,6 @@ public class NativeCommand {
 	FWScrollLayout scrollLayout = new FWScrollLayout(frame, getChildInternalId());
 	frame.addToViewList(scrollLayout);
 	view.addChild(scrollLayout);
-      }
-    break;
-    case CREATE_RELATIVE_LAYOUT:
-      if (view != null) {
-	FWRelativeLayout layout = new FWRelativeLayout(frame);
-	layout.setId(getChildInternalId());
-	frame.addToViewList(layout);
-	view.addChild(layout);
       }
     break;
     case CREATE_AUTO_COLUMN_LAYOUT:
