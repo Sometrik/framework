@@ -539,6 +539,7 @@ public class FrameWork extends Activity {
     if (actionBar != null) {
       ArrayList<ActionBarItem> itemList = actionBar.getItemList();
       for (ActionBarItem item : itemList) {
+	System.out.println("onCreateOptionsMenu add new Item " + item.id);
 	MenuItem newItem = menu.add(0, item.id, 0, "item");
 	newItem.setIcon(item.picture).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
       }
@@ -549,7 +550,8 @@ public class FrameWork extends Activity {
 
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
-    intChangedEvent(actionBar.getElementId(), item.getItemId(), 0);
+    System.out.println("onOptionsItemSelected Item " + actionBar.getElementId() + " " + item.getItemId() + " " + item.getGroupId());
+    intChangedEvent(actionBar.getElementId(), item.getItemId(), item.getItemId());
     if (item.getItemId() == 16908332){
       if (drawerLayout.isDrawerOpen(Gravity.LEFT)){
 	drawerLayout.closeDrawer(Gravity.LEFT);
