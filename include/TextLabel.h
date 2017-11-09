@@ -21,6 +21,8 @@ class TextLabel : public Element {
     sendCommand(c);
   }
 
+  std::string getText() { return value; }
+
  protected:
   void create() override {
     Command c(Command::CREATE_TEXT, getParentInternalId(), getInternalId());
