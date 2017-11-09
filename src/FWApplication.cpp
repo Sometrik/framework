@@ -11,7 +11,7 @@ using namespace std;
 
 class DebugDialog : public Dialog {
 public:
-  DebugDialog() : Dialog("Debug") {
+  DebugDialog() : Dialog() {
     auto mainLayout = make_shared<LinearLayout>(FW_VERTICAL);
     addChild(mainLayout);
 

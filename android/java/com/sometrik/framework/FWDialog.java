@@ -59,14 +59,18 @@ public class FWDialog extends Dialog implements NativeCommandHandler {
   }
 
   @Override
-  public void addOption(int optionId, String text) { }
+  public void addOption(int optionId, String text) {
+    System.out.println("FWDialog couldn't handle command");
+    }
 
   @Override
-  public void addData(String text, int row, int column, int sheet) { }
+  public void addData(String text, int row, int column, int sheet) {
+    System.out.println("FWDialog couldn't handle command");
+    }
 
   @Override
   public void setValue(String v) {
-//    setTitle(v);
+    System.out.println("FWDialog couldn't handle command");
   }
 
   @Override

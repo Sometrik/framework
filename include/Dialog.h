@@ -8,8 +8,8 @@
 
 class Dialog : public Element {
  public:
-  Dialog(const std::string & _title, int _id = 0)
-    : Element(_id), title(_title) { }
+  Dialog(int _id = 0)
+    : Element(_id) { }
 
   bool isA(const std::string & className) const override {
     if (className == "Dialog") return true;
@@ -32,11 +32,8 @@ class Dialog : public Element {
   
   void create() override {
     Command c(Command::CREATE_DIALOG, getParentInternalId(), getInternalId());
-    c.setTextValue(title);
     sendCommand(c);
   }
-
-  std::string title;
 };
 
 #endif

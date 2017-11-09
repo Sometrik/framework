@@ -18,7 +18,7 @@ class FWOption {
 
 class FWActionSheet : public Dialog {
  public:
- FWActionSheet(const std::string & _title, int _id = 0) : Dialog(_title, _id) {
+ FWActionSheet(int _id = 0) : Dialog(_id) {
   }
 
   void addOption(int id, const std::string & name) {
@@ -55,7 +55,6 @@ class FWActionSheet : public Dialog {
  protected:
   void create() override {
     Command c0(Command::CREATE_ACTION_SHEET, getParentInternalId(), getInternalId());
-    c0.setTextValue(title);
     sendCommand(c0);
   }
   
