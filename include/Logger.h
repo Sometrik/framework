@@ -2,7 +2,6 @@
 #define _LOGGER_H_
 
 #include <string>
-#include <iostream>
 
 class Logger {
  public:
@@ -16,15 +15,6 @@ class Logger {
   
  private:
   std::string name;
-};
-
-class BasicLogger : public Logger {
- public:
-  BasicLogger(const std::string & _name) : Logger(_name) { }
-  
-  void println(const char * s) override {
-    std::cerr << s << std::endl;
-  }
 };
 
 #endif
