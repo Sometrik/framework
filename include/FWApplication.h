@@ -23,7 +23,7 @@ public:
   
   const std::string & getName() const { return name; }
 
-  void setActiveViewId(int id) { activeViewId = id; }
+  virtual void setActiveViewId(int id) { activeViewId = id; }
   int getActiveViewId() const { return activeViewId; }
 
   void addToHistory(int view_internal_id) {

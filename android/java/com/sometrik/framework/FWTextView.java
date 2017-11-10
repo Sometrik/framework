@@ -33,7 +33,7 @@ public class FWTextView extends TextView implements NativeCommandHandler {
       @Override
       public void onClick(View v) {
 	System.out.println("OnClick TextView");
-	frame.intChangedEvent(getElementId(), 0, 0);
+	frame.sendNativeValueEvent(getElementId(), 0, 0);
       }
     });
     

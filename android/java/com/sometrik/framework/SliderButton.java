@@ -70,7 +70,7 @@ public class SliderButton extends Button {
 	  child.setViewVisibility(true);
 	  onTop = true;
 
-	  frame.intChangedEvent(sliderLayout.getId(), -1, positionId);
+	  frame.sendNativeValueEvent(sliderLayout.getId(), -1, positionId);
 
 	}
       }

@@ -309,7 +309,7 @@ public class NativeCommand {
 	    @Override
 	    public void onItemClick(AdapterView<?> arg0, View arg1, int groupPosition, long id) {
 	      System.out.println("row clicked. Sending intChangedEvent of " + (groupPosition - 1));
-	      frame.intChangedEvent(childInternalId, (groupPosition - 1), 0);
+	      frame.sendNativeValueEvent(childInternalId, (groupPosition - 1), 0);
 	    }
 	  });
 	  frame.addToViewList(listView);
@@ -634,7 +634,7 @@ public class NativeCommand {
     click.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
       @Override
       public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-	frame.intChangedEvent(buttonView.getId(), isChecked ? 1 : 0, 0);
+	frame.sendNativeValueEvent(buttonView.getId(), isChecked ? 1 : 0, 0);
       }
     });
     frame.addToViewList(click);
@@ -723,7 +723,7 @@ public class NativeCommand {
       public void afterTextChanged(Editable editable) {
 	String inputText = editable.toString();
 	byte[] b = inputText.getBytes(frame.getCharset());
-	frame.textChangedEvent(getChildInternalId(), b);
+	frame.sendNativeValueEvent(getChildInternalId(), b);
       }
       public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
       public void onTextChanged(CharSequence s, int start, int before, int count) {}
@@ -766,7 +766,7 @@ public class NativeCommand {
     checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
       @Override
       public void onCheckedChanged(CompoundButton box, boolean isChecked) {
-	frame.intChangedEvent(childInternalId, isChecked ? 1 : 0, 0);
+	frame.sendNativeValueEvent(childInternalId, isChecked ? 1 : 0, 0);
       }
     });
     return checkBox;

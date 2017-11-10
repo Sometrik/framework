@@ -100,6 +100,14 @@ public class FWFrameView extends FrameLayout implements NativeCommandHandler {
       if (activeStyle == currentStyle) activeStyle.apply(this);
     }
     
+    System.out.println("FWFrameView style " + key + " " + value);
+    
+    if (returnAnimation == null) {
+      
+    } else {
+      System.out.println("FWFrameView got animation");
+    }
+    
     if (key.equals("enter-animation")) {
       if (value.equals("from-right")) {
 	enterAnimationOtherViewFromX = 2000;

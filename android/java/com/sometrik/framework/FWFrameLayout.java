@@ -58,6 +58,7 @@ public class FWFrameLayout extends FrameLayout implements NativeCommandHandler {
     
   @Override
   public void setStyle(Selector selector, String key, String value) {
+    System.out.println("FWFrameView (Layout) style " + key + " " + value);
     if (selector == Selector.NORMAL) {
       normalStyle.setStyle(key, value);
       if (normalStyle == currentStyle) normalStyle.apply(this);

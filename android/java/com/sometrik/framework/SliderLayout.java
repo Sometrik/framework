@@ -103,7 +103,7 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
 	@Override
 	public void onClick(int childIndex, int childId) {
 	  System.out.println("Clicked child index " + childIndex);
-	  frame.intChangedEvent(getId(), childIndex, 0);
+	  frame.sendNativeValueEvent(getId(), childIndex, 0);
 	}
       };
       FWLayout layout = (FWLayout) view;
@@ -172,7 +172,7 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
         @Override
         public void onItemClick(AdapterView<?> arg0, View arg1, int groupPosition, long id) {
   	System.out.println("row clicked. Sending intChangedEvent of " + (groupPosition - 1));
-  	  frame.intChangedEvent(getId(), (groupPosition - 1), sheet);
+  	  frame.sendNativeValueEvent(getId(), (groupPosition - 1), sheet);
         }
       });
       

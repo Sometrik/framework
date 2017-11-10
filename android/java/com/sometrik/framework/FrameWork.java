@@ -85,8 +85,8 @@ public class FrameWork extends Activity {
   public BitmapCache bitmapCache;
 
   public native void endModal(int value, byte[] textValue);
-  public native void textChangedEvent(int id, byte[] textValue);
-  public native void intChangedEvent(int id, int changedInt, int changedInt2);
+  private native void textChangedEvent(int id, byte[] textValue);
+  private native void intChangedEvent(int id, int changedInt, int changedInt2);
   public native void visibilityChangedEvent(int id, boolean visible);
   public native void keyPressed(int keyId, int viewId);
   public native void touchEvent(int viewId, int mode, int fingerIndex, double timestamp, float x, float y);
@@ -285,8 +285,24 @@ public class FrameWork extends Activity {
 //      imm.hideSoftInputFromWindow(((View)views.get(getCurrentViewId())).getApplicationWindowToken(), 0);
 //    }
   }
+  
+  public void sendNativeValueEvent(int elementId, int value, int value2) {
+    if (!transitionAnimation) {
+      System.out.println("click while not transitioning");
+      intChangedEvent(elementId, value, value2);
+    } else {
+      System.out.println("click while transitioning");
+    }
+  }
+
+  public void sendNativeValueEvent(int elementId, byte[] value) {
+    if (!transitionAnimation) {
+      textChangedEvent(elementId, value);
+    }
+  }
 
   public void setCurrentView(final View view, final boolean recordHistory, Animation animation, final int newViewAnimationFromX) {
+	 transitionAnimation = true;
     animation.setAnimationListener(new Animation.AnimationListener() {
 	@Override
 	public void onAnimationStart(Animation animation) {
@@ -331,7 +347,6 @@ public class FrameWork extends Activity {
 	  });
 	  q.setDuration(100);
 	  view.startAnimation(q);
-	 transitionAnimation = true;
 	}
 
 	@Override

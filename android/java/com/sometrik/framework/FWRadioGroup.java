@@ -18,7 +18,7 @@ public class FWRadioGroup extends RadioGroup implements NativeCommandHandler {
     setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener(){
       @Override
       public void onCheckedChanged(RadioGroup group, int checkedId) {
-	frame.intChangedEvent(getId(), checkedId, 0);
+	frame.sendNativeValueEvent(getId(), checkedId, 0);
       }
     });
   }

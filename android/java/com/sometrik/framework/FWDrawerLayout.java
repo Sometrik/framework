@@ -21,7 +21,7 @@ public class FWDrawerLayout extends DrawerLayout {
             super.onDrawerClosed(view);
             System.out.println("drawerClosed");
             frame.invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
-            frame.intChangedEvent(frame.getCurrentDrawerViewId(), 0, 0);
+            frame.sendNativeValueEvent(frame.getCurrentDrawerViewId(), 0, 0);
         }
 
         /** Called when a drawer has settled in a completely open state. */
@@ -29,7 +29,7 @@ public class FWDrawerLayout extends DrawerLayout {
             super.onDrawerOpened(drawerView);
             System.out.println("drawerOpened");
             frame.invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
-            frame.intChangedEvent(frame.getCurrentDrawerViewId(), 1, 0);
+            frame.sendNativeValueEvent(frame.getCurrentDrawerViewId(), 1, 0);
         }
     };
     mDrawerToggle.setDrawerIndicatorEnabled(false);

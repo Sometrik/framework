@@ -55,7 +55,7 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
 
   @Override
   public boolean performClick() {
-    frame.intChangedEvent(getElementId(), 0, 0);
+    frame.sendNativeValueEvent(getElementId(), 0, 0);
     return super.performClick();
   }
   
@@ -86,7 +86,7 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
       view.setOnClickListener(new OnClickListener() {
 	  @Override
 	  public void onClick(View v) {
-	    frame.intChangedEvent(getElementId(), 0, 1);
+	    frame.sendNativeValueEvent(getElementId(), 0, 1);
 	  }
       });
     }
