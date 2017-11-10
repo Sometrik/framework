@@ -482,7 +482,6 @@ protected:
 	break;      
 
       case Command::CREATE_FRAME_LAYOUT:
-      case Command::CREATE_RELATIVE_LAYOUT: 
       case Command::CREATE_LINEAR_LAYOUT: {
 	auto box = gtk_box_new(command.getValue() == 1 ? GTK_ORIENTATION_VERTICAL : GTK_ORIENTATION_HORIZONTAL, 0);
 
