@@ -484,15 +484,6 @@ protected:
       case Command::CREATE_FRAME_LAYOUT:
       case Command::CREATE_LINEAR_LAYOUT: {
 	auto box = gtk_box_new(command.getValue() == 1 ? GTK_ORIENTATION_VERTICAL : GTK_ORIENTATION_HORIZONTAL, 0);
-
-#if 0
-	event_box = gtk_event_box_new ();
-	gtk_container_add (GTK_CONTAINER (event_box), image);
-	g_signal_connect(G_OBJECT (event_box),
-			 "button_press_event",
-			 G_CALLBACK (button_press_callback),
-			 image);
-#endif
 	addView(command, box);
       }
 	break;
@@ -559,10 +550,17 @@ protected:
 	break;
 
       case Command::CREATE_IMAGEVIEW: {
+	GtkWidget * box = gtk_event_box_new();
 	GtkWidget * image = gtk_image_new();
-	addView(command, image, true);
+
+	addView(command, box, true);
+
+	gtk_container_add(GTK_CONTAINER(box), image);
+
+	gtk_widget_show(image);
 
 	g_signal_connect(G_OBJECT(image), "size-allocate", G_CALLBACK(on_size_allocate), this);
+	g_signal_connect(G_OBJECT(box), "button_press_event", G_CALLBACK(on_eventbox_clicked), this);
 
 	auto & uri_text = command.getTextValue();
 	if (!uri_text.empty()) {
@@ -1212,6 +1210,7 @@ protected:
 
   static size_t getChildCount(GtkContainer * widget);
   
+  static gboolean on_eventbox_clicked(GtkWidget * widget, GdkEvent * event, gpointer user_data);
   static void send_int_value(GtkWidget * widget, gpointer data);
   static void send_bool_value(GtkWidget * widget, GParamSpec *pspec, gpointer data);
   static void send_toggled_value(GtkWidget * widget, gpointer user_data);
@@ -1276,6 +1275,19 @@ GtkMainThread::getChildCount(GtkContainer * widget) {
     n = g_list_length(children);
   }
   return n;
+}
+
+gboolean
+GtkMainThread::on_eventbox_clicked(GtkWidget * widget, GdkEvent * event, gpointer data) {
+  GtkMainThread * mainThread = (GtkMainThread*)data;
+  int id = mainThread->getId(widget);
+  assert(id);
+  if (id) {
+    cerr << "int value: id = " << id << endl;
+    ValueEvent ev(1);
+    mainThread->getPlatform().postEvent(id, ev);
+  }
+  return TRUE; // stop propagation
 }
 
 void
