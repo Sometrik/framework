@@ -241,6 +241,10 @@ protected:
   void setImageData(int internal_id, std::shared_ptr<canvas::PackedImageData> image) override {
     auto view = views_by_id[internal_id];
     if (view) {
+      if (GTK_IS_EVENT_BOX(view)) {
+	view = gtk_bin_get_child(GTK_BIN(view));
+      }
+      
       bool has_alpha = true; // format == canvas::RGBA8;
       GdkPixbuf * pixbuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB,
 					  has_alpha,
@@ -559,7 +563,7 @@ protected:
 
 	gtk_widget_show(image);
 
-	g_signal_connect(G_OBJECT(image), "size-allocate", G_CALLBACK(on_size_allocate), this);
+	g_signal_connect(G_OBJECT(box), "size-allocate", G_CALLBACK(on_size_allocate), this);
 	g_signal_connect(G_OBJECT(box), "button_press_event", G_CALLBACK(on_eventbox_clicked), this);
 
 	auto & uri_text = command.getTextValue();
@@ -642,16 +646,17 @@ protected:
 	  gtk_header_bar_set_subtitle((GtkHeaderBar*)view, command.getTextValue().c_str());
 	} else if (GTK_IS_BUTTON(view)) {
 	  gtk_button_set_label(GTK_BUTTON(view), command.getTextValue().c_str());
-	} else if (GTK_IS_IMAGE(view)) {
+	} else if (GTK_IS_EVENT_BOX(view)) {
+	  auto image = gtk_bin_get_child(GTK_BIN(view));
 	  auto & uri_text = command.getTextValue();
 	  URI uri(uri_text);
 	  if (uri.getScheme() == "http" || uri.getScheme() == "https") {
-	    int w = gtk_widget_get_allocated_width(view);
+	    int w = gtk_widget_get_allocated_width(image);
 	    requestImage(command.getInternalId(), uri_text, w);
 	  } else {
 	    auto pixbuf = loadPixbuf(uri_text);
 	    if (pixbuf) {
-	      gtk_image_set_from_pixbuf(GTK_IMAGE(view), pixbuf);
+	      gtk_image_set_from_pixbuf(GTK_IMAGE(image), pixbuf);
 	    }
 	  }
 	} else {
@@ -1484,7 +1489,7 @@ GtkMainThread::on_bar_button(GtkWidget * widget, gpointer data) {
 void
 GtkMainThread::on_size_allocate(GtkWidget * widget, GtkAllocation * allocation, gpointer data) {
   GtkMainThread * mainThread = (GtkMainThread*)data;
-  if (GTK_IS_IMAGE(widget)) {
+  if (GTK_IS_EVENT_BOX(widget)) {
     int id = mainThread->getId(widget);
     auto & d = mainThread->getImageData(id);
     if (!d.images.empty() && d.width != allocation->width) {
