@@ -61,14 +61,18 @@ class PlatformThread : public Element {
   bool terminate() {
     sendEvent(getInternalId(), SysEvent(SysEvent::TERMINATE_THREAD));
     
-    for (auto & thread : subthreads) {
-      thread.second->terminate();
-    }
+    terminateChildren();
     exit_when_threads_terminated = true;
 
     return getNumRunningThreads() == 0;
   }
   
+  void terminateChildren() {
+    for (auto & thread : subthreads) {
+      thread.second->terminate();
+    }
+  }
+
   std::string getBundleFilename(const std::string & filename) { return getBundleFilename(filename.c_str()); }
 
   Runnable & getRunnable() { return *runnable; }
