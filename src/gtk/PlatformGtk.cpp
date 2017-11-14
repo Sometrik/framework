@@ -240,11 +240,7 @@ protected:
 
   void setImageData(int internal_id, std::shared_ptr<canvas::PackedImageData> image) override {
     auto view = views_by_id[internal_id];
-    if (view) {
-      if (GTK_IS_EVENT_BOX(view)) {
-	view = gtk_bin_get_child(GTK_BIN(view));
-      }
-      
+    if (view) {      
       bool has_alpha = true; // format == canvas::RGBA8;
       GdkPixbuf * pixbuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB,
 					  has_alpha,
@@ -485,9 +481,20 @@ protected:
       }
 	break;      
 
-      case Command::CREATE_FRAME_LAYOUT:
+      case Command::CREATE_FRAME_LAYOUT: {
+	auto frame = gtk_overlay_new();
+	gtk_widget_set_events(frame, GDK_BUTTON_PRESS_MASK);	
+	// gtk_widget_set_has_window(frame, true);
+	g_signal_connect(G_OBJECT(frame), "button_press_event", G_CALLBACK(on_button_press), this);
+	addView(command, frame);
+      }
+	break;
+	
       case Command::CREATE_LINEAR_LAYOUT: {
 	auto box = gtk_box_new(command.getValue() == 1 ? GTK_ORIENTATION_VERTICAL : GTK_ORIENTATION_HORIZONTAL, 0);
+	gtk_widget_set_events(box, GDK_BUTTON_PRESS_MASK);
+	// gtk_widget_set_has_window(box, true);
+	g_signal_connect(G_OBJECT(box), "button_press_event", G_CALLBACK(on_button_press), this);
 	addView(command, box);
       }
 	break;
@@ -554,17 +561,10 @@ protected:
 	break;
 
       case Command::CREATE_IMAGEVIEW: {
-	GtkWidget * box = gtk_event_box_new();
 	GtkWidget * image = gtk_image_new();
+	addView(command, image, true);
 
-	addView(command, box, true);
-
-	gtk_container_add(GTK_CONTAINER(box), image);
-
-	gtk_widget_show(image);
-
-	g_signal_connect(G_OBJECT(box), "size-allocate", G_CALLBACK(on_size_allocate), this);
-	g_signal_connect(G_OBJECT(box), "button_press_event", G_CALLBACK(on_eventbox_clicked), this);
+	g_signal_connect(G_OBJECT(image), "size-allocate", G_CALLBACK(on_size_allocate), this);
 
 	auto & uri_text = command.getTextValue();
 	if (!uri_text.empty()) {
@@ -646,17 +646,16 @@ protected:
 	  gtk_header_bar_set_subtitle((GtkHeaderBar*)view, command.getTextValue().c_str());
 	} else if (GTK_IS_BUTTON(view)) {
 	  gtk_button_set_label(GTK_BUTTON(view), command.getTextValue().c_str());
-	} else if (GTK_IS_EVENT_BOX(view)) {
-	  auto image = gtk_bin_get_child(GTK_BIN(view));
+	} else if (GTK_IS_IMAGE(view)) {
 	  auto & uri_text = command.getTextValue();
 	  URI uri(uri_text);
 	  if (uri.getScheme() == "http" || uri.getScheme() == "https") {
-	    int w = gtk_widget_get_allocated_width(image);
+	    int w = gtk_widget_get_allocated_width(view);
 	    requestImage(command.getInternalId(), uri_text, w);
 	  } else {
 	    auto pixbuf = loadPixbuf(uri_text);
 	    if (pixbuf) {
-	      gtk_image_set_from_pixbuf(GTK_IMAGE(image), pixbuf);
+	      gtk_image_set_from_pixbuf(GTK_IMAGE(view), pixbuf);
 	    }
 	  }
 	} else {
@@ -911,6 +910,15 @@ protected:
       }
 	break;
 
+      case Command::REORDER_CHILD: {
+	auto view = views_by_id[command.getInternalId()];
+	auto child = views_by_id[command.getChildInternalId()];
+	if (view && child) {
+	  gtk_box_reorder_child(GTK_BOX(view), child, command.getValue());
+	}
+      }
+	break;
+	
       case Command::LAUNCH_BROWSER: {
 #if 0
 	gtk_show_uri_on_window(GTK_WINDOW(window),
@@ -959,7 +967,11 @@ protected:
 				  match_parent,
 				  0,
 				  GTK_PACK_START);
-      } else if (!match_parent && !wrap_content && GTK_IS_IMAGE(widget)) {
+      }
+      if (!match_parent && !wrap_content) {
+	gtk_widget_set_size_request(widget, -1, stoi(value));
+      }
+      if (!match_parent && !wrap_content && GTK_IS_IMAGE(widget)) {
 	setImageWidth(id, stoi(value), true);
       }
     } else if (key == "width") {
@@ -973,7 +985,9 @@ protected:
 				  match_parent,
 				  0,
 				  GTK_PACK_START);
-      } else if (!match_parent && !wrap_content && GTK_IS_IMAGE(widget)) {
+      }
+
+      if (!match_parent && !wrap_content && GTK_IS_IMAGE(widget)) {
 	setImageHeight(id, stoi(value), true);
       }
     } else if (key == "color") {
@@ -1123,6 +1137,8 @@ protected:
 			 GtkAttachOptions(GTK_SHRINK),
 			 0, 0
 			 );
+      } else if (GTK_IS_OVERLAY(parent)) {
+	gtk_overlay_add_overlay(GTK_OVERLAY(parent), widget);	
       } else {
 	gtk_container_add(parent, widget);
       }
@@ -1215,7 +1231,7 @@ protected:
 
   static size_t getChildCount(GtkContainer * widget);
   
-  static gboolean on_eventbox_clicked(GtkWidget * widget, GdkEvent * event, gpointer user_data);
+  static gboolean on_button_press(GtkWidget * widget, GdkEvent * event, gpointer user_data);
   static void send_int_value(GtkWidget * widget, gpointer data);
   static void send_bool_value(GtkWidget * widget, GParamSpec *pspec, gpointer data);
   static void send_toggled_value(GtkWidget * widget, gpointer user_data);
@@ -1283,7 +1299,8 @@ GtkMainThread::getChildCount(GtkContainer * widget) {
 }
 
 gboolean
-GtkMainThread::on_eventbox_clicked(GtkWidget * widget, GdkEvent * event, gpointer data) {
+GtkMainThread::on_button_press(GtkWidget * widget, GdkEvent * event, gpointer data) {
+  cerr << "button press\n";
   GtkMainThread * mainThread = (GtkMainThread*)data;
   int id = mainThread->getId(widget);
   assert(id);
@@ -1489,7 +1506,7 @@ GtkMainThread::on_bar_button(GtkWidget * widget, gpointer data) {
 void
 GtkMainThread::on_size_allocate(GtkWidget * widget, GtkAllocation * allocation, gpointer data) {
   GtkMainThread * mainThread = (GtkMainThread*)data;
-  if (GTK_IS_EVENT_BOX(widget)) {
+  if (GTK_IS_IMAGE(widget)) {
     int id = mainThread->getId(widget);
     auto & d = mainThread->getImageData(id);
     if (!d.images.empty() && d.width != allocation->width) {
