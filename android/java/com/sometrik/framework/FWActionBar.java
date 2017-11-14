@@ -59,7 +59,7 @@ public class FWActionBar implements NativeCommandHandler {
     drawerButton = new ImageButton(frame);
     LinearLayout.LayoutParams drawerButtonParams = new LinearLayout.LayoutParams((int)(45 * scale), LayoutParams.MATCH_PARENT);
     drawerButton.setLayoutParams(drawerButtonParams);
-    Bitmap bitmap = frame.bitmapCache.loadBitmap("icons_hamburger-menu.png");
+    Bitmap bitmap = frame.bitmapCache.loadBitmap("chaff_actionbar.png");
     
     if (bitmap != null) {
       Drawable draw = new BitmapDrawable(bitmap);
