@@ -18,8 +18,7 @@ class FWOption {
 
 class FWActionSheet : public Dialog {
  public:
- FWActionSheet(int _id = 0) : Dialog(_id) {
-  }
+ FWActionSheet(const std::string & _title, int _id = 0) : Dialog(_title, _id) { }
 
   void addOption(int id, const std::string & name) {
     options.push_back(FWOption(id, name));
@@ -32,25 +31,6 @@ class FWActionSheet : public Dialog {
   }
 
   const std::vector<FWOption> & getOptions() const { return options; }
-
-  int showModal(Element * parent) override {
-    sendCommand(Command(Command::SHOW_ACTION_SHEET, getInternalId()));
-    if (!isInitialized()) {
-      setParent(parent);
-      initialize(&(parent->getThread()));
-      initializeChildren();
-    }
-//    if (!isInitialized()) {
-//      setParent(parent);
-//      initialize(&(parent->getPlatform()));
-//      initializeChildren();
-//      load();
-//    }
-    return 1;
-//    Command c1(Command::SHOW_ACTION_SHEET, getInternalId());
-//    sendCommand(c1);
-//    return getPlatform().getModalResultValue();
-  }
 
  protected:
   void create() override {

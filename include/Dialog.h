@@ -8,8 +8,8 @@
 
 class Dialog : public Element {
  public:
-  Dialog(int _id = 0)
-    : Element(_id) { }
+  Dialog(const std::string & _title, int _id = 0)
+    : Element(_id), title(_title) { }
 
   bool isA(const std::string & className) const override {
     if (className == "Dialog") return true;
@@ -22,18 +22,24 @@ class Dialog : public Element {
       initialize(&(parent->getThread()));
       initializeChildren();
     }
-    return sendCommand(Command(Command::SHOW_DIALOG, getInternalId()));
+    return sendCommand(Command(Command::SHOW_MODAL, getInternalId()));
   }
 
  protected:
   void endModal(int value = 0) {
-    sendCommand(Command(Command::END_MODAL, getInternalId()));
+    Command c(Command::END_MODAL, getInternalId());
+    c.setValue(value);
+    sendCommand(c);
   }
   
   void create() override {
     Command c(Command::CREATE_DIALOG, getParentInternalId(), getInternalId());
+    c.setTextValue(title);
     sendCommand(c);
   }
+
+ private:
+  std::string title;
 };
 
 #endif

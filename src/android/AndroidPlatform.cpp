@@ -222,10 +222,7 @@ public:
 	if (!app.getActiveViewId()) {
 	  app.setActiveViewId(command.getChildInternalId());
 	}
-      } else if (command.getType() == Command::SHOW_DIALOG ||
-          command.getType() == Command::SHOW_MESSAGE_DIALOG ||
-          command.getType() == Command::SHOW_INPUT_DIALOG ||
-          command.getType() == Command::SHOW_ACTION_SHEET) {
+      } else if (command.getType() == Command::SHOW_MODAL) {
         startLoop = true;
       } else if (command.getType() == Command::END_MODAL) {
         exit_loop = true;
@@ -251,7 +248,6 @@ public:
 
     if (startLoop) {
       setModalResultValue(0);
-      setModalResultText("");
       startEventLoop();
       return getModalResultValue();
     } else {

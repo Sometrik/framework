@@ -11,9 +11,6 @@ import com.android.trivialdrivesample.util.IabResult;
 import com.android.trivialdrivesample.util.Inventory;
 import com.android.trivialdrivesample.util.Purchase;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnCancelListener;
 import android.text.Editable;
 import android.text.Html;
 import android.text.InputType;
@@ -28,7 +25,6 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.PopupMenu.OnMenuItemClickListener;
@@ -100,11 +96,8 @@ public class NativeCommand {
     CREATE_NOTIFICATION,
     DELETE_ELEMENT,
     REORDER_CHILD,
+    SHOW_MODAL, // Show dialogs and action sheets
     END_MODAL,
-    SHOW_DIALOG,
-    SHOW_MESSAGE_DIALOG,
-    SHOW_INPUT_DIALOG,
-    SHOW_ACTION_SHEET,
     LAUNCH_BROWSER,
     HISTORY_GO_BACK,
     HISTORY_GO_FORWARD,
@@ -467,13 +460,7 @@ public class NativeCommand {
       if (view != null) {
 	view.setViewVisibility(value != 0);
       }
-      break;
-    case SHOW_ACTION_SHEET:{
-      if (view != null) {
-	view.setValue(1);
-      }
-      break;
-    }
+      break;    
     case SET_STYLE:
       if (view != null) {
 	view.setStyle(Selector.values()[value], getTextValueAsString(), getTextValue2AsString());
@@ -492,21 +479,15 @@ public class NativeCommand {
     case LAUNCH_BROWSER:
       frame.launchBrowser(getTextValueAsString());
       break;
-    case END_MODAL:
-      if (view != null) {
-	view.setValue(0);
-      }
-      break;
-    case SHOW_DIALOG:
+    case SHOW_MODAL:
       if (view != null) {
 	view.setValue(1);
       }
       break;
-    case SHOW_MESSAGE_DIALOG:
-      showMessageDialog(getTextValueAsString(), getTextValue2AsString());
-      break;
-    case SHOW_INPUT_DIALOG:
-      showInputDialog(getTextValueAsString(), getTextValue2AsString());
+    case END_MODAL:
+      if (view != null) {
+	view.setValue(0);
+      }
       break;
     case CREATE_DIALOG:
       FWDialog dialog = new FWDialog(frame, childInternalId);
@@ -770,90 +751,6 @@ public class NativeCommand {
       }
     });
     return checkBox;
-  }
-
- // Create dialog with user text input
-  private void showInputDialog(String title, String message) {
-    System.out.println("Creating input dialog");
-
-    AlertDialog.Builder builder;
-    builder = new AlertDialog.Builder(frame);
-
-    // Building an alert
-    builder.setTitle(title);
-    builder.setMessage(message);
-    builder.setCancelable(true);
-
-    final EditText input = new EditText(frame);
-    input.setInputType(InputType.TYPE_CLASS_TEXT);
-    builder.setView(input);
-    
-    builder.setOnCancelListener(new OnCancelListener(){
-
-      @Override
-      public void onCancel(DialogInterface arg0) {
-	frame.endModal(0, null);
-      }
-    });
-
-    // Negative button listener
-    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-      public void onClick(DialogInterface dialog, int id) {
-	frame.endModal(0, null);
-	dialog.dismiss();
-      }
-    });
-
-    // Positive button listener
-    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-      public void onClick(DialogInterface dialog, int id) {
-	String inputText = String.valueOf(input.getText());
-	byte[] b = inputText.getBytes(frame.getCharset());
-	frame.endModal(1, b);
-	dialog.dismiss();
-      }
-    });
-
-    // Create and show the alert
-    AlertDialog alert = builder.create();
-    alert.show();
-  }
-
-  // create Message dialog
-  private void showMessageDialog(String title, String message) {
-
-    System.out.println("creating message dialog");
-
-    AlertDialog.Builder builder;
-    builder = new AlertDialog.Builder(frame);
-
-    // Building an alert
-    builder.setTitle(title);
-    builder.setMessage(message);
-    builder.setCancelable(true);
-    
-    builder.setOnCancelListener(new OnCancelListener(){
-
-      @Override
-      public void onCancel(DialogInterface arg0) {
-	frame.endModal(0, null);
-      }
-      
-    });
-
-    // Positive button listener
-    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-      public void onClick(DialogInterface dialog, int id) {
-	frame.endModal(1, null);
-	dialog.dismiss();
-      }
-    });
-
-    // Create and show the alert
-    AlertDialog alert = builder.create();
-    alert.show();
-
-    System.out.println("message dialog created");
   }
   
   private void launchPurchase(final String productId) throws IabAsyncInProgressException {
