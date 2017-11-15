@@ -86,6 +86,9 @@ public:
     preferences.clearChanges();
   }
 
+  void showMessageDialog(const std::string & title, const std::string & message);
+  std::string showInputDialog(const std::string & title, const std::string & message);
+
  private:
   std::string name, iap_public_key;
   bool full_screen;
