@@ -6,6 +6,8 @@ import java.util.Iterator;
 import com.sometrik.framework.NativeCommand.Selector;
 
 import android.graphics.Bitmap;
+import android.support.v4.view.GestureDetectorCompat;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -20,12 +22,52 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
   public FWLayout(FrameWork frameWork) {
     super(frameWork);
     this.frame = frameWork;
-//    setDividerDrawable(frame.getResources().getDrawable(android.R.drawable.divider_horizontal_bright));
-//    setDividerDrawable(frame.getResources().getDrawable(android.R.drawable.divider_horizontal_textfield));
-    
+
     final float scale = getContext().getResources().getDisplayMetrics().density;
     this.normalStyle = currentStyle = new ViewStyleManager(frame.bitmapCache, scale, true);
     this.activeStyle = new ViewStyleManager(frame.bitmapCache, scale, false);
+    
+
+    final GestureDetectorCompat mDetector = new GestureDetectorCompat(frame, new GestureDetector.OnGestureListener() {
+      
+      @Override
+      public boolean onSingleTapUp(MotionEvent e) {
+        // TODO Auto-generated method stub
+        return false;
+      }
+      
+      @Override
+      public void onShowPress(MotionEvent e) {
+        // TODO Auto-generated method stub
+        
+      }
+      
+      @Override
+      public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+        // TODO Auto-generated method stub
+        return false;
+      }
+      
+      @Override
+      public void onLongPress(MotionEvent e) {
+        // TODO Auto-generated method stub
+        
+      }
+      
+      @Override
+      public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+	System.out.println("onFling");
+	frame.sendNativeValueEvent(getElementId(), 3, 3);
+	return false;
+      }
+      
+      @Override
+      public boolean onDown(MotionEvent e) {
+        // TODO Auto-generated method stub
+        return false;
+      }
+    });
+
 
     final FWLayout layout = this;
     
@@ -39,6 +81,7 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
     setOnTouchListener(new OnTouchListener() {
       @Override
       public boolean onTouch(View v, MotionEvent event) {
+	mDetector.onTouchEvent(event);
 	if (event.getAction() == MotionEvent.ACTION_DOWN) {
 	  layout.currentStyle = layout.activeStyle;
 	  layout.currentStyle.apply(layout);
@@ -81,8 +124,7 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
 	  }
 	});
       }
-    } 
-    else if (view instanceof FWLayout){
+    } else if (view instanceof FWLayout){
       view.setOnClickListener(new OnClickListener() {
 	  @Override
 	  public void onClick(View v) {

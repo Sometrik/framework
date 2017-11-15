@@ -3,6 +3,8 @@ package com.sometrik.framework;
 import com.sometrik.framework.NativeCommand.Selector;
 
 import android.graphics.Bitmap;
+import android.support.v4.view.GestureDetectorCompat;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
@@ -37,9 +39,52 @@ public class FWTextView extends TextView implements NativeCommandHandler {
       }
     });
     
+
+
+    final GestureDetectorCompat mDetector = new GestureDetectorCompat(frame, new GestureDetector.OnGestureListener() {
+      
+      @Override
+      public boolean onSingleTapUp(MotionEvent e) {
+        // TODO Auto-generated method stub
+        return false;
+      }
+      
+      @Override
+      public void onShowPress(MotionEvent e) {
+        // TODO Auto-generated method stub
+        
+      }
+      
+      @Override
+      public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+        // TODO Auto-generated method stub
+        return false;
+      }
+      
+      @Override
+      public void onLongPress(MotionEvent e) {
+        // TODO Auto-generated method stub
+        
+      }
+      
+      @Override
+      public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+	System.out.println("onFling");
+	frame.sendNativeValueEvent(getElementId(), 3, 3);
+	return false;
+      }
+      
+      @Override
+      public boolean onDown(MotionEvent e) {
+        // TODO Auto-generated method stub
+        return false;
+      }
+    });
+    
     setOnTouchListener(new OnTouchListener() {
       @Override
       public boolean onTouch(View v, MotionEvent event) {
+	mDetector.onTouchEvent(event);
 	if (event.getAction() == MotionEvent.ACTION_DOWN) {
 	  textView.currentStyle = textView.activeStyle;
 	  textView.currentStyle.apply(textView);
