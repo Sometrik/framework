@@ -18,7 +18,6 @@ public:
     MEMORY_WARNING,
     TERMINATE_THREAD,
     THREAD_TERMINATED,
-    END_MODAL,
     LANGUAGE_CHANGED,
     BACK,
     DEBUG
@@ -37,20 +36,17 @@ public:
   }
   bool isBroadcast() const override { return true; }
 
-  void setValue(int _value) { value = _value; }
   void setTextValue(const std::string & _text_value) { text_value = _text_value; }
   void setThreadId(int id) { thread_id = id; }
   void setRunnable(Runnable * _runnable) { runnable = _runnable; }
   
   Type getType() { return type; }
-  int getValue() { return value; }
   const std::string & getTextValue() const { return text_value; }
   int getThreadId() const { return thread_id; }
   const Runnable * getRunnable() const { return runnable; }
   
  private:
   Type type;
-  int value = 0;
   std::string text_value;
   int thread_id = 0;
   Runnable * runnable = 0;

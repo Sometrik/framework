@@ -439,9 +439,7 @@ public:
 
         auto ev2 = dynamic_cast<SysEvent*>(ev.second.get());
         if (ev2) {
-          if (ev2->getType() == SysEvent::END_MODAL) {
-            exit_loop = true;
-          } else if (ev2->getType() == SysEvent::DESTROY) {
+          if (ev2->getType() == SysEvent::DESTROY) {
             exit_loop = true;
           } else if (ev2->getType() == SysEvent::PAUSE) {
           }
@@ -616,21 +614,6 @@ void Java_com_sometrik_framework_FrameWork_nativeSetSurface(JNIEnv* env, jobject
 
  void Java_com_sometrik_framework_FrameWork_nativeSurfaceDestroyed(JNIEnv* env, jobject thiz, int surfaceId, int gl_version) {
    mainThread->deinitializeRenderer();
- }
-
- void Java_com_sometrik_framework_FrameWork_endModal(JNIEnv* env, jobject thiz, int value, jbyteArray jarray) {
-   string text;
-   if (jarray) {
-     jbyte* content_array = env->GetByteArrayElements(jarray, NULL);
-     text = string((const char *)content_array, env->GetArrayLength(jarray));
-     env->ReleaseByteArrayElements(jarray, content_array, JNI_ABORT);
-   }
-   __android_log_print(ANDROID_LOG_INFO, "Sometrik", "native endModal: %d %s", value, text.c_str());
-   SysEvent ev(SysEvent::END_MODAL);
-   ev.setValue(value);
-   ev.setTextValue(text);
-   mainThread->sendEvent(mainThread->getInternalId(), ev);
-   mainThread->sendEvent(mainThread->getApplication().getInternalId(), ev);
  }
 
 void Java_com_sometrik_framework_FrameWork_nativeOnResume(JNIEnv* env, jobject thiz, int appId) {

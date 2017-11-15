@@ -158,8 +158,6 @@ class PlatformThread : public Element {
           exitApp();
         }
       }
-    } else if (ev.getType() == SysEvent::END_MODAL) {
-      setModalResultValue(ev.getValue());
     }
   }
 

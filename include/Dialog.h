@@ -25,6 +25,13 @@ class Dialog : public Element {
     return sendCommand(Command(Command::SHOW_MODAL, getInternalId()));
   }
 
+  void onValueEvent(ValueEvent & ev) override {
+    if (ev.getValue() == 0) {
+      endModal();
+    }
+    ev.setHandled(true);
+  }
+
  protected:
   void endModal(int value = 0) {
     Command c(Command::END_MODAL, getInternalId());

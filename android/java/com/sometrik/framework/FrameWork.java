@@ -84,9 +84,8 @@ public class FrameWork extends Activity {
   public static boolean transitionAnimation = false;
   public BitmapCache bitmapCache;
 
-  public native void endModal(int value, byte[] textValue);
   private native void textChangedEvent(int id, byte[] textValue);
-  private native void intChangedEvent(int id, int changedInt, int changedInt2);
+  public native void intChangedEvent(int id, int changedInt, int changedInt2);
   public native void visibilityChangedEvent(int id, boolean visible);
   public native void keyPressed(int keyId, int viewId);
   public native void touchEvent(int viewId, int mode, int fingerIndex, double timestamp, float x, float y);

@@ -37,7 +37,7 @@ public class FWDialog extends Dialog implements NativeCommandHandler {
     this.setOnCancelListener(new OnCancelListener(){
       @Override
       public void onCancel(DialogInterface arg0) {
-	frame.endModal(id, null);
+	frame.intChangedEvent(id, 0, 0);
       }      
     });
     // this.setOnDismissListener(new OnDismissListener(){
