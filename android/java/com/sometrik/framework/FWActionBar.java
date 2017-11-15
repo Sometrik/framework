@@ -207,9 +207,7 @@ public class FWActionBar implements NativeCommandHandler {
   }
 
   @Override
-  public void setStyle(Selector selector, String key, String value) {
-   
-    
+  public void setStyle(Selector selector, String key, String value) {  
     if (selector == Selector.NORMAL) {
       normalStyle.setStyle(key, value);
       // if (normalStyle == currentStyle) normalStyle.apply(this);
@@ -218,21 +216,13 @@ public class FWActionBar implements NativeCommandHandler {
       // if (activeStyle == currentStyle) activeStyle.apply(this);
     }
     if (key.equals("drawer-button")) {
-      if (value.equals("hide")) {
+      if (value.equals("hidden")) {
 	drawerButton.setVisibility(Button.GONE);
-      } else if (value.equals("show")) {
+      } else if (value.equals("visible")) {
 	drawerButton.setVisibility(Button.VISIBLE);
       }
     }
-//    if (key.equals("subtitle")) {
-//      subtitleView.setText(value);
-//      if (value.isEmpty()) {
-//	subtitleView.setVisibility(TextView.GONE);
-//      } else if (subtitleView.getVisibility() == TextView.GONE) {
-//	subtitleView.setVisibility(TextView.VISIBLE);
-//      }
-//    } else
-      if (key.equals("height")) {
+    if (key.equals("height")) {
       final float scale = frame.getResources().getDisplayMetrics().density;
       LinearLayout.LayoutParams params = (LayoutParams) mainLayout.getLayoutParams();
       if (value.equals("wrap-content")) {
@@ -248,9 +238,7 @@ public class FWActionBar implements NativeCommandHandler {
   }
 
   @Override
-  public void setError(boolean hasError, String errorText) {
-    System.out.println("Command couldn't be handled by FWActionBar");
-  }
+  public void setError(boolean hasError, String errorText) { }
 
   @Override
   public int getElementId() {
