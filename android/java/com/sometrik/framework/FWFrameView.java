@@ -31,9 +31,6 @@ public class FWFrameView extends FrameLayout implements NativeCommandHandler {
   public FWFrameView(FrameWork frameWork) {
     super(frameWork);
     this.frame = frameWork;
-    // LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-    // this.setLayoutParams(params);
-    // this.setFillViewport(true);
     
     final float scale = getContext().getResources().getDisplayMetrics().density;
     this.normalStyle = currentStyle = new ViewStyleManager(frame.bitmapCache, scale, true);
@@ -66,8 +63,7 @@ public class FWFrameView extends FrameLayout implements NativeCommandHandler {
 
   @Override
   public void setValue(int v) {
-    System.out.println("FWFrameView setValue " + v);
-    if (v == 1){
+    if (v == 1) {
       if (enterAnimation != null) {
 	frame.setCurrentView(this, true, enterAnimation, enterAnimationOtherViewFromX);
       } else {
@@ -81,10 +77,8 @@ public class FWFrameView extends FrameLayout implements NativeCommandHandler {
       }
     } else if (v == 3) {
       if (returnAnimation != null) {
-	System.out.println("FWFrameView return animation");
 	frame.setCurrentView(this, false, returnAnimation, returnAnimationOtherViewFromX);
       } else {
-	System.out.println("FWFrameView no animation");
 	frame.setCurrentView(this, false, title);
       }
     }
@@ -99,13 +93,11 @@ public class FWFrameView extends FrameLayout implements NativeCommandHandler {
       activeStyle.setStyle(key, value);      
       if (activeStyle == currentStyle) activeStyle.apply(this);
     }
-    
-    System.out.println("FWFrameView style " + key + " " + value);
-    
+        
     if (returnAnimation == null) {
       
     } else {
-      System.out.println("FWFrameView got animation");
+    
     }
     
     if (key.equals("enter-animation")) {
@@ -183,25 +175,16 @@ public class FWFrameView extends FrameLayout implements NativeCommandHandler {
   }
 
   @Override
-  public void clear() {
-    System.out.println("couldn't handle command");
-  }
+  public void clear() { }
 
   @Override
-  public void flush() {
-    // TODO Auto-generated method stub
-    
-  }
+  public void flush() { }
 
   @Override
-  public void addColumn(String text, int columnType) {
-    // TODO Auto-generated method stub
-    
-  }
+  public void addColumn(String text, int columnType) { }
   
   @Override
-  public void reshape(int value, int size) {
-  }
+  public void reshape(int value, int size) { }
   
   @Override
   public void setBitmap(Bitmap bitmap) { }
@@ -211,14 +194,8 @@ public class FWFrameView extends FrameLayout implements NativeCommandHandler {
   }
 
   @Override
-  public void deinitialize() {
-    // TODO Auto-generated method stub
-    
-  }
+  public void deinitialize() { }
 
   @Override
-  public void addImageUrl(String url, int width, int height) {
-    // TODO Auto-generated method stub
-    
-  }
+  public void addImageUrl(String url, int width, int height) { }
 }
