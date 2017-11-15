@@ -36,7 +36,7 @@ class Button : public UIElement {
 
   void onValueEvent(ValueEvent & ev) override {
     notify();
-    CommandEvent ev2(getId());
+    CommandEvent ev2(getId(), ev.getValue(), ev.getValue2());
     ev2.dispatch(*this);
     ev.setHandled(true);
   }
