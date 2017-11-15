@@ -666,7 +666,7 @@ void Java_com_sometrik_framework_FrameWork_nativeOnDestroy(JNIEnv* env, jobject 
   moncleanup();
 #endif
 
-  mainThread = shared_ptr<AndroidMainThread>(0);
+  // mainThread = shared_ptr<AndroidMainThread>(0);
 }
 void Java_com_sometrik_framework_FrameWork_languageChanged(JNIEnv* env, jobject thiz, int appId, jstring language) {
   const char * clanguage = env->GetStringUTFChars(language, NULL);
