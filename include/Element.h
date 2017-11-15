@@ -155,8 +155,6 @@ class Element : public EventHandler {
     return Selection();
   }
   
-  void showMessageDialog(const std::string & title, const std::string & text);
-  std::string showInputDialog(const std::string & title, const std::string & text);
   void showToast(const std::string & message, int duration = 0);
   void launchBrowser(const std::string & input_url);
 

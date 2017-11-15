@@ -138,26 +138,6 @@ Element::onEvent(Event & ev) {
 }
 
 void
-Element::showMessageDialog(const std::string & title, const std::string & text) {
-  Command c(Command::SHOW_MESSAGE_DIALOG, getParentInternalId(), getInternalId());
-  c.setTextValue(title);
-  c.setTextValue2(text);
-  sendCommand(c);
-}
-
-std::string
-Element::showInputDialog(const std::string & title, const std::string & text) {
-  Command c(Command::SHOW_INPUT_DIALOG, getParentInternalId(), getInternalId());
-  c.setTextValue(title);
-  c.setTextValue2(text);
-  if (sendCommand(c) && thread) {
-    return thread->getModalResultText();
-  } else {
-    return "";
-  }
-}
-
-void
 Element::showToast(const std::string & message, int duration) {
   Command c(Command::CREATE_TOAST, getParentInternalId(), getInternalId());
   c.setTextValue(message);
