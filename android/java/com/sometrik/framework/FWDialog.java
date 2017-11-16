@@ -40,12 +40,6 @@ public class FWDialog extends Dialog implements NativeCommandHandler {
 	frame.intChangedEvent(id, 0, 0);
       }      
     });
-    // this.setOnDismissListener(new OnDismissListener(){
-    //   @Override
-    //   public void onDismiss(DialogInterface arg0) {
-    // 	  frame.endModal(System.currentTimeMillis() / 1000.0, id, null);
-    //   }
-    // });
     
     show();
   }
