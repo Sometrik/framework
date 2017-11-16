@@ -173,18 +173,16 @@ class PlatformThread : public Element {
   void commitBatch() {
     batchOpen = false;
     if (!commandBatch.empty()) {
-      std::vector<Command> tmp = commandBatch;
+      sendCommands(commandBatch);
       commandBatch.clear();
-      sendCommands(tmp);
     }
   }
 
   void sendCommand(const Command & command) {
     commandBatch.push_back(command);
     if (!isInTransaction()) {
-      std::vector<Command> tmp = commandBatch;
+      sendCommands(commandBatch);
       commandBatch.clear();
-      sendCommands(tmp);
     }
   }
   
