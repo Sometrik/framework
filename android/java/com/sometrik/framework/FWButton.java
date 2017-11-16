@@ -66,14 +66,10 @@ public class FWButton extends Button implements NativeCommandHandler {
   }
   
   @Override
-  public void addChild(View view) {
-    System.out.println("FWButton couldn't handle command");
-  }
+  public void addChild(View view) { }
   
   @Override
-  public void addOption(int optionId, String text) {
-    System.out.println("FWButton couldn't handle command");
-  }
+  public void addOption(int optionId, String text) { }
 
   @Override
   public void setValue(String v) {
@@ -82,7 +78,6 @@ public class FWButton extends Button implements NativeCommandHandler {
   
   @Override
   public void setValue(int v) {
-
     boolean b = v != 0;
     if (b != isSelected) {  
       isSelected = b;
@@ -124,72 +119,42 @@ public class FWButton extends Button implements NativeCommandHandler {
   @Override
   public void setError(boolean hasError, String errorText) { }
 
+  @Override
+  public void onScreenOrientationChange(boolean isLandscape) { }
 
   @Override
-  public void onScreenOrientationChange(boolean isLandscape) {
-    // TODO Auto-generated method stub
-    
-  }
-
-
-  @Override
-  public void addData(String text, int row, int column, int sheet) {
-    System.out.println("FWButton couldn't handle command");
-  }
+  public void addData(String text, int row, int column, int sheet) { }
 
   @Override
   public void setViewVisibility(boolean visibility) {
-    if (visibility){
+    if (visibility) {
       this.setVisibility(VISIBLE);
     } else {
       this.setVisibility(INVISIBLE);
     }
   }
 
+  @Override
+  public void clear() { }
 
   @Override
-  public void clear() {
-    System.out.println("couldn't handle command");
-  }
-
+  public void flush() { }
 
   @Override
-  public void flush() {
-    // TODO Auto-generated method stub
-    
-  }
-
+  public void addColumn(String text, int columnType) { }
 
   @Override
-  public void addColumn(String text, int columnType) {
-    // TODO Auto-generated method stub
-    
-  }
-
-  @Override
-  public void reshape(int value, int size) {
-    // TODO Auto-generated method stub
-    
-  }
+  public void reshape(int value, int size) { }
 
   @Override
   public void setBitmap(Bitmap bitmap) { }
 
   @Override
-  public void reshape(int size) {
-    // TODO Auto-generated method stub
-    
-  }
+  public void reshape(int size) { }
 
   @Override
-  public void deinitialize() {
-    // TODO Auto-generated method stub
-    
-  }
+  public void deinitialize() { }
 
   @Override
-  public void addImageUrl(String url, int width, int height) {
-    // TODO Auto-generated method stub
-    
-  }
+  public void addImageUrl(String url, int width, int height) { }
 }
