@@ -72,7 +72,10 @@ class Command {
     LIST_PRODUCTS,
     BUY_PRODUCT,
     LIST_PURCHASES,
-    CONSUME_PURCHASE
+    CONSUME_PURCHASE,
+
+    // Other
+    SHARE_LINK
   };
 
  Command(Type _command, int _internalId, int _childInternalId = 0) : commandType(_command), internalId(_internalId), childInternalId(_childInternalId) { }

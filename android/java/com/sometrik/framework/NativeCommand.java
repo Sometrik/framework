@@ -11,6 +11,7 @@ import com.android.trivialdrivesample.util.IabResult;
 import com.android.trivialdrivesample.util.Inventory;
 import com.android.trivialdrivesample.util.Purchase;
 
+import android.support.v4.app.ShareCompat;
 import android.text.Editable;
 import android.text.Html;
 import android.text.InputType;
@@ -129,7 +130,9 @@ public class NativeCommand {
     LIST_PRODUCTS,
     BUY_PRODUCT,
     LIST_PURCHASES,
-    CONSUME_PURCHASE
+    CONSUME_PURCHASE,
+
+    SHARE_LINK
   }
 
   public NativeCommand(FrameWork frame, int messageTypeId, int internalId, int childInternalId, int value, byte[] textValue, byte[] textValue2, int flags, int row, int column, int sheet, int width, int height) {
@@ -562,6 +565,14 @@ public class NativeCommand {
 	view.reshape(value);
       }
       break;
+    case SHARE_LINK: {
+      ShareCompat.IntentBuilder.from(frame)
+      .setType("text/plain")
+      .setChooserTitle("Share link")
+      .setText(getTextValueAsString())
+      .startChooser();
+      break;
+    }
     default:
       System.out.println("Command couldn't be handled "  + command + " id: " + internalId + " Child id: " + getChildInternalId());
       break;

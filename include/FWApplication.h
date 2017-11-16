@@ -61,6 +61,11 @@ public:
   void setPreferences(const FWPreferences & _preferences) { preferences = _preferences; }
   FWPreferences & getPreferences() { return preferences; }
   const FWPreferences & getPreferences() const { return preferences; }
+  void shareLink(std::string url) {
+    Command c(Command::SHARE_LINK, getInternalId());
+    c.setTextValue(url);
+    sendCommand(c);
+  }
 
  protected:
   void create() override {
