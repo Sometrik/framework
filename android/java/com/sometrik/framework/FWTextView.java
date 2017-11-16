@@ -3,9 +3,6 @@ package com.sometrik.framework;
 import com.sometrik.framework.NativeCommand.Selector;
 
 import android.graphics.Bitmap;
-import android.support.v4.view.GestureDetectorCompat;
-import android.view.GestureDetector;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
 
@@ -17,7 +14,6 @@ public class FWTextView extends TextView implements NativeCommandHandler {
   public FWTextView(final FrameWork frame, boolean autolink) {
     super(frame);
     this.frame = frame;
-    this.setBackground(null);
     
     final float scale = getContext().getResources().getDisplayMetrics().density;
     this.normalStyle = currentStyle = new ViewStyleManager(frame.bitmapCache, scale, true);
@@ -28,84 +24,13 @@ public class FWTextView extends TextView implements NativeCommandHandler {
       this.setLinksClickable(true);
       this.setAutoLinkMask(15);
     }
-    
-    final FWTextView textView = this;
-    
-    setOnClickListener(new OnClickListener() {
-      @Override
-      public void onClick(View v) {
-	System.out.println("OnClick TextView");
-	frame.sendNativeValueEvent(getElementId(), 0, 0);
-      }
-    });
-    
-
-
-    final GestureDetectorCompat mDetector = new GestureDetectorCompat(frame, new GestureDetector.OnGestureListener() {
-      
-      @Override
-      public boolean onSingleTapUp(MotionEvent e) {
-        // TODO Auto-generated method stub
-        return false;
-      }
-      
-      @Override
-      public void onShowPress(MotionEvent e) {
-        // TODO Auto-generated method stub
-        
-      }
-      
-      @Override
-      public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-        // TODO Auto-generated method stub
-        return false;
-      }
-      
-      @Override
-      public void onLongPress(MotionEvent e) {
-        // TODO Auto-generated method stub
-        
-      }
-      
-      @Override
-      public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-	System.out.println("onFling");
-	frame.sendNativeValueEvent(getElementId(), 3, 3);
-	return false;
-      }
-      
-      @Override
-      public boolean onDown(MotionEvent e) {
-        // TODO Auto-generated method stub
-        return false;
-      }
-    });
-    
-    setOnTouchListener(new OnTouchListener() {
-      @Override
-      public boolean onTouch(View v, MotionEvent event) {
-	mDetector.onTouchEvent(event);
-	if (event.getAction() == MotionEvent.ACTION_DOWN) {
-	  textView.currentStyle = textView.activeStyle;
-	  textView.currentStyle.apply(textView);
-	} else if (event.getAction() == MotionEvent.ACTION_UP) {
-	  textView.currentStyle = textView.normalStyle;
-	  textView.currentStyle.apply(textView);
-	}
-	return false;
-      }
-    });
   }
     
   @Override
-  public void addChild(View view) {
-    System.out.println("FWTextView couldn't handle command");
-  }
+  public void addChild(View view) { }
   
   @Override
-  public void addOption(int optionId, String text) {
-    System.out.println("FWTextView couldn't handle command");
-  }
+  public void addOption(int optionId, String text) { }
 
   @Override
   public void setValue(String v) {
@@ -113,9 +38,7 @@ public class FWTextView extends TextView implements NativeCommandHandler {
   }
 
   @Override
-  public void setValue(int v) {
-    System.out.println("FWTextView couldn't handle command");
-  }
+  public void setValue(int v) { }
 
   @Override
   public void setStyle(Selector selector, String key, String value) {
@@ -144,15 +67,10 @@ public class FWTextView extends TextView implements NativeCommandHandler {
   }
 
   @Override
-  public void onScreenOrientationChange(boolean isLandscape) {
-    // TODO Auto-generated method stub
-    
-  }
+  public void onScreenOrientationChange(boolean isLandscape) { }
 
   @Override
-  public void addData(String text, int row, int column, int sheet) {
-    System.out.println("FWTextView couldn't handle command");
-  }
+  public void addData(String text, int row, int column, int sheet) { }
 
   @Override
   public void setViewVisibility(boolean visibility) {
@@ -164,46 +82,26 @@ public class FWTextView extends TextView implements NativeCommandHandler {
   }
 
   @Override
-  public void clear() {
-    System.out.println("couldn't handle command");
-  }
+  public void clear() { }
 
   @Override
-  public void flush() {
-    // TODO Auto-generated method stub
-    
-  }
+  public void flush() { }
 
   @Override
-  public void addColumn(String text, int columnType) {
-    // TODO Auto-generated method stub
-    
-  }
+  public void addColumn(String text, int columnType) { }
 
   @Override
-  public void reshape(int value, int size) {
-    // TODO Auto-generated method stub
-    
-  }
+  public void reshape(int value, int size) { }
 
   @Override
   public void setBitmap(Bitmap bitmap) { }
 
   @Override
-  public void reshape(int size) {
-    // TODO Auto-generated method stub
-    
-  }
+  public void reshape(int size) { }
 
   @Override
-  public void deinitialize() {
-    // TODO Auto-generated method stub
-    
-  }
+  public void deinitialize() { }
 
   @Override
-  public void addImageUrl(String url, int width, int height) {
-    // TODO Auto-generated method stub
-    
-  }
+  public void addImageUrl(String url, int width, int height) { }
 }
