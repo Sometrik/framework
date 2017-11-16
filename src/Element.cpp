@@ -165,7 +165,7 @@ void
 Element::removeChild(Element * child) {
   for (auto it = children.begin(); it != children.end(); it++) {
     if (it->get() == child) {
-      sendCommand(Command(Command::DELETE_ELEMENT, getInternalId(), child->getInternalId()));
+      sendCommand(Command(Command::REMOVE_CHILD, getInternalId(), child->getInternalId()));
       children.erase(it);
       return;
     }

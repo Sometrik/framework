@@ -94,7 +94,7 @@ public class NativeCommand {
     CREATE_PROGRESSBAR,
     CREATE_TOAST,
     CREATE_NOTIFICATION,
-    DELETE_ELEMENT,
+    REMOVE_CHILD,
     REORDER_CHILD,
     LAUNCH_BROWSER,
     HISTORY_GO_BACK,
@@ -526,9 +526,9 @@ public class NativeCommand {
     case COMMIT_PREFERENCES:
       frame.getPreferencesEditor().apply();
       break;
-    case DELETE_ELEMENT:
+    case REMOVE_CHILD:
       if (view != null) {
-	deleteElement(view, childInternalId);
+	removeChild(view, childInternalId);
       }
       break;
     case REORDER_CHILD:
@@ -610,8 +610,11 @@ public class NativeCommand {
     return click;
   }
   
-  private void deleteElement(NativeCommandHandler parent, int childId) {
-    frame.removeViewFromList(childId);
+  private void deleteElement(int childId) {
+    frame.removeViewFromList(childId);    
+  }
+  
+  private void removeChild(NativeCommandHandler parent, int childId) {
     if (parent instanceof ViewGroup) {
       ViewGroup group = (ViewGroup) parent;
       int childCount = group.getChildCount();
