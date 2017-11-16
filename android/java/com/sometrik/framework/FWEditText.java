@@ -8,6 +8,7 @@ import com.sometrik.framework.NativeCommand.Selector;
 
 import android.graphics.Bitmap;
 import android.text.Editable;
+import android.text.InputFilter;
 import android.text.TextWatcher;
 import android.view.MotionEvent;
 import android.view.View;
@@ -110,6 +111,12 @@ public class FWEditText extends EditText implements NativeCommandHandler {
 
   @Override
   public void setStyle(Selector selector, String key, String value) {
+    
+    if (key.equals("max-length")) {
+      InputFilter[] filters = new InputFilter[1];
+      filters[0] = new InputFilter.LengthFilter(Integer.parseInt(value)); //Filter to 10 characters
+      setFilters(filters);
+    }
     if (selector == Selector.NORMAL) {
       normalStyle.setStyle(key, value);
       if (normalStyle == currentStyle) normalStyle.apply(this);
