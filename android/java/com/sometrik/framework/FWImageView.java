@@ -142,12 +142,9 @@ public class FWImageView extends ImageView implements NativeCommandHandler {
   
   @Override
   public void setBitmap(Bitmap bitmap) {
-    releaseBitmap();
-    
-    if (bitmap != null) {
-      ownedBitmap = bitmap;
-      setImageBitmap(bitmap);
-    }
+    releaseBitmap();  
+    ownedBitmap = bitmap;
+    setImageBitmap(ownedBitmap);
   }
 
   @Override
