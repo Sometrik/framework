@@ -20,9 +20,10 @@ class ImageRequestEvent : public Event {
     NORMAL,
     LOW
   };
- ImageRequestEvent(RequestMode _mode, int _source_internal_id) : mode(_mode), priority(NORMAL), source_internal_id(_source_internal_id), requested_width(0), requested_height(0), requested_levels(0) { }
 
-   ImageRequestEvent(RequestMode _mode, int _source_internal_id, const std::string & _image_url, RequestPriority _priority, unsigned int _requested_width, unsigned int _requested_height, unsigned int _requested_levels = 1) : mode(_mode), image_url(_image_url), priority(_priority), source_internal_id(_source_internal_id), requested_width(_requested_width), requested_height(_requested_height), requested_levels(_requested_levels) { }
+  ImageRequestEvent() : mode(CANCEL), priority(NORMAL), source_internal_id(0), requested_width(0), requested_height(0), requested_levels(0) { }
+  ImageRequestEvent(RequestMode _mode, int _source_internal_id) : mode(_mode), priority(NORMAL), source_internal_id(_source_internal_id), requested_width(0), requested_height(0), requested_levels(0) { }
+  ImageRequestEvent(RequestMode _mode, int _source_internal_id, const std::string & _image_url, RequestPriority _priority, unsigned int _requested_width, unsigned int _requested_height, unsigned int _requested_levels = 1) : mode(_mode), image_url(_image_url), priority(_priority), source_internal_id(_source_internal_id), requested_width(_requested_width), requested_height(_requested_height), requested_levels(_requested_levels) { }
 
   const char * key() const override { return "imageRequest"; }
   Event * dup() const override { return new ImageRequestEvent(*this); }
