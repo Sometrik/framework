@@ -2,13 +2,11 @@ package com.sometrik.framework;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.ByteBuffer;
 import java.util.TreeSet;
 
 import com.sometrik.framework.NativeCommand.Selector;
 
 import android.graphics.Bitmap;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -32,36 +30,11 @@ public class FWImageView extends ImageView implements NativeCommandHandler {
     this.setScaleType(ScaleType.CENTER_CROP); // needed for parallax scrolling
     this.setClipToOutline(true);
     this.setAdjustViewBounds(true);
-    this.setClickable(true);    
+    this.setClickable(false);    
         
     final float scale = getContext().getResources().getDisplayMetrics().density;
     this.normalStyle = currentStyle = new ViewStyleManager(frame.bitmapCache, scale, true);
-    this.activeStyle = new ViewStyleManager(frame.bitmapCache, scale, false);
-    
-    final FWImageView image = this;
-
-    setOnClickListener(new OnClickListener() {
-      @Override
-      public void onClick(View arg0) {
-	if (!FrameWork.transitionAnimation) {
-	  frame.sendNativeValueEvent(getElementId(), 0, 0);
-	}
-      }
-    });
-    
-    setOnTouchListener(new OnTouchListener() {
-      @Override
-      public boolean onTouch(View v, MotionEvent event) {
-	if (event.getAction() == MotionEvent.ACTION_DOWN) {
-	  image.currentStyle = image.activeStyle;
-	  image.currentStyle.apply(image);
-	} else if (event.getAction() == MotionEvent.ACTION_UP) {
-	  image.currentStyle = image.normalStyle;
-	  image.currentStyle.apply(image);
-	}
-	return false;
-      }
-    });
+    this.activeStyle = new ViewStyleManager(frame.bitmapCache, scale, false);    
   }
   
   @Override

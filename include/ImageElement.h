@@ -3,11 +3,8 @@
 
 #include <Element.h>
 #include <Command.h>
-#include <CommandEvent.h>
-#include <ValueEvent.h>
 #include <ImageSet.h>
 #include <PlatformThread.h>
-
 #include <ImageResponseEvent.h>
 
 class ImageElement : public Element {
@@ -55,20 +52,6 @@ class ImageElement : public Element {
     }
   }
 
-  void onValueEvent(ValueEvent & ev) override {
-    notify();
-    CommandEvent ev2(getId(), ev.getValue(), ev.getValue2());
-    ev2.dispatch(*this);
-    ev.setHandled(true);
-  }
-
-#if 0
-  void setFilename(const std::string & _filename) {
-    images.clear();
-    images.insert(_filename);
-  }
-#endif
-  
   const ImageSet & getImages() const { return images; }
   
  protected:
