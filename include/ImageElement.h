@@ -9,6 +9,7 @@
 
 class ImageElement : public Element {
  public:
+  ImageElement(int _id = 0) : Element(_id) { }
   ImageElement(const ImageSet & _images, int _id = 0) : Element(_id), images(_images) { }
   ImageElement(const std::string & filename, int _id = 0) : Element(_id) {
     images.insert(filename);
