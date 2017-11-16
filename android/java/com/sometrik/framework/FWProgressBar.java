@@ -14,6 +14,7 @@ public class FWProgressBar extends ProgressBar implements NativeCommandHandler {
   public FWProgressBar(FrameWork frame) {
     super(frame);
     this.frame = frame;
+    this.setClickable(false);
     final float scale = getContext().getResources().getDisplayMetrics().density;
     this.normalStyle = currentStyle = new ViewStyleManager(frame.bitmapCache, scale, true);
     this.activeStyle = new ViewStyleManager(frame.bitmapCache, scale, false);

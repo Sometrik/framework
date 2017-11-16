@@ -37,6 +37,13 @@ public class FWFrameView extends FrameLayout implements NativeCommandHandler {
     this.activeStyle = new ViewStyleManager(frame.bitmapCache, scale, false);
   }
   
+
+  @Override
+  public boolean performClick() {
+    frame.sendNativeValueEvent(getElementId(), 0, 0);
+    return super.performClick();
+  }
+  
   @Override
   public void onVisibilityChanged(View changedView, int visibility) {
     switch (visibility) {

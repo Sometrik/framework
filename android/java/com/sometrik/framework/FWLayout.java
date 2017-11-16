@@ -124,7 +124,7 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
 	  }
 	});
       }
-    } else if (view instanceof FWLayout){
+    } else if (view instanceof FWLayout || view instanceof FWFrameLayout || view instanceof FWFrameView) {
       view.setOnClickListener(new OnClickListener() {
 	  @Override
 	  public void onClick(View v) {

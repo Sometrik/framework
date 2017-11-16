@@ -30,7 +30,7 @@ public class FWImageView extends ImageView implements NativeCommandHandler {
     this.setScaleType(ScaleType.CENTER_CROP); // needed for parallax scrolling
     this.setClipToOutline(true);
     this.setAdjustViewBounds(true);
-    this.setClickable(false);    
+    this.setClickable(false);
         
     final float scale = getContext().getResources().getDisplayMetrics().density;
     this.normalStyle = currentStyle = new ViewStyleManager(frame.bitmapCache, scale, true);
