@@ -116,6 +116,7 @@ public class FWEditText extends EditText implements NativeCommandHandler {
       InputFilter[] filters = new InputFilter[1];
       filters[0] = new InputFilter.LengthFilter(Integer.parseInt(value)); //Filter to 10 characters
       setFilters(filters);
+      return;
     }
     if (selector == Selector.NORMAL) {
       normalStyle.setStyle(key, value);
