@@ -44,7 +44,7 @@ class PlatformThread : public Element {
   
   virtual bool start() = 0;
   virtual bool testDestroy() = 0;
-  virtual int sendCommands(const std::vector<Command> & commands) = 0;
+  virtual void sendCommands(const std::vector<Command> & commands) = 0;
   virtual void sleep(double t) = 0;
   virtual std::unique_ptr<HTTPClientFactory> createHTTPClientFactory() const = 0;
 #ifndef NO_CANVAS
@@ -57,6 +57,8 @@ class PlatformThread : public Element {
   virtual std::vector<std::pair<int, std::shared_ptr<Event> > > pollEvents(bool blocking = false) = 0;
   virtual void startEventLoop() = 0;
   virtual void setImageData(int internal_id, std::shared_ptr<canvas::PackedImageData> image) = 0;
+  virtual int startModal() = 0;
+  virtual void endModal(int value) = 0;
   
   bool terminate() {
     sendEvent(getInternalId(), SysEvent(SysEvent::TERMINATE_THREAD));
@@ -177,15 +179,13 @@ class PlatformThread : public Element {
     }
   }
 
-  int sendCommand(const Command & command) {
-    int rv = 0;
+  void sendCommand(const Command & command) {
     commandBatch.push_back(command);
     if (!isInTransaction()) {
       std::vector<Command> tmp = commandBatch;
       commandBatch.clear();
-      rv = sendCommands(tmp);
+      sendCommands(tmp);
     }
-    return rv;
   }
   
   bool isInTransaction() const { return batchOpen; }

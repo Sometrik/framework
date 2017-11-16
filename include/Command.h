@@ -40,8 +40,6 @@ class Command {
     CREATE_NOTIFICATION,
     DELETE_ELEMENT,
     REORDER_CHILD,
-    SHOW_MODAL, // Show dialogs and action sheets
-    END_MODAL,
     LAUNCH_BROWSER,
     HISTORY_GO_BACK,
     HISTORY_GO_FORWARD,

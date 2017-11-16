@@ -53,7 +53,7 @@ class Element : public EventHandler {
 
   void begin();
   void commit();
-  int sendCommand(const Command & command);
+  void sendCommand(const Command & command);
 
   void onEvent(Event & ev) override;
   void onVisibilityEvent(VisibilityEvent & ev) override {

@@ -46,6 +46,8 @@ public class FWDialog extends Dialog implements NativeCommandHandler {
     // 	  frame.endModal(System.currentTimeMillis() / 1000.0, id, null);
     //   }
     // });
+    
+    show();
   }
 
   @Override
@@ -74,13 +76,7 @@ public class FWDialog extends Dialog implements NativeCommandHandler {
   }
 
   @Override
-  public void setValue(int v) {
-    if (v > 0) {
-      show();
-    } else {
-      dismiss();
-    }
-  }
+  public void setValue(int v) { }
 
   @Override
   public void setViewVisibility(boolean visible) {
@@ -144,8 +140,7 @@ public class FWDialog extends Dialog implements NativeCommandHandler {
 
   @Override
   public void deinitialize() {
-    // TODO Auto-generated method stub
-    
+    dismiss();
   }
 
   @Override

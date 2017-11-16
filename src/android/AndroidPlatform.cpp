@@ -209,9 +209,18 @@ public:
     myEnv->DeleteLocalRef(bytes);   
   }
 
-  int sendCommands(const vector<Command> & commands) override {
-    bool startLoop = false;
+  int startModal() override {
+    setModalResultValue(0);
+    startEventLoop();
+    return getModalResultValue();
+  }
 
+  void endModal(int value) override {
+    setModalResultValue(value);
+    exit_loop++;
+  }
+
+  void sendCommands(const vector<Command> & commands) override {
     jobject jtransaction = myEnv->NewObject(javaCache->nativeCommandTransactionClass, javaCache->nativeCommandTransactionConstructor);
 
     __android_log_print(ANDROID_LOG_INFO, "Sometrik", "SENDING TRANSACTION (%d)", (int)commands.size());
@@ -222,10 +231,6 @@ public:
 	if (!app.getActiveViewId()) {
 	  app.setActiveViewId(command.getChildInternalId());
 	}
-      } else if (command.getType() == Command::SHOW_MODAL) {
-        startLoop = true;
-      } else if (command.getType() == Command::END_MODAL) {
-        exit_loop = true;
       }
       
       int commandTypeId = int(command.getType());
@@ -245,14 +250,6 @@ public:
 
     myEnv->CallStaticVoidMethod(javaCache->frameworkClass, javaCache->sendTransactionMethod, javaCache->framework, jtransaction);
     myEnv->DeleteLocalRef(jtransaction);
-
-    if (startLoop) {
-      setModalResultValue(0);
-      startEventLoop();
-      return getModalResultValue();
-    } else {
-      return 0;
-    }
   }
 
   AAssetManager * getAssetManager() const { return asset_manager; }
@@ -273,7 +270,7 @@ protected:
   JNIEnv * myEnv = 0;
   std::shared_ptr<JavaCache> javaCache;
   AAssetManager * asset_manager;
-  bool exit_loop = false;
+  int exit_loop = 0;
 };
 
 class AndroidMainThread : public AndroidThread {
@@ -423,8 +420,6 @@ public:
   }
 
   void startEventLoop() override {
-    exit_loop = false;
-    
     while (!isDestroyed && !exit_loop) {
       auto evs = pollEvents();
 
@@ -460,7 +455,7 @@ public:
       }
     }
 
-    exit_loop = false;
+    if (exit_loop > 0) exit_loop--;
   }
 
 private:

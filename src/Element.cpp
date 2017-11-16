@@ -99,13 +99,12 @@ Element::commit() {
   if (thread) thread->commitBatch();
 }
 
-int
+void
 Element::sendCommand(const Command & command) {
   if (thread) {
-    return thread->sendCommand(command);
+    thread->sendCommand(command);
   } else {
     pendingCommands.push_back(command);
-    return 0;
   }
 }
 

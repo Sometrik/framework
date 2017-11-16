@@ -4,7 +4,7 @@
 #include <Element.h>
 #include <Command.h>
 #include <ValueEvent.h>
-#include <CommandEvent.h>
+#include <PlatformThread.h>
 
 class Dialog : public Element {
  public:
@@ -22,7 +22,7 @@ class Dialog : public Element {
       initialize(&(parent->getThread()));
       initializeChildren();
     }
-    return sendCommand(Command(Command::SHOW_MODAL, getInternalId()));
+    return getThread().startModal();
   }
 
   void onValueEvent(ValueEvent & ev) override {
@@ -34,9 +34,7 @@ class Dialog : public Element {
 
  protected:
   void endModal(int value = 0) {
-    Command c(Command::END_MODAL, getInternalId());
-    c.setValue(value);
-    sendCommand(c);
+    getThread().endModal(value);
   }
   
   void create() override {

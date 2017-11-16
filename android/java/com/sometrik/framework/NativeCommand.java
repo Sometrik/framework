@@ -96,8 +96,6 @@ public class NativeCommand {
     CREATE_NOTIFICATION,
     DELETE_ELEMENT,
     REORDER_CHILD,
-    SHOW_MODAL, // Show dialogs and action sheets
-    END_MODAL,
     LAUNCH_BROWSER,
     HISTORY_GO_BACK,
     HISTORY_GO_FORWARD,
@@ -478,16 +476,6 @@ public class NativeCommand {
       break;
     case LAUNCH_BROWSER:
       frame.launchBrowser(getTextValueAsString());
-      break;
-    case SHOW_MODAL:
-      if (view != null) {
-	view.setValue(1);
-      }
-      break;
-    case END_MODAL:
-      if (view != null) {
-	view.setValue(0);
-      }
       break;
     case CREATE_DIALOG:
       FWDialog dialog = new FWDialog(frame, childInternalId);
