@@ -21,6 +21,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -94,6 +95,7 @@ public class NativeCommand {
     CREATE_PROGRESSBAR,
     CREATE_TOAST,
     CREATE_NOTIFICATION,
+    DELETE_ELEMENT,
     REMOVE_CHILD,
     REORDER_CHILD,
     LAUNCH_BROWSER,
@@ -526,6 +528,11 @@ public class NativeCommand {
     case COMMIT_PREFERENCES:
       frame.getPreferencesEditor().apply();
       break;
+    case DELETE_ELEMENT:
+      if (view != null) {
+	deleteElement(view);
+      }
+      break;
     case REMOVE_CHILD:
       if (view != null) {
 	removeChild(view, childInternalId);
@@ -610,8 +617,16 @@ public class NativeCommand {
     return click;
   }
   
-  private void deleteElement(int childId) {
-    frame.removeViewFromList(childId);    
+  private void deleteElement(NativeCommandHandler handler) {
+    frame.removeViewFromList(handler.getElementId());    
+
+    if (handler instanceof View) {
+      View view = (View)handler;
+      ViewParent parent = view.getParent();
+      if (parent instanceof ViewGroup) {
+	((ViewGroup) parent).removeView(view);
+      }
+    }
   }
   
   private void removeChild(NativeCommandHandler parent, int childId) {

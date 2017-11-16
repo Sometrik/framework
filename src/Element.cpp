@@ -16,6 +16,11 @@ Element::~Element() {
   if (thread) {
     auto & platform = thread->getPlatform();
     platform.unregisterElement(this);
+
+    if (this != thread) {
+      Command c(Command::DELETE_ELEMENT, getInternalId());
+      thread->sendCommand(c);
+    }
   }
 }
 
