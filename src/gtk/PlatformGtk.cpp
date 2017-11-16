@@ -116,10 +116,9 @@ public:
     bitmap_data_s * bd = new bitmap_data_s(&(getApplication().getThread()), internal_id, image);
     g_idle_add(bitmap_callback, bd);
   }
-  int sendCommands(const vector<Command> & commands) override {
+  void sendCommands(const vector<Command> & commands) override {
     command_data_s * cd = new command_data_s(&(getApplication().getThread()), commands);
     g_idle_add(command_callback, cd);
-    return 0;
   }
   string getLocalFilename(const char * fn, FileType type) override {
     string s = "assets/";
@@ -139,6 +138,15 @@ public:
   std::unique_ptr<Logger> createLogger(const std::string & name) const override {
     return std::unique_ptr<Logger>(new GtkLogger(name));
   }
+
+  int startModal() override {
+    return getModalResultValue();
+  }
+
+  void endModal(int value) override {
+    setModalResultValue(value);
+  }
+
 };
 
 class GtkMainThread : public PlatformThread {
@@ -219,6 +227,14 @@ public:
 
   void startEventLoop() override { }
 
+  int startModal() override {
+    return getModalResultValue();
+  }
+
+  void endModal(int value) override {
+    setModalResultValue(value);
+  }
+  
   std::unique_ptr<Logger> createLogger(const std::string & name) const override {
     return std::unique_ptr<Logger>(new GtkLogger(name));
   }
@@ -262,8 +278,7 @@ protected:
     }
   }
 
-  int sendCommands(const vector<Command> & commands) {
-    int commandRv = 0;
+  void sendCommands(const vector<Command> & commands) {
     for (auto & command : commands) {
       if (command.getType() == Command::CREATE_FRAMEVIEW || command.getType() == Command::CREATE_OPENGL_VIEW) {
 	auto & app = getApplication();
@@ -784,85 +799,20 @@ protected:
       }
 	break;
 
-      case Command::END_MODAL: {
+      case Command::DELETE_ELEMENT: {
 	auto it = views_by_id.find(command.getInternalId());
-	assert(it != views_by_id.end());
 	if (it != views_by_id.end()) {
-	  auto dialog = it->second;
-	  gtk_dialog_response(GTK_DIALOG(dialog), 0);
+	  auto widget = it->second;
+	  if (GTK_IS_DIALOG(widget)) {
+	    gtk_dialog_response(GTK_DIALOG(widget), 0);
+	  } else {
+	    gtk_widget_destroy(it->second); // autom. removed from container
+	  }
+	  views_by_id.erase(it);
 	}
       }
 	break;
-      
-      case Command::SHOW_DIALOG: {
-	auto it = views_by_id.find(command.getInternalId());
-	assert(it != views_by_id.end());
-	if (it != views_by_id.end()) {
-	  auto dialog = it->second;
-	  gtk_dialog_run(GTK_DIALOG(dialog));
-	  gtk_widget_destroy(dialog);
-	  views_by_id.erase(command.getInternalId());
-	}
-      }
-	break;
-      
-      case Command::SHOW_MESSAGE_DIALOG: {
-	GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
-	auto dialog = gtk_message_dialog_new(GTK_WINDOW(window),
-					     flags,
-					     GTK_MESSAGE_ERROR,
-					     GTK_BUTTONS_CLOSE,
-					     "%s",
-					     command.getTextValue2().c_str()
-					     );
-	gtk_dialog_run (GTK_DIALOG (dialog));
-	gtk_widget_destroy (dialog);
-      }
-	break;
-
-      case Command::SHOW_INPUT_DIALOG: {
-	GtkDialogFlags flags = GtkDialogFlags(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT);
-	auto dialog = gtk_dialog_new_with_buttons(command.getTextValue().c_str(),
-						  GTK_WINDOW(window),
-						  flags,
-						  "_OK",
-						  GTK_RESPONSE_ACCEPT,
-						  "_Cancel",
-						  GTK_RESPONSE_REJECT,
-						  0
-						  );
-
-	auto vbox = gtk_vbox_new(TRUE, TRUE);
-      
-	auto label = gtk_label_new(command.getTextValue2().c_str());
-	gtk_widget_show(label);
- 
-	auto entry = gtk_entry_new ();
-	gtk_widget_show(entry);
-
-	gtk_box_pack_start(GTK_BOX(vbox), label, TRUE, TRUE, 0);
-	gtk_box_pack_start (GTK_BOX(vbox), entry, TRUE, TRUE, 0);
-	gtk_widget_show (vbox);
-
-	auto a = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
-	gtk_container_add(GTK_CONTAINER(a), vbox);
-      
-	gint result = gtk_dialog_run(GTK_DIALOG (dialog));
-	if (result == GTK_RESPONSE_ACCEPT) {
-	  setModalResultValue(1);
-	  setModalResultText(gtk_entry_get_text((GtkEntry*)entry));
-	} else {
-	  setModalResultValue(0);
-	  setModalResultText("");
-	}
-      
-	gtk_widget_destroy (dialog);
-
-	commandRv = getModalResultValue();
-
-      }
-	break;
-
+            
       case Command::CREATE_TOAST: {
 	// GApplication *application = g_application_new ("hello.world", G_APPLICATION_FLAGS_NONE);
 	// g_application_register (application, NULL, NULL);
@@ -901,7 +851,7 @@ protected:
       }
 	break;      
 
-      case Command::DELETE_ELEMENT: {
+      case Command::REMOVE_CHILD: {
 	auto it = views_by_id.find(command.getChildInternalId());
 	if (it != views_by_id.end()) {
 	  gtk_widget_destroy(it->second); // autom. removed from container
@@ -938,7 +888,6 @@ protected:
 	break;
       }
     }
-    return commandRv;
   }
 
   PangoFontDescription * getFont(int view_id) {
