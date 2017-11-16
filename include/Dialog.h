@@ -26,11 +26,11 @@ class Dialog : public Element {
   }
 
   void onValueEvent(ValueEvent & ev) override {
-    if (ev.getValue() == 0) {
-      endModal();
-    }
+    endModal(ev.getValue());
     ev.setHandled(true);
   }
+
+  const std::string & getTitle() const { return title; }
 
  protected:
   void endModal(int value = 0) {
