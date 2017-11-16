@@ -4,19 +4,33 @@ import com.sometrik.framework.NativeCommand.Selector;
 
 import android.graphics.Bitmap;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.PopupMenu;
 
 public class FWActionSheet extends PopupMenu implements NativeCommandHandler {
-
-  private FrameWork frame;
   private int id;
   private boolean hasEntries = false;
   
-  public FWActionSheet(FrameWork frame, View anchor, int id) {
+  public FWActionSheet(final FrameWork frame, View anchor, final int id) {
     super(frame, anchor);
     this.id = id;
-   
+       
+    this.setOnDismissListener(new OnDismissListener() {
+      @Override
+      public void onDismiss(PopupMenu arg0) {
+	frame.intChangedEvent(id, 0, 0);     	  
+      }
+    });
+    
+    this.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+      @Override
+      public boolean onMenuItemClick(MenuItem item) {
+	frame.intChangedEvent(id, item.getItemId(), 0);
+	return true;
+      }
+    });
+    
     // Add dummy entry, or the menu will not have any width
     getMenu().add("No menu entries");
     show();
@@ -34,7 +48,6 @@ public class FWActionSheet extends PopupMenu implements NativeCommandHandler {
       getMenu().clear();
       hasEntries = true;      
     }
-    System.out.println("ActionSheet adding option " + optionId + " " + text);
     getMenu().add(Menu.NONE, optionId, Menu.NONE, text);
   }
 
