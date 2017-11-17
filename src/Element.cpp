@@ -167,12 +167,22 @@ Element::getApplication() const {
 }
 
 void
+Element::removeChildren() {
+  for (auto & child : children) {
+    sendCommand(Command(Command::REMOVE_CHILD, getInternalId(), child->getInternalId()));
+  }
+  children.clear();
+}
+
+void
 Element::removeChild(Element * child) {
-  for (auto it = children.begin(); it != children.end(); it++) {
-    if (it->get() == child) {
-      sendCommand(Command(Command::REMOVE_CHILD, getInternalId(), child->getInternalId()));
-      children.erase(it);
-      return;
+  if (child) {
+    for (auto it = children.begin(); it != children.end(); it++) {
+      if (it->get() == child) {
+        sendCommand(Command(Command::REMOVE_CHILD, getInternalId(), child->getInternalId()));
+        children.erase(it);
+        return;
+      }
     }
   }
 }

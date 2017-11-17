@@ -163,6 +163,7 @@ class Element : public EventHandler {
   void setParent(Element * _parent) { parent = _parent; }
   bool isInitialized() const { return thread != 0; }
 
+  void removeChildren();
   void removeChild(Element * c);
 
   int createTimer(int timeout_ms);
