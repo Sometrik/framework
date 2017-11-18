@@ -202,11 +202,25 @@ public:
     jobject bitmap = myEnv->CallStaticObjectMethod(javaCache->bitmapClass, javaCache->bitmapCreateMethod, (int)image->getWidth(), (int)image->getHeight(), config);
 
     myEnv->CallVoidMethod(bitmap, javaCache->copyPixelsFromBufferMethod, buffer);
-    myEnv->CallStaticVoidMethod(javaCache->frameworkClass, javaCache->sendBitmapMethod, javaCache->framework, internal_id, bitmap);
+    setBitmap(internal_id, bitmap);
 
     myEnv->DeleteLocalRef(bitmap);
     myEnv->DeleteLocalRef(buffer);
     myEnv->DeleteLocalRef(bytes);   
+  }
+
+  void setSurface(int internal_id, canvas::Surface & _surface) override {
+    auto surface = dynamic_cast<AndroidSurface*>(&_surface);
+    if (surface) {
+      auto bitmap = surface->getBitmap();
+      if (bitmap) {
+	setBitmap(internal_id, bitmap);
+      }
+    }
+  }
+
+  void setBitmap(int internal_id, jobject bitmap) {
+    myEnv->CallStaticVoidMethod(javaCache->frameworkClass, javaCache->sendBitmapMethod, javaCache->framework, internal_id, bitmap);
   }
 
   int startModal() override {

@@ -116,6 +116,12 @@ public:
     bitmap_data_s * bd = new bitmap_data_s(&(getApplication().getThread()), internal_id, image);
     g_idle_add(bitmap_callback, bd);
   }
+  void setSurface(int internal_id, canvas::Surface & surface) override {
+    auto img = surface.createImage(getDisplayScale());
+    std::shared_ptr<canvas::PackedImageData> packedImage = img->pack(canvas::RGBA8, 1);
+    bitmap_data_s * bd = new bitmap_data_s(&(getApplication().getThread()), internal_id, packedImage);
+    g_idle_add(bitmap_callback, bd);    
+  }
   void sendCommands(const vector<Command> & commands) override {
     command_data_s * cd = new command_data_s(&(getApplication().getThread()), commands);
     g_idle_add(command_callback, cd);
@@ -276,6 +282,12 @@ protected:
       auto image = GTK_IMAGE(view);
       gtk_image_set_from_pixbuf(image, pixbuf);
     }
+  }
+
+  void setSurface(int internal_id, canvas::Surface & surface) override {
+    auto img = surface.createImage(getDisplayScale());
+    std::shared_ptr<canvas::PackedImageData> packedImage = img->pack(canvas::RGBA8, 1);
+    setImageData(internal_id, packedImage);
   }
 
   void sendCommands(const vector<Command> & commands) {
@@ -467,6 +479,7 @@ protected:
       
       case Command::CREATE_BUTTON: {
 	auto button = gtk_button_new_with_label(command.getTextValue().c_str());
+	gtk_button_set_image_position(GTK_BUTTON(button), GTK_POS_TOP);
 	g_signal_connect(button, "clicked", G_CALLBACK(send_int_value), this);
 	addView(command, button);
       }
@@ -805,7 +818,7 @@ protected:
 	  auto widget = it->second;
 	  if (GTK_IS_DIALOG(widget)) {
 	    gtk_dialog_response(GTK_DIALOG(widget), 0);
-	  } else {
+	  } else if (GTK_IS_WIDGET(widget)) {
 	    gtk_widget_destroy(it->second); // autom. removed from container
 	  }
 	  views_by_id.erase(it);
@@ -854,7 +867,10 @@ protected:
       case Command::REMOVE_CHILD: {
 	auto it = views_by_id.find(command.getChildInternalId());
 	if (it != views_by_id.end()) {
-	  gtk_widget_destroy(it->second); // autom. removed from container
+	  auto widget = it->second;
+	  if (GTK_IS_WIDGET(widget)) {
+	    gtk_widget_destroy(widget); // autom. removed from container
+	  }
 	  views_by_id.erase(it);
 	}
       }
@@ -899,6 +915,14 @@ protected:
       fonts_by_id[view_id] = font;
       return font;
     }
+  }
+
+  static GtkPositionType parseIconAttachment(const std::string & value) {
+    if (value == "left") return GTK_POS_LEFT;
+    else if (value == "right") return GTK_POS_RIGHT;
+    else if (value == "top") return GTK_POS_TOP;
+    else if (value == "bottom") return GTK_POS_BOTTOM;
+    else return GTK_POS_TOP;
   }
   
   void setStyle(int id, Selector selector, const std::string & key, const std::string & value) {
@@ -1009,6 +1033,18 @@ protected:
       auto font = getFont(id);
       pango_font_description_set_family(font, value.c_str());
       gtk_widget_override_font(widget, font);
+    } else if (GTK_IS_BUTTON(widget)) {
+      if (key == "icon") {
+	auto pixbuf = loadPixbuf(value);
+	if (pixbuf) {
+	  GtkWidget * image = gtk_image_new();
+	  gtk_image_set_from_pixbuf(GTK_IMAGE(image), pixbuf);
+	  gtk_button_set_always_show_image(GTK_BUTTON(widget), true);
+	  gtk_button_set_image(GTK_BUTTON(widget), image);
+	}
+      } else if (key == "icon-attachment") {
+	gtk_button_set_image_position(GTK_BUTTON(widget), parseIconAttachment(value));
+      }
     } else if (GTK_IS_LABEL(widget)) {
       auto label = GTK_LABEL(widget);
       if (key == "white-space") {
@@ -1041,7 +1077,7 @@ protected:
       } else if (key == "border") {
       } else if (key == "single-line") {
 	gtk_label_set_single_line_mode(label, true);
-      }
+      }    
     } else if (GTK_IS_FRAME(widget)) {
       auto frame = GTK_FRAME(widget);
       if (key == "shadow") {
@@ -1110,7 +1146,9 @@ protected:
     string s = getBundleFilename(filename.c_str());
     GError * error = 0;
     GdkPixbuf * pixbuf = gdk_pixbuf_new_from_file(s.c_str(), &error);
-    if (pixbuf && getDisplayScale() < 2.0f) {
+    if (!pixbuf) {
+      cerr << "failed to load image " << filename << endl;
+    } else if (getDisplayScale() < 2.0f) {
       int new_w = int(getDisplayScale() * gdk_pixbuf_get_width(pixbuf) / 2.0f);
       int new_h = int(getDisplayScale() * gdk_pixbuf_get_height(pixbuf) / 2.0f);
       auto new_pixbuf = gdk_pixbuf_scale_simple(pixbuf, 

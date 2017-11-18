@@ -16,6 +16,7 @@ class HTTPClientFactory;
 namespace canvas {
   class ContextFactory;
   class PackedImageData;
+  class Surface;
 };
 
 class PlatformThread : public Element {
@@ -57,6 +58,7 @@ class PlatformThread : public Element {
   virtual std::vector<std::pair<int, std::shared_ptr<Event> > > pollEvents(bool blocking = false) = 0;
   virtual void startEventLoop() = 0;
   virtual void setImageData(int internal_id, std::shared_ptr<canvas::PackedImageData> image) = 0;
+  virtual void setSurface(int internal_id, canvas::Surface & surface) = 0;
   virtual int startModal() = 0;
   virtual void endModal(int value) = 0;
   
