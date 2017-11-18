@@ -210,7 +210,7 @@ public:
   }
 
   void setSurface(int internal_id, canvas::Surface & _surface) override {
-    auto surface = dynamic_cast<AndroidSurface*>(&_surface);
+    auto surface = dynamic_cast<canvas::AndroidSurface*>(&_surface);
     if (surface) {
       auto bitmap = surface->getBitmap();
       if (bitmap) {
