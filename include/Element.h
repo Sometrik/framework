@@ -82,10 +82,6 @@ class Element : public EventHandler {
     return *element;
   }  
     
-  Element & addText(const std::string & text);
-  Element & addHorizontalLayout(int _id = 0);
-  Element & addVerticalLayout(int _id = 0);
-
   int getId() const { return id; }
   void setId(int _id) { id = _id; }
 
@@ -170,6 +166,11 @@ class Element : public EventHandler {
 
   PlatformThread & getThread() { return *thread; }
   const PlatformThread & getThread() const { return *thread; }
+  PlatformThread * getThreadPtr() { return thread; }
+
+  void setThread(PlatformThread * _thread) {
+    thread = _thread;
+  }
 
   virtual void initialize(PlatformThread * _thread);
 
@@ -179,7 +180,7 @@ class Element : public EventHandler {
   bool isClickable() const { return is_clickable; }
 
  protected:
-  virtual void create() = 0;
+  virtual void create() { }
   virtual void load() { }
 
   virtual bool isChildVisible(const Element & child) const {

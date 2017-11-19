@@ -1,7 +1,5 @@
 #include <Element.h>
 #include <FWPlatform.h>
-#include <TextLabel.h>
-#include <LinearLayout.h>
 #include <FWApplication.h>
 #include <ElementNotInitializedException.h>
 #include <PlatformThread.h>
@@ -111,21 +109,6 @@ Element::sendCommand(const Command & command) {
   } else {
     pendingCommands.push_back(command);
   }
-}
-
-Element &
-Element::addText(const std::string & text) {
-  return addChild(make_shared<TextLabel>(text));
-}
-
-Element &
-Element::addHorizontalLayout(int _id) {
-  return addChild(make_shared<LinearLayout>(FW_HORIZONTAL, _id));
-}
-
-Element &
-Element::addVerticalLayout(int _id) {
-  return addChild(make_shared<LinearLayout>(FW_VERTICAL, _id));
 }
 
 void
