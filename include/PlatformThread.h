@@ -38,6 +38,11 @@ class PlatformThread : public Element {
     }
   }
 
+  ~PlatformThread() {
+    auto & platform = getPlatform();
+    platform.unregisterElement(this);    
+  }
+
   bool isA(const std::string & className) const override {
     if (className == "PlatformThread") return true;
     else return Element::isA(className);
