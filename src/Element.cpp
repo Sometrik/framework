@@ -11,11 +11,10 @@ using namespace std;
 atomic<int> Element::nextInternalId(1);
 
 Element::~Element() {
-  if (thread) {
+  if (thread && this != thread) {
     auto & platform = thread->getPlatform();
-    platform.unregisterElement(this);
-
-    if (this != thread) {
+    if (platform.unregisterElement(this)) {
+      // Threads do the unregistration themselves
       Command c(Command::DELETE_ELEMENT, getInternalId());
       thread->sendCommand(c);
     }
