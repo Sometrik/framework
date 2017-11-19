@@ -61,7 +61,8 @@ class PlatformThread : public Element {
   virtual void setSurface(int internal_id, canvas::Surface & surface) = 0;
   virtual int startModal() = 0;
   virtual void endModal(int value) = 0;
-  
+  virtual void sendHeartbeat() { }
+      
   bool terminate() {
     sendEvent(getInternalId(), SysEvent(SysEvent::TERMINATE_THREAD));
     
