@@ -2,9 +2,8 @@
 #define _ACTIONBAR_H_
 
 #include <InputElement.h>
-
+#include <CommandEvent.h>
 #include <Command.h>
-#include <FWPlatform.h>
 
 class ActionBar : public Element {
  public:

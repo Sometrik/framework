@@ -48,7 +48,6 @@ class Picker : public Element {
  protected:
   void create() override {
     Command c(Command::CREATE_PICKER, getParentInternalId(), getInternalId());
-    c.setLayoutWeight(getLayoutWeight());
     sendCommand(c);
   }
 

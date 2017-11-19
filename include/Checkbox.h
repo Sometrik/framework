@@ -4,7 +4,6 @@
 #include <InputElement.h>
 
 #include <Command.h>
-#include <FWPlatform.h>
 
 class Checkbox : public InputElement {
  public:
@@ -38,7 +37,6 @@ class Checkbox : public InputElement {
   void create() override {
     Command c(Command::CREATE_CHECKBOX, getParentInternalId(), getInternalId());
     c.setTextValue(label);
-    c.setLayoutWeight(getLayoutWeight());
     sendCommand(c);
   }
 

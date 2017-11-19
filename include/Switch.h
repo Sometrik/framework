@@ -4,7 +4,6 @@
 #include <InputElement.h>
 
 #include <Command.h>
-#include <FWPlatform.h>
 
 class Switch : public InputElement {
  public:
@@ -29,7 +28,6 @@ class Switch : public InputElement {
     Command c(Command::CREATE_SWITCH, getParentInternalId(), getInternalId());
     c.setTextValue(on_label);
     c.setTextValue2(off_label);
-    c.setLayoutWeight(getLayoutWeight());
     sendCommand(c);
   }
 
