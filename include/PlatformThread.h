@@ -2,7 +2,6 @@
 #define _PLATFORMTHREAD_H_
 
 #include <Element.h>
-#include <Logger.h>
 #include <Runnable.h>
 #include <SysEvent.h>
 #include <FWPlatform.h>
@@ -12,6 +11,7 @@
 
 class Event;
 class HTTPClientFactory;
+class Logger;
 
 namespace canvas {
   class ContextFactory;
