@@ -393,7 +393,7 @@ public class NativeCommand {
       break;
       
     case CREATE_TOAST: {
-      Toast toast = Toast.makeText(frame, getTextValueAsString(), getValue() != 0 ? getValue() : 2);
+      Toast toast = Toast.makeText(frame, getTextValueAsString(), getValue() != 0 ? getValue() : Toast.LENGTH_SHORT);
       toast.show();
     }
       break;
