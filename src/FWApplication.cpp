@@ -25,6 +25,7 @@ class AppMessageDialog : public Dialog {
     mainLayout->addChild(dialogMessage);
 
     auto okButton = std::make_shared<Button>("OK");
+    mainLayout->addChild(okButton);
   }
 
   bool isA(const std::string & className) const override {
@@ -154,7 +155,7 @@ protected:
     string runnable_name, runnable_status;
     auto runnable = thread.getRunnablePtr();
     if (runnable) {
-      runnable_name = typeid(*runnable).name();
+      runnable_name = runnable->getName();
       runnable_status = runnable->getStatusText();
     }
     grid.setValue(numThreadRows, 0, runnable_name);
@@ -185,14 +186,6 @@ FWApplication::onSysEvent(SysEvent & ev) {
     auto dialog = make_shared<DebugDialog>();
     dialog->showModal(this);
   }
-}
-
-Logger &
-FWApplication::getLogger() {
-  if (!logger.get()) {
-    logger = getThread().createLogger(name);
-  }
-  return *logger;
 }
 
 void

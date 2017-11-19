@@ -2,11 +2,13 @@
 #define _RUNNABLE_H_
 
 #include <Element.h>
-
 #include <Mutex.h>
+#include <Logger.h>
 
 #include <exception>
 #include <string>
+
+class Logger;
 
 class Runnable : public Element {
  public:
@@ -17,7 +19,7 @@ class Runnable : public Element {
     try {
       run();
     } catch (std::exception & e) {
-      // std::cerr << "Runnable threw an exception: " + std::string(e.what()) + "\n";
+      getLogger().println("exception: " + std::string(e.what()));
     }
   }
 
@@ -25,6 +27,10 @@ class Runnable : public Element {
     MutexLocker m(mutex);
     return status_text;
   }
+
+  virtual std::string getName() const;
+
+  Logger & getLogger();
 
  protected: 
   virtual void run() = 0;
@@ -36,6 +42,7 @@ class Runnable : public Element {
 
  private:
   std::string status_text;
+  std::shared_ptr<Logger> logger;
   mutable Mutex mutex;
 };
 

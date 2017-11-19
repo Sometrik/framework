@@ -6,8 +6,6 @@
 #include <FWPreferences.h>
 #include <MobileAccount.h>
 
-class Logger;
-
 class FWApplication : public Runnable {
 public:
   FWApplication(const char * _name, bool _full_screen = false)
@@ -21,7 +19,7 @@ public:
     return Runnable::isA(className);
   }
   
-  const std::string & getName() const { return name; }
+  std::string getName() const override { return name; }
 
   virtual void setActiveViewId(int id) { activeViewId = id; }
   int getActiveViewId() const { return activeViewId; }
@@ -52,8 +50,6 @@ public:
   }
   
   void onSysEvent(SysEvent & ev) override;
-
-  Logger & getLogger();
 
   void setMobileAccount(const MobileAccount & account) { mobileAccount = account; }
   const MobileAccount getMobileAccount() const { return mobileAccount; }
@@ -105,7 +101,6 @@ public:
   std::vector<int> view_back_history, view_forward_history;
   FWPreferences preferences;
   MobileAccount mobileAccount;
-  std::shared_ptr<Logger> logger;
 };
 
 #endif
