@@ -124,18 +124,18 @@ public:
     auto mainLayout = make_shared<LinearLayout>(FW_VERTICAL);
     addChild(mainLayout);
 
-    mainLayout->addText("Debug screen").style("font-size", "14")
+    mainLayout->addChild(make_shared<TextLabel>("Debug screen")).style("font-size", "14")
       .style("white-space", "nowrap")
       .style("margin", 5);
 
-    mainLayout->addText("Stuff").style("font-size", "12").style("margin", 5);
+    mainLayout->addChild(make_shared<TextLabel>("Stuff")).style("font-size", "12").style("margin", 5);
 
     
     auto table = make_shared<TableLayout>(2);
     table->style("margin", 5);
     mainLayout->addChild(table);
 
-    mainLayout->addText("Threads").style("font-size", "12").style("margin", 5);
+    mainLayout->addChild(make_shared<TextLabel>("Threads")).style("font-size", "12").style("margin", 5);
 
     auto grid = make_shared<GridView>();
     grid->style("margin", 5);
