@@ -27,7 +27,7 @@ class FWPlatform {
     MutexLocker m(mutex);
     auto it = registered_elements.find(e->getInternalId());
     if (it != registered_elements.end()) {
-      registered_element.remove(e->getInternalId());
+      registered_elements.erase(e->getInternalId());
       return true;
     } else {
       return false;
