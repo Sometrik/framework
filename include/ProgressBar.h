@@ -1,7 +1,7 @@
 #ifndef _PROGRESSBAR_H_
 #define _PROGRESSBAR_H_
 
-#include <UIElement.h>
+#include <Element.h>
 
 class ProgressBar : public Element {
  public:

@@ -1,7 +1,7 @@
 #ifndef _NAVIGATIONBAR_H_
 #define _NAVIGATIONBAR_H_
 
-#include <UIElement.h>
+#include <Element.h>
 
 #include <ValueEvent.h>
 #include <Command.h>

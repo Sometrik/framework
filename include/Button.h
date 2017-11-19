@@ -1,21 +1,21 @@
 #ifndef _BUTTON_H_
 #define _BUTTON_H_
 
-#include <UIElement.h>
+#include <Element.h>
 
 #include <ValueEvent.h>
 #include <Command.h>
 #include <CommandEvent.h>
 #include <TouchEvent.h>
 
-class Button : public UIElement {
+class Button : public Element {
  public:
  Button(const std::string & _label, int _id = 0, unsigned int _flags = 0)
-   : UIElement(_id, _flags), label(_label) { }
+   : Element(_id, _flags), label(_label) { }
 
   bool isA(const std::string & className) const override {
     if (className == "Button") return true;
-    return UIElement::isA(className);
+    return Element::isA(className);
   }
 
   void onTouchEvent(TouchEvent & ev) override {
