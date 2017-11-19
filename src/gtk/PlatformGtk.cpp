@@ -1555,14 +1555,11 @@ static void activate(GtkApplication * gtk_app, gpointer user_data) {
 }
 
 int main (int argc, char *argv[]) {
-  cerr << "creating app\n";
-  
   std::shared_ptr<FWApplication> application(applicationMain());
 
   cerr << "creating mainloop\n";
   
-  std::shared_ptr<Runnable> runnable(0);
-  GtkMainThread mainThread(application, runnable);
+  GtkMainThread mainThread(application, application);
   mainThread.setActualDisplayWidth(width);
   mainThread.setActualDisplayHeight(height);
   

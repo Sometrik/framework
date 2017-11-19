@@ -602,9 +602,7 @@ void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, job
 
     auto cache = make_shared<JavaCache>(env, thiz);
 
-    shared_ptr<Runnable> runnable;
-
-    mainThread = make_shared<AndroidMainThread>(application, cache, manager, runnable);
+    mainThread = make_shared<AndroidMainThread>(application, cache, manager, application);
     mainThread->setActualDisplayWidth(screenWidth);
     mainThread->setActualDisplayHeight(screenHeight);
     mainThread->setDisplayScale(displayScale);
