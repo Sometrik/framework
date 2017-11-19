@@ -1,14 +1,14 @@
 #ifndef _FWAPPLICATION_H_
 #define _FWAPPLICATION_H_
 
-#include <Element.h>
+#include <Runnable.h>
 #include <Command.h>
 #include <FWPreferences.h>
 #include <MobileAccount.h>
 
 class Logger;
 
-class FWApplication : public Element {
+class FWApplication : public Runnable {
 public:
   FWApplication(const char * _name, bool _full_screen = false)
     : name(_name), full_screen(_full_screen) { }
@@ -18,7 +18,7 @@ public:
 
   bool isA(const std::string & className) const override {
     if (className == "FWApplication") return true;
-    return Element::isA(className);
+    return Runnable::isA(className);
   }
   
   const std::string & getName() const { return name; }
@@ -68,6 +68,10 @@ public:
   }
 
  protected:
+  void run() override {
+    // not used
+  }
+
   void create() override {
     Command c(Command::CREATE_APPLICATION, getParentInternalId(), getInternalId());
     c.setFlags(iap_public_key.empty() ? 0 : 128);
