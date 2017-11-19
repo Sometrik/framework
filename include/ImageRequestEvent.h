@@ -15,19 +15,14 @@ class ImageRequestEvent : public Event {
     REQUEST = 1,
     CANCEL
   };
-  enum RequestPriority {
-    REALTIME = 1,
-    NORMAL,
-    LOW
-  };
 
-  ImageRequestEvent() : mode(CANCEL), priority(NORMAL), source_internal_id(0), requested_width(0), requested_height(0), requested_levels(0) { }
-  ImageRequestEvent(RequestMode _mode, int _source_internal_id) : mode(_mode), priority(NORMAL), source_internal_id(_source_internal_id), requested_width(0), requested_height(0), requested_levels(0) { }
-  ImageRequestEvent(RequestMode _mode, int _source_internal_id, const std::string & _image_url, RequestPriority _priority, unsigned int _requested_width, unsigned int _requested_height, unsigned int _requested_levels = 1) : mode(_mode), image_url(_image_url), priority(_priority), source_internal_id(_source_internal_id), requested_width(_requested_width), requested_height(_requested_height), requested_levels(_requested_levels) { }
+  ImageRequestEvent() : mode(CANCEL), source_internal_id(0), requested_width(0), requested_height(0), requested_levels(0) { }
+ ImageRequestEvent(RequestMode _mode, int _source_internal_id, unsigned int _requested_width = 0, unsigned int _requested_height = 0, unsigned int _requested_levels = 1) : mode(_mode), source_internal_id(_source_internal_id), requested_width(_requested_width), requested_height(_requested_height), requested_levels(_requested_levels) { }
+ ImageRequestEvent(RequestMode _mode, int _source_internal_id, const std::string & _image_url, unsigned int _requested_width, unsigned int _requested_height, unsigned int _requested_levels = 1) : mode(_mode), image_url(_image_url), source_internal_id(_source_internal_id), requested_width(_requested_width), requested_height(_requested_height), requested_levels(_requested_levels) { }
 
   const char * key() const override { return "imageRequest"; }
   Event * dup() const override { return new ImageRequestEvent(*this); }
-  bool isBroadcast() const override { return true; }
+  bool isBroadcast() const override { return false; }
 
   void dispatch(EventHandler & evh) override {
     evh.handleImageRequestEvent(*this);
@@ -41,9 +36,8 @@ class ImageRequestEvent : public Event {
   unsigned int getRequestedHeight() const { return requested_height; }
   unsigned int getRequestedLevels() const { return requested_levels; }
 
-  RequestPriority getPriority() const { return priority; }
-  void setSubPriority(int p) { sub_priority = p; }
-  int getSubPriority() const { return sub_priority; }
+  void setPriority(int p) { priority = p; }
+  int getPriority() const { return priority; }
  
   //  void setTargetKey(const skey & _target_key) { target_key = _target_key; }
   // const skey & getTargetKey() const { return target_key; }
@@ -56,9 +50,8 @@ class ImageRequestEvent : public Event {
  private:
   RequestMode mode;
   std::string image_url;
-  RequestPriority priority;
   unsigned int requested_width, requested_height, requested_levels;
-  int sub_priority = 0;
+  int priority = 0;
   // skey target_key;
   canvas::InternalFormat format = canvas::NO_FORMAT;
   int source_internal_id;
