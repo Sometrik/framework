@@ -129,6 +129,8 @@ public class FWImageView extends ImageView implements NativeCommandHandler {
 
   @Override
   public void clear() {
+    deinitialize();
+    setImageBitmap(null);
     images.clear();
   }
 
@@ -174,13 +176,13 @@ public class FWImageView extends ImageView implements NativeCommandHandler {
     cancelImageRequest();
     currentWidth = w;
     currentHeight = h;
-    if (!images.isEmpty()) requestImage();
+    requestImage();
   }
   
   protected void requestImage() {
     if (currentWidth > 0) {
-      ImageData img = getSuitable(currentWidth);
-      if (img != null) {
+      if (!images.isEmpty()) {
+	ImageData img = getSuitable(currentWidth);
 	System.out.println("Sending image request for " + img.url);
 	imageRequestSent = true;
 	final float scale = getContext().getResources().getDisplayMetrics().density;
@@ -192,7 +194,7 @@ public class FWImageView extends ImageView implements NativeCommandHandler {
 	  frame.sendImageRequest(getElementId(), img.url, (int)(currentWidth / scale), 0, RGB565);
 	}
       } else {
-	System.out.println("No image found");	    
+	frame.sendImageRequest(getElementId(), (int)(currentWidth / scale), (int)(currentHeight / scale), RGB565);
       }
     } else {
       System.out.println("Unable to sent image request");
