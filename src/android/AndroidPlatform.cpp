@@ -218,7 +218,7 @@ public:
       }
     }
   }
-
+  
   void setBitmap(int internal_id, jobject bitmap) {
     myEnv->CallStaticVoidMethod(javaCache->frameworkClass, javaCache->sendBitmapMethod, javaCache->framework, internal_id, bitmap);
   }
@@ -467,9 +467,18 @@ public:
           // Swap buffers failed
         }
       }
+
+      if (prev_heartbeat_time + 10 <= time(0)) {
+	showToast("Application is not responding: " + getApplication().getStatusText(), 9);
+	sendHeartbeat();
+      }
     }
 
     if (exit_loop > 0) exit_loop--;
+  }
+
+  void sendHeartbeat() {
+    prev_heartbeat_time = time(0);
   }
 
 private:
@@ -482,6 +491,7 @@ private:
 
   MobileAccount mobileAccount;
   FWPreferences preferences;
+  time_t prev_heartbeat_time = 0;
 };
 
 static std::shared_ptr<AndroidMainThread> mainThread;
@@ -604,6 +614,7 @@ void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, job
     monstartup("framework.so");
 #endif
 
+    mainThread->sendHeartbeat();
     mainThread->start();
   }
 }
@@ -707,12 +718,20 @@ void Java_com_sometrik_framework_FrameWork_nativeScrollChanged(JNIEnv * env, job
 void Java_com_sometrik_framework_FrameWork_sendImageRequest(JNIEnv* env, jobject thiz, jint viewId, jstring uri, jint width, jint height, jint internalFormat) {
   const char * uri2 = env->GetStringUTFChars(uri, NULL);
   __android_log_print(ANDROID_LOG_INFO, "Sometrik", "sendImageRequest: %s %d %d", uri2, width, height);
-  ImageRequestEvent ev(ImageRequestEvent::REQUEST, viewId, uri2, ImageRequestEvent::NORMAL, width, height);
+  ImageRequestEvent ev(ImageRequestEvent::REQUEST, viewId, uri2, width, height);
   if (internalFormat != 0) {
     ev.setInternalFormat((canvas::InternalFormat)internalFormat);
   }
   mainThread->sendEvent(mainThread->getApplication().getInternalId(), ev);
   env->ReleaseStringUTFChars(uri, uri2);
+}
+
+void Java_com_sometrik_framework_FrameWork_sendImageRequest(JNIEnv* env, jobject thiz, jint viewId, jint width, jint height, jint internalFormat) {
+  ImageRequestEvent ev(ImageRequestEvent::REQUEST, viewId, width, height);
+  if (internalFormat != 0) {
+    ev.setInternalFormat((canvas::InternalFormat)internalFormat);
+  }
+  mainThread->sendEvent(mainThread->getApplication().getInternalId(), ev);
 }
 
 void Java_com_sometrik_framework_FrameWork_cancelImageRequest(JNIEnv * env, jobject thiz, jint viewId) {
