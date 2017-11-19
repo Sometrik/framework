@@ -6,7 +6,6 @@
 #include <TouchEvent.h>
 #include <CommandEvent.h>
 #include <SysEvent.h>
-#include <FWPlatform.h>
 #include <GraphicsContext.h>
 
 #include <cassert>
