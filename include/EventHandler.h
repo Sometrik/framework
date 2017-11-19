@@ -3,6 +3,8 @@
 
 #include <Notifier.h>
 
+#include <atomic>
+
 class Event;
 class TouchEvent;
 class CommandEvent;
@@ -49,6 +51,8 @@ class StatusEvent;
 
 class EventHandler : public Notifier {
  public:
+ EventHandler() : internal_id(getNextInternalId()) { }
+  
   bool call() override { return call(true); }
   bool call(bool t) override { return call(t ? 1 : 0); }
   bool call(int i) override { return true; }
@@ -108,6 +112,15 @@ class EventHandler : public Notifier {
   
   virtual bool acceptPositionEvent(const PositionEvent & ev, float margin = 0) const { return false; }
   virtual bool isVisibleOnWorkspace(int w) const { return true; }  
+
+  int getInternalId() const { return internal_id; }
+
+ protected:
+  static int getNextInternalId() { return nextInternalId.fetch_add(1); }
+
+ private:
+  int internal_id;
+  static std::atomic<int> nextInternalId;
 };
 
 #endif

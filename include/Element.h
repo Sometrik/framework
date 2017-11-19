@@ -5,8 +5,9 @@
 #include <Selection.h>
 #include <Command.h>
 #include <VisibilityEvent.h>
+#include <Mutex.h>
 
-#include <atomic>
+#include <unordered_map>
 
 class FWApplication;
 class PlatformThread;
@@ -14,8 +15,7 @@ class PlatformThread;
 class Element : public EventHandler {
  public:
   Element(int _id = 0, unsigned int _flags = 0)
-    : internal_id(getNextInternalId()),
-    id(_id),
+    : id(_id),
     flags(_flags)
     { }
   Element(const Element & other) = delete;
@@ -85,7 +85,6 @@ class Element : public EventHandler {
   int getId() const { return id; }
   void setId(int _id) { id = _id; }
 
-  int getInternalId() const { return internal_id; }
   int getParentInternalId() const { return parent ? parent->getInternalId() : 0; }
 
   unsigned int getFlags() const { return flags; }
@@ -179,6 +178,19 @@ class Element : public EventHandler {
   void setClickable(bool t) { is_clickable = t; }
   bool isClickable() const { return is_clickable; }
 
+  static void postEvent(int internal_id, Event & ev) {
+    auto e = getRegisteredElement(internal_id);
+    if (e) {
+      ev.dispatch(*e);
+    }
+  }
+
+  static Element * getRegisteredElement(int internal_id) {
+    MutexLocker m(mutex);
+    auto it = registered_elements.find(internal_id);
+    return it != registered_elements.end() ? it->second : 0;
+  }
+
  protected:
   virtual void create() { }
   virtual void load() { }
@@ -188,22 +200,38 @@ class Element : public EventHandler {
     else if (parent) return parent->isChildVisible(*this);
     else return true;
   }
+  
+  static void registerElement(Element * e) {
+    MutexLocker m(mutex);
+    registered_elements[e->getInternalId()] = e;
+  }
 
+  static bool unregisterElement(Element * e) {
+    MutexLocker m(mutex);
+    auto it = registered_elements.find(e->getInternalId());
+    if (it != registered_elements.end()) {
+      registered_elements.erase(e->getInternalId());
+      return true;
+    } else {
+      return false;
+    }
+  }
+  
   bool is_visible = true;
 
  private:
-  static int getNextInternalId() { return nextInternalId.fetch_add(1); }
 
   PlatformThread * thread = 0;
   Element * parent = 0;
-  int internal_id, id = 0;
+  int id = 0;
   std::vector<std::shared_ptr<Element> > children;
   unsigned int flags; // initialized in constructor
   bool has_error = false;
   std::vector<Command> pendingCommands;
   bool is_enabled = true, is_clickable = false;
 
-  static std::atomic<int> nextInternalId;
+  static std::unordered_map<int, Element *> registered_elements;
+  static Mutex mutex;
 };
 
 #endif

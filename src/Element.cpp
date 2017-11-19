@@ -1,23 +1,20 @@
 #include <Element.h>
-#include <FWPlatform.h>
 #include <FWApplication.h>
 #include <ElementNotInitializedException.h>
 #include <PlatformThread.h>
 
 #include <cassert>
+#include <iostream>
 
 using namespace std;
 
-atomic<int> Element::nextInternalId(1);
+std::unordered_map<int, Element *> Element::registered_elements;
+Mutex Element::mutex;
 
 Element::~Element() {
-  if (thread && this != thread) {
-    auto & platform = thread->getPlatform();
-    if (platform.unregisterElement(this)) {
-      // Threads do the unregistration themselves
-      Command c(Command::DELETE_ELEMENT, getInternalId());
-      thread->sendCommand(c);
-    }
+  if (unregisterElement(this)) {
+    Command c(Command::DELETE_ELEMENT, getInternalId());
+    thread->sendCommand(c);
   }
 }
 
@@ -26,7 +23,7 @@ Element::initialize(PlatformThread * _thread) {
   assert(_thread);
   if (_thread) {
     thread = _thread;
-    thread->getPlatform().registerElement(this);
+    registerElement(this);
     create();
     load();
     if (!pendingCommands.empty()) {
