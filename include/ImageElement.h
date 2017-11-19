@@ -5,6 +5,7 @@
 #include <Command.h>
 #include <ImageSet.h>
 #include <PlatformThread.h>
+#include <ImageRequestEvent.h>
 #include <ImageResponseEvent.h>
 
 class ImageElement : public Element {
@@ -18,6 +19,11 @@ class ImageElement : public Element {
   bool isA(const std::string & className) const override {
     if (className == "ImageElement") return true;
     return Element::isA(className);
+  }
+
+  void handleImageRequestEvent(ImageRequestEvent & ev) {
+    width = ev.getRequestedWidth();
+    height = ev.getRequestedHeight();
   }
 
   void handleImageResponseEvent(ImageResponseEvent & ev) override {
@@ -53,7 +59,17 @@ class ImageElement : public Element {
     }
   }
 
+#if 0
+  std::unique_ptr<canvas::Context> createContext(unsigned int width, unsigned int height) {
+    auto factory = getThread().createContextFactory();
+    return factory->createContext(width, height);
+  }
+#endif
+
   const ImageSet & getImages() const { return images; }
+
+  unsigned int getWidth() const { return width; }
+  unsigned int getHeight() const { return height; }
   
  protected:
   void create() override {
@@ -79,6 +95,7 @@ class ImageElement : public Element {
 
  private:
   ImageSet images;
+  unsigned int width = 0, height = 0;
 };
 
 #endif
