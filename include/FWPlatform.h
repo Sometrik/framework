@@ -23,9 +23,15 @@ class FWPlatform {
     registered_elements[e->getInternalId()] = e;
   }
 
-  void unregisterElement(Element * e) {
+  bool unregisterElement(Element * e) {
     MutexLocker m(mutex);
-    registered_elements.erase(e->getInternalId());
+    auto it = registered_elements.find(e->getInternalId());
+    if (it != registered_elements.end()) {
+      registered_element.remove(e->getInternalId());
+      return true;
+    } else {
+      return false;
+    }
   }
 
   Element * getRegisteredElement(int internal_id) {
