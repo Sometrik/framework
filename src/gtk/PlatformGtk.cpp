@@ -117,8 +117,7 @@ public:
     g_idle_add(bitmap_callback, bd);
   }
   void setSurface(int internal_id, canvas::Surface & surface) override {
-    auto img = surface.createImage(getDisplayScale());
-    std::shared_ptr<canvas::PackedImageData> packedImage = img->pack(canvas::RGBA8, 1);
+    std::shared_ptr<canvas::PackedImageData> packedImage = surface.createPackedImage();
     bitmap_data_s * bd = new bitmap_data_s(&(getApplication().getThread()), internal_id, packedImage);
     g_idle_add(bitmap_callback, bd);    
   }
@@ -262,7 +261,7 @@ protected:
 
   void setImageData(int internal_id, std::shared_ptr<canvas::PackedImageData> image) override {
     auto view = views_by_id[internal_id];
-    if (view) {      
+    if (view) {  
       bool has_alpha = true; // format == canvas::RGBA8;
       GdkPixbuf * pixbuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB,
 					  has_alpha,
@@ -279,15 +278,16 @@ protected:
 	pixels[i + 2] = input[i + 0];
 	pixels[i + 3] = input[i + 3];
       }
-      auto image = GTK_IMAGE(view);
-      gtk_image_set_from_pixbuf(image, pixbuf);
+      gtk_image_set_from_pixbuf(GTK_IMAGE(view), pixbuf);
     }
   }
 
-  void setSurface(int internal_id, canvas::Surface & surface) override {
-    auto img = surface.createImage(getDisplayScale());
-    std::shared_ptr<canvas::PackedImageData> packedImage = img->pack(canvas::RGBA8, 1);
-    setImageData(internal_id, packedImage);
+  void setSurface(int internal_id, canvas::Surface & _surface) override {
+    auto view = views_by_id[internal_id];
+    if (view) {
+      auto & surface = dynamic_cast<canvas::CairoSurface&>(_surface);
+      gtk_image_set_from_surface(GTK_IMAGE(view), surface.getCairoSurface());
+    }
   }
 
   void sendCommands(const vector<Command> & commands) {
@@ -760,6 +760,8 @@ protected:
 	  }
 	} else if (GTK_IS_ENTRY(view)) {
 	  gtk_entry_set_text((GtkEntry*)view, "");
+	} else if (GTK_IS_IMAGE(view)) {
+	  gtk_image_clear(GTK_IMAGE(view));
 	}
       }
 	break;
@@ -1131,15 +1133,21 @@ protected:
     views_by_id[id] = widget;
   }
 
+  void requestImage(int viewId, unsigned int width = 0, unsigned int height = 0) {
+    cerr << "requestImage(), viewId = " << viewId << endl;
+    ImageRequestEvent ev(ImageRequestEvent::REQUEST, viewId, width, height);
+    sendEvent(viewId, ev);
+  }
+
   void requestImage(int viewId, const std::string & uri, unsigned int width = 0, unsigned int height = 0) {
     cerr << "requestImage(), viewId = " << viewId << ", uri = " << uri << endl;
-    ImageRequestEvent ev(ImageRequestEvent::REQUEST, viewId, uri, ImageRequestEvent::NORMAL, width, height);
-    sendEvent(getApplication().getInternalId(), ev);
+    ImageRequestEvent ev(ImageRequestEvent::REQUEST, viewId, uri, width, height);
+    sendEvent(viewId, ev);
   }
 
   void cancelImage(int viewId) {
     ImageRequestEvent ev(ImageRequestEvent::CANCEL, viewId);
-    sendEvent(getApplication().getInternalId(), ev);
+    sendEvent(viewId, ev);
   }
 
   GdkPixbuf * loadPixbuf(const string & filename) {
@@ -1496,12 +1504,16 @@ GtkMainThread::on_size_allocate(GtkWidget * widget, GtkAllocation * allocation, 
   if (GTK_IS_IMAGE(widget)) {
     int id = mainThread->getId(widget);
     auto & d = mainThread->getImageData(id);
-    if (!d.images.empty() && d.width != allocation->width) {
+    if (d.width != allocation->width) {
       cerr << "imageSize changed " << allocation->width << ", " << allocation->height << endl;
-      auto & image = d.images.getSuitable(allocation->width);
       mainThread->setImageWidth(id, allocation->width);
       mainThread->setImageHeight(id, allocation->height);
-      mainThread->requestImage(id, image.url, allocation->width);
+      if (!d.images.empty()) {
+	auto & image = d.images.getSuitable(allocation->width);
+	mainThread->requestImage(id, image.url, allocation->width);
+      } else {
+	mainThread->requestImage(id, allocation->width, allocation->height);
+      }
     }
   }
 }
