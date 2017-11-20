@@ -12,12 +12,14 @@ The idea is to built the UI dynamically, so no XIB files should be
 used for any widget.
 
 Most of the work is done using the class PlatformThread, from which,
-the classes iOSThread and iOSMainThread will be inherited from.
+the classes iOSThread and iOSMainThread will both be inherited
+from. However, iOSThread is inherited from PosixThread, which is
+inherited from PlatformThread.
 
 Most important method in PlatformThread is _sendCommands()_, which
 take an array of commands as parameters. These commands are used to
 update the UI on the iOS side. The Command class has an internal_id
-field accessed using the method getInternalId(), that specifies the UI
+field accessed using the method getInternalId(), which specifies the UI
 element, that the command is applied to. When creating new UI
 elements, there is also a field child_internal_id accessed using
 getChildInternalId(), that specifies the id for the new child
@@ -29,8 +31,20 @@ The Command class also has some other usefull fields such as text
 value and integer value, which will be used as needed by the different
 commands.
 
+All UI widgets constructed on the iOS side should retain the integer
+id, that was provided in the Command that was used to construct the
+widget. It's also useful to have a dictionary / hash map, that can be
+used to find a widget by its id.
+
 
 # iOSMainThread and iOSThread
+
+iOSThread represents a standard POSIX thread with iOS functionality added. iOSMainThread represents the UI thread.
+
+In iOSThread the methods sendCommands(), setImageData() and
+setSurface() simply package the parameters in some sort of iOS event,
+that would be sent to the main thread for processing.
+
 
 ```
   virtual bool start() = 0;
@@ -105,11 +119,17 @@ CREATE_TIMER | Creates a timer with a specified interval
 
 ## Styles
 
-Style system is based on CSS and the requirements of Android platform. No units should be added to the style values, and the implicit unit is considered to be density independent pixel.
+Style system is based on CSS and the requirements of Android
+platform. No units should be added to the style values, and the
+implicit unit is considered to be density independent pixel.
 
-No inheritance is currently needed. All widgets are sent just the styles that they need.
+No inheritance is currently needed. All widgets are sent just the
+styles that they need.
 
-However, each widget has three sets of styles for different states: NORMAL, ACTIVE, SELECTED
+However, each widget has three sets of styles for different states:
+NORMAL, ACTIVE, SELECTED. If the widget is is pressed, it goes to the
+ACTIVE state, and when its a toggle button that is selected, it goes
+to the selected state.
 
 Style | Description
 ----- | -----------
@@ -149,9 +169,22 @@ font-family | Font familiy (e.g. Arial)
 icon-attachment | Icon attachment for buttons: top, right, bottom or left
 icon | Icon filename for buttons or none (loaded from application assets)
 
-## Events
+## Events sent by the iOS framework component
+
+Event | Description
+----- | -----------
+ValueEvent | Sent if a button or layout has been clicked or text field value changed
+SysEvent | Application lifecycle events and out of memory warning
+VisibilityEvent | Sent when the navigation layout becomes visible
+ScrollChangedEvent | Sent by scroll layout when scrolled
+ImageRequestEvent | Sent when an image needs data to show or has been deleted and no longer needs any
+TimerEvent | Sent periodically when a configurable timer has been triggered
 
 ## Events sent by the Application
+
+Subthreads can send events to the application using
+iOSThread::sendEvent(). The event must be added to the iOS main event
+queue, so that the application receives it eventually.
 
 ## Modal dialogs
 
