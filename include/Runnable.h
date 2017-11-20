@@ -8,11 +8,12 @@
 #include <exception>
 #include <string>
 
-class Logger;
-
 class Runnable : public Element {
  public:
   Runnable() { }
+  ~Runnable() {
+    unregisterElement(this);
+  }
   
   void start(PlatformThread * _thread) {
     initialize(_thread);
