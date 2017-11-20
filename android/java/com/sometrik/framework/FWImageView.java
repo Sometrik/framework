@@ -181,11 +181,11 @@ public class FWImageView extends ImageView implements NativeCommandHandler {
   
   protected void requestImage() {
     if (currentWidth > 0) {
+	final float scale = getContext().getResources().getDisplayMetrics().density;
       if (!images.isEmpty()) {
 	ImageData img = getSuitable(currentWidth);
 	System.out.println("Sending image request for " + img.url);
 	imageRequestSent = true;
-	final float scale = getContext().getResources().getDisplayMetrics().density;
 	ImageData smallest = images.first();
 	if (false && smallest.width < img.width) {
 	  frame.sendImageRequest(getElementId(), smallest.url, (int)(currentWidth / scale), 0, 0);
