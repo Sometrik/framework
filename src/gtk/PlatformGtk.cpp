@@ -1301,7 +1301,7 @@ GtkMainThread::on_button_press(GtkWidget * widget, GdkEvent * event, gpointer da
   if (id) {
     cerr << "int value: id = " << id << endl;
     ValueEvent ev(1);
-    Element::postEvent(id, ev);
+    Element::postEventToElement(id, ev);
   }
   return TRUE; // stop propagation
 }
@@ -1314,7 +1314,7 @@ GtkMainThread::send_int_value(GtkWidget * widget, gpointer data) {
   if (id) {
     cerr << "int value: id = " << id << endl;
     ValueEvent ev(1);
-    Element::postEvent(id, ev);
+    Element::postEventToElement(id, ev);
   }
 }
 
@@ -1332,7 +1332,7 @@ GtkMainThread::send_bool_value(GtkWidget * widget, GParamSpec *pspec, gpointer d
     }
     cerr << "bool value: id = " << id << ", v = " << v << endl;
     ValueEvent ev(v ? 1 : 0);
-    Element::postEvent(id, ev);
+    Element::postEventToElement(id, ev);
   }
 }
 
@@ -1346,7 +1346,7 @@ GtkMainThread::send_combo_value(GtkWidget * widget, gpointer data) {
     cerr << "combo value: id = " << id << ", v = " << v0 << endl;
     int v = atoi(v0.c_str());
     ValueEvent ev(v ? 1 : 0);
-    Element::postEvent(id, ev);
+    Element::postEventToElement(id, ev);
   }
 }
 
@@ -1365,7 +1365,7 @@ GtkMainThread::send_toggled_value(GtkWidget * widget, gpointer data) {
     }
     cerr << "toggled value: id = " << id << ", v = " << v << endl;
     ValueEvent ev(v ? 1 : 0);
-    Element::postEvent(id, ev);
+    Element::postEventToElement(id, ev);
   }
 }
 
@@ -1383,7 +1383,7 @@ GtkMainThread::send_text_value(GtkWidget * widget, gpointer data) {
     }
     cerr << "text value: id = " << id << ", text = " << s << endl;
     ValueEvent ev(s);
-    Element::postEvent(id, ev);
+    Element::postEventToElement(id, ev);
   }
 }
 
@@ -1418,7 +1418,7 @@ GtkMainThread::send_selection_value(GtkWidget * widget, gpointer data) {
       }
       
       ValueEvent ev(row, sheet);
-      Element::postEvent(id, ev);
+      Element::postEventToElement(id, ev);
       
       g_list_free_full(l, (GDestroyNotify)gtk_tree_path_free);
     }
@@ -1449,7 +1449,7 @@ GtkMainThread::send_activation_value(GtkTreeView * treeview, GtkTreePath * path,
     }
       
     ValueEvent ev(row, sheet);
-    Element::postEvent(id, ev);
+    Element::postEventToElement(id, ev);
     
     // g_list_free_full(l, (GDestroyNotify)gtk_tree_path_free);
   }
@@ -1477,7 +1477,7 @@ GtkMainThread::on_settings_button(GtkWidget * widget, gpointer data) {
   cerr << "got settings\n";
   GtkMainThread * mainThread = (GtkMainThread*)data;
   SysEvent ev(SysEvent::DEBUG);
-  Element::postEvent(mainThread->getApplication().getInternalId(), ev);
+  Element::postEventToElement(mainThread->getApplication().getInternalId(), ev);
 }
 
 void
@@ -1493,7 +1493,7 @@ GtkMainThread::on_bar_button(GtkWidget * widget, gpointer data) {
     int value = mainThread->getValue(widget);
     cerr << "sending bar button click value: " << value << endl;
     ValueEvent ev(value, value);
-    Element::postEvent(id, ev);
+    Element::postEventToElement(id, ev);
   }
 }
 
@@ -1524,7 +1524,7 @@ GtkMainThread::event_callback(gpointer data) {
   Event * ev = ed->event;
   int internal_id = ed->internal_id;
   delete ed;
-  Element::postEvent(internal_id ? internal_id : mainThread->getApplication().getInternalId(), *ev);
+  Element::postEventToElement(internal_id ? internal_id : mainThread->getApplication().getInternalId(), *ev);
   delete ev;
   return FALSE;
 }
@@ -1543,7 +1543,7 @@ gboolean
 GtkMainThread::timer_callback(gpointer data) {
   GtkMainThread * mainThread = (GtkMainThread*)data;
   TimerEvent ev(0);
-  Element::postEvent(mainThread->getApplication().getInternalId(), ev);
+  Element::postEventToElement(mainThread->getApplication().getInternalId(), ev);
   return TRUE;
 }
 
@@ -1569,7 +1569,7 @@ int main (int argc, char *argv[]) {
     
 #if 0
   SysEvent ev(SysEvent::DESTROY);
-  Element::postEvent(application->getInternalId(), ev);
+  Element::postEventToElement(application->getInternalId(), ev);
 #endif
   
   return status;

@@ -443,7 +443,7 @@ public:
           update_sent = true;
         }
 
-	Element::postEvent(ev.first, *ev.second.get());
+	Element::postEventToElement(ev.first, *ev.second.get());
 
         auto ev2 = dynamic_cast<SysEvent*>(ev.second.get());
         if (ev2) {

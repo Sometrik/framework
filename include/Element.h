@@ -176,7 +176,7 @@ class Element : public EventHandler {
   void setClickable(bool t) { is_clickable = t; }
   bool isClickable() const { return is_clickable; }
 
-  static void postEvent(int internal_id, Event & ev) {
+  static void postEventToElement(int internal_id, Event & ev) {
     auto e = getRegisteredElement(internal_id);
     if (e) {
       ev.dispatch(*e);
