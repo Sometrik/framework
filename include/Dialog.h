@@ -16,7 +16,7 @@ class Dialog : public Element {
     return Element::isA(className);
   }
 
-  int showModal(Element * parent) override {
+  int showModal(Element * parent) {
     if (!isInitialized()) {
       setParent(parent);
       initialize(&(parent->getThread()));

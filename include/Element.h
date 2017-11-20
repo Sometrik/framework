@@ -31,8 +31,6 @@ class Element : public EventHandler {
     return className == "*" || className == "Element";
   }  
   
-  virtual int showModal(Element * parent) { return 0; }
-
   virtual bool isVisible() const {
     if (parent) return parent->isChildVisible(*this);
     else return is_visible;
