@@ -25,6 +25,15 @@ class AppMessageDialog : public Dialog {
     mainLayout->addChild(dialogMessage);
 
     auto okButton = std::make_shared<Button>("OK");
+    okButton->style("width", "match-parent");
+    okButton->style("height", "match-parent");
+    okButton->style("color", "#ffffff");
+    okButton->style("background", "#c1272d");
+    okButton->style("border-radius", "4");
+    okButton->style("weight", "1");
+    okButton->style("margin-left", "2");
+    okButton->style("margin-right", "2");
+    okButton->style("margin-bottom", "2");
     mainLayout->addChild(okButton);
   }
 
@@ -66,7 +75,7 @@ class AppInputDialog : public Dialog {
 
     textField = make_shared<TextField>();
     textField->style("width", "match-parent");
-    textField->style("minimun-width", "100");
+    textField->style("min-width", "100");
     textField->style("padding-bottom", "10");
     textField->style("padding-top", "10");
     textField->style("hint", "Enter code here");
@@ -77,24 +86,24 @@ class AppInputDialog : public Dialog {
     auto okButton = std::make_shared<Button>("OK", 1);
     okButton->style("width", "match-parent");
     okButton->style("height", "match-parent");
-    okButton->style("color", "#c1272d");
-    okButton->style("border", "#c1272d");
+    okButton->style("color", "#ffffff");
+    okButton->style("background", "#c1272d");
     okButton->style("border-radius", "4");
     okButton->style("weight", "1");
-    okButton->style("margin-left", "16");
+    okButton->style("margin-left", "4");
     okButton->style("margin-right", "2");
-    okButton->style("margin-bottom", "2");
+    okButton->style("margin-bottom", "4");
     buttonLayout->addChild(okButton);
     auto cancelButton = std::make_shared<Button>("Cancel", 0);
     cancelButton->style("width", "match-parent");
     cancelButton->style("height", "match-parent");
-    cancelButton->style("color", "#c1272d");
-    cancelButton->style("border", "#c1272d");
+    cancelButton->style("color", "#ffffff");
+    cancelButton->style("background", "#c1272d");
     cancelButton->style("border-radius", "4");
     cancelButton->style("weight", "1");
-    cancelButton->style("margin-left", "16");
+    cancelButton->style("margin-left", "4");
     cancelButton->style("margin-right", "2");
-    cancelButton->style("margin-bottom", "2");
+    cancelButton->style("margin-bottom", "4");
     buttonLayout->addChild(cancelButton);
 
     mainLayout->addChild(buttonLayout);
