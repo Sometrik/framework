@@ -1,10 +1,9 @@
 #ifndef _PLATFORMTHREAD_H_
 #define _PLATFORMTHREAD_H_
 
-#include <Element.h>
+#include <EventHandler.h>
 #include <Runnable.h>
 #include <SysEvent.h>
-#include <FWPlatform.h>
 #include <FWApplication.h>
 
 #include <memory>
@@ -19,7 +18,7 @@ namespace canvas {
   class Surface;
 };
 
-class PlatformThread : public Element {
+class PlatformThread : public EventHandler {
  public:
   enum FileType {
     NORMAL = 1,
@@ -27,10 +26,10 @@ class PlatformThread : public Element {
     CACHE_DATABASE
   };
 
- PlatformThread(PlatformThread * _parent_thread, FWPlatform * _platform, std::shared_ptr<FWApplication> & _application, std::shared_ptr<Runnable> & _runnable)
-   : application(_application), platform(_platform), parent_thread(_parent_thread), runnable(_runnable)
+ PlatformThread(PlatformThread * _parent_thread, std::shared_ptr<FWApplication> & _application, std::shared_ptr<Runnable> & _runnable)
+   : application(_application), parent_thread(_parent_thread), runnable(_runnable)
     {
-    initialize(this);
+      // initialize(this);
     if (_parent_thread) {
       setActualDisplayWidth(_parent_thread->getActualDisplayWidth());
       setActualDisplayHeight(_parent_thread->getActualDisplayHeight());
@@ -38,15 +37,11 @@ class PlatformThread : public Element {
     }
   }
 
+#if 0
   ~PlatformThread() {
-    auto & platform = getPlatform();
-    platform.unregisterElement(this);    
+    Element::unregisterElement(this);    
   }
-
-  bool isA(const std::string & className) const override {
-    if (className == "PlatformThread") return true;
-    else return Element::isA(className);
-  }  
+#endif
   
   virtual bool start() = 0;
   virtual bool testDestroy() = 0;
@@ -88,9 +83,6 @@ class PlatformThread : public Element {
   Runnable & getRunnable() { return *runnable; }
   Runnable * getRunnablePtr() { return runnable.get(); }
   const Runnable * getRunnablePtr() const { return runnable.get(); }
-
-  FWPlatform & getPlatform() { return *platform; }
-  const FWPlatform & getPlatform() const { return *platform; }
 
   FWApplication & getApplication() { return *application; }
   const FWApplication & getApplication() const { return *application; }
@@ -151,7 +143,7 @@ class PlatformThread : public Element {
   virtual std::shared_ptr<PlatformThread> createThread(std::shared_ptr<Runnable> & runnable) = 0;
 
   void onSysEvent(SysEvent & ev) override {
-    Element::onSysEvent(ev);
+    // Element::onSysEvent(ev);
 
     if (ev.getType() == SysEvent::TERMINATE_THREAD) {
       setDestroyed();
@@ -197,8 +189,6 @@ class PlatformThread : public Element {
   bool isInTransaction() const { return batchOpen; }
 
  protected:
-  void create() override { }
-
   virtual void setDestroyed() = 0;
   virtual void initializeThread() { }  
   virtual void deinitializeThread() { }
@@ -237,7 +227,6 @@ class PlatformThread : public Element {
   std::shared_ptr<FWApplication> application;
 
  private:
-  FWPlatform * platform;
   PlatformThread * parent_thread;
   int actual_display_width = 0, actual_display_height = 0;
   float display_scale = 1.0f;
