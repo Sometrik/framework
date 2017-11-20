@@ -206,12 +206,27 @@ class ViewStyleManager {
 	zoom = new Float(value);
       }
     } else if (key.equals("border")) {
-      if (value.equals("none")) {
+      if (value.equals("none") || value.isEmpty()) {
 	borderWidth = new Integer(0);
       } else {
-	borderWidth = new Integer(1);
-	borderColor = new Integer(Color.parseColor(value));
-      }      
+	String[] sets = value.split(" ");
+	if (sets.length == 1) {
+	  borderColor = new Integer(Color.parseColor(sets[0]));
+	  borderWidth = 1;
+	} else {
+	  if (sets.length >= 1) {
+	    borderWidth = new Integer(sets[0]);
+	  } else {
+	    borderWidth = 1;
+	  }
+	  // Skip second value
+	  if (sets.length >= 3) {
+	    borderColor = new Integer(Color.parseColor(sets[2]));
+	  } else {
+	    borderColor = Color.parseColor("#000000");
+	  }
+	}
+      }
     } else if (key.equals("border-radius")) {
       borderRadius = parseFloatArray(value, 4);
     } else if (key.equals("font-size")) {
