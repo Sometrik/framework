@@ -19,6 +19,8 @@ public class FWTextView extends TextView implements NativeCommandHandler {
     this.normalStyle = currentStyle = new ViewStyleManager(frame.bitmapCache, scale, true);
     this.activeStyle = new ViewStyleManager(frame.bitmapCache, scale, false);
     this.linkStyle = new ViewStyleManager(frame.bitmapCache, scale, false);
+    this.setClickable(false);
+    this.setFocusable(false);
 
     if (autolink) {
       this.setLinksClickable(true);
