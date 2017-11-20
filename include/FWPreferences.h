@@ -35,7 +35,7 @@ class FWPreferences {
 
   long long getLong(const std::string & key, long long defaultValue = 0) const {
     try {
-      return std::stoi(getText(key, std::to_string(defaultValue)));
+      return std::stoll(getText(key, std::to_string(defaultValue)));
     } catch (std::invalid_argument & e) {
       return 0;
     }
