@@ -1,4 +1,3 @@
-#include <FWPlatform.h>
 #include <CurlClient.h>
 #include <Logger.h>
 #include <ContextCairo.h>
@@ -100,8 +99,8 @@ class GtkLogger : public Logger {
 
 class GtkThread : public PosixThread {
 public:
-  GtkThread(PlatformThread * _parent_thread, FWPlatform * _platform, std::shared_ptr<FWApplication> & _application, std::shared_ptr<Runnable> & _runnable)
-    : PosixThread(_parent_thread, _platform, _application, _runnable) { }
+  GtkThread(PlatformThread * _parent_thread, std::shared_ptr<FWApplication> & _application, std::shared_ptr<Runnable> & _runnable)
+    : PosixThread(_parent_thread, _application, _runnable) { }
 
   std::unique_ptr<HTTPClientFactory> createHTTPClientFactory() const override {
     return std::unique_ptr<HTTPClientFactory>(new CurlClientFactory);
@@ -110,7 +109,7 @@ public:
     return std::unique_ptr<canvas::ContextFactory>(new canvas::CairoContextFactory);
   }
   std::shared_ptr<PlatformThread> createThread(std::shared_ptr<Runnable> & runnable) override {
-    return make_shared<GtkThread>(this, &(getPlatform()), application, runnable);
+    return make_shared<GtkThread>(this, application, runnable);
   }
   void setImageData(int internal_id, std::shared_ptr<canvas::PackedImageData> image) override {
     bitmap_data_s * bd = new bitmap_data_s(&(getApplication().getThread()), internal_id, image);
@@ -156,8 +155,8 @@ public:
 
 class GtkMainThread : public PlatformThread {
 public:
-  GtkMainThread(std::shared_ptr<FWApplication> & _application, std::shared_ptr<Runnable> & _runnable)
-    : PlatformThread(nullptr, new FWPlatform, _application, _runnable) {
+  GtkMainThread(std::shared_ptr<FWApplication> _application, std::shared_ptr<Runnable> _runnable)
+    : PlatformThread(nullptr, _application, _runnable) {
     CurlClientFactory::globalInit();
   }
   
@@ -189,7 +188,7 @@ public:
   bool testDestroy() override { return false; }
 
   std::shared_ptr<PlatformThread> createThread(std::shared_ptr<Runnable> & runnable) override {
-    return make_shared<GtkThread>(this, &(getPlatform()), application, runnable);
+    return make_shared<GtkThread>(this, application, runnable);
   }
   
   void sleep(double t) override {
@@ -630,7 +629,7 @@ protected:
 
 	    if (header) {
 	      string title;
-	      auto e = getPlatform().getRegisteredElement(id);
+	      auto e = Element::getRegisteredElement(id);
 	      if (e) {
 		auto e2 = dynamic_cast<FWViewBase*>(e);
 		if (e2) title = e2->getTitle().c_str();
@@ -1302,7 +1301,7 @@ GtkMainThread::on_button_press(GtkWidget * widget, GdkEvent * event, gpointer da
   if (id) {
     cerr << "int value: id = " << id << endl;
     ValueEvent ev(1);
-    mainThread->getPlatform().postEvent(id, ev);
+    Element::postEvent(id, ev);
   }
   return TRUE; // stop propagation
 }
@@ -1315,7 +1314,7 @@ GtkMainThread::send_int_value(GtkWidget * widget, gpointer data) {
   if (id) {
     cerr << "int value: id = " << id << endl;
     ValueEvent ev(1);
-    mainThread->getPlatform().postEvent(id, ev);
+    Element::postEvent(id, ev);
   }
 }
 
@@ -1333,7 +1332,7 @@ GtkMainThread::send_bool_value(GtkWidget * widget, GParamSpec *pspec, gpointer d
     }
     cerr << "bool value: id = " << id << ", v = " << v << endl;
     ValueEvent ev(v ? 1 : 0);
-    mainThread->getPlatform().postEvent(id, ev);
+    Element::postEvent(id, ev);
   }
 }
 
@@ -1347,7 +1346,7 @@ GtkMainThread::send_combo_value(GtkWidget * widget, gpointer data) {
     cerr << "combo value: id = " << id << ", v = " << v0 << endl;
     int v = atoi(v0.c_str());
     ValueEvent ev(v ? 1 : 0);
-    mainThread->getPlatform().postEvent(id, ev);
+    Element::postEvent(id, ev);
   }
 }
 
@@ -1366,7 +1365,7 @@ GtkMainThread::send_toggled_value(GtkWidget * widget, gpointer data) {
     }
     cerr << "toggled value: id = " << id << ", v = " << v << endl;
     ValueEvent ev(v ? 1 : 0);
-    mainThread->getPlatform().postEvent(id, ev);
+    Element::postEvent(id, ev);
   }
 }
 
@@ -1384,7 +1383,7 @@ GtkMainThread::send_text_value(GtkWidget * widget, gpointer data) {
     }
     cerr << "text value: id = " << id << ", text = " << s << endl;
     ValueEvent ev(s);
-    mainThread->getPlatform().postEvent(id, ev);
+    Element::postEvent(id, ev);
   }
 }
 
@@ -1419,7 +1418,7 @@ GtkMainThread::send_selection_value(GtkWidget * widget, gpointer data) {
       }
       
       ValueEvent ev(row, sheet);
-      mainThread->getPlatform().postEvent(id, ev);
+      Element::postEvent(id, ev);
       
       g_list_free_full(l, (GDestroyNotify)gtk_tree_path_free);
     }
@@ -1450,7 +1449,7 @@ GtkMainThread::send_activation_value(GtkTreeView * treeview, GtkTreePath * path,
     }
       
     ValueEvent ev(row, sheet);
-    mainThread->getPlatform().postEvent(id, ev);
+    Element::postEvent(id, ev);
     
     // g_list_free_full(l, (GDestroyNotify)gtk_tree_path_free);
   }
@@ -1478,7 +1477,7 @@ GtkMainThread::on_settings_button(GtkWidget * widget, gpointer data) {
   cerr << "got settings\n";
   GtkMainThread * mainThread = (GtkMainThread*)data;
   SysEvent ev(SysEvent::DEBUG);
-  mainThread->getPlatform().postEvent(mainThread->getApplication().getInternalId(), ev);
+  Element::postEvent(mainThread->getApplication().getInternalId(), ev);
 }
 
 void
@@ -1494,7 +1493,7 @@ GtkMainThread::on_bar_button(GtkWidget * widget, gpointer data) {
     int value = mainThread->getValue(widget);
     cerr << "sending bar button click value: " << value << endl;
     ValueEvent ev(value, value);
-    mainThread->getPlatform().postEvent(id, ev);
+    Element::postEvent(id, ev);
   }
 }
 
@@ -1525,7 +1524,7 @@ GtkMainThread::event_callback(gpointer data) {
   Event * ev = ed->event;
   int internal_id = ed->internal_id;
   delete ed;
-  mainThread->getPlatform().postEvent(internal_id ? internal_id : mainThread->getApplication().getInternalId(), *ev);
+  Element::postEvent(internal_id ? internal_id : mainThread->getApplication().getInternalId(), *ev);
   delete ev;
   return FALSE;
 }
@@ -1544,7 +1543,7 @@ gboolean
 GtkMainThread::timer_callback(gpointer data) {
   GtkMainThread * mainThread = (GtkMainThread*)data;
   TimerEvent ev(0);
-  mainThread->getPlatform().postEvent(mainThread->getApplication().getInternalId(), ev);
+  Element::postEvent(mainThread->getApplication().getInternalId(), ev);
   return TRUE;
 }
 
@@ -1570,7 +1569,7 @@ int main (int argc, char *argv[]) {
     
 #if 0
   SysEvent ev(SysEvent::DESTROY);
-  platform.postEvent(application->getInternalId(), ev);
+  Element::postEvent(application->getInternalId(), ev);
 #endif
   
   return status;
