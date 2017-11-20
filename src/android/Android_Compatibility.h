@@ -62,14 +62,7 @@ namespace std {
 #endif
 
   inline int stoi(const string & str, size_t* idx = 0, int base = 10) {
-#if 1
     return strtoul(str.c_str(), 0, base);
-#else
-    stringstream buffer(str);
-    int i;
-    buffer >> i;
-    return i;
-#endif
   }
 
   inline float stof(const string & value) {
