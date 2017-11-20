@@ -13,7 +13,6 @@
 #include <ContextAndroid.h>
 #include <AndroidClient.h>
 
-#include <FWPlatform.h>
 #include <AndroidClient.h>
 #include <AndroidLogger.h>
 #include <android/native_window_jni.h>
@@ -135,8 +134,8 @@ extern FWApplication * applicationMain();
 
 class AndroidThread : public PosixThread {
 public:
-  AndroidThread(PlatformThread * _parent_thread, FWPlatform * _platform, std::shared_ptr<FWApplication> & _application, std::shared_ptr<JavaCache> & _cache, AAssetManager * _asset_manager, std::shared_ptr<Runnable> & _runnable)
-    : PosixThread(_parent_thread, _platform, _application, _runnable), javaCache(_cache), asset_manager(_asset_manager) {
+  AndroidThread(PlatformThread * _parent_thread, std::shared_ptr<FWApplication> & _application, std::shared_ptr<JavaCache> & _cache, AAssetManager * _asset_manager, std::shared_ptr<Runnable> & _runnable)
+    : PosixThread(_parent_thread, _application, _runnable), javaCache(_cache), asset_manager(_asset_manager) {
   }
 
   std::unique_ptr<HTTPClientFactory> createHTTPClientFactory() const override {
@@ -174,7 +173,7 @@ public:
   }
 
   std::shared_ptr<PlatformThread> createThread(std::shared_ptr<Runnable> & runnable) override {
-    return std::make_shared<AndroidThread>(this, &(getPlatform()), application, javaCache, asset_manager, runnable);
+    return std::make_shared<AndroidThread>(this, application, javaCache, asset_manager, runnable);
   }
 
   void setImageData(int internal_id, std::shared_ptr<canvas::PackedImageData> image) override {
@@ -289,8 +288,8 @@ protected:
 
 class AndroidMainThread : public AndroidThread {
 public:
-  AndroidMainThread(std::shared_ptr<FWApplication> & _application, std::shared_ptr<JavaCache> & _cache, AAssetManager * _asset_manager, std::shared_ptr<Runnable> & _runnable)
-  : AndroidThread(nullptr, new FWPlatform, _application, _cache, _asset_manager, _runnable) { }
+  AndroidMainThread(std::shared_ptr<FWApplication> _application, std::shared_ptr<JavaCache> & _cache, AAssetManager * _asset_manager, std::shared_ptr<Runnable> _runnable)
+  : AndroidThread(nullptr, _application, _cache, _asset_manager, _runnable) { }
 
   void startRunnable() override {
     application->initialize(this);
@@ -444,7 +443,7 @@ public:
           update_sent = true;
         }
 
-        getPlatform().postEvent(ev.first, *ev.second.get());
+	Element::postEvent(ev.first, *ev.second.get());
 
         auto ev2 = dynamic_cast<SysEvent*>(ev.second.get());
         if (ev2) {
