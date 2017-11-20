@@ -186,22 +186,31 @@ public class FrameWork extends Activity {
     return true;
   }
   
+  private boolean hasAccountPermission() {
+    return false;
+  }
+
   private String getUserGoogleAccountEmail() {
-    Log.d("accountFinder", "Checking for user Google Account");
-    AccountManager manager = AccountManager.get(this);
-    Account[] accounts = manager.getAccounts();
-    String gmail = "";
-    for (Account account : accounts) {
-      if (account.type.equalsIgnoreCase("com.google")) {
-	gmail = account.name;
-	Log.d("accountFinder", "Google Account found: " + gmail);
-	break;
+
+    if (hasAccountPermission()) {
+      Log.d("accountFinder", "Checking for user Google Account");
+      AccountManager manager = AccountManager.get(this);
+      Account[] accounts = manager.getAccounts();
+      String gmail = "";
+      for (Account account : accounts) {
+	if (account.type.equalsIgnoreCase("com.google")) {
+	  gmail = account.name;
+	  Log.d("accountFinder", "Google Account found: " + gmail);
+	  break;
+	}
       }
+      if (gmail.isEmpty()) {
+	Log.d("accountFinder", "No user Google Account found");
+      }
+      return gmail;
+    } else {
+      return "";
     }
-    if (gmail.isEmpty()) {
-      Log.d("accountFinder", "No user Google Account found");
-    }
-    return gmail;
   }
 
   public Inventory getPurchaseHelperInventory() {
@@ -218,10 +227,6 @@ public class FrameWork extends Activity {
 
   private void initNative() {
     System.out.println("Display scale: density = " + displayMetrics.scaledDensity + ", dpi = " + displayMetrics.densityDpi);
-//    float xSize = displayMetrics.widthPixels / displayMetrics.scaledDensity;
-//    float ySize = displayMetrics.heightPixels / displayMetrics.scaledDensity;
-//    Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
-//    display.getRealMetrics(displayMetrics);
     int xSize = displayMetrics.widthPixels;
     int ySize = displayMetrics.heightPixels;
     initNativePreferences();
@@ -580,6 +585,10 @@ public class FrameWork extends Activity {
   @Override
   public boolean onKeyDown(int keycode, KeyEvent e) {
     System.out.println("KeyEvent. KeyCode: " + keycode + " ViewId: " + findViewById(android.R.id.content).getRootView().getId());
+//    if (e.getAction() == KeyEvent.ACTION_MULTIPLE) {
+//      System.out.println("KeyEvent ACTION_MULTIPLE. KeyCode: " + keycode + " ViewId: " + findViewById(android.R.id.content).getRootView().getId());
+//      return true;
+//    }
     if (!transitionAnimation){
       keyPressed(e.getKeyCode(), currentView);
     }
