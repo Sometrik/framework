@@ -188,10 +188,10 @@ public class FWImageView extends ImageView implements NativeCommandHandler {
 	imageRequestSent = true;
 	ImageData smallest = images.first();
 	if (false && smallest.width < img.width) {
-	  frame.sendImageRequest(getElementId(), smallest.url, (int)(currentWidth / scale), 0, 0);
+	  frame.sendURLImageRequest(getElementId(), smallest.url, (int)(currentWidth / scale), 0, 0);
 	}
 	if (true) {
-	  frame.sendImageRequest(getElementId(), img.url, (int)(currentWidth / scale), 0, RGB565);
+	  frame.sendURLImageRequest(getElementId(), img.url, (int)(currentWidth / scale), 0, RGB565);
 	}
       } else {
 	frame.sendImageRequest(getElementId(), (int)(currentWidth / scale), (int)(currentHeight / scale), RGB565);

@@ -712,7 +712,7 @@ void Java_com_sometrik_framework_FrameWork_nativeScrollChanged(JNIEnv * env, job
   mainThread->sendEvent(viewId, ev);
 }
 
-void Java_com_sometrik_framework_FrameWork_sendImageRequest(JNIEnv* env, jobject thiz, jint viewId, jstring uri, jint width, jint height, jint internalFormat) {
+void Java_com_sometrik_framework_FrameWork_sendURLImageRequest(JNIEnv* env, jobject thiz, jint viewId, jstring uri, jint width, jint height, jint internalFormat) {
   const char * uri2 = env->GetStringUTFChars(uri, NULL);
   __android_log_print(ANDROID_LOG_INFO, "Sometrik", "sendImageRequest: %s %d %d", uri2, width, height);
   ImageRequestEvent ev(ImageRequestEvent::REQUEST, viewId, uri2, width, height);
