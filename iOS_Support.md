@@ -216,4 +216,11 @@ If no data is specified for an image, it simply sends an
 ImageRequestEvent without an URL.
 
 When the application is ready to provide bitmap data for the image, it
-calls iOSMainThread.
+calls iOSMainThread::setImageData() or iOSMainThread::setSurface(). 
+
+## Scrolling
+
+Scrollable layouts are added using CREATE_SCROLL_LAYOUT. If possible, there
+should be an option for infinite scrolling, in which case the scrolling doesn't
+stop when the scroll position hits bottom. Instead it should scroll forever, and
+trust that the application provides more data to show.
