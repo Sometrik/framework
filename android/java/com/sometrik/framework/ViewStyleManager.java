@@ -6,11 +6,14 @@ import java.util.regex.Pattern;
 import android.app.Dialog;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.Paint.Style;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.PathShape;
 import android.graphics.drawable.shapes.RoundRectShape;
 import android.text.TextUtils.TruncateAt;
 import android.view.Gravity;
@@ -31,6 +34,7 @@ class ViewStyleManager {
   private enum TextOverflow { CLIP, ELLIPSIS };
   private enum FontStyle { NORMAL, ITALIC, OBLIQUE };
   private enum IconAttachment { TOP, RIGHT, BOTTOM, LEFT };
+  private enum BorderStyle { SOLID, DOTTED, DASHED };
 
   private BitmapCache bitmapCache;
   private float displayScale = 1.0f;
@@ -51,6 +55,7 @@ class ViewStyleManager {
   private Integer shadow = null;
   private float[] borderRadius = null;
   private Integer borderWidth = null, borderColor = null;
+  private BorderStyle borderStyle = null;
   private Integer fontSize = null;
   private WhiteSpace whiteSpace = null;
   private HorizontalAlignment textAlign = null;
@@ -213,13 +218,21 @@ class ViewStyleManager {
 	if (sets.length == 1) {
 	  borderColor = new Integer(Color.parseColor(sets[0]));
 	  borderWidth = 1;
+	  borderStyle = BorderStyle.SOLID;
 	} else {
 	  if (sets.length >= 1) {
 	    borderWidth = new Integer(sets[0]);
 	  } else {
 	    borderWidth = 1;
 	  }
-	  // Skip second value
+	  if (sets.length >= 2) {
+	    String s = sets[1];
+	    if (s.equals("dotted")) borderStyle = BorderStyle.DOTTED;
+	    else if (s.equals("dashed")) borderStyle = BorderStyle.DASHED;
+	    else borderStyle = BorderStyle.SOLID;
+	  } else {
+	    borderStyle = BorderStyle.SOLID;
+	  }
 	  if (sets.length >= 3) {
 	    borderColor = new Integer(Color.parseColor(sets[2]));
 	  } else {
@@ -331,19 +344,26 @@ class ViewStyleManager {
     if (bottomPosition != null) view.setBottom(applyScale(bottomPosition));
     if (minWidth > 0) view.setMinimumWidth(applyScale(minWidth));
     if (minHeight > 0) view.setMinimumHeight(applyScale(minHeight));
-    if ((borderColor != null && borderWidth != null) || borderRadius != null || gradientColors != null) {
-      view.setBackgroundResource(0);
-      if (borderRadius != null &&
-	  gradientColors == null &&
-	  (borderWidth == null || borderWidth == 0)) {
+    if ((borderColor != null && borderColor != 0 && borderWidth != null && borderWidth != 0) || borderRadius != null || gradientColors != null) {
+      if (!(view instanceof TextView) && borderRadius != null && gradientColors == null &&
+	  (borderWidth == null || borderWidth == 0 || backgroundColor == null || backgroundColor == 0)) {
 	RoundRectShape shape = new RoundRectShape(expandRadii(borderRadius), null, null);
-     	ShapeDrawable sd = new ShapeDrawable(shape);
-     	sd.getPaint().setStyle(Style.FILL);
-     	if (backgroundColor == null || backgroundColor == 0) {
-     	  sd.getPaint().setColor(Color.parseColor("#00000000"));
+	ShapeDrawable sd = new ShapeDrawable(shape);
+     	Paint paint = sd.getPaint();
+     	Integer paintColor = 0;
+     	if (borderWidth == null || borderWidth == 0) {
+     	  paint.setStyle(Style.FILL);
+     	  paintColor = backgroundColor;
      	} else {
-     	  sd.getPaint().setColor(backgroundColor);
+     	  paint.setStyle(Style.STROKE);
+     	  paint.setStrokeWidth(applyScale(borderWidth));
+     	  paintColor = borderColor;
      	}
+     	if (paintColor == null || paintColor == 0) {
+   	  paint.setColor(Color.parseColor("#00000000"));
+   	} else {
+   	  paint.setColor(paintColor);
+   	}
      	view.setBackground(sd);
       } else {
 	GradientDrawable gradientDrawable = new GradientDrawable();
@@ -356,8 +376,8 @@ class ViewStyleManager {
 	  gradientDrawable.setCornerRadius(2); // Might be necessary for zero radiuses to work
 	  gradientDrawable.setCornerRadii(expandRadii(borderRadius));
 	}
-	if (borderColor != null && borderWidth != null) {
-	  gradientDrawable.setStroke(borderWidth, borderColor);
+	if (borderColor != null && borderWidth != null && borderWidth != 0) {	  
+	  gradientDrawable.setStroke(borderWidth, borderColor, applyScale(getDashWidth(borderStyle)), applyScale(1));
 	}
 	view.setBackground(gradientDrawable);
       }
@@ -530,6 +550,14 @@ class ViewStyleManager {
   protected float applyScale(float v) {
     return v * displayScale;
   }
+  
+  protected float[] applyScale(float[] input) {
+    float[] r = new float[input.length];
+    for (int i = 0; i < input.length; i++) {
+      r[i] = applyScale(borderRadius[i]);
+    }
+    return r;
+  }
 
   protected float[] expandRadii(float[] input) {
     float[] r = new float[8];
@@ -556,6 +584,15 @@ class ViewStyleManager {
     case LEFT: return View.TEXT_ALIGNMENT_TEXT_START;
     case CENTER: return View.TEXT_ALIGNMENT_CENTER;
     case RIGHT: return View.TEXT_ALIGNMENT_TEXT_END;
+    }
+    return 0;
+  }
+  
+  protected int getDashWidth(BorderStyle style) {
+    switch (style) {
+    case SOLID: return 0;
+    case DOTTED: return 1;
+    case DASHED: return 2;
     }
     return 0;
   }
