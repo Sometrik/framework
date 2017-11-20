@@ -6,7 +6,6 @@
 #include <ValueEvent.h>
 #include <Command.h>
 #include <CommandEvent.h>
-#include <TouchEvent.h>
 
 class Button : public Element {
  public:
@@ -18,22 +17,6 @@ class Button : public Element {
     return Element::isA(className);
   }
 
-  void onTouchEvent(TouchEvent & ev) override {
-    if (ev.getType() == TouchEvent::ACTION_DOWN &&
-	ev.getX() >= x && ev.getX() < x + width &&
-	ev.getY() >= y && ev.getY() < y + height) {
-      setTouched(true);
-      CommandEvent ev2(getId());
-      ev2.dispatch(*this);
-      ev.setHandled();
-      ev.requestRedraw();
-    } else if (ev.getType() == TouchEvent::ACTION_UP && isTouched()) {
-      setTouched(false);
-      ev.setHandled();
-      ev.requestRedraw();
-    }
-  }
-
   void onValueEvent(ValueEvent & ev) override {
     notify();
     CommandEvent ev2(getId(), ev.getValue(), ev.getValue2());
@@ -41,16 +24,9 @@ class Button : public Element {
     ev.setHandled(true);
   }
   
-  void renderContent() override {
-    if (context) {
-      context->renderButton(width, height, isTouched());
-    }
-  }
-
   void text(const std::string & l) override {
     if (l != label) {
       label = l;
-      if (context) context->clear();
       Command c(Command::SET_TEXT_VALUE, getInternalId());
       c.setTextValue(label);
       sendCommand(c);
