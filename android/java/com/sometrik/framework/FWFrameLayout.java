@@ -1,6 +1,5 @@
 package com.sometrik.framework;
 
-import com.sometrik.framework.FWLayout.ChildClickListener;
 import com.sometrik.framework.NativeCommand.Selector;
 
 import android.graphics.Bitmap;
@@ -15,7 +14,7 @@ public class FWFrameLayout extends FrameLayout implements NativeCommandHandler {
   private FrameWork frame;
   private ViewStyleManager normalStyle, activeStyle, currentStyle;
   
-  public FWFrameLayout(FrameWork frameWork, int id, bool is_clickable) {
+  public FWFrameLayout(FrameWork frameWork, int id, boolean is_clickable) {
     super(frameWork);
     this.frame = frameWork;
     this.setId(id);
@@ -42,6 +41,7 @@ public class FWFrameLayout extends FrameLayout implements NativeCommandHandler {
 	return false;
       }
     });
+    }
   }
   
   @Override
