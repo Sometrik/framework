@@ -100,6 +100,7 @@ CREATE_BUTTON | Creates a button
 CREATE_LINEAR_LAYOUT | Creates a linear layout, either vertical or horizontal
 CREATE_FRAME_LAYOUT | Creates a layout that can show multiple overlaid child views
 CREATE_SCROLL_LAYOUT | Creates a vertically scrollable layout
+CREATE_FLIPPER_LAYOUT | Creates a layout that shows one of its children and allows the changing of the visible child by swipe or by a command.
 CREATE_EVENT_LAYOUT | Creates an event layout. Event layout has a single child, and can capture and send click events.
 CREATE_TEXT | Creates a label
 CREATE_DIALOG | Creates a dialog
@@ -126,7 +127,7 @@ CREATE_TIMER | Creates a timer with a specified interval
 ## Styles
 
 Style system is based on CSS and the requirements of Android
-platform. No units should be added to the style values, and the
+platform. One of the differences is that no units should be added to the style values, and the
 implicit unit is considered to be density independent pixel.
 
 No inheritance is currently needed. All widgets are sent just the
@@ -136,6 +137,8 @@ However, each widget has three sets of styles for different states:
 NORMAL, ACTIVE, SELECTED. If the widget is is pressed, it goes to the
 ACTIVE state, and when its a toggle button that is selected, it goes
 to the selected state.
+
+It is recommended, that some kind of style manager class is created, which can receive style commands, and then update the appearance of each widget. On Android, each widget has multiple style managers - one for each state - and, for example, when a widget is touched, it goes to the active state, and the style manager for active state is asked to update the widget appearance.
 
 Style | Description
 ----- | -----------
