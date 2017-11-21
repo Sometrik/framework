@@ -23,6 +23,8 @@ class AppMessageDialog : public Dialog {
 
     auto dialogMessage = make_shared<TextLabel>(message);
     mainLayout->addChild(dialogMessage);
+    mainLayout->style("margin-left", "8");
+    mainLayout->style("margin-right", "8");
 
     auto okButton = std::make_shared<Button>("OK");
     okButton->style("width", "match-parent");
@@ -31,8 +33,8 @@ class AppMessageDialog : public Dialog {
     okButton->style("background", "#c1272d");
     okButton->style("border-radius", "4");
     okButton->style("weight", "1");
-    okButton->style("margin-left", "2");
-    okButton->style("margin-right", "2");
+    okButton->style("margin-left", "8");
+    okButton->style("margin-right", "8");
     okButton->style("margin-bottom", "2");
     mainLayout->addChild(okButton);
   }
@@ -66,11 +68,14 @@ class AppInputDialog : public Dialog {
     dialogTitle->style("padding-top", "12");
     dialogTitle->style("padding-bottom", "16");
     dialogTitle->style("font-weight", "bold");
-    dialogTitle->style("padding-left", "4");
+    dialogTitle->style("padding-left", "14");
+    dialogTitle->style("padding-right", "14");
     dialogTitle->style("color", "#c1272d");
     mainLayout->addChild(dialogTitle);
 
     auto dialogMessage = make_shared<TextLabel>(message);
+    dialogMessage->style("padding-left", "14");
+    dialogMessage->style("padding-right", "14");
     mainLayout->addChild(dialogMessage);
 
     textField = make_shared<TextField>();
@@ -79,7 +84,7 @@ class AppInputDialog : public Dialog {
     textField->style("padding-bottom", "10");
     textField->style("padding-top", "10");
     textField->style("hint", "Enter code here");
-    textField->style("padding-left", "4");
+    textField->style("padding-left", "14");
     mainLayout->addChild(textField);
 
     auto buttonLayout = make_shared<LinearLayout>(2);
