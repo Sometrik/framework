@@ -81,6 +81,7 @@ public class NativeCommand {
     CREATE_FRAME_LAYOUT,
     CREATE_EVENT_LAYOUT,
     CREATE_SCROLL_LAYOUT,
+    CREATE_FLIPPER_LAYOUT,
     CREATE_TABLE_LAYOUT,
     CREATE_AUTO_COLUMN_LAYOUT,
     CREATE_TEXT,
@@ -508,7 +509,7 @@ public class NativeCommand {
       break;
     }
     case CREATE_NAVIGATIONBAR: {
-      FWFrameLayout bar = new FWFrameLayout(frame, getChildInternalId());      
+      FWFrameLayout bar = new FWFrameLayout(frame, getChildInternalId(), true);      
       view.addChild(bar);
       frame.addToViewList(bar);
       break;
