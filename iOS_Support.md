@@ -39,7 +39,10 @@ used to find a widget by its id.
 # First steps
 
 - Create Xcode project for the example application as specified in _Compilation.md_.
-- Open the file iOSFramework.mm and start adding code to _sendCommands()_ method.
+- The example application tries to create application, frame view, linear layout, text label and a button, so you should start by implementing the commands CREATE_FRAMEVIEW, CREATE_LINEAR_LAYOUT, CREATE_TEXT, CREATE_BUTTON. CREATE_APPLICATION command can be ignored for now.
+  - Frame view is just a widget that covers the whole window, and can show its child widgets layered independently.
+  - It is possible that linear layout can be implemented using UIStackView. However, the idea is that the linear layout positions its children eiher vertically or horizontally and adjusts their positions if some are deleted.
+- Open the file iOSFramework.mm and start adding code to _sendCommands()_ method. The language for the file is Objective-C++, so you can mix Objective-C and C++ without problems.
 
 # iOSMainThread and iOSThread
 
@@ -49,31 +52,6 @@ added. iOSMainThread represents the UI thread.
 In iOSThread the methods sendCommands(), setImageData() and
 setSurface() simply package the parameters in some sort of iOS event,
 that would be sent to the main thread for processing.
-
-
-```
-  virtual bool start() = 0;
-  virtual bool testDestroy() = 0;
-  virtual void sendCommands(const std::vector<Command> & commands) = 0;
-  virtual void sleep(double t) = 0;
-  virtual std::unique_ptr<HTTPClientFactory> createHTTPClientFactory() const = 0;
-  virtual std::unique_ptr<canvas::ContextFactory> createContextFactory() const = 0;
-  virtual std::string loadTextAsset(const char * filename) = 0; 
-  virtual std::string getBundleFilename(const char * filename) = 0;
-  virtual std::string getLocalFilename(const char * filename, FileType type) = 0;
-  virtual void sendEvent(int internal_id, const Event & ev) = 0;
-  virtual std::vector<std::pair<int, std::shared_ptr<Event> > > pollEvents(bool blocking = false) = 0;
-  virtual void startEventLoop() = 0;
-  virtual void setImageData(int internal_id, std::shared_ptr<canvas::PackedImageData> image) = 0;
-  virtual void setSurface(int internal_id, canvas::Surface & surface) = 0;
-  virtual int startModal() = 0;
-  virtual void endModal(int value) = 0;
-  virtual void sendHeartbeat() { }
-  virtual std::unique_ptr<Logger> createLogger(const std::string & name) const = 0;
-  virtual std::shared_ptr<PlatformThread> createThread(std::shared_ptr<Runnable> & runnable) = 0;
-  virtual void initializeThread();  
-  virtual void deinitializeThread();
-```
 
 ## Object hierarchy
 
