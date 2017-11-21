@@ -13,10 +13,9 @@ framework/src/Selection.cpp
 framework/src/FWApplication.cpp
 framework/src/Runnable.cpp
 framework/src/PosixThread.cpp
-framework/src/PosixThread.cpp
 framework/src/iOS/iOSFramework.cpp
 canvas/src/Color.cpp
-canvas/src/ContextCairo.cpp
+canvas/src/ContextQuartz2D.cpp
 canvas/src/Path2D.cpp
 canvas/src/Image.cpp
 canvas/src/ImageData.cpp
@@ -46,4 +45,10 @@ Add the following include directories:
 framework/include
 canvas/include
 httpclient/include
+```
+
+Add the following libraries:
+```
+libiconv
+libz ??
 ```
