@@ -36,10 +36,15 @@ id, that was provided in the Command that was used to construct the
 widget. It's also useful to have a dictionary / hash map, that can be
 used to find a widget by its id.
 
+# First steps
+
+- Create Xcode project for the example application as specified in _Compilation.md_.
+- Open the file iOSFramework.mm and start adding code to _sendCommands()_ method.
 
 # iOSMainThread and iOSThread
 
-iOSThread represents a standard POSIX thread with iOS functionality added. iOSMainThread represents the UI thread.
+iOSThread represents a standard POSIX thread with iOS functionality
+added. iOSMainThread represents the UI thread.
 
 In iOSThread the methods sendCommands(), setImageData() and
 setSurface() simply package the parameters in some sort of iOS event,
@@ -94,7 +99,8 @@ CREATE_TEXTFIELD | Creates a single-line text input
 CREATE_BUTTON | Creates a button
 CREATE_LINEAR_LAYOUT | Creates a linear layout, either vertical or horizontal
 CREATE_FRAME_LAYOUT | Creates a layout that can show multiple overlaid child views
-CREATE_SCROLL_LAYOUT | Creates a scrollable layout
+CREATE_SCROLL_LAYOUT | Creates a vertically scrollable layout
+CREATE_EVENT_LAYOUT | Creates an event layout. Event layout has a single child, and can capture and send click events.
 CREATE_TEXT | Creates a label
 CREATE_DIALOG | Creates a dialog
 CREATE_IMAGEVIEW | Creates an image 
