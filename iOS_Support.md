@@ -224,3 +224,27 @@ Scrollable layouts are added using CREATE_SCROLL_LAYOUT. If possible, there
 should be an option for infinite scrolling, in which case the scrolling doesn't
 stop when the scroll position hits bottom. Instead it should scroll forever, and
 trust that the application provides more data to show.
+
+## Storing preferences
+
+Some preliminary work is already done conserning user preferences.
+
+## Strings
+
+Strings are stored in Framework as UTF-8. String conversion between NSSString and C++ or C strings goes as follows:
+
+```
+// C string to NSString
+
+const char * s1 = "Hello World";
+NSString* m2 = [NSString stringWithUTF8String:s1];
+
+// C++ string to NSString
+
+std::string s1 = "Hello World";
+NSString* m2 = [NSString stringWithUTF8String:s1.c_str()];
+
+// NSString to C or C++ string
+NSString * s1;
+s2 = [s1 cStringUsingEncoding:NSUTF8StringEncoding];
+```
