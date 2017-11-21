@@ -5,8 +5,6 @@ import com.sometrik.framework.NativeCommand.Selector;
 import android.graphics.Bitmap;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.AdapterView;
 import android.widget.FrameLayout;
 
 public class FWFrameLayout extends FrameLayout implements NativeCommandHandler {
