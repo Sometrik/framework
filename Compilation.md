@@ -1,10 +1,13 @@
 # Compilation
 
+Instructions for compiling example application Example1.
+
 ## iOS
 
 Clone repositories _framework_, _canvas_ and _httpclient_. Create xCode project with the following files:
 
 ```
+framework/example1/Example1.cpp
 framework/src/DateTime.cpp
 framework/src/StringUtils.cpp
 framework/src/EventHandler.cpp
@@ -32,13 +35,6 @@ httpclient/src/RateLimiter.cpp
 httpclient/src/iOSClient.mm
 ```
 
-As well as the application files. For testing, you can use the
-following example application:
-
-```
-framework/example1/Example1.cpp
-```
-
 Add the following include directories:
 
 ```
@@ -47,8 +43,9 @@ canvas/include
 httpclient/include
 ```
 
-Add the following libraries:
+Possibly, add the following libraries:
 ```
 libiconv
 libz ??
 ```
+Compile.
