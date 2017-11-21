@@ -4,22 +4,23 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import android.app.Dialog;
+import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Path;
 import android.graphics.Paint.Style;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.RippleDrawable;
 import android.graphics.drawable.ShapeDrawable;
-import android.graphics.drawable.shapes.PathShape;
 import android.graphics.drawable.shapes.RoundRectShape;
 import android.text.TextUtils.TruncateAt;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -345,7 +346,41 @@ class ViewStyleManager {
     if (minWidth > 0) view.setMinimumWidth(applyScale(minWidth));
     if (minHeight > 0) view.setMinimumHeight(applyScale(minHeight));
     if ((borderColor != null && borderColor != 0 && borderWidth != null && borderWidth != 0) || borderRadius != null || gradientColors != null) {
-      if (!(view instanceof TextView) && borderRadius != null && gradientColors == null &&
+      if (view instanceof Button) {
+	int color1 = Color.parseColor("#ffffff");
+	int color2 = Color.parseColor("#000000");
+	ColorStateList colors = new ColorStateList(
+	        new int[][]
+	            {
+	                new int[]{android.R.attr.state_pressed},
+	                new int[]{android.R.attr.state_focused},
+	                new int[]{android.R.attr.state_activated},
+	                new int[]{}
+	            },
+	        new int[]
+	            {
+	                color2,
+	                color2,
+	                color2,
+	                color1
+	            }
+	    );	
+	GradientDrawable content = new GradientDrawable();
+	if (gradientColors != null) {
+	  content.setColors(gradientColors);
+	} else if (backgroundColor != null) {
+	  content.setColor(backgroundColor);
+	}	
+	if (borderRadius != null) {
+	  content.setCornerRadius(2); // Might be necessary for zero radiuses to work
+	  content.setCornerRadii(expandRadii(borderRadius));
+	}
+	if (borderColor != null && borderWidth != null && borderWidth != 0) {	  
+	  content.setStroke(borderWidth, borderColor, applyScale(getDashWidth(borderStyle)), applyScale(1));
+	}	
+	RippleDrawable rd = new RippleDrawable(colors, content, null);
+	view.setBackground(rd);	
+      } else if (!(view instanceof TextView) && borderRadius != null && gradientColors == null &&
 	  (borderWidth == null || borderWidth == 0 || backgroundColor == null || backgroundColor == 0)) {
 	RoundRectShape shape = new RoundRectShape(expandRadii(borderRadius), null, null);
 	ShapeDrawable sd = new ShapeDrawable(shape);
