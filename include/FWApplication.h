@@ -94,6 +94,9 @@ public:
   void showMessageDialog(const std::string & title, const std::string & message);
   std::string showInputDialog(const std::string & title, const std::string & message);
 
+  void setVersion(const std::string & v) { versionText = v; }
+  const std::string & getVersion() const { return versionText; }
+
  private:
   std::string name, iap_public_key;
   bool full_screen;
@@ -101,6 +104,7 @@ public:
   std::vector<int> view_back_history, view_forward_history;
   FWPreferences preferences;
   MobileAccount mobileAccount;
+  std::string versionText = "0.1";
 };
 
 #endif
