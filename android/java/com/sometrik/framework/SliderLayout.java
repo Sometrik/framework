@@ -98,18 +98,9 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
     scrollView.setLayoutParams(listParams);
     scrollView.addChild(view);
     if (view instanceof FWLayout) {
-      FWLayout.ChildClickListener listener = new FWLayout.ChildClickListener() {
-
-	@Override
-	public void onClick(int childIndex, int childId) {
-	  System.out.println("Clicked child index " + childIndex);
-	  frame.sendNativeValueEvent(getId(), childIndex, 0);
-	}
-      };
       FWLayout layout = (FWLayout) view;
       
       FrameLayout.LayoutParams fwLayoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT);
-      layout.setChildListeners(listener);
       layout.setLayoutParams(fwLayoutParams);
     }
     addView(scrollView);
@@ -321,7 +312,7 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
 	  if (usesLists) {
 	    setValue("");
 	  } else {
-	    addChild(new FWLayout(frame));
+	    addChild(new FWLayout(frame, 0));
 	  }
 	}
       }
