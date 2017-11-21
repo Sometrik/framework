@@ -158,6 +158,31 @@ public:
   GtkMainThread(std::shared_ptr<FWApplication> _application, std::shared_ptr<Runnable> _runnable)
     : PlatformThread(nullptr, _application, _runnable) {
     CurlClientFactory::globalInit();
+
+    string fn = g_get_user_config_dir();
+    fn += "/framework.ini";
+
+    keyFile = g_key_file_new();
+    
+    if (g_key_file_load_from_file(keyFile, fn.c_str(), G_KEY_FILE_NONE, NULL)) {
+      FWPreferences prefs;
+    
+      gchar * groupName = g_key_file_get_start_group(keyFile);
+      if (groupName) {
+	gchar ** keys = g_key_file_get_keys(keyFile, groupName, NULL, NULL);
+	for (unsigned int i = 0; keys[i] != 0; i++) {
+	  gchar * value = g_key_file_get_string(keyFile, groupName, keys[i], NULL);
+	  if (value) prefs.setValue(keys[i], value);
+	}
+	g_strfreev(keys);
+      }
+
+      application->setPreferences(prefs);
+    }
+  }
+
+  ~GtkMainThread() {
+    g_key_file_free(keyFile);
   }
   
   std::unique_ptr<canvas::ContextFactory> createContextFactory() const override {
@@ -232,11 +257,20 @@ public:
   void startEventLoop() override { }
 
   int startModal() override {
-    return getModalResultValue();
+    if (!dialog_stack.empty()) {
+      auto view = views_by_id[dialog_stack.back()];
+      return gtk_dialog_run(GTK_DIALOG(view));
+    } else {
+      return 0;
+    }
   }
 
   void endModal(int value) override {
-    setModalResultValue(value);
+    if (!dialog_stack.empty()) {
+      auto view = views_by_id[dialog_stack.back()];
+      gtk_dialog_response(GTK_DIALOG(view), value);
+      dialog_stack.pop_back();
+    }
   }
   
   std::unique_ptr<Logger> createLogger(const std::string & name) const override {
@@ -810,6 +844,7 @@ protected:
 	// gtk_window_set_modal(GTK_WINDOW(dlg), 1);
 	// gtk_window_set_transient_for(GTK_WINDOW(dlg), GTK_WINDOW(parent));
 	addView(0, command.getChildInternalId(), dlg);
+	dialog_stack.push_back(command.getChildInternalId());
       }
 	break;
 
@@ -885,7 +920,20 @@ protected:
 	}
       }
 	break;
-	
+
+      case Command::UPDATE_PREFERENCE: {
+	g_key_file_set_string(keyFile, "app", command.getTextValue().c_str(), command.getTextValue2().c_str());	
+      }
+	break;
+
+      case Command::COMMIT_PREFERENCES: {
+	string fn = g_get_user_config_dir();
+	fn += "/framework.ini";
+    
+	g_key_file_save_to_file(keyFile, fn.c_str(), NULL);
+      }
+	break;
+
       case Command::LAUNCH_BROWSER: {
 #if 0
 	gtk_show_uri_on_window(GTK_WINDOW(window),
@@ -1256,6 +1304,8 @@ private:
   map<GtkWidget *, int> widget_values;
   unordered_map<int, image_data_s> image_data;
   image_data_s null_image_data;
+  GKeyFile * keyFile;
+  vector<int> dialog_stack;
 };
 
 string
@@ -1555,7 +1605,7 @@ static void activate(GtkApplication * gtk_app, gpointer user_data) {
 
 int main (int argc, char *argv[]) {
   std::shared_ptr<FWApplication> application(applicationMain());
-
+			      
   cerr << "creating mainloop\n";
   
   GtkMainThread mainThread(application, application);
