@@ -1,5 +1,4 @@
 #import "OpenGLView.h"
-#import "InputDialog.h"
 #include <FWApplication.h>
 #include <FWPlatform.h>
 
@@ -77,16 +76,6 @@ public:
 //      [[NSNotificationCenter defaultCenter] postNotificationName:message2 object:self];
     }
 #endif
-  std::string showTextEntryDialog(const std::string & title, const std::string & message) override {
-      // NSString* message2 = [NSString stringWithUTF8String:message];
-      InputDialog * dlg = [InputDialog dialog];
-      has_active_modal = true;
-      [dlg showModal];
-      has_active_modal = false;
-      NSString * input = [dlg getInput];
-      const char * stringAsChar = [input cStringUsingEncoding:NSUTF8StringEncoding];
-      return stringAsChar;
-    }
     std::string getBundleFilename(const char * filename) override {
       int n = int(strlen(filename));
       for (int i = n - 1; i >= 0; i--)  {
