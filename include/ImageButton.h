@@ -1,12 +1,12 @@
 #ifndef _IMAGEBUTTON_H_
 #define _IMAGEBUTTON_H_
 
-#include <FrameLayout.h>
+#include <EventLayout.h>
 #include <ImageElement.h>
 
-class ImageButton : public FrameLayout {
+class ImageButton : public EventLayout {
 public:
-  ImageButton(const std::string & _filename, int _id = 0) : FrameLayout(_id) {
+  ImageButton(const std::string & _filename, int _id = 0) : EventLayout(_id) {
     image = std::make_shared<ImageElement>(_filename, _id);
     addChild(image);
     setClickable(true);
