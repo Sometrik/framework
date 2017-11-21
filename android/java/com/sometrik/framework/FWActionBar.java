@@ -132,7 +132,7 @@ public class FWActionBar implements NativeCommandHandler {
     clear();
 
     drawerButton.setVisibility(ImageButton.GONE);
-    alternativeButtonLayout = new FWLayout(frame);
+    alternativeButtonLayout = new FWLayout(frame, 0);
     LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
     alternativeButtonLayout.setLayoutParams(params2);
     alternativeButtonLayout.addView(view);
