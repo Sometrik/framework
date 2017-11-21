@@ -687,8 +687,7 @@ public class NativeCommand {
   }
     
   private FWLayout createLinearLayout(int direction) {
-    FWLayout layout = new FWLayout(frame);
-    layout.setId(getChildInternalId());
+    FWLayout layout = new FWLayout(frame, getChildInternalId());
     frame.addToViewList(layout);
     if (direction == 2) {
       layout.setOrientation(LinearLayout.HORIZONTAL);

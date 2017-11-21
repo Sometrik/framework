@@ -14,8 +14,6 @@ public class FWFrameLayout extends FrameLayout implements NativeCommandHandler {
   
   private FrameWork frame;
   private ViewStyleManager normalStyle, activeStyle, currentStyle;
-  private boolean childListeners = false;
-  private ChildClickListener hostListener;
   
   public FWFrameLayout(FrameWork frameWork, int id, bool is_clickable) {
     super(frameWork);
@@ -60,39 +58,8 @@ public class FWFrameLayout extends FrameLayout implements NativeCommandHandler {
   @Override
   public void addChild(final View view) {
     addView(view);
-
-    if (childListeners) {
-      if (view instanceof AdapterView) {
-	return;
-      } else {
-	view.setOnClickListener(new OnClickListener() {
-	  @Override
-	  public void onClick(View v) {
-  	    System.out.println("child click " + v.getId());
-  	    int index = getChildIndex(v.getId());
-  	    hostListener.onClick(index, v.getId());
-	  }
-	});
-      }
-    } else if (view instanceof FWLayout || view instanceof FWFrameLayout || view instanceof FWFrameView) {
-      view.setOnClickListener(new OnClickListener() {
-	  @Override
-	  public void onClick(View v) {
-	    frame.sendNativeValueEvent(getElementId(), 0, 1);
-	  }
-      });
-    }
   }
- 
-  private int getChildIndex(int id) {
-    for (int i = 0; i < getChildCount(); i++) {
-      if (id == getChildAt(i).getId()) {
-	return i;
-      }
-    }
-    return 0;
-  }
-  
+   
   @Override
   public void addOption(int optionId, String text) { }
 
@@ -127,8 +94,6 @@ public class FWFrameLayout extends FrameLayout implements NativeCommandHandler {
   @Override
   public void setViewVisibility(boolean visibility) {
     if (visibility) {
-      frame.hideSoftKeyboard();
-     
       this.setVisibility(VISIBLE);
     } else {
       this.setVisibility(GONE);
