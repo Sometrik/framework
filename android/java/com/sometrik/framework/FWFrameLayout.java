@@ -17,7 +17,7 @@ public class FWFrameLayout extends FrameLayout implements NativeCommandHandler {
   private boolean childListeners = false;
   private ChildClickListener hostListener;
   
-  public FWFrameLayout(FrameWork frameWork, int id) {
+  public FWFrameLayout(FrameWork frameWork, int id, bool is_clickable) {
     super(frameWork);
     this.frame = frameWork;
     this.setId(id);
@@ -26,9 +26,12 @@ public class FWFrameLayout extends FrameLayout implements NativeCommandHandler {
     this.normalStyle = currentStyle = new ViewStyleManager(frame.bitmapCache, scale, true);
     this.activeStyle = new ViewStyleManager(frame.bitmapCache, scale, false);
 
-    final FWFrameLayout layout = this;
+    setClickable(is_clickable);
+      
+    if (is_clickable) {      
+      final FWFrameLayout layout = this;
     
-    setOnTouchListener(new OnTouchListener() {
+      setOnTouchListener(new OnTouchListener() {
       @Override
       public boolean onTouch(View v, MotionEvent event) {
 	if (event.getAction() == MotionEvent.ACTION_DOWN) {
@@ -80,8 +83,6 @@ public class FWFrameLayout extends FrameLayout implements NativeCommandHandler {
       });
     }
   }
-  
-  
  
   private int getChildIndex(int id) {
     for (int i = 0; i < getChildCount(); i++) {
@@ -103,7 +104,6 @@ public class FWFrameLayout extends FrameLayout implements NativeCommandHandler {
     
   @Override
   public void setStyle(Selector selector, String key, String value) {
-    System.out.println("FWFrameView (Layout) style " + key + " " + value);
     if (selector == Selector.NORMAL) {
       normalStyle.setStyle(key, value);
       if (normalStyle == currentStyle) normalStyle.apply(this);
@@ -157,8 +157,5 @@ public class FWFrameLayout extends FrameLayout implements NativeCommandHandler {
   public void deinitialize() { }
 
   @Override
-  public void addImageUrl(String url, int width, int height) {
-    // TODO Auto-generated method stub
-    
-  }
+  public void addImageUrl(String url, int width, int height) { }
 }

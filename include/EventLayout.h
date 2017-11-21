@@ -1,20 +1,17 @@
-#ifndef _LINEARLAYOUT_H_
-#define _LINEARLAYOUT_H_
+#ifndef _EVENTLAYOUT_H_
+#define _EVENTLAYOUT_H_
 
 #include <Element.h>
 #include <Command.h>
 #include <CommandEvent.h>
 #include <ValueEvent.h>
 
-#define FW_VERTICAL	1
-#define FW_HORIZONTAL	2
-
-class LinearLayout : public Element {
+class EventLayout : public Element {
  public:
-  LinearLayout(int _direction, int _id = 0) : Element(_id), direction(_direction) { }
+  EventLayout(int _id = 0) : Element(_id) { }
 
   bool isA(const std::string & className) const override {
-    if (className == "LinearLayout") return true;
+    if (className == "EventLayout") return true;
     return Element::isA(className);
   }
 
@@ -27,13 +24,9 @@ class LinearLayout : public Element {
 
  protected:
   void create() override {
-    Command c(Command::CREATE_LINEAR_LAYOUT, getParentInternalId(), getInternalId());
-    c.setValue(direction);
+    Command c(Command::CREATE_EVENT_LAYOUT, getParentInternalId(), getInternalId());
     sendCommand(c);
   }
-
- private:
-  int direction = FW_VERTICAL;
 };
 
 #endif

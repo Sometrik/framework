@@ -544,17 +544,19 @@ protected:
 
       case Command::CREATE_FRAME_LAYOUT: {
 	auto frame = gtk_overlay_new();
-	gtk_widget_set_events(frame, GDK_BUTTON_PRESS_MASK);	
-	// gtk_widget_set_has_window(frame, true);
-	g_signal_connect(G_OBJECT(frame), "button_press_event", G_CALLBACK(on_button_press), this);
 	addView(command, frame);
       }
 	break;
 	
       case Command::CREATE_LINEAR_LAYOUT: {
 	auto box = gtk_box_new(command.getValue() == 1 ? GTK_ORIENTATION_VERTICAL : GTK_ORIENTATION_HORIZONTAL, 0);
+	addView(command, box);
+      }
+	break;
+
+      case Command::CREATE_EVENT_LAYOUT: {
+	auto box = gtk_event_box_new();
 	gtk_widget_set_events(box, GDK_BUTTON_PRESS_MASK);
-	// gtk_widget_set_has_window(box, true);
 	g_signal_connect(G_OBJECT(box), "button_press_event", G_CALLBACK(on_button_press), this);
 	addView(command, box);
       }

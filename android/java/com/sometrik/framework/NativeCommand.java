@@ -79,6 +79,7 @@ public class NativeCommand {
     CREATE_PICKER, // called Spinner in Android
     CREATE_LINEAR_LAYOUT,
     CREATE_FRAME_LAYOUT,
+    CREATE_EVENT_LAYOUT,
     CREATE_SCROLL_LAYOUT,
     CREATE_TABLE_LAYOUT,
     CREATE_AUTO_COLUMN_LAYOUT,
@@ -218,7 +219,15 @@ public class NativeCommand {
     }
 
     case CREATE_FRAME_LAYOUT: {
-      FWFrameLayout layout = new FWFrameLayout(frame, getChildInternalId());
+      FWFrameLayout layout = new FWFrameLayout(frame, getChildInternalId(), false);
+      frame.addToViewList(layout);
+      if (view != null) {
+	view.addChild(layout);
+      }
+    }
+      break;
+    case CREATE_EVENT_LAYOUT: {
+      FWFrameLayout layout = new FWFrameLayout(frame, getChildInternalId(), true);
       frame.addToViewList(layout);
       if (view != null) {
 	view.addChild(layout);
