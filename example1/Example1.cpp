@@ -1,46 +1,26 @@
 #include "Example1.h"
 
-#include <string.h>
-#include <GLES3/gl3.h>
-#include <jni.h>
+#include <FrameView.h>
+#include <TextLabel.h>
+#include <LinearLayout.h>
+#include <Button.h>
+
 #include <iostream>
-#include <glm/gtc/matrix_transform.hpp>
-#include <shader_program.h>
-#include <Context.h>
-#include <AndroidPlatform.h>
-#include <ContextAndroid.h>
 
 using namespace std;
 
-bool
-Example1::Init() {
+Example1::Example1() : FWApplication("com.sometrik.example1")
+{
+  auto view = std::make_shared<FrameView>();
+  addChild(view);
 
-  auto contextF = getPlatform().createContextFactory();
-	auto context = contextF->createContext(800, 800, canvas::InternalFormat::RGBA8, true);
-
-
-		context->globalAlpha = 1.0f;
-		context->font.size = 50;
-		context->textBaseline = "top";
-	context->strokeText("Olen Mikko osaan lukea ja kirjoittaa", 20, 100);
-
-	auto yoSurface = context->createSurface("picture.jpg");
-	context->drawImage(*yoSurface, 120, 120, 400, 400);
-
-	dynamic_cast<AndroidPlatform&>(getPlatform()).showCanvas(dynamic_cast<canvas::ContextAndroid&>(*context));
+  auto layout = std::make_shared<LinearLayout>(FW_VERTICAL);
+  view->addChild(layout);
+  
+  layout->addChild(make_shared<TextLabel>("Hello World!"));
+  layout->addChild(make_shared<Button>("Click me!"));
 }
 
-void
-Example1::onDraw() {
-}
-
-void
-Example1::onShutdown() {
-}
-
-std::shared_ptr<Example1> application;
-
-void applicationMain(FWPlatformBase * platform) {
-	application = std::make_shared<Example1>(platform);
-	platform->setApplication(application.get());
+FWApplication * applicationMain() {
+  return new Example1();  
 }
