@@ -29,6 +29,10 @@ public:
     view_forward_history.clear();
   }
 
+  int getViewBackHistory() {
+    return view_back_history.back();
+  }
+
   virtual int popViewBackHistory() {
     int id = 0;
     if (!view_back_history.empty()) {
