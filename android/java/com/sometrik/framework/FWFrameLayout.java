@@ -29,10 +29,10 @@ public class FWFrameLayout extends FrameLayout implements NativeCommandHandler {
       setOnTouchListener(new OnTouchListener() {
       @Override
       public boolean onTouch(View v, MotionEvent event) {
-	if (event.getAction() == MotionEvent.ACTION_DOWN) {
+	if (event.getAction() == MotionEvent.ACTION_DOWN || event.getAction() == MotionEvent.ACTION_HOVER_ENTER) {
 	  layout.currentStyle = layout.activeStyle;
 	  layout.currentStyle.apply(layout);
-	} else { // if (event.getAction() == MotionEvent.ACTION_UP)
+	} else if (event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_HOVER_EXIT || event.getAction() == MotionEvent.ACTION_OUTSIDE) {
 	  layout.currentStyle = layout.normalStyle;
 	  layout.currentStyle.apply(layout);
 	}
