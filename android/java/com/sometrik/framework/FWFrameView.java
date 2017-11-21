@@ -37,7 +37,6 @@ public class FWFrameView extends FrameLayout implements NativeCommandHandler {
     this.activeStyle = new ViewStyleManager(frame.bitmapCache, scale, false);
   }
   
-
   @Override
   public boolean performClick() {
     frame.sendNativeValueEvent(getElementId(), 0, 0);
@@ -70,6 +69,8 @@ public class FWFrameView extends FrameLayout implements NativeCommandHandler {
 
   @Override
   public void setValue(int v) {
+    frame.hideSoftKeyboard();
+
     if (v == 1) {
       if (enterAnimation != null) {
 	frame.setCurrentView(this, true, enterAnimation, enterAnimationOtherViewFromX);
@@ -174,7 +175,9 @@ public class FWFrameView extends FrameLayout implements NativeCommandHandler {
 
   @Override
   public void setViewVisibility(boolean visibility) {
-    if (visibility){
+    if (visibility) {
+      frame.hideSoftKeyboard();
+ 
       this.setVisibility(VISIBLE);
     } else {
       this.setVisibility(INVISIBLE);
@@ -197,8 +200,7 @@ public class FWFrameView extends FrameLayout implements NativeCommandHandler {
   public void setBitmap(Bitmap bitmap) { }
 
   @Override
-  public void reshape(int size) {
-  }
+  public void reshape(int size) { }
 
   @Override
   public void deinitialize() { }
