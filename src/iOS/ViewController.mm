@@ -1,30 +1,47 @@
 #import "ViewController.h"
 
-#include "OpenGLView.h"
+#include <FWApplication.h>
 
 #include <iostream>
+#include <memory>
 
 using namespace std;
+
+// Pointer to main thread
+// std::shared_ptr<iOSMainThread> mainThread;
+
+// Declare C++ function
+extern FWApplication * applicationMain();
 
 @interface ViewController ()
 @end
 
 @implementation ViewController
 
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    // Do any additional setup after loading the view, typically from a nib.
+  
+    cerr << "Starting app\n";
+  
+    // Creating the C++ app
+    FWApplication * app = applicationMain();
+  
+    // mainThread = make_shared<iOSMainThread>(application, application);
+    // mainThread->setActualDisplayWidth(screenWidth);
+    // mainThread->setActualDisplayHeight(screenHeight);
+    // mainThread->setDisplayScale(displayScale);
+}
+
 - (void)viewWillTransitionToSize: (CGSize)size withTransitionCoordinator:(id)coordinator
 {
   [super viewWillTransitionToSize: size withTransitionCoordinator:coordinator];
   [coordinator animateAlongsideTransition: nil completion: ^(id _Nonnull context) {
-    OpenGLView * v = (OpenGLView *)self.view;
-    [v requestUpdate];
+
   }];
 }
 
 - (void)didReceiveMemoryWarning {
-  cerr << "didReceiveMemoryWarning called" << endl;
-
-  OpenGLView * v = (OpenGLView *)self.view;
-  [v sendMemoryWarning];
   
   [super didReceiveMemoryWarning];
 }
