@@ -4,12 +4,18 @@
 - (void)viewWillTransitionToSize: (CGSize)size withTransitionCoordinator:(id)coordinator;
 - (void)didReceiveMemoryWarning;
 
-- (void)createTextField: (int)elementId parent:(int)parentId;
-- (void)setStyle: (int)elementId key:(NSString *)key value:(NSString *)value;
+- (void)createTextFieldWithId: (int)viewId parentId:(int)parentId;
+- (void)setStyle: (int)viewId key:(NSString *)key value:(NSString *)value;
 
 - (void)createFrameViewWithId:(int)viewId parentId:(int)parentId;
 - (void)createLinearLayoutWithId:(int)viewId parentId:(int)parentId direction:(int)direction;
-- (void)createTextWithId:(int)viewId parentId:(int)parentId;
-- (void)createButtonWithId:(int)viewId parentId:(int)parentId;
+- (void)createTextWithId:(int)viewId parentId:(int)parentId value:(NSString *)value;
+- (void)createButtonWithId:(int)viewId parentId:(int)parentId caption:(NSString *)caption;
+- (void)createSwitch:(int)viewId parentId:(int)parentId;
+
+- (void)addToParent:(int)parentId view:(UIView*)view;
+
+- (void)sendIntValue:(int)viewId value:(int)value;
+- (void)sendTextValue:(int)viewId value:(NSString *)value;
 
 @end

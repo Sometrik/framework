@@ -4,7 +4,6 @@
 
 #include "iOSMainThread.h"
 
-#include <iostream>
 #include <memory>
 
 using namespace std;
@@ -24,8 +23,6 @@ extern FWApplication * applicationMain();
 - (void)viewDidLoad {
   [super viewDidLoad];
   // Do any additional setup after loading the view, typically from a nib.
-  
-  cerr << "Starting app\n";
   
   // Creating the C++ app
   std::shared_ptr<FWApplication> application(applicationMain());
@@ -53,14 +50,20 @@ extern FWApplication * applicationMain();
   [super didReceiveMemoryWarning];
 }
 
-- (void)createTextField: (int)elementId parent:(int)parentId {
-  CGRect someRect = CGRectMake(0.0, 0.0, 100.0, 30.0);
-  UITextField* text = [[UITextField alloc] initWithFrame:someRect];
-  UIView* view = [[UIView alloc] initWithFrame:someRect];
-
-  // Associate the created view with the specified elementId
-  // Add the created view as a child to the object specified by parentId
-}
+- (void)createTextFieldWithId: (int)viewId parentId:(int)parentId {
+    CGRect someRect = CGRectMake(0.0, 0.0, 100.0, 30.0);
+    UITextField* text = [[UITextField alloc] initWithFrame:someRect];
+    text.borderStyle = UITextBorderStyleRoundedRect;
+    text.font = [UIFont systemFontOfSize:15];
+    text.placeholder = @"enter text";
+    text.autocorrectionType = UITextAutocorrectionTypeNo;
+    text.keyboardType = UIKeyboardTypeDefault;
+    text.returnKeyType = UIReturnKeyDone;
+    text.clearButtonMode = UITextFieldViewModeWhileEditing;
+    text.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
+    [self.viewsDictionary setObject:text forKey:[NSString stringWithFormat:@"%d", viewId]];
+    [self addToParent:parentId view:text];
+  }
 
 - (void)setStyle: (int)elementId key:(NSString *)key value:(NSString *)value {
   // Find object with the id elementId
@@ -80,7 +83,7 @@ extern FWApplication * applicationMain();
 - (void)createFrameViewWithId:(int)viewId parentId:(int)parentId
 {
     UIView *view = [[UIView alloc] initWithFrame:self.view.bounds];
-    view.backgroundColor = [UIColor whiteColor];
+    view.backgroundColor = [UIColor darkGrayColor];
     [self.view addSubview:view];
     [self.viewsDictionary setObject:view forKey:[NSString stringWithFormat:@"%d", viewId]];
     //UIView *parentView = [self.viewsDictionary objectForKey:[NSString stringWithFormat:@"%d", parentId]];
@@ -90,7 +93,7 @@ extern FWApplication * applicationMain();
 - (void)createLinearLayoutWithId:(int)viewId parentId:(int)parentId direction:(int)direction
 {
     UIStackView *stackView = [[UIStackView alloc] init];
-    if (direction == 2) {
+    if (direction == 1) {
         stackView.axis = UILayoutConstraintAxisVertical;
     } else {
         stackView.axis = UILayoutConstraintAxisHorizontal;
@@ -99,36 +102,55 @@ extern FWApplication * applicationMain();
     stackView.frame = self.view.frame;
     stackView.backgroundColor = UIColor.lightGrayColor;
     [self.viewsDictionary setObject:stackView forKey:[NSString stringWithFormat:@"%d", viewId]];
-    UIView *parentView = [self.viewsDictionary objectForKey:[NSString stringWithFormat:@"%d", parentId]];
-    [parentView addSubview:stackView];
+    [self addToParent:parentId view:stackView];
 }
 
-- (void)createTextWithId:(int)viewId parentId:(int)parentId
+- (void)createTextWithId:(int)viewId parentId:(int)parentId value:(NSString*)value
 {
     UILabel *label = [[UILabel alloc] init];
     label.frame = CGRectMake(0, 0, 50, 20);
-    const char *text = "Hello World";
-    label.text = [NSString stringWithUTF8String:text];
+    label.text = value;
     label.backgroundColor = UIColor.blueColor;
     [self.viewsDictionary setObject:label forKey:[NSString stringWithFormat:@"%d", viewId]];
+    [self addToParent:parentId view:label];
+}
+
+- (void)createButtonWithId:(int)viewId parentId:(int)parentId caption:(NSString *)caption
+{
+    UIButton *button = [[UIButton alloc] init];
+    [button setTitle:caption forState:UIControlStateNormal];
+    [self.viewsDictionary setObject:button forKey:[NSString stringWithFormat:@"%d", viewId]];
+    [self addToParent:parentId view:button];
+}
+
+- (void)createSwitch:(int)viewId parentId:(int)parentId
+{
+    UISwitch *sw = [[UISwitch alloc] init];
+    [self.viewsDictionary setObject:sw forKey:[NSString stringWithFormat:@"%d", viewId]];
+    [self addToParent:parentId view:sw];
+}
+
+- (void)addToParent:(int)parentId view:(UIView*)view
+{
     UIView *parentView = [self.viewsDictionary objectForKey:[NSString stringWithFormat:@"%d", parentId]];
-    NSLog(@"parentView = %@", parentView.class);
     if ([parentView isKindOfClass:UIStackView.class]) {
         UIStackView *stackView = (UIStackView *)parentView;
-        [stackView addArrangedSubview:label];
+        [stackView addArrangedSubview:view];
     } else {
-        [parentView addSubview:label];
+        [parentView addSubview:view];
     }
 }
 
-- (void)createButtonWithId:(int)viewId parentId:(int)parentId
-{
-    UIButton *button = [[UIButton alloc] init];
-    [self.viewsDictionary setObject:button forKey:[NSString stringWithFormat:@"%d", viewId]];
-    UIView *parentView = [self.viewsDictionary objectForKey:[NSString stringWithFormat:@"%d", parentId]];
-    [parentView addSubview:button];
+// This method send changed integer or boolean values back to application.
+// For example, a button click sends value 1
+- (void)sendIntValue:(int)viewId value:(int)value {
+    mainThread->sendIntValue(viewId, value);
 }
 
-
+// This method send changed text values back to application.
+- (void)sendTextValue:(int)viewId value:(NSString *)value {
+    string s = [value cStringUsingEncoding:NSUTF8StringEncoding];
+    mainThread->sendTextValue(viewId, s);
+}
 
 @end
