@@ -16,7 +16,8 @@ framework/src/Selection.cpp
 framework/src/FWApplication.cpp
 framework/src/Runnable.cpp
 framework/src/PosixThread.cpp
-framework/src/iOS/iOSFramework.cpp
+framework/src/iOS/ViewController.mm
+framework/src/iOS/AppDelegate.m
 canvas/src/Color.cpp
 canvas/src/ContextQuartz2D.cpp
 canvas/src/Path2D.cpp
