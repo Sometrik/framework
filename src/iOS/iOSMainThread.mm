@@ -5,6 +5,13 @@
 void
 iOSMainThread::sendCommands(const std::vector<Command> & commands) {
   for (auto & command : commands) {
+    if (command.getType() == Command::CREATE_FRAMEVIEW || command.getType() == Command::CREATE_OPENGL_VIEW) {
+      auto & app = getApplication();
+      if (!app.getActiveViewId()) {
+        app.setActiveViewId(command.getChildInternalId());
+      }
+    }
+
     switch (command.getType()) {
       case Command::CREATE_APPLICATION: {
         NSString * appName = [NSString stringWithUTF8String:command.getTextValue().c_str()];
@@ -54,6 +61,14 @@ iOSMainThread::sendCommands(const std::vector<Command> & commands) {
         [viewController setStyle:command.getInternalId() key:key value:value];
       }
         break;
+
+      case Command::LAUNCH_BROWSER: {
+        NSString * input_url = [NSString stringWithUTF8String:command.getTextValue().c_str()];
+        NSURL *url = [NSURL URLWithString:input_url];
+        [[UIApplication sharedApplication] openURL:url];
+        // no need to release anything
+      }
+
     }
   }
 }
