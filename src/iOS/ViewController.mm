@@ -16,6 +16,7 @@ std::shared_ptr<iOSMainThread> mainThread;
 extern FWApplication * applicationMain();
 
 @interface ViewController ()
+@property (nonatomic, strong) NSMutableDictionary *viewsDictionary;
 @end
 
 @implementation ViewController
@@ -67,5 +68,67 @@ extern FWApplication * applicationMain();
     // set width of the object to value
   }
 }
+// Lazy initialization
+- (NSMutableDictionary *)viewsDictionary
+{
+    if (!_viewsDictionary) {
+        _viewsDictionary = [[NSMutableDictionary alloc] init];
+    }
+    return _viewsDictionary;
+}
+
+- (void)createFrameViewWithId:(int)viewId parentId:(int)parentId
+{
+    UIView *view = [[UIView alloc] initWithFrame:self.view.bounds];
+    view.backgroundColor = [UIColor whiteColor];
+    [self.view addSubview:view];
+    [self.viewsDictionary setObject:view forKey:[NSString stringWithFormat:@"%d", viewId]];
+    //UIView *parentView = [self.viewsDictionary objectForKey:[NSString stringWithFormat:@"%d", parentId]];
+    //[parentView addSubview:view];
+}
+
+- (void)createLinearLayoutWithId:(int)viewId parentId:(int)parentId direction:(int)direction
+{
+    UIStackView *stackView = [[UIStackView alloc] init];
+    if (direction == 2) {
+        stackView.axis = UILayoutConstraintAxisVertical;
+    } else {
+        stackView.axis = UILayoutConstraintAxisHorizontal;
+    }
+    //stackView.si
+    stackView.frame = self.view.frame;
+    stackView.backgroundColor = UIColor.lightGrayColor;
+    [self.viewsDictionary setObject:stackView forKey:[NSString stringWithFormat:@"%d", viewId]];
+    UIView *parentView = [self.viewsDictionary objectForKey:[NSString stringWithFormat:@"%d", parentId]];
+    [parentView addSubview:stackView];
+}
+
+- (void)createTextWithId:(int)viewId parentId:(int)parentId
+{
+    UILabel *label = [[UILabel alloc] init];
+    label.frame = CGRectMake(0, 0, 50, 20);
+    const char *text = "Hello World";
+    label.text = [NSString stringWithUTF8String:text];
+    label.backgroundColor = UIColor.blueColor;
+    [self.viewsDictionary setObject:label forKey:[NSString stringWithFormat:@"%d", viewId]];
+    UIView *parentView = [self.viewsDictionary objectForKey:[NSString stringWithFormat:@"%d", parentId]];
+    NSLog(@"parentView = %@", parentView.class);
+    if ([parentView isKindOfClass:UIStackView.class]) {
+        UIStackView *stackView = (UIStackView *)parentView;
+        [stackView addArrangedSubview:label];
+    } else {
+        [parentView addSubview:label];
+    }
+}
+
+- (void)createButtonWithId:(int)viewId parentId:(int)parentId
+{
+    UIButton *button = [[UIButton alloc] init];
+    [self.viewsDictionary setObject:button forKey:[NSString stringWithFormat:@"%d", viewId]];
+    UIView *parentView = [self.viewsDictionary objectForKey:[NSString stringWithFormat:@"%d", parentId]];
+    [parentView addSubview:button];
+}
+
+
 
 @end

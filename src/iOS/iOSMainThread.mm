@@ -10,23 +10,23 @@ iOSMainThread::sendCommands(const std::vector<Command> & commands) {
         break;
         
       case Command::CREATE_FRAMEVIEW: {
-        
+          [viewController createFrameViewWithId:command.getChildInternalId() parentId:command.getInternalId()];
       }
         break;
         
       case Command::CREATE_LINEAR_LAYOUT: {
-        
+          [viewController createLinearLayoutWithId:command.getChildInternalId() parentId:command.getInternalId() direction:command.getValue()];
       }
         break;
         
       case Command::CREATE_TEXT: {
-        
+          [viewController createTextWithId:command.getChildInternalId() parentId:command.getInternalId()];
       }
         break;
 
       case Command::CREATE_BUTTON: {
 	// Create button here with the id command.getChildInternalId() and put it as a child of element identified by command.getInternalId()
-
+          [viewController createButtonWithId:command.getChildInternalId() parentId:command.getInternalId()];
       }
 	break;
         
