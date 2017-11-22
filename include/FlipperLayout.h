@@ -23,6 +23,9 @@ class FlipperLayout : public Element {
   }
 
   void setVisibleView(int position) {
+    if (position >= 0 && position < getChildren().size()) {
+      getChildren()[position]->refresh();
+    }
     Command c(Command::SET_INT_VALUE, getInternalId());
     c.setValue(position);
     sendCommand(c);
