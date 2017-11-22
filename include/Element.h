@@ -65,6 +65,7 @@ class Element : public EventHandler {
     if (isInitialized()) {
       element->initialize(thread);
       element->initializeChildren();
+      element->load();
     }
     return *element;
   }  
@@ -76,6 +77,7 @@ class Element : public EventHandler {
     if (isInitialized()) {
       element->initialize(thread);
       element->initializeChildren();
+      element->load();
     }
     return *element;
   }  

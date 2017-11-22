@@ -25,7 +25,6 @@ Element::initialize(PlatformThread * _thread) {
     thread = _thread;
     registerElement(this);
     create();
-    load();
     if (!pendingCommands.empty()) {
       if (thread->isInTransaction()) {
         for (auto & c : pendingCommands) {
