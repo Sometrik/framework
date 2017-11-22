@@ -42,7 +42,7 @@ used to find a widget by its id.
 - The example application tries to create application, frame view, linear layout, text label and a button, so you should start by implementing the commands CREATE_FRAMEVIEW, CREATE_LINEAR_LAYOUT, CREATE_TEXT, CREATE_BUTTON. CREATE_APPLICATION command can be ignored for now.
   - Frame view is just a widget that covers the whole window, and can show its child widgets layered independently.
   - It is possible that linear layout can be implemented using UIStackView. However, the idea is that the linear layout positions its children eiher vertically or horizontally and adjusts their positions if some are deleted.
-- Open the file iOSFramework.mm and start adding code to _sendCommands()_ method. The language for the file is Objective-C++, so you can mix Objective-C and C++ without problems.
+- Open the file iOSMainThread.mm and start adding code to _sendCommands()_ method. The language for the file is Objective-C++, so you can mix Objective-C and C++ without problems.
 
 # iOSMainThread and iOSThread
 
