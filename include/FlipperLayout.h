@@ -23,6 +23,7 @@ class FlipperLayout : public Element {
   }
 
   void setVisibleView(int position) {
+    visible_view_index = position;
     if (position >= 0 && position < getChildren().size()) {
       getChildren()[position]->refresh();
     }
@@ -31,11 +32,21 @@ class FlipperLayout : public Element {
     sendCommand(c);
   }
 
+  bool isChildVisible(const Element & child) const override {
+    if (visible_view_index >= 0 && visible_view_index < getChildren().size()) {
+      return getChildren()[visible_view_index]->getInternalId() == child.getInternalId();
+    } else {
+      return false;
+    }
+  }
+
  protected:
   void create() override {
     Command c(Command::CREATE_FLIPPER_LAYOUT, getParentInternalId(), getInternalId());
     sendCommand(c);
   }
+
+  int visible_view_index = 0;
 };
 
 #endif
