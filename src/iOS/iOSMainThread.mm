@@ -4,6 +4,26 @@ void
 iOSMainThread::sendCommands(const std::vector<Command> & commands) {
   for (auto & command : commands) {
     switch (command.getType()) {
+      case Command::CREATE_APPLICATION: {
+
+      }
+        break;
+        
+      case Command::CREATE_FRAMEVIEW: {
+        
+      }
+        break;
+        
+      case Command::CREATE_LINEAR_LAYOUT: {
+        
+      }
+        break;
+        
+      case Command::CREATE_TEXT: {
+        
+      }
+        break;
+
       case Command::CREATE_BUTTON: {
 	// Create button here with the id command.getChildInternalId() and put it as a child of element identified by command.getInternalId()
 
