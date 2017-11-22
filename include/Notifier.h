@@ -5,6 +5,7 @@
 
 #include <memory>
 #include <vector>
+#include <functional>
 
 #include <shims.h>
 
