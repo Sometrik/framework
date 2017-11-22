@@ -70,37 +70,47 @@ as needed.
 
 Command | Description
 ------- | -----------
-CREATE_APPLICATION | Creates an application object which is a parent for all views
-CREATE_FRAMEVIEW | Creates a simple top level view that can show multiple overlaid child views
-CREATE_NAVIGATIONVIEW | Creates a drawer navigation layout or similar
-CREATE_TEXTFIELD | Creates a single-line text input
-CREATE_BUTTON | Creates a button
-CREATE_LINEAR_LAYOUT | Creates a linear layout, either vertical or horizontal
+CREATE_APPLICATION | Creates an application object which is a parent for all views (text : app bundle name)
+CREATE_FRAMEVIEW | Creates a simple top level view that can show multiple overlaid child views (text : title)
+CREATE_NAVIGATIONVIEW | Creates a drawer navigation layout or similar 
+CREATE_TEXTFIELD | Creates a single-line text input (text : initial value)
+CREATE_BUTTON | Creates a button (text : caption)
+CREATE_LINEAR_LAYOUT | Creates a linear layout, either vertical or horizontal (value : direction)
 CREATE_FRAME_LAYOUT | Creates a layout that can show multiple overlaid child views
 CREATE_SCROLL_LAYOUT | Creates a vertically scrollable layout
 CREATE_FLIPPER_LAYOUT | Creates a layout that shows one of its children and allows the changing of the visible child by swipe or by a command.
 CREATE_EVENT_LAYOUT | Creates an event layout. Event layout has a single child, and can capture and send click events.
-CREATE_TEXT | Creates a label
-CREATE_DIALOG | Creates a dialog
-CREATE_IMAGEVIEW | Creates an image 
-CREATE_ACTION_SHEET | Creates an action sheet / popup menu
+CREATE_TEXT | Creates a label (text : content)
+CREATE_DIALOG | Creates a dialog (text : title)
+CREATE_IMAGEVIEW | Creates an image (text : url, width : width in dip, height : height in dip)
+CREATE_ACTION_SHEET | Creates an action sheet / popup menu (text : title)
 CREATE_ACTIONBAR | Creates an action bar / a bar for buttons that is at the top of the view
 CREATE_NAVIGATIONBAR | Creates a navigation bar / a bar for buttons that is at the bottom of the view
 CREATE_PROGRESSBAR | Creates a progress spinner
-CREATE_TOAST | Creates a short notification message that hides itself after a specified duration
+CREATE_TOAST | Creates a short notification message that hides itself after a specified duration (text : message, value : duration)
 DELETE_ELEMENT | Deletes an element
 REMOVE_CHILD | Removes a child
-REORDER_CHILD | Modifies the order of the children by moving single child to a new position
+REORDER_CHILD | Modifies the order of the children by moving single child to a new position (value : new position)
 CLEAR | Clears the content of an image, for example, and frees the memory
-SET_INT_VALUE | ??
-SET_TEXT_VALUE | Sets the value of text fields and labels
-SET_VISIBILITY | Sets the visibility of an element
-SET_STYLE | Sets a style specified by a key and a values
-ADD_IMAGE_URL | Adds an URL and dimensions to a 
-UPDATE_PREFERENCE | Updates user preferences specified by a key and a value
-DELETE_PREFERENCE | Deletes an user preference
+SET_INT_VALUE | Sets an integer or boolean value for switches and checkboxes (value : the value)
+SET_TEXT_VALUE | Sets the value of text fields and labels (text : the value)
+SET_VISIBILITY | Sets the visibility of an element (value : 0=invisible, 1=visible)
+SET_STYLE | Sets a style specified by a key and a values (text : style name, text2 : style value)
+ADD_IMAGE_URL | Adds an URL and dimensions to an image (text : url, width : width, height : height)
+UPDATE_PREFERENCE | Updates user preferences specified by a key and a value (text : attribute name, text2 : attribute value)
+DELETE_PREFERENCE | Deletes an user preference (text : attribute name)
 COMMIT_PREFERENCES | Stores user preferences
-CREATE_TIMER | Creates a timer with a specified interval
+CREATE_TIMER | Creates a timer with a specified interval (value : interval in milliseconds)
+
+### Accessors
+
+Value | Accessor
+----- | --------
+text | command.getTextValue() -> std::string
+text2 | command.getTextValue() -> std::string
+value | command.getValue() -> int
+width | command.getWidth() -> int
+height | command.getHeight() -> int
 
 ## Styles
 
