@@ -22,6 +22,7 @@ public class FWFrameLayout extends FrameLayout implements NativeCommandHandler {
     this.activeStyle = new ViewStyleManager(frame.bitmapCache, scale, false);
 
     setClickable(is_clickable);
+    setFocusable(is_clickable);
       
     if (is_clickable) {      
       final FWFrameLayout layout = this;
@@ -29,10 +30,12 @@ public class FWFrameLayout extends FrameLayout implements NativeCommandHandler {
       setOnTouchListener(new OnTouchListener() {
       @Override
       public boolean onTouch(View v, MotionEvent event) {
-	if (event.getAction() == MotionEvent.ACTION_DOWN || event.getAction() == MotionEvent.ACTION_HOVER_ENTER) {
+	if (event.getAction() == MotionEvent.ACTION_DOWN || event.getAction() == MotionEvent.ACTION_POINTER_DOWN || event.getAction() == MotionEvent.ACTION_HOVER_ENTER) {
 	  layout.currentStyle = layout.activeStyle;
 	  layout.currentStyle.apply(layout);
-	} else if (event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_HOVER_EXIT || event.getAction() == MotionEvent.ACTION_OUTSIDE) {
+	} else if (event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_POINTER_UP ||
+	    	event.getAction() == MotionEvent.ACTION_HOVER_EXIT || event.getAction() == MotionEvent.ACTION_OUTSIDE ||
+	    	event.getAction() == MotionEvent.ACTION_CANCEL) {
 	  layout.currentStyle = layout.normalStyle;
 	  layout.currentStyle.apply(layout);
 	}
