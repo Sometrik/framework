@@ -107,7 +107,7 @@ CREATE_TIMER | Creates a timer with a specified interval (value : interval in mi
 Value | Accessor
 ----- | --------
 text | command.getTextValue() -> std::string
-text2 | command.getTextValue() -> std::string
+text2 | command.getTextValue2() -> std::string
 value | command.getValue() -> int
 width | command.getWidth() -> int
 height | command.getHeight() -> int
