@@ -5,6 +5,8 @@
 #include <LinearLayout.h>
 #include <Button.h>
 #include <ScrollLayout.h>
+#include <Switch.h>
+#include <TextField.h>
 
 #include <iostream>
 
@@ -18,9 +20,16 @@ Example1::Example1() : FWApplication("com.sometrik.example1")
   auto layout = std::make_shared<LinearLayout>(FW_VERTICAL);
   view->addChild(layout);
 
-  auto title = make_shared<TextLabel>("Hello World!");
+  auto title = make_shared<TextLabel>("Hello again!");
   title->style("font-size", 20);
   layout->addChild(title);
+
+  auto nameLayout = make_shared<LinearLayout>(FW_HORIZONTAL);
+  layout->addChild(nameLayout);
+  nameLayout->addChild(make_shared<TextLabel>("Kirjoita nimesi:"));
+  nameLayout->addChild(make_shared<TextField>());
+        
+  layout->addChild(make_shared<Switch>("On", "Off"));
 
   auto buttonLayout = std::make_shared<LinearLayout>(FW_HORIZONTAL);
   buttonLayout->addChild(make_shared<Button>("Click me!"));
