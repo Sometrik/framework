@@ -21,21 +21,22 @@ extern FWApplication * applicationMain();
 @implementation ViewController
 
 - (void)viewDidLoad {
-    [super viewDidLoad];
-    // Do any additional setup after loading the view, typically from a nib.
+  [super viewDidLoad];
+  // Do any additional setup after loading the view, typically from a nib.
   
-    cerr << "Starting app\n";
+  cerr << "Starting app\n";
   
-    // Creating the C++ app
-    std::shared_ptr<FWApplication> application(applicationMain());
+  // Creating the C++ app
+  std::shared_ptr<FWApplication> application(applicationMain());
   
-    mainThread = make_shared<iOSMainThread>(application, application);
+  mainThread = make_shared<iOSMainThread>(application, application);
+  mainThread->viewController = self;
 //    mainThread->setActualDisplayWidth(screenWidth);
 //    mainThread->setActualDisplayHeight(screenHeight);
 //    mainThread->setDisplayScale(displayScale);
   
-    application->initialize(mainThread.get());
-    application->initializeChildren();
+  application->initialize(mainThread.get());
+  application->initializeChildren();
 }
 
 - (void)viewWillTransitionToSize: (CGSize)size withTransitionCoordinator:(id)coordinator

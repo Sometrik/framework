@@ -7,6 +7,8 @@
 #include <FilenameConverter.h>
 #include <ContextQuartz2D.h>
 
+#include "ViewController.h"
+
 namespace canvas {
   class BundleFilenameConverter : public FilenameConverter {
     public:
@@ -78,8 +80,11 @@ public:
   
   std::unique_ptr<Logger> createLogger(const std::string & name) const override;
 
+  ViewController * viewController = 0;
+  
  protected:
-  void setDestroyed() { }
+  void setDestroyed() override { }
+  
 };
 
 #endif
