@@ -21,6 +21,8 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
     super(frameWork);
     this.frame = frameWork;
     this.setId(id);
+    this.setFocusable(false);
+    this.setClickable(false);
     
     final float scale = getContext().getResources().getDisplayMetrics().density;
     this.normalStyle = currentStyle = new ViewStyleManager(frame.bitmapCache, scale, true);
