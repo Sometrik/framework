@@ -1,5 +1,7 @@
 #include "iOSMainThread.h"
 
+#include <ValueEvent.h>
+
 void
 iOSMainThread::sendCommands(const std::vector<Command> & commands) {
   for (auto & command : commands) {
@@ -20,19 +22,29 @@ iOSMainThread::sendCommands(const std::vector<Command> & commands) {
         break;
         
       case Command::CREATE_TEXT: {
-          NSString * value = [NSString stringWithUTF8String:command.getTextValue().c_str()];
-          [viewController createTextWithId:command.getChildInternalId() parentId:command.getInternalId()];
+        NSString * value = [NSString stringWithUTF8String:command.getTextValue().c_str()];
+        [viewController createTextWithId:command.getChildInternalId() parentId:command.getInternalId() value:value];
       }
         break;
 
       case Command::CREATE_BUTTON: {
-          NSString * caption = [NSString stringWithUTF8String:command.getTextValue().c_str()];
-          [viewController createButtonWithId:command.getChildInternalId() parentId:command.getInternalId()];
+        NSString * caption = [NSString stringWithUTF8String:command.getTextValue().c_str()];
+        [viewController createButtonWithId:command.getChildInternalId() parentId:command.getInternalId() caption:caption];
       }
 	break;
         
       case Command::CREATE_TEXTFIELD: {
-        [viewController createTextField:command.getChildInternalId() parent:command.getInternalId()];
+        [viewController createTextFieldWithId:command.getChildInternalId() parentId:command.getInternalId()];
+      }
+        break;
+        
+      case Command::CREATE_SCROLL_LAYOUT: {
+        
+      }
+        break;
+        
+      case Command::CREATE_SWITCH: {
+        [viewController createSwitch:command.getChildInternalId() parentId:command.getInternalId()];
       }
         break;
         
@@ -59,6 +71,18 @@ iOSMainThread::setImageData(int internal_id, std::shared_ptr<canvas::PackedImage
 void
 iOSMainThread::setSurface(int internal_id, canvas::Surface & surface) {
 
+}
+
+void
+iOSMainThread::sendIntValue(int viewId, int value) {
+    ValueEvent ev(value);
+    sendEvent(viewId, ev);
+}
+
+void
+iOSMainThread::sendTextValue(int viewId, const std::string & value) {
+    ValueEvent ev(value);
+    sendEvent(viewId, ev);
 }
 
 class iOSLogger : public Logger {

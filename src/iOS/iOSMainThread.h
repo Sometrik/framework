@@ -80,6 +80,9 @@ public:
   
   std::unique_ptr<Logger> createLogger(const std::string & name) const override;
 
+  void sendIntValue(int viewId, int value);
+  void sendTextValue(int viewId, const std::string & value);
+  
   ViewController * viewController = 0;
   
  protected:
