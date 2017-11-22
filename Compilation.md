@@ -35,7 +35,7 @@ httpclient/src/SHA1.cpp
 httpclient/src/iOSClient.mm
 ```
 
-Add the following include directories:
+Add the following include directories (in the project settings: Build Settings / Search Paths / Header Search paths):
 
 ```
 framework/include
@@ -43,9 +43,10 @@ canvas/include
 httpclient/include
 ```
 
-Possibly, add the following libraries:
+Add the following frameworks / libraries:
+
 ```
-libiconv
-libz ??
+ImageIO.framework
 ```
+
 Compile.
