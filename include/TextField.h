@@ -38,6 +38,7 @@ class TextField : public InputElement {
  protected:
   void create() override {
     Command c(Command::CREATE_TEXTFIELD, getParentInternalId(), getInternalId());
+    c.setTextValue(value);
     sendCommand(c);
   }
 
