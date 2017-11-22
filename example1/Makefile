@@ -56,8 +56,7 @@ OBJECTS = \
 	../../httpclient/src/OAuth.o \
 	../../httpclient/src/Base64.o \
 	../../httpclient/src/SHA1.o \
-	../../httpclient/src/CurlClient.o \
-	../../httpclient/src/RateLimiter.o
+	../../httpclient/src/CurlClient.o
 
 ### Targets: ###
 
