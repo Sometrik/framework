@@ -5,7 +5,7 @@ iOSMainThread::sendCommands(const std::vector<Command> & commands) {
   for (auto & command : commands) {
     switch (command.getType()) {
       case Command::CREATE_APPLICATION: {
-
+        NSString * appName = [NSString stringWithUTF8String:command.getTextValue().c_str()];
       }
         break;
         
@@ -20,12 +20,13 @@ iOSMainThread::sendCommands(const std::vector<Command> & commands) {
         break;
         
       case Command::CREATE_TEXT: {
+          NSString * value = [NSString stringWithUTF8String:command.getTextValue().c_str()];
           [viewController createTextWithId:command.getChildInternalId() parentId:command.getInternalId()];
       }
         break;
 
       case Command::CREATE_BUTTON: {
-	// Create button here with the id command.getChildInternalId() and put it as a child of element identified by command.getInternalId()
+          NSString * caption = [NSString stringWithUTF8String:command.getTextValue().c_str()];
           [viewController createButtonWithId:command.getChildInternalId() parentId:command.getInternalId()];
       }
 	break;
