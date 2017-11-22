@@ -898,7 +898,7 @@ protected:
 	auto sw = gtk_scrolled_window_new(0, 0);
 	// gtk_scrolled_window_set_min_content_height((GtkScrolledWindow*)sw, 400);
 	gtk_scrolled_window_set_policy((GtkScrolledWindow*)sw, GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
-	addView(command, sw, true);
+	addView(command, sw, false);
       }
 	break;      
 
@@ -979,8 +979,13 @@ protected:
   void setStyle(int id, Selector selector, const std::string & key, const std::string & value) {
     auto widget = views_by_id[id];
     if (!widget) return;
-    
-    if (key == "height") {
+
+    if (key == "min-height") {
+      if (GTK_IS_SCROLLED_WINDOW(widget)) {
+	int h = stoi(value);
+	gtk_scrolled_window_set_min_content_height(GTK_SCROLLED_WINDOW(widget), h);
+      }
+    } else if (key == "height") {
       GtkWidget * parent = gtk_widget_get_parent(widget);
       bool match_parent = value == "match-parent";
       bool wrap_content = value == "wrap-content";
@@ -1528,7 +1533,7 @@ void
 GtkMainThread::on_settings_button(GtkWidget * widget, gpointer data) {
   cerr << "got settings\n";
   GtkMainThread * mainThread = (GtkMainThread*)data;
-  SysEvent ev(SysEvent::DEBUG);
+  SysEvent ev(SysEvent::SHOW_DEBUG);
   Element::postEventToElement(mainThread->getApplication().getInternalId(), ev);
 }
 
