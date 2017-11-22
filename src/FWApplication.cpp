@@ -196,7 +196,7 @@ FWApplication::onSysEvent(SysEvent & ev) {
       Command c(Command::QUIT_APP, poppedView);
       sendCommand(c);
     }
-  } else if (ev.getType() == SysEvent::DEBUG) {
+  } else if (ev.getType() == SysEvent::SHOW_DEBUG) {
     auto dialog = make_shared<DebugDialog>();
     dialog->showModal(this);
   }
