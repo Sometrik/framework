@@ -52,4 +52,20 @@ extern FWApplication * applicationMain();
   [super didReceiveMemoryWarning];
 }
 
+- (void)createTextField: (int)elementId parent:(int)parentId {
+  CGRect someRect = CGRectMake(0.0, 0.0, 100.0, 30.0);
+  UITextField* text = [[UITextField alloc] initWithFrame:someRect];
+  UIView* view = [[UIView alloc] initWithFrame:someRect];
+
+  // Associate the created view with the specified elementId
+  // Add the created view as a child to the object specified by parentId
+}
+
+- (void)setStyle: (int)elementId key:(NSString *)key value:(NSString *)value {
+  // Find object with the id elementId
+  if ([key isEqualToString:@"width"]) {
+    // set width of the object to value
+  }
+}
+
 @end

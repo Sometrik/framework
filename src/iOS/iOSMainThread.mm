@@ -29,6 +29,18 @@ iOSMainThread::sendCommands(const std::vector<Command> & commands) {
 
       }
 	break;
+        
+      case Command::CREATE_TEXTFIELD: {
+        [viewController createTextField:command.getChildInternalId() parent:command.getInternalId()];
+      }
+        break;
+        
+      case Command::SET_STYLE: {
+        NSString * key = [NSString stringWithUTF8String:command.getTextValue().c_str()];
+        NSString * value = [NSString stringWithUTF8String:command.getTextValue().c_str()];
+        [viewController setStyle:command.getInternalId() key:key value:value];
+      }
+        break;
     }
   }
 }
