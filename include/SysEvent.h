@@ -20,7 +20,7 @@ public:
     THREAD_TERMINATED,
     LANGUAGE_CHANGED,
     BACK,
-    DEBUG
+    SHOW_DEBUG
   };
  SysEvent(Type _type) : type(_type) { }
 
