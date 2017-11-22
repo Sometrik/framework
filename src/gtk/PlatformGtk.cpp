@@ -542,6 +542,13 @@ protected:
       }
 	break;      
 
+      case Command::CREATE_FLIPPER_LAYOUT: {
+	auto flipper = gtk_stack_new();
+	gtk_stack_set_transition_type((GtkStack*)flipper, GTK_STACK_TRANSITION_TYPE_SLIDE_LEFT_RIGHT);
+	addView(command, stack);
+      }
+	break;
+	
       case Command::CREATE_FRAME_LAYOUT: {
 	auto frame = gtk_overlay_new();
 	addView(command, frame);
@@ -681,6 +688,9 @@ protected:
 	auto view = views_by_id[command.getInternalId()];
 	if (!view) {
 	  cerr << "no view " << command.getInternalId() << " for SET_INT_VALUE\n";
+	} else if (GTK_IS_STACK(view)) {
+	  // Flipper
+	  
 	} else if (gtk_widget_get_parent(view) == stack) {
 	  auto & app = getApplication();
 	  app.addToHistory(app.getActiveViewId());
@@ -898,7 +908,7 @@ protected:
 	auto sw = gtk_scrolled_window_new(0, 0);
 	// gtk_scrolled_window_set_min_content_height((GtkScrolledWindow*)sw, 400);
 	gtk_scrolled_window_set_policy((GtkScrolledWindow*)sw, GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
-	addView(command, sw, false);
+	addView(command, sw, true);
       }
 	break;      
 
