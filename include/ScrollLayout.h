@@ -22,6 +22,12 @@ class ScrollLayout : public Element {
     ev.setHandled(true);
   }
 
+  void refresh() override {
+    for (auto & child : getChildren()) {
+      child->refresh();
+    }
+  }
+
  protected:
   void create() override {
     Command c(Command::CREATE_SCROLL_LAYOUT, getParentInternalId(), getInternalId());
