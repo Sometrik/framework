@@ -99,7 +99,13 @@ public class FWImageView extends ImageView implements NativeCommandHandler {
   public void reshape(int value, int size) { }
 
   @Override
-  public void setViewVisibility(boolean visible) { }
+  public void setViewVisibility(boolean visible) { 
+    if (visible) {
+      setVisibility(ImageView.VISIBLE);
+    } else {
+      setVisibility(ImageView.GONE);
+    }
+  }
 
   @Override
   public void setStyle(Selector selector, String key, String value) {
