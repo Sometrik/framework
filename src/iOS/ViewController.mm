@@ -2,13 +2,15 @@
 
 #include <FWApplication.h>
 
+#include "iOSMainThread.h"
+
 #include <iostream>
 #include <memory>
 
 using namespace std;
 
 // Pointer to main thread
-// std::shared_ptr<iOSMainThread> mainThread;
+std::shared_ptr<iOSMainThread> mainThread;
 
 // Declare C++ function
 extern FWApplication * applicationMain();
@@ -25,12 +27,15 @@ extern FWApplication * applicationMain();
     cerr << "Starting app\n";
   
     // Creating the C++ app
-    FWApplication * app = applicationMain();
+    std::shared_ptr<FWApplication> application(applicationMain());
   
-    // mainThread = make_shared<iOSMainThread>(application, application);
-    // mainThread->setActualDisplayWidth(screenWidth);
-    // mainThread->setActualDisplayHeight(screenHeight);
-    // mainThread->setDisplayScale(displayScale);
+    mainThread = make_shared<iOSMainThread>(application, application);
+//    mainThread->setActualDisplayWidth(screenWidth);
+//    mainThread->setActualDisplayHeight(screenHeight);
+//    mainThread->setDisplayScale(displayScale);
+  
+    application->initialize(mainThread.get());
+    application->initializeChildren();
 }
 
 - (void)viewWillTransitionToSize: (CGSize)size withTransitionCoordinator:(id)coordinator
