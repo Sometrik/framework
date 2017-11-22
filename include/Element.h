@@ -173,9 +173,6 @@ class Element : public EventHandler {
 
   void initializeChildren();
 
-  void setClickable(bool t) { is_clickable = t; }
-  bool isClickable() const { return is_clickable; }
-
   static void postEventToElement(int internal_id, Event & ev) {
     auto e = getRegisteredElement(internal_id);
     if (e) {
@@ -226,7 +223,7 @@ class Element : public EventHandler {
   unsigned int flags; // initialized in constructor
   bool has_error = false;
   std::vector<Command> pendingCommands;
-  bool is_enabled = true, is_clickable = false;
+  bool is_enabled = true;
 
   static std::unordered_map<int, Element *> registered_elements;
   static Mutex mutex;

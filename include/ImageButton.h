@@ -9,7 +9,6 @@ public:
   ImageButton(const std::string & _filename, int _id = 0) : EventLayout(_id) {
     image = std::make_shared<ImageElement>(_filename, _id);
     addChild(image);
-    setClickable(true);
   }
   
   void setImageFile(const std::string & filename) {
