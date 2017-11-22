@@ -46,6 +46,7 @@ Element::initializeChildren() {
     for (auto & c : getChildren()) {
       c->initialize(thread);
       c->initializeChildren();
+      c->load();
     }
   }
 }

@@ -187,10 +187,10 @@ class Element : public EventHandler {
     auto it = registered_elements.find(internal_id);
     return it != registered_elements.end() ? it->second : 0;
   }
+  virtual void load() { }
 
  protected:
   virtual void create() { }
-  virtual void load() { }
 
   virtual bool isChildVisible(const Element & child) const {
     if (!child.is_visible) return false;
