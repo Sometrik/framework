@@ -59,23 +59,24 @@ class AppInputDialog : public Dialog {
     mainLayout->style("background-color", "#ffffff");
     addChild(mainLayout);
 
-    auto dialogTitle = std::make_shared<TextLabel>(title);
-    dialogTitle->style("background-color", "#ffffff");
-    dialogTitle->style("width", "match-parent");
-    dialogTitle->style("gravity", "center-horizontal");
-    dialogTitle->style("height", "wrap-content");
-    dialogTitle->style("font-size", "24");
-    dialogTitle->style("padding-top", "12");
-    dialogTitle->style("padding-bottom", "16");
-    dialogTitle->style("font-weight", "bold");
-    dialogTitle->style("padding-left", "14");
-    dialogTitle->style("padding-right", "14");
-    dialogTitle->style("color", "#c1272d");
-    mainLayout->addChild(dialogTitle);
+//    auto dialogTitle = std::make_shared<TextLabel>(title);
+//    dialogTitle->style("background-color", "#ffffff");
+//    dialogTitle->style("width", "match-parent");
+//    dialogTitle->style("gravity", "center-horizontal");
+//    dialogTitle->style("height", "wrap-content");
+//    dialogTitle->style("font-size", "24");
+//    dialogTitle->style("padding-top", "12");
+//    dialogTitle->style("padding-bottom", "16");
+//    dialogTitle->style("font-weight", "bold");
+//    dialogTitle->style("padding-left", "14");
+//    dialogTitle->style("padding-right", "14");
+//    dialogTitle->style("color", "#c1272d");
+//    mainLayout->addChild(dialogTitle);
 
     auto dialogMessage = make_shared<TextLabel>(message);
     dialogMessage->style("padding-left", "14");
     dialogMessage->style("padding-right", "14");
+    dialogMessage->style("padding-top", "8");
     mainLayout->addChild(dialogMessage);
 
     textField = make_shared<TextField>();

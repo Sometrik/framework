@@ -5,25 +5,31 @@ import com.sometrik.framework.NativeCommand.Selector;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.text.Layout;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.view.Window;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 public class FWDialog extends Dialog implements NativeCommandHandler {
 
-  FrameWork frame;
-  ViewGroup baseView;
-  int id;
-  ViewStyleManager normalStyle, activeStyle, currentStyle;
+  private FrameWork frame;
+  private LinearLayout baseView;
+  private int id;
+  private ViewStyleManager normalStyle, activeStyle, currentStyle;
+  private FWTextView titleView;
   
   public FWDialog(final FrameWork frame, final int id) {
     super(frame);
     requestWindowFeature(Window.FEATURE_NO_TITLE);
     this.frame = frame;
     this.id = id;
-    baseView = new FrameLayout(frame);
+    baseView = new LinearLayout(frame);
+    baseView.setOrientation(LinearLayout.VERTICAL);
     setContentView(baseView);
     LayoutParams params = getWindow().getAttributes();
     params.height = LayoutParams.WRAP_CONTENT;
@@ -33,6 +39,26 @@ public class FWDialog extends Dialog implements NativeCommandHandler {
     final float scale = getContext().getResources().getDisplayMetrics().density;
     this.normalStyle = currentStyle = new ViewStyleManager(frame.bitmapCache, scale, true);
     this.activeStyle = new ViewStyleManager(frame.bitmapCache, scale, false);
+    
+    
+    titleView = new FWTextView(frame, false);
+    titleView.setStyle(Selector.NORMAL, "background-color", "#ffffff");
+    titleView.setStyle(Selector.NORMAL, "width", "match-parent");
+    titleView.setStyle(Selector.NORMAL, "gravity", "center-horizontal");
+    titleView.setStyle(Selector.NORMAL, "height", "wrap-content");
+    titleView.setStyle(Selector.NORMAL, "font-size", "24");
+    titleView.setStyle(Selector.NORMAL, "padding-top", "12");
+    titleView.setStyle(Selector.NORMAL, "padding-bottom", "12");
+    titleView.setStyle(Selector.NORMAL, "font-weight", "bold");
+    titleView.setStyle(Selector.NORMAL, "padding-left", "14");
+    titleView.setStyle(Selector.NORMAL, "color", "#c1272d");
+    baseView.addView(titleView);
+
+    LinearLayout dividerView = new LinearLayout(frame);
+    LinearLayout.LayoutParams dividerParams = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, 5);
+    dividerView.setBackgroundColor(Color.parseColor("#c1272d"));
+    dividerView.setLayoutParams(dividerParams);
+    baseView.addView(dividerView);
     
     this.setOnCancelListener(new OnCancelListener(){
       @Override
@@ -66,7 +92,7 @@ public class FWDialog extends Dialog implements NativeCommandHandler {
 
   @Override
   public void setValue(String v) {
-    System.out.println("FWDialog couldn't handle command");
+    titleView.setText(v);
   }
 
   @Override
