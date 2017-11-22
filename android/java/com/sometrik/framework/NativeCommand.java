@@ -242,6 +242,15 @@ public class NativeCommand {
 	view.addChild(scrollLayout);
       }
     break;
+    case CREATE_FLIPPER_LAYOUT: {
+      	if (view != null) {
+      	  FWViewFlipper flipper = new FWViewFlipper(frame);
+      	  flipper.setId(getChildInternalId());
+      	  frame.addToViewList(flipper);
+      	  view.addChild(flipper);
+      	}
+      break; 
+    }
     case CREATE_AUTO_COLUMN_LAYOUT:
       if (view != null) {
 	FWAuto auto  = new FWAuto(frame);
