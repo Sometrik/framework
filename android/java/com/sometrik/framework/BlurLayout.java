@@ -109,7 +109,7 @@ public class BlurLayout extends FrameLayout implements NativeCommandHandler {
     topOffset = y + topOffset >= 0 ? topOffset : 0;
 
     int bottomOffset = padding;
-    bottomOffset = y + height + bottomOffset <= screenHeight ? bottomOffset : 0;
+    bottomOffset = y + getHeight() + bottomOffset <= screenHeight ? bottomOffset : 0;
 
     // Create parent view bitmap, cropped to the BlurLayout area with above padding.
     Bitmap bitmap;
