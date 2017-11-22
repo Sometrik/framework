@@ -32,7 +32,6 @@ httpclient/src/FNV.cpp
 httpclient/src/OAuth.cpp
 httpclient/src/Base64.cpp
 httpclient/src/SHA1.cpp
-httpclient/src/RateLimiter.cpp
 httpclient/src/iOSClient.mm
 ```
 
