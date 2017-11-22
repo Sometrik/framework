@@ -494,6 +494,7 @@ public class NativeCommand {
       break;
     case CREATE_DIALOG:
       FWDialog dialog = new FWDialog(frame, childInternalId);
+      dialog.setValue(getTextValueAsString());
       frame.addToViewList(dialog);
       break;
     case CREATE_ACTION_SHEET:
