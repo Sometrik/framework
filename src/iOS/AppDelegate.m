@@ -38,9 +38,9 @@
   CGRect screenBounds = [[UIScreen mainScreen] bounds];
 
   window = [[UIWindow alloc] initWithFrame: screenBounds];
-  view = [[OpenGLView alloc] initWithFrame: screenBounds];
+  // view = [[OpenGLView alloc] initWithFrame: screenBounds];
   controller = [[ViewController alloc] init];
-  controller.view = view;
+  // controller.view = view;
   //  [window addSubview: view];
   [window setRootViewController:controller];
   [window makeKeyAndVisible];
@@ -49,19 +49,19 @@
 // the app is going to be suspended to the background,
 - (void)applicationWillResignActive:(UIApplication *)application
 {
-  [view stopRenderLoop];
+  //  [view stopRenderLoop];
 }
  
 // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
-  [view startRenderLoop];
+  //  [view startRenderLoop];
 }
 
 // Called when the application is about to terminate. Save data if appropriate.
 - (void)applicationWillTerminate:(UIApplication *)application
 {
-  [view stopRenderLoop];
+  //  [view stopRenderLoop];
 }
 
 - (void) dealloc

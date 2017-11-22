@@ -1,5 +1,4 @@
-#include "OpenGLView.h"
-// #include "ViewController.h"
+#import <UIKit/UIKit.h>  
 
 #if 0
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
@@ -11,7 +10,6 @@
 @interface AppDelegate : NSObject <UIApplicationDelegate> {
 @private
   UIWindow* window;
-  OpenGLView* view;
   UIViewController* controller;
 }
 
