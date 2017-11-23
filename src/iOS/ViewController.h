@@ -17,6 +17,9 @@
 - (void)createScrollLayoutWithId:(int)viewId parentId:(int)parentId;
 - (void)createEventLayoutWithId:(int)viewId parentId:(int)parentId;
 
+- (void)setIntValue:(int)viewId value:(int)value;
+- (void)setTextValue:(int)viewId value:(NSString *)value;
+
 - (void)addToParent:(int)parentId view:(UIView*)view;
 
 - (void)sendIntValue:(int)viewId value:(int)value;

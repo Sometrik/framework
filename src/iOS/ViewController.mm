@@ -216,6 +216,16 @@ extern FWApplication * applicationMain();
     }
 }
 
+- (void)setIntValue:(int)viewId value:(int)value
+{
+	// if view is switch, set state to value
+}
+
+- (void)setTextValue:(int)viewId value:(NSString *)value;
+{
+	// if view is text field or label, set the text
+}
+
 // This method send changed integer or boolean values back to application.
 // For example, a button click sends value 1
 - (void)sendIntValue:(int)viewId value:(int)value {
