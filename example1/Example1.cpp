@@ -16,22 +16,26 @@ using namespace std;
 Example1::Example1() : FWApplication("com.sometrik.example1")
 {
   auto view = std::make_shared<FrameView>();
+  view->style("background-color", "#cccccc");
   addChild(view);
-        
-  auto image = std::make_shared<ImageElement>("test.png");
-  view->addChild(image);
-        
+  
   auto layout = std::make_shared<LinearLayout>(FW_VERTICAL);
   view->addChild(layout);
 
-  auto title = make_shared<TextLabel>("Hello again!");
+  auto image = std::make_shared<ImageElement>("test.png");
+  layout->addChild(image);
+
+  auto title = make_shared<TextLabel>("Hello again!", 1234);
   title->style("font-size", 20);
+  title->style("background-color", "#e03030");
   layout->addChild(title);
 
   auto nameLayout = make_shared<LinearLayout>(FW_HORIZONTAL);
   layout->addChild(nameLayout);
   nameLayout->addChild(make_shared<TextLabel>("Kirjoita nimesi:"));
-  nameLayout->addChild(make_shared<TextField>());
+  
+  textField = make_shared<TextField>();
+  nameLayout->addChild(textField);
         
   layout->addChild(make_shared<Switch>("On", "Off"));
 
@@ -52,6 +56,14 @@ Example1::Example1() : FWApplication("com.sometrik.example1")
   }
   
 }
+
+void
+Example1::onCommandEvent(CommandEvent & ev) {
+  getLogger().println("got command event " + textField->getValue());
+  
+  getChildById(1234).text("Hello " + textField->getValue() + "!");
+}
+
 
 FWApplication * applicationMain() {
   return new Example1();  
