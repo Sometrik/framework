@@ -399,14 +399,13 @@ class ViewStyleManager {
     }
   
     if (view instanceof Button) {
-      GradientDrawable backgroundMask = null;
+      Drawable backgroundMask = null;
       if (borderRadius != null) {
-	backgroundMask = new GradientDrawable();
-	backgroundMask.setColor(Color.parseColor("#000000"));
-	backgroundMask.setCornerRadius(2); // Might be necessary for zero radiuses to work
-	backgroundMask.setCornerRadii(expandRadii(borderRadius));
+	RoundRectShape shape = new RoundRectShape(expandRadii(borderRadius), null, null);
+	backgroundMask = new ShapeDrawable(shape);
+      } else {
+	backgroundMask = new GradientDrawable();	
       }
-      if (backgroundContent == null) backgroundContent = backgroundMask;
       
       int color1 = Color.parseColor("#ffffff");
       int color2 = Color.parseColor("#000000");
