@@ -75,10 +75,20 @@ extern FWApplication * applicationMain();
     [self sendTextValue:viewId value:sender.text];
 }
 
-- (void)setStyle: (int)elementId key:(NSString *)key value:(NSString *)value {
-  // Find object with the id elementId
-  if ([key isEqualToString:@"width"]) {
-    // set width of the object to value
+- (void)setStyle: (int)viewId key:(NSString *)key value:(NSString *)value {
+  UIView *view = [self.viewsDictionary objectForKey:[NSString stringWithFormat:@"%d", viewId]];
+  
+  if ([key isEqualToString:@"background-color"]) {
+    view.backgroundColor = [self colorFromHexString:value];
+  }
+  
+  if ([view isKindOfClass:UILabel.class]) {
+    UILabel *label = (UILabel *)view;
+    
+    if ([key isEqualToString:@"font-size"]) {
+      int b = (int)[value integerValue];
+      label.font = [label.font fontWithSize:b];
+    }
   }
 }
 
@@ -104,7 +114,6 @@ extern FWApplication * applicationMain();
 {
     UIView *view = [[UIView alloc] initWithFrame:self.view.bounds];
     view.tag = viewId;
-    view.backgroundColor = [UIColor darkGrayColor];
     [self.view addSubview:view];
     [self.viewsDictionary setObject:view forKey:[NSString stringWithFormat:@"%d", viewId]];
     //UIView *parentView = [self.viewsDictionary objectForKey:[NSString stringWithFormat:@"%d", parentId]];
@@ -121,7 +130,6 @@ extern FWApplication * applicationMain();
     }
     //stackView.si
     stackView.frame = self.view.frame;
-    stackView.backgroundColor = UIColor.lightGrayColor;
     [self.viewsDictionary setObject:stackView forKey:[NSString stringWithFormat:@"%d", viewId]];
     [self addToParent:parentId view:stackView];
 }
@@ -132,7 +140,6 @@ extern FWApplication * applicationMain();
     label.tag = viewId;
     //label.frame = CGRectMake(0, 0, 50, 20);
     label.text = value;
-    label.backgroundColor = UIColor.blueColor;
     [self.viewsDictionary setObject:label forKey:[NSString stringWithFormat:@"%d", viewId]];
     [self addToParent:parentId view:label];
 }
@@ -179,7 +186,8 @@ extern FWApplication * applicationMain();
     UIImage *image = [UIImage imageNamed:filename];
     UIImageView *imageView = [[UIImageView alloc] initWithImage:image];
     imageView.tag = viewId;
-    imageView.contentScaleFactor = UIViewContentModeScaleAspectFit;
+    imageView.contentScaleFactor = 1.0f;
+    imageView.contentMode = UIViewContentModeScaleAspectFit;
     [self addToParent:parentId view:imageView];
 }
 
@@ -231,6 +239,11 @@ extern FWApplication * applicationMain();
 	// if view is image, set the content
 }
 
+- (void)addImageUrl:(int)viewId url:(NSString *)url width:(int)width height:(int)height
+{
+  
+}
+
 // This method send changed integer or boolean values back to application.
 // For example, a button click sends value 1
 - (void)sendIntValue:(int)viewId value:(int)value {
@@ -241,6 +254,14 @@ extern FWApplication * applicationMain();
 - (void)sendTextValue:(int)viewId value:(NSString *)value {
     string s = [value cStringUsingEncoding:NSUTF8StringEncoding];
     mainThread->sendTextValue(viewId, s);
+}
+
+- (UIColor *)colorFromHexString:(NSString *)hexString {
+  unsigned rgbValue = 0;
+  NSScanner *scanner = [NSScanner scannerWithString:hexString];
+  [scanner setScanLocation:1]; // bypass '#' character
+  [scanner scanHexInt:&rgbValue];
+  return [UIColor colorWithRed:((rgbValue & 0xFF0000) >> 16)/255.0 green:((rgbValue & 0xFF00) >> 8)/255.0 blue:(rgbValue & 0xFF)/255.0 alpha:1.0];
 }
 
 @end
