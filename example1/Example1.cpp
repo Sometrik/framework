@@ -7,6 +7,7 @@
 #include <ScrollLayout.h>
 #include <Switch.h>
 #include <TextField.h>
+#include <ImageElement.h>
 
 #include <iostream>
 
@@ -16,7 +17,10 @@ Example1::Example1() : FWApplication("com.sometrik.example1")
 {
   auto view = std::make_shared<FrameView>();
   addChild(view);
-
+        
+  auto image = std::make_shared<ImageElement>("test.png");
+  view->addChild(image);
+        
   auto layout = std::make_shared<LinearLayout>(FW_VERTICAL);
   view->addChild(layout);
 
