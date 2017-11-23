@@ -82,6 +82,7 @@ CREATE_FLIPPER_LAYOUT | Creates a layout that shows one of its children and allo
 CREATE_EVENT_LAYOUT | Creates an event layout. Event layout has a single child, and can capture and send click events.
 CREATE_TEXT | Creates a label (text : content)
 CREATE_DIALOG | Creates a dialog (text : title)
+CREATE_ALERT_DIALOG | Creates an alert dialog
 CREATE_IMAGEVIEW | Creates an image (text : url, width : width in dip, height : height in dip)
 CREATE_ACTION_SHEET | Creates an action sheet / popup menu (text : title)
 CREATE_ACTIONBAR | Creates an action bar / a bar for buttons that is at the top of the view
