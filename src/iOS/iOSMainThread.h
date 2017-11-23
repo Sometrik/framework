@@ -1,43 +1,9 @@
 #ifndef _IOSMAINTHREAD_H_
 #define _IOSMAINTHREAD_H_
 
-#include <PlatformThread.h>
-
-#include <iOSClient.h>
-#include <FilenameConverter.h>
-#include <ContextQuartz2D.h>
+#include "iOSThread.h"
 
 #include "ViewController.h"
-
-namespace canvas {
-  class BundleFilenameConverter : public FilenameConverter {
-    public:
-      bool convert(const std::string & input, std::string & output) {
-        const char * filename = input.c_str();
-        int n = (int)input.size();
-        for (int i = n - 1; i >= 0; i--)  {
-          if (filename[i] == '/')  {
-            filename = filename + i + 1;
-            break;
-          }
-        }
-        
-        // Given a fileName, convert into a path that can be used to open from the mainBundle
-        NSString* fileNameNS = [NSString stringWithUTF8String:filename];
-        NSString* baseName = [fileNameNS stringByDeletingPathExtension];
-        NSString* extension = [fileNameNS pathExtension];
-        NSString *path = [[NSBundle mainBundle] pathForResource: baseName ofType: extension ];
-        const char * filename2 = [path cStringUsingEncoding:1];
-        if (filename2) {
-            output = filename2;
-            return true;
-        } else {
-            return false;
-        }
-      }
-   };
-};
-
 
 class iOSMainThread : public PlatformThread {
 public:
@@ -75,10 +41,12 @@ public:
   void sendHeartbeat() override { }
       
   std::shared_ptr<PlatformThread> createThread(std::shared_ptr<Runnable> & runnable) override {
-    return std::shared_ptr<PlatformThread>(0);
+    return std::make_shared<iOSThread>(this, application, runnable);
   }
   
-  std::unique_ptr<Logger> createLogger(const std::string & name) const override;
+  std::unique_ptr<Logger> createLogger(const std::string & name) const override {
+    return std::unique_ptr<Logger>(new iOSLogger(name));
+  }
 
   void sendMemoryWarning();
   void sendIntValue(int viewId, int value);

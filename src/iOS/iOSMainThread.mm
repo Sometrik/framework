@@ -118,17 +118,4 @@ iOSMainThread::sendTimerEvent(int timerId) {
     TimerEvent ev(timerId);
     Element::postEventToElement(getApplication().getInternalId(), ev);
 }
-
-class iOSLogger : public Logger {
-public:
-  iOSLogger(const std::string & _name) : Logger(_name) { }
-    
-  void println(const char * s) override {
-    std::cerr << s << std::endl;
-  }
-};
         
-std::unique_ptr<Logger>
-iOSMainThread::createLogger(const std::string & name) const {
-  return std::unique_ptr<Logger>(new iOSLogger(name));
-};
