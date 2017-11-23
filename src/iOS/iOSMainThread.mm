@@ -96,6 +96,12 @@ iOSMainThread::setSurface(int internal_id, canvas::Surface & surface) {
 }
 
 void
+iOSMainThread::sendMemoryWarning() {
+  SysEvent ev(SysEvent::MEMORY_WARNING);
+  Element::postEventToElement(getApplication().getInternalId(), ev);
+}
+
+void
 iOSMainThread::sendIntValue(int viewId, int value) {
     ValueEvent ev(value);
     Element::postEventToElement(viewId, ev);

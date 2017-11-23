@@ -46,7 +46,7 @@ extern FWApplication * applicationMain();
 }
 
 - (void)didReceiveMemoryWarning {
-  
+  mainThread->sendMemoryWarning();
   [super didReceiveMemoryWarning];
 }
 
