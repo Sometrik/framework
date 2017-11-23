@@ -81,6 +81,16 @@ extern FWApplication * applicationMain();
     // set width of the object to value
   }
 }
+
+- (void)setVisibility:(int)viewId visibility:(int)visibility
+{
+    UIView *view = [self.viewsDictionary objectForKey:[NSString stringWithFormat:@"%d", viewId]];
+    bool viewHidden = visibility == 0 ? true : false;
+    if (view) {
+        view.hidden = viewHidden;
+    }
+}
+
 // Lazy initialization
 - (NSMutableDictionary *)viewsDictionary
 {
@@ -120,7 +130,7 @@ extern FWApplication * applicationMain();
 {
     UILabel *label = [[UILabel alloc] init];
     label.tag = viewId;
-    label.frame = CGRectMake(0, 0, 50, 20);
+    //label.frame = CGRectMake(0, 0, 50, 20);
     label.text = value;
     label.backgroundColor = UIColor.blueColor;
     [self.viewsDictionary setObject:label forKey:[NSString stringWithFormat:@"%d", viewId]];
@@ -170,12 +180,29 @@ extern FWApplication * applicationMain();
     UIImageView *imageView = [[UIImageView alloc] initWithImage:image];
     imageView.tag = viewId;
     imageView.contentScaleFactor = UIViewContentModeScaleAspectFit;
-    
+    [self addToParent:parentId view:imageView];
 }
 
 - (void)createScrollLayoutWithId:(int)viewId parentId:(int)parentId
 {
   
+}
+
+- (void)createEventLayoutWithId:(int)viewId parentId:(int)parentId
+{
+    UIView *view = [[UIView alloc] init];
+    view.tag = viewId;
+    UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(viewTapped:)];
+    [view addGestureRecognizer:tapGestureRecognizer];
+    [self.viewsDictionary setObject:view forKey:[NSString stringWithFormat:@"%d", viewId]];
+    [self addToParent:parentId view:view];
+}
+
+- (void)viewTapped:(UIView *)sender
+{
+    int viewId = (int)sender.tag;
+    NSLog(@"viewId = %d", viewId);
+    [self sendIntValue:viewId value:viewId];
 }
 
 - (void)addToParent:(int)parentId view:(UIView*)view

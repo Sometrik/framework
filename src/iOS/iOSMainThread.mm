@@ -29,6 +29,11 @@ iOSMainThread::sendCommands(const std::vector<Command> & commands) {
       }
         break;
         
+      case Command::CREATE_EVENT_LAYOUT: {
+          [viewController createEventLayoutWithId:command.getChildInternalId() parentId:command.getInternalId()];
+      }
+        break;
+            
       case Command::CREATE_TEXT: {
         NSString * value = [NSString stringWithUTF8String:command.getTextValue().c_str()];
         [viewController createTextWithId:command.getChildInternalId() parentId:command.getInternalId() value:value];
@@ -68,7 +73,12 @@ iOSMainThread::sendCommands(const std::vector<Command> & commands) {
         [viewController setStyle:command.getInternalId() key:key value:value];
       }
         break;
-
+            
+      case Command::SET_VISIBILITY: {
+          [viewController setVisibility:command.getInternalId() visibility:command.getValue()];
+      }
+        break;
+            
       case Command::LAUNCH_BROWSER: {
         NSString * input_url = [NSString stringWithUTF8String:command.getTextValue().c_str()];
         NSURL *url = [NSURL URLWithString:input_url];

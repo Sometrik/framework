@@ -6,6 +6,7 @@
 
 - (void)createTextFieldWithId: (int)viewId parentId:(int)parentId;
 - (void)setStyle: (int)viewId key:(NSString *)key value:(NSString *)value;
+- (void)setVisibility:(int)viewId visibility:(int)visibility;
 
 - (void)createFrameViewWithId:(int)viewId parentId:(int)parentId;
 - (void)createLinearLayoutWithId:(int)viewId parentId:(int)parentId direction:(int)direction;
@@ -14,6 +15,7 @@
 - (void)createSwitchWithId:(int)viewId parentId:(int)parentId;
 - (void)createImageWithId:(int)viewId parentId:(int)parentId filename:(NSString *)filename;
 - (void)createScrollLayoutWithId:(int)viewId parentId:(int)parentId;
+- (void)createEventLayoutWithId:(int)viewId parentId:(int)parentId;
 
 - (void)addToParent:(int)parentId view:(UIView*)view;
 
