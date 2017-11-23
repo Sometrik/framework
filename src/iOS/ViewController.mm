@@ -226,6 +226,11 @@ extern FWApplication * applicationMain();
 	// if view is text field or label, set the text
 }
 
+- (void)setImage:(int)viewId data:(UIImage *)data
+{
+	// if view is image, set the content
+}
+
 // This method send changed integer or boolean values back to application.
 // For example, a button click sends value 1
 - (void)sendIntValue:(int)viewId value:(int)value {

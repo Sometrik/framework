@@ -19,6 +19,7 @@
 
 - (void)setIntValue:(int)viewId value:(int)value;
 - (void)setTextValue:(int)viewId value:(NSString *)value;
+- (void)setImage:(int)viewId data:(UIImage *)data;
 
 - (void)addToParent:(int)parentId view:(UIView*)view;
 
