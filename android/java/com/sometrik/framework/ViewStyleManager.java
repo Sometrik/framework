@@ -394,7 +394,7 @@ class ViewStyleManager {
 	}
 	backgroundContent = gradientDrawable;
       }
-    } else if (backgroundColor != null) {
+    } else if (backgroundColor != null && backgroundColor != 0) {
       backgroundContent = new ColorDrawable(backgroundColor);      
     }
   
