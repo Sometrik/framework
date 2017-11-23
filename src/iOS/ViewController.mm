@@ -61,9 +61,22 @@ extern FWApplication * applicationMain();
     text.returnKeyType = UIReturnKeyDone;
     text.clearButtonMode = UITextFieldViewModeWhileEditing;
     text.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
+    [text addTarget:self action:@selector(textFieldChanged:) forControlEvents:UIControlEventEditingChanged];
     [self.viewsDictionary setObject:text forKey:[NSString stringWithFormat:@"%d", viewId]];
     [self addToParent:parentId view:text];
   }
+
+- (void)textFieldChanged:(UITextField *)sender
+{
+    // Get the key(viewId) of the button that was pushed
+    for (NSString *key in self.viewsDictionary) {
+        if ([sender isEqual:[self.viewsDictionary objectForKey:key]]) {
+            NSLog(@"viewId = %@", key);
+            NSLog(@"textField.text = %@", sender.text);
+            [self sendTextValue:key.intValue value:sender.text];
+        }
+    }
+}
 
 - (void)setStyle: (int)elementId key:(NSString *)key value:(NSString *)value {
   // Find object with the id elementId
@@ -119,15 +132,43 @@ extern FWApplication * applicationMain();
 {
     UIButton *button = [[UIButton alloc] init];
     [button setTitle:caption forState:UIControlStateNormal];
+    [button addTarget:self action:@selector(buttonPushed:) forControlEvents:UIControlEventTouchUpInside];
     [self.viewsDictionary setObject:button forKey:[NSString stringWithFormat:@"%d", viewId]];
     [self addToParent:parentId view:button];
+}
+
+- (void)buttonPushed:(UIButton *)sender
+{
+    // Get the key(viewId) of the button that was pushed
+    for (NSString *key in self.viewsDictionary) {
+        if ([sender isEqual:[self.viewsDictionary objectForKey:key]]) {
+            NSLog(@"viewId = %@", key);
+            NSLog(@"buttonTitle = %@", sender.titleLabel.text);
+            [self sendIntValue:key.intValue value:key.intValue];
+        }
+    }
 }
 
 - (void)createSwitchWithId:(int)viewId parentId:(int)parentId
 {
     UISwitch *sw = [[UISwitch alloc] init];
+    [sw addTarget:self action:@selector(switchToggled:) forControlEvents:UIControlEventValueChanged];
     [self.viewsDictionary setObject:sw forKey:[NSString stringWithFormat:@"%d", viewId]];
     [self addToParent:parentId view:sw];
+}
+
+- (void)switchToggled:(UISwitch *)sender
+{
+    // Get the key(viewId) of the button that was pushed
+    for (NSString *key in self.viewsDictionary) {
+        if ([sender isEqual:[self.viewsDictionary objectForKey:key]]) {
+            NSLog(@"viewId = %@", key);
+            bool switchState = sender.on;
+            int value = switchState ? 1 : 0;
+            [self sendIntValue:key.intValue value:value];
+            NSLog(@"Switch is %@", switchState ? @"on" : @"off");
+        }
+    }
 }
 
 - (void)createImageWithId:(int)viewId parentId:(int)parentId filename:(NSString *)filename
