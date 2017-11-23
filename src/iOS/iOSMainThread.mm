@@ -1,6 +1,7 @@
 #include "iOSMainThread.h"
 
 #include <ValueEvent.h>
+#include <TimerEvent.h>
 
 void
 iOSMainThread::sendCommands(const std::vector<Command> & commands) {
@@ -91,13 +92,19 @@ iOSMainThread::setSurface(int internal_id, canvas::Surface & surface) {
 void
 iOSMainThread::sendIntValue(int viewId, int value) {
     ValueEvent ev(value);
-    sendEvent(viewId, ev);
+    Element::postEventToElement(viewId, ev);
 }
 
 void
 iOSMainThread::sendTextValue(int viewId, const std::string & value) {
     ValueEvent ev(value);
-    sendEvent(viewId, ev);
+    Element::postEventToElement(viewId, ev);
+}
+
+void
+iOSMainThread::sendTimerEvent(int timerId) {
+    TimerEvent ev(timerId);
+    Element::postEventToElement(getApplication().getInternalId(), ev);
 }
 
 class iOSLogger : public Logger {

@@ -82,6 +82,7 @@ public:
 
   void sendIntValue(int viewId, int value);
   void sendTextValue(int viewId, const std::string & value);
+  void sendTimerEvent(int timerId);
   
   ViewController * viewController = 0;
   
