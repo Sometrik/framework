@@ -78,7 +78,28 @@ iOSMainThread::sendCommands(const std::vector<Command> & commands) {
           [viewController setVisibility:command.getInternalId() visibility:command.getValue()];
       }
         break;
-            
+        
+      case Command::CREATE_DIALOG: {
+
+      }
+      	break;
+      	
+      case Command::CREATE_ALERT_DIALOG: {
+      	
+      }
+        break;
+
+	  case Command::SET_INT_VALUE: {
+        [viewController setIntValue:comamnd.getInternalId() value:command.getIntValue()];
+	  }
+	    break;
+
+	  case Command::SET_TEXT_VALUE: {
+        NSString * value = [NSString stringWithUTF8String:command.getTextValue().c_str()];
+	    [viewController setTextValue:comamnd.getInternalId() value:value];
+	  }
+	    break;
+	                
       case Command::LAUNCH_BROWSER: {
         NSString * input_url = [NSString stringWithUTF8String:command.getTextValue().c_str()];
         NSURL *url = [NSURL URLWithString:input_url];
