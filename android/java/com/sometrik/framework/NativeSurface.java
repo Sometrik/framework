@@ -88,7 +88,7 @@ public class NativeSurface extends SurfaceView implements NativeCommandHandler {
 
   @Override
   public void setValue(String v) {
-    framework.setCurrentView(this, true);
+    framework.setCurrentView(this);
     drawTimer = new DrawTimer(getId());
     timer.scheduleAtFixedRate(drawTimer, UPDATE_FREQUENCY, UPDATE_FREQUENCY);
   }
@@ -96,11 +96,11 @@ public class NativeSurface extends SurfaceView implements NativeCommandHandler {
   @Override
   public void setValue(int v) {
     if (v == 1){
-      framework.setCurrentView(this, true);
+      framework.setCurrentView(this);
       drawTimer = new DrawTimer(getId());
       timer.scheduleAtFixedRate(drawTimer, UPDATE_FREQUENCY, UPDATE_FREQUENCY);
     } else if (v == 2) {
-      framework.setCurrentView(this, false);
+      framework.setCurrentView(this);
     }
   }
 

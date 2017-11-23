@@ -62,21 +62,21 @@ public class FWFrameView extends FrameLayout implements NativeCommandHandler {
 
     if (v == 1) {
       if (enterAnimation != null) {
-	frame.setCurrentView(this, true, enterAnimation, enterAnimationOtherViewFromX);
+	frame.setCurrentView(this, enterAnimation, enterAnimationOtherViewFromX);
       } else {
-	frame.setCurrentView(this, true);
+	frame.setCurrentView(this);
       }
     } else if (v == 2) {
       if (enterAnimation != null) {
-	frame.setCurrentView(this, false, enterAnimation, enterAnimationOtherViewFromX);
+	frame.setCurrentView(this, enterAnimation, enterAnimationOtherViewFromX);
       } else {
-	frame.setCurrentView(this, false);
+	frame.setCurrentView(this);
       }
     } else if (v == 3) {
       if (returnAnimation != null) {
-	frame.setCurrentView(this, false, returnAnimation, returnAnimationOtherViewFromX);
+	frame.setCurrentView(this, returnAnimation, returnAnimationOtherViewFromX);
       } else {
-	frame.setCurrentView(this, false);
+	frame.setCurrentView(this);
       }
     }
   }
@@ -112,7 +112,7 @@ public class FWFrameView extends FrameLayout implements NativeCommandHandler {
 
 	  @Override
 	  public void onAnimationEnd(Animation animation) {
-	      frame.setCurrentView(holderView, true);
+	      frame.setCurrentView(holderView);
 	  }
 
 	  @Override
@@ -135,7 +135,7 @@ public class FWFrameView extends FrameLayout implements NativeCommandHandler {
 
 	  @Override
 	  public void onAnimationEnd(Animation animation) {
-	      frame.setCurrentView(holderView, true);
+	      frame.setCurrentView(holderView);
 	  }
 
 	  @Override

@@ -183,9 +183,9 @@ public class FlowLayout extends ViewGroup implements NativeCommandHandler {
   @Override
   public void setValue(int v) {
     if (v == 1){
-      frame.setCurrentView(this, true);
+      frame.setCurrentView(this);
     } else if (v == 2) {
-      frame.setCurrentView(this, false);
+      frame.setCurrentView(this);
     }
     
   }
