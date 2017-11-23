@@ -32,6 +32,15 @@ class Dialog : public Element {
 
   const std::string & getTitle() const { return title; }
 
+  void setTitle(const std::string & _title) {
+    title = _title;
+    if (!isInitialized()) {
+      Command c(Command::SET_TEXT_VALUE, getInternalId());
+      c.setTextValue(title);
+      sendCommand(c);
+    }
+  }
+
  protected:
   void endModal(int value = 0) {
     getThread().endModal(value);
