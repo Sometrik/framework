@@ -36,8 +36,8 @@ public:
   void startEventLoop() override { }
   void setImageData(int internal_id, std::shared_ptr<canvas::PackedImageData> image) override;
   void setSurface(int internal_id, canvas::Surface & surface) override;
-  int startModal() override { return 0; }
-  void endModal(int value) override { }
+  int startModal() override;
+  void endModal(int value) override;
   void sendHeartbeat() override { }
       
   std::shared_ptr<PlatformThread> createThread(std::shared_ptr<Runnable> & runnable) override {

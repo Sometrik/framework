@@ -95,6 +95,17 @@ iOSMainThread::setSurface(int internal_id, canvas::Surface & surface) {
 
 }
 
+int
+iOSMainThread::startModal() {
+  CFRunLoopRun();
+  return getModalResultValue();
+}
+
+void
+iOSMainThread::endModal(int value) {
+  CFRunLoopStop(CFRunLoopGetCurrent());
+}
+
 void
 iOSMainThread::sendMemoryWarning() {
   SysEvent ev(SysEvent::MEMORY_WARNING);
