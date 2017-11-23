@@ -68,14 +68,10 @@ extern FWApplication * applicationMain();
 
 - (void)textFieldChanged:(UITextField *)sender
 {
-    // Get the key(viewId) of the button that was pushed
-    for (NSString *key in self.viewsDictionary) {
-        if ([sender isEqual:[self.viewsDictionary objectForKey:key]]) {
-            NSLog(@"viewId = %@", key);
-            NSLog(@"textField.text = %@", sender.text);
-            [self sendTextValue:key.intValue value:sender.text];
-        }
-    }
+    int viewId = [self getIdOfView:sender];
+    NSLog(@"viewId = %d", viewId);
+    NSLog(@"textField.text = %@", sender.text);
+    [self sendTextValue:viewId value:sender.text];
 }
 
 - (void)setStyle: (int)elementId key:(NSString *)key value:(NSString *)value {
@@ -139,14 +135,10 @@ extern FWApplication * applicationMain();
 
 - (void)buttonPushed:(UIButton *)sender
 {
-    // Get the key(viewId) of the button that was pushed
-    for (NSString *key in self.viewsDictionary) {
-        if ([sender isEqual:[self.viewsDictionary objectForKey:key]]) {
-            NSLog(@"viewId = %@", key);
-            NSLog(@"buttonTitle = %@", sender.titleLabel.text);
-            [self sendIntValue:key.intValue value:key.intValue];
-        }
-    }
+    int viewId = [self getIdOfView:sender];
+    NSLog(@"viewId = %d", viewId);
+    NSLog(@"buttonTitle = %@", sender.titleLabel.text);
+    [self sendIntValue:viewId value:viewId];
 }
 
 - (void)createSwitchWithId:(int)viewId parentId:(int)parentId
@@ -159,16 +151,12 @@ extern FWApplication * applicationMain();
 
 - (void)switchToggled:(UISwitch *)sender
 {
-    // Get the key(viewId) of the button that was pushed
-    for (NSString *key in self.viewsDictionary) {
-        if ([sender isEqual:[self.viewsDictionary objectForKey:key]]) {
-            NSLog(@"viewId = %@", key);
-            bool switchState = sender.on;
-            int value = switchState ? 1 : 0;
-            [self sendIntValue:key.intValue value:value];
-            NSLog(@"Switch is %@", switchState ? @"on" : @"off");
-        }
-    }
+    int viewId = [self getIdOfView:sender];
+    NSLog(@"viewId = %d", viewId);
+    bool switchState = sender.on;
+    int value = switchState ? 1 : 0;
+    [self sendIntValue:viewId value:value];
+    NSLog(@"Switch is %@", switchState ? @"on" : @"off");
 }
 
 - (void)createImageWithId:(int)viewId parentId:(int)parentId filename:(NSString *)filename
@@ -190,6 +178,16 @@ extern FWApplication * applicationMain();
     } else {
         [parentView addSubview:view];
     }
+}
+
+- (int)getIdOfView:(UIView *)view
+{
+    for (NSString *key in self.viewsDictionary) {
+        if ([view isEqual:[self.viewsDictionary objectForKey:key]]) {
+            return key.intValue;
+        }
+    }
+    return -1;
 }
 
 // This method send changed integer or boolean values back to application.
