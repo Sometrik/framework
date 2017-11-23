@@ -3,6 +3,8 @@
 #include <ValueEvent.h>
 #include <TimerEvent.h>
 
+using namespace std;
+
 void
 iOSMainThread::sendCommands(const std::vector<Command> & commands) {
   for (auto & command : commands) {
@@ -69,7 +71,7 @@ iOSMainThread::sendCommands(const std::vector<Command> & commands) {
         
       case Command::SET_STYLE: {
         NSString * key = [NSString stringWithUTF8String:command.getTextValue().c_str()];
-        NSString * value = [NSString stringWithUTF8String:command.getTextValue().c_str()];
+        NSString * value = [NSString stringWithUTF8String:command.getTextValue2().c_str()];
         [viewController setStyle:command.getInternalId() key:key value:value];
       }
         break;
@@ -89,14 +91,30 @@ iOSMainThread::sendCommands(const std::vector<Command> & commands) {
       }
         break;
 
+      case Command::REMOVE_CHILD: {
+        
+      }
+        break;
+        
+      case Command::DELETE_ELEMENT: {
+        
+      }
+        break;
+        
+      case Command::ADD_IMAGE_URL: {
+        NSString * url = [NSString stringWithUTF8String:command.getTextValue().c_str()];
+        [viewController addImageUrl:command.getInternalId() url:url width:command.getWidth() height:command.getHeight()];
+      }
+        break;
+        
 	  case Command::SET_INT_VALUE: {
-        [viewController setIntValue:comamnd.getInternalId() value:command.getIntValue()];
+        [viewController setIntValue:command.getInternalId() value:command.getValue()];
 	  }
 	    break;
 
 	  case Command::SET_TEXT_VALUE: {
         NSString * value = [NSString stringWithUTF8String:command.getTextValue().c_str()];
-	    [viewController setTextValue:comamnd.getInternalId() value:value];
+	    [viewController setTextValue:command.getInternalId() value:value];
 	  }
 	    break;
 	                
@@ -106,6 +124,22 @@ iOSMainThread::sendCommands(const std::vector<Command> & commands) {
         [[UIApplication sharedApplication] openURL:url];
         // no need to release anything
       }
+        break;
+        
+      case Command::UPDATE_PREFERENCE: {
+        
+      }
+        break;
+        
+      case Command::DELETE_PREFERENCE: {
+        
+      }
+        break;
+        
+      case Command::COMMIT_PREFERENCES: {
+        
+      }
+        break;
 
     }
   }
