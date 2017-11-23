@@ -187,7 +187,7 @@ public class NativeCommand {
     switch (command) {
       
     case CREATE_FRAMEVIEW: {
-      FWFrameView frameView = new FWFrameView(frame, getTextValueAsString());
+      FWFrameView frameView = new FWFrameView(frame);
       frameView.setId(getChildInternalId());
       frame.addToViewList(frameView);
 

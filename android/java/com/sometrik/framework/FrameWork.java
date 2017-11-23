@@ -368,59 +368,6 @@ public class FrameWork extends Activity {
       System.out.println("view already set");
       return;
     }
-//    if (currentView != 0) {
-//
-//      View focusedView = this.getCurrentFocus();
-//      if (focusedView != null) {
-//	InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-//	imm.hideSoftInputFromWindow(focusedView.getWindowToken(), 0);
-//      }
-//      
-//      TranslateAnimation r;
-//      if (recordHistory) {
-//	r = new TranslateAnimation(0, -2000, 0, 0);
-//      } else {
-//	r = new TranslateAnimation(0, 2000, 0, 0);
-//      }
-//      r.setDuration(200);
-//      r.setAnimationListener(new Animation.AnimationListener() {
-//	@Override
-//	public void onAnimationStart(Animation animation) {
-//	 transitionAnimation = true;
-//	}
-//
-//	@Override
-//	public void onAnimationEnd(Animation animation) {
-//	  currentView = view.getId();
-//	  currentlyShowingView = view;
-//	  setContentView(view);
-//	  TranslateAnimation q;
-//	  if (recordHistory) {
-//	    q = new TranslateAnimation(2000, 0, 0, 0);
-//	  } else {
-//	    q = new TranslateAnimation(-2000, 0, 0, 0);
-//	  }
-//	  setNativeActiveView(System.currentTimeMillis() / 1000.0, view.getId(), recordHistory);
-//	  q.setAnimationListener(new Animation.AnimationListener() {
-//	    @Override
-//	    public void onAnimationEnd(Animation animation) { transitionAnimation = false; }
-//	    @Override
-//	    public void onAnimationRepeat(Animation animation) {  }
-//	    @Override
-//	    public void onAnimationStart(Animation animation) { }
-//	  });
-//	  q.setDuration(200);
-//	  view.startAnimation(q);
-//	}
-//
-//	@Override
-//	public void onAnimationRepeat(Animation animation) {
-//	}
-//      });
-//      View sadas = (View) FrameWork.views.get(currentView);
-//      sadas.startAnimation(r);
-//      
-//    } else {
       currentView = view.getId();
       currentlyShowingView = view;
 
@@ -444,13 +391,6 @@ public class FrameWork extends Activity {
     }
      
     setNativeActiveView(view.getId(), recordHistory);
-  }
-  
-  public void setCurrentView(final View view, final boolean recordHistory, String title) {
-    if (getActionBar() != null){
-//      getActionBar().setTitle(title);
-    }
-    setCurrentView(view, recordHistory);
   }
   
   public int getCurrentViewId() { return currentView; }

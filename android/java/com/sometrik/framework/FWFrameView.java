@@ -11,23 +11,12 @@ import android.widget.FrameLayout;
 public class FWFrameView extends FrameLayout implements NativeCommandHandler {
 
   FrameWork frame;
-  private String title;
   private Animation enterAnimation = null;
   private int enterAnimationOtherViewFromX = 0;
   private Animation returnAnimation = null;
   private int returnAnimationOtherViewFromX = 0;
   private ViewStyleManager normalStyle, activeStyle, currentStyle;
-  
-  public FWFrameView(FrameWork frameWork, String title) {
-    super(frameWork);
-    this.frame = frameWork;
-    this.title = title;
-    
-    final float scale = getContext().getResources().getDisplayMetrics().density;
-    this.normalStyle = currentStyle = new ViewStyleManager(frame.bitmapCache, scale, true);
-    this.activeStyle = new ViewStyleManager(frame.bitmapCache, scale, false);
-  }
-  
+ 
   public FWFrameView(FrameWork frameWork) {
     super(frameWork);
     this.frame = frameWork;
@@ -75,19 +64,19 @@ public class FWFrameView extends FrameLayout implements NativeCommandHandler {
       if (enterAnimation != null) {
 	frame.setCurrentView(this, true, enterAnimation, enterAnimationOtherViewFromX);
       } else {
-	frame.setCurrentView(this, true, title);
+	frame.setCurrentView(this, true);
       }
     } else if (v == 2) {
       if (enterAnimation != null) {
 	frame.setCurrentView(this, false, enterAnimation, enterAnimationOtherViewFromX);
       } else {
-	frame.setCurrentView(this, false, title);
+	frame.setCurrentView(this, false);
       }
     } else if (v == 3) {
       if (returnAnimation != null) {
 	frame.setCurrentView(this, false, returnAnimation, returnAnimationOtherViewFromX);
       } else {
-	frame.setCurrentView(this, false, title);
+	frame.setCurrentView(this, false);
       }
     }
   }
@@ -123,7 +112,7 @@ public class FWFrameView extends FrameLayout implements NativeCommandHandler {
 
 	  @Override
 	  public void onAnimationEnd(Animation animation) {
-	      frame.setCurrentView(holderView, true, title);
+	      frame.setCurrentView(holderView, true);
 	  }
 
 	  @Override
@@ -146,7 +135,7 @@ public class FWFrameView extends FrameLayout implements NativeCommandHandler {
 
 	  @Override
 	  public void onAnimationEnd(Animation animation) {
-	      frame.setCurrentView(holderView, true, title);
+	      frame.setCurrentView(holderView, true);
 	  }
 
 	  @Override
