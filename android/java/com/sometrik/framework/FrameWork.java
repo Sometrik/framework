@@ -306,7 +306,7 @@ public class FrameWork extends Activity {
     }
   }
 
-  public void setCurrentView(final View view, final boolean recordHistory, Animation animation, final int newViewAnimationFromX) {
+  public void setCurrentView(final View view, Animation animation, final int newViewAnimationFromX) {
 	 transitionAnimation = true;
     animation.setAnimationListener(new Animation.AnimationListener() {
 	@Override
@@ -341,7 +341,7 @@ public class FrameWork extends Activity {
 //	  } else {
 //	    q = new TranslateAnimation(-1000, 0, 0, 0);
 //	  }
-	  setNativeActiveView(view.getId(), recordHistory);
+	  setNativeActiveView(view.getId(), false);
 	  q.setAnimationListener(new Animation.AnimationListener() {
 	    @Override
 	    public void onAnimationEnd(Animation animation) { transitionAnimation = false; }
@@ -363,7 +363,7 @@ public class FrameWork extends Activity {
     sadas.startAnimation(animation);
   }
 
-  public void setCurrentView(final View view, final boolean recordHistory) {
+  public void setCurrentView(final View view) {
     if (currentView == view.getId()){
       System.out.println("view already set");
       return;
@@ -390,7 +390,7 @@ public class FrameWork extends Activity {
       setContentView(view);
     }
      
-    setNativeActiveView(view.getId(), recordHistory);
+    setNativeActiveView(view.getId(), false);
   }
   
   public int getCurrentViewId() { return currentView; }
