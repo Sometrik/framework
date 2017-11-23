@@ -30,7 +30,11 @@ public:
   }
 
   int getViewBackHistory() {
-    return view_back_history.back();
+    if (!view_back_history.empty()) {
+      return view_back_history.back();
+    } else {
+      return 0;
+    }
   }
 
   virtual int popViewBackHistory() {
