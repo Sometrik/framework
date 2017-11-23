@@ -11,7 +11,9 @@
 - (void)createLinearLayoutWithId:(int)viewId parentId:(int)parentId direction:(int)direction;
 - (void)createTextWithId:(int)viewId parentId:(int)parentId value:(NSString *)value;
 - (void)createButtonWithId:(int)viewId parentId:(int)parentId caption:(NSString *)caption;
-- (void)createSwitch:(int)viewId parentId:(int)parentId;
+- (void)createSwitchWithId:(int)viewId parentId:(int)parentId;
+- (void)createImageWithId:(int)viewId parentId:(int)parentId filename:(NSString *)filename;
+- (void)createScrollLayoutWithId:(int)viewId parentId:(int)parentId;
 
 - (void)addToParent:(int)parentId view:(UIView*)view;
 

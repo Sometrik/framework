@@ -46,13 +46,19 @@ iOSMainThread::sendCommands(const std::vector<Command> & commands) {
       }
         break;
         
-      case Command::CREATE_SCROLL_LAYOUT: {
+      case Command::CREATE_IMAGEVIEW: {
+        NSString * filename = [NSString stringWithUTF8String:command.getTextValue().c_str()];
+        [viewController createImageWithId:command.getChildInternalId() parentId:command.getInternalId() filename:filename];
+      }
+        break;
         
+      case Command::CREATE_SCROLL_LAYOUT: {
+        [viewController createScrollLayoutWithId:command.getChildInternalId() parentId:command.getInternalId()];
       }
         break;
         
       case Command::CREATE_SWITCH: {
-        [viewController createSwitch:command.getChildInternalId() parentId:command.getInternalId()];
+        [viewController createSwitchWithId:command.getChildInternalId() parentId:command.getInternalId()];
       }
         break;
         

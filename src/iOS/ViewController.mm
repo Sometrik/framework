@@ -123,11 +123,21 @@ extern FWApplication * applicationMain();
     [self addToParent:parentId view:button];
 }
 
-- (void)createSwitch:(int)viewId parentId:(int)parentId
+- (void)createSwitchWithId:(int)viewId parentId:(int)parentId
 {
     UISwitch *sw = [[UISwitch alloc] init];
     [self.viewsDictionary setObject:sw forKey:[NSString stringWithFormat:@"%d", viewId]];
     [self addToParent:parentId view:sw];
+}
+
+- (void)createImageWithId:(int)viewId parentId:(int)parentId filename:(NSString *)filename
+{
+  
+}
+
+- (void)createScrollLayoutWithId:(int)viewId parentId:(int)parentId
+{
+  
 }
 
 - (void)addToParent:(int)parentId view:(UIView*)view
