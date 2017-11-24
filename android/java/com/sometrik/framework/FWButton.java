@@ -42,7 +42,7 @@ public class FWButton extends Button implements NativeCommandHandler {
     setOnTouchListener(new OnTouchListener() {
       @Override
       public boolean onTouch(View v, MotionEvent event) {
-	if (button.selectedStyle.isModified()) {
+	if (button.activeStyle.isModified()) {
 	  if (event.getAction() == MotionEvent.ACTION_DOWN) {
 	    button.currentStyle = button.activeStyle;
 	    button.currentStyle.apply(button);
