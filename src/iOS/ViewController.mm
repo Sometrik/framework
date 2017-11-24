@@ -123,6 +123,11 @@ extern FWApplication * applicationMain();
         frame.size.height = (int)[value integerValue];
         [view setFrame:frame];
       }
+    } else if ([key isEqualToString:@"border-radius"]) {
+      view.layer.cornerRadius = (int)[value integerValue];
+    } else if ([key isEqualToString:@"border"]) {
+      view.layer.borderColor = [self colorFromString:value].CGColor;
+      view.layer.borderWidth = 1.0f;
     }
   }
 }
