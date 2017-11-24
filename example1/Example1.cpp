@@ -28,6 +28,7 @@ Example1::Example1() : FWApplication("com.sometrik.example1")
   auto title = make_shared<TextLabel>("Hello again!", 1234);
   title->style("font-size", 20);
   title->style("background-color", "#e03030");
+  title->style("shadow", 5);
   layout->addChild(title);
 
   auto nameLayout = make_shared<LinearLayout>(FW_HORIZONTAL);

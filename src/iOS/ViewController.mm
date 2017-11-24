@@ -80,6 +80,11 @@ extern FWApplication * applicationMain();
   
   if ([key isEqualToString:@"background-color"]) {
     view.backgroundColor = [self colorFromString:value];
+  } else if ([key isEqualToString:@"shadow"]) {
+    view.layer.shadowOpacity = 0.25;
+    view.layer.masksToBounds = NO;
+    view.layer.shadowRadius = (float)[value floatValue];
+    view.layer.shadowOffset = CGSizeMake(0, 0);
   }
   
   if ([view isKindOfClass:UILabel.class]) {
