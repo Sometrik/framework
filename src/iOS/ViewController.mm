@@ -282,6 +282,16 @@ extern FWApplication * applicationMain();
     if ([parentView isKindOfClass:UIStackView.class]) {
         UIStackView *stackView = (UIStackView *)parentView;
         [stackView addArrangedSubview:view];
+    } else if ([parentView isKindOfClass:UITabBar.class]) {
+        if ([view isKindOfClass:UITabBarItem.class]) {
+          UITabBar *tabBar = (UITabBar *)parentView;
+          UITabBarItem *tabBarItem = (UITabBarItem *)view;
+          NSMutableArray * items = (NSMutableArray *)tabBar.items;
+          if (items == nil) {
+            tabBar.items = items = [[NSMutableArray alloc] init];
+          }
+          [items addObject:tabBarItem];
+        }
     } else {
         [parentView addSubview:view];
     }
