@@ -261,10 +261,28 @@ extern FWApplication * applicationMain();
 
 - (void)createTabBar:(int)viewId parentId:(int)parentId
 {
-  UITabBar * tabBar = [[UITabBar alloc] init];
-  tabBar.tag = viewId;
-  [self.viewsDictionary setObject:tabBar forKey:[NSString stringWithFormat:@"%d", viewId]];
-  [self addToParent:parentId view:tabBar];
+    UITabBar * tabBar = [[UITabBar alloc] init];
+    tabBar.tag = viewId;
+    [self.viewsDictionary setObject:tabBar forKey:[NSString stringWithFormat:@"%d", viewId]];
+    [self addToParent:parentId view:tabBar];
+}
+
+- (void)createTabBarItem:(int)viewId parentId:(int)parentId title:(NSString *)title
+{
+    UIView *parentView = [self.viewsDictionary objectForKey:[NSString stringWithFormat:@"%d", parentId]];
+    if ([parentView isKindOfClass:UITabBar.class]) {
+        UITabBar *tabBar = (UITabBar *)parentView;
+  
+        UITabBarItem * tabBarItem = [[UITabBarItem alloc] init];
+        tabBarItem.title = title;
+        tabBarItem.tag = viewId;
+  
+        NSMutableArray * items = (NSMutableArray *)tabBar.items;
+        if (items == nil) {
+          tabBar.items = items = [[NSMutableArray alloc] init];
+        }
+        [items addObject:tabBarItem];
+    }
 }
 
 - (void)viewTapped:(UIView *)sender
@@ -280,16 +298,6 @@ extern FWApplication * applicationMain();
     if ([parentView isKindOfClass:UIStackView.class]) {
         UIStackView *stackView = (UIStackView *)parentView;
         [stackView addArrangedSubview:view];
-    } else if ([parentView isKindOfClass:UITabBar.class]) {
-        if ([view isKindOfClass:UITabBarItem.class]) {
-          UITabBar *tabBar = (UITabBar *)parentView;
-          UITabBarItem *tabBarItem = (UITabBarItem *)view;
-          NSMutableArray * items = (NSMutableArray *)tabBar.items;
-          if (items == nil) {
-            tabBar.items = items = [[NSMutableArray alloc] init];
-          }
-          [items addObject:tabBarItem];
-        }
     } else {
         [parentView addSubview:view];
     }
