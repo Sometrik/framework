@@ -103,6 +103,26 @@ extern FWApplication * applicationMain();
       } else {
         label.textAlignment = NSTextAlignmentLeft;
       }
+    } else if ([key isEqualToString:@"width"]) {
+      if ([value isEqualToString:@"match-parent"]) {
+        
+      } else if ([value isEqualToString:@"wrap-content"]) {
+        
+      } else {
+        CGRect frame = view.frame;
+        frame.size.width = (int)[value integerValue];
+        [view setFrame:frame];
+      }
+    } else if ([key isEqualToString:@"height"]) {
+      if ([value isEqualToString:@"match-parent"]) {
+        
+      } else if ([value isEqualToString:@"wrap-content"]) {
+        
+      } else {
+        CGRect frame = view.frame;
+        frame.size.height = (int)[value integerValue];
+        [view setFrame:frame];
+      }
     }
   }
 }
