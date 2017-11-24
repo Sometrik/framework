@@ -550,6 +550,7 @@ public class NativeCommand {
       break;
     case DELETE_PREFERENCE:
       frame.getPreferencesEditor().remove(getTextValueAsString());
+      System.out.println("DELETE_PREFERENCE: " + getTextValueAsString());
       break;
     case COMMIT_PREFERENCES:
       frame.getPreferencesEditor().apply();
