@@ -55,8 +55,6 @@ extern FWApplication * applicationMain();
     UITextField* text = [[UITextField alloc] initWithFrame:someRect];
     text.tag = viewId;
     text.borderStyle = UITextBorderStyleRoundedRect;
-    text.font = [UIFont systemFontOfSize:15];
-    text.placeholder = @"enter text";
     text.autocorrectionType = UITextAutocorrectionTypeNo;
     text.keyboardType = UIKeyboardTypeDefault;
     text.returnKeyType = UIReturnKeyDone;
@@ -134,6 +132,12 @@ extern FWApplication * applicationMain();
   } else if ([view isKindOfClass:UIButton.class]) {
     UIButton *button = (UIButton *)view;
     
+  } else if ([view isKindOfClass:UITextField.class]) {
+    UITextField *textField = (UITextField *)view;
+    
+    if ([value isEqualToString:@"hint"]) {
+      textField.placeholder = value;
+    }
   }
 }
 
