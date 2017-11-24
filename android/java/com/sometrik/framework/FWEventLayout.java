@@ -3,15 +3,16 @@ package com.sometrik.framework;
 import com.sometrik.framework.NativeCommand.Selector;
 
 import android.graphics.Bitmap;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 
-public class FWFrameLayout extends FrameLayout implements NativeCommandHandler {
+public class FWEventLayout extends FrameLayout implements NativeCommandHandler {
   
   private FrameWork frame;
   private ViewStyleManager normalStyle, activeStyle, currentStyle;
   
-  public FWFrameLayout(FrameWork frameWork, int id) {
+  public FWEventLayout(FrameWork frameWork, int id) {
     super(frameWork);
     this.frame = frameWork;
     this.setId(id);
@@ -20,10 +21,36 @@ public class FWFrameLayout extends FrameLayout implements NativeCommandHandler {
     this.normalStyle = currentStyle = new ViewStyleManager(frame.bitmapCache, scale, true);
     this.activeStyle = new ViewStyleManager(frame.bitmapCache, scale, false);
 
-    setClickable(false);
-    setFocusable(false);
-  }
+    setClickable(true);
+    setFocusable(true);
+      
+    final FWEventLayout layout = this;
     
+    setOnTouchListener(new OnTouchListener() {
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+      if (layout.activeStyle.isModified()) {
+	if (event.getAction() == MotionEvent.ACTION_DOWN || event.getAction() == MotionEvent.ACTION_POINTER_DOWN || event.getAction() == MotionEvent.ACTION_HOVER_ENTER) {
+	  layout.currentStyle = layout.activeStyle;
+	  layout.currentStyle.apply(layout);
+	} else if (event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_POINTER_UP ||
+	    	event.getAction() == MotionEvent.ACTION_HOVER_EXIT || event.getAction() == MotionEvent.ACTION_OUTSIDE ||
+	    	event.getAction() == MotionEvent.ACTION_CANCEL) {
+	  layout.currentStyle = layout.normalStyle;
+	  layout.currentStyle.apply(layout);
+	}
+      }
+      return false;
+    }
+    });
+  }
+  
+  @Override
+  public boolean performClick() {
+    frame.sendNativeValueEvent(getElementId(), 0, 0);
+    return super.performClick();
+  }
+  
   @Override
   public int getElementId() {
     return getId();
