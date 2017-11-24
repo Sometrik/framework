@@ -10,6 +10,7 @@
 #include <ImageElement.h>
 #include <NavigationBar.h>
 #include <NavigationBarItem.h>
+#include <NavigationDrawer.h>
 
 #include <iostream>
 
@@ -17,6 +18,10 @@ using namespace std;
 
 Example1::Example1() : FWApplication("com.sometrik.example1")
 {
+    auto navi = std::make_shared<NavigationDrawer>();
+    navi->style("background-color", "#aaaaaa");
+    addChild(navi);
+    
   auto view = std::make_shared<FrameView>();
   view->style("background-color", "#cccccc");
   addChild(view);
@@ -65,6 +70,8 @@ Example1::Example1() : FWApplication("com.sometrik.example1")
   navigationBar->addChild(std::make_shared<NavigationBarItem>("Page 2"));
   navigationBar->addChild(std::make_shared<NavigationBarItem>("Page 3"));
   layout->addChild(navigationBar);
+    
+    
 }
 
 void

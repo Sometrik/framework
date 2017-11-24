@@ -17,7 +17,10 @@ extern FWApplication * applicationMain();
 @interface ViewController ()
 @property (nonatomic, strong) NSMutableDictionary *viewsDictionary;
 @property (nonatomic, strong) UIView *sideMenuView;
+@property (nonatomic, strong) UIView *sideMenuBackgroundOverlayView;
 @end
+
+static NSTimeInterval sidePanelAnimationDuration = 0.4;
 
 @implementation ViewController
 
@@ -49,6 +52,19 @@ extern FWApplication * applicationMain();
 - (void)didReceiveMemoryWarning {
   mainThread->sendMemoryWarning();
   [super didReceiveMemoryWarning];
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    if (self.sideMenuView) {
+        [self.view bringSubviewToFront:self.sideMenuBackgroundOverlayView];
+        [self.view bringSubviewToFront:self.sideMenuView];
+    }
+}
+- (void)sideMenuBackgroundOverlayViewTapped:(UITapGestureRecognizer *)gesture
+{
+    [self hideNavigationView];
 }
 
 - (void)createTextFieldWithId: (int)viewId parentId:(int)parentId {
@@ -145,9 +161,17 @@ extern FWApplication * applicationMain();
 - (void)setVisibility:(int)viewId visibility:(int)visibility
 {
     UIView *view = [self.viewsDictionary objectForKey:[NSString stringWithFormat:@"%d", viewId]];
-    bool viewHidden = visibility == 0 ? true : false;
-    if (view) {
-        view.hidden = viewHidden;
+    if ([view isEqual:self.sideMenuView]) {
+        if (visibility == 0) {
+            [self hideNavigationView];
+        } else {
+            [self showNavigationView];
+        }
+    } else {
+        BOOL viewHidden = visibility == 0 ? true : false;
+        if (view) {
+            view.hidden = viewHidden;
+        }
     }
 }
 
@@ -211,6 +235,7 @@ extern FWApplication * applicationMain();
     int viewId = (int)sender.tag;
     NSLog(@"viewId = %d", viewId);
     NSLog(@"buttonTitle = %@", sender.titleLabel.text);
+    [self showNavigationView];
     [self sendIntValue:viewId value:viewId];
 }
 
@@ -227,7 +252,7 @@ extern FWApplication * applicationMain();
 {
     int viewId = (int)sender.tag;
     NSLog(@"viewId = %d", viewId);
-    bool switchState = sender.on;
+    BOOL switchState = sender.on;
     int value = switchState ? 1 : 0;
     [self sendIntValue:viewId value:value];
     NSLog(@"Switch is %@", switchState ? @"on" : @"off");
@@ -290,10 +315,50 @@ extern FWApplication * applicationMain();
 
 - (void)createNavigationView:(int)viewId
 {
-    self.sideMenuView = [[UIView alloc] initWithFrame:self.view.bounds];
+    CGRect viewFrame = self.view.bounds;
+    CGRect frame = CGRectMake(CGRectGetMinX(viewFrame), CGRectGetMinY(viewFrame), CGRectGetWidth(viewFrame)-100, CGRectGetHeight(viewFrame));
+    self.sideMenuView = [[UIView alloc] initWithFrame:frame];
     self.sideMenuView.tag = viewId;
-    self.sideMenuView.transform = CGAffineTransformTranslate(self.sideMenuView.transform, -self.view.frame.size.width, 0.0);
+    self.sideMenuView.hidden = YES;
+    // create backgroundoverlay view that's behind sidePanel and if clicked closes the panel
+    
+    self.sideMenuBackgroundOverlayView = [[UIView alloc] initWithFrame:self.view.bounds];
+    self.sideMenuBackgroundOverlayView.hidden = YES;
+    self.sideMenuBackgroundOverlayView.backgroundColor = UIColor.blackColor;
+    [self.view addSubview:self.sideMenuBackgroundOverlayView];
+    UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(sideMenuBackgroundOverlayViewTapped:)];
+    [self.sideMenuBackgroundOverlayView addGestureRecognizer:tapGestureRecognizer];
+    [self.view addSubview:self.sideMenuView];
+    self.sideMenuView.transform = CGAffineTransformTranslate(self.sideMenuView.transform, -CGRectGetWidth(self.sideMenuView.frame), 0.0);
     [self.viewsDictionary setObject:self.sideMenuView forKey:[NSString stringWithFormat:@"%d", viewId]];
+}
+
+- (void)showNavigationView
+{
+    self.sideMenuView.hidden = NO;
+    self.sideMenuBackgroundOverlayView.hidden = NO;
+    self.sideMenuBackgroundOverlayView.alpha = 0.0;
+    if (self.sideMenuView) {
+        [UIView animateWithDuration:sidePanelAnimationDuration animations:^{
+            self.sideMenuView.transform = CGAffineTransformTranslate(self.sideMenuView.transform, CGRectGetWidth(self.sideMenuView.frame), 0.0);
+            self.sideMenuBackgroundOverlayView.alpha = 0.5;
+        }];
+    }
+}
+
+- (void)hideNavigationView
+{
+    if (self.sideMenuView) {
+        [UIView animateWithDuration:sidePanelAnimationDuration animations:^{
+            self.sideMenuView.transform = CGAffineTransformTranslate(self.sideMenuView.transform, -(CGRectGetWidth(self.sideMenuView.frame)), 0.0);
+            self.sideMenuBackgroundOverlayView.alpha = 0.0;
+        } completion:^(BOOL finished) {
+            if (finished) {
+                self.sideMenuView.hidden = YES;
+                self.sideMenuBackgroundOverlayView.hidden = YES;
+            }
+        }];
+    }
 }
 
 - (void)viewTapped:(UIView *)sender
@@ -309,17 +374,6 @@ extern FWApplication * applicationMain();
     if ([parentView isKindOfClass:UIStackView.class]) {
         UIStackView *stackView = (UIStackView *)parentView;
         [stackView addArrangedSubview:view];
-    } else if ([parentView isKindOfClass:UITabBar.class]) {
-        if ([view isKindOfClass:UITabBarItem.class]) {
-          UITabBar *tabBar = (UITabBar *)parentView;
-          UITabBarItem *tabBarItem = (UITabBarItem *)view;
-          NSMutableArray * items = (NSMutableArray *)tabBar.items;
-          if (items == nil) {
-            tabBar.items = items = [[NSMutableArray alloc] init];
-          }
-            
-          [items addObject:tabBarItem];
-        }
     } else {
         [parentView addSubview:view];
     }
