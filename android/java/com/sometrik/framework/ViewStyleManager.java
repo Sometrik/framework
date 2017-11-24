@@ -409,8 +409,14 @@ class ViewStyleManager {
 	backgroundMask = new ShapeDrawable(shape);
       }
       
-      int color1 = Color.parseColor("#ffffff");
-      int color2 = Color.parseColor("#000000");
+      int color1 = 0, color2 = 0;
+      if (backgroundColor != null && backgroundColor != 0) {
+	color1 = Color.parseColor("#80ffffff");
+	color2 = Color.parseColor("#80000000");      
+      } else {
+	color1 = Color.parseColor("#80ff0000");
+	color2 = Color.parseColor("#807f0000");
+      }
       ColorStateList colors = new ColorStateList(
 	        new int[][]
 	            {
