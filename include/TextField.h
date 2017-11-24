@@ -26,11 +26,18 @@ class TextField : public InputElement {
 
   bool call(bool t) override { return call(t ? "true" : "false"); }
   bool call(const std::string & s) override {
-    value = s;
-    Command c(Command::SET_TEXT_VALUE, getInternalId());
-    c.setTextValue(value);
-    sendCommand(c);
+    text(s);
     return true;
+  }
+
+  void text(const std::string & _value) override {
+    value = _value;
+
+    if (isInitialized()) {
+      Command c(Command::SET_TEXT_VALUE, getInternalId());
+      c.setTextValue(value);
+      sendCommand(c);
+    }
   }
 
   const std::string & getValue() const { return value; }
