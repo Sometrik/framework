@@ -70,6 +70,7 @@ public:
     c.setTextValue(url);
     sendCommand(c);
   }
+  void setVersion(const std::string & v) { versionText = v; }
 
  protected:
   void run() override {
@@ -107,7 +108,6 @@ public:
   void showMessageDialog(const std::string & title, const std::string & message);
   std::string showInputDialog(const std::string & title, const std::string & message);
 
-  void setVersion(const std::string & v) { versionText = v; }
   const std::string & getVersion() const { return versionText; }
 
  private:
