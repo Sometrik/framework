@@ -69,6 +69,10 @@ public class FWDialog extends Dialog implements NativeCommandHandler {
     
     show();
   }
+  
+  public View getContentView() {
+    return baseView;
+  }
 
   @Override
   public void onScreenOrientationChange(boolean isLandscape) {

@@ -24,6 +24,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.ConfigurationInfo;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.AssetManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -90,7 +91,7 @@ public class FrameWork extends Activity {
   public native void keyPressed(int keyId, int viewId);
   public native void touchEvent(int viewId, int mode, int fingerIndex, double timestamp, float x, float y);
   public native void flushTouchEvent(double timestamp, int viewId, int mode);
-  public native void onInit(AssetManager assetManager, int xSize, int ySize, float displayScale, String email, String language, String country);
+  public native void onInit(AssetManager assetManager, int xSize, int ySize, float displayScale, String email, String language, String country, String version);
   public native void nativeSetSurface(Surface surface, int surfaceId, int gl_version, int width, int height);
   public native void nativeSurfaceDestroyed(int surfaceId, int gl_version);
   public native void nativeOnResume(int appId);
@@ -230,7 +231,16 @@ public class FrameWork extends Activity {
     int xSize = displayMetrics.widthPixels;
     int ySize = displayMetrics.heightPixels;
     initNativePreferences();
-    onInit(getAssets(), xSize, ySize, displayMetrics.scaledDensity, getUserGoogleAccountEmail(), defaultLocale.getLanguage(), defaultLocale.getCountry());
+
+    String versionName = null;
+    try {
+      versionName = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+    } catch (NameNotFoundException e) {
+      System.out.println("versionName not found");
+      e.printStackTrace();
+    }
+    
+    onInit(getAssets(), xSize, ySize, displayMetrics.scaledDensity, getUserGoogleAccountEmail(), defaultLocale.getLanguage(), defaultLocale.getCountry(), versionName);
   }
   
   public void initNativePreferences() {
@@ -561,8 +571,8 @@ public class FrameWork extends Activity {
     return screenHeight;
   }
   
-  public void setAppId(int id){ this.appId = id; }
-  public int getAppId(){ return appId; }
+  public void setAppId(int id) { this.appId = id; }
+  public int getAppId() { return appId; }
 
   // returns database path
   public String getDBPath(String dbName) {

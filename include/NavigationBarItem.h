@@ -16,12 +16,9 @@ class NavigationBarItem : public Button {
 protected:
   void create() override {
     Command c(Command::CREATE_NAVIGATIONBAR_ITEM, getParentInternalId(), getInternalId());
-    c.setTextValue(label);
+    c.setTextValue(getLabel());
     sendCommand(c);
   }
-
- private:
-  std::string label;
 };
 
 #endif

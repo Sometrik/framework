@@ -11,6 +11,7 @@ import android.widget.PopupMenu;
 public class FWActionSheet extends PopupMenu implements NativeCommandHandler {
   private int id;
   private boolean hasEntries = false;
+  private boolean isDismissed = false;
   
   public FWActionSheet(final FrameWork frame, View anchor, final int id) {
     super(frame, anchor);
@@ -19,7 +20,9 @@ public class FWActionSheet extends PopupMenu implements NativeCommandHandler {
     this.setOnDismissListener(new OnDismissListener() {
       @Override
       public void onDismiss(PopupMenu arg0) {
-	frame.intChangedEvent(id, 0, 0);     	  
+	if (!isDismissed) {
+	  frame.intChangedEvent(id, 0, 0);
+	}
       }
     });
     
@@ -27,6 +30,7 @@ public class FWActionSheet extends PopupMenu implements NativeCommandHandler {
       @Override
       public boolean onMenuItemClick(MenuItem item) {
 	frame.intChangedEvent(id, item.getItemId(), 0);
+	isDismissed = true;
 	return true;
       }
     });

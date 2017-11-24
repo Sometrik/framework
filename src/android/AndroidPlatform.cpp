@@ -576,17 +576,20 @@ void Java_com_sometrik_framework_FrameWork_onUpdate(JNIEnv* env, jclass clazz, d
   mainThread->sendEvent(viewId, ev);
 }
 
-void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, jobject assetManager, int screenWidth, int screenHeight, float displayScale, jstring jemail, jstring jlanguage, jstring jcountry) {
+  void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, jobject assetManager, int screenWidth, int screenHeight, float displayScale, jstring jemail, jstring jlanguage, jstring jcountry, jstring jversion) {
   if (!mainThread.get()) {
     const char * email = env->GetStringUTFChars(jemail, NULL);
     const char * language = env->GetStringUTFChars(jlanguage, NULL);
     const char * country = env->GetStringUTFChars(jcountry, NULL);
-
+    const char * _version = env->GetStringUTFChars(jversion, NULL);
+    string version = _version;
+    
     MobileAccount account = MobileAccount(email, language, country);
 
     env->ReleaseStringUTFChars(jlanguage, language);
     env->ReleaseStringUTFChars(jemail, email);
     env->ReleaseStringUTFChars(jcountry, country);
+    env->ReleaseStringUTFChars(jversion, _version);
 
     AAssetManager* manager = AAssetManager_fromJava(env, assetManager);
     android_fopen_set_asset_manager(manager);
@@ -597,6 +600,7 @@ void Java_com_sometrik_framework_FrameWork_onInit(JNIEnv* env, jobject thiz, job
     initialPrefs.clearChanges();
 
     shared_ptr<FWApplication> application(applicationMain());
+    application->setVersion(version);
     application->setPreferences(initialPrefs);
     application->setMobileAccount(account);
 
