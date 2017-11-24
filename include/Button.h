@@ -48,6 +48,7 @@ class Button : public Element {
   bool call(const std::string & s) override { return call(); }
 
   int linkedView = 0;
+  std::string getLabel() { return label; }
 
 protected:
   void create() override {
@@ -55,8 +56,6 @@ protected:
     c.setTextValue(label);
     sendCommand(c);
   }
-
- private:
   std::string label;
 };
 
