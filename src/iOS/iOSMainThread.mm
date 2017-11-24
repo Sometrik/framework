@@ -107,16 +107,16 @@ iOSMainThread::sendCommands(const std::vector<Command> & commands) {
       }
         break;
         
-	  case Command::SET_INT_VALUE: {
+      case Command::SET_INT_VALUE: {
         [viewController setIntValue:command.getInternalId() value:command.getValue()];
-	  }
-	    break;
+      }
+	break;
 
-	  case Command::SET_TEXT_VALUE: {
+      case Command::SET_TEXT_VALUE: {
         NSString * value = [NSString stringWithUTF8String:command.getTextValue().c_str()];
-	    [viewController setTextValue:command.getInternalId() value:value];
-	  }
-	    break;
+	[viewController setTextValue:command.getInternalId() value:value];
+      }
+	break;
 	                
       case Command::LAUNCH_BROWSER: {
         NSString * input_url = [NSString stringWithUTF8String:command.getTextValue().c_str()];
