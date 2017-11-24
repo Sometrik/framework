@@ -24,6 +24,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.ConfigurationInfo;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.AssetManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -231,7 +232,13 @@ public class FrameWork extends Activity {
     int ySize = displayMetrics.heightPixels;
     initNativePreferences();
 
-    String versionName = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+    String versionName = null;
+    try {
+      versionName = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+    } catch (NameNotFoundException e) {
+      System.out.println("versionName not found");
+      e.printStackTrace();
+    }
     
     onInit(getAssets(), xSize, ySize, displayMetrics.scaledDensity, getUserGoogleAccountEmail(), defaultLocale.getLanguage(), defaultLocale.getCountry(), versionName);
   }
