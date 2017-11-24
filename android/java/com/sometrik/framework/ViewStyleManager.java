@@ -11,6 +11,8 @@ import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.RippleDrawable;
 import android.graphics.drawable.ShapeDrawable;
@@ -69,6 +71,8 @@ class ViewStyleManager {
   private IconAttachment iconAttachment = null;
   private int[] gradientColors = null;
   
+  private boolean isModified = false;
+  
   private static Pattern gradientPattern;
   
   public ViewStyleManager(BitmapCache bitmapCache, float displayScale, boolean isDefault) {
@@ -99,7 +103,13 @@ class ViewStyleManager {
     initMargin();
   }
     
+  public boolean isModified() {
+    return isModified;
+  }
+  
   public void setStyle(String key, String value) {
+    isModified = true;
+    
     if (key.equals("padding")) {
       padding = parseFloatArray(value, 4);
     } else if (key.equals("padding-top")) {
@@ -345,42 +355,10 @@ class ViewStyleManager {
     if (bottomPosition != null) view.setBottom(applyScale(bottomPosition));
     if (minWidth > 0) view.setMinimumWidth(applyScale(minWidth));
     if (minHeight > 0) view.setMinimumHeight(applyScale(minHeight));
+    
+    Drawable backgroundContent = null;
     if ((borderColor != null && borderColor != 0 && borderWidth != null && borderWidth != 0) || borderRadius != null || gradientColors != null) {
-      if (view instanceof Button) {
-	int color1 = Color.parseColor("#ffffff");
-	int color2 = Color.parseColor("#000000");
-	ColorStateList colors = new ColorStateList(
-	        new int[][]
-	            {
-	                new int[]{android.R.attr.state_pressed},
-	                new int[]{android.R.attr.state_focused},
-	                new int[]{android.R.attr.state_activated},
-	                new int[]{}
-	            },
-	        new int[]
-	            {
-	                color2,
-	                color2,
-	                color2,
-	                color1
-	            }
-	    );	
-	GradientDrawable content = new GradientDrawable();
-	if (gradientColors != null) {
-	  content.setColors(gradientColors);
-	} else if (backgroundColor != null) {
-	  content.setColor(backgroundColor);
-	}	
-	if (borderRadius != null) {
-	  content.setCornerRadius(2); // Might be necessary for zero radiuses to work
-	  content.setCornerRadii(expandRadii(borderRadius));
-	}
-	if (borderColor != null && borderWidth != null && borderWidth != 0) {	  
-	  content.setStroke(borderWidth, borderColor, applyScale(getDashWidth(borderStyle)), applyScale(1));
-	}	
-	RippleDrawable rd = new RippleDrawable(colors, content, null);
-	view.setBackground(rd);	
-      } else if (!(view instanceof TextView) && borderRadius != null && gradientColors == null &&
+      if (!(view instanceof TextView) && borderRadius != null && gradientColors == null &&
 	  (borderWidth == null || borderWidth == 0 || backgroundColor == null || backgroundColor == 0)) {
 	RoundRectShape shape = new RoundRectShape(expandRadii(borderRadius), null, null);
 	ShapeDrawable sd = new ShapeDrawable(shape);
@@ -399,7 +377,7 @@ class ViewStyleManager {
    	} else {
    	  paint.setColor(paintColor);
    	}
-     	view.setBackground(sd);
+     	backgroundContent = sd;
       } else {
 	GradientDrawable gradientDrawable = new GradientDrawable();
 	if (gradientColors != null) {
@@ -414,10 +392,43 @@ class ViewStyleManager {
 	if (borderColor != null && borderWidth != null && borderWidth != 0) {	  
 	  gradientDrawable.setStroke(borderWidth, borderColor, applyScale(getDashWidth(borderStyle)), applyScale(1));
 	}
-	view.setBackground(gradientDrawable);
+	backgroundContent = gradientDrawable;
       }
-    } else if (backgroundColor != null) {
-      view.setBackgroundColor(backgroundColor);
+    } else if (backgroundColor != null && backgroundColor != 0) {
+      backgroundContent = new ColorDrawable(backgroundColor);      
+    }
+  
+    if (view instanceof Button) {
+      Drawable backgroundMask = null;
+      if (borderRadius != null) {
+	RoundRectShape shape = new RoundRectShape(expandRadii(borderRadius), null, null);
+	backgroundMask = new ShapeDrawable(shape);
+      } else {
+	backgroundMask = new GradientDrawable();	
+      }
+      
+      int color1 = Color.parseColor("#ffffff");
+      int color2 = Color.parseColor("#000000");
+      ColorStateList colors = new ColorStateList(
+	        new int[][]
+	            {
+	                new int[]{android.R.attr.state_pressed},
+	                new int[]{android.R.attr.state_focused},
+	                new int[]{android.R.attr.state_activated},
+	                new int[]{}
+	            },
+	        new int[]
+	            {
+	                color2,
+	                color2,
+	                color2,
+	                color1
+	            }
+	    );	
+      RippleDrawable rd = new RippleDrawable(colors, backgroundContent, backgroundMask);
+      view.setBackground(rd);	
+    } else {
+      view.setBackground(backgroundContent);
     }
     
     // Layout parameters

@@ -42,13 +42,15 @@ public class FWButton extends Button implements NativeCommandHandler {
     setOnTouchListener(new OnTouchListener() {
       @Override
       public boolean onTouch(View v, MotionEvent event) {
-	if (event.getAction() == MotionEvent.ACTION_DOWN) {
-	  button.currentStyle = button.activeStyle;
-	  button.currentStyle.apply(button);
-	} else if (event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_POINTER_UP
+	if (button.selectedStyle.isModified()) {
+	  if (event.getAction() == MotionEvent.ACTION_DOWN) {
+	    button.currentStyle = button.activeStyle;
+	    button.currentStyle.apply(button);
+	  } else if (event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_POINTER_UP
 	    || event.getAction() == MotionEvent.ACTION_CANCEL || event.getAction() == MotionEvent.ACTION_OUTSIDE) {
-	  button.currentStyle = isSelected ? button.selectedStyle : button.normalStyle;
-	  button.currentStyle.apply(button);
+	    button.currentStyle = isSelected ? button.selectedStyle : button.normalStyle;
+	    button.currentStyle.apply(button);
+	  }
 	}
 	return false;
       }

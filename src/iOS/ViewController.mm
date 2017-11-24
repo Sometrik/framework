@@ -55,8 +55,6 @@ extern FWApplication * applicationMain();
     UITextField* text = [[UITextField alloc] initWithFrame:someRect];
     text.tag = viewId;
     text.borderStyle = UITextBorderStyleRoundedRect;
-    text.font = [UIFont systemFontOfSize:15];
-    text.placeholder = @"enter text";
     text.autocorrectionType = UITextAutocorrectionTypeNo;
     text.keyboardType = UIKeyboardTypeDefault;
     text.returnKeyType = UIReturnKeyDone;
@@ -75,10 +73,71 @@ extern FWApplication * applicationMain();
     [self sendTextValue:viewId value:sender.text];
 }
 
-- (void)setStyle: (int)elementId key:(NSString *)key value:(NSString *)value {
-  // Find object with the id elementId
-  if ([key isEqualToString:@"width"]) {
-    // set width of the object to value
+- (void)setStyle: (int)viewId key:(NSString *)key value:(NSString *)value {
+  UIView *view = [self.viewsDictionary objectForKey:[NSString stringWithFormat:@"%d", viewId]];
+  
+  if ([key isEqualToString:@"background-color"]) {
+    view.backgroundColor = [self colorFromString:value];
+  } else if ([key isEqualToString:@"background"]) {
+    view.backgroundColor = [self colorFromString:value];
+  } else if ([key isEqualToString:@"shadow"]) {
+    view.layer.shadowOpacity = 0.25;
+    // view.layer.masksToBounds = NO;
+    view.layer.shadowRadius = (float)[value floatValue];
+    view.layer.shadowOffset = CGSizeMake(0, 0);
+  } else if ([key isEqualToString:@"width"]) {
+    if ([value isEqualToString:@"match-parent"]) {
+      
+    } else if ([value isEqualToString:@"wrap-content"]) {
+      
+    } else {
+      CGRect frame = view.frame;
+      frame.size.width = (int)[value integerValue];
+      [view setFrame:frame];
+    }
+  } else if ([key isEqualToString:@"height"]) {
+    if ([value isEqualToString:@"match-parent"]) {
+      
+    } else if ([value isEqualToString:@"wrap-content"]) {
+      
+    } else {
+      CGRect frame = view.frame;
+      frame.size.height = (int)[value integerValue];
+      [view setFrame:frame];
+    }
+  } else if ([key isEqualToString:@"border-radius"]) {
+    view.layer.cornerRadius = (int)[value integerValue];
+  } else if ([key isEqualToString:@"border"]) {
+    view.layer.borderColor = [self colorFromString:value].CGColor;
+    view.layer.borderWidth = 1.0f;
+  }
+  
+  if ([view isKindOfClass:UILabel.class]) {
+    UILabel *label = (UILabel *)view;
+    
+    if ([key isEqualToString:@"font-size"]) {
+      int b = (int)[value integerValue];
+      label.font = [label.font fontWithSize:b];
+    } else if ([key isEqualToString:@"color"]) {
+      label.textColor = [self colorFromString:value];
+    } else if ([key isEqualToString:@"text-alignment"]) {
+      if ([value isEqualToString:@"center"]) {
+        label.textAlignment = NSTextAlignmentCenter;
+      } else if ([value isEqualToString:@"right"]) {
+        label.textAlignment = NSTextAlignmentRight;
+      } else {
+        label.textAlignment = NSTextAlignmentLeft;
+      }
+    }
+  } else if ([view isKindOfClass:UIButton.class]) {
+    UIButton *button = (UIButton *)view;
+    
+  } else if ([view isKindOfClass:UITextField.class]) {
+    UITextField *textField = (UITextField *)view;
+    
+    if ([value isEqualToString:@"hint"]) {
+      textField.placeholder = value;
+    }
   }
 }
 
@@ -104,7 +163,6 @@ extern FWApplication * applicationMain();
 {
     UIView *view = [[UIView alloc] initWithFrame:self.view.bounds];
     view.tag = viewId;
-    view.backgroundColor = [UIColor darkGrayColor];
     [self.view addSubview:view];
     [self.viewsDictionary setObject:view forKey:[NSString stringWithFormat:@"%d", viewId]];
     //UIView *parentView = [self.viewsDictionary objectForKey:[NSString stringWithFormat:@"%d", parentId]];
@@ -123,7 +181,6 @@ extern FWApplication * applicationMain();
     stackView.alignment = UIStackViewAlignmentFill;
     stackView.translatesAutoresizingMaskIntoConstraints = false;
     stackView.frame = self.view.frame;
-    stackView.backgroundColor = UIColor.lightGrayColor;
     [self.viewsDictionary setObject:stackView forKey:[NSString stringWithFormat:@"%d", viewId]];
     [self addToParent:parentId view:stackView];
 }
@@ -134,7 +191,6 @@ extern FWApplication * applicationMain();
     label.tag = viewId;
     //label.frame = CGRectMake(0, 0, 50, 20);
     label.text = value;
-    label.backgroundColor = UIColor.blueColor;
     [self.viewsDictionary setObject:label forKey:[NSString stringWithFormat:@"%d", viewId]];
     [self addToParent:parentId view:label];
 }
@@ -181,13 +237,18 @@ extern FWApplication * applicationMain();
     UIImage *image = [UIImage imageNamed:filename];
     UIImageView *imageView = [[UIImageView alloc] initWithImage:image];
     imageView.tag = viewId;
-    imageView.contentScaleFactor = UIViewContentModeScaleAspectFit;
+    imageView.contentScaleFactor = 1.0f;
+    imageView.contentMode = UIViewContentModeScaleAspectFit;
+    [self.viewsDictionary setObject:image forKey:[NSString stringWithFormat:@"%d", viewId]];
     [self addToParent:parentId view:imageView];
 }
 
 - (void)createScrollLayoutWithId:(int)viewId parentId:(int)parentId
 {
-  
+    UIScrollView * scrollView = [[UIScrollView alloc] init];
+    scrollView.tag = viewId;
+    [self.viewsDictionary setObject:scrollView forKey:[NSString stringWithFormat:@"%d", viewId]];
+    [self addToParent:parentId view:scrollView];
 }
 
 - (void)createEventLayoutWithId:(int)viewId parentId:(int)parentId
@@ -198,6 +259,14 @@ extern FWApplication * applicationMain();
     [view addGestureRecognizer:tapGestureRecognizer];
     [self.viewsDictionary setObject:view forKey:[NSString stringWithFormat:@"%d", viewId]];
     [self addToParent:parentId view:view];
+}
+
+- (void)createTabBar:(int)viewId parentId:(int)parentId
+{
+  UITabBar * tabBar = [[UITabBar alloc] init];
+  tabBar.tag = viewId;
+  [self.viewsDictionary setObject:tabBar forKey:[NSString stringWithFormat:@"%d", viewId]];
+  [self addToParent:parentId view:tabBar];
 }
 
 - (void)viewTapped:(UIView *)sender
@@ -218,6 +287,26 @@ extern FWApplication * applicationMain();
     }
 }
 
+- (void)setIntValue:(int)viewId value:(int)value
+{
+	// if view is switch, set state to value
+}
+
+- (void)setTextValue:(int)viewId value:(NSString *)value;
+{
+	// if view is text field or label, set the text
+}
+
+- (void)setImage:(int)viewId data:(UIImage *)data
+{
+	// if view is image, set the content
+}
+
+- (void)addImageUrl:(int)viewId url:(NSString *)url width:(int)width height:(int)height
+{
+  
+}
+
 // This method send changed integer or boolean values back to application.
 // For example, a button click sends value 1
 - (void)sendIntValue:(int)viewId value:(int)value {
@@ -228,6 +317,14 @@ extern FWApplication * applicationMain();
 - (void)sendTextValue:(int)viewId value:(NSString *)value {
     string s = [value cStringUsingEncoding:NSUTF8StringEncoding];
     mainThread->sendTextValue(viewId, s);
+}
+
+- (UIColor *)colorFromString:(NSString *)hexString {
+  unsigned rgbValue = 0;
+  NSScanner *scanner = [NSScanner scannerWithString:hexString];
+  [scanner setScanLocation:1]; // bypass '#' character
+  [scanner scanHexInt:&rgbValue];
+  return [UIColor colorWithRed:((rgbValue & 0xFF0000) >> 16)/255.0 green:((rgbValue & 0xFF00) >> 8)/255.0 blue:(rgbValue & 0xFF)/255.0 alpha:1.0];
 }
 
 @end

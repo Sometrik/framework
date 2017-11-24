@@ -3,6 +3,8 @@
 #include <ValueEvent.h>
 #include <TimerEvent.h>
 
+using namespace std;
+
 void
 iOSMainThread::sendCommands(const std::vector<Command> & commands) {
   for (auto & command : commands) {
@@ -67,9 +69,14 @@ iOSMainThread::sendCommands(const std::vector<Command> & commands) {
       }
         break;
         
+      case Command::CREATE_NAVIGATIONBAR: {
+        [viewController createTabBar:command.getChildInternalId() parentId:command.getInternalId()];
+      }
+        break;
+        
       case Command::SET_STYLE: {
         NSString * key = [NSString stringWithUTF8String:command.getTextValue().c_str()];
-        NSString * value = [NSString stringWithUTF8String:command.getTextValue().c_str()];
+        NSString * value = [NSString stringWithUTF8String:command.getTextValue2().c_str()];
         [viewController setStyle:command.getInternalId() key:key value:value];
       }
         break;
@@ -78,14 +85,66 @@ iOSMainThread::sendCommands(const std::vector<Command> & commands) {
           [viewController setVisibility:command.getInternalId() visibility:command.getValue()];
       }
         break;
-            
+        
+      case Command::CREATE_DIALOG: {
+
+      }
+      	break;
+      	
+      case Command::CREATE_ALERT_DIALOG: {
+      	
+      }
+        break;
+
+      case Command::REMOVE_CHILD: {
+        
+      }
+        break;
+        
+      case Command::DELETE_ELEMENT: {
+        
+      }
+        break;
+        
+      case Command::ADD_IMAGE_URL: {
+        NSString * url = [NSString stringWithUTF8String:command.getTextValue().c_str()];
+        [viewController addImageUrl:command.getInternalId() url:url width:command.getWidth() height:command.getHeight()];
+      }
+        break;
+        
+      case Command::SET_INT_VALUE: {
+        [viewController setIntValue:command.getInternalId() value:command.getValue()];
+      }
+	break;
+
+      case Command::SET_TEXT_VALUE: {
+        NSString * value = [NSString stringWithUTF8String:command.getTextValue().c_str()];
+	[viewController setTextValue:command.getInternalId() value:value];
+      }
+	break;
+	                
       case Command::LAUNCH_BROWSER: {
         NSString * input_url = [NSString stringWithUTF8String:command.getTextValue().c_str()];
         NSURL *url = [NSURL URLWithString:input_url];
         [[UIApplication sharedApplication] openURL:url];
         // no need to release anything
       }
-
+        break;
+        
+      case Command::UPDATE_PREFERENCE: {
+        
+      }
+        break;
+        
+      case Command::DELETE_PREFERENCE: {
+        
+      }
+        break;
+        
+      case Command::COMMIT_PREFERENCES: {
+        
+      }
+        break;
     }
   }
 }

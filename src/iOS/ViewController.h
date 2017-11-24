@@ -16,6 +16,12 @@
 - (void)createImageWithId:(int)viewId parentId:(int)parentId filename:(NSString *)filename;
 - (void)createScrollLayoutWithId:(int)viewId parentId:(int)parentId;
 - (void)createEventLayoutWithId:(int)viewId parentId:(int)parentId;
+- (void)createTabBar:(int)viewId parentId:(int)parentId;
+
+- (void)setIntValue:(int)viewId value:(int)value;
+- (void)setTextValue:(int)viewId value:(NSString *)value;
+- (void)setImage:(int)viewId data:(UIImage *)data;
+- (void)addImageUrl:(int)viewId url:(NSString *)url width:(int)width height:(int)height;
 
 - (void)addToParent:(int)parentId view:(UIView*)view;
 

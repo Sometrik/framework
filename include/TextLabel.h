@@ -16,9 +16,11 @@ class TextLabel : public Element {
   void text(const std::string & _value) override {
     value = _value;
     
-    Command c(Command::SET_TEXT_VALUE, getInternalId());
-    c.setTextValue(value);
-    sendCommand(c);
+    if (isInitialized()) {
+      Command c(Command::SET_TEXT_VALUE, getInternalId());
+      c.setTextValue(value);
+      sendCommand(c);
+    }
   }
 
   std::string getText() { return value; }
