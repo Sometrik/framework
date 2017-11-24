@@ -119,7 +119,9 @@ extern FWApplication * applicationMain();
     } else {
         stackView.axis = UILayoutConstraintAxisHorizontal;
     }
-    //stackView.si
+    stackView.distribution = UIStackViewDistributionFill;
+    stackView.alignment = UIStackViewAlignmentFill;
+    stackView.translatesAutoresizingMaskIntoConstraints = false;
     stackView.frame = self.view.frame;
     stackView.backgroundColor = UIColor.lightGrayColor;
     [self.viewsDictionary setObject:stackView forKey:[NSString stringWithFormat:@"%d", viewId]];
