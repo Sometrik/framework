@@ -399,7 +399,7 @@ class ViewStyleManager {
       backgroundContent = new ColorDrawable(backgroundColor);      
     }
   
-    if (view instanceof Button || view instanceof FWEventLayout) {
+    if ((shadow == null || shadow == 0) && (view instanceof Button || view instanceof FWEventLayout)) {
       Drawable backgroundMask = null;
       if (borderRadius != null) {
 	RoundRectShape shape = new RoundRectShape(expandRadii(borderRadius), null, null);
