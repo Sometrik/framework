@@ -90,7 +90,7 @@ public class FrameWork extends Activity {
   public native void keyPressed(int keyId, int viewId);
   public native void touchEvent(int viewId, int mode, int fingerIndex, double timestamp, float x, float y);
   public native void flushTouchEvent(double timestamp, int viewId, int mode);
-  public native void onInit(AssetManager assetManager, int xSize, int ySize, float displayScale, String email, String language, String country);
+  public native void onInit(AssetManager assetManager, int xSize, int ySize, float displayScale, String email, String language, String country, String version);
   public native void nativeSetSurface(Surface surface, int surfaceId, int gl_version, int width, int height);
   public native void nativeSurfaceDestroyed(int surfaceId, int gl_version);
   public native void nativeOnResume(int appId);
@@ -230,7 +230,10 @@ public class FrameWork extends Activity {
     int xSize = displayMetrics.widthPixels;
     int ySize = displayMetrics.heightPixels;
     initNativePreferences();
-    onInit(getAssets(), xSize, ySize, displayMetrics.scaledDensity, getUserGoogleAccountEmail(), defaultLocale.getLanguage(), defaultLocale.getCountry());
+
+    String versionName = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+    
+    onInit(getAssets(), xSize, ySize, displayMetrics.scaledDensity, getUserGoogleAccountEmail(), defaultLocale.getLanguage(), defaultLocale.getCountry(), versionName);
   }
   
   public void initNativePreferences() {
