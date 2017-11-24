@@ -277,11 +277,11 @@ extern FWApplication * applicationMain();
         tabBarItem.title = title;
         tabBarItem.tag = viewId;
   
-        NSMutableArray * items = (NSMutableArray *)tabBar.items;
-        if (items == nil) {
-          tabBar.items = items = [[NSMutableArray alloc] init];
-        }
-        [items addObject:tabBarItem];
+        // NSMutableArray * items = (NSMutableArray *)tabBar.items;
+        // if (items == nil) {
+        //   tabBar.items = items = [[NSMutableArray alloc] init];
+        // }
+        // [items addObject:tabBarItem];
     }
 }
 
