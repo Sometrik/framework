@@ -198,12 +198,16 @@ extern FWApplication * applicationMain();
     imageView.tag = viewId;
     imageView.contentScaleFactor = 1.0f;
     imageView.contentMode = UIViewContentModeScaleAspectFit;
+    [self.viewsDictionary setObject:image forKey:[NSString stringWithFormat:@"%d", viewId]];
     [self addToParent:parentId view:imageView];
 }
 
 - (void)createScrollLayoutWithId:(int)viewId parentId:(int)parentId
 {
-  
+    UIScrollView * scrollView = [[UIScrollView alloc] init];
+    scrollView.tag = viewId;
+    [self.viewsDictionary setObject:scrollView forKey:[NSString stringWithFormat:@"%d", viewId]];
+    [self addToParent:parentId view:scrollView];
 }
 
 - (void)createEventLayoutWithId:(int)viewId parentId:(int)parentId
