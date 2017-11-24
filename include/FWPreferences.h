@@ -9,10 +9,6 @@ class FWPreferences {
  public:
   FWPreferences() { }
 
-  void setValue(const std::string & key, const std::string & value) {
-    data[key] = value;
-  }
-
   const std::string & getText(const std::string & key) const {
     auto it = data.find(key);
     if (it != data.end()) return it->second;
@@ -26,7 +22,8 @@ class FWPreferences {
   }
 
   void deleteKey(const std::string & key) {
-
+    data.erase(key);
+    deletedKeys.insert(key);
   }
 
   int getInt(const std::string & key, int defaultValue = 0) const {
@@ -46,6 +43,7 @@ class FWPreferences {
   }
 
   void setText(const std::string & key, const std::string & value) {
+    deletedKeys.erase(key);
     data[key] = value;
     changedKeys.insert(key);
   }
@@ -68,13 +66,18 @@ class FWPreferences {
     }
     return r;
   }
+
+  const std::unordered_set<std::string> & getDeletedKeys() {
+    return deletedKeys;
+  }
   
-  void clearChanges() { changedKeys.clear(); }
+  void clearChanges() { changedKeys.clear(); deletedKeys.clear(); }
   
  private:
   std::unordered_map<std::string, std::string> data;
   std::string empty_string;
   std::unordered_set<std::string> changedKeys;
+  std::unordered_set<std::string> deletedKeys;
 };
 
 #endif

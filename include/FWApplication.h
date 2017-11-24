@@ -89,6 +89,11 @@ public:
   }
 
   void savePreferences() {
+    for (auto & row : preferences.getDeletedKeys()) {
+      Command c(Command::DELETE_PREFERENCE, getInternalId());
+      c.setTextValue(row);
+      sendCommand(c);
+    }
     for (auto & row : preferences.getChanges()) {
       Command c(Command::UPDATE_PREFERENCE, getInternalId());
       c.setTextValue(row.first);
