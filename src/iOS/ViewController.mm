@@ -16,6 +16,7 @@ extern FWApplication * applicationMain();
 
 @interface ViewController ()
 @property (nonatomic, strong) NSMutableDictionary *viewsDictionary;
+@property (nonatomic, strong) UIView *sideMenuView;
 @end
 
 @implementation ViewController
@@ -269,6 +270,14 @@ extern FWApplication * applicationMain();
   [self addToParent:parentId view:tabBar];
 }
 
+- (void)createNavigationView:(int)viewId
+{
+    self.sideMenuView = [[UIView alloc] initWithFrame:self.view.bounds];
+    self.sideMenuView.tag = viewId;
+    self.sideMenuView.transform = CGAffineTransformTranslate(self.sideMenuView.transform, -self.view.frame.size.width, 0.0);
+    [self.viewsDictionary setObject:self.sideMenuView forKey:[NSString stringWithFormat:@"%d", viewId]];
+}
+
 - (void)viewTapped:(UIView *)sender
 {
     int viewId = (int)sender.tag;
@@ -290,6 +299,7 @@ extern FWApplication * applicationMain();
           if (items == nil) {
             tabBar.items = items = [[NSMutableArray alloc] init];
           }
+            
           [items addObject:tabBarItem];
         }
     } else {

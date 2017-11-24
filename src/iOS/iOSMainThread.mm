@@ -74,6 +74,11 @@ iOSMainThread::sendCommands(const std::vector<Command> & commands) {
       }
         break;
         
+      case Command::CREATE_NAVIGATIONVIEW: {
+          [viewController createNavigationView:command.getChildInternalId()];
+      }
+        break;
+            
       case Command::SET_STYLE: {
         NSString * key = [NSString stringWithUTF8String:command.getTextValue().c_str()];
         NSString * value = [NSString stringWithUTF8String:command.getTextValue2().c_str()];
