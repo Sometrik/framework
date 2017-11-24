@@ -571,8 +571,8 @@ public class FrameWork extends Activity {
     return screenHeight;
   }
   
-  public void setAppId(int id){ this.appId = id; }
-  public int getAppId(){ return appId; }
+  public void setAppId(int id) { this.appId = id; }
+  public int getAppId() { return appId; }
 
   // returns database path
   public String getDBPath(String dbName) {
