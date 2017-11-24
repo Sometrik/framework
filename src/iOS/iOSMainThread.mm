@@ -79,6 +79,12 @@ iOSMainThread::sendCommands(const std::vector<Command> & commands) {
       }
         break;
             
+      case Command::CREATE_NAVIGATIONBAR_ITEM: {
+        NSString * title = [NSString stringWithUTF8String:command.getTextValue().c_str()];
+        [viewController createTabBarItem:command.getChildInternalId() parentId:command.getInternalId() title:title];
+      }
+        break;
+        
       case Command::SET_STYLE: {
         NSString * key = [NSString stringWithUTF8String:command.getTextValue().c_str()];
         NSString * value = [NSString stringWithUTF8String:command.getTextValue2().c_str()];

@@ -18,6 +18,7 @@
 - (void)createEventLayoutWithId:(int)viewId parentId:(int)parentId;
 - (void)createTabBar:(int)viewId parentId:(int)parentId;
 - (void)createNavigationView:(int)viewId;
+- (void)createTabBarItem:(int)viewId parentId:(int)parentId title:(NSString *)title;
 
 - (void)setIntValue:(int)viewId value:(int)value;
 - (void)setTextValue:(int)viewId value:(NSString *)value;

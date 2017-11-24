@@ -9,6 +9,7 @@
 #include <TextField.h>
 #include <ImageElement.h>
 #include <NavigationBar.h>
+#include <NavigationBarItem.h>
 
 #include <iostream>
 
@@ -60,6 +61,9 @@ Example1::Example1() : FWApplication("com.sometrik.example1")
   }
 
   auto navigationBar = std::make_shared<NavigationBar>();
+  navigationBar->addChild(std::make_shared<NavigationBarItem>("Page 1"));
+  navigationBar->addChild(std::make_shared<NavigationBarItem>("Page 2"));
+  navigationBar->addChild(std::make_shared<NavigationBarItem>("Page 3"));
   layout->addChild(navigationBar);
 }
 
