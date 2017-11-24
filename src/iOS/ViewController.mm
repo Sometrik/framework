@@ -79,7 +79,7 @@ extern FWApplication * applicationMain();
   UIView *view = [self.viewsDictionary objectForKey:[NSString stringWithFormat:@"%d", viewId]];
   
   if ([key isEqualToString:@"background-color"]) {
-    view.backgroundColor = [self colorFromHexString:value];
+    view.backgroundColor = [self colorFromString:value];
   }
   
   if ([view isKindOfClass:UILabel.class]) {
@@ -88,6 +88,16 @@ extern FWApplication * applicationMain();
     if ([key isEqualToString:@"font-size"]) {
       int b = (int)[value integerValue];
       label.font = [label.font fontWithSize:b];
+    } else if ([key isEqualToString:@"color"]) {
+      label.textColor = [self colorFromString:value];
+    } else if ([key isEqualToString:@"text-alignment"]) {
+      if ([value isEqualToString:@"center"]) {
+        label.textAlignment = NSTextAlignmentCenter;
+      } else if ([value isEqualToString:@"right"]) {
+        label.textAlignment = NSTextAlignmentRight;
+      } else {
+        label.textAlignment = NSTextAlignmentLeft;
+      }
     }
   }
 }
@@ -256,7 +266,7 @@ extern FWApplication * applicationMain();
     mainThread->sendTextValue(viewId, s);
 }
 
-- (UIColor *)colorFromHexString:(NSString *)hexString {
+- (UIColor *)colorFromString:(NSString *)hexString {
   unsigned rgbValue = 0;
   NSScanner *scanner = [NSScanner scannerWithString:hexString];
   [scanner setScanLocation:1]; // bypass '#' character
