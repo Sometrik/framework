@@ -8,6 +8,7 @@
 #include <Switch.h>
 #include <TextField.h>
 #include <ImageElement.h>
+#include <NavigationBar.h>
 
 #include <iostream>
 
@@ -57,7 +58,9 @@ Example1::Example1() : FWApplication("com.sometrik.example1")
   for (int i = 0; i < 100; i++) {
     scrollContent->addChild(std::make_shared<TextLabel>("Number: " + to_string(i)));
   }
-  
+
+  auto navigationBar = std::make_shared<NavigationBar>();
+  layout->addChild(navigationBar);
 }
 
 void

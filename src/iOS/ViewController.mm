@@ -250,6 +250,14 @@ extern FWApplication * applicationMain();
     [self addToParent:parentId view:view];
 }
 
+- (void)createTabBar:(int)viewId parentId:(int)parentId
+{
+  UITabBar * tabBar = [[UITabBar alloc] init];
+  tabBar.tag = viewId;
+  [self.viewsDictionary setObject:tabBar forKey:[NSString stringWithFormat:@"%d", viewId]];
+  [self addToParent:parentId view:tabBar];
+}
+
 - (void)viewTapped:(UIView *)sender
 {
     int viewId = (int)sender.tag;
