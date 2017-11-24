@@ -80,11 +80,38 @@ extern FWApplication * applicationMain();
   
   if ([key isEqualToString:@"background-color"]) {
     view.backgroundColor = [self colorFromString:value];
+  } else if ([key isEqualToString:@"background"]) {
+    view.backgroundColor = [self colorFromString:value];
   } else if ([key isEqualToString:@"shadow"]) {
     view.layer.shadowOpacity = 0.25;
     view.layer.masksToBounds = NO;
     view.layer.shadowRadius = (float)[value floatValue];
     view.layer.shadowOffset = CGSizeMake(0, 0);
+  } else if ([key isEqualToString:@"width"]) {
+    if ([value isEqualToString:@"match-parent"]) {
+      
+    } else if ([value isEqualToString:@"wrap-content"]) {
+      
+    } else {
+      CGRect frame = view.frame;
+      frame.size.width = (int)[value integerValue];
+      [view setFrame:frame];
+    }
+  } else if ([key isEqualToString:@"height"]) {
+    if ([value isEqualToString:@"match-parent"]) {
+      
+    } else if ([value isEqualToString:@"wrap-content"]) {
+      
+    } else {
+      CGRect frame = view.frame;
+      frame.size.height = (int)[value integerValue];
+      [view setFrame:frame];
+    }
+  } else if ([key isEqualToString:@"border-radius"]) {
+    view.layer.cornerRadius = (int)[value integerValue];
+  } else if ([key isEqualToString:@"border"]) {
+    view.layer.borderColor = [self colorFromString:value].CGColor;
+    view.layer.borderWidth = 1.0f;
   }
   
   if ([view isKindOfClass:UILabel.class]) {
@@ -103,32 +130,10 @@ extern FWApplication * applicationMain();
       } else {
         label.textAlignment = NSTextAlignmentLeft;
       }
-    } else if ([key isEqualToString:@"width"]) {
-      if ([value isEqualToString:@"match-parent"]) {
-        
-      } else if ([value isEqualToString:@"wrap-content"]) {
-        
-      } else {
-        CGRect frame = view.frame;
-        frame.size.width = (int)[value integerValue];
-        [view setFrame:frame];
-      }
-    } else if ([key isEqualToString:@"height"]) {
-      if ([value isEqualToString:@"match-parent"]) {
-        
-      } else if ([value isEqualToString:@"wrap-content"]) {
-        
-      } else {
-        CGRect frame = view.frame;
-        frame.size.height = (int)[value integerValue];
-        [view setFrame:frame];
-      }
-    } else if ([key isEqualToString:@"border-radius"]) {
-      view.layer.cornerRadius = (int)[value integerValue];
-    } else if ([key isEqualToString:@"border"]) {
-      view.layer.borderColor = [self colorFromString:value].CGColor;
-      view.layer.borderWidth = 1.0f;
     }
+  } else if ([view isKindOfClass:UIButton.class]) {
+    UIButton *button = (UIButton *)view;
+    
   }
 }
 
