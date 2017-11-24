@@ -25,6 +25,10 @@ class FWPreferences {
     else return defaultValue;
   }
 
+  void deleteKey(const std::string & key) {
+
+  }
+
   int getInt(const std::string & key, int defaultValue = 0) const {
     try {
       return std::stoi(getText(key, std::to_string(defaultValue)));
