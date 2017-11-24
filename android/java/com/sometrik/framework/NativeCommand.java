@@ -96,6 +96,7 @@ public class NativeCommand {
     CREATE_SLIDER,
     CREATE_ACTIONBAR,
     CREATE_NAVIGATIONBAR,
+    CREATE_NAVIGATIONBAR_ITEM,
     CREATE_PROGRESSBAR,
     CREATE_TOAST,
     CREATE_NOTIFICATION,
@@ -267,6 +268,7 @@ public class NativeCommand {
       }
       break;
 
+    case CREATE_NAVIGATIONBAR_ITEM:
     case CREATE_BUTTON:
       if (view != null) {
 	FWButton button = createButton();
