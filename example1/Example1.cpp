@@ -44,7 +44,7 @@ Example1::Example1() : FWApplication("com.sometrik.example1")
   layout->addChild(make_shared<Switch>("On", "Off"));
 
   auto buttonLayout = std::make_shared<LinearLayout>(FW_HORIZONTAL);
-  buttonLayout->addChild(make_shared<Button>("Click me!"));
+  buttonLayout->addChild(make_shared<Button>("Click me!")).style("background", "#30e030").style("border-radius", 5);
   buttonLayout->addChild(make_shared<Button>("Cancel"));
   buttonLayout->addChild(make_shared<Button>("Button"));
   layout->addChild(buttonLayout);
