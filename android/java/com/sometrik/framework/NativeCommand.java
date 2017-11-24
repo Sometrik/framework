@@ -504,16 +504,25 @@ public class NativeCommand {
     case LAUNCH_BROWSER:
       frame.launchBrowser(getTextValueAsString());
       break;
-    case CREATE_DIALOG:
-      FWDialog dialog = new FWDialog(frame, childInternalId);
-      dialog.setValue(getTextValueAsString());
-      frame.addToViewList(dialog);
+    case CREATE_DIALOG: {
+      	FWDialog dialog = new FWDialog(frame, childInternalId);
+      	dialog.setValue(getTextValueAsString());
+      	frame.addToViewList(dialog);
+    }
       break;
-    case CREATE_ACTION_SHEET:
-      if (view instanceof View) {
-	FWActionSheet sheet = new FWActionSheet(frame, (View)view, childInternalId);
-	frame.addToViewList(sheet);
-      }
+    case CREATE_ACTION_SHEET: {
+        View anchor = null;
+        if (view instanceof FWDialog) {
+	  FWDialog dialog = (FWDialog)view;
+	  anchor = dialog.getContentView();
+        } else if (view instanceof View) {
+	  anchor = (View)view;
+        }
+        if (anchor != null) {
+	  FWActionSheet sheet = new FWActionSheet(frame, anchor, childInternalId);
+	  frame.addToViewList(sheet);
+        }
+    }
       break;
     case CREATE_ACTIONBAR: {
       FWActionBar ab = new FWActionBar(frame, childInternalId);
