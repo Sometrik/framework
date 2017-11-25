@@ -35,7 +35,12 @@ iOSMainThread::sendCommands(const std::vector<Command> & commands) {
           [viewController createEventLayoutWithId:command.getChildInternalId() parentId:command.getInternalId()];
       }
         break;
-            
+        
+      case Command::CREATE_FRAME_LAYOUT: {
+          [viewController createFrameLayoutWithId:command.getChildInternalId() parentId:command.getInternalId()];
+      }
+        break;
+        
       case Command::CREATE_TEXT: {
         NSString * value = [NSString stringWithUTF8String:command.getTextValue().c_str()];
         [viewController createTextWithId:command.getChildInternalId() parentId:command.getInternalId() value:value];

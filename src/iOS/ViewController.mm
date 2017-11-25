@@ -183,6 +183,14 @@ extern FWApplication * applicationMain();
     [self addToParent:parentId view:stackView];
 }
 
+- (void)createFrameLayoutWithId:(int)viewId parentId:(int)parentId
+{
+    UIView *view = [[UIView alloc] init];
+    view.tag = viewId;
+    [self.viewsDictionary setObject:view forKey:[NSString stringWithFormat:@"%d", viewId]];
+    [self addToParent:parentId view:view];
+}
+
 - (void)createTextWithId:(int)viewId parentId:(int)parentId value:(NSString*)value
 {
     UILabel *label = [[UILabel alloc] init];
