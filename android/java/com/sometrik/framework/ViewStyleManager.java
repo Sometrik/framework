@@ -16,6 +16,7 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.RippleDrawable;
 import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.RectShape;
 import android.graphics.drawable.shapes.RoundRectShape;
 import android.text.TextUtils.TruncateAt;
 import android.view.Gravity;
@@ -398,17 +399,24 @@ class ViewStyleManager {
       backgroundContent = new ColorDrawable(backgroundColor);      
     }
   
-    if (view instanceof Button) {
+    if ((shadow == null || shadow == 0) && (view instanceof Button || view instanceof FWEventLayout)) {
       Drawable backgroundMask = null;
       if (borderRadius != null) {
 	RoundRectShape shape = new RoundRectShape(expandRadii(borderRadius), null, null);
 	backgroundMask = new ShapeDrawable(shape);
       } else {
-	backgroundMask = new GradientDrawable();	
+	RectShape shape = new RectShape();
+	backgroundMask = new ShapeDrawable(shape);
       }
       
-      int color1 = Color.parseColor("#ffffff");
-      int color2 = Color.parseColor("#000000");
+      int color1 = 0, color2 = 0;
+      if (backgroundColor != null && backgroundColor != 0) {
+	color1 = Color.parseColor("#80ffffff");
+	color2 = Color.parseColor("#80000000");      
+      } else {
+	color1 = Color.parseColor("#80ff0000");
+	color2 = Color.parseColor("#807f0000");
+      }
       ColorStateList colors = new ColorStateList(
 	        new int[][]
 	            {

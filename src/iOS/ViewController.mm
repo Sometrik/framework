@@ -68,8 +68,7 @@ static NSTimeInterval sidePanelAnimationDuration = 0.4;
 }
 
 - (void)createTextFieldWithId: (int)viewId parentId:(int)parentId {
-    CGRect someRect = CGRectMake(0.0, 0.0, 100.0, 30.0);
-    UITextField* text = [[UITextField alloc] initWithFrame:someRect];
+    UITextField* text = [[UITextField alloc] init];
     text.tag = viewId;
     text.borderStyle = UITextBorderStyleRoundedRect;
     text.autocorrectionType = UITextAutocorrectionTypeNo;
@@ -206,15 +205,23 @@ static NSTimeInterval sidePanelAnimationDuration = 0.4;
     stackView.alignment = UIStackViewAlignmentFill;
     stackView.translatesAutoresizingMaskIntoConstraints = false;
     stackView.frame = self.view.frame;
+
     [self.viewsDictionary setObject:stackView forKey:[NSString stringWithFormat:@"%d", viewId]];
     [self addToParent:parentId view:stackView];
+}
+
+- (void)createFrameLayoutWithId:(int)viewId parentId:(int)parentId
+{
+    UIView *view = [[UIView alloc] init];
+    view.tag = viewId;
+    [self.viewsDictionary setObject:view forKey:[NSString stringWithFormat:@"%d", viewId]];
+    [self addToParent:parentId view:view];
 }
 
 - (void)createTextWithId:(int)viewId parentId:(int)parentId value:(NSString*)value
 {
     UILabel *label = [[UILabel alloc] init];
     label.tag = viewId;
-    //label.frame = CGRectMake(0, 0, 50, 20);
     label.text = value;
     [self.viewsDictionary setObject:label forKey:[NSString stringWithFormat:@"%d", viewId]];
     [self addToParent:parentId view:label];
@@ -273,6 +280,21 @@ static NSTimeInterval sidePanelAnimationDuration = 0.4;
 {
     UIScrollView * scrollView = [[UIScrollView alloc] init];
     scrollView.tag = viewId;
+    scrollView.contentSize = CGSizeMake(self.view.bounds.size.width, 5 * self.view.bounds.size.height);
+    scrollView.frame = self.view.frame;
+    scrollView.clipsToBounds = YES;
+    [self.viewsDictionary setObject:scrollView forKey:[NSString stringWithFormat:@"%d", viewId]];
+    [self addToParent:parentId view:scrollView];
+}
+
+- (void)createPageLayoutWithId:(int)viewId parentId:(int)parentId
+{
+    UIScrollView * scrollView = [[UIScrollView alloc] init];
+    scrollView.tag = viewId;
+    scrollView.pagingEnabled = YES;
+    scrollView.contentSize = CGSizeMake(0, self.view.bounds.size.height);
+    scrollView.frame = self.view.frame;
+    scrollView.clipsToBounds = YES;
     [self.viewsDictionary setObject:scrollView forKey:[NSString stringWithFormat:@"%d", viewId]];
     [self addToParent:parentId view:scrollView];
 }
@@ -291,6 +313,8 @@ static NSTimeInterval sidePanelAnimationDuration = 0.4;
 {
     UITabBar * tabBar = [[UITabBar alloc] init];
     tabBar.tag = viewId;
+    tabBar.contentMode = UIViewContentModeBottom;
+    [tabBar setAutoresizingMask:UIViewAutoresizingFlexibleTopMargin];
     [self.viewsDictionary setObject:tabBar forKey:[NSString stringWithFormat:@"%d", viewId]];
     [self addToParent:parentId view:tabBar];
 }
@@ -359,6 +383,36 @@ static NSTimeInterval sidePanelAnimationDuration = 0.4;
             }
         }];
     }
+- (void)createActivityIndicatorWithId:(int)viewId parentId:(int)parentId
+{
+    UIActivityIndicatorView * view = [[UIActivityIndicatorView alloc] init];
+    view.tag = viewId;
+    [self.viewsDictionary setObject:view forKey:[NSString stringWithFormat:@"%d", viewId]];
+    [self addToParent:parentId view:view];
+    [view startAnimating];
+}
+
+- (void)createDialogWithId:(int)viewId parentId:(int)parentId
+{
+    UIView * dialog = [[UIView alloc] init];
+    dialog.tag = viewId;
+    dialog.layer.backgroundColor = [UIColor grayColor].CGColor;
+    dialog.layer.borderColor = [UIColor blackColor].CGColor;
+    dialog.layer.borderWidth = 1;
+    dialog.layer.cornerRadius = 10;
+    dialog.layer.shadowColor = [UIColor blackColor].CGColor;
+    dialog.layer.shadowOpacity = 1.0;
+    dialog.layer.shadowRadius = 7.5;
+    dialog.layer.shadowOffset = CGSizeMake(1, 4);
+    dialog.clipsToBounds = NO;
+  
+    CGSize s = self.view.bounds.size;
+
+    dialog.frame = CGRectMake(50, 50, s.width - 100, s.height - 100);
+    // dialog.center = CGPointMake(s.width / 2, (s.height / 2) - 65);
+  
+    [self.viewsDictionary setObject:dialog forKey:[NSString stringWithFormat:@"%d", viewId]];
+    [self.view addSubview:dialog];
 }
 
 - (void)viewTapped:(UIView *)sender
@@ -374,8 +428,31 @@ static NSTimeInterval sidePanelAnimationDuration = 0.4;
     if ([parentView isKindOfClass:UIStackView.class]) {
         UIStackView *stackView = (UIStackView *)parentView;
         [stackView addArrangedSubview:view];
-    } else {
+    } else if ([parentView isKindOfClass:UIScrollView.class]) {
+        UIScrollView * scrollView = (UIScrollView *)parentView;
+        if (scrollView.pagingEnabled) {
+            int pos = [[scrollView subviews] count];
+            int pageWidth = self.view.bounds.size.width;
+            int pageHeight = self.view.bounds.size.height;
+            view.frame = CGRectMake(pos * pageWidth, 0, pageWidth, pageHeight);
+            scrollView.contentSize = CGSizeMake(scrollView.contentSize.width + pageWidth, scrollView.contentSize.height);
+        } else {
+            view.frame = parentView.frame;
+        }
         [parentView addSubview:view];
+    } else {
+        view.frame = parentView.frame;
+        [parentView addSubview:view];
+    }
+}
+
+- (void)removeView:(int)viewId
+{
+    NSString * key = [NSString stringWithFormat:@"%d", viewId];
+    UIView *view = [self.viewsDictionary objectForKey:key];
+    if (view != nil) {
+        [view removeFromSuperview];
+        [self.viewsDictionary removeObjectForKey:key];
     }
 }
 

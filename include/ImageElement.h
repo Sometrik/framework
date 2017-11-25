@@ -21,7 +21,7 @@ class ImageElement : public Element {
     return Element::isA(className);
   }
 
-  void handleImageRequestEvent(ImageRequestEvent & ev) {
+  void handleImageRequestEvent(ImageRequestEvent & ev) override {
     width = ev.getRequestedWidth();
     height = ev.getRequestedHeight();
   }

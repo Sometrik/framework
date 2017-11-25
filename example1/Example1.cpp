@@ -11,8 +11,15 @@
 #include <NavigationBar.h>
 #include <NavigationBarItem.h>
 #include <NavigationDrawer.h>
+#include <FrameLayout.h>
+#include <ProgressBar.h>
+#include <FlipperLayout.h>
+
+#include "ImageDialog.h"
 
 #include <iostream>
+
+#define ID_CLICK_ME_BUTTON 1
 
 using namespace std;
 
@@ -23,64 +30,76 @@ Example1::Example1() : FWApplication("com.sometrik.example1")
     addChild(navi);
     
   auto view = std::make_shared<FrameView>();
-  view->style("background-color", "#cccccc");
+  view->style("background-color", "#555555");
   addChild(view);
   
-  auto layout = std::make_shared<LinearLayout>(FW_VERTICAL);
-  view->addChild(layout);
-
+  auto flipper = std::make_shared<FlipperLayout>();
+  view->addChild(flipper);
+  
+  auto firstPage = std::make_shared<LinearLayout>(FW_VERTICAL);
+  flipper->addChild(firstPage);
+ 
+  auto secondPage = std::make_shared<LinearLayout>(FW_VERTICAL);
+  flipper->addChild(secondPage);
+  
   auto image = std::make_shared<ImageElement>("test.png");
-  layout->addChild(image);
-
+  firstPage->addChild(image);
+  
   auto title = make_shared<TextLabel>("Hello again!", 1234);
   title->style("font-size", 20);
   title->style("background-color", "#e03030");
   title->style("shadow", 5);
   title->style("border", "#801010");
   title->style("border-radius", 5);
-  layout->addChild(title);
+  firstPage->addChild(title);
 
   auto nameLayout = make_shared<LinearLayout>(FW_HORIZONTAL);
-  layout->addChild(nameLayout);
+  firstPage->addChild(nameLayout);
   nameLayout->addChild(make_shared<TextLabel>("Kirjoita nimesi:"));
   
   textField = make_shared<TextField>();
   nameLayout->addChild(textField);
-        
-  layout->addChild(make_shared<Switch>("On", "Off"));
-
+  
   auto buttonLayout = std::make_shared<LinearLayout>(FW_HORIZONTAL);
-  buttonLayout->addChild(make_shared<Button>("Click me!")).style("background", "#30e030").style("border-radius", 5);
+  buttonLayout->addChild(make_shared<Button>("Click me!", ID_CLICK_ME_BUTTON)).style("background", "#30e030").style("border-radius", 5);
   buttonLayout->addChild(make_shared<Button>("Cancel"));
   buttonLayout->addChild(make_shared<Button>("Button"));
-  layout->addChild(buttonLayout);
+  firstPage->addChild(buttonLayout);
 
   auto scrollLayout = std::make_shared<ScrollLayout>();
   scrollLayout->style("min-height", 200);
-  layout->addChild(scrollLayout);
+  firstPage->addChild(scrollLayout);
   auto scrollContent = std::make_shared<LinearLayout>(FW_VERTICAL);
   scrollLayout->addChild(scrollContent);
   
   for (int i = 0; i < 100; i++) {
     scrollContent->addChild(std::make_shared<TextLabel>("Number: " + to_string(i)));
   }
+  
+  firstPage->addChild(make_shared<Switch>("On", "Off"));
 
   auto navigationBar = std::make_shared<NavigationBar>();
   navigationBar->addChild(std::make_shared<NavigationBarItem>("Page 1"));
   navigationBar->addChild(std::make_shared<NavigationBarItem>("Page 2"));
   navigationBar->addChild(std::make_shared<NavigationBarItem>("Page 3"));
-  layout->addChild(navigationBar);
-    
-    
+
+  view->addChild(navigationBar);
+  
+  secondPage->addChild(make_shared<ProgressBar>());
 }
 
 void
 Example1::onCommandEvent(CommandEvent & ev) {
-  getLogger().println("got command event " + textField->getValue());
-  
-  getChildById(1234).text("Hello " + textField->getValue() + "!");
+  cerr << "got command event: " << ev.getElementId() << endl;
+  switch (ev.getElementId()) {
+    case ID_CLICK_ME_BUTTON: {
+      cerr << "showing dialog" << endl;
+      auto dialog = make_shared<ImageDialog>();
+      dialog->showModal(this);
+    }
+      break;
+  }
 }
-
 
 FWApplication * applicationMain() {
   return new Example1();  

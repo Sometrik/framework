@@ -221,21 +221,19 @@ public class NativeCommand {
       break;
     }
 
-    case CREATE_FRAME_LAYOUT: {
-      FWFrameLayout layout = new FWFrameLayout(frame, getChildInternalId(), false);
-      frame.addToViewList(layout);
+    case CREATE_FRAME_LAYOUT:
       if (view != null) {
+	FWFrameLayout layout = new FWFrameLayout(frame, getChildInternalId());
+	frame.addToViewList(layout);
 	view.addChild(layout);
       }
-    }
       break;
-    case CREATE_EVENT_LAYOUT: {
-      FWFrameLayout layout = new FWFrameLayout(frame, getChildInternalId(), true);
-      frame.addToViewList(layout);
+    case CREATE_EVENT_LAYOUT:
       if (view != null) {
+	FWEventLayout layout = new FWEventLayout(frame, getChildInternalId());
+	frame.addToViewList(layout);
 	view.addChild(layout);
       }
-    }
       break;
     case CREATE_SCROLL_LAYOUT:
       if (view != null) {
@@ -531,7 +529,7 @@ public class NativeCommand {
       break;
     }
     case CREATE_NAVIGATIONBAR: {
-      FWFrameLayout bar = new FWFrameLayout(frame, getChildInternalId(), true);      
+      FWFrameLayout bar = new FWFrameLayout(frame, getChildInternalId());      
       view.addChild(bar);
       frame.addToViewList(bar);
       break;
