@@ -5,6 +5,10 @@
 
 using namespace std;
 
+iOSMainThread::iOSMainThread(std::shared_ptr<FWApplication> _application, std::shared_ptr<Runnable> _runnable) : PlatformThread(0, _application, _runnable) {
+  defaults = [NSUserDefaults standardUserDefaults];
+}
+
 void
 iOSMainThread::sendCommands(const std::vector<Command> & commands) {
   for (auto & command : commands) {
@@ -158,7 +162,10 @@ iOSMainThread::sendCommands(const std::vector<Command> & commands) {
         break;
         
       case Command::UPDATE_PREFERENCE: {
-        
+	NSString *storedVal = [NSString stringWithUTF8String:command.getTextValue().c_str()];
+	NSString *storedKey = [NSString stringWithUTF8String:command.getTextValue2().c_str()];
+	[defaults setObject:storedVal forKey:storedKey];
+	[defaults synchronize];
       }
         break;
         

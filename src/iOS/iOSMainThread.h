@@ -7,7 +7,7 @@
 
 class iOSMainThread : public PlatformThread {
 public:
-    iOSMainThread(std::shared_ptr<FWApplication> _application, std::shared_ptr<Runnable> _runnable) : PlatformThread(0, _application, _runnable) { }
+  iOSMainThread(std::shared_ptr<FWApplication> _application, std::shared_ptr<Runnable> _runnable);
     
   bool start() override { return true; }
   bool testDestroy() override { return false; }
@@ -54,6 +54,7 @@ public:
   void sendTimerEvent(int timerId);
   
   ViewController * viewController = 0;
+  NSUserDefaults * defaults = 0;
   
  protected:
   void setDestroyed() override { }
