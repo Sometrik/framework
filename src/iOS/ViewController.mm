@@ -161,7 +161,7 @@ static NSTimeInterval sidePanelAnimationDuration = 0.4;
 {
     UIView *view = [self.viewsDictionary objectForKey:[NSString stringWithFormat:@"%d", viewId]];
     if ([view isEqual:self.sideMenuView]) {
-        if (visibility == 0) {
+      if (visibility == 0) {
             [self hideNavigationView];
         } else {
             [self showNavigationView];
@@ -205,9 +205,17 @@ static NSTimeInterval sidePanelAnimationDuration = 0.4;
     stackView.alignment = UIStackViewAlignmentFill;
     stackView.translatesAutoresizingMaskIntoConstraints = false;
     stackView.frame = self.view.frame;
-
+    stackView.distribution = UIStackViewDistributionFillProportionally;
+  
     [self.viewsDictionary setObject:stackView forKey:[NSString stringWithFormat:@"%d", viewId]];
     [self addToParent:parentId view:stackView];
+  
+    if (direction == 1) {
+      NSLayoutConstraint *stackViewWidth = [NSLayoutConstraint constraintWithItem:stackView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:stackView.superview attribute:NSLayoutAttributeWidth multiplier:1 constant:0];
+      [stackView.superview addConstraints:@[stackViewWidth]];
+
+  }
+  
 }
 
 - (void)createFrameLayoutWithId:(int)viewId parentId:(int)parentId
@@ -279,7 +287,7 @@ static NSTimeInterval sidePanelAnimationDuration = 0.4;
 {
     UIScrollView * scrollView = [[UIScrollView alloc] init];
     scrollView.tag = viewId;
-    scrollView.contentSize = CGSizeMake(self.view.bounds.size.width, 5 * self.view.bounds.size.height);
+    scrollView.contentSize = CGSizeMake(self.view.bounds.size.width, 4000);
     scrollView.frame = self.view.frame;
     scrollView.clipsToBounds = YES;
     [self.viewsDictionary setObject:scrollView forKey:[NSString stringWithFormat:@"%d", viewId]];
@@ -317,8 +325,8 @@ static NSTimeInterval sidePanelAnimationDuration = 0.4;
 {
     UITabBar * tabBar = [[UITabBar alloc] init];
     tabBar.tag = viewId;
-    tabBar.contentMode = UIViewContentModeBottom;
-    [tabBar setAutoresizingMask:UIViewAutoresizingFlexibleTopMargin];
+    // tabBar.contentMode = UIViewContentModeBottom;
+    // [tabBar setAutoresizingMask:UIViewAutoresizingFlexibleTopMargin];
     [self.viewsDictionary setObject:tabBar forKey:[NSString stringWithFormat:@"%d", viewId]];
     [self addToParent:parentId view:tabBar];
 }
