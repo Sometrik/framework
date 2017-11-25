@@ -16,6 +16,7 @@
 - (void)createSwitchWithId:(int)viewId parentId:(int)parentId;
 - (void)createImageWithId:(int)viewId parentId:(int)parentId filename:(NSString *)filename;
 - (void)createScrollLayoutWithId:(int)viewId parentId:(int)parentId;
+- (void)createPageLayoutWithId:(int)viewId parentId:(int)parentId;
 - (void)createEventLayoutWithId:(int)viewId parentId:(int)parentId;
 - (void)createTabBar:(int)viewId parentId:(int)parentId;
 - (void)createTabBarItem:(int)viewId parentId:(int)parentId title:(NSString *)title;

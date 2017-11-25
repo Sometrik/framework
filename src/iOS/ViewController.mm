@@ -258,6 +258,16 @@ extern FWApplication * applicationMain();
     [self addToParent:parentId view:scrollView];
 }
 
+- (void)createPageLayoutWithId:(int)viewId parentId:(int)parentId
+{
+    UIScrollView * scrollView = [[UIScrollView alloc] init];
+    scrollView.tag = viewId;
+    scrollView.pagingEnabled = YES;
+    scrollView.contentSize = CGSizeMake(self.view.bounds.size.width * 3, self.view.bounds.size.height);
+    [self.viewsDictionary setObject:scrollView forKey:[NSString stringWithFormat:@"%d", viewId]];
+    [self addToParent:parentId view:scrollView];
+}
+
 - (void)createEventLayoutWithId:(int)viewId parentId:(int)parentId
 {
     UIView *view = [[UIView alloc] init];
