@@ -51,8 +51,7 @@ extern FWApplication * applicationMain();
 }
 
 - (void)createTextFieldWithId: (int)viewId parentId:(int)parentId {
-    CGRect someRect = CGRectMake(0.0, 0.0, 100.0, 30.0);
-    UITextField* text = [[UITextField alloc] initWithFrame:someRect];
+    UITextField* text = [[UITextField alloc] init];
     text.tag = viewId;
     text.borderStyle = UITextBorderStyleRoundedRect;
     text.autocorrectionType = UITextAutocorrectionTypeNo;
@@ -178,7 +177,6 @@ extern FWApplication * applicationMain();
         stackView.axis = UILayoutConstraintAxisHorizontal;
     }
     //stackView.si
-    stackView.frame = self.view.frame;
     [self.viewsDictionary setObject:stackView forKey:[NSString stringWithFormat:@"%d", viewId]];
     [self addToParent:parentId view:stackView];
 }
@@ -195,7 +193,6 @@ extern FWApplication * applicationMain();
 {
     UILabel *label = [[UILabel alloc] init];
     label.tag = viewId;
-    //label.frame = CGRectMake(0, 0, 50, 20);
     label.text = value;
     [self.viewsDictionary setObject:label forKey:[NSString stringWithFormat:@"%d", viewId]];
     [self addToParent:parentId view:label];
@@ -286,7 +283,7 @@ extern FWApplication * applicationMain();
 {
     UITabBar * tabBar = [[UITabBar alloc] init];
     tabBar.tag = viewId;
-    tabBar.frame = self.view.bounds;
+    tabBar.contentMode = UIViewContentModeBottom;
     [tabBar setAutoresizingMask:UIViewAutoresizingFlexibleTopMargin];
     [self.viewsDictionary setObject:tabBar forKey:[NSString stringWithFormat:@"%d", viewId]];
     [self addToParent:parentId view:tabBar];
@@ -332,16 +329,14 @@ extern FWApplication * applicationMain();
     dialog.layer.shadowRadius = 7.5;
     dialog.layer.shadowOffset = CGSizeMake(1, 4);
     dialog.clipsToBounds = NO;
-    dialog.frame = CGRectMake(0, 0, 200, 300);
-
-    UIWindow* keyWindow = [[UIApplication sharedApplication] keyWindow];
-    UIView* topmostView = [keyWindow.subviews objectAtIndex:0];
   
-    CGSize s = topmostView.bounds.size;
-    dialog.center = CGPointMake(s.width / 2, (s.height / 2) - 65);
+    CGSize s = self.view.bounds.size;
+
+    dialog.frame = CGRectMake(50, 50, s.width - 100, s.height - 100);
+    // dialog.center = CGPointMake(s.width / 2, (s.height / 2) - 65);
   
     [self.viewsDictionary setObject:dialog forKey:[NSString stringWithFormat:@"%d", viewId]];
-    [topmostView addSubview:dialog];
+    [self.view addSubview:dialog];
 }
 
 - (void)viewTapped:(UIView *)sender
@@ -366,11 +361,11 @@ extern FWApplication * applicationMain();
             view.frame = CGRectMake(pos * pageWidth, 0, pageWidth, pageHeight);
             scrollView.contentSize = CGSizeMake(scrollView.contentSize.width + pageWidth, scrollView.contentSize.height);
         } else {
-            view.frame = parentView.bounds;
+            view.frame = parentView.frame;
         }
         [parentView addSubview:view];
     } else {
-        view.frame = parentView.bounds;
+        view.frame = parentView.frame;
         [parentView addSubview:view];
     }
 }
