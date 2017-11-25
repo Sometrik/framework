@@ -253,6 +253,7 @@ extern FWApplication * applicationMain();
 {
     UIScrollView * scrollView = [[UIScrollView alloc] init];
     scrollView.tag = viewId;
+    scrollView.contentSize = CGSizeMake(self.view.bounds.size.width, 4000);
     [self.viewsDictionary setObject:scrollView forKey:[NSString stringWithFormat:@"%d", viewId]];
     [self addToParent:parentId view:scrollView];
 }
