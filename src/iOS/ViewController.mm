@@ -309,6 +309,11 @@ static NSTimeInterval sidePanelAnimationDuration = 0.4;
     [self addToParent:parentId view:view];
 }
 
+- (void)createNavigationBar:(int)viewId parentId:(int)parentId
+{
+    // Create navigation bar with a button for opening side menu
+}
+
 - (void)createTabBar:(int)viewId parentId:(int)parentId
 {
     UITabBar * tabBar = [[UITabBar alloc] init];
