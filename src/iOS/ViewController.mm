@@ -242,7 +242,6 @@ static NSTimeInterval sidePanelAnimationDuration = 0.4;
     int viewId = (int)sender.tag;
     NSLog(@"viewId = %d", viewId);
     NSLog(@"buttonTitle = %@", sender.titleLabel.text);
-    [self showNavigationView];
     [self sendIntValue:viewId value:viewId];
 }
 
