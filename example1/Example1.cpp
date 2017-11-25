@@ -24,19 +24,14 @@ Example1::Example1() : FWApplication("com.sometrik.example1")
   view->style("background-color", "#555555");
   addChild(view);
   
-#if 0
   auto flipper = std::make_shared<FlipperLayout>();
   view->addChild(flipper);
   
   auto firstPage = std::make_shared<LinearLayout>(FW_VERTICAL);
   flipper->addChild(firstPage);
-  
+ 
   auto secondPage = std::make_shared<LinearLayout>(FW_VERTICAL);
   flipper->addChild(secondPage);
-#else
-  auto firstPage = std::make_shared<LinearLayout>(FW_VERTICAL);
-  view->addChild(firstPage);
-#endif
   
   auto image = std::make_shared<ImageElement>("test.png");
   firstPage->addChild(image);
@@ -80,9 +75,7 @@ Example1::Example1() : FWApplication("com.sometrik.example1")
   navigationBar->addChild(std::make_shared<NavigationBarItem>("Page 3"));
   firstPage->addChild(navigationBar);
   
-#if 0
   secondPage->addChild(make_shared<ProgressBar>());
-#endif
 }
 
 void
