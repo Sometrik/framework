@@ -25,6 +25,7 @@
 - (void)addImageUrl:(int)viewId url:(NSString *)url width:(int)width height:(int)height;
 
 - (void)addToParent:(int)parentId view:(UIView*)view;
+- (void)removeView:(int)viewId;
 
 - (void)sendIntValue:(int)viewId value:(int)value;
 - (void)sendTextValue:(int)viewId value:(NSString *)value;

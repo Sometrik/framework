@@ -303,6 +303,16 @@ extern FWApplication * applicationMain();
     }
 }
 
+- (void)removeView:(int)viewId
+{
+    NSString * key = [NSString stringWithFormat:@"%d", viewId];
+    UIView *view = [self.viewsDictionary objectForKey:key];
+    if (view != nil) {
+        [view removeFromSuperview];
+        [self.viewsDictionary removeObjectForKey:key];
+    }
+}
+
 - (void)setIntValue:(int)viewId value:(int)value
 {
 	// if view is switch, set state to value

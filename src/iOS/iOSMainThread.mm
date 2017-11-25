@@ -108,7 +108,7 @@ iOSMainThread::sendCommands(const std::vector<Command> & commands) {
         break;
         
       case Command::DELETE_ELEMENT: {
-        
+        [viewController removeView:command.getInternalId()];
       }
         break;
         
