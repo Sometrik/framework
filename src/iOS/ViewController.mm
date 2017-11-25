@@ -383,6 +383,8 @@ static NSTimeInterval sidePanelAnimationDuration = 0.4;
             }
         }];
     }
+}
+
 - (void)createActivityIndicatorWithId:(int)viewId parentId:(int)parentId
 {
     UIActivityIndicatorView * view = [[UIActivityIndicatorView alloc] init];
