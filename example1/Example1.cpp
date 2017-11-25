@@ -10,6 +10,8 @@
 #include <ImageElement.h>
 #include <NavigationBar.h>
 #include <NavigationBarItem.h>
+#include <FrameLayout.h>
+#include <ProgressBar.h>
 
 #include <iostream>
 
@@ -26,6 +28,8 @@ Example1::Example1() : FWApplication("com.sometrik.example1")
 
   auto image = std::make_shared<ImageElement>("test.png");
   layout->addChild(image);
+  
+  layout->addChild(make_shared<ProgressBar>());
 
   auto title = make_shared<TextLabel>("Hello again!", 1234);
   title->style("font-size", 20);
@@ -41,9 +45,7 @@ Example1::Example1() : FWApplication("com.sometrik.example1")
   
   textField = make_shared<TextField>();
   nameLayout->addChild(textField);
-        
-  layout->addChild(make_shared<Switch>("On", "Off"));
-
+  
   auto buttonLayout = std::make_shared<LinearLayout>(FW_HORIZONTAL);
   buttonLayout->addChild(make_shared<Button>("Click me!")).style("background", "#30e030").style("border-radius", 5);
   buttonLayout->addChild(make_shared<Button>("Cancel"));
@@ -53,12 +55,16 @@ Example1::Example1() : FWApplication("com.sometrik.example1")
   auto scrollLayout = std::make_shared<ScrollLayout>();
   scrollLayout->style("min-height", 200);
   layout->addChild(scrollLayout);
+  auto scrollFrame = std::make_shared<FrameLayout>();
+  scrollLayout->addChild(scrollFrame);
   auto scrollContent = std::make_shared<LinearLayout>(FW_VERTICAL);
-  scrollLayout->addChild(scrollContent);
+  scrollFrame->addChild(scrollContent);
   
   for (int i = 0; i < 100; i++) {
     scrollContent->addChild(std::make_shared<TextLabel>("Number: " + to_string(i)));
   }
+  
+  layout->addChild(make_shared<Switch>("On", "Off"));
 
   auto navigationBar = std::make_shared<NavigationBar>();
   navigationBar->addChild(std::make_shared<NavigationBarItem>("Page 1"));
