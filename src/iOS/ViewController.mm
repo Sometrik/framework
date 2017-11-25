@@ -293,6 +293,15 @@ extern FWApplication * applicationMain();
     }
 }
 
+- (void)createActivityIndicatorWithId:(int)viewId parentId:(int)parentId
+{
+    UIActivityIndicatorView * view = [[UIActivityIndicatorView alloc] init];
+    view.tag = viewId;
+    [self.viewsDictionary setObject:view forKey:[NSString stringWithFormat:@"%d", viewId]];
+    [self addToParent:parentId view:view];
+    [view startAnimating];
+}
+
 - (void)viewTapped:(UIView *)sender
 {
     int viewId = (int)sender.tag;

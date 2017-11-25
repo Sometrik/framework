@@ -41,6 +41,11 @@ iOSMainThread::sendCommands(const std::vector<Command> & commands) {
       }
         break;
         
+      case Command::CREATE_FLIPPER_LAYOUT: {
+        
+      }
+        break;
+        
       case Command::CREATE_TEXT: {
         NSString * value = [NSString stringWithUTF8String:command.getTextValue().c_str()];
         [viewController createTextWithId:command.getChildInternalId() parentId:command.getInternalId() value:value];
@@ -85,6 +90,11 @@ iOSMainThread::sendCommands(const std::vector<Command> & commands) {
       }
         break;
         
+      case Command::CREATE_PROGRESSBAR: {
+        [viewController createActivityIndicatorWithId:command.getChildInternalId() parentId:command.getInternalId()];
+      }
+        break;
+        
       case Command::SET_STYLE: {
         NSString * key = [NSString stringWithUTF8String:command.getTextValue().c_str()];
         NSString * value = [NSString stringWithUTF8String:command.getTextValue2().c_str()];
@@ -104,6 +114,11 @@ iOSMainThread::sendCommands(const std::vector<Command> & commands) {
       	
       case Command::CREATE_ALERT_DIALOG: {
       	
+      }
+        break;
+        
+      case Command::CREATE_ACTION_SHEET: {
+        
       }
         break;
 
