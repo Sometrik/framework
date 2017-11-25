@@ -83,6 +83,11 @@ iOSMainThread::sendCommands(const std::vector<Command> & commands) {
       }
         break;
         
+      case Command::CREATE_ACTIONBAR: {
+        [viewController createNavigationBar:command.getChildInternalId() parentId:command.getInternalId()];
+      }
+        break;
+        
       case Command::CREATE_NAVIGATIONBAR: {
         [viewController createTabBar:command.getChildInternalId() parentId:command.getInternalId()];
       }
