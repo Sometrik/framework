@@ -319,6 +319,31 @@ extern FWApplication * applicationMain();
     [view startAnimating];
 }
 
+- (void)createDialogWithId:(int)viewId parentId:(int)parentId
+{
+    UIView * dialog = [[UIView alloc] init];
+    dialog.tag = viewId;
+    dialog.layer.backgroundColor = [UIColor grayColor].CGColor;
+    dialog.layer.borderColor = [UIColor blackColor].CGColor;
+    dialog.layer.borderWidth = 1;
+    dialog.layer.cornerRadius = 10;
+    dialog.layer.shadowColor = [UIColor blackColor].CGColor;
+    dialog.layer.shadowOpacity = 1.0;
+    dialog.layer.shadowRadius = 7.5;
+    dialog.layer.shadowOffset = CGSizeMake(1, 4);
+    dialog.clipsToBounds = NO;
+    dialog.frame = CGRectMake(0, 0, 200, 300);
+
+    UIWindow* keyWindow = [[UIApplication sharedApplication] keyWindow];
+    UIView* topmostView = [keyWindow.subviews objectAtIndex:0];
+  
+    CGSize s = topmostView.bounds.size;
+    dialog.center = CGPointMake(s.width / 2, (s.height / 2) - 65);
+  
+    [self.viewsDictionary setObject:dialog forKey:[NSString stringWithFormat:@"%d", viewId]];
+    [topmostView addSubview:dialog];
+}
+
 - (void)viewTapped:(UIView *)sender
 {
     int viewId = (int)sender.tag;
@@ -340,9 +365,12 @@ extern FWApplication * applicationMain();
             int pageHeight = self.view.bounds.size.height;
             view.frame = CGRectMake(pos * pageWidth, 0, pageWidth, pageHeight);
             scrollView.contentSize = CGSizeMake(scrollView.contentSize.width + pageWidth, scrollView.contentSize.height);
+        } else {
+            view.frame = parentView.bounds;
         }
         [parentView addSubview:view];
     } else {
+        view.frame = parentView.bounds;
         [parentView addSubview:view];
     }
 }

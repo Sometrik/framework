@@ -21,6 +21,7 @@
 - (void)createTabBar:(int)viewId parentId:(int)parentId;
 - (void)createTabBarItem:(int)viewId parentId:(int)parentId title:(NSString *)title;
 - (void)createActivityIndicatorWithId:(int)viewId parentId:(int)parentId;
+- (void)createDialogWithId:(int)viewId parentId:(int)parentId;
 
 - (void)setIntValue:(int)viewId value:(int)value;
 - (void)setTextValue:(int)viewId value:(NSString *)value;

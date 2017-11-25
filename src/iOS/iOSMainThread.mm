@@ -99,6 +99,11 @@ iOSMainThread::sendCommands(const std::vector<Command> & commands) {
       }
         break;
         
+      case Command::CREATE_DIALOG: {
+        [viewController createDialogWithId:command.getInternalId() parentId:command.getInternalId() ];
+      }
+        break;
+
       case Command::SET_STYLE: {
         NSString * key = [NSString stringWithUTF8String:command.getTextValue().c_str()];
         NSString * value = [NSString stringWithUTF8String:command.getTextValue2().c_str()];
@@ -111,11 +116,6 @@ iOSMainThread::sendCommands(const std::vector<Command> & commands) {
       }
         break;
         
-      case Command::CREATE_DIALOG: {
-
-      }
-      	break;
-      	
       case Command::CREATE_ALERT_DIALOG: {
       	
       }
