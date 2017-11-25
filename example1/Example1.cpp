@@ -12,6 +12,7 @@
 #include <NavigationBarItem.h>
 #include <FrameLayout.h>
 #include <ProgressBar.h>
+#include <FlipperLayout.h>
 
 #include <iostream>
 
@@ -20,27 +21,36 @@ using namespace std;
 Example1::Example1() : FWApplication("com.sometrik.example1")
 {
   auto view = std::make_shared<FrameView>();
-  view->style("background-color", "#cccccc");
+  view->style("background-color", "#555555");
   addChild(view);
   
-  auto layout = std::make_shared<LinearLayout>(FW_VERTICAL);
-  view->addChild(layout);
-
-  auto image = std::make_shared<ImageElement>("test.png");
-  layout->addChild(image);
+#if 0
+  auto flipper = std::make_shared<FlipperLayout>();
+  view->addChild(flipper);
   
-  layout->addChild(make_shared<ProgressBar>());
-
+  auto firstPage = std::make_shared<LinearLayout>(FW_VERTICAL);
+  flipper->addChild(firstPage);
+  
+  auto secondPage = std::make_shared<LinearLayout>(FW_VERTICAL);
+  flipper->addChild(secondPage);
+#else
+  auto firstPage = std::make_shared<LinearLayout>(FW_VERTICAL);
+  view->addChild(firstPage);
+#endif
+  
+  auto image = std::make_shared<ImageElement>("test.png");
+  firstPage->addChild(image);
+  
   auto title = make_shared<TextLabel>("Hello again!", 1234);
   title->style("font-size", 20);
   title->style("background-color", "#e03030");
   title->style("shadow", 5);
   title->style("border", "#801010");
   title->style("border-radius", 5);
-  layout->addChild(title);
+  firstPage->addChild(title);
 
   auto nameLayout = make_shared<LinearLayout>(FW_HORIZONTAL);
-  layout->addChild(nameLayout);
+  firstPage->addChild(nameLayout);
   nameLayout->addChild(make_shared<TextLabel>("Kirjoita nimesi:"));
   
   textField = make_shared<TextField>();
@@ -50,27 +60,29 @@ Example1::Example1() : FWApplication("com.sometrik.example1")
   buttonLayout->addChild(make_shared<Button>("Click me!")).style("background", "#30e030").style("border-radius", 5);
   buttonLayout->addChild(make_shared<Button>("Cancel"));
   buttonLayout->addChild(make_shared<Button>("Button"));
-  layout->addChild(buttonLayout);
+  firstPage->addChild(buttonLayout);
 
   auto scrollLayout = std::make_shared<ScrollLayout>();
   scrollLayout->style("min-height", 200);
-  layout->addChild(scrollLayout);
-  auto scrollFrame = std::make_shared<FrameLayout>();
-  scrollLayout->addChild(scrollFrame);
+  firstPage->addChild(scrollLayout);
   auto scrollContent = std::make_shared<LinearLayout>(FW_VERTICAL);
-  scrollFrame->addChild(scrollContent);
+  scrollLayout->addChild(scrollContent);
   
   for (int i = 0; i < 100; i++) {
     scrollContent->addChild(std::make_shared<TextLabel>("Number: " + to_string(i)));
   }
   
-  layout->addChild(make_shared<Switch>("On", "Off"));
+  firstPage->addChild(make_shared<Switch>("On", "Off"));
 
   auto navigationBar = std::make_shared<NavigationBar>();
   navigationBar->addChild(std::make_shared<NavigationBarItem>("Page 1"));
   navigationBar->addChild(std::make_shared<NavigationBarItem>("Page 2"));
   navigationBar->addChild(std::make_shared<NavigationBarItem>("Page 3"));
-  layout->addChild(navigationBar);
+  firstPage->addChild(navigationBar);
+  
+#if 0
+  secondPage->addChild(make_shared<ProgressBar>());
+#endif
 }
 
 void
