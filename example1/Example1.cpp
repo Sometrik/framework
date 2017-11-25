@@ -15,7 +15,6 @@
 #include <ProgressBar.h>
 #include <FlipperLayout.h>
 #include <ActionBar.h>
-#include <NavigationDrawer.h>
 
 #include "ImageDialog.h"
 
@@ -37,10 +36,6 @@ Example1::Example1() : FWApplication("com.sometrik.example1")
   navigationDrawer->addChild(make_shared<Button>("OK"));
   addChild(navigationDrawer);
   
-  auto navi = std::make_shared<NavigationDrawer>();
-  navi->style("background-color", "#aaaaaa");
-  addChild(navi);
-    
   auto view = std::make_shared<FrameView>();
   view->style("background-color", "#555555");
   addChild(view);
@@ -75,6 +70,7 @@ Example1::Example1() : FWApplication("com.sometrik.example1")
   auto buttonLayout = std::make_shared<LinearLayout>(FW_HORIZONTAL);
   buttonLayout->addChild(make_shared<Button>("Click me!", ID_CLICK_ME_BUTTON)).style("background", "#30e030").style("border-radius", 5);
   buttonLayout->addChild(make_shared<Button>("Show menu", ID_SHOW_MENU_BUTTON));
+  buttonLayout->addChild(make_shared<Button>("Useless button"));
   firstPage->addChild(buttonLayout);
 
   auto scrollLayout = std::make_shared<ScrollLayout>();
@@ -110,7 +106,8 @@ Example1::onCommandEvent(CommandEvent & ev) {
     }
       break;
     case ID_SHOW_MENU_BUTTON: {
-      actionBar->show();
+      cerr << "showing menu" << endl;
+      navigationDrawer->show();
     }
       break;
   }
