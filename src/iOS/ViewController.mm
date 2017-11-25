@@ -253,7 +253,8 @@ extern FWApplication * applicationMain();
 {
     UIScrollView * scrollView = [[UIScrollView alloc] init];
     scrollView.tag = viewId;
-    scrollView.contentSize = CGSizeMake(self.view.bounds.size.width, 4000);
+    scrollView.contentSize = CGSizeMake(self.view.bounds.size.width, 5 * self.view.bounds.size.height);
+    scrollView.frame = self.view.frame;
     [self.viewsDictionary setObject:scrollView forKey:[NSString stringWithFormat:@"%d", viewId]];
     [self addToParent:parentId view:scrollView];
 }
@@ -263,7 +264,8 @@ extern FWApplication * applicationMain();
     UIScrollView * scrollView = [[UIScrollView alloc] init];
     scrollView.tag = viewId;
     scrollView.pagingEnabled = YES;
-    scrollView.contentSize = CGSizeMake(self.view.bounds.size.width * 3, self.view.bounds.size.height);
+    scrollView.contentSize = CGSizeMake(0, self.view.bounds.size.height);
+    scrollView.frame = self.view.frame;
     [self.viewsDictionary setObject:scrollView forKey:[NSString stringWithFormat:@"%d", viewId]];
     [self addToParent:parentId view:scrollView];
 }
@@ -326,6 +328,16 @@ extern FWApplication * applicationMain();
     if ([parentView isKindOfClass:UIStackView.class]) {
         UIStackView *stackView = (UIStackView *)parentView;
         [stackView addArrangedSubview:view];
+    } else if ([parentView isKindOfClass:UIScrollView.class]) {
+        UIScrollView * scrollView = (UIScrollView *)parentView;
+        if (scrollView.pagingEnabled) {
+            int pos = [[scrollView subviews] count];
+            int pageWidth = self.view.bounds.size.width;
+            int pageHeight = self.view.bounds.size.height;
+            view.frame = CGRectMake(pos * pageWidth, 0, pageWidth, pageHeight);
+            scrollView.contentSize = CGSizeMake(scrollView.contentSize.width + pageWidth, scrollView.contentSize.height);
+        }
+        [parentView addSubview:view];
     } else {
         [parentView addSubview:view];
     }
