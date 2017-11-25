@@ -435,7 +435,7 @@ class ViewStyleManager {
 	    );	
       RippleDrawable rd = new RippleDrawable(colors, backgroundContent, backgroundMask);
       view.setBackground(rd);	
-    } else {
+    } else if (backgroundContent != null) {
       view.setBackground(backgroundContent);
     }
     
@@ -538,6 +538,7 @@ class ViewStyleManager {
       }
       if (textAlign != null) {
 	textView.setTextAlignment(convertTextAlignment(textAlign));
+	textView.setGravity(convertTextAlignmentToGravity(textAlign));	
       }
       if (textOverflow != null) {
 	switch (textOverflow) {
@@ -642,6 +643,16 @@ class ViewStyleManager {
     return 0;
   }
   
+  protected int convertTextAlignmentToGravity(HorizontalAlignment alignment) {
+    switch (alignment) {
+    case INHERIT: return Gravity.LEFT;
+    case CENTER: return Gravity.CENTER;
+    case LEFT: return Gravity.LEFT;
+    case RIGHT: return Gravity.RIGHT;
+    }
+    return Gravity.LEFT;
+  }
+    
   protected int getDashWidth(BorderStyle style) {
     switch (style) {
     case SOLID: return 0;
