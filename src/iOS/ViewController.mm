@@ -255,6 +255,7 @@ extern FWApplication * applicationMain();
     scrollView.tag = viewId;
     scrollView.contentSize = CGSizeMake(self.view.bounds.size.width, 5 * self.view.bounds.size.height);
     scrollView.frame = self.view.frame;
+    scrollView.clipsToBounds = YES;
     [self.viewsDictionary setObject:scrollView forKey:[NSString stringWithFormat:@"%d", viewId]];
     [self addToParent:parentId view:scrollView];
 }
@@ -266,6 +267,7 @@ extern FWApplication * applicationMain();
     scrollView.pagingEnabled = YES;
     scrollView.contentSize = CGSizeMake(0, self.view.bounds.size.height);
     scrollView.frame = self.view.frame;
+    scrollView.clipsToBounds = YES;
     [self.viewsDictionary setObject:scrollView forKey:[NSString stringWithFormat:@"%d", viewId]];
     [self addToParent:parentId view:scrollView];
 }
@@ -284,6 +286,8 @@ extern FWApplication * applicationMain();
 {
     UITabBar * tabBar = [[UITabBar alloc] init];
     tabBar.tag = viewId;
+    tabBar.frame = self.view.bounds;
+    [tabBar setAutoresizingMask:UIViewAutoresizingFlexibleTopMargin];
     [self.viewsDictionary setObject:tabBar forKey:[NSString stringWithFormat:@"%d", viewId]];
     [self addToParent:parentId view:tabBar];
 }
