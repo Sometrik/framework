@@ -14,7 +14,11 @@
 #include <ProgressBar.h>
 #include <FlipperLayout.h>
 
+#include "ImageDialog.h"
+
 #include <iostream>
+
+#define ID_CLICK_ME_BUTTON 1
 
 using namespace std;
 
@@ -52,7 +56,7 @@ Example1::Example1() : FWApplication("com.sometrik.example1")
   nameLayout->addChild(textField);
   
   auto buttonLayout = std::make_shared<LinearLayout>(FW_HORIZONTAL);
-  buttonLayout->addChild(make_shared<Button>("Click me!")).style("background", "#30e030").style("border-radius", 5);
+  buttonLayout->addChild(make_shared<Button>("Click me!", ID_CLICK_ME_BUTTON)).style("background", "#30e030").style("border-radius", 5);
   buttonLayout->addChild(make_shared<Button>("Cancel"));
   buttonLayout->addChild(make_shared<Button>("Button"));
   firstPage->addChild(buttonLayout);
@@ -73,18 +77,23 @@ Example1::Example1() : FWApplication("com.sometrik.example1")
   navigationBar->addChild(std::make_shared<NavigationBarItem>("Page 1"));
   navigationBar->addChild(std::make_shared<NavigationBarItem>("Page 2"));
   navigationBar->addChild(std::make_shared<NavigationBarItem>("Page 3"));
-  firstPage->addChild(navigationBar);
+  view->addChild(navigationBar);
   
   secondPage->addChild(make_shared<ProgressBar>());
 }
 
 void
 Example1::onCommandEvent(CommandEvent & ev) {
-  getLogger().println("got command event " + textField->getValue());
-  
-  getChildById(1234).text("Hello " + textField->getValue() + "!");
+  cerr << "got command event: " << ev.getElementId() << endl;
+  switch (ev.getElementId()) {
+    case ID_CLICK_ME_BUTTON: {
+      cerr << "showing dialog" << endl;
+      auto dialog = make_shared<ImageDialog>();
+      dialog->showModal(this);
+    }
+      break;
+  }
 }
-
 
 FWApplication * applicationMain() {
   return new Example1();  
