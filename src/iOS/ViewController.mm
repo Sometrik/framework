@@ -18,6 +18,7 @@ extern FWApplication * applicationMain();
 @property (nonatomic, strong) NSMutableDictionary *viewsDictionary;
 @property (nonatomic, strong) UIView *sideMenuView;
 @property (nonatomic, strong) UIView *sideMenuBackgroundOverlayView;
+@property (nonatomic, strong) UIView *tabBar;
 @end
 
 static NSTimeInterval sidePanelAnimationDuration = 0.4;
@@ -54,6 +55,12 @@ static NSTimeInterval sidePanelAnimationDuration = 0.4;
   [super didReceiveMemoryWarning];
 }
 
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+}
+
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
@@ -61,6 +68,9 @@ static NSTimeInterval sidePanelAnimationDuration = 0.4;
         [self.view bringSubviewToFront:self.sideMenuBackgroundOverlayView];
         [self.view bringSubviewToFront:self.sideMenuView];
     }
+    CGRect tabBarFrame = CGRectMake(0.0, self.view.frame.size.height-self.tabBar.frame.size.height , self.view.frame.size.width, self.tabBar.frame.size.height);
+    self.tabBar.frame = tabBarFrame;
+    NSLog(@"self.tabBar.frame = %@", NSStringFromCGRect(self.tabBar.frame));
 }
 - (void)sideMenuBackgroundOverlayViewTapped:(UITapGestureRecognizer *)gesture
 {
@@ -77,7 +87,7 @@ static NSTimeInterval sidePanelAnimationDuration = 0.4;
     text.clearButtonMode = UITextFieldViewModeWhileEditing;
     text.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
     [text addTarget:self action:@selector(textFieldChanged:) forControlEvents:UIControlEventEditingChanged];
-    [self.viewsDictionary setObject:text forKey:[NSString stringWithFormat:@"%d", viewId]];
+    [self addView:text withId:viewId];
     [self addToParent:parentId view:text];
   }
 
@@ -90,7 +100,7 @@ static NSTimeInterval sidePanelAnimationDuration = 0.4;
 }
 
 - (void)setStyle: (int)viewId key:(NSString *)key value:(NSString *)value {
-  UIView *view = [self.viewsDictionary objectForKey:[NSString stringWithFormat:@"%d", viewId]];
+    UIView *view =  [self viewForId:viewId];
   
   if ([key isEqualToString:@"background-color"]) {
     view.backgroundColor = [self colorFromString:value];
@@ -159,7 +169,8 @@ static NSTimeInterval sidePanelAnimationDuration = 0.4;
 
 - (void)setVisibility:(int)viewId visibility:(int)visibility
 {
-    UIView *view = [self.viewsDictionary objectForKey:[NSString stringWithFormat:@"%d", viewId]];
+    UIView *view = [self viewForId:viewId];
+    
     if ([view isEqual:self.sideMenuView]) {
       if (visibility == 0) {
             [self hideNavigationView];
@@ -188,7 +199,7 @@ static NSTimeInterval sidePanelAnimationDuration = 0.4;
     UIView *view = [[UIView alloc] initWithFrame:self.view.bounds];
     view.tag = viewId;
     [self.view addSubview:view];
-    [self.viewsDictionary setObject:view forKey:[NSString stringWithFormat:@"%d", viewId]];
+    [self addView:view withId:viewId];
     //UIView *parentView = [self.viewsDictionary objectForKey:[NSString stringWithFormat:@"%d", parentId]];
     //[parentView addSubview:view];
 }
@@ -207,7 +218,7 @@ static NSTimeInterval sidePanelAnimationDuration = 0.4;
     stackView.translatesAutoresizingMaskIntoConstraints = false;
     stackView.frame = self.view.frame;
   
-    [self.viewsDictionary setObject:stackView forKey:[NSString stringWithFormat:@"%d", viewId]];
+    [self addView:stackView withId:viewId];
     [self addToParent:parentId view:stackView];
   
     if (direction == 1) {
@@ -222,7 +233,7 @@ static NSTimeInterval sidePanelAnimationDuration = 0.4;
 {
     UIView *view = [[UIView alloc] init];
     view.tag = viewId;
-    [self.viewsDictionary setObject:view forKey:[NSString stringWithFormat:@"%d", viewId]];
+    [self addView:view withId:viewId];
     [self addToParent:parentId view:view];
 }
 
@@ -231,7 +242,7 @@ static NSTimeInterval sidePanelAnimationDuration = 0.4;
     UILabel *label = [[UILabel alloc] init];
     label.tag = viewId;
     label.text = value;
-    [self.viewsDictionary setObject:label forKey:[NSString stringWithFormat:@"%d", viewId]];
+    [self addView:label withId:viewId];
     [self addToParent:parentId view:label];
 }
 
@@ -241,7 +252,7 @@ static NSTimeInterval sidePanelAnimationDuration = 0.4;
     button.tag = viewId;
     [button setTitle:caption forState:UIControlStateNormal];
     [button addTarget:self action:@selector(buttonPushed:) forControlEvents:UIControlEventTouchUpInside];
-    [self.viewsDictionary setObject:button forKey:[NSString stringWithFormat:@"%d", viewId]];
+    [self addView:button withId:viewId];
     [self addToParent:parentId view:button];
 }
 
@@ -258,7 +269,7 @@ static NSTimeInterval sidePanelAnimationDuration = 0.4;
     UISwitch *sw = [[UISwitch alloc] init];
     sw.tag = viewId;
     [sw addTarget:self action:@selector(switchToggled:) forControlEvents:UIControlEventValueChanged];
-    [self.viewsDictionary setObject:sw forKey:[NSString stringWithFormat:@"%d", viewId]];
+    [self addView:sw withId:viewId];
     [self addToParent:parentId view:sw];
 }
 
@@ -279,7 +290,7 @@ static NSTimeInterval sidePanelAnimationDuration = 0.4;
     imageView.tag = viewId;
     imageView.contentScaleFactor = 1.0f;
     imageView.contentMode = UIViewContentModeScaleAspectFit;
-    [self.viewsDictionary setObject:image forKey:[NSString stringWithFormat:@"%d", viewId]];
+    [self addView:imageView withId:viewId];
     [self addToParent:parentId view:imageView];
 }
 
@@ -290,8 +301,21 @@ static NSTimeInterval sidePanelAnimationDuration = 0.4;
     scrollView.contentSize = CGSizeMake(self.view.bounds.size.width, 4000);
     scrollView.frame = self.view.frame;
     scrollView.clipsToBounds = YES;
-    [self.viewsDictionary setObject:scrollView forKey:[NSString stringWithFormat:@"%d", viewId]];
+    [self addView:scrollView withId:viewId];
     [self addToParent:parentId view:scrollView];
+}
+
+- (void)calculateScrollViewContentSize:(int)scrollViewId
+{
+    UIView *possibleScrollView = [self viewForId:scrollViewId];
+    if (possibleScrollView && [possibleScrollView isKindOfClass:[UIScrollView class]]) {
+        UIScrollView *scrollView = (UIScrollView *)possibleScrollView;
+        CGRect contentRect = CGRectZero;
+        for (UIView *view in scrollView.subviews) {
+            contentRect = CGRectUnion(contentRect, view.frame);
+        }
+        scrollView.contentSize = CGSizeMake(scrollView.contentSize.width, contentRect.size.height);
+    }
 }
 
 - (void)createPageLayoutWithId:(int)viewId parentId:(int)parentId
@@ -302,7 +326,7 @@ static NSTimeInterval sidePanelAnimationDuration = 0.4;
     scrollView.contentSize = CGSizeMake(0, self.view.bounds.size.height);
     scrollView.frame = self.view.frame;
     scrollView.clipsToBounds = YES;
-    [self.viewsDictionary setObject:scrollView forKey:[NSString stringWithFormat:@"%d", viewId]];
+    [self addView:scrollView withId:viewId];
     [self addToParent:parentId view:scrollView];
 }
 
@@ -312,7 +336,7 @@ static NSTimeInterval sidePanelAnimationDuration = 0.4;
     view.tag = viewId;
     UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(viewTapped:)];
     [view addGestureRecognizer:tapGestureRecognizer];
-    [self.viewsDictionary setObject:view forKey:[NSString stringWithFormat:@"%d", viewId]];
+    [self addView:view withId:viewId];
     [self addToParent:parentId view:view];
 }
 
@@ -327,8 +351,12 @@ static NSTimeInterval sidePanelAnimationDuration = 0.4;
     tabBar.tag = viewId;
     // tabBar.contentMode = UIViewContentModeBottom;
     // [tabBar setAutoresizingMask:UIViewAutoresizingFlexibleTopMargin];
-    [self.viewsDictionary setObject:tabBar forKey:[NSString stringWithFormat:@"%d", viewId]];
+    
+    self.tabBar = tabBar;
+    [self addView:tabBar withId:viewId];
+    //[tabBar.bottomAnchor constraintEqualToAnchor:parentView.bottomAnchor];
     [self addToParent:parentId view:tabBar];
+    // Put tabbar to the bottom of the view
 }
 
 - (void)createTabBarItem:(int)viewId parentId:(int)parentId title:(NSString *)title
@@ -366,7 +394,7 @@ static NSTimeInterval sidePanelAnimationDuration = 0.4;
     [self.sideMenuBackgroundOverlayView addGestureRecognizer:tapGestureRecognizer];
     [self.view addSubview:self.sideMenuView];
     self.sideMenuView.transform = CGAffineTransformTranslate(self.sideMenuView.transform, -CGRectGetWidth(self.sideMenuView.frame), 0.0);
-    [self.viewsDictionary setObject:self.sideMenuView forKey:[NSString stringWithFormat:@"%d", viewId]];
+    [self addView:self.sideMenuView withId:viewId];
 }
 
 - (void)showNavigationView
@@ -401,7 +429,7 @@ static NSTimeInterval sidePanelAnimationDuration = 0.4;
 {
     UIActivityIndicatorView * view = [[UIActivityIndicatorView alloc] init];
     view.tag = viewId;
-    [self.viewsDictionary setObject:view forKey:[NSString stringWithFormat:@"%d", viewId]];
+    [self addView:view withId:viewId];
     [self addToParent:parentId view:view];
     [view startAnimating];
 }
@@ -425,7 +453,7 @@ static NSTimeInterval sidePanelAnimationDuration = 0.4;
     dialog.frame = CGRectMake(50, 50, s.width - 100, s.height - 100);
     // dialog.center = CGPointMake(s.width / 2, (s.height / 2) - 65);
   
-    [self.viewsDictionary setObject:dialog forKey:[NSString stringWithFormat:@"%d", viewId]];
+    [self addView:dialog withId:viewId];
     [self.view addSubview:dialog];
 }
 
@@ -452,7 +480,8 @@ static NSTimeInterval sidePanelAnimationDuration = 0.4;
 
 - (void)addToParent:(int)parentId view:(UIView*)view
 {
-    UIView *parentView = [self.viewsDictionary objectForKey:[NSString stringWithFormat:@"%d", parentId]];
+    UIView *parentView = [self viewForId:parentId];
+    
     if ([parentView isKindOfClass:UIStackView.class]) {
         UIStackView *stackView = (UIStackView *)parentView;
         [stackView addArrangedSubview:view];
@@ -483,6 +512,16 @@ static NSTimeInterval sidePanelAnimationDuration = 0.4;
         [view removeFromSuperview];
         [self.viewsDictionary removeObjectForKey:key];
     }
+}
+
+- (UIView *)viewForId:(int)viewId
+{
+    return [self.viewsDictionary objectForKey:[NSString stringWithFormat:@"%d", viewId]];
+}
+
+- (void)addView:(UIView *)view withId:(int)viewId
+{
+    [self.viewsDictionary setObject:view forKey:[NSString stringWithFormat:@"%d", viewId]];
 }
 
 - (void)setIntValue:(int)viewId value:(int)value
