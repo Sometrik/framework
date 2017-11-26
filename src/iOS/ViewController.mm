@@ -218,13 +218,6 @@ static const NSTimeInterval sidePanelAnimationDuration = 0.4;
   
     [self addView:stackView withId:viewId];
     [self addToParent:parentId view:stackView];
-  
-    if (![stackView.superview isKindOfClass:UIStackView.class]) {
-        NSLayoutConstraint *widthConstraint = [NSLayoutConstraint constraintWithItem:stackView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:stackView.superview attribute:NSLayoutAttributeWidth multiplier:1 constant:0];
-        NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:stackView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:stackView.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
-        NSLayoutConstraint *leftConstraint = [NSLayoutConstraint constraintWithItem:stackView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:stackView.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
-        [stackView.superview addConstraints:@[widthConstraint, topConstraint, leftConstraint]];
-    }
 }
 
 - (void)createFrameLayoutWithId:(int)viewId parentId:(int)parentId
@@ -490,22 +483,28 @@ static const NSTimeInterval sidePanelAnimationDuration = 0.4;
         UIStackView *stackView = (UIStackView *)parentView;
         [stackView addArrangedSubview:view];
     } else if ([parentView isKindOfClass:UIScrollView.class]) {
+        NSUInteger pos = [[parentView subviews] count];
+        [parentView addSubview:view];
         UIScrollView * scrollView = (UIScrollView *)parentView;
         if (scrollView.pagingEnabled) {
-            int pos = [[scrollView subviews] count];
             int pageWidth = self.view.bounds.size.width;
-            int pageHeight = self.view.bounds.size.height;
-            view.frame = CGRectMake(pos * pageWidth, 0, pageWidth, pageHeight);
+            // int pageHeight = self.view.bounds.size.height;
+            // view.frame = CGRectMake(pos * pageWidth, 0, pageWidth, pageHeight);
             scrollView.contentSize = CGSizeMake(scrollView.contentSize.width + pageWidth, scrollView.contentSize.height);
+          
+            NSLayoutConstraint *widthConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeWidth multiplier:1 constant:0];
+            //NSLayoutConstraint *heightConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeHeight multiplier:1 constant:0];
+            NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
+            NSLayoutConstraint *leftConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:pos * pageWidth];
+            [view.superview addConstraints:@[widthConstraint, topConstraint, leftConstraint]];
         } else {
             view.frame = parentView.frame;
             add_basic_constraints = YES;
         }
-        [parentView addSubview:view];
     } else {
         view.frame = parentView.frame;
         [parentView addSubview:view];
-        if (![view isKindOfClass:UITabBar.class] && ![view isKindOfClass:UINavigationBar.class] && ![view isKindOfClass:UIStackView.class]) {
+        if (![view isKindOfClass:UITabBar.class] && ![view isKindOfClass:UINavigationBar.class]) {
           add_basic_constraints = YES;
         }
     }
@@ -537,7 +536,6 @@ static const NSTimeInterval sidePanelAnimationDuration = 0.4;
     UIView *childView = [self viewForId:viewId];
     if (parentView && childView) {
         if ([parentView isKindOfClass:[UIStackView class]]) {
-            NSLog(@"stackview change: %ld => %d", (long)childView.tag, position);
             UIStackView *stackView = (UIStackView *)parentView;
             [childView removeFromSuperview];
             [stackView insertArrangedSubview:childView atIndex:position];
