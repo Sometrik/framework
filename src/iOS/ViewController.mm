@@ -219,12 +219,11 @@ static const NSTimeInterval sidePanelAnimationDuration = 0.4;
     [self addView:stackView withId:viewId];
     [self addToParent:parentId view:stackView];
   
-    if (stackView.superview != nil && ![stackView.superview isKindOfClass:UIStackView.class]) {
+    if (![stackView.superview isKindOfClass:UIStackView.class]) {
         NSLayoutConstraint *widthConstraint = [NSLayoutConstraint constraintWithItem:stackView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:stackView.superview attribute:NSLayoutAttributeWidth multiplier:1 constant:0];
-        NSLayoutConstraint *heightConstraint = [NSLayoutConstraint constraintWithItem:stackView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:stackView.superview attribute:NSLayoutAttributeHeight multiplier:1 constant:0];
         NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:stackView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:stackView.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
         NSLayoutConstraint *leftConstraint = [NSLayoutConstraint constraintWithItem:stackView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:stackView.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
-        [stackView.superview addConstraints:@[widthConstraint, heightConstraint, topConstraint, leftConstraint]];
+        [stackView.superview addConstraints:@[widthConstraint, topConstraint, leftConstraint]];
     }
 }
 
@@ -484,7 +483,9 @@ static const NSTimeInterval sidePanelAnimationDuration = 0.4;
 - (void)addToParent:(int)parentId view:(UIView*)view
 {
     UIView *parentView = [self viewForId:parentId];
-    
+  
+    BOOL add_basic_constraints = NO;
+  
     if ([parentView isKindOfClass:UIStackView.class]) {
         UIStackView *stackView = (UIStackView *)parentView;
         [stackView addArrangedSubview:view];
@@ -498,12 +499,25 @@ static const NSTimeInterval sidePanelAnimationDuration = 0.4;
             scrollView.contentSize = CGSizeMake(scrollView.contentSize.width + pageWidth, scrollView.contentSize.height);
         } else {
             view.frame = parentView.frame;
+            add_basic_constraints = YES;
         }
         [parentView addSubview:view];
     } else {
         view.frame = parentView.frame;
         [parentView addSubview:view];
+        if (![view isKindOfClass:UITabBar.class] && ![view isKindOfClass:UINavigationBar.class] && ![view isKindOfClass:UIStackView.class]) {
+          add_basic_constraints = YES;
+        }
     }
+
+    if (add_basic_constraints) {
+        NSLayoutConstraint *widthConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeWidth multiplier:1 constant:0];
+        NSLayoutConstraint *heightConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeHeight multiplier:1 constant:0];
+        NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
+        NSLayoutConstraint *leftConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
+        [view.superview addConstraints:@[widthConstraint, heightConstraint, topConstraint, leftConstraint]];
+    }
+  
     [parentView bringSubviewToFront:view];
 }
 
