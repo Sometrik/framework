@@ -137,7 +137,7 @@ iOSMainThread::sendCommands(const std::vector<Command> & commands) {
         break;
 
       case Command::REORDER_CHILD: {
-          [viewController reorderChildWithId:command.getChildInternalI() parentId:command.getInternalId() newPosition:command.getValue()];
+          [viewController reorderChildWithId:command.getChildInternalId() parentId:command.getInternalId() newPosition:command.getValue()];
       }
       case Command::REMOVE_CHILD: {
         

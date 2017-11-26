@@ -18,7 +18,8 @@ extern FWApplication * applicationMain();
 @property (nonatomic, strong) NSMutableDictionary *viewsDictionary;
 @property (nonatomic, strong) UIView *sideMenuView;
 @property (nonatomic, strong) UIView *sideMenuBackgroundOverlayView;
-@property (nonatomic, strong) UIView *tabBar;
+@property (nonatomic, strong) UITabBar *tabBar;
+@property (nonatomic, strong) NSArray *tabBarItems;
 @end
 
 static const NSTimeInterval sidePanelAnimationDuration = 0.4;
@@ -28,7 +29,8 @@ static const NSTimeInterval sidePanelAnimationDuration = 0.4;
 - (void)viewDidLoad {
   [super viewDidLoad];
   // Do any additional setup after loading the view, typically from a nib.
-  
+    UITabBarItem *item1 = [[UITabBarItem alloc] initWithTitle:@"eka" image:nil tag:200];
+    self.tabBarItems = [NSArray arrayWithObject:item1];
   // Creating the C++ app
   std::shared_ptr<FWApplication> application(applicationMain());
   
@@ -347,7 +349,7 @@ static const NSTimeInterval sidePanelAnimationDuration = 0.4;
 
 - (void)createTabBar:(int)viewId parentId:(int)parentId
 {
-    UITabBar * tabBar = [[UITabBar alloc] init];
+    UITabBar *tabBar = [[UITabBar alloc] init];
     tabBar.tag = viewId;
     // tabBar.contentMode = UIViewContentModeBottom;
     // [tabBar setAutoresizingMask:UIViewAutoresizingFlexibleTopMargin];
@@ -356,25 +358,31 @@ static const NSTimeInterval sidePanelAnimationDuration = 0.4;
     [self addView:tabBar withId:viewId];
     //[tabBar.bottomAnchor constraintEqualToAnchor:parentView.bottomAnchor];
     [self addToParent:parentId view:tabBar];
+    self.tabBar.items = self.tabBarItems;
     // Put tabbar to the bottom of the view
 }
 
 - (void)createTabBarItem:(int)viewId parentId:(int)parentId title:(NSString *)title
 {
-    UIView *parentView = [self.viewsDictionary objectForKey:[NSString stringWithFormat:@"%d", parentId]];
-    if ([parentView isKindOfClass:UITabBar.class]) {
+    /*
+    UIView *parentView = [self viewForId:parentId];
+    
+    if ([parentView isKindOfClass:UITabBar.class] && [parentView isEqual:self.tabBar]) {
         UITabBar *tabBar = (UITabBar *)parentView;
+        
+        UITabBarItem * tabBarItem = [[UITabBarItem alloc] initWithTitle:title image:nil tag:viewId];
+        //tabBarItem.title = title;
+        //tabBarItem.tag = viewId;
   
-        UITabBarItem * tabBarItem = [[UITabBarItem alloc] init];
-        tabBarItem.title = title;
-        tabBarItem.tag = viewId;
-  
-        // NSMutableArray * items = (NSMutableArray *)tabBar.items;
-        // if (items == nil) {
-        //   tabBar.items = items = [[NSMutableArray alloc] init];
-        // }
-        // [items addObject:tabBarItem];
+        NSMutableArray *items = self.tabBar.items.mutableCopy; //(NSMutableArray *)tabBar.items.mutableCopy;
+        if (items == nil) {
+          self.tabBar.items = [[NSMutableArray alloc] init];
+        }
+        [items addObject:tabBarItem];
+        
+        [self.tabBar setItems:(NSArray *)items animated:false];
     }
+     */
 }
 
 - (void)createNavigationView:(int)viewId
