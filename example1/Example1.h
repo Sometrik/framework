@@ -3,6 +3,7 @@
 class TextField;
 class ActionBar;
 class NavigationDrawer;
+class LinearLayout;
 
 class Example1 : public FWApplication {
 public:
@@ -15,4 +16,5 @@ private:
     std::shared_ptr<TextField> textField;
     std::shared_ptr<ActionBar> actionBar;
     std::shared_ptr<NavigationDrawer> navigationDrawer;
+    std::shared_ptr<LinearLayout> scrollContent;
 };
