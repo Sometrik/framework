@@ -14,21 +14,31 @@
 #include <FrameLayout.h>
 #include <ProgressBar.h>
 #include <FlipperLayout.h>
+#include <ActionBar.h>
+#include <TimerEvent.h>
 
 #include "ImageDialog.h"
 
 #include <iostream>
 
 #define ID_CLICK_ME_BUTTON 1
+#define ID_SHOW_MENU_BUTTON 2
 
 using namespace std;
 
 Example1::Example1() : FWApplication("com.sometrik.example1")
 {
-    auto navi = std::make_shared<NavigationDrawer>();
-    navi->style("background-color", "#aaaaaa");
-    addChild(navi);
-    
+  createTimer(1000);
+  
+  actionBar = std::make_shared<ActionBar>();
+  addChild(actionBar);
+  
+  navigationDrawer = std::make_shared<NavigationDrawer>();
+  navigationDrawer->style("background", "#cccccc");
+  navigationDrawer->addChild(make_shared<TextLabel>("Hello sidebar!"));
+  navigationDrawer->addChild(make_shared<Button>("OK"));
+  addChild(navigationDrawer);
+  
   auto view = std::make_shared<FrameView>();
   view->style("background-color", "#555555");
   addChild(view);
@@ -62,8 +72,8 @@ Example1::Example1() : FWApplication("com.sometrik.example1")
   
   auto buttonLayout = std::make_shared<LinearLayout>(FW_HORIZONTAL);
   buttonLayout->addChild(make_shared<Button>("Click me!", ID_CLICK_ME_BUTTON)).style("background", "#30e030").style("border-radius", 5);
-  buttonLayout->addChild(make_shared<Button>("Cancel"));
-  buttonLayout->addChild(make_shared<Button>("Button"));
+  buttonLayout->addChild(make_shared<Button>("Show menu", ID_SHOW_MENU_BUTTON));
+  buttonLayout->addChild(make_shared<Button>("Useless button"));
   firstPage->addChild(buttonLayout);
 
   auto scrollLayout = std::make_shared<ScrollLayout>();
@@ -98,7 +108,17 @@ Example1::onCommandEvent(CommandEvent & ev) {
       dialog->showModal(this);
     }
       break;
+    case ID_SHOW_MENU_BUTTON: {
+      cerr << "showing menu" << endl;
+      navigationDrawer->show();
+    }
+      break;
   }
+}
+
+void
+Example1::onTimerEvent(TimerEvent & ev) {
+  cerr << "timer" << endl;
 }
 
 FWApplication * applicationMain() {

@@ -45,11 +45,11 @@ public class FWButton extends Button implements NativeCommandHandler {
 	if (button.activeStyle.isModified()) {
 	  if (event.getAction() == MotionEvent.ACTION_DOWN) {
 	    button.currentStyle = button.activeStyle;
-	    button.currentStyle.apply(button);
+	    button.currentStyle.apply(button, true);
 	  } else if (event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_POINTER_UP
 	    || event.getAction() == MotionEvent.ACTION_CANCEL || event.getAction() == MotionEvent.ACTION_OUTSIDE) {
 	    button.currentStyle = isSelected ? button.selectedStyle : button.normalStyle;
-	    button.currentStyle.apply(button);
+	    button.currentStyle.apply(button, true);
 	  }
 	}
 	return false;

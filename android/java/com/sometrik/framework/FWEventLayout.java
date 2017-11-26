@@ -32,12 +32,12 @@ public class FWEventLayout extends FrameLayout implements NativeCommandHandler {
       if (layout.activeStyle.isModified()) {
 	if (event.getAction() == MotionEvent.ACTION_DOWN || event.getAction() == MotionEvent.ACTION_POINTER_DOWN || event.getAction() == MotionEvent.ACTION_HOVER_ENTER) {
 	  layout.currentStyle = layout.activeStyle;
-	  layout.currentStyle.apply(layout);
+	  layout.currentStyle.apply(layout, true);
 	} else if (event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_POINTER_UP ||
 	    	event.getAction() == MotionEvent.ACTION_HOVER_EXIT || event.getAction() == MotionEvent.ACTION_OUTSIDE ||
 	    	event.getAction() == MotionEvent.ACTION_CANCEL) {
 	  layout.currentStyle = layout.normalStyle;
-	  layout.currentStyle.apply(layout);
+	  layout.currentStyle.apply(layout, true);
 	}
       }
       return false;

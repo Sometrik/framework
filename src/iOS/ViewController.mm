@@ -161,7 +161,7 @@ static NSTimeInterval sidePanelAnimationDuration = 0.4;
 {
     UIView *view = [self.viewsDictionary objectForKey:[NSString stringWithFormat:@"%d", viewId]];
     if ([view isEqual:self.sideMenuView]) {
-        if (visibility == 0) {
+      if (visibility == 0) {
             [self hideNavigationView];
         } else {
             [self showNavigationView];
@@ -202,12 +202,20 @@ static NSTimeInterval sidePanelAnimationDuration = 0.4;
         stackView.axis = UILayoutConstraintAxisHorizontal;
     }
     stackView.distribution = UIStackViewDistributionFill;
+    // stackView.distribution = UIStackViewDistributionFillProportionally;
     stackView.alignment = UIStackViewAlignmentFill;
     stackView.translatesAutoresizingMaskIntoConstraints = false;
     stackView.frame = self.view.frame;
-
+  
     [self.viewsDictionary setObject:stackView forKey:[NSString stringWithFormat:@"%d", viewId]];
     [self addToParent:parentId view:stackView];
+  
+    if (direction == 1) {
+      NSLayoutConstraint *stackViewWidth = [NSLayoutConstraint constraintWithItem:stackView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:stackView.superview attribute:NSLayoutAttributeWidth multiplier:1 constant:0];
+      [stackView.superview addConstraints:@[stackViewWidth]];
+
+  }
+  
 }
 
 - (void)createFrameLayoutWithId:(int)viewId parentId:(int)parentId
@@ -242,7 +250,6 @@ static NSTimeInterval sidePanelAnimationDuration = 0.4;
     int viewId = (int)sender.tag;
     NSLog(@"viewId = %d", viewId);
     NSLog(@"buttonTitle = %@", sender.titleLabel.text);
-    [self showNavigationView];
     [self sendIntValue:viewId value:viewId];
 }
 
@@ -280,7 +287,7 @@ static NSTimeInterval sidePanelAnimationDuration = 0.4;
 {
     UIScrollView * scrollView = [[UIScrollView alloc] init];
     scrollView.tag = viewId;
-    scrollView.contentSize = CGSizeMake(self.view.bounds.size.width, 5 * self.view.bounds.size.height);
+    scrollView.contentSize = CGSizeMake(self.view.bounds.size.width, 4000);
     scrollView.frame = self.view.frame;
     scrollView.clipsToBounds = YES;
     [self.viewsDictionary setObject:scrollView forKey:[NSString stringWithFormat:@"%d", viewId]];
@@ -309,12 +316,17 @@ static NSTimeInterval sidePanelAnimationDuration = 0.4;
     [self addToParent:parentId view:view];
 }
 
+- (void)createNavigationBar:(int)viewId parentId:(int)parentId
+{
+    // Create navigation bar with a button for opening side menu
+}
+
 - (void)createTabBar:(int)viewId parentId:(int)parentId
 {
     UITabBar * tabBar = [[UITabBar alloc] init];
     tabBar.tag = viewId;
-    tabBar.contentMode = UIViewContentModeBottom;
-    [tabBar setAutoresizingMask:UIViewAutoresizingFlexibleTopMargin];
+    // tabBar.contentMode = UIViewContentModeBottom;
+    // [tabBar setAutoresizingMask:UIViewAutoresizingFlexibleTopMargin];
     [self.viewsDictionary setObject:tabBar forKey:[NSString stringWithFormat:@"%d", viewId]];
     [self addToParent:parentId view:tabBar];
 }
@@ -417,6 +429,20 @@ static NSTimeInterval sidePanelAnimationDuration = 0.4;
     [self.view addSubview:dialog];
 }
 
+- (void)createTimer:(int)viewId interval:(double)interval
+{
+  [NSTimer scheduledTimerWithTimeInterval:interval
+                                   target:self
+                                 selector:@selector(sendTimerEvent:)
+                                 userInfo:nil
+                                  repeats:YES];
+}
+
+- (void)sendTimerEvent:(NSTimer *)timer
+{
+    mainThread->sendTimerEvent(1);
+}
+
 - (void)viewTapped:(UIView *)sender
 {
     int viewId = (int)sender.tag;
@@ -446,6 +472,7 @@ static NSTimeInterval sidePanelAnimationDuration = 0.4;
         view.frame = parentView.frame;
         [parentView addSubview:view];
     }
+    [parentView bringSubviewToFront:view];
 }
 
 - (void)removeView:(int)viewId

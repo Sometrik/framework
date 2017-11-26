@@ -1,8 +1,12 @@
 package com.sometrik.framework;
 
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import android.animation.Animator;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.app.Dialog;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
@@ -335,12 +339,35 @@ class ViewStyleManager {
   }
   
   public void apply(View view) {
-    if (opacity != null) view.setAlpha(opacity);
-    if (zoom != null) {
-      view.setScaleX(zoom);
-      view.setScaleY(zoom);
+    apply(view, false);
+  }
+  
+  public void apply(View view, boolean animate) {
+    ArrayList<Animator> animators = new ArrayList<Animator>();
+    
+    if (opacity != null) {
+      if (animate) {
+	animators.add(ObjectAnimator.ofFloat(view, View.ALPHA, opacity));	
+      } else {
+	view.setAlpha(opacity);	
+      }
     }
-    if (shadow != null) view.setElevation(shadow);
+    if (zoom != null) {
+      if (animate) {
+	animators.add(ObjectAnimator.ofFloat(view, View.SCALE_X, zoom));
+	animators.add(ObjectAnimator.ofFloat(view, View.SCALE_Y, zoom));
+      } else {
+	view.setScaleX(zoom);
+	view.setScaleY(zoom);
+      }
+    }
+    if (shadow != null) {
+      if (animate) {
+	animators.add(ObjectAnimator.ofFloat(view, View.TRANSLATION_Z, shadow));
+      } else {
+	view.setTranslationZ(shadow);	
+      }
+    }
 //    if (title != null) view.setTooltipText(title);
 
     // Scaled parameters
@@ -435,7 +462,7 @@ class ViewStyleManager {
 	    );	
       RippleDrawable rd = new RippleDrawable(colors, backgroundContent, backgroundMask);
       view.setBackground(rd);	
-    } else {
+    } else if (backgroundContent != null) {
       view.setBackground(backgroundContent);
     }
     
@@ -538,6 +565,7 @@ class ViewStyleManager {
       }
       if (textAlign != null) {
 	textView.setTextAlignment(convertTextAlignment(textAlign));
+	textView.setGravity(convertTextAlignmentToGravity(textAlign));	
       }
       if (textOverflow != null) {
 	switch (textOverflow) {
@@ -578,6 +606,13 @@ class ViewStyleManager {
 	  textView.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null);
 	}
       }
+    }
+    
+    if (!animators.isEmpty()) {
+      AnimatorSet animatorSet = new AnimatorSet();
+      animatorSet.playTogether(animators);
+      animatorSet.setDuration(300);
+      animatorSet.start();
     }
   }
 
@@ -642,6 +677,16 @@ class ViewStyleManager {
     return 0;
   }
   
+  protected int convertTextAlignmentToGravity(HorizontalAlignment alignment) {
+    switch (alignment) {
+    case INHERIT: return Gravity.LEFT;
+    case CENTER: return Gravity.CENTER;
+    case LEFT: return Gravity.LEFT;
+    case RIGHT: return Gravity.RIGHT;
+    }
+    return Gravity.LEFT;
+  }
+    
   protected int getDashWidth(BorderStyle style) {
     switch (style) {
     case SOLID: return 0;

@@ -18,11 +18,13 @@
 - (void)createScrollLayoutWithId:(int)viewId parentId:(int)parentId;
 - (void)createPageLayoutWithId:(int)viewId parentId:(int)parentId;
 - (void)createEventLayoutWithId:(int)viewId parentId:(int)parentId;
+- (void)createNavigationBar:(int)viewId parentId:(int)parentId;
 - (void)createTabBar:(int)viewId parentId:(int)parentId;
 - (void)createNavigationView:(int)viewId;
 - (void)createTabBarItem:(int)viewId parentId:(int)parentId title:(NSString *)title;
 - (void)createActivityIndicatorWithId:(int)viewId parentId:(int)parentId;
 - (void)createDialogWithId:(int)viewId parentId:(int)parentId;
+- (void)createTimer:(int)viewId interval:(double)interval;
 
 - (void)setIntValue:(int)viewId value:(int)value;
 - (void)setTextValue:(int)viewId value:(NSString *)value;
