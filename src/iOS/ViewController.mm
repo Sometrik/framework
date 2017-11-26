@@ -21,7 +21,7 @@ extern FWApplication * applicationMain();
 @property (nonatomic, strong) UIView *tabBar;
 @end
 
-static NSTimeInterval sidePanelAnimationDuration = 0.4;
+static const NSTimeInterval sidePanelAnimationDuration = 0.4;
 
 @implementation ViewController
 

@@ -36,7 +36,7 @@ Example1::Example1() : FWApplication("com.sometrik.example1")
   navigationDrawer = std::make_shared<NavigationDrawer>();
   auto navigationLayout = std::make_shared<LinearLayout>(FW_VERTICAL);
   navigationDrawer->addChild(navigationLayout);
-  navigationLayout->style("background", "#cccccc");
+  navigationDrawer->style("background", "#cccccc");
   navigationLayout->addChild(make_shared<TextLabel>("Hello sidebar!"));
   navigationLayout->addChild(make_shared<Button>("OK"));
   addChild(navigationDrawer);
