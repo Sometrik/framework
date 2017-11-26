@@ -384,6 +384,10 @@ static const NSTimeInterval sidePanelAnimationDuration = 0.4;
     self.sideMenuView = [[UIView alloc] initWithFrame:frame];
     self.sideMenuView.tag = viewId;
     self.sideMenuView.hidden = YES;
+    self.sideMenuView.layer.shadowColor = [UIColor blackColor].CGColor;
+    self.sideMenuView.layer.shadowOpacity = 1.0;
+    self.sideMenuView.layer.shadowRadius = 7.5;
+    self.sideMenuView.layer.shadowOffset = CGSizeMake(1, 4);
     // create backgroundoverlay view that's behind sidePanel and if clicked closes the panel
     
     self.sideMenuBackgroundOverlayView = [[UIView alloc] initWithFrame:self.view.bounds];
