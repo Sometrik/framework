@@ -63,10 +63,7 @@ protected:
     auto orig = getContent(key);
     if (orig.get()) {
       updateContent(*orig, key, data);
-      
-      Command c(Command::REORDER_CHILD, getInternalId(), orig->getInternalId());
-      c.setValue(pos);
-      sendCommand(c);
+      reorderChildren(*orig, pos);
     } else {
       auto e = createContent(key, data);
       content[key] = e;

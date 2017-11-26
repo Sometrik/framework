@@ -111,6 +111,12 @@ class Element : public EventHandler {
   std::vector<std::shared_ptr<Element> > & getChildren() { return children; }
   const std::vector<std::shared_ptr<Element> > & getChildren() const { return children; }
 
+  void reorderChildren(Element & child, unsigned int new_position) {
+    Command c(Command::REORDER_CHILD, getInternalId(), child.getInternalId());
+    c.setValue(new_position);
+    sendCommand(c);
+  }
+
   Selection find(const std::string & q) {
     Selection s;
     find(q, s);
