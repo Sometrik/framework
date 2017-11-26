@@ -34,9 +34,11 @@ Example1::Example1() : FWApplication("com.sometrik.example1")
   addChild(actionBar);
   
   navigationDrawer = std::make_shared<NavigationDrawer>();
-  navigationDrawer->style("background", "#cccccc");
-  navigationDrawer->addChild(make_shared<TextLabel>("Hello sidebar!"));
-  navigationDrawer->addChild(make_shared<Button>("OK"));
+  auto navigationLayout = std::make_shared<LinearLayout>(FW_VERTICAL);
+  navigationDrawer->addChild(navigationLayout);
+  navigationLayout->style("background", "#cccccc");
+  navigationLayout->addChild(make_shared<TextLabel>("Hello sidebar!"));
+  navigationLayout->addChild(make_shared<Button>("OK"));
   addChild(navigationDrawer);
   
   auto view = std::make_shared<FrameView>();
@@ -50,6 +52,7 @@ Example1::Example1() : FWApplication("com.sometrik.example1")
   flipper->addChild(firstPage);
  
   auto secondPage = std::make_shared<LinearLayout>(FW_VERTICAL);
+  secondPage->style("background", "#e03030");
   flipper->addChild(secondPage);
   
   auto image = std::make_shared<ImageElement>("test.png");

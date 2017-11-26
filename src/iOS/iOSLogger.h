@@ -10,7 +10,7 @@ public:
   iOSLogger(const std::string & _name) : Logger(_name) { }
     
   void println(const char * s) override {
-      std::cerr << s << std::endl;
+    NSLog(@"%s", s);
   }
 };
 
