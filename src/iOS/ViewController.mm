@@ -119,9 +119,8 @@ static const NSTimeInterval sidePanelAnimationDuration = 0.4;
     } else if ([value isEqualToString:@"wrap-content"]) {
       
     } else {
-      CGRect frame = view.frame;
-      frame.size.width = (int)[value integerValue];
-      [view setFrame:frame];
+      int width = (int)[value integerValue];
+      [view.widthAnchor constraintEqualToConstant:width].active = true;
     }
   } else if ([key isEqualToString:@"height"]) {
     if ([value isEqualToString:@"match-parent"]) {
@@ -129,9 +128,8 @@ static const NSTimeInterval sidePanelAnimationDuration = 0.4;
     } else if ([value isEqualToString:@"wrap-content"]) {
       
     } else {
-      CGRect frame = view.frame;
-      frame.size.height = (int)[value integerValue];
-      [view setFrame:frame];
+      int height = (int)[value integerValue];
+      [view.heightAnchor constraintEqualToConstant:height].active = true;
     }
   } else if ([key isEqualToString:@"border-radius"]) {
     view.layer.cornerRadius = (int)[value integerValue];
@@ -223,12 +221,13 @@ static const NSTimeInterval sidePanelAnimationDuration = 0.4;
     [self addView:stackView withId:viewId];
     [self addToParent:parentId view:stackView];
   
-    if (direction == 1) {
-      NSLayoutConstraint *stackViewWidth = [NSLayoutConstraint constraintWithItem:stackView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:stackView.superview attribute:NSLayoutAttributeWidth multiplier:1 constant:0];
-      [stackView.superview addConstraints:@[stackViewWidth]];
-
-  }
-  
+    if (stackView.superview != nil && ![stackView.superview isKindOfClass:UIStackView.class]) {
+        NSLayoutConstraint *widthConstraint = [NSLayoutConstraint constraintWithItem:stackView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:stackView.superview attribute:NSLayoutAttributeWidth multiplier:1 constant:0];
+        NSLayoutConstraint *heightConstraint = [NSLayoutConstraint constraintWithItem:stackView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:stackView.superview attribute:NSLayoutAttributeHeight multiplier:1 constant:0];
+        NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:stackView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:stackView.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
+        NSLayoutConstraint *leftConstraint = [NSLayoutConstraint constraintWithItem:stackView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:stackView.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
+        [stackView.superview addConstraints:@[widthConstraint, heightConstraint, topConstraint, leftConstraint]];
+    }
 }
 
 - (void)createFrameLayoutWithId:(int)viewId parentId:(int)parentId
@@ -530,13 +529,16 @@ static const NSTimeInterval sidePanelAnimationDuration = 0.4;
 {
     UIView *parentView = [self viewForId:parentId];
     UIView *childView = [self viewForId:viewId];
-    if (parentView && [parentView isKindOfClass:[UIStackView class]]) {
-        UIStackView *stackView = (UIStackView *)parentView;
-        NSMutableArray *subviews = stackView.arrangedSubviews.mutableCopy;
-        NSUInteger index = [subviews indexOfObject:childView];
-        if (index != NSNotFound) {
-            [subviews removeObjectAtIndex:index];
-            [subviews insertObject:childView atIndex:position];
+    if (parentView && childView) {
+        if ([parentView isKindOfClass:[UIStackView class]]) {
+            NSLog(@"stackview change: %ld => %d", (long)childView.tag, position);
+            UIStackView *stackView = (UIStackView *)parentView;
+            [childView removeFromSuperview];
+            [stackView insertArrangedSubview:childView atIndex:position];
+            [stackView setNeedsLayout];
+            [stackView layoutIfNeeded];
+        } else {
+            [parentView insertSubview:childView atIndex:position];
         }
     }
 }
