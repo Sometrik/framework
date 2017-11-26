@@ -15,6 +15,7 @@
 #include <ProgressBar.h>
 #include <FlipperLayout.h>
 #include <ActionBar.h>
+#include <TimerEvent.h>
 
 #include "ImageDialog.h"
 
@@ -27,6 +28,8 @@ using namespace std;
 
 Example1::Example1() : FWApplication("com.sometrik.example1")
 {
+  createTimer(1000);
+  
   actionBar = std::make_shared<ActionBar>();
   addChild(actionBar);
   
@@ -111,6 +114,11 @@ Example1::onCommandEvent(CommandEvent & ev) {
     }
       break;
   }
+}
+
+void
+Example1::onTimerEvent(TimerEvent & ev) {
+  cerr << "timer" << endl;
 }
 
 FWApplication * applicationMain() {

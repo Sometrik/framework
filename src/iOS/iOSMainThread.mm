@@ -171,6 +171,11 @@ iOSMainThread::sendCommands(const std::vector<Command> & commands) {
       }
         break;
         
+      case Command::CREATE_TIMER: {
+        [viewController createTimer:command.getInternalId() interval:command.getValue() / 1000.0];
+      }
+        break;
+        
       case Command::UPDATE_PREFERENCE: {
 	NSString *storedVal = [NSString stringWithUTF8String:command.getTextValue().c_str()];
 	NSString *storedKey = [NSString stringWithUTF8String:command.getTextValue2().c_str()];
@@ -237,8 +242,8 @@ iOSMainThread::sendTextValue(int viewId, const std::string & value) {
 }
 
 void
-iOSMainThread::sendTimerEvent(int timerId) {
-    TimerEvent ev(timerId);
-    Element::postEventToElement(getApplication().getInternalId(), ev);
+iOSMainThread::sendTimerEvent(int viewId) {
+    TimerEvent ev(0);
+    Element::postEventToElement(viewId, ev);
 }
         

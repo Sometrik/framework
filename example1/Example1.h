@@ -9,6 +9,7 @@ public:
   Example1();
     
     void onCommandEvent(CommandEvent & ev) override;
+    void onTimerEvent(TimerEvent & ev) override;
     
 private:
     std::shared_ptr<TextField> textField;

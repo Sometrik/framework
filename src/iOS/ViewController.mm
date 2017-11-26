@@ -202,10 +202,10 @@ static NSTimeInterval sidePanelAnimationDuration = 0.4;
         stackView.axis = UILayoutConstraintAxisHorizontal;
     }
     stackView.distribution = UIStackViewDistributionFill;
+    // stackView.distribution = UIStackViewDistributionFillProportionally;
     stackView.alignment = UIStackViewAlignmentFill;
     stackView.translatesAutoresizingMaskIntoConstraints = false;
     stackView.frame = self.view.frame;
-    stackView.distribution = UIStackViewDistributionFillProportionally;
   
     [self.viewsDictionary setObject:stackView forKey:[NSString stringWithFormat:@"%d", viewId]];
     [self addToParent:parentId view:stackView];
@@ -429,6 +429,20 @@ static NSTimeInterval sidePanelAnimationDuration = 0.4;
     [self.view addSubview:dialog];
 }
 
+- (void)createTimer:(int)viewId interval:(double)interval
+{
+  [NSTimer scheduledTimerWithTimeInterval:interval
+                                   target:self
+                                 selector:@selector(sendTimerEvent:)
+                                 userInfo:nil
+                                  repeats:YES];
+}
+
+- (void)sendTimerEvent:(NSTimer *)timer
+{
+    mainThread->sendTimerEvent(1);
+}
+
 - (void)viewTapped:(UIView *)sender
 {
     int viewId = (int)sender.tag;
@@ -458,6 +472,7 @@ static NSTimeInterval sidePanelAnimationDuration = 0.4;
         view.frame = parentView.frame;
         [parentView addSubview:view];
     }
+    [parentView bringSubviewToFront:view];
 }
 
 - (void)removeView:(int)viewId
