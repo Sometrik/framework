@@ -94,7 +94,7 @@ Example1::Example1() : FWApplication("com.sometrik.example1")
 
   view->addChild(navigationBar);
   
-#if 0
+#if 1
   auto secondPage = std::make_shared<LinearLayout>(FW_VERTICAL);
   secondPage->style("background", "#e03030");
   flipper->addChild(secondPage);
@@ -122,7 +122,7 @@ Example1::onCommandEvent(CommandEvent & ev) {
 
 void
 Example1::onTimerEvent(TimerEvent & ev) {
-#if 0
+#if 1
   auto & children = scrollContent->getChildren();
   cerr << "timer: front child = " << children.front()->getInternalId() << endl;
   scrollContent->reorderChildren(*(children.back()), 0);
