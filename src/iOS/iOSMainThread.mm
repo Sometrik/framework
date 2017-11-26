@@ -110,7 +110,7 @@ iOSMainThread::sendCommands(const std::vector<Command> & commands) {
         break;
         
       case Command::CREATE_DIALOG: {
-        [viewController createDialogWithId:command.getInternalId() parentId:command.getInternalId() ];
+        [viewController createDialogWithId:command.getChildInternalId() parentId:command.getInternalId() ];
       }
         break;
 
