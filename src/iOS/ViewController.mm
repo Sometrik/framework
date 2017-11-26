@@ -518,6 +518,21 @@ static const NSTimeInterval sidePanelAnimationDuration = 0.4;
     }
 }
 
+- (void)reorderChildWithId:(int)viewId parentId:(int)parentId newPosition:(int)position
+{
+    UIView *parentView = [self viewForId:parentId];
+    UIView *childView = [self viewForId:viewId];
+    if (parentView && [parentView isKindOfClass:[UIStackView class]]) {
+        UIStackView *stackView = (UIStackView *)parentView;
+        NSMutableArray *subviews = stackView.arrangedSubviews.mutableCopy;
+        NSUInteger index = [subviews indexOfObject:childView];
+        if (index != NSNotFound) {
+            [subviews removeObjectAtIndex:index];
+            [subviews insertObject:childView atIndex:position];
+        }
+    }
+}
+
 - (UIView *)viewForId:(int)viewId
 {
     return [self.viewsDictionary objectForKey:[NSString stringWithFormat:@"%d", viewId]];

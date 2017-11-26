@@ -35,6 +35,7 @@
 
 - (void)addToParent:(int)parentId view:(UIView*)view;
 - (void)removeView:(int)viewId;
+- (void)reorderChildWithId:(int)viewId parentId:(int)parentId newPosition:(int)position;
 
 - (void)sendIntValue:(int)viewId value:(int)value;
 - (void)sendTextValue:(int)viewId value:(NSString *)value;
