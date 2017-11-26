@@ -19,7 +19,6 @@ extern FWApplication * applicationMain();
 @property (nonatomic, strong) UIView *sideMenuView;
 @property (nonatomic, strong) UIView *sideMenuBackgroundOverlayView;
 @property (nonatomic, strong) UITabBar *tabBar;
-@property (nonatomic, strong) NSArray *tabBarItems;
 @end
 
 static const NSTimeInterval sidePanelAnimationDuration = 0.4;
@@ -29,8 +28,7 @@ static const NSTimeInterval sidePanelAnimationDuration = 0.4;
 - (void)viewDidLoad {
   [super viewDidLoad];
   // Do any additional setup after loading the view, typically from a nib.
-    UITabBarItem *item1 = [[UITabBarItem alloc] initWithTitle:@"eka" image:nil tag:200];
-    self.tabBarItems = [NSArray arrayWithObject:item1];
+  
   // Creating the C++ app
   std::shared_ptr<FWApplication> application(applicationMain());
   
@@ -357,31 +355,25 @@ static const NSTimeInterval sidePanelAnimationDuration = 0.4;
     [self addView:tabBar withId:viewId];
     //[tabBar.bottomAnchor constraintEqualToAnchor:parentView.bottomAnchor];
     [self addToParent:parentId view:tabBar];
-    self.tabBar.items = self.tabBarItems;
+    self.tabBar.items = [[NSArray alloc] init];
     // Put tabbar to the bottom of the view
 }
 
 - (void)createTabBarItem:(int)viewId parentId:(int)parentId title:(NSString *)title
 {
-    /*
     UIView *parentView = [self viewForId:parentId];
     
-    if ([parentView isKindOfClass:UITabBar.class] && [parentView isEqual:self.tabBar]) {
+    if ([parentView isKindOfClass:UITabBar.class]) {
         UITabBar *tabBar = (UITabBar *)parentView;
         
         UITabBarItem * tabBarItem = [[UITabBarItem alloc] initWithTitle:title image:nil tag:viewId];
-        //tabBarItem.title = title;
-        //tabBarItem.tag = viewId;
-  
-        NSMutableArray *items = self.tabBar.items.mutableCopy; //(NSMutableArray *)tabBar.items.mutableCopy;
-        if (items == nil) {
-          self.tabBar.items = [[NSMutableArray alloc] init];
+      
+        NSMutableArray *items = tabBar.items.mutableCopy;
+        if (items != nil) {
+            [items addObject:tabBarItem];
+            [tabBar setItems:(NSArray *)items animated:false];
         }
-        [items addObject:tabBarItem];
-        
-        [self.tabBar setItems:(NSArray *)items animated:false];
     }
-     */
 }
 
 - (void)createNavigationView:(int)viewId
