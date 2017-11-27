@@ -258,6 +258,8 @@ class ViewStyleManager {
       }
     } else if (key.equals("border-radius")) {
       borderRadius = parseFloatArray(value, 4);
+    } else if (key.equals("border-color")) {
+      borderColor = Color.parseColor(value);
     } else if (key.equals("font-size")) {
       if (value.equals("small")){
 	fontSize = new Integer(9);
@@ -385,7 +387,10 @@ class ViewStyleManager {
     if (minHeight > 0) view.setMinimumHeight(applyScale(minHeight));
     
     Drawable backgroundContent = null;
-    if ((borderColor != null && borderColor != 0 && borderWidth != null && borderWidth != 0) || borderRadius != null || gradientColors != null) {
+    
+    if (borderColor != null && view instanceof EditText) {
+      ((EditText) view).setBackgroundTintList(ColorStateList.valueOf(borderColor));
+    } else if ((borderColor != null && borderColor != 0 && borderWidth != null && borderWidth != 0) || borderRadius != null || gradientColors != null) {
       if (!(view instanceof TextView) && borderRadius != null && gradientColors == null &&
 	  (borderWidth == null || borderWidth == 0 || backgroundColor == null || backgroundColor == 0)) {
 	RoundRectShape shape = new RoundRectShape(expandRadii(borderRadius), null, null);
@@ -395,6 +400,7 @@ class ViewStyleManager {
      	if (borderWidth == null || borderWidth == 0) {
      	  paint.setStyle(Style.FILL);
      	  paintColor = backgroundColor;
+     	  
      	} else {
      	  paint.setStyle(Style.STROKE);
      	  paint.setStrokeWidth(applyScale(borderWidth));
