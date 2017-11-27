@@ -20,6 +20,7 @@ extern FWApplication * applicationMain();
 @property (nonatomic, strong) UIView *sideMenuBackgroundOverlayView;
 @property (nonatomic, strong) UITabBar *tabBar;
 @property (nonatomic, strong) UINavigationBar *navBar;
+@property (nonatomic, strong) UIToolbar *statusBarBackgroundView;
 @end
 
 static const NSTimeInterval sidePanelAnimationDuration = 0.4;
@@ -66,6 +67,7 @@ static const NSTimeInterval sidePanelAnimationDuration = 0.4;
 {
     [super viewDidAppear:animated];
     if (self.navBar) {
+        [self.view bringSubviewToFront:self.statusBarBackgroundView];
         [self.view bringSubviewToFront:self.navBar];
     }
     if (self.sideMenuView) {
@@ -356,7 +358,7 @@ static const NSTimeInterval sidePanelAnimationDuration = 0.4;
 - (void)createNavigationBar:(int)viewId parentId:(int)parentId
 {
     // Create navigation bar with a button for opening side menu
-    UINavigationBar *navBar = [[UINavigationBar alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 50)];
+    UINavigationBar *navBar = [[UINavigationBar alloc] initWithFrame:CGRectMake(0, 20, self.view.frame.size.width, 44)];
     UINavigationItem *navItem = [[UINavigationItem alloc] initWithTitle:@"title"];
     
     UIBarButtonItem *menuButton = [[UIBarButtonItem alloc] initWithTitle:@"Menu" style:UIBarButtonItemStylePlain target:self action:@selector(showNavigationView)];
@@ -365,7 +367,16 @@ static const NSTimeInterval sidePanelAnimationDuration = 0.4;
     navBar.translucent = YES;
     self.navBar = navBar;
     [self.view addSubview:navBar];
+    
+    UIToolbar *statusBarBackgroundView = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 20)];
+    statusBarBackgroundView.barStyle = self.navBar.barStyle;
+    statusBarBackgroundView.translucent = self.navBar.translucent;
+    statusBarBackgroundView.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleWidth;
+
+    self.statusBarBackgroundView = statusBarBackgroundView;
+    [self.view addSubview:statusBarBackgroundView];
 }
+
 
 - (void)createTabBar:(int)viewId parentId:(int)parentId
 {
