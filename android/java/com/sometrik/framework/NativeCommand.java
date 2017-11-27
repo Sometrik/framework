@@ -11,6 +11,8 @@ import com.android.trivialdrivesample.util.IabResult;
 import com.android.trivialdrivesample.util.Inventory;
 import com.android.trivialdrivesample.util.Purchase;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.support.v4.app.ShareCompat;
 import android.text.Editable;
 import android.text.Html;
@@ -24,6 +26,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.view.inputmethod.EditorInfo;
+import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.CompoundButton;
@@ -499,9 +502,22 @@ public class NativeCommand {
 	view.addImageUrl(getTextValueAsString(), width, height);
       }
       break;
-    case LAUNCH_BROWSER:
+    case LAUNCH_BROWSER: {
       frame.launchBrowser(getTextValueAsString());
+//      Uri uri = Uri.parse(getTextValueAsString());
+//      Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+//      frame.startActivity(intent);
+      
+//      WebView webView = new WebView(frame);
+//      webView.loadUrl(getTextValueAsString());
+//      
+//      Activity act = new Activity();
+//      Intent intent = new Intent(act, Activity.class);
+//      frame.startActivity(intent);
+//      act.setContentView(webView);
+
       break;
+    }
     case CREATE_DIALOG: {
       	FWDialog dialog = new FWDialog(frame, childInternalId);
       	dialog.setValue(getTextValueAsString());
