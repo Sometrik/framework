@@ -14,7 +14,7 @@ std::shared_ptr<iOSMainThread> mainThread;
 // Declare C++ function
 extern FWApplication * applicationMain();
 
-@interface ViewController ()
+@interface ViewController () <UIScrollViewDelegate>
 @property (nonatomic, strong) NSMutableDictionary *viewsDictionary;
 @property (nonatomic, strong) UIView *sideMenuView;
 @property (nonatomic, strong) UIView *sideMenuBackgroundOverlayView;
@@ -292,6 +292,7 @@ static const NSTimeInterval sidePanelAnimationDuration = 0.4;
     scrollView.contentSize = CGSizeMake(self.view.bounds.size.width, 4000);
     scrollView.frame = self.view.frame;
     scrollView.clipsToBounds = YES;
+    scrollView.delegate = self;
     [self addView:scrollView withId:viewId];
     [self addToParent:parentId view:scrollView];
 }
@@ -309,6 +310,18 @@ static const NSTimeInterval sidePanelAnimationDuration = 0.4;
     }
 }
 
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView
+{
+    if (!scrollView.pagingEnabled) { // Do nothing if scrollView has paging enabled
+        NSLog(@"scrollView scrolled");
+    }
+}
+
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
+{
+    NSLog(@"scrollView did end decelerating");
+}
+
 - (void)createPageLayoutWithId:(int)viewId parentId:(int)parentId
 {
     UIScrollView * scrollView = [[UIScrollView alloc] init];
@@ -317,6 +330,7 @@ static const NSTimeInterval sidePanelAnimationDuration = 0.4;
     scrollView.contentSize = CGSizeMake(0, self.view.bounds.size.height);
     scrollView.frame = self.view.frame;
     scrollView.clipsToBounds = YES;
+    scrollView.delegate = self;
     [self addView:scrollView withId:viewId];
     [self addToParent:parentId view:scrollView];
 }
