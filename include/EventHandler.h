@@ -48,6 +48,7 @@ class VisiblePostsEvent;
 class GraphChangeEvent;
 class SearchEvent;
 class StatusEvent;
+class UserListEvent;
 
 class EventHandler : public Notifier {
  public:
@@ -109,6 +110,7 @@ class EventHandler : public Notifier {
   virtual void handleVisiblePostsEvent(VisiblePostsEvent & ev) { }
   virtual void handleSearchEvent(SearchEvent & ev) { }
   virtual void handleStatusEvent(StatusEvent & ev) { }
+  virtual void handleUserListEvent(UserListEvent & ev) { }
   
   virtual bool acceptPositionEvent(const PositionEvent & ev, float margin = 0) const { return false; }
   virtual bool isVisibleOnWorkspace(int w) const { return true; }  
