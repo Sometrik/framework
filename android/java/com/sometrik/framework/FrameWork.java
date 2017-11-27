@@ -163,14 +163,22 @@ public class FrameWork extends Activity {
 
       public void handleMessage(Message msg) {
 	if (msg.what == 1) {
-	  NativeCommandTransaction transaction = (NativeCommandTransaction) msg.obj;
-	  for (NativeCommand command : transaction.getCommands()) {
-	    command.apply(framework.views.get(command.getInternalId()));
+	  try {
+	    NativeCommandTransaction transaction = (NativeCommandTransaction) msg.obj;
+	    for (NativeCommand command : transaction.getCommands()) {
+	      command.apply(framework.views.get(command.getInternalId()));
+	    }
+	  } catch (Throwable t) {
+	    t.printStackTrace();
 	  }
 	} else if (msg.what == 2) {
-	  NativeCommandHandler view = framework.views.get(msg.arg1);
-	  if (view != null) {
-	    view.setBitmap((Bitmap)msg.obj);
+	  try {
+	    NativeCommandHandler view = framework.views.get(msg.arg1);
+	    if (view != null) {
+	      view.setBitmap((Bitmap)msg.obj);
+	    }
+	  } catch (Throwable t) {
+	    t.printStackTrace();
 	  }
 	}
       }
