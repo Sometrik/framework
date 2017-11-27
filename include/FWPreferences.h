@@ -73,6 +73,14 @@ class FWPreferences {
   
   void clearChanges() { changedKeys.clear(); deletedKeys.clear(); }
   
+  std::vector<std::string> getKeys() const {
+    std::vector<std::string> r;
+    for (auto & d : data) {
+      r.push_back(d.first);
+    }
+    return r;
+  }
+
  private:
   std::unordered_map<std::string, std::string> data;
   std::string empty_string;
