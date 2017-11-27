@@ -47,10 +47,31 @@
 
 using namespace std;
 
+static void logException(JNIEnv * env, const char * error) {
+  jthrowable e = env->ExceptionOccurred();
+  env->ExceptionClear();
+  jclass clazz = env->GetObjectClass(e);
+  jmethodID getMessage = env->GetMethodID(clazz, "toString", "()Ljava/lang/String;"); // or getMessage
+  jstring message = (jstring)env->CallObjectMethod(e, getMessage);
+  string m;
+  if (message != NULL) {
+    const char *mstr = env->GetStringUTFChars(message, NULL);
+    m = mstr;
+    env->ReleaseStringUTFChars(message, mstr);
+  }
+  env->DeleteLocalRef(message);
+  env->DeleteLocalRef(clazz);
+  env->DeleteLocalRef(e);
+
+  __android_log_print(ANDROID_LOG_INFO, "Framework", "%s: %s", error, m.c_str());
+}
+
 static jbyteArray convertToByteArray(JNIEnv * env, const std::string & s) {
   const jbyte * pNativeMessage = reinterpret_cast<const jbyte*>(s.c_str());
   jbyteArray bytes = env->NewByteArray(s.size());
-  env->SetByteArrayRegion(bytes, 0, s.size(), pNativeMessage);
+  if (bytes) {
+    env->SetByteArrayRegion(bytes, 0, s.size(), pNativeMessage);
+  }
   return bytes;
 }
 
@@ -195,17 +216,30 @@ public:
     const jbyte * bytePtr = reinterpret_cast<const jbyte*>(image->getData());
     size_t size = image->calculateSizeForFirstLevel();
     jbyteArray bytes = myEnv->NewByteArray(size);
-    myEnv->SetByteArrayRegion(bytes, 0, size, bytePtr);
 
-    jobject buffer = myEnv->CallStaticObjectMethod(javaCache->byteBufferClass, javaCache->wrapMethod, bytes);
-    jobject bitmap = myEnv->CallStaticObjectMethod(javaCache->bitmapClass, javaCache->bitmapCreateMethod, (int)image->getWidth(), (int)image->getHeight(), config);
+    if (bytes) {
+      myEnv->SetByteArrayRegion(bytes, 0, size, bytePtr);
 
-    myEnv->CallVoidMethod(bitmap, javaCache->copyPixelsFromBufferMethod, buffer);
-    setBitmap(internal_id, bitmap);
+      if (myEnv->ExceptionCheck()) logException(myEnv, "SetByteArrayRegion");
 
-    myEnv->DeleteLocalRef(bitmap);
-    myEnv->DeleteLocalRef(buffer);
-    myEnv->DeleteLocalRef(bytes);   
+      jobject buffer = myEnv->CallStaticObjectMethod(javaCache->byteBufferClass, javaCache->wrapMethod, bytes);
+
+      if (myEnv->ExceptionCheck()) logException(myEnv, "ByteBuffer.wrap");
+
+      jobject bitmap = myEnv->CallStaticObjectMethod(javaCache->bitmapClass, javaCache->bitmapCreateMethod, (int)image->getWidth(), (int)image->getHeight(), config);
+
+      if (myEnv->ExceptionCheck()) logException(myEnv, "Bitmap.create");
+
+      myEnv->CallVoidMethod(bitmap, javaCache->copyPixelsFromBufferMethod, buffer);
+
+      if (myEnv->ExceptionCheck()) logException(myEnv, "Bitmap.copyPixelsFromBuffer");
+
+      setBitmap(internal_id, bitmap);
+
+      myEnv->DeleteLocalRef(bitmap);
+      myEnv->DeleteLocalRef(buffer);
+      myEnv->DeleteLocalRef(bytes);
+    }
   }
 
   void setSurface(int internal_id, canvas::Surface & _surface) override {
@@ -220,6 +254,7 @@ public:
   
   void setBitmap(int internal_id, jobject bitmap) {
     myEnv->CallStaticVoidMethod(javaCache->frameworkClass, javaCache->sendBitmapMethod, javaCache->framework, internal_id, bitmap);
+    if (myEnv->ExceptionCheck()) logException(myEnv, "FrameWork.setBitmap");
   }
 
   int startModal() override {
@@ -236,7 +271,9 @@ public:
   void sendCommands(const vector<Command> & commands) override {
     jobject jtransaction = myEnv->NewObject(javaCache->nativeCommandTransactionClass, javaCache->nativeCommandTransactionConstructor);
 
-    __android_log_print(ANDROID_LOG_INFO, "Sometrik", "SENDING TRANSACTION (%d)", (int)commands.size());
+    if (myEnv->ExceptionCheck()) logException(myEnv, "NativeCommandTransaction()");
+
+    __android_log_print(ANDROID_LOG_INFO, "Framework", "SENDING TRANSACTION (%d)", (int)commands.size());
 
     for (auto & command : commands) {
       if (command.getType() == Command::CREATE_FRAMEVIEW || command.getType() == Command::CREATE_OPENGL_VIEW) {
@@ -353,26 +390,25 @@ public:
       EGLint height;
       int version = opengl_es_version >> 16;
 
-      __android_log_print(ANDROID_LOG_INFO, "Sometrik", "version check: %d", version);
       EGLint contextAttribs[] = { EGL_CONTEXT_CLIENT_VERSION, version, EGL_NONE };
 
       if ((_display = eglGetDisplay(EGL_DEFAULT_DISPLAY)) == EGL_NO_DISPLAY) {
-        __android_log_print(ANDROID_LOG_INFO, "Sometrik", "eglGetDisplay() returned error %d", eglGetError());
+        __android_log_print(ANDROID_LOG_INFO, "Framework", "eglGetDisplay() returned error %d", eglGetError());
         return false;
       }
       if (!eglInitialize(_display, 0, 0)) {
-        __android_log_print(ANDROID_LOG_INFO, "Sometrik", "eglInitialize() returned error %d", eglGetError());
+        __android_log_print(ANDROID_LOG_INFO, "Framework", "eglInitialize() returned error %d", eglGetError());
         return false;
       }
 
       if (!eglChooseConfig(_display, attribs, &_config, 1, &numConfigs)) {
-        __android_log_print(ANDROID_LOG_INFO, "Sometrik", "eglChooseConfig() returned error %d", eglGetError());
+        __android_log_print(ANDROID_LOG_INFO, "Framework", "eglChooseConfig() returned error %d", eglGetError());
         //         destroy();
         return false;
       }
 
       if (!eglGetConfigAttrib(_display, _config, EGL_NATIVE_VISUAL_ID, &format)) {
-        __android_log_print(ANDROID_LOG_INFO, "Sometrik", "eglGetConfigAttrib() returned error %d", eglGetError());
+        __android_log_print(ANDROID_LOG_INFO, "Framework", "eglGetConfigAttrib() returned error %d", eglGetError());
         //         destroy();
         return false;
       }
@@ -380,25 +416,25 @@ public:
       ANativeWindow_setBuffersGeometry(window, 0, 0, format);
 
       if (!(_surface = eglCreateWindowSurface(_display, _config, window, 0))) {
-        __android_log_print(ANDROID_LOG_INFO, "Sometrik", "eglCreateWindowSurface() returned error %d", eglGetError());
+        __android_log_print(ANDROID_LOG_INFO, "Framework", "eglCreateWindowSurface() returned error %d", eglGetError());
         //         destroy();
         return false;
       }
 
       if (!(_context = eglCreateContext(_display, _config, 0, contextAttribs))) {
-        __android_log_print(ANDROID_LOG_INFO, "Sometrik", "eglCreateContext() returned error %d", eglGetError());
+        __android_log_print(ANDROID_LOG_INFO, "Framework", "eglCreateContext() returned error %d", eglGetError());
         //         destroy();
         return false;
       }
 
       if (!eglMakeCurrent(_display, _surface, _surface, _context)) {
-        __android_log_print(ANDROID_LOG_INFO, "Sometrik", "eglMakeCurrent() returned error %d", eglGetError());
+        __android_log_print(ANDROID_LOG_INFO, "Framework", "eglMakeCurrent() returned error %d", eglGetError());
         //         destroy();
         return false;
       }
 
       if (!eglQuerySurface(_display, _surface, EGL_WIDTH, &width) || !eglQuerySurface(_display, _surface, EGL_HEIGHT, &height)) {
-        __android_log_print(ANDROID_LOG_INFO, "Sometrik", "eglQuerySurface() returned error %d", eglGetError());
+        __android_log_print(ANDROID_LOG_INFO, "Framework", "eglQuerySurface() returned error %d", eglGetError());
         //         destroy();
         return false;
       }
@@ -655,7 +691,7 @@ void Java_com_sometrik_framework_FrameWork_nativeOnStart(JNIEnv* env, jobject th
     SysEvent ev(SysEvent::START);
     mainThread->sendEvent(appId, ev);
   } else {
-    __android_log_print(ANDROID_LOG_INFO, "Sometrik", "NO THREAD FOR SysEvent::START");
+    __android_log_print(ANDROID_LOG_INFO, "Framework", "NO THREAD FOR SysEvent::START");
   }
 }
 void Java_com_sometrik_framework_FrameWork_nativeOnDestroy(JNIEnv* env, jobject thiz, int appId) {
@@ -693,13 +729,11 @@ void Java_com_sometrik_framework_FrameWork_textChangedEvent(JNIEnv* env, jobject
 }
 
 void Java_com_sometrik_framework_FrameWork_intChangedEvent(JNIEnv* env, jobject thiz, jint id, jint changedInt, jint changedInt2) {
-  __android_log_print(ANDROID_LOG_INFO, "Sometrik", "intChangedEvent: %d %d", changedInt, changedInt2);
   ValueEvent ev(changedInt, changedInt2);
   mainThread->sendEvent(id, ev);
 }
 
 void Java_com_sometrik_framework_FrameWork_visibilityChangedEvent(JNIEnv* env, jobject thiz, jint id, bool visible) {
-  __android_log_print(ANDROID_LOG_INFO, "Sometrik", "visibilityChangedEvent on %d", id);
   VisibilityEvent ev(visible);
   mainThread->sendEvent(id, ev);
 }
@@ -719,7 +753,6 @@ void Java_com_sometrik_framework_FrameWork_nativeScrollChanged(JNIEnv * env, job
 
 void Java_com_sometrik_framework_FrameWork_sendURLImageRequest(JNIEnv* env, jobject thiz, jint viewId, jstring uri, jint width, jint height, jint internalFormat) {
   const char * uri2 = env->GetStringUTFChars(uri, NULL);
-  __android_log_print(ANDROID_LOG_INFO, "Sometrik", "sendImageRequest: %s %d %d", uri2, width, height);
   ImageRequestEvent ev(ImageRequestEvent::REQUEST, viewId, uri2, width, height);
   if (internalFormat != 0) {
     ev.setInternalFormat((canvas::InternalFormat)internalFormat);
@@ -746,7 +779,6 @@ void Java_com_sometrik_framework_FrameWork_timerEvent(JNIEnv* env, jobject thiz,
 }
 
 void Java_com_sometrik_framework_FrameWork_setNativeActiveView(JNIEnv* env, jobject thiz, jint activeView, bool recordHistory) {
-  __android_log_print(ANDROID_LOG_INFO, "Sometrik", "setActivewView: %u", activeView);
   auto & app = mainThread->getApplication();
   if (app.getActiveViewId() != 0 && recordHistory) {
     app.addToHistory(app.getActiveViewId());
