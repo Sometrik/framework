@@ -2,6 +2,21 @@
 
 @implementation ViewManager;
 
+- (id)init
+{
+    self = [super init];
+    self.constraintsSet = NO;
+    return self;
+}
+
+- (void)clear
+{
+    if ([self.view isKindOfClass:UIImageView.class]) {
+        UIImageView * imageView = (UIImageView *)self.view;
+        imageView.image = nil;
+    }
+}
+
 - (void)addImageUrl:(NSString *)url width:(int)width height:(int)height
 {
   
@@ -53,8 +68,10 @@
             } else if ([value isEqualToString:@"wrap-content"]) {
                 
             } else {
-                int width = (int)[value integerValue];
-                // [view.widthAnchor constraintEqualToConstant:width].active = true;
+                if (!self.constraintsSet) {
+                    int width = (int)[value integerValue];
+                    [view.widthAnchor constraintEqualToConstant:width].active = true;
+                }
             }
         } else if ([key isEqualToString:@"height"]) {
             if ([value isEqualToString:@"match-parent"]) {
@@ -62,8 +79,10 @@
             } else if ([value isEqualToString:@"wrap-content"]) {
                 
             } else {
-                int height = (int)[value integerValue];
-                // [self.view.heightAnchor constraintEqualToConstant:height].active = true;
+                if (!self.constraintsSet) {
+                    int height = (int)[value integerValue];
+                    [view.heightAnchor constraintEqualToConstant:height].active = true;
+                }
             }
         } else if ([key isEqualToString:@"border-radius"]) {
             view.layer.cornerRadius = (int)[value integerValue];
