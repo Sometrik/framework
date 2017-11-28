@@ -1,6 +1,8 @@
 #import <UIKit/UIKit.h>
 
 @interface ViewManager : NSObject
+- (id)init;
+- (void)clear;
 - (void)setImage:(UIImage *)data;
 - (void)addImageUrl:(NSString *)url width:(int)width height:(int)height;
 - (void)setStyle:(NSString *)key value:(NSString *)value;
@@ -9,4 +11,5 @@
 
 @property (nonatomic) NSInteger id;
 @property id view;
+@property BOOL constraintsSet;
 @end
