@@ -23,6 +23,7 @@ extern FWApplication * applicationMain();
 @property (nonatomic, strong) UINavigationBar *navBar;
 @property (nonatomic, strong) UIToolbar *statusBarBackgroundView;
 @property (nonatomic, strong) UIScrollView *pageView;
+@property (nonatomic) int activeDialogId;
 @property (nonatomic) int activeViewId;
 @end
 
@@ -36,6 +37,7 @@ static const CGFloat backgroundOverlayViewAlpha = 0.5;
   // Do any additional setup after loading the view, typically from a nib.
 
   self.activeViewId = 0;
+  self.activeDialogId = 0;
     
   [self createBackgroundOverlay];
   //self.view.layoutMargins = UIEdgeInsetsMake(64.0, 0, 50.0, 0);
@@ -107,6 +109,10 @@ static const CGFloat backgroundOverlayViewAlpha = 0.5;
 {
     if (!self.sideMenuView.isHidden) {
         [self hideNavigationViewWithAnimation:YES];
+    }
+    if (self.activeDialogId) {
+        [self sendIntValue:self.activeDialogId value:0];
+        self.activeDialogId = 0;
     }
     [UIView animateWithDuration:animationDuration animations:^{
         self.backgroundOverlayView.alpha = 0.0;
@@ -253,9 +259,6 @@ static const CGFloat backgroundOverlayViewAlpha = 0.5;
         BOOL viewHidden = visibility == 0 ? true : false;
         if (view) {
             view.hidden = viewHidden;
-	    if (!viewHidden) {
-	        [view.superview bringSubviewToFront:view];
-	    }
         }
     }
 }
@@ -618,6 +621,8 @@ static const CGFloat backgroundOverlayViewAlpha = 0.5;
 
 - (void)createDialogWithId:(int)viewId parentId:(int)parentId
 {
+    self.activeDialogId = viewId;
+  
     UIView * dialog = [[UIView alloc] init];
     dialog.tag = viewId;
     dialog.layer.backgroundColor = [UIColor grayColor].CGColor;
@@ -718,12 +723,12 @@ static const CGFloat backgroundOverlayViewAlpha = 0.5;
         NSLayoutConstraint *leftConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
         [view.superview addConstraints:@[widthConstraint, heightConstraint, topConstraint, leftConstraint]];
     }
-  
-    [parentView bringSubviewToFront:view];
 }
 
 - (void)removeView:(int)viewId
 {
+    if (self.activeDialogId == viewId) self.activeDialogId = 0;
+  
     NSString * key = [NSString stringWithFormat:@"%d", viewId];
     UIView *view = [self.viewsDictionary objectForKey:key];
     if (view != nil) {
@@ -818,8 +823,8 @@ static const CGFloat backgroundOverlayViewAlpha = 0.5;
 
 - (void)setTitle:(NSString*)title
 {
-  if (navBar != null) {
-    navBar.items[0].title = title;
+  if (self.navBar != nil) {
+    self.navBar.items[0].title = title;
   }
 }
 
