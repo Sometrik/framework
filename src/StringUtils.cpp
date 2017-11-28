@@ -552,7 +552,7 @@ StringUtils::encodePunycode(const string & input) {
     if (input[i] >= 0) basic += input[i];
   }
 
-  int h = basic.size(), b = basic.size();
+  int h = basic.size(), b = (int)basic.size();
   if (b > 0) output += basic;
 
   // cerr << "basic codepoints: " << output << endl;
