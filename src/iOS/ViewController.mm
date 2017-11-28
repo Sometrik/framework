@@ -83,11 +83,6 @@ static const CGFloat backgroundOverlayViewAlpha = 0.5;
     [self.tabBar setSelectedItem:self.tabBar.items[0]];
 }
 
-- (void)menuButtonTapped
-{
-    [self showNavigationViewWithAnimation:YES];
-}
-
 - (void)createBackgroundOverlay
 {
     // create backgroundoverlay view that's behind sidePanel and dialog and if clicked closes the panel
@@ -435,6 +430,11 @@ static const CGFloat backgroundOverlayViewAlpha = 0.5;
     // Create navigation bar with a button for opening side menu
     UINavigationBar *navBar = [[UINavigationBar alloc] initWithFrame:CGRectMake(0, 20, self.view.frame.size.width, 44)];
     UINavigationItem *navItem = [[UINavigationItem alloc] initWithTitle:@"title"];
+
+    // Add debug event by tapping nav bar 5 times
+    UITapGestureRecognizer *debugTapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(navBarTapped5Times:)];
+    debugTapGesture.numberOfTapsRequired = 5;
+    [navBar addGestureRecognizer:debugTapGesture];
     
     UIBarButtonItem *menuButton = [[UIBarButtonItem alloc] initWithTitle:@"Menu" style:UIBarButtonItemStylePlain target:self action:@selector(menuButtonTapped)];
     navItem.leftBarButtonItem = menuButton;
@@ -450,6 +450,17 @@ static const CGFloat backgroundOverlayViewAlpha = 0.5;
 
     self.statusBarBackgroundView = statusBarBackgroundView;
     [self.view addSubview:statusBarBackgroundView];
+}
+
+- (void)navBarTapped5Times:(UITapGestureRecognizer *)recognizer
+{
+    NSLog(@"tap-tap-tap-tap-tap");
+    
+}
+
+- (void)menuButtonTapped
+{
+    [self showNavigationViewWithAnimation:YES];
 }
 
 - (void)createTabBar:(int)viewId parentId:(int)parentId
