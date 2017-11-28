@@ -363,6 +363,7 @@ static const CGFloat backgroundOverlayViewAlpha = 0.5;
     scrollView.frame = self.view.frame;
     scrollView.clipsToBounds = YES;
     scrollView.delegate = self;
+    scrollView.translatesAutoresizingMaskIntoConstraints = false;
     [self addView:scrollView withId:viewId];
     [self addToParent:parentId view:scrollView];
 }
@@ -408,6 +409,7 @@ static const CGFloat backgroundOverlayViewAlpha = 0.5;
     scrollView.frame = self.view.frame;
     scrollView.clipsToBounds = YES;
     scrollView.delegate = self;
+    scrollView.translatesAutoresizingMaskIntoConstraints = false;
     self.pageView = scrollView;
     [self addView:scrollView withId:viewId];
     [self addToParent:parentId view:scrollView];
