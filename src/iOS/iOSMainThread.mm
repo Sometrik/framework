@@ -158,7 +158,16 @@ iOSMainThread::sendCommands(const std::vector<Command> & commands) {
         break;
         
       case Command::SET_INT_VALUE: {
-        [viewController setIntValue:command.getInternalId() value:command.getValue()];
+	if (command.getInternalId() == 1) {
+	  auto & app = getApplication();
+	  app.addToHistory(command.getChildInternalId());
+	  app.setActiveViewId(command.getChildInternalId());
+
+	  NSString * title = [NSString stringWithUTF8String:command.getTextValue().c_str()];
+	  [viewController setTitle:title]
+	} else {
+	  [viewController setIntValue:command.getInternalId() value:command.getValue()];
+	}
       }
 	break;
 
