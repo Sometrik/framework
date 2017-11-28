@@ -34,6 +34,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.view.GravityCompat;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
@@ -104,6 +105,7 @@ public class FrameWork extends Activity {
   public native void sendURLImageRequest(int viewId, String url, int width, int height, int internalFormat);
   public native void sendImageRequest(int viewId, int width, int height, int internalFormat);
   public native void cancelImageRequest(int viewId);
+  public native void showNativeDebug();
   private native void setNativeActiveView(int activeView, boolean recordHistory);
   private native void languageChanged(int appId, String language);
   private native void memoryWarning(int appId);
@@ -547,7 +549,13 @@ public class FrameWork extends Activity {
 //      System.out.println("KeyEvent ACTION_MULTIPLE. KeyCode: " + keycode + " ViewId: " + findViewById(android.R.id.content).getRootView().getId());
 //      return true;
 //    }
-    if (!transitionAnimation){
+    if (!transitionAnimation) {
+      if (keycode == KeyEvent.KEYCODE_BACK && drawerLayout != null) {
+	if (drawerLayout.isDrawerOpen(Gravity.LEFT)) {
+	  drawerLayout.closeDrawer(Gravity.LEFT);
+	  return true;
+	}
+      }
       keyPressed(e.getKeyCode(), currentView);
     }
     return true;

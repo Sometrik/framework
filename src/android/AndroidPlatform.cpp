@@ -788,6 +788,11 @@ void Java_com_sometrik_framework_FrameWork_setNativeActiveView(JNIEnv* env, jobj
   // Wrong thread. Send event instead
 }
 
+void Java_com_sometrik_framework_FrameWork_showNativeDebug(JNIEnv* env, jobject thiz) {
+  SysEvent ev(SysEvent::SHOW_DEBUG);
+  mainThread->sendEvent(mainThread->getApplication().getInternalId(), ev);
+}
+
 void Java_com_sometrik_framework_FrameWork_OnPurchaseEvent(JNIEnv* env, jclass clazz, jint applicationId, jstring productId, bool newPurchase, double purchaseTime){
   const char * cstring = env->GetStringUTFChars(productId, 0);
   //PurchaseEvent Type not used yet. PurchaseTime is not sent //TODO

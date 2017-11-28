@@ -35,6 +35,9 @@ public class FWActionBar implements NativeCommandHandler {
   private RelativeLayout mainLayout;
   private FWLayout alternativeButtonLayout;
   ViewStyleManager normalStyle, activeStyle, currentStyle;
+  
+  private static boolean debugClickEnabled = true;
+  private int debugClickCounter = 0;
 
   public FWActionBar(final FrameWork frame, int id){
     this.frame = frame;
@@ -70,6 +73,9 @@ public class FWActionBar implements NativeCommandHandler {
       drawerButton.setOnClickListener(new OnClickListener() {
 	@Override
 	public void onClick(View v) {
+	  if (debugClickEnabled) {
+	    debugClickCounter = 0;
+	  }
 	  System.out.println("drawerButton click");
 	  NativeCommandHandler handler = frame.views.get(frame.getCurrentDrawerViewId());
 	  System.out.println("handler: " + handler.getElementId());
@@ -83,6 +89,21 @@ public class FWActionBar implements NativeCommandHandler {
 	}
       });
       mainLayout.addView(drawerButton);
+    }
+    
+    if (debugClickEnabled) {
+      mainLayout.setOnClickListener(new OnClickListener() {
+	@Override
+	public void onClick(View arg0) {
+	  debugClickCounter++;
+	  System.out.println("actionBar debugClick: " + debugClickCounter);
+	  if (debugClickCounter > 4) {
+	    System.out.println("actionBar debugClick: showing debug");
+	    frame.showNativeDebug();
+	    debugClickCounter = 0;
+	  }
+	}
+      });
     }
     
 //    titleView = new TextView(frame);

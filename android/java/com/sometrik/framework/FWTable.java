@@ -30,7 +30,7 @@ public class FWTable extends TableLayout implements NativeCommandHandler {
     setLayoutParams(params);
     rowList = new ArrayList<TableRow>();
     TableRow firstRow = new TableRow(frame);
-    firstRow.setLayoutParams(params);
+    firstRow.setLayoutParams(rowChildParams);
     rowList.add(firstRow);
     addView(firstRow);
     dataList = new ArrayList<View>();
@@ -50,6 +50,7 @@ public class FWTable extends TableLayout implements NativeCommandHandler {
 	return rowList.get(rowList.size() - 1);
       }
     } else if (dataList.size() != 0){
+      Log.d("table", "Alert. mathi : " + ((dataList.size()) / columnCount));
       double mathi = (double)(dataList.size()) / (double)columnCount;
       Log.d("table", "Alert. Datalist size: " + (dataList.size() ));
       Log.d("table", "Alert. BLaag : " + ((dataList.size()) / columnCount));
@@ -74,7 +75,7 @@ public class FWTable extends TableLayout implements NativeCommandHandler {
     return row;
   }
   
-  public void resizeAutoSize(){
+  public void resizeAutoSize() {
     if (autoSize){
       Log.d("table", "Resizing autoSize table");
       
