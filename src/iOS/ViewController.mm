@@ -659,9 +659,9 @@ static const CGFloat backgroundOverlayViewAlpha = 0.5;
     mainThread->sendTimerEvent(1);
 }
 
-- (void)viewTapped:(UIView *)sender
+- (void)viewTapped:(UITapGestureRecognizer *)gesture
 {
-    int viewId = (int)sender.tag;
+    int viewId = (int)gesture.view.tag;
     NSLog(@"viewId = %d", viewId);
     [self sendIntValue:viewId value:viewId];
 }
