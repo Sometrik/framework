@@ -45,7 +45,7 @@ Example1::Example1() : FWApplication("com.sometrik.example1")
   frontView = std::make_shared<FrontView>();
   addChild(frontView);
   
-  mainView = std::make_shared<FrameView>();
+  mainView = std::make_shared<FrameView>("Secondary page");
   mainView->style("background-color", "#555555");
   addChild(mainView);
   

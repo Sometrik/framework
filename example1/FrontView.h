@@ -9,7 +9,7 @@
 
 class FrontView : public FrameView {
 public:
-    FrontView(int _id = 0) : FrameView(_id) {
+    FrontView(int _id = 0) : FrameView("Front page", _id) {
         auto & layout = addChild(std::make_shared<LinearLayout>(FW_VERTICAL));
         layout.addChild(std::make_shared<Button>("Click here!", ID_SHOW_FRONT_PAGE));
     }
