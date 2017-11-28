@@ -9,17 +9,29 @@
 
 - (void)setImage:(UIImage *)data
 {
-	// if view is image, set the content
+    if ([self.view isKindOfClass:UIImageView.class]) {
+        UIImageView * imageView = (UIImageView *)self.view;
+        imageView.image = data;
+    }
 }
 
 - (void)setIntValue:(int)value
 {
-	// if view is switch, set state to value
+    if ([self.view isKindOfClass:UISwitch.class]) {
+        UISwitch * sw = (UISwitch *)self.view;
+        sw.on = value != 0 ? YES : NO;
+    }
 }
 
 - (void)setTextValue:(NSString *)value;
 {
-	// if view is text field or label, set the text
+    if ([self.view isKindOfClass:UILabel.class]) {
+        UILabel * label = (UILabel*)self.view;
+        label.text = value;
+    } else if ([self.view isKindOfClass:UITextField.class]) {
+        UITextField * textField = (UITextField*)self.view;
+        textField.text = value;
+    }
 }
 
 - (void)setStyle:(NSString *)key value:(NSString *)value {
