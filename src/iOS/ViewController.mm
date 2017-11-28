@@ -253,6 +253,9 @@ static const CGFloat backgroundOverlayViewAlpha = 0.5;
         BOOL viewHidden = visibility == 0 ? true : false;
         if (view) {
             view.hidden = viewHidden;
+	    if (!viewHidden) {
+	        [view.superview bringSubviewToFront:view];
+	    }
         }
     }
 }
@@ -811,6 +814,13 @@ static const CGFloat backgroundOverlayViewAlpha = 0.5;
 - (void)sendEvent:(EventWrapper*)event
 {
     mainThread->handleEventFromThread(event.targetElementId, (Event *)event.eventPtr);
+}
+
+- (void)setTitle:(NSString*)title
+{
+  if (navBar != null) {
+    navBar.items[0].title = title;
+  }
 }
 
 - (UIColor *)colorFromString:(NSString *)hexString {

@@ -45,4 +45,6 @@
 
 - (void)sendEventToMainThread:(EventWrapper*) event;
 
+- (void)setTitle:(NSString*)title;
+
 @end
