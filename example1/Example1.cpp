@@ -142,7 +142,6 @@ Example1::onCommandEvent(CommandEvent & ev) {
     }
       break;
     case ID_SHOW_FRONT_PAGE: {
-      frontView->hide();
       mainView->show();
     }
       break;
