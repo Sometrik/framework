@@ -17,14 +17,15 @@ extern FWApplication * applicationMain();
 @interface ViewController () <UIScrollViewDelegate, UITabBarDelegate>
 @property (nonatomic, strong) NSMutableDictionary *viewsDictionary;
 @property (nonatomic, strong) UIView *sideMenuView;
-@property (nonatomic, strong) UIView *sideMenuBackgroundOverlayView;
+@property (nonatomic, strong) UIView *backgroundOverlayView;
 @property (nonatomic, strong) UITabBar *tabBar;
 @property (nonatomic, strong) UINavigationBar *navBar;
 @property (nonatomic, strong) UIToolbar *statusBarBackgroundView;
 @property (nonatomic, strong) UIScrollView *pageView;
 @end
 
-static const NSTimeInterval sidePanelAnimationDuration = 0.4;
+static const NSTimeInterval animationDuration = 0.4;
+static const CGFloat backgroundOverlayViewAlpha = 0.5;
 
 @implementation ViewController
 
@@ -32,6 +33,8 @@ static const NSTimeInterval sidePanelAnimationDuration = 0.4;
   [super viewDidLoad];
   // Do any additional setup after loading the view, typically from a nib.
 
+  [self createBackgroundOverlay];
+    
   // Creating the C++ app
   std::shared_ptr<FWApplication> application(applicationMain());
   
@@ -72,16 +75,51 @@ static const NSTimeInterval sidePanelAnimationDuration = 0.4;
         [self.view bringSubviewToFront:self.navBar];
     }
     if (self.sideMenuView) {
-        [self.view bringSubviewToFront:self.sideMenuBackgroundOverlayView];
+        [self.view bringSubviewToFront:self.backgroundOverlayView];
         [self.view bringSubviewToFront:self.sideMenuView];
     }
     CGRect tabBarFrame = CGRectMake(0.0, self.view.frame.size.height-self.tabBar.frame.size.height , self.view.frame.size.width, self.tabBar.frame.size.height);
     self.tabBar.frame = tabBarFrame;
-    NSLog(@"self.tabBar.frame = %@", NSStringFromCGRect(self.tabBar.frame));
+    [self.tabBar setSelectedItem:self.tabBar.items[0]];
 }
-- (void)sideMenuBackgroundOverlayViewTapped:(UITapGestureRecognizer *)gesture
+
+- (void)createBackgroundOverlay
 {
-    [self hideNavigationView];
+    // create backgroundoverlay view that's behind sidePanel and dialog and if clicked closes the panel
+    self.backgroundOverlayView = [[UIView alloc] initWithFrame:self.view.bounds];
+    self.backgroundOverlayView.hidden = YES;
+    self.backgroundOverlayView.backgroundColor = UIColor.blackColor;
+    [self.view addSubview:self.backgroundOverlayView];
+    UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(backgroundOverlayViewTapped:)];
+    [self.backgroundOverlayView addGestureRecognizer:tapGestureRecognizer];
+}
+
+- (void)backgroundOverlayViewTapped:(UITapGestureRecognizer *)gesture
+{
+    if (!self.sideMenuView.isHidden) {
+        [self hideNavigationViewWithAnimation:YES];
+    }
+    [UIView animateWithDuration:animationDuration animations:^{
+        self.backgroundOverlayView.alpha = 0.0;
+    } completion:^(BOOL finished) {
+        if (finished) {
+            self.backgroundOverlayView.hidden = YES;
+        }
+    }];
+}
+
+- (void)hideBackgroundOverlayViewWithAnimation:(BOOL)animate
+{
+    if (animate) {
+        [UIView animateWithDuration:animationDuration animations:^{
+            self.backgroundOverlayView.alpha = 0.0;
+        } completion:^(BOOL finished) {
+            self.backgroundOverlayView.hidden = YES;
+        }];
+    } else {
+        self.backgroundOverlayView.alpha = 0.0;
+        self.backgroundOverlayView.hidden = YES;
+    }
 }
 
 - (UIStatusBarStyle)preferredStatusBarStyle {
@@ -184,9 +222,9 @@ static const NSTimeInterval sidePanelAnimationDuration = 0.4;
     
     if ([view isEqual:self.sideMenuView]) {
       if (visibility == 0) {
-            [self hideNavigationView];
+          [self hideNavigationViewWithAnimation:YES];
         } else {
-            [self showNavigationView];
+            [self showNavigationViewWithAnimation:YES];
         }
     } else {
         BOOL viewHidden = visibility == 0 ? true : false;
@@ -392,7 +430,7 @@ static const NSTimeInterval sidePanelAnimationDuration = 0.4;
     UINavigationBar *navBar = [[UINavigationBar alloc] initWithFrame:CGRectMake(0, 20, self.view.frame.size.width, 44)];
     UINavigationItem *navItem = [[UINavigationItem alloc] initWithTitle:@"title"];
     
-    UIBarButtonItem *menuButton = [[UIBarButtonItem alloc] initWithTitle:@"Menu" style:UIBarButtonItemStylePlain target:self action:@selector(showNavigationView)];
+    UIBarButtonItem *menuButton = [[UIBarButtonItem alloc] initWithTitle:@"Menu" style:UIBarButtonItemStylePlain target:self action:@selector(showNavigationView:)];
     navItem.leftBarButtonItem = menuButton;
     [navBar setItems:@[navItem]];
     navBar.translucent = YES;
@@ -407,7 +445,6 @@ static const NSTimeInterval sidePanelAnimationDuration = 0.4;
     self.statusBarBackgroundView = statusBarBackgroundView;
     [self.view addSubview:statusBarBackgroundView];
 }
-
 
 - (void)createTabBar:(int)viewId parentId:(int)parentId
 {
@@ -474,44 +511,46 @@ static const NSTimeInterval sidePanelAnimationDuration = 0.4;
     self.sideMenuView.layer.shadowOpacity = 1.0;
     self.sideMenuView.layer.shadowRadius = 7.5;
     self.sideMenuView.layer.shadowOffset = CGSizeMake(1, 4);
-    // create backgroundoverlay view that's behind sidePanel and if clicked closes the panel
     
-    self.sideMenuBackgroundOverlayView = [[UIView alloc] initWithFrame:self.view.bounds];
-    self.sideMenuBackgroundOverlayView.hidden = YES;
-    self.sideMenuBackgroundOverlayView.backgroundColor = UIColor.blackColor;
-    [self.view addSubview:self.sideMenuBackgroundOverlayView];
-    UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(sideMenuBackgroundOverlayViewTapped:)];
-    [self.sideMenuBackgroundOverlayView addGestureRecognizer:tapGestureRecognizer];
     [self.view addSubview:self.sideMenuView];
     self.sideMenuView.transform = CGAffineTransformTranslate(self.sideMenuView.transform, -CGRectGetWidth(self.sideMenuView.frame), 0.0);
     [self addView:self.sideMenuView withId:viewId];
 }
 
-- (void)showNavigationView
+- (void)showNavigationViewWithAnimation:(BOOL)animate
 {
     self.sideMenuView.hidden = NO;
-    self.sideMenuBackgroundOverlayView.hidden = NO;
-    self.sideMenuBackgroundOverlayView.alpha = 0.0;
+    self.backgroundOverlayView.hidden = NO;
+    self.backgroundOverlayView.alpha = 0.0;
     if (self.sideMenuView) {
-        [UIView animateWithDuration:sidePanelAnimationDuration animations:^{
+        if (animate) {
+            [UIView animateWithDuration:animationDuration animations:^{
+                self.sideMenuView.transform = CGAffineTransformTranslate(self.sideMenuView.transform, CGRectGetWidth(self.sideMenuView.frame), 0.0);
+                self.backgroundOverlayView.alpha = backgroundOverlayViewAlpha;
+            }];
+        } else {
             self.sideMenuView.transform = CGAffineTransformTranslate(self.sideMenuView.transform, CGRectGetWidth(self.sideMenuView.frame), 0.0);
-            self.sideMenuBackgroundOverlayView.alpha = 0.5;
-        }];
+            self.backgroundOverlayView.alpha = backgroundOverlayViewAlpha;
+        }
     }
+        
 }
 
-- (void)hideNavigationView
+- (void)hideNavigationViewWithAnimation:(BOOL)animate
 {
     if (self.sideMenuView) {
-        [UIView animateWithDuration:sidePanelAnimationDuration animations:^{
+        if (animate) {
+            [UIView animateWithDuration:animationDuration animations:^{
+                self.sideMenuView.transform = CGAffineTransformTranslate(self.sideMenuView.transform, -(CGRectGetWidth(self.sideMenuView.frame)), 0.0);
+            } completion:^(BOOL finished) {
+                if (finished) {
+                    self.sideMenuView.hidden = YES;
+                }
+            }];
+        } else {
             self.sideMenuView.transform = CGAffineTransformTranslate(self.sideMenuView.transform, -(CGRectGetWidth(self.sideMenuView.frame)), 0.0);
-            self.sideMenuBackgroundOverlayView.alpha = 0.0;
-        } completion:^(BOOL finished) {
-            if (finished) {
-                self.sideMenuView.hidden = YES;
-                self.sideMenuBackgroundOverlayView.hidden = YES;
-            }
-        }];
+            self.sideMenuView.hidden = YES;
+        }
     }
 }
 
@@ -542,9 +581,18 @@ static const NSTimeInterval sidePanelAnimationDuration = 0.4;
 
     dialog.frame = CGRectMake(50, 50, s.width - 100, s.height - 100);
     // dialog.center = CGPointMake(s.width / 2, (s.height / 2) - 65);
-  
+    
     [self addView:dialog withId:viewId];
     [self.view addSubview:dialog];
+    
+    dialog.alpha = 0.0;
+    self.backgroundOverlayView.alpha = 0.0;
+    self.backgroundOverlayView.hidden = NO;
+    [UIView animateWithDuration:animationDuration/2 animations:^{
+        dialog.alpha = 1.0;
+        self.backgroundOverlayView.alpha = backgroundOverlayViewAlpha;
+    }];
+    
 }
 
 - (void)createTimer:(int)viewId interval:(double)interval
@@ -620,8 +668,12 @@ static const NSTimeInterval sidePanelAnimationDuration = 0.4;
     NSString * key = [NSString stringWithFormat:@"%d", viewId];
     UIView *view = [self.viewsDictionary objectForKey:key];
     if (view != nil) {
+        
         [view removeFromSuperview];
         [self.viewsDictionary removeObjectForKey:key];
+        
+        // just to take backgroundOverlayView off the screen as well
+        [self hideBackgroundOverlayViewWithAnimation:YES];
     }
 }
 
