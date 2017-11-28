@@ -34,7 +34,8 @@ static const CGFloat backgroundOverlayViewAlpha = 0.5;
   // Do any additional setup after loading the view, typically from a nib.
 
   [self createBackgroundOverlay];
-    
+  //self.view.layoutMargins = UIEdgeInsetsMake(64.0, 0, 50.0, 0);
+
   // Creating the C++ app
   std::shared_ptr<FWApplication> application(applicationMain());
   
@@ -249,10 +250,11 @@ static const CGFloat backgroundOverlayViewAlpha = 0.5;
 
 - (void)createFrameViewWithId:(int)viewId parentId:(int)parentId
 {
-    UIView *view = [[UIView alloc] initWithFrame:self.view.bounds];
+    UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 64.0, self.view.bounds.size.width, self.view.bounds.size.height-64.0-44.0)];
     view.tag = viewId;
     [self.view addSubview:view];
     [self addView:view withId:viewId];
+    
     //UIView *parentView = [self.viewsDictionary objectForKey:[NSString stringWithFormat:@"%d", parentId]];
     //[parentView addSubview:view];
 }
@@ -477,7 +479,9 @@ static const CGFloat backgroundOverlayViewAlpha = 0.5;
     self.tabBar.delegate = self;
     [self addView:tabBar withId:viewId];
     //[tabBar.bottomAnchor constraintEqualToAnchor:parentView.bottomAnchor];
-    [self addToParent:parentId view:tabBar];
+    //[self addToParent:parentId view:tabBar];
+    [self.view addSubview:self.tabBar];
+    
     self.tabBar.items = [[NSArray alloc] init];
     // Put tabbar to the bottom of the view
 }
@@ -553,7 +557,6 @@ static const CGFloat backgroundOverlayViewAlpha = 0.5;
             self.backgroundOverlayView.alpha = backgroundOverlayViewAlpha;
         }
     }
-        
 }
 
 - (void)hideNavigationViewWithAnimation:(BOOL)animate
@@ -643,7 +646,7 @@ static const CGFloat backgroundOverlayViewAlpha = 0.5;
         NSLog(@"Element %d missing in addToParent", parentId);
 	return;
     }
-   
+    
     BOOL add_basic_constraints = NO;
   
     if ([parentView isKindOfClass:UIStackView.class]) {
@@ -665,11 +668,13 @@ static const CGFloat backgroundOverlayViewAlpha = 0.5;
             NSLayoutConstraint *leftConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:pos * pageWidth];
             [view.superview addConstraints:@[widthConstraint, topConstraint, leftConstraint]];
         } else {
+            
             view.frame = parentView.frame;
             add_basic_constraints = YES;
         }
     } else {
-        view.frame = parentView.frame;
+        //view.frame = parentView.frame;
+        
         [parentView addSubview:view];
         if (![view isKindOfClass:UITabBar.class] && ![view isKindOfClass:UINavigationBar.class]) {
           add_basic_constraints = YES;

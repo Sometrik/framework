@@ -30,8 +30,8 @@
 - (void)setTextValue:(int)viewId value:(NSString *)value;
 - (void)setImage:(int)viewId data:(UIImage *)data;
 - (void)addImageUrl:(int)viewId url:(NSString *)url width:(int)width height:(int)height;
-- (void)showNavigationView;
-- (void)hideNavigationView;
+- (void)showNavigationViewWithAnimation:(BOOL)animate;
+- (void)hideNavigationViewWithAnimation:(BOOL)animate;
 
 - (void)addToParent:(int)parentId view:(UIView*)view;
 - (void)removeView:(int)viewId;
