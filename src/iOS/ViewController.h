@@ -31,6 +31,7 @@
 - (void)setIntValue:(int)viewId value:(int)value;
 - (void)setTextValue:(int)viewId value:(NSString *)value;
 - (void)setImage:(int)viewId data:(UIImage *)data;
+- (void)setImageFromThread:(int)viewId data:(UIImage *)data;
 - (void)addImageUrl:(int)viewId url:(NSString *)url width:(int)width height:(int)height;
 - (void)showNavigationViewWithAnimation:(BOOL)animate;
 - (void)hideNavigationViewWithAnimation:(BOOL)animate;

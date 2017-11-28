@@ -3,6 +3,7 @@
 #include <FWApplication.h>
 
 #include "iOSMainThread.h"
+#include "ImageWrapper.h"
 
 #include <memory>
 
@@ -772,6 +773,17 @@ static const CGFloat backgroundOverlayViewAlpha = 0.5;
 - (void)setImage:(int)viewId data:(UIImage *)data
 {
 	// if view is image, set the content
+}
+
+- (void)setImageFromThread:(int)viewId data:(UIImage *)data
+{
+    ImageWrapper * iw = [[ImageWrapper alloc] init];
+    [self performSelectorOnMainThread:@selector(handleImage:) withObject:iw waitUntilDone:NO];
+}
+
+- (void)handleImage:(ImageWrapper*)iw
+{
+    [self setImage:iw.targetElementId data:iw.image];
 }
 
 - (void)addImageUrl:(int)viewId url:(NSString *)url width:(int)width height:(int)height
