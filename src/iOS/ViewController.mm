@@ -137,6 +137,7 @@ static const CGFloat backgroundOverlayViewAlpha = 0.5;
     text.returnKeyType = UIReturnKeyDone;
     text.clearButtonMode = UITextFieldViewModeWhileEditing;
     text.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
+    // text.borderStyle = UITextBorderStyleRoundedRect;
     [text addTarget:self action:@selector(textFieldChanged:) forControlEvents:UIControlEventEditingChanged];
     [self addView:text withId:viewId];
     [self addToParent:parentId view:text];
@@ -169,7 +170,7 @@ static const CGFloat backgroundOverlayViewAlpha = 0.5;
       
     } else {
       int width = (int)[value integerValue];
-      [view.widthAnchor constraintEqualToConstant:width].active = true;
+      // [view.widthAnchor constraintEqualToConstant:width].active = true;
     }
   } else if ([key isEqualToString:@"height"]) {
     if ([value isEqualToString:@"match-parent"]) {
@@ -178,7 +179,7 @@ static const CGFloat backgroundOverlayViewAlpha = 0.5;
       
     } else {
       int height = (int)[value integerValue];
-      [view.heightAnchor constraintEqualToConstant:height].active = true;
+      // [view.heightAnchor constraintEqualToConstant:height].active = true;
     }
   } else if ([key isEqualToString:@"border-radius"]) {
     view.layer.cornerRadius = (int)[value integerValue];
@@ -619,7 +620,11 @@ static const CGFloat backgroundOverlayViewAlpha = 0.5;
 - (void)addToParent:(int)parentId view:(UIView*)view
 {
     UIView *parentView = [self viewForId:parentId];
-  
+    if (parentView == nil) {
+        NSLog(@"Element %d missing in addToParent", parentId);
+	return;
+    }
+   
     BOOL add_basic_constraints = NO;
   
     if ([parentView isKindOfClass:UIStackView.class]) {

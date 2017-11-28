@@ -72,7 +72,7 @@ Example1::Example1() : FWApplication("com.sometrik.example1")
   auto buttonLayout = std::make_shared<LinearLayout>(FW_HORIZONTAL);
   buttonLayout->addChild(make_shared<Button>("Click me!", ID_CLICK_ME_BUTTON)).style("background", "#30e030").style("border-radius", 5);
   buttonLayout->addChild(make_shared<Button>("Show menu", ID_SHOW_MENU_BUTTON));
-  buttonLayout->addChild(make_shared<Button>("Useless button"));
+  buttonLayout->addChild(make_shared<Button>("Useless button")).style("icon", "button.png");
   firstPage->addChild(buttonLayout);
 
   auto scrollLayout = std::make_shared<ScrollLayout>();
@@ -88,9 +88,9 @@ Example1::Example1() : FWApplication("com.sometrik.example1")
   firstPage->addChild(make_shared<Switch>("On", "Off"));
 
   auto navigationBar = std::make_shared<NavigationBar>();
-  navigationBar->addChild(std::make_shared<NavigationBarItem>("Page 1"));
-  navigationBar->addChild(std::make_shared<NavigationBarItem>("Page 2"));
-  navigationBar->addChild(std::make_shared<NavigationBarItem>("Page 3"));
+  navigationBar->addChild(std::make_shared<NavigationBarItem>("Page 1")).style("icon", "icon1.png");
+  navigationBar->addChild(std::make_shared<NavigationBarItem>("Page 2")).style("icon", "icon2.png");
+  navigationBar->addChild(std::make_shared<NavigationBarItem>("Page 3")).style("icon", "icon3.png");
 
   view->addChild(navigationBar);
   
