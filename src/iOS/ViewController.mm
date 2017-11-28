@@ -337,6 +337,7 @@ static const NSTimeInterval sidePanelAnimationDuration = 0.4;
         NSInteger page = [self indexForScrollViewPage:scrollView];
         if (page != NSNotFound && self.tabBar) {
             [self.tabBar setSelectedItem:self.tabBar.items[page]];
+            [self sendIntValue:(int)scrollView.tag value:(int)page];
         }
     }
 }
