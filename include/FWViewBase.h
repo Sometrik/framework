@@ -17,10 +17,18 @@ class FWViewBase : public Element {
 
   void show() override {
     Element::show();
+    
     Command c(Command::SET_INT_VALUE, getInternalId());
     c.setValue(1);
     c.setTextValue(getTitle());
     sendCommand(c);
+
+    if (getParent()) {
+      Command c(Command::SET_INT_VALUE, getParent()->getInternalId(), getInternalId());
+      c.setValue(1);
+      c.setTextValue(getTitle());
+      sendCommand(c);
+    }
   }
 
   virtual std::string getTitle() const { return title; }
