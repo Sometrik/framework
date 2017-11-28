@@ -14,13 +14,14 @@ std::shared_ptr<iOSMainThread> mainThread;
 // Declare C++ function
 extern FWApplication * applicationMain();
 
-@interface ViewController () <UIScrollViewDelegate>
+@interface ViewController () <UIScrollViewDelegate, UITabBarDelegate>
 @property (nonatomic, strong) NSMutableDictionary *viewsDictionary;
 @property (nonatomic, strong) UIView *sideMenuView;
 @property (nonatomic, strong) UIView *sideMenuBackgroundOverlayView;
 @property (nonatomic, strong) UITabBar *tabBar;
 @property (nonatomic, strong) UINavigationBar *navBar;
 @property (nonatomic, strong) UIToolbar *statusBarBackgroundView;
+@property (nonatomic, strong) UIScrollView *pageView;
 @end
 
 static const NSTimeInterval sidePanelAnimationDuration = 0.4;
@@ -84,7 +85,9 @@ static const NSTimeInterval sidePanelAnimationDuration = 0.4;
 }
 
 - (UIStatusBarStyle)preferredStatusBarStyle {
-    return UIStatusBarStyleLightContent;
+    // UIStatusBarStyleDefault:      text is black
+    // UIStatusBarStyleLightContent: text is white
+    return UIStatusBarStyleDefault;
 }
 
 - (void)createTextFieldWithId: (int)viewId parentId:(int)parentId {
@@ -330,6 +333,12 @@ static const NSTimeInterval sidePanelAnimationDuration = 0.4;
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
 {
     NSLog(@"scrollView did end decelerating");
+    if (scrollView.isPagingEnabled) {
+        NSInteger page = [self indexForScrollViewPage:scrollView];
+        if (page != NSNotFound && self.tabBar) {
+            [self.tabBar setSelectedItem:self.tabBar.items[page]];
+        }
+    }
 }
 
 - (void)createPageLayoutWithId:(int)viewId parentId:(int)parentId
@@ -341,8 +350,29 @@ static const NSTimeInterval sidePanelAnimationDuration = 0.4;
     scrollView.frame = self.view.frame;
     scrollView.clipsToBounds = YES;
     scrollView.delegate = self;
+    self.pageView = scrollView;
     [self addView:scrollView withId:viewId];
     [self addToParent:parentId view:scrollView];
+}
+
+- (void)showPage:(NSInteger)page
+{
+    if (page != NSNotFound && self.pageView) {
+        CGRect frame = self.pageView.frame;
+        frame.origin.x = frame.size.width * page;
+        frame.origin.y = 0;
+        [self.pageView scrollRectToVisible:frame animated:YES];
+    }
+}
+
+- (NSInteger)indexForScrollViewPage:(UIScrollView *)pageView
+{
+    if (pageView.pagingEnabled) {
+        CGRect frame = pageView.bounds;
+        int page = frame.origin.x / frame.size.width;
+        return page;
+    }
+    return NSNotFound;
 }
 
 - (void)createEventLayoutWithId:(int)viewId parentId:(int)parentId
@@ -386,6 +416,7 @@ static const NSTimeInterval sidePanelAnimationDuration = 0.4;
     // [tabBar setAutoresizingMask:UIViewAutoresizingFlexibleTopMargin];
     
     self.tabBar = tabBar;
+    self.tabBar.delegate = self;
     [self addView:tabBar withId:viewId];
     //[tabBar.bottomAnchor constraintEqualToAnchor:parentView.bottomAnchor];
     [self addToParent:parentId view:tabBar];
@@ -408,6 +439,27 @@ static const NSTimeInterval sidePanelAnimationDuration = 0.4;
             [tabBar setItems:(NSArray *)items animated:false];
         }
     }
+}
+
+- (void)tabBar:(UITabBar *)tabBar didSelectItem:(UITabBarItem *)item
+{
+    if ([tabBar isEqual:self.tabBar]) {
+        [self showPage:[self indexForTabBarItem:item]];
+        [self sendIntValue:(int)tabBar.tag value:(int)item.tag];
+    }
+}
+
+// returns index for item in tabBar.items array.
+- (NSInteger)indexForTabBarItem:(UITabBarItem *)item
+{
+    if (self.tabBar) {
+        for (int i = 0; i < self.tabBar.items.count; i++) {
+            if ([self.tabBar.items[i] isEqual:item]) {
+                return i;
+            }
+        }
+    }
+    return NSNotFound;
 }
 
 - (void)createNavigationView:(int)viewId
