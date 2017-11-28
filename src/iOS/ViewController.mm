@@ -83,6 +83,11 @@ static const CGFloat backgroundOverlayViewAlpha = 0.5;
     [self.tabBar setSelectedItem:self.tabBar.items[0]];
 }
 
+- (void)menuButtonTapped
+{
+    [self showNavigationViewWithAnimation:YES];
+}
+
 - (void)createBackgroundOverlay
 {
     // create backgroundoverlay view that's behind sidePanel and dialog and if clicked closes the panel
@@ -431,7 +436,7 @@ static const CGFloat backgroundOverlayViewAlpha = 0.5;
     UINavigationBar *navBar = [[UINavigationBar alloc] initWithFrame:CGRectMake(0, 20, self.view.frame.size.width, 44)];
     UINavigationItem *navItem = [[UINavigationItem alloc] initWithTitle:@"title"];
     
-    UIBarButtonItem *menuButton = [[UIBarButtonItem alloc] initWithTitle:@"Menu" style:UIBarButtonItemStylePlain target:self action:@selector(showNavigationView:)];
+    UIBarButtonItem *menuButton = [[UIBarButtonItem alloc] initWithTitle:@"Menu" style:UIBarButtonItemStylePlain target:self action:@selector(menuButtonTapped)];
     navItem.leftBarButtonItem = menuButton;
     [navBar setItems:@[navItem]];
     navBar.translucent = YES;
