@@ -13,10 +13,8 @@ import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.view.Gravity;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnTouchListener;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView.ScaleType;
@@ -99,7 +97,7 @@ public class FWActionBar implements NativeCommandHandler {
 	public void onClick(View arg0) {
 	  debugClickCounter++;
 	  System.out.println("actionBar debugClick: " + debugClickCounter);
-	  if (debugClickCounter > 5) {
+	  if (debugClickCounter > 4) {
 	    System.out.println("actionBar debugClick: showing debug");
 	    frame.showNativeDebug();
 	    debugClickCounter = 0;
