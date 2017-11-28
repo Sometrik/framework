@@ -20,7 +20,7 @@ public:
   }
 
   void addProxy(const T1 & key, const T2 & data) {
-    unsigned int pos = all_keys.size();
+    size_t pos = all_keys.size();
     all_keys.push_back(std::make_pair(key, data));
 
     if (pos < max_visible_count) {
