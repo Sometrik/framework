@@ -186,6 +186,9 @@ static const CGFloat backgroundOverlayViewAlpha = 0.5;
   } else if ([key isEqualToString:@"border"]) {
     view.layer.borderColor = [self colorFromString:value].CGColor;
     view.layer.borderWidth = 1.0f;
+  } else if ([key isEqualToString:@"margin"]) {
+    int v = (int)[value integerValue];
+    view.layoutMargins = UIEdgeInsetsMake(v, v, v, v);
   }
   
   if ([view isKindOfClass:UILabel.class]) {
