@@ -12,7 +12,7 @@ public:
   bool start() override { return true; }
   bool testDestroy() override { return false; }
   void sendCommands(const std::vector<Command> & commands) override;
-  void sleep(double t) override { }
+  void sleep(double t) override;
   std::unique_ptr<HTTPClientFactory> createHTTPClientFactory() const override {
     return std::unique_ptr<iOSClientFactory>(new iOSClientFactory);
   }

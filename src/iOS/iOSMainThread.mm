@@ -212,6 +212,11 @@ iOSMainThread::sendCommands(const std::vector<Command> & commands) {
 }
 
 void
+iOSMainThread::sleep(double t) {
+  usleep((unsigned int)(t * 1000000));
+}
+
+void
 iOSMainThread::sendEvent(int internal_id, const Event & ev) {
     EventWrapper * ew = [[EventWrapper alloc] init];
     ew.targetElementId = internal_id;
