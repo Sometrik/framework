@@ -241,6 +241,8 @@ static const CGFloat backgroundOverlayViewAlpha = 0.5;
     UILabel *label = [[UILabel alloc] init];
     label.tag = viewId;
     label.text = value;
+    label.numberOfLines = 0; // as many lines as needed
+    label.lineBreakMode = NSLineBreakByWordWrapping;
     [self addView:label withId:viewId];
     [self addToParent:parentId view:label];
 }
