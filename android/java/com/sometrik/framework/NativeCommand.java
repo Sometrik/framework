@@ -187,7 +187,7 @@ public class NativeCommand {
   }
   
   public void apply(NativeCommandHandler view) {
-    // System.out.println("Processing message " + command + " id: " + internalId + " Child id: " + getChildInternalId());
+     System.out.println("Processing message " + command + " id: " + internalId + " Child id: " + getChildInternalId());
     
     switch (command) {
       
@@ -264,8 +264,11 @@ public class NativeCommand {
       break;
     case CREATE_TABLE_LAYOUT:
       if (view != null) {
-	FWTable table = createTableLayout(false);
-	view.addChild(table);
+//	FWTable table = createTableLayout(false);
+//	view.addChild(table);
+	FWLayout layout = new FWLayout(frame, childInternalId);
+	view.addChild(layout);
+	frame.addToViewList(layout);
       }
       break;
 
