@@ -47,10 +47,6 @@ public:
     
   }
   
-  void sleep(double t) override {
-  
-  }
-  
   std::unique_ptr<HTTPClientFactory> createHTTPClientFactory() const override {
     return std::unique_ptr<iOSClientFactory>(new iOSClientFactory);
   }
