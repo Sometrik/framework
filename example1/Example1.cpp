@@ -17,6 +17,7 @@
 #include <ActionBar.h>
 #include <TimerEvent.h>
 
+#include "FrontView.h"
 #include "ImageDialog.h"
 
 #include <iostream>
@@ -41,12 +42,15 @@ Example1::Example1() : FWApplication("com.sometrik.example1")
   navigationLayout->addChild(make_shared<Button>("OK"));
   addChild(navigationDrawer);
   
-  auto view = std::make_shared<FrameView>();
-  view->style("background-color", "#555555");
-  addChild(view);
+  frontView = std::make_shared<FrontView>();
+  addChild(frontView);
+  
+  mainView = std::make_shared<FrameView>();
+  mainView->style("background-color", "#555555");
+  addChild(mainView);
   
   auto flipper = std::make_shared<FlipperLayout>();
-  view->addChild(flipper);
+  mainView->addChild(flipper);
   
   auto firstPage = std::make_shared<LinearLayout>(FW_VERTICAL);
   flipper->addChild(firstPage);
@@ -92,7 +96,7 @@ Example1::Example1() : FWApplication("com.sometrik.example1")
   navigationBar->addChild(std::make_shared<NavigationBarItem>("Page 2")).style("icon", "icon2.png");
   navigationBar->addChild(std::make_shared<NavigationBarItem>("Page 3")).style("icon", "icon3.png");
 
-  view->addChild(navigationBar);
+  mainView->addChild(navigationBar);
   
 #if 1
   auto secondPage = std::make_shared<LinearLayout>(FW_VERTICAL);
@@ -135,6 +139,11 @@ Example1::onCommandEvent(CommandEvent & ev) {
     case ID_SHOW_MENU_BUTTON: {
       cerr << "showing menu" << endl;
       navigationDrawer->show();
+    }
+      break;
+    case ID_SHOW_FRONT_PAGE: {
+      frontView->hide();
+      mainView->show();
     }
       break;
   }

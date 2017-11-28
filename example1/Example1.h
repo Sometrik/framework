@@ -1,9 +1,14 @@
+#ifndef _EXAMPLE1_H_
+#define _EXAMPLE1_H_
+
 #include <FWApplication.h>
 
 class TextField;
 class ActionBar;
 class NavigationDrawer;
 class LinearLayout;
+class FrontView;
+class FrameView;
 
 class Example1 : public FWApplication {
 public:
@@ -17,4 +22,8 @@ private:
     std::shared_ptr<ActionBar> actionBar;
     std::shared_ptr<NavigationDrawer> navigationDrawer;
     std::shared_ptr<LinearLayout> scrollContent;
+    std::shared_ptr<FrontView> frontView;
+    std::shared_ptr<FrameView> mainView;
 };
+
+#endif
