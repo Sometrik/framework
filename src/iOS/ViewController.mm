@@ -53,6 +53,7 @@ static const CGFloat backgroundOverlayViewAlpha = 0.5;
   
   application->initialize(mainThread.get());
   application->initializeChildren();
+  application->load();
 }
 
 - (void)viewWillTransitionToSize: (CGSize)size withTransitionCoordinator:(id)coordinator
