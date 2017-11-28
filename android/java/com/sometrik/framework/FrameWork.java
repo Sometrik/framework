@@ -104,6 +104,7 @@ public class FrameWork extends Activity {
   public native void sendURLImageRequest(int viewId, String url, int width, int height, int internalFormat);
   public native void sendImageRequest(int viewId, int width, int height, int internalFormat);
   public native void cancelImageRequest(int viewId);
+  public native void showNativeDebug();
   private native void setNativeActiveView(int activeView, boolean recordHistory);
   private native void languageChanged(int appId, String language);
   private native void memoryWarning(int appId);
