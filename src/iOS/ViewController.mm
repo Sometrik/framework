@@ -1,9 +1,9 @@
 #import "ViewController.h"
 
 #include <FWApplication.h>
-
 #include "iOSMainThread.h"
-#include "ImageWrapper.h"
+
+#import "ImageWrapper.h"
 
 #include <memory>
 
@@ -164,85 +164,6 @@ static const CGFloat backgroundOverlayViewAlpha = 0.5;
     NSLog(@"viewId = %d", viewId);
     NSLog(@"textField.text = %@", sender.text);
     [self sendTextValue:viewId value:sender.text];
-}
-
-- (void)setStyle: (int)viewId key:(NSString *)key value:(NSString *)value {
-    id storedItem =  [self viewForId:viewId]; // Changed to id as some are not view's or view's subclasses
-  
-    if ([storedItem isKindOfClass:UIView.class]) {
-        UIView *view = (UIView *)storedItem;
-        if ([key isEqualToString:@"background-color"]) {
-            view.backgroundColor = [self colorFromString:value];
-        } else if ([key isEqualToString:@"background"]) {
-            view.backgroundColor = [self colorFromString:value];
-        } else if ([key isEqualToString:@"shadow"]) {
-            view.layer.shadowOpacity = 0.25;
-            // view.layer.masksToBounds = NO;
-            view.layer.shadowRadius = (float)[value floatValue];
-            view.layer.shadowOffset = CGSizeMake(0, 0);
-        } else if ([key isEqualToString:@"width"]) {
-            if ([value isEqualToString:@"match-parent"]) {
-                
-            } else if ([value isEqualToString:@"wrap-content"]) {
-                
-            } else {
-                int width = (int)[value integerValue];
-                // [view.widthAnchor constraintEqualToConstant:width].active = true;
-            }
-        } else if ([key isEqualToString:@"height"]) {
-            if ([value isEqualToString:@"match-parent"]) {
-                
-            } else if ([value isEqualToString:@"wrap-content"]) {
-                
-            } else {
-                int height = (int)[value integerValue];
-                // [view.heightAnchor constraintEqualToConstant:height].active = true;
-            }
-        } else if ([key isEqualToString:@"border-radius"]) {
-            view.layer.cornerRadius = (int)[value integerValue];
-        } else if ([key isEqualToString:@"border"]) {
-            view.layer.borderColor = [self colorFromString:value].CGColor;
-            view.layer.borderWidth = 1.0f;
-        } else if ([key isEqualToString:@"margin"]) {
-            int v = (int)[value integerValue];
-            view.layoutMargins = UIEdgeInsetsMake(v, v, v, v);
-        }
-    }
-  
-  if ([storedItem isKindOfClass:UILabel.class]) {
-    UILabel *label = (UILabel *)storedItem;
-    
-    if ([key isEqualToString:@"font-size"]) {
-      int b = (int)[value integerValue];
-      label.font = [label.font fontWithSize:b];
-    } else if ([key isEqualToString:@"color"]) {
-      label.textColor = [self colorFromString:value];
-    } else if ([key isEqualToString:@"text-alignment"]) {
-      if ([value isEqualToString:@"center"]) {
-        label.textAlignment = NSTextAlignmentCenter;
-      } else if ([value isEqualToString:@"right"]) {
-        label.textAlignment = NSTextAlignmentRight;
-      } else {
-        label.textAlignment = NSTextAlignmentLeft;
-      }
-    }
-  } else if ([storedItem isKindOfClass:UIButton.class]) {
-    UIButton *button = (UIButton *)storedItem;
-    
-  } else if ([storedItem isKindOfClass:UITextField.class]) {
-    UITextField *textField = (UITextField *)storedItem;
-    
-    if ([value isEqualToString:@"hint"]) {
-      textField.placeholder = value;
-    }
-  } else if ([storedItem isKindOfClass:UITabBarItem.class]) {
-      UITabBarItem *item = (UITabBarItem *)storedItem;
-      if ([key isEqualToString:@"icon"]) {
-          NSString *imageString = value;
-          UIImage *icon = [UIImage imageNamed:imageString];
-          item.image = icon;
-      }
-  }
 }
 
 - (void)setVisibility:(int)viewId visibility:(int)visibility
@@ -730,12 +651,16 @@ static const CGFloat backgroundOverlayViewAlpha = 0.5;
     if (self.activeDialogId == viewId) self.activeDialogId = 0;
   
     NSString * key = [NSString stringWithFormat:@"%d", viewId];
-    UIView *view = [self.viewsDictionary objectForKey:key];
-    if (view != nil) {
-        
-        [view removeFromSuperview];
+    ViewManager * viewManager = [self.viewsDictionary objectForKey:key];
+    if (viewManager != nil) {
+        if ([viewManager.view isKindOfClass:UIView.class]) {
+            UIView * view = (UIView*)viewManager.view;
+            [view removeFromSuperview];
+        } else {
+          
+        }
         [self.viewsDictionary removeObjectForKey:key];
-        
+    
         // just to take backgroundOverlayView off the screen as well
         [self hideBackgroundOverlayViewWithAnimation:YES];
     }
@@ -760,27 +685,21 @@ static const CGFloat backgroundOverlayViewAlpha = 0.5;
 
 - (id)viewForId:(int)viewId
 {
+    ViewManager * viewManager = [self.viewsDictionary objectForKey:[NSString stringWithFormat:@"%d", viewId]];
+    return viewManager.view;
+}
+
+- (ViewManager*)getViewManager:(int)viewId
+{
     return [self.viewsDictionary objectForKey:[NSString stringWithFormat:@"%d", viewId]];
 }
 
 - (void)addView:(id)view withId:(int)viewId
 {
-    [self.viewsDictionary setObject:view forKey:[NSString stringWithFormat:@"%d", viewId]];
-}
-
-- (void)setIntValue:(int)viewId value:(int)value
-{
-	// if view is switch, set state to value
-}
-
-- (void)setTextValue:(int)viewId value:(NSString *)value;
-{
-	// if view is text field or label, set the text
-}
-
-- (void)setImage:(int)viewId data:(UIImage *)data
-{
-	// if view is image, set the content
+    ViewManager * viewManager = [[ViewManager alloc] init];
+    viewManager.id = viewId;
+    viewManager.view = view;
+    [self.viewsDictionary setObject:viewManager forKey:[NSString stringWithFormat:@"%d", viewId]];
 }
 
 - (void)setImageFromThread:(int)viewId data:(UIImage *)data
@@ -791,12 +710,10 @@ static const CGFloat backgroundOverlayViewAlpha = 0.5;
 
 - (void)handleImage:(ImageWrapper*)iw
 {
-    [self setImage:iw.targetElementId data:iw.image];
-}
-
-- (void)addImageUrl:(int)viewId url:(NSString *)url width:(int)width height:(int)height
-{
-  
+    ViewManager * viewManager = [self getViewManager:iw.targetElementId];
+    if (viewManager) {
+        [viewManager setImage:iw.image];
+    }
 }
 
 // This method send changed integer or boolean values back to application.
@@ -826,14 +743,6 @@ static const CGFloat backgroundOverlayViewAlpha = 0.5;
   if (self.navBar != nil) {
     self.navBar.items[0].title = title;
   }
-}
-
-- (UIColor *)colorFromString:(NSString *)hexString {
-  unsigned rgbValue = 0;
-  NSScanner *scanner = [NSScanner scannerWithString:hexString];
-  [scanner setScanLocation:1]; // bypass '#' character
-  [scanner scanHexInt:&rgbValue];
-  return [UIColor colorWithRed:((rgbValue & 0xFF0000) >> 16)/255.0 green:((rgbValue & 0xFF00) >> 8)/255.0 blue:(rgbValue & 0xFF)/255.0 alpha:1.0];
 }
 
 @end
