@@ -1,5 +1,7 @@
 #import <UIKit/UIKit.h>
 
+#import "EventWrapper.h"
+
 @interface ViewController : UIViewController
 - (void)viewWillTransitionToSize: (CGSize)size withTransitionCoordinator:(id)coordinator;
 - (void)didReceiveMemoryWarning;
@@ -39,5 +41,7 @@
 
 - (void)sendIntValue:(int)viewId value:(int)value;
 - (void)sendTextValue:(int)viewId value:(NSString *)value;
+
+- (void)sendEventToMainThread:(EventWrapper*) event;
 
 @end

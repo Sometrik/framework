@@ -780,6 +780,16 @@ static const CGFloat backgroundOverlayViewAlpha = 0.5;
     mainThread->sendTextValue(viewId, s);
 }
 
+- (void)sendEventToMainThread:(EventWrapper*) event
+{
+    [self performSelectorOnMainThread:@selector(sendEvent:) withObject:event waitUntilDone:NO];
+}
+
+- (void)sendEvent:(EventWrapper*)event
+{
+    mainThread->handleEventFromThread(event.targetElementId, (Event *)event.eventPtr);
+}
+
 - (UIColor *)colorFromString:(NSString *)hexString {
   unsigned rgbValue = 0;
   NSScanner *scanner = [NSScanner scannerWithString:hexString];

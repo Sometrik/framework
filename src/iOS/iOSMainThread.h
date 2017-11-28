@@ -52,7 +52,9 @@ public:
   void sendIntValue(int viewId, int value);
   void sendTextValue(int viewId, const std::string & value);
   void sendTimerEvent(int timerId);
-  
+    
+  void handleEventFromThread(int target_element_id, Event * event);
+    
   ViewController * viewController = 0;
   NSUserDefaults * defaults = 0;
   

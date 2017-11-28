@@ -3,6 +3,8 @@
 #include <ValueEvent.h>
 #include <TimerEvent.h>
 
+#import "EventWrapper.h"
+
 using namespace std;
 
 iOSMainThread::iOSMainThread(std::shared_ptr<FWApplication> _application, std::shared_ptr<Runnable> _runnable) : PlatformThread(0, _application, _runnable) {
@@ -202,7 +204,16 @@ iOSMainThread::sendCommands(const std::vector<Command> & commands) {
 
 void
 iOSMainThread::sendEvent(int internal_id, const Event & ev) {
+    EventWrapper * ew = [[EventWrapper alloc] init];
+    ew.targetElementId = internal_id;
+    ew.eventPtr = ev.dup();
+    [viewController sendEventToMainThread:ew];
+}
 
+void
+iOSMainThread::handleEventFromThread(int target_element_id, Event * event) {
+    Element::postEventToElement(target_element_id, *event);
+    delete event;
 }
 
 void
