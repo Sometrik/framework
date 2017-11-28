@@ -1,6 +1,6 @@
 #import <Foundation/Foundation.h>
 
 @interface EventWrapper : NSObject
-@property NSInteger targetElementId;
-@property void * eventPtr;
+@property (nonatomic) NSInteger targetElementId;
+@property (nonatomic) void * eventPtr;
 @end
