@@ -22,6 +22,7 @@ extern FWApplication * applicationMain();
 @property (nonatomic, strong) UINavigationBar *navBar;
 @property (nonatomic, strong) UIToolbar *statusBarBackgroundView;
 @property (nonatomic, strong) UIScrollView *pageView;
+@property (nonatomic) int activeViewId;
 @end
 
 static const NSTimeInterval animationDuration = 0.4;
@@ -33,6 +34,8 @@ static const CGFloat backgroundOverlayViewAlpha = 0.5;
   [super viewDidLoad];
   // Do any additional setup after loading the view, typically from a nib.
 
+  self.activeViewId = 0;
+    
   [self createBackgroundOverlay];
   //self.view.layoutMargins = UIEdgeInsetsMake(64.0, 0, 50.0, 0);
 
@@ -79,9 +82,13 @@ static const CGFloat backgroundOverlayViewAlpha = 0.5;
         [self.view bringSubviewToFront:self.backgroundOverlayView];
         [self.view bringSubviewToFront:self.sideMenuView];
     }
-    CGRect tabBarFrame = CGRectMake(0.0, self.view.frame.size.height-self.tabBar.frame.size.height , self.view.frame.size.width, self.tabBar.frame.size.height);
-    self.tabBar.frame = tabBarFrame;
-    [self.tabBar setSelectedItem:self.tabBar.items[0]];
+    if (self.tabBar) {
+        CGRect tabBarFrame = CGRectMake(0.0, self.view.frame.size.height-self.tabBar.frame.size.height , self.view.frame.size.width, self.tabBar.frame.size.height);
+        self.tabBar.frame = tabBarFrame;
+        if ([self.tabBar.items count]) {
+            [self.tabBar setSelectedItem:self.tabBar.items[0]];
+        }
+    }
 }
 
 - (void)createBackgroundOverlay
@@ -255,6 +262,12 @@ static const CGFloat backgroundOverlayViewAlpha = 0.5;
     [self.view addSubview:view];
     [self addView:view withId:viewId];
     
+    if (self.activeViewId == 0) {
+        self.activeViewId = viewId;
+    } else {
+        view.hidden = YES;
+    }
+    
     //UIView *parentView = [self.viewsDictionary objectForKey:[NSString stringWithFormat:@"%d", parentId]];
     //[parentView addSubview:view];
 }
@@ -379,7 +392,7 @@ static const CGFloat backgroundOverlayViewAlpha = 0.5;
     NSLog(@"scrollView did end decelerating");
     if (scrollView.isPagingEnabled) {
         NSInteger page = [self indexForScrollViewPage:scrollView];
-        if (page != NSNotFound && self.tabBar) {
+        if (page != NSNotFound && self.tabBar && page < [self.tabBar.items count]) {
             [self.tabBar setSelectedItem:self.tabBar.items[page]];
             [self sendIntValue:(int)scrollView.tag value:(int)page];
         }
