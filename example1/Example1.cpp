@@ -97,19 +97,19 @@ Example1::Example1() : FWApplication("com.sometrik.example1")
 #if 1
   auto secondPage = std::make_shared<LinearLayout>(FW_VERTICAL);
   secondPage->style("background", "#e03030");
-  secondPage->style("margin", 40);
   flipper->addChild(secondPage);
-  secondPage->addChild(make_shared<TextLabel>("SECOND PAGE")).style("font-size", "20");
-  secondPage->addChild(make_shared<TextLabel>("A"));
-  secondPage->addChild(make_shared<TextLabel>("B"));
-  secondPage->addChild(make_shared<TextLabel>("C"));
-  secondPage->addChild(make_shared<TextLabel>("D"));
-  secondPage->addChild(make_shared<TextLabel>("E"));
-  secondPage->addChild(make_shared<TextLabel>("F"));
-  secondPage->addChild(make_shared<TextLabel>("G"));
-  secondPage->addChild(make_shared<TextLabel>("H"));
-  secondPage->addChild(make_shared<TextLabel>("I"));
-  secondPage->addChild(make_shared<ProgressBar>());
+  
+  auto scrollLayout2 = std::make_shared<ScrollLayout>();
+  secondPage->addChild(scrollLayout2);
+  auto scrollContent2 = std::make_shared<LinearLayout>(FW_VERTICAL);
+  scrollLayout2->addChild(scrollContent2);
+  
+  for (char c = 'A'; c <= 'Z'; c++) {
+    string s;
+    s += c;
+    scrollContent2->addChild(make_shared<TextLabel>(s));
+  }
+  
 #endif
 
 #if 1
@@ -118,6 +118,7 @@ Example1::Example1() : FWApplication("com.sometrik.example1")
   thirdPage->style("margin", 20);
   flipper->addChild(thirdPage);
   thirdPage->addChild(make_shared<TextLabel>("THIRD PAGE")).style("font-size", "20");
+  thirdPage->addChild(make_shared<ProgressBar>());
 #endif
 }
 
