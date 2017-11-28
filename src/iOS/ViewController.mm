@@ -153,47 +153,50 @@ static const CGFloat backgroundOverlayViewAlpha = 0.5;
 }
 
 - (void)setStyle: (int)viewId key:(NSString *)key value:(NSString *)value {
-    UIView *view =  [self viewForId:viewId];
+    id storedItem =  [self viewForId:viewId]; // Changed to id as some are not view's or view's subclasses
   
-  if ([key isEqualToString:@"background-color"]) {
-    view.backgroundColor = [self colorFromString:value];
-  } else if ([key isEqualToString:@"background"]) {
-    view.backgroundColor = [self colorFromString:value];
-  } else if ([key isEqualToString:@"shadow"]) {
-    view.layer.shadowOpacity = 0.25;
-    // view.layer.masksToBounds = NO;
-    view.layer.shadowRadius = (float)[value floatValue];
-    view.layer.shadowOffset = CGSizeMake(0, 0);
-  } else if ([key isEqualToString:@"width"]) {
-    if ([value isEqualToString:@"match-parent"]) {
-      
-    } else if ([value isEqualToString:@"wrap-content"]) {
-      
-    } else {
-      int width = (int)[value integerValue];
-      // [view.widthAnchor constraintEqualToConstant:width].active = true;
+    if ([storedItem isKindOfClass:UIView.class]) {
+        UIView *view = (UIView *)storedItem;
+        if ([key isEqualToString:@"background-color"]) {
+            view.backgroundColor = [self colorFromString:value];
+        } else if ([key isEqualToString:@"background"]) {
+            view.backgroundColor = [self colorFromString:value];
+        } else if ([key isEqualToString:@"shadow"]) {
+            view.layer.shadowOpacity = 0.25;
+            // view.layer.masksToBounds = NO;
+            view.layer.shadowRadius = (float)[value floatValue];
+            view.layer.shadowOffset = CGSizeMake(0, 0);
+        } else if ([key isEqualToString:@"width"]) {
+            if ([value isEqualToString:@"match-parent"]) {
+                
+            } else if ([value isEqualToString:@"wrap-content"]) {
+                
+            } else {
+                int width = (int)[value integerValue];
+                // [view.widthAnchor constraintEqualToConstant:width].active = true;
+            }
+        } else if ([key isEqualToString:@"height"]) {
+            if ([value isEqualToString:@"match-parent"]) {
+                
+            } else if ([value isEqualToString:@"wrap-content"]) {
+                
+            } else {
+                int height = (int)[value integerValue];
+                // [view.heightAnchor constraintEqualToConstant:height].active = true;
+            }
+        } else if ([key isEqualToString:@"border-radius"]) {
+            view.layer.cornerRadius = (int)[value integerValue];
+        } else if ([key isEqualToString:@"border"]) {
+            view.layer.borderColor = [self colorFromString:value].CGColor;
+            view.layer.borderWidth = 1.0f;
+        } else if ([key isEqualToString:@"margin"]) {
+            int v = (int)[value integerValue];
+            view.layoutMargins = UIEdgeInsetsMake(v, v, v, v);
+        }
     }
-  } else if ([key isEqualToString:@"height"]) {
-    if ([value isEqualToString:@"match-parent"]) {
-      
-    } else if ([value isEqualToString:@"wrap-content"]) {
-      
-    } else {
-      int height = (int)[value integerValue];
-      // [view.heightAnchor constraintEqualToConstant:height].active = true;
-    }
-  } else if ([key isEqualToString:@"border-radius"]) {
-    view.layer.cornerRadius = (int)[value integerValue];
-  } else if ([key isEqualToString:@"border"]) {
-    view.layer.borderColor = [self colorFromString:value].CGColor;
-    view.layer.borderWidth = 1.0f;
-  } else if ([key isEqualToString:@"margin"]) {
-    int v = (int)[value integerValue];
-    view.layoutMargins = UIEdgeInsetsMake(v, v, v, v);
-  }
   
-  if ([view isKindOfClass:UILabel.class]) {
-    UILabel *label = (UILabel *)view;
+  if ([storedItem isKindOfClass:UILabel.class]) {
+    UILabel *label = (UILabel *)storedItem;
     
     if ([key isEqualToString:@"font-size"]) {
       int b = (int)[value integerValue];
@@ -209,15 +212,22 @@ static const CGFloat backgroundOverlayViewAlpha = 0.5;
         label.textAlignment = NSTextAlignmentLeft;
       }
     }
-  } else if ([view isKindOfClass:UIButton.class]) {
-    UIButton *button = (UIButton *)view;
+  } else if ([storedItem isKindOfClass:UIButton.class]) {
+    UIButton *button = (UIButton *)storedItem;
     
-  } else if ([view isKindOfClass:UITextField.class]) {
-    UITextField *textField = (UITextField *)view;
+  } else if ([storedItem isKindOfClass:UITextField.class]) {
+    UITextField *textField = (UITextField *)storedItem;
     
     if ([value isEqualToString:@"hint"]) {
       textField.placeholder = value;
     }
+  } else if ([storedItem isKindOfClass:UITabBarItem.class]) {
+      UITabBarItem *item = (UITabBarItem *)storedItem;
+      if ([key isEqualToString:@"icon"]) {
+          NSString *imageString = value;
+          UIImage *icon = [UIImage imageNamed:imageString];
+          item.image = icon;
+      }
   }
 }
 
@@ -494,12 +504,13 @@ static const CGFloat backgroundOverlayViewAlpha = 0.5;
         UITabBar *tabBar = (UITabBar *)parentView;
         
         UITabBarItem * tabBarItem = [[UITabBarItem alloc] initWithTitle:title image:nil tag:viewId];
-      
+        
         NSMutableArray *items = tabBar.items.mutableCopy;
         if (items != nil) {
             [items addObject:tabBarItem];
             [tabBar setItems:(NSArray *)items animated:false];
         }
+        [self addView:tabBarItem withId:viewId];
     }
 }
 
@@ -723,12 +734,12 @@ static const CGFloat backgroundOverlayViewAlpha = 0.5;
     }
 }
 
-- (UIView *)viewForId:(int)viewId
+- (id)viewForId:(int)viewId
 {
     return [self.viewsDictionary objectForKey:[NSString stringWithFormat:@"%d", viewId]];
 }
 
-- (void)addView:(UIView *)view withId:(int)viewId
+- (void)addView:(id)view withId:(int)viewId
 {
     [self.viewsDictionary setObject:view forKey:[NSString stringWithFormat:@"%d", viewId]];
 }
