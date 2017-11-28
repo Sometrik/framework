@@ -164,7 +164,7 @@ iOSMainThread::sendCommands(const std::vector<Command> & commands) {
 	  app.setActiveViewId(command.getChildInternalId());
 
 	  NSString * title = [NSString stringWithUTF8String:command.getTextValue().c_str()];
-	  [viewController setTitle:title]
+	  [viewController setTitle:title];
 	} else {
 	  [viewController setIntValue:command.getInternalId() value:command.getValue()];
 	}
