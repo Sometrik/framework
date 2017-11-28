@@ -141,7 +141,10 @@ public class FWList extends ListView implements NativeCommandHandler {
 
   @Override
   public void addColumn(String text, int columnType) {
-    System.out.println("AddOption " + columnType + " text");
+    System.out.println("AddOption " + columnType + " " + text);
+    if (columnType == 0) {
+      columnType = 1;
+    }
     ColumnType type = ColumnType.values()[columnType - 1];
     System.out.println("columnType int: " + ColumnType.values()[columnType - 1]);
     headers.add(text);
@@ -149,11 +152,14 @@ public class FWList extends ListView implements NativeCommandHandler {
 
     adapter.setColumnType(type, headers.size() - 1);
     View headerView = createHeaderView();
+    System.out.println("created headerView");
     if (getHeaderViewsCount() > 0){
       this.removeHeaderView(currentHeaderView);
     }
     currentHeaderView = headerView;
+    System.out.println("adding headerView");
     addHeaderView(headerView);
+    System.out.println("added headerView");
   }
   
   private View createHeaderView(){
