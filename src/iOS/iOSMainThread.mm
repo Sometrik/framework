@@ -140,7 +140,15 @@ iOSMainThread::sendCommands(const std::vector<Command> & commands) {
         
       }
         break;
-
+            
+      case Command::CLEAR: {
+          ViewManager * viewManager = [viewController getViewManager:command.getInternalId()];
+          if (viewManager) {
+              [viewManager clear];
+          }
+      }
+        break;
+            
       case Command::REORDER_CHILD: {
           [viewController reorderChildWithId:command.getChildInternalId() parentId:command.getInternalId() newPosition:command.getValue()];
       }
