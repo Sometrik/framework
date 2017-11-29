@@ -8,7 +8,7 @@ import android.widget.ProgressBar;
 
 public class FWProgressBar extends ProgressBar implements NativeCommandHandler {
   private FrameWork frame;
-  private ViewStyleManager normalStyle, activeStyle, selectedStyle;
+  private ViewStyleManager normalStyle, activeStyle;
   private ViewStyleManager currentStyle;
   
   public FWProgressBar(FrameWork frame) {
@@ -63,14 +63,14 @@ public class FWProgressBar extends ProgressBar implements NativeCommandHandler {
   public void setStyle(Selector selector, String key, String value) {
     if (selector == Selector.NORMAL) {
       normalStyle.setStyle(key, value);
-      if (normalStyle == currentStyle) normalStyle.apply(this);
     } else if (selector == Selector.ACTIVE) {
       activeStyle.setStyle(key, value);      
-      if (activeStyle == currentStyle) activeStyle.apply(this);
-    } else if (selector == Selector.SELECTED) {
-      selectedStyle.setStyle(key, value);      
-      if (selectedStyle == currentStyle) selectedStyle.apply(this);
     }
+  }
+  
+  @Override
+  public void applyStyles() {    
+    currentStyle.apply(this);  
   }
 
   @Override

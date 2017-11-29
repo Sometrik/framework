@@ -70,7 +70,7 @@ public class FrameWork extends Activity {
   
   private boolean drawMode = false;
   
-  public FWActionBar actionBar;
+  public FWActionBar actionBar = null;
   
   private Locale defaultLocale;
   private float screenHeight;
@@ -166,9 +166,21 @@ public class FrameWork extends Activity {
       public void handleMessage(Message msg) {
 	if (msg.what == 1) {
 	  try {
+	    HashMap<Integer, NativeCommandHandler> changedViews = null;
 	    NativeCommandTransaction transaction = (NativeCommandTransaction) msg.obj;
 	    for (NativeCommand command : transaction.getCommands()) {
-	      command.apply(framework.views.get(command.getInternalId()));
+	      NativeCommandHandler view = framework.views.get(command.getInternalId()); 
+	      command.apply(view);
+	      if (command.getCommand() == NativeCommand.CommandType.SET_STYLE) {
+		 if (changedViews == null) changedViews = new HashMap<Integer, NativeCommandHandler>();
+		 changedViews.put(command.getInternalId(), view);
+	      }
+	    }
+	    if (changedViews != null) {
+	      for (HashMap.Entry<Integer, NativeCommandHandler> entry : changedViews.entrySet()) {
+		NativeCommandHandler view = entry.getValue();
+		view.applyStyles();
+	      }
 	    }
 	  } catch (Throwable t) {
 	    t.printStackTrace();

@@ -16,14 +16,10 @@ public class FWSwitch extends Switch implements NativeCommandHandler {
   }
 
   @Override
-  public void addChild(View view) {
-    System.out.println("FWSwitch coulnd't handle Command");
-  }
+  public void addChild(View view) { }
 
   @Override
-  public void addOption(int optionId, String text) {
-    System.out.println("FWSwitch coulnd't handle Command");
-  }
+  public void addOption(int optionId, String text) { }
 
   @Override
   public void setValue(String v) {
@@ -40,14 +36,13 @@ public class FWSwitch extends Switch implements NativeCommandHandler {
   }
 
   @Override
-  public void setStyle(Selector selector, String key, String value) {
-    System.out.println("FWSwitch coulnd't handle Command");
-  }
+  public void setStyle(Selector selector, String key, String value) { }
 
   @Override
-  public void setError(boolean hasError, String errorText) {
-    System.out.println("FWSwitch coulnd't handle Command");
-  }
+  public void applyStyles() { }
+  
+  @Override
+  public void setError(boolean hasError, String errorText) { }
 
   @Override
   public int getElementId() {
@@ -55,15 +50,10 @@ public class FWSwitch extends Switch implements NativeCommandHandler {
   }
 
   @Override
-  public void onScreenOrientationChange(boolean isLandscape) {
-    // TODO Auto-generated method stub
-    
-  }
+  public void onScreenOrientationChange(boolean isLandscape) { }
 
   @Override
-  public void addData(String text, int row, int column, int sheet) {
-    System.out.println("FWSwitch coulnd't handle Command");
-  }
+  public void addData(String text, int row, int column, int sheet) { }
 
   @Override
   public void setViewVisibility(boolean visibility) {
@@ -75,46 +65,26 @@ public class FWSwitch extends Switch implements NativeCommandHandler {
   }
 
   @Override
-  public void clear() {
-    System.out.println("couldn't handle command");
-  }
+  public void clear() { }
 
   @Override
-  public void flush() {
-    // TODO Auto-generated method stub
-    
-  }
+  public void flush() { }
 
   @Override
-  public void addColumn(String text, int columnType) {
-    // TODO Auto-generated method stub
-    
-  }
+  public void addColumn(String text, int columnType) { }
 
   @Override
-  public void reshape(int value, int size) {
-    // TODO Auto-generated method stub
-    
-  }
+  public void reshape(int value, int size) { }
 
   @Override
   public void setBitmap(Bitmap bitmap) { }
 
   @Override
-  public void reshape(int size) {
-    // TODO Auto-generated method stub
-    
-  }
+  public void reshape(int size) { }
 
   @Override
-  public void deinitialize() {
-    // TODO Auto-generated method stub
-    
-  }
+  public void deinitialize() { }
 
   @Override
-  public void addImageUrl(String url, int width, int height) {
-    // TODO Auto-generated method stub
-    
-  }
+  public void addImageUrl(String url, int width, int height) { }
 }

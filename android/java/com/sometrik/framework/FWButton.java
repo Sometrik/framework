@@ -5,13 +5,10 @@ import com.sometrik.framework.NativeCommand.Selector;
 import android.graphics.Bitmap;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.RotateAnimation;
 import android.widget.Button;
 
 public class FWButton extends Button implements NativeCommandHandler {
   private FrameWork frame;
-  private Animation animation = null;
   private ViewStyleManager normalStyle, activeStyle, selectedStyle;
   private ViewStyleManager currentStyle;
   private boolean isSelected = false;
@@ -27,18 +24,7 @@ public class FWButton extends Button implements NativeCommandHandler {
     this.selectedStyle = new ViewStyleManager(bitmapCache, scale, false);
     
     final FWButton button = this;
-    
-//    setOnClickListener(new OnClickListener() {
-//      @Override
-//      public void onClick(View arg0) {
-//	if (!FrameWork.transitionAnimation) {
-//	  frame.intChangedEvent(getElementId(), 1, 0);
-//	  if (animation != null) button.startAnimation(animation);
-//	  frame.hideSoftKeyboard();
-//	}
-//      }
-//    });
-    
+        
     setOnTouchListener(new OnTouchListener() {
       @Override
       public boolean onTouch(View v, MotionEvent event) {
@@ -62,7 +48,6 @@ public class FWButton extends Button implements NativeCommandHandler {
   public boolean performClick() {
     requestFocus();
     frame.sendNativeValueEvent(getElementId(), 0, 0);
-    if (animation != null)  startAnimation(animation);
 //    frame.hideSoftKeyboard();
     return super.performClick();
   }
@@ -98,24 +83,16 @@ public class FWButton extends Button implements NativeCommandHandler {
   public void setStyle(Selector selector, String key, String value) {
     if (selector == Selector.NORMAL) {
       normalStyle.setStyle(key, value);
-      if (normalStyle == currentStyle) normalStyle.apply(this);
     } else if (selector == Selector.ACTIVE) {
       activeStyle.setStyle(key, value);      
-      if (activeStyle == currentStyle) activeStyle.apply(this);
     } else if (selector == Selector.SELECTED) {
       selectedStyle.setStyle(key, value);      
-      if (selectedStyle == currentStyle) selectedStyle.apply(this);
     }
-    
-    if (key.equals("animation")) {
-      if (value.equals("rotate")) {
-	RotateAnimation r = new RotateAnimation(-5f, 5f,50,50); 
-	r.setDuration(100);
-	r.setRepeatCount(10);
-	r.setRepeatMode(RotateAnimation.REVERSE);
-	animation = r;
-      }
-    }
+  }
+  
+  @Override
+  public void applyStyles() {
+    currentStyle.apply(this);    
   }
 
   @Override

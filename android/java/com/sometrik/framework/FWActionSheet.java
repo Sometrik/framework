@@ -84,6 +84,9 @@ public class FWActionSheet extends PopupMenu implements NativeCommandHandler {
 
   @Override
   public void setStyle(Selector selector, String key, String value) { }
+  
+  @Override
+  public void applyStyles() { }
 
   @Override
   public void setError(boolean hasError, String errorText) { }

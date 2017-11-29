@@ -64,6 +64,9 @@ public class FWPicker extends Spinner implements NativeCommandHandler {
 
   @Override
   public void setStyle(Selector selector, String key, String value) { }
+  
+  @Override
+  public void applyStyles() { }
 
   @Override
   public void setError(boolean hasError, String errorText) { }

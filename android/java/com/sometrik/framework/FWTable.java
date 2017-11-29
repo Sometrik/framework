@@ -100,8 +100,6 @@ public class FWTable extends TableLayout implements NativeCommandHandler {
   
   public void setColumnCount(int columnCount) { this.columnCount = columnCount; };
 
- 
-
   @Override
   public void addChild(View view) {
     view.setLayoutParams(rowChildParams);
@@ -111,9 +109,7 @@ public class FWTable extends TableLayout implements NativeCommandHandler {
   }
   
   @Override
-  public void addOption(int optionId, String text) {
-    System.out.println("FWTable couldn't handle command");
-  }
+  public void addOption(int optionId, String text) { }
 
   @Override
   public int getElementId() {
@@ -121,18 +117,16 @@ public class FWTable extends TableLayout implements NativeCommandHandler {
   }
 
   @Override
-  public void setValue(String v) {
-    System.out.println("FWTable couldn't handle command");
-  }
+  public void setValue(String v) { }
 
   @Override
-  public void setValue(int v) {
-    System.out.println("FWTable couldn't handle command");
-  }
+  public void setValue(int v) { }
 
   @Override
   public void setStyle(Selector selector, String key, String value) { }
 
+  @Override
+  public void applyStyles() { }
   @Override
   public void setError(boolean hasError, String errorText) { }
 
@@ -142,9 +136,7 @@ public class FWTable extends TableLayout implements NativeCommandHandler {
   }
 
   @Override
-  public void addData(String text, int row, int column, int sheet) {
-    System.out.println("FWTable couldn't handle command");
-  }
+  public void addData(String text, int row, int column, int sheet) { }
 
   @Override
   public void setViewVisibility(boolean visibility) {
@@ -156,46 +148,26 @@ public class FWTable extends TableLayout implements NativeCommandHandler {
   }
 
   @Override
-  public void clear() {
-    System.out.println("couldn't handle command");
-  }
+  public void clear() { }
 
   @Override
-  public void flush() {
-    // TODO Auto-generated method stub
-    
-  }
+  public void flush() { }
 
   @Override
-  public void addColumn(String text, int columnType) {
-    // TODO Auto-generated method stub
-    
-  }
+  public void addColumn(String text, int columnType) { }
 
   @Override
-  public void reshape(int value, int size) {
-    // TODO Auto-generated method stub
-    
-  }
+  public void reshape(int value, int size) { }
 
   @Override
   public void setBitmap(Bitmap bitmap) { }
 
   @Override
-  public void reshape(int size) {
-    // TODO Auto-generated method stub
-    
-  }
+  public void reshape(int size) { }
 
   @Override
-  public void deinitialize() {
-    // TODO Auto-generated method stub
-    
-  }
+  public void deinitialize() { }
 
   @Override
-  public void addImageUrl(String url, int width, int height) {
-    // TODO Auto-generated method stub
-    
-  }
+  public void addImageUrl(String url, int width, int height) { }
 }

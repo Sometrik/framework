@@ -137,8 +137,10 @@ public class FWAuto extends LinearLayout implements NativeCommandHandler {
   @Override
   public void setStyle(Selector selector, String key, String value) {
     // TODO Auto-generated method stub
-    
   }
+  
+  @Override
+  public void applyStyles() { }
 
   @Override
   public void setError(boolean hasError, String errorText) {

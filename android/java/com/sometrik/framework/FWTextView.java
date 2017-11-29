@@ -46,13 +46,10 @@ public class FWTextView extends TextView implements NativeCommandHandler {
   public void setStyle(Selector selector, String key, String value) {
     if (selector == Selector.NORMAL) {
       normalStyle.setStyle(key, value);
-      if (normalStyle == currentStyle) normalStyle.apply(this);
     } else if (selector == Selector.ACTIVE) {
       activeStyle.setStyle(key, value);      
-      if (activeStyle == currentStyle) activeStyle.apply(this);
     } else if (selector == Selector.LINK) {
       linkStyle.setStyle(key, value);
-      linkStyle.applyLinkColor(this);
     }
 
     if (key.equals("max-lines")) {
@@ -60,6 +57,12 @@ public class FWTextView extends TextView implements NativeCommandHandler {
     }
   }
 
+  @Override
+  public void applyStyles() {    
+    currentStyle.apply(this);  
+    linkStyle.applyLinkColor(this);
+  }
+  
   @Override
   public void setError(boolean hasError, String errorText) { }
 

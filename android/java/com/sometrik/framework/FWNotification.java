@@ -107,8 +107,10 @@ public class FWNotification extends Notification.Builder implements NativeComman
   @Override
   public void setStyle(Selector selector, String key, String value) {
     // TODO Auto-generated method stub
-
   }
+  
+  @Override
+  public void applyStyles() { }
 
   @Override
   public void setError(boolean hasError, String errorText) {

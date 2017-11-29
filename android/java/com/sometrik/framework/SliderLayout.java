@@ -232,6 +232,9 @@ public class SliderLayout extends RelativeLayout implements NativeCommandHandler
   public void setStyle(Selector selector, String key, String value) {
     // TODO Auto-generated method stub
   }
+  
+  @Override
+  public void applyStyles() { }
 
   @Override
   public void setError(boolean hasError, String errorText) {

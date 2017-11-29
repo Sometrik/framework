@@ -171,14 +171,10 @@ public class FlowLayout extends ViewGroup implements NativeCommandHandler {
   }
 
   @Override
-  public void addOption(int optionId, String text) {
-    System.out.println("FlowLayout coulnd't handle command");
-  }
+  public void addOption(int optionId, String text) { }
 
   @Override
-  public void setValue(String v) {
-    System.out.println("FlowLayout coulnd't handle command");
-  }
+  public void setValue(String v) { }
 
   @Override
   public void setValue(int v) {
@@ -191,15 +187,14 @@ public class FlowLayout extends ViewGroup implements NativeCommandHandler {
   }
 
   @Override
-  public void setStyle(Selector selector, String key, String value) {
-    System.out.println("FlowLayout coulnd't setStyle command");
-  }
+  public void setStyle(Selector selector, String key, String value) { }
 
   @Override
-  public void setError(boolean hasError, String errorText) {
-    System.out.println("FlowLayout coulnd't handle command");
-  }
+  public void setError(boolean hasError, String errorText) { }
 
+  @Override
+  public void applyStyles() { }
+  
   @Override
   public int getElementId() {
     return getId();

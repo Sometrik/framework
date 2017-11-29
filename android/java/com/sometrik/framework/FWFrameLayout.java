@@ -47,11 +47,14 @@ public class FWFrameLayout extends FrameLayout implements NativeCommandHandler {
   public void setStyle(Selector selector, String key, String value) {
     if (selector == Selector.NORMAL) {
       normalStyle.setStyle(key, value);
-      if (normalStyle == currentStyle) normalStyle.apply(this);
     } else if (selector == Selector.ACTIVE) {
       activeStyle.setStyle(key, value);      
-      if (activeStyle == currentStyle) activeStyle.apply(this);
     }    
+  }
+  
+  @Override
+  public void applyStyles() {
+    currentStyle.apply(this);  
   }
 
   @Override

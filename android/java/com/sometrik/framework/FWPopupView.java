@@ -87,6 +87,9 @@ public class FWPopupView extends PopupWindow implements NativeCommandHandler {
       // if (activeStyle == currentStyle) activeStyle.apply(this);
     }
   }
+  
+  @Override
+  public void applyStyles() { }
 
   @Override
   public void setError(boolean hasError, String errorText) {

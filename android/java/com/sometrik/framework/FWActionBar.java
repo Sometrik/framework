@@ -42,6 +42,7 @@ public class FWActionBar implements NativeCommandHandler {
   public FWActionBar(final FrameWork frame, int id){
     this.frame = frame;
     actionBar = frame.getActionBar();
+    
 //    actionBar.setDisplayShowTitleEnabled(true);
 //    actionBar.setTitle(title);
 
@@ -231,10 +232,8 @@ public class FWActionBar implements NativeCommandHandler {
   public void setStyle(Selector selector, String key, String value) {  
     if (selector == Selector.NORMAL) {
       normalStyle.setStyle(key, value);
-      // if (normalStyle == currentStyle) normalStyle.apply(this);
     } else if (selector == Selector.ACTIVE) {
       activeStyle.setStyle(key, value);      
-      // if (activeStyle == currentStyle) activeStyle.apply(this);
     }
     if (key.equals("drawer-button")) {
       if (value.equals("hidden")) {
@@ -256,6 +255,11 @@ public class FWActionBar implements NativeCommandHandler {
       }
       mainLayout.setLayoutParams(params);
     }
+  }
+  
+  @Override
+  public void applyStyles() {
+  
   }
 
   @Override
