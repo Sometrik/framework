@@ -172,11 +172,12 @@ public:
 	gchar ** keys = g_key_file_get_keys(keyFile, groupName, NULL, NULL);
 	for (unsigned int i = 0; keys[i] != 0; i++) {
 	  gchar * value = g_key_file_get_string(keyFile, groupName, keys[i], NULL);
-	  if (value) prefs.setValue(keys[i], value);
+	  if (value) prefs.setText(keys[i], value);
 	}
 	g_strfreev(keys);
       }
 
+      prefs.clearChanges();
       application->setPreferences(prefs);
     }
   }
@@ -688,9 +689,18 @@ protected:
 	auto view = views_by_id[command.getInternalId()];
 	if (!view) {
 	  cerr << "no view " << command.getInternalId() << " for SET_INT_VALUE\n";
-	} else if (GTK_IS_STACK(view)) {
-	  // Flipper
-	  
+	} else if (GTK_IS_STACK(view)) { // Flipper
+	  GtkStack * stack = GTK_STACK(view);
+	  GList *children = gtk_container_get_children(GTK_CONTAINER(view));
+	  int n = command.getValue();
+	  while (n >= 0 && (children = g_list_next(children)) != NULL) {
+	    if (n == 0) {
+	      GtkWidget* widget = (GtkWidget*)children->data;
+	      gtk_stack_set_visible_child(stack, widget);
+	    } else {
+	      n--;
+	    }	    
+	  }	  
 	} else if (gtk_widget_get_parent(view) == stack) {
 	  auto & app = getApplication();
 	  app.addToHistory(app.getActiveViewId());
@@ -1192,6 +1202,9 @@ protected:
 	gtk_overlay_add_overlay(GTK_OVERLAY(parent), widget);	
       } else {
 	gtk_container_add(parent, widget);
+	if (GTK_IS_STACK(parent)) {
+	  gtk_stack_set_visible_child(GTK_STACK(stack), widget);
+	}
       }
     }
     views_by_id[id] = widget;
