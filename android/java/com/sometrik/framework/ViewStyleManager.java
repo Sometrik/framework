@@ -77,7 +77,8 @@ class ViewStyleManager {
   private int[] gradientColors = null;
   private Integer lineSpacing = null;
   private boolean showDecorations = true;
-    
+  private boolean isDefault = false;
+  
   private static final float ANDROID_DEFAULT_LINESPACING_MODIFIER = 17.1f;
   
   private boolean isModified = false;
@@ -87,6 +88,7 @@ class ViewStyleManager {
   public ViewStyleManager(BitmapCache bitmapCache, float displayScale, boolean isDefault) {
     this.bitmapCache = bitmapCache;
     this.displayScale = displayScale;
+    this.isDefault = isDefault;
     if (isDefault) setDefaults();
   }
   
@@ -440,7 +442,7 @@ class ViewStyleManager {
 	}
 	backgroundContent = gradientDrawable;
       }
-    } else if ((backgroundColor != null && backgroundColor != 0) || !showDecorations) {
+    } else if ((backgroundColor != null && backgroundColor != 0) || (!showDecorations && isDefault)) {
       backgroundContent = new ColorDrawable(backgroundColor);
     }
   
@@ -459,8 +461,8 @@ class ViewStyleManager {
 	color1 = Color.parseColor("#80ffffff");
 	color2 = Color.parseColor("#80000000");      
       } else {
-	color1 = Color.parseColor("#80ff0000");
-	color2 = Color.parseColor("#807f0000");
+	color1 = Color.parseColor("#30ff0000");
+	color2 = Color.parseColor("#30000000");
       }
       ColorStateList colors = new ColorStateList(
 	        new int[][]
