@@ -38,6 +38,9 @@
 		26738C6B1FC5E1B200E24663 /* URI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26738C641FC5E1B200E24663 /* URI.cpp */; };
 		26738C6C1FC5E1B200E24663 /* utf8 in Resources */ = {isa = PBXBuildFile; fileRef = 26738C651FC5E1B200E24663 /* utf8 */; };
 		26738C721FC5E33F00E24663 /* Example1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26738C711FC5E33F00E24663 /* Example1.cpp */; };
+		26BBBA7B1FCE9C6800DD5174 /* ViewManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = 26BBBA751FCE9C6700DD5174 /* ViewManager.mm */; };
+		26BBBA7C1FCE9C6800DD5174 /* EventWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 26BBBA761FCE9C6700DD5174 /* EventWrapper.m */; };
+		26BBBA7D1FCE9C6800DD5174 /* ImageWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 26BBBA781FCE9C6800DD5174 /* ImageWrapper.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -84,6 +87,12 @@
 		26738C6E1FC5E30500E24663 /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
 		26738C701FC5E33F00E24663 /* Example1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Example1.h; path = ../../../../../example1/Example1.h; sourceTree = "<group>"; };
 		26738C711FC5E33F00E24663 /* Example1.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Example1.cpp; path = ../../../../../example1/Example1.cpp; sourceTree = "<group>"; };
+		26BBBA751FCE9C6700DD5174 /* ViewManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ViewManager.mm; path = ../../../../src/iOS/ViewManager.mm; sourceTree = "<group>"; };
+		26BBBA761FCE9C6700DD5174 /* EventWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = EventWrapper.m; path = ../../../../src/iOS/EventWrapper.m; sourceTree = "<group>"; };
+		26BBBA771FCE9C6700DD5174 /* ViewManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewManager.h; path = ../../../../src/iOS/ViewManager.h; sourceTree = "<group>"; };
+		26BBBA781FCE9C6800DD5174 /* ImageWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ImageWrapper.m; path = ../../../../src/iOS/ImageWrapper.m; sourceTree = "<group>"; };
+		26BBBA791FCE9C6800DD5174 /* EventWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EventWrapper.h; path = ../../../../src/iOS/EventWrapper.h; sourceTree = "<group>"; };
+		26BBBA7A1FCE9C6800DD5174 /* ImageWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ImageWrapper.h; path = ../../../../src/iOS/ImageWrapper.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -173,6 +182,12 @@
 				26738C461FC5E16C00E24663 /* iOSMainThread.mm */,
 				26738C431FC5E16C00E24663 /* ViewController.h */,
 				26738C441FC5E16C00E24663 /* ViewController.mm */,
+				26BBBA791FCE9C6800DD5174 /* EventWrapper.h */,
+				26BBBA761FCE9C6700DD5174 /* EventWrapper.m */,
+				26BBBA7A1FCE9C6800DD5174 /* ImageWrapper.h */,
+				26BBBA781FCE9C6800DD5174 /* ImageWrapper.m */,
+				26BBBA771FCE9C6700DD5174 /* ViewManager.h */,
+				26BBBA751FCE9C6700DD5174 /* ViewManager.mm */,
 				26738C2C1FC5E12C00E24663 /* src */,
 			);
 			path = framework;
@@ -290,6 +305,7 @@
 				26738C5D1FC5E19500E24663 /* FloydSteinberg.cpp in Sources */,
 				26738C391FC5E15100E24663 /* EventHandler.cpp in Sources */,
 				26738C381FC5E15100E24663 /* DateTime.cpp in Sources */,
+				26BBBA7C1FCE9C6800DD5174 /* EventWrapper.m in Sources */,
 				26738C691FC5E1B200E24663 /* Base64.cpp in Sources */,
 				26738C3F1FC5E15100E24663 /* PosixThread.cpp in Sources */,
 				26738C401FC5E15100E24663 /* Runnable.cpp in Sources */,
@@ -300,12 +316,14 @@
 				26738C3C1FC5E15100E24663 /* Selection.cpp in Sources */,
 				26738C581FC5E19500E24663 /* PackedImageData.cpp in Sources */,
 				26738C481FC5E16C00E24663 /* ViewController.mm in Sources */,
+				26BBBA7D1FCE9C6800DD5174 /* ImageWrapper.m in Sources */,
 				26738C6B1FC5E1B200E24663 /* URI.cpp in Sources */,
 				26738C661FC5E1B200E24663 /* iOSClient.mm in Sources */,
 				26738C571FC5E19500E24663 /* ImageData.cpp in Sources */,
 				26738C561FC5E19500E24663 /* Image.cpp in Sources */,
 				26738C3D1FC5E15100E24663 /* Element.cpp in Sources */,
 				26738C3B1FC5E15100E24663 /* FWApplication.cpp in Sources */,
+				26BBBA7B1FCE9C6800DD5174 /* ViewManager.mm in Sources */,
 				26738C5A1FC5E19500E24663 /* rg_etc1.cpp in Sources */,
 				26738C5C1FC5E19500E24663 /* ContextQuartz2D.cpp in Sources */,
 				26738C5B1FC5E19500E24663 /* Color.cpp in Sources */,

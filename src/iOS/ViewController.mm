@@ -196,7 +196,9 @@ static const CGFloat backgroundOverlayViewAlpha = 0.5;
 
 - (void)createFrameViewWithId:(int)viewId parentId:(int)parentId
 {
-    UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 64.0, self.view.bounds.size.width, self.view.bounds.size.height-64.0-44.0)];
+    CGFloat tabBarHeight = self.tabBar == nil ? 0.0 : 44.0;
+    CGFloat topBarsHeight = self.navBar == nil ? 0.0 : 64.0;
+    UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, topBarsHeight, self.view.bounds.size.width, self.view.bounds.size.height-topBarsHeight-tabBarHeight)];
     view.tag = viewId;
     [self.view addSubview:view];
     [self addView:view withId:viewId];
