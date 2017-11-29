@@ -34,7 +34,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.view.GravityCompat;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
@@ -51,6 +50,7 @@ import android.view.View.OnTouchListener;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
 
 public class FrameWork extends Activity {
@@ -304,11 +304,13 @@ public class FrameWork extends Activity {
     views.remove(viewId);
   }
   
-  public void hideSoftKeyboard() {
-//    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-//    if (views.get(getCurrentViewId()) instanceof View) {
-//      imm.hideSoftInputFromWindow(((View)views.get(getCurrentViewId())).getApplicationWindowToken(), 0);
-//    }
+  public void setSoftKeyboardShow(View view, boolean enabled) {
+    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+    if (enabled) {
+      imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
+    } else {
+      imm.hideSoftInputFromWindow(view.getApplicationWindowToken(), 0);
+    }
   }
   
   public void sendNativeValueEvent(int elementId, int value, int value2) {
@@ -327,6 +329,7 @@ public class FrameWork extends Activity {
   }
 
   public void setCurrentView(final View view, Animation animation, final int newViewAnimationFromX) {
+
 	 transitionAnimation = true;
 //    animation.setAnimationListener(new Animation.AnimationListener() {
 //	@Override

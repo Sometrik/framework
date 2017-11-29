@@ -12,6 +12,7 @@ import android.text.InputFilter;
 import android.text.TextWatcher;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
@@ -106,7 +107,12 @@ public class FWEditText extends EditText implements NativeCommandHandler {
 
   @Override
   public void setValue(int v) {
-    System.out.println("FWEditText couldn't handle command");
+    if (v > 0) {
+      this.requestFocus();
+      frame.setSoftKeyboardShow(this, true);
+    } else {
+      frame.setSoftKeyboardShow(this, false);
+    }
   }
 
   @Override

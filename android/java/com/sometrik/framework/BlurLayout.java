@@ -289,7 +289,6 @@ public class BlurLayout extends FrameLayout implements NativeCommandHandler {
   @Override
   public void setViewVisibility(boolean visible) {
     if (visible) {
-      frame.hideSoftKeyboard();
       this.setVisibility(VISIBLE);
     } else {
       this.setVisibility(GONE);

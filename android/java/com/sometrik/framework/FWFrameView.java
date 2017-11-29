@@ -58,7 +58,7 @@ public class FWFrameView extends FrameLayout implements NativeCommandHandler {
 
   @Override
   public void setValue(int v) {
-    frame.hideSoftKeyboard();
+//    frame.hideSoftKeyboard();
 
     if (v == 1) {
       if (enterAnimation != null) {
@@ -165,8 +165,6 @@ public class FWFrameView extends FrameLayout implements NativeCommandHandler {
   @Override
   public void setViewVisibility(boolean visibility) {
     if (visibility) {
-      frame.hideSoftKeyboard();
- 
       this.setVisibility(VISIBLE);
     } else {
       this.setVisibility(INVISIBLE);

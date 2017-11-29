@@ -40,6 +40,12 @@ class TextField : public InputElement {
     }
   }
 
+  void setCursorFocus(bool enabled) {
+    Command c(Command::SET_INT_VALUE, getInternalId());
+    c.setValue(enabled ? 1 : 0);
+    sendCommand(c);
+  }
+
   const std::string & getValue() const { return value; }
 
  protected:
