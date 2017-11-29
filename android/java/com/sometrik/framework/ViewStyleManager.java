@@ -75,6 +75,9 @@ class ViewStyleManager {
   private String iconFile = null;
   private IconAttachment iconAttachment = null;
   private int[] gradientColors = null;
+  private Integer lineSpacing = null;
+  
+  private static final float ANDROID_DEFAULT_LINESPACING_MODIFIER = 17.1f;
   
   private boolean isModified = false;
   
@@ -270,6 +273,8 @@ class ViewStyleManager {
       } else {
 	fontSize = new Integer(value);
       }
+    } else if (key.equals("line-spacing")) {
+      lineSpacing = new Integer(value);
     } else if (key.equals("white-space")) {
       if (value.equals("normal")) whiteSpace = WhiteSpace.NORMAL;
       else if (value.equals("nowrap")) whiteSpace = WhiteSpace.NOWRAP;
@@ -559,6 +564,13 @@ class ViewStyleManager {
 
       if (color != null) textView.setTextColor(color);
       if (fontSize != null) textView.setTextSize(fontSize);
+      if (lineSpacing != null)  {
+//	float textSize = textView.getTextSize();
+//	float defaultLineSpacing = textSize / ANDROID_DEFAULT_LINESPACING_MODIFIER;
+//	textView.setLineSpacing(defaultLineSpacing - lineSpacing, 1);
+	
+	textView.setLineSpacing(lineSpacing, 1);
+      }
       if (whiteSpace != null) {
 	switch (whiteSpace) {
 	case NORMAL:

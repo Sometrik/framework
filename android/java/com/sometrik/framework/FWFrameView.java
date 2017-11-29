@@ -125,7 +125,7 @@ public class FWFrameView extends FrameLayout implements NativeCommandHandler {
 	returnAnimationOtherViewFromX = -2000;
 	TranslateAnimation r;
 	r = new TranslateAnimation(0, 2000, 0, 0);
-	r.setDuration(100);
+	r.setDuration(200);
 	returnAnimation = r;
 	final View holderView = this;
 	r.setAnimationListener(new Animation.AnimationListener() {

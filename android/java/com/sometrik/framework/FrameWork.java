@@ -328,13 +328,9 @@ public class FrameWork extends Activity {
 
   public void setCurrentView(final View view, Animation animation, final int newViewAnimationFromX) {
 	 transitionAnimation = true;
-    animation.setAnimationListener(new Animation.AnimationListener() {
-	@Override
-	public void onAnimationStart(Animation animation) {
-	}
-
-	@Override
-	public void onAnimationEnd(Animation animation) {
+//    animation.setAnimationListener(new Animation.AnimationListener() {
+//	@Override
+//	public void onAnimationStart(Animation animation) {
 	  currentView = view.getId();
 	  currentlyShowingView = view;
 	  
@@ -370,17 +366,21 @@ public class FrameWork extends Activity {
 	    @Override
 	    public void onAnimationStart(Animation animation) { }
 	  });
-	  q.setDuration(100);
+	  q.setDuration(200);
 	  view.startAnimation(q);
-	}
-
-	@Override
-	public void onAnimationRepeat(Animation animation) {
-	}
-    });
-
-    View sadas = (View) views.get(currentView);
-    sadas.startAnimation(animation);
+//	}
+//
+//	@Override
+//	public void onAnimationEnd(Animation animation) {
+//	}
+//
+//	@Override
+//	public void onAnimationRepeat(Animation animation) {
+//	}
+//    });
+//
+//    View sadas = (View) views.get(currentView);
+//    sadas.startAnimation(animation);
   }
 
   public void setCurrentView(final View view) {
