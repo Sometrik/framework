@@ -440,8 +440,8 @@ class ViewStyleManager {
 	}
 	backgroundContent = gradientDrawable;
       }
-    } else if (backgroundColor != null && backgroundColor != 0) {
-      backgroundContent = new ColorDrawable(backgroundColor);      
+    } else if ((backgroundColor != null && backgroundColor != 0) || !showDecorations) {
+      backgroundContent = new ColorDrawable(backgroundColor);
     }
   
     if (showDecorations && (shadow == null || shadow == 0) && (view instanceof Button || view instanceof FWEventLayout)) {
