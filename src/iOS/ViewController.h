@@ -1,15 +1,15 @@
 #import <UIKit/UIKit.h>
 
 #import "EventWrapper.h"
+#import "ViewManager.h"
 
 @interface ViewController : UIViewController
 - (void)viewWillTransitionToSize: (CGSize)size withTransitionCoordinator:(id)coordinator;
 - (void)didReceiveMemoryWarning;
 
-- (void)createTextFieldWithId: (int)viewId parentId:(int)parentId;
-- (void)setStyle: (int)viewId key:(NSString *)key value:(NSString *)value;
 - (void)setVisibility:(int)viewId visibility:(int)visibility;
 
+- (void)createTextFieldWithId: (int)viewId parentId:(int)parentId;
 - (void)createFrameViewWithId:(int)viewId parentId:(int)parentId;
 - (void)createLinearLayoutWithId:(int)viewId parentId:(int)parentId direction:(int)direction;
 - (void)createFrameLayoutWithId:(int)viewId parentId:(int)parentId;
@@ -28,11 +28,7 @@
 - (void)createDialogWithId:(int)viewId parentId:(int)parentId;
 - (void)createTimer:(int)viewId interval:(double)interval;
 
-- (void)setIntValue:(int)viewId value:(int)value;
-- (void)setTextValue:(int)viewId value:(NSString *)value;
-- (void)setImage:(int)viewId data:(UIImage *)data;
 - (void)setImageFromThread:(int)viewId data:(UIImage *)data;
-- (void)addImageUrl:(int)viewId url:(NSString *)url width:(int)width height:(int)height;
 - (void)showNavigationViewWithAnimation:(BOOL)animate;
 - (void)hideNavigationViewWithAnimation:(BOOL)animate;
 
@@ -46,5 +42,7 @@
 - (void)sendEventToMainThread:(EventWrapper*) event;
 
 - (void)setTitle:(NSString*)title;
+
+- (ViewManager *)getViewManager:(int)viewId;
 
 @end

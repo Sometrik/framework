@@ -246,11 +246,9 @@ public:
     
     auto & app = getApplication();
 
-    cerr << "initializing app\n";
     app.initialize(this);
-
-    cerr << "initializing app children\n";
     app.initializeChildren();
+    app.load();
 
     cerr << "activate done\n";
   }

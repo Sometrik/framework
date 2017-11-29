@@ -117,9 +117,12 @@ iOSMainThread::sendCommands(const std::vector<Command> & commands) {
         break;
 
       case Command::SET_STYLE: {
-        NSString * key = [NSString stringWithUTF8String:command.getTextValue().c_str()];
-        NSString * value = [NSString stringWithUTF8String:command.getTextValue2().c_str()];
-        [viewController setStyle:command.getInternalId() key:key value:value];
+	ViewManager * viewManager = [viewController getViewManager:command.getInternalId()];
+	if (viewManager != nil) {
+	  NSString * key = [NSString stringWithUTF8String:command.getTextValue().c_str()];
+          NSString * value = [NSString stringWithUTF8String:command.getTextValue2().c_str()];
+          [viewManager setStyle:key value:value];
+	}
       }
         break;
             
@@ -137,10 +140,20 @@ iOSMainThread::sendCommands(const std::vector<Command> & commands) {
         
       }
         break;
-
+            
+      case Command::CLEAR: {
+          ViewManager * viewManager = [viewController getViewManager:command.getInternalId()];
+          if (viewManager) {
+              [viewManager clear];
+          }
+      }
+        break;
+            
       case Command::REORDER_CHILD: {
           [viewController reorderChildWithId:command.getChildInternalId() parentId:command.getInternalId() newPosition:command.getValue()];
       }
+	break;
+
       case Command::REMOVE_CHILD: {
         
       }
@@ -152,8 +165,11 @@ iOSMainThread::sendCommands(const std::vector<Command> & commands) {
         break;
         
       case Command::ADD_IMAGE_URL: {
-        NSString * url = [NSString stringWithUTF8String:command.getTextValue().c_str()];
-        [viewController addImageUrl:command.getInternalId() url:url width:command.getWidth() height:command.getHeight()];
+        ViewManager * viewManager = [viewController getViewManager:command.getInternalId()];
+	if (viewManager != nil) {
+	  NSString * url = [NSString stringWithUTF8String:command.getTextValue().c_str()];
+          [viewManager addImageUrl:url width:command.getWidth() height:command.getHeight()];
+	}
       }
         break;
         
@@ -164,16 +180,22 @@ iOSMainThread::sendCommands(const std::vector<Command> & commands) {
 	  app.setActiveViewId(command.getChildInternalId());
 
 	  NSString * title = [NSString stringWithUTF8String:command.getTextValue().c_str()];
-	  [viewController setTitle:title]
+	  [viewController setTitle:title];
 	} else {
-	  [viewController setIntValue:command.getInternalId() value:command.getValue()];
+	  ViewManager * viewManager = [viewController getViewManager:command.getInternalId()];
+	  if (viewManager != nil) {
+	    [viewManager setIntValue:command.getValue()];
+	  }
 	}
       }
 	break;
 
       case Command::SET_TEXT_VALUE: {
-        NSString * value = [NSString stringWithUTF8String:command.getTextValue().c_str()];
-	[viewController setTextValue:command.getInternalId() value:value];
+	ViewManager * viewManager = [viewController getViewManager:command.getInternalId()];
+	if (viewManager != nil) {
+	  NSString * value = [NSString stringWithUTF8String:command.getTextValue().c_str()];
+	  [viewManager setTextValue:value];
+	}
       }
 	break;
 	                
@@ -209,6 +231,11 @@ iOSMainThread::sendCommands(const std::vector<Command> & commands) {
         break;
     }
   }
+}
+
+void
+iOSMainThread::sleep(double t) {
+  usleep((unsigned int)(t * 1000000));
 }
 
 void
