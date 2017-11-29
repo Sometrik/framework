@@ -25,6 +25,7 @@ extern FWApplication * applicationMain();
 @property (nonatomic, strong) UIScrollView *pageView;
 @property (nonatomic) int activeDialogId;
 @property (nonatomic) int activeViewId;
+@property (nonatomic, strong) NSSet *tabBarHiddenInThesePages;
 @end
 
 static const NSTimeInterval animationDuration = 0.4;
@@ -35,7 +36,7 @@ static const CGFloat backgroundOverlayViewAlpha = 0.5;
 - (void)viewDidLoad {
   [super viewDidLoad];
   // Do any additional setup after loading the view, typically from a nib.
-
+  self.tabBarHiddenInThesePages = [[NSSet alloc] initWithObjects:[NSNumber numberWithInt:0], nil];
   self.activeViewId = 0;
   self.activeDialogId = 0;
     
@@ -72,7 +73,9 @@ static const CGFloat backgroundOverlayViewAlpha = 0.5;
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    
+    if (self.tabBar) {
+        [self updateTabBarVisibility:0];
+    }
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -336,9 +339,12 @@ static const CGFloat backgroundOverlayViewAlpha = 0.5;
     NSLog(@"scrollView did end decelerating");
     if (scrollView.isPagingEnabled) {
         NSInteger page = [self indexForScrollViewPage:scrollView];
+        
         if (page != NSNotFound && self.tabBar && page < [self.tabBar.items count]) {
             [self.tabBar setSelectedItem:self.tabBar.items[page]];
             [self sendIntValue:(int)scrollView.tag value:(int)page];
+            
+            [self updateTabBarVisibility:(int)page];
         }
     }
 }
@@ -426,6 +432,7 @@ static const CGFloat backgroundOverlayViewAlpha = 0.5;
     [self showNavigationViewWithAnimation:YES];
 }
 
+#pragma mark - TabBar
 - (void)createTabBar:(int)viewId parentId:(int)parentId
 {
     UITabBar *tabBar = [[UITabBar alloc] init];
@@ -465,8 +472,34 @@ static const CGFloat backgroundOverlayViewAlpha = 0.5;
 - (void)tabBar:(UITabBar *)tabBar didSelectItem:(UITabBarItem *)item
 {
     if ([tabBar isEqual:self.tabBar]) {
-        [self showPage:[self indexForTabBarItem:item]];
+        int itemIndex = (int)[self indexForTabBarItem:item];
+        [self showPage:itemIndex];
         [self sendIntValue:(int)tabBar.tag value:(int)item.tag];
+        [self updateTabBarVisibility:itemIndex];
+    }
+}
+
+- (void)updateTabBarVisibility:(int)pageIndex
+{
+    BOOL hidden = NO;
+    
+    for (NSNumber *number in self.tabBarHiddenInThesePages) {
+        if (pageIndex == number.intValue) {
+            hidden = YES;
+            break;
+        }
+    }
+    
+    if (hidden) {
+        if (self.tabBar) {
+            // Hide from first page
+            [self.tabBar setHidden:YES];
+        }
+    } else {
+        if (self.tabBar) {
+            // Show elsewhere
+            [self.tabBar setHidden:NO];
+        }
     }
 }
 
@@ -483,6 +516,7 @@ static const CGFloat backgroundOverlayViewAlpha = 0.5;
     return NSNotFound;
 }
 
+#pragma mark - Side menu
 - (void)createNavigationView:(int)viewId
 {
     CGRect viewFrame = self.view.bounds;
@@ -536,6 +570,7 @@ static const CGFloat backgroundOverlayViewAlpha = 0.5;
     }
 }
 
+#pragma mark -
 - (void)createActivityIndicatorWithId:(int)viewId parentId:(int)parentId
 {
     UIActivityIndicatorView * view = [[UIActivityIndicatorView alloc] init];
