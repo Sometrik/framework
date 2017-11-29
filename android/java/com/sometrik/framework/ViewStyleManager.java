@@ -76,7 +76,8 @@ class ViewStyleManager {
   private IconAttachment iconAttachment = null;
   private int[] gradientColors = null;
   private Integer lineSpacing = null;
-  
+  private boolean showDecorations = true;
+    
   private static final float ANDROID_DEFAULT_LINESPACING_MODIFIER = 17.1f;
   
   private boolean isModified = false;
@@ -329,6 +330,12 @@ class ViewStyleManager {
       } else {
 	iconFile = value;
       }
+    } else if (key.equals("decoration")) {
+      if (value.equals("none")) {
+	showDecorations = false;
+      } else {
+	showDecorations = true;
+      }
     }
   }
 
@@ -437,7 +444,7 @@ class ViewStyleManager {
       backgroundContent = new ColorDrawable(backgroundColor);      
     }
   
-    if ((shadow == null || shadow == 0) && (view instanceof Button || view instanceof FWEventLayout)) {
+    if (showDecorations && (shadow == null || shadow == 0) && (view instanceof Button || view instanceof FWEventLayout)) {
       Drawable backgroundMask = null;
       if (borderRadius != null) {
 	RoundRectShape shape = new RoundRectShape(expandRadii(borderRadius), null, null);
