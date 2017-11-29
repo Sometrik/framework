@@ -52,6 +52,7 @@ public class FWDialog extends Dialog implements NativeCommandHandler {
     titleView.setStyle(Selector.NORMAL, "font-weight", "bold");
     titleView.setStyle(Selector.NORMAL, "padding-left", "14");
     titleView.setStyle(Selector.NORMAL, "color", "#c1272d");
+    titleView.applyStyles();
     baseView.addView(titleView);
 
     LinearLayout dividerView = new LinearLayout(frame);
