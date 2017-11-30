@@ -93,6 +93,7 @@ public class NativeCommand {
     CREATE_ALERT_DIALOG,
     CREATE_IMAGEVIEW,
     CREATE_ACTION_SHEET,
+    CREATE_PAGER,
     CREATE_CHECKBOX,
     CREATE_RADIO_GROUP,
     CREATE_SEPARATOR,
@@ -186,9 +187,7 @@ public class NativeCommand {
     }
   }
   
-  public void apply(NativeCommandHandler view) {
-     System.out.println("Processing message " + command + " id: " + internalId + " Child id: " + getChildInternalId());
-    
+  public void apply(NativeCommandHandler view) {     
     switch (command) {
       
     case CREATE_FRAMEVIEW: {
@@ -246,13 +245,13 @@ public class NativeCommand {
       }
     break;
     case CREATE_FLIPPER_LAYOUT: {
-      	if (view != null) {
-      	  FWViewFlipper flipper = new FWViewFlipper(frame);
-      	  flipper.setId(getChildInternalId());
-      	  frame.addToViewList(flipper);
-      	  view.addChild(flipper);
-      	}
-      break; 
+      if (view != null) {
+	FWViewFlipper flipper = new FWViewFlipper(frame);
+	flipper.setId(getChildInternalId());
+	frame.addToViewList(flipper);
+	view.addChild(flipper);
+      }
+      break;
     }
     case CREATE_AUTO_COLUMN_LAYOUT:
       if (view != null) {
@@ -540,7 +539,14 @@ public class NativeCommand {
 	  frame.addToViewList(sheet);
         }
     }
+    case CREATE_PAGER: {
+      FWPager pager = new FWPager(frame);
+      pager.setId(getChildInternalId());
+      frame.addToViewList(pager);
+      view.addChild(pager);
+      System.out.println("Pager on");
       break;
+    }
     case CREATE_ACTIONBAR: {
       FWActionBar ab = new FWActionBar(frame, childInternalId);
       frame.actionBar = ab;
