@@ -145,10 +145,10 @@ public class FrameWork extends Activity {
     // ActionBar is hidden by default with this
 //    actionBar = getActionBar();
 //    actionBar.hide();
+    
     getActionBar().hide();
     getActionBar().setDisplayHomeAsUpEnabled(true);
 //    getActionBar().setHomeButtonEnabled(true);
-
     
     // Init NavigationBar
     drawerLayout = new FWDrawerLayout(this);
