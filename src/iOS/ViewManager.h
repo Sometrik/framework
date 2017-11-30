@@ -9,7 +9,7 @@
 - (void)setIntValue:(int)value;
 - (void)setTextValue:(NSString *)value;
 
-@property (nonatomic) NSInteger id;
+@property (nonatomic) NSInteger viewId; // don't use id as it is reserved word in objective-c
 @property id view;
 @property BOOL constraintsSet;
 @end

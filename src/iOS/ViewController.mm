@@ -25,7 +25,7 @@ extern FWApplication * applicationMain();
 @property (nonatomic, strong) UIScrollView *pageView;
 @property (nonatomic) int activeDialogId;
 @property (nonatomic) int activeViewId;
-@property (nonatomic, strong) NSSet *tabBarHiddenInThesePages;
+//@property (nonatomic, strong) NSSet *tabBarHiddenInThesePages;
 @end
 
 static const NSTimeInterval animationDuration = 0.4;
@@ -36,7 +36,7 @@ static const CGFloat backgroundOverlayViewAlpha = 0.5;
 - (void)viewDidLoad {
   [super viewDidLoad];
   // Do any additional setup after loading the view, typically from a nib.
-  self.tabBarHiddenInThesePages = [[NSSet alloc] initWithObjects:[NSNumber numberWithInt:0], nil];
+  //self.tabBarHiddenInThesePages = [[NSSet alloc] initWithObjects:[NSNumber numberWithInt:0], nil];
   self.activeViewId = 0;
   self.activeDialogId = 0;
     
@@ -73,9 +73,7 @@ static const CGFloat backgroundOverlayViewAlpha = 0.5;
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    if (self.tabBar) {
-        [self updateTabBarVisibility:0];
-    }
+    [self bringTabBarsToFront];
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -89,11 +87,15 @@ static const CGFloat backgroundOverlayViewAlpha = 0.5;
         [self.view bringSubviewToFront:self.backgroundOverlayView];
         [self.view bringSubviewToFront:self.sideMenuView];
     }
-    if (self.tabBar) {
-        CGRect tabBarFrame = CGRectMake(0.0, self.view.frame.size.height-self.tabBar.frame.size.height , self.view.frame.size.width, self.tabBar.frame.size.height);
-        self.tabBar.frame = tabBarFrame;
-        if ([self.tabBar.items count]) {
-            [self.tabBar setSelectedItem:self.tabBar.items[0]];
+}
+
+- (void)bringTabBarsToFront
+{
+    for (NSString *key in self.viewsDictionary.allKeys) {
+        ViewManager *viewManager = [self.viewsDictionary objectForKey:key];
+        if ([viewManager.view isKindOfClass:UITabBar.class]) {
+            UITabBar *tabBar = (UITabBar *)viewManager.view;
+            [tabBar.superview bringSubviewToFront:tabBar];
         }
     }
 }
@@ -340,11 +342,21 @@ static const CGFloat backgroundOverlayViewAlpha = 0.5;
     if (scrollView.isPagingEnabled) {
         NSInteger page = [self indexForScrollViewPage:scrollView];
         
-        if (page != NSNotFound && self.tabBar && page < [self.tabBar.items count]) {
-            [self.tabBar setSelectedItem:self.tabBar.items[page]];
-            [self sendIntValue:(int)scrollView.tag value:(int)page];
+        if (page >= 0) {
+            // set selected item for all tabbars
+            for (NSString *key in self.viewsDictionary.allKeys) {
+                ViewManager *viewManager = [self.viewsDictionary objectForKey:key];
+                if ([viewManager.view isKindOfClass:UITabBar.class]) {
+                    UITabBar *tabBar = (UITabBar *)viewManager.view;
+                    if (page <= tabBar.items.count) {
+                        [tabBar setSelectedItem:tabBar.items[page]];
+                        [self sendIntValue:(int)scrollView.tag value:(int)page];
+                    }
+                }
+            }
             
-            [self updateTabBarVisibility:(int)page];
+            
+            //[self updateTabBarVisibility:(int)page];
         }
     }
 }
@@ -435,19 +447,20 @@ static const CGFloat backgroundOverlayViewAlpha = 0.5;
 #pragma mark - TabBar
 - (void)createTabBar:(int)viewId parentId:(int)parentId
 {
-    UITabBar *tabBar = [[UITabBar alloc] init];
+    CGFloat tabBarHeight = 44.0;
+    UIView *parentView = [self viewForId:parentId];
+    UITabBar *tabBar = [[UITabBar alloc] initWithFrame:CGRectMake(0, parentView.frame.size.height-tabBarHeight, parentView.frame.size.width, tabBarHeight)];
     tabBar.tag = viewId;
     // tabBar.contentMode = UIViewContentModeBottom;
     // [tabBar setAutoresizingMask:UIViewAutoresizingFlexibleTopMargin];
     
-    self.tabBar = tabBar;
-    self.tabBar.delegate = self;
+    //self.tabBar = tabBar;
+    tabBar.delegate = self;
     [self addView:tabBar withId:viewId];
     //[tabBar.bottomAnchor constraintEqualToAnchor:parentView.bottomAnchor];
-    //[self addToParent:parentId view:tabBar];
-    [self.view addSubview:self.tabBar];
-    
-    self.tabBar.items = [[NSArray alloc] init];
+    [self addToParent:parentId view:tabBar];
+    //[self.view addSubview:self.tabBar];
+    tabBar.items = [[NSArray alloc] init];
     // Put tabbar to the bottom of the view
 }
 
@@ -471,14 +484,15 @@ static const CGFloat backgroundOverlayViewAlpha = 0.5;
 
 - (void)tabBar:(UITabBar *)tabBar didSelectItem:(UITabBarItem *)item
 {
-    if ([tabBar isEqual:self.tabBar]) {
-        int itemIndex = (int)[self indexForTabBarItem:item];
+    //if ([tabBar isEqual:self.tabBar]) {
+    int itemIndex = (int)[self indexForTabBar:tabBar item:item];
         [self showPage:itemIndex];
         [self sendIntValue:(int)tabBar.tag value:(int)item.tag];
-        [self updateTabBarVisibility:itemIndex];
-    }
+        //[self updateTabBarVisibility:itemIndex];
+    //}
 }
 
+/*
 - (void)updateTabBarVisibility:(int)pageIndex
 {
     BOOL hidden = NO;
@@ -502,17 +516,18 @@ static const CGFloat backgroundOverlayViewAlpha = 0.5;
         }
     }
 }
+*/
 
 // returns index for item in tabBar.items array.
-- (NSInteger)indexForTabBarItem:(UITabBarItem *)item
+- (NSInteger)indexForTabBar:(UITabBar *)tabBar item:(UITabBarItem *)item
 {
-    if (self.tabBar) {
-        for (int i = 0; i < self.tabBar.items.count; i++) {
-            if ([self.tabBar.items[i] isEqual:item]) {
+    //if (self.tabBar) {
+        for (int i = 0; i < tabBar.items.count; i++) {
+            if ([tabBar.items[i] isEqual:item]) {
                 return i;
             }
         }
-    }
+    //}
     return NSNotFound;
 }
 
@@ -740,7 +755,7 @@ static const CGFloat backgroundOverlayViewAlpha = 0.5;
 - (void)addView:(id)view withId:(int)viewId
 {
     ViewManager * viewManager = [[ViewManager alloc] init];
-    viewManager.id = viewId;
+    viewManager.viewId = viewId;
     viewManager.view = view;
     [self.viewsDictionary setObject:viewManager forKey:[NSString stringWithFormat:@"%d", viewId]];
 }
