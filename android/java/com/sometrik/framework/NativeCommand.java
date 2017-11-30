@@ -538,6 +538,7 @@ public class NativeCommand {
 	  FWActionSheet sheet = new FWActionSheet(frame, anchor, childInternalId);
 	  frame.addToViewList(sheet);
         }
+        break;
     }
     case CREATE_PAGER: {
       FWPager pager = new FWPager(frame);
