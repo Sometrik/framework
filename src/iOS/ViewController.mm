@@ -41,6 +41,7 @@ static const CGFloat backgroundOverlayViewAlpha = 0.5;
   self.activeDialogId = 0;
     
   [self createBackgroundOverlay];
+    
   //self.view.layoutMargins = UIEdgeInsetsMake(64.0, 0, 50.0, 0);
 
   // Creating the C++ app
@@ -73,7 +74,24 @@ static const CGFloat backgroundOverlayViewAlpha = 0.5;
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    [self bringTabBarsToFront];
+    
+    // make side menu open by swiping from the left edge of the screen
+    UIScreenEdgePanGestureRecognizer *panEdgeGestureRecognizer = [[UIScreenEdgePanGestureRecognizer alloc] initWithTarget:self action:@selector(edgeSwiped:)];
+    panEdgeGestureRecognizer.edges = UIRectEdgeLeft;
+    [self.view addGestureRecognizer:panEdgeGestureRecognizer];
+    
+    // some additional setups for views
+    for (NSString *key in self.viewsDictionary.allKeys) {
+        ViewManager *viewManager = [self.viewsDictionary objectForKey:key];
+        if ([viewManager.view isKindOfClass:UITabBar.class]) {
+            UITabBar *tabBar = (UITabBar *)viewManager.view;
+            [tabBar.superview bringSubviewToFront:tabBar];
+        } else if ([viewManager.view isKindOfClass:UIScrollView.class]) {
+            UIScrollView *scrollView = (UIScrollView *)viewManager.view;
+            [scrollView.panGestureRecognizer requireGestureRecognizerToFail:panEdgeGestureRecognizer];
+        }
+    }
+    
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -89,13 +107,11 @@ static const CGFloat backgroundOverlayViewAlpha = 0.5;
     }
 }
 
-- (void)bringTabBarsToFront
+- (void)edgeSwiped:(UISwipeGestureRecognizer *)gesture
 {
-    for (NSString *key in self.viewsDictionary.allKeys) {
-        ViewManager *viewManager = [self.viewsDictionary objectForKey:key];
-        if ([viewManager.view isKindOfClass:UITabBar.class]) {
-            UITabBar *tabBar = (UITabBar *)viewManager.view;
-            [tabBar.superview bringSubviewToFront:tabBar];
+    if (gesture.state == UIGestureRecognizerStateEnded) {
+        if (self.sideMenuView.isHidden) {
+            [self showNavigationViewWithAnimation:YES];
         }
     }
 }
