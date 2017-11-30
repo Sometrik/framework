@@ -15,7 +15,7 @@ public class FWPager extends ViewPager implements NativeCommandHandler {
   private FrameWork frame;
   private FWPagerAdapter adapter;
   
-  public FWPager(FrameWork frame) {
+  public FWPager(final FrameWork frame) {
     super(frame);
     this.frame = frame;
     adapter = new FWPagerAdapter();
@@ -27,7 +27,8 @@ public class FWPager extends ViewPager implements NativeCommandHandler {
     setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
       @Override
       public void onPageSelected(int position) {
-	System.out.println("Pager change page");
+	System.out.println("Pager change page " + getElementId());
+	frame.sendNativeValueEvent(getElementId(), position, 0);
       }
     });
 
@@ -41,7 +42,6 @@ public class FWPager extends ViewPager implements NativeCommandHandler {
   @Override
   public void addChild(View view) {
     adapter.addToList(view);
-	System.out.println("Pager added view");
 	adapter.notifyDataSetChanged();
 //    addView(view);s
   }
@@ -77,8 +77,7 @@ public class FWPager extends ViewPager implements NativeCommandHandler {
   }
   @Override
   public void setValue(int v) {
-    // TODO Auto-generated method stub
-    
+    setCurrentItem(v);
   }
   @Override
   public void reshape(int value, int size) {
@@ -145,20 +144,17 @@ public class FWPager extends ViewPager implements NativeCommandHandler {
 
     @Override
     public int getCount() {
-	System.out.println("Pager get count " + viewList.size());
       return viewList.size();
     }
     
     @Override
     public void startUpdate(ViewGroup container) {
-      System.out.println("Pager startUpdate");
       super.startUpdate(container);
     }
     
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
       container.addView(viewList.get(position));
-      System.out.println("Pager get view " + position);
       return viewList.get(position);
     }
     
