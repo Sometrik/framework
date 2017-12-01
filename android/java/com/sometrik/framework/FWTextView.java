@@ -99,7 +99,7 @@ public class FWTextView extends TextView implements NativeCommandHandler {
   }
 
   @Override
-  public void applyStyles() {    
+  public void applyStyles() {
     currentStyle.apply(this);  
     linkStyle.applyLinkColor(this);
   }
