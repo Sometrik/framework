@@ -740,6 +740,7 @@ public class FrameWork extends Activity {
   @Override
   public void onLowMemory() {
     super.onLowMemory();
+    System.out.println("FRAMEWORK MEMORY WARNING");
     memoryWarning(appId);
   }
 
