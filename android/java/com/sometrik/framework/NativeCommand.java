@@ -505,9 +505,7 @@ public class NativeCommand {
       }
       break;
     case LAUNCH_BROWSER: {
-      Intent intent = new Intent(frame, FWWebActivity.class);
-      intent.putExtra(FWWebActivity.URL_EXTRA, getTextValueAsString());
-      frame.startActivity(intent);
+      frame.launchBrowser(getTextValueAsString());
       break;
     }
     case CREATE_DIALOG: {

@@ -306,8 +306,9 @@ public class FrameWork extends Activity {
   }
 
   public void launchBrowser(String url) {
-    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-    startActivity(browserIntent);
+    Intent intent = new Intent(this, FWWebActivity.class);
+    intent.putExtra(FWWebActivity.URL_EXTRA, url);
+    startActivity(intent);
   }
   
   public void removeViewFromList(int viewId) {
