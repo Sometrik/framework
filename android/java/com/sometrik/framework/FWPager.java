@@ -26,11 +26,7 @@ public class FWPager extends ViewPager implements NativeCommandHandler {
     this.linkStyle = new ViewStyleManager(frame.bitmapCache, scale, false);
     
     adapter = new FWPagerAdapter();
-//    ViewPager.LayoutParams params = new ViewPager.LayoutParams();
-//    params.width = ViewPager.LayoutParams.MATCH_PARENT;
-//    params.height = ViewPager.LayoutParams.WRAP_CONTENT;
     setAdapter(adapter);
-//    setLayoutParams(params);
     setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
       @Override
       public void onPageSelected(int position) {
@@ -180,48 +176,4 @@ public class FWPager extends ViewPager implements NativeCommandHandler {
       return view == object;
     }
   }
-  
-//  private class FWPagerAdapter extends FragmentPagerAdapter  {
-//    
-//    private ArrayList<View> viewList;
-//    
-//    public FWPagerAdapter(android.support.v4.app.FragmentManager fm) {
-//      super(fm);
-//      viewList = new ArrayList<View>();
-//    }
-//
-//    @Override
-//    public Fragment getItem(int position) {
-//      View view = viewList.get(position);
-//      FWObjectFragment fragment = new FWObjectFragment(view);
-//      return fragment;
-//    }
-//
-//    @Override
-//    public int getCount() {
-//      return viewList.size();
-//    }
-//  }
-//  
-//  private class FWObjectFragment extends Fragment {
-//    public final String ARG_OBJECT = "object";
-//    
-//    private View rootView;
-//    public FWObjectFragment(View rootView) {
-//      this.rootView = rootView;
-//    }
-//
-//    @Override
-//    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-////        // The last two arguments ensure LayoutParams are inflated
-////        // properly.
-////        View rootView = inflater.inflate(
-////                R.layout.fragment_collection_object, container, false);
-////        Bundle args = getArguments();
-////        ((TextView) rootView.findViewById(android.R.id.text1)).setText(
-////                Integer.toString(args.getInt(ARG_OBJECT)));
-//        return rootView;
-//    }
-//}
-
 }
