@@ -14,16 +14,23 @@ public class FWPager extends ViewPager implements NativeCommandHandler {
 
   private FrameWork frame;
   private FWPagerAdapter adapter;
+  ViewStyleManager normalStyle, activeStyle, currentStyle, linkStyle;
   
   public FWPager(final FrameWork frame) {
     super(frame);
     this.frame = frame;
+    
+    final float scale = getContext().getResources().getDisplayMetrics().density;
+    this.normalStyle = currentStyle = new ViewStyleManager(frame.bitmapCache, scale, true);
+    this.activeStyle = new ViewStyleManager(frame.bitmapCache, scale, false);
+    this.linkStyle = new ViewStyleManager(frame.bitmapCache, scale, false);
+    
     adapter = new FWPagerAdapter();
-    ViewPager.LayoutParams params = new ViewPager.LayoutParams();
-    params.width = ViewPager.LayoutParams.MATCH_PARENT;
-    params.height = ViewPager.LayoutParams.WRAP_CONTENT;
+//    ViewPager.LayoutParams params = new ViewPager.LayoutParams();
+//    params.width = ViewPager.LayoutParams.MATCH_PARENT;
+//    params.height = ViewPager.LayoutParams.WRAP_CONTENT;
     setAdapter(adapter);
-    setLayoutParams(params);
+//    setLayoutParams(params);
     setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
       @Override
       public void onPageSelected(int position) {
@@ -96,13 +103,18 @@ public class FWPager extends ViewPager implements NativeCommandHandler {
   }
   @Override
   public void setStyle(Selector selector, String key, String value) {
-    // TODO Auto-generated method stub
-    
+    if (selector == Selector.NORMAL) {
+      normalStyle.setStyle(key, value);
+    } else if (selector == Selector.ACTIVE) {
+      activeStyle.setStyle(key, value);      
+    } else if (selector == Selector.LINK) {
+      linkStyle.setStyle(key, value);
+    }
   }
   @Override
   public void applyStyles() {
-    // TODO Auto-generated method stub
-    
+    currentStyle.apply(this);  
+    linkStyle.applyLinkColor(this);
   }
   @Override
   public void setError(boolean hasError, String errorText) {
