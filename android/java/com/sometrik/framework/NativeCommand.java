@@ -505,19 +505,9 @@ public class NativeCommand {
       }
       break;
     case LAUNCH_BROWSER: {
-      frame.launchBrowser(getTextValueAsString());
-//      Uri uri = Uri.parse(getTextValueAsString());
-//      Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-//      frame.startActivity(intent);
-      
-//      WebView webView = new WebView(frame);
-//      webView.loadUrl(getTextValueAsString());
-//      
-//      Activity act = new Activity();
-//      Intent intent = new Intent(act, Activity.class);
-//      frame.startActivity(intent);
-//      act.setContentView(webView);
-
+      Intent intent = new Intent(frame, FWWebActivity.class);
+      intent.putExtra(FWWebActivity.URL_EXTRA, getTextValueAsString());
+      frame.startActivity(intent);
       break;
     }
     case CREATE_DIALOG: {
