@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Timer;
 
 import com.android.trivialdrivesample.util.IabException;
 import com.android.trivialdrivesample.util.IabHelper;
@@ -29,7 +30,6 @@ import android.content.res.AssetManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -85,6 +85,7 @@ public class FrameWork extends Activity {
   private int currentView = 0;
   public static boolean transitionAnimation = false;
   public BitmapCache bitmapCache;
+  private boolean setCurrentViewDisabled = false;
 
   private native void textChangedEvent(int id, byte[] textValue);
   public native void intChangedEvent(int id, int changedInt, int changedInt2);
@@ -342,11 +343,19 @@ public class FrameWork extends Activity {
   }
 
   public void setCurrentView(final View view, Animation animation, final int newViewAnimationFromX) {
+    if (transitionAnimation) {
+      return;
+    }
+
+    Runnable runnable = new Runnable() {
+      @Override
+      public void run() {
+	transitionAnimation = false;
+      }
+    };
+	mainHandler.postDelayed(runnable, 300);
 
 	 transitionAnimation = true;
-//    animation.setAnimationListener(new Animation.AnimationListener() {
-//	@Override
-//	public void onAnimationStart(Animation animation) {
 	  currentView = view.getId();
 	  currentlyShowingView = view;
 	  
@@ -376,7 +385,9 @@ public class FrameWork extends Activity {
 	  setNativeActiveView(view.getId(), false);
 	  q.setAnimationListener(new Animation.AnimationListener() {
 	    @Override
-	    public void onAnimationEnd(Animation animation) { transitionAnimation = false; }
+	    public void onAnimationEnd(Animation animation) { 
+//	      transitionAnimation = false; 
+	      }
 	    @Override
 	    public void onAnimationRepeat(Animation animation) {  }
 	    @Override
