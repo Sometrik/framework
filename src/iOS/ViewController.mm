@@ -427,7 +427,7 @@ static const CGFloat backgroundOverlayViewAlpha = 0.5;
     // Create navigation bar with a button for opening side menu
     UINavigationBar *navBar = [[UINavigationBar alloc] initWithFrame:CGRectMake(0, 20, self.view.frame.size.width, 44)];
     UINavigationItem *navItem = [[UINavigationItem alloc] initWithTitle:@"title"];
-
+    
     // Add debug event by tapping nav bar 5 times
     UITapGestureRecognizer *debugTapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(navBarTapped5Times:)];
     debugTapGesture.numberOfTapsRequired = 5;
@@ -647,11 +647,12 @@ static const CGFloat backgroundOverlayViewAlpha = 0.5;
 
 - (void)createTimer:(int)viewId interval:(double)interval
 {
-  [NSTimer scheduledTimerWithTimeInterval:interval
+    NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:interval
                                    target:self
                                  selector:@selector(sendTimerEvent:)
                                  userInfo:nil
                                   repeats:YES];
+    [[NSRunLoop mainRunLoop] addTimer:timer forMode:NSRunLoopCommonModes];
 }
 
 - (void)sendTimerEvent:(NSTimer *)timer
