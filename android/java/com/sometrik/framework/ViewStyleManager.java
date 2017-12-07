@@ -76,7 +76,7 @@ class ViewStyleManager {
   private IconAttachment iconAttachment = null;
   private int[] gradientColors = null;
   private Integer lineSpacing = null;
-  private boolean showDecorations = true;
+  private boolean showDecorations = false;
   private boolean isDefault = false;
   
   private static final float ANDROID_DEFAULT_LINESPACING_MODIFIER = 17.1f;
