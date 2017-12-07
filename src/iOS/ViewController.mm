@@ -25,11 +25,13 @@ extern FWApplication * applicationMain();
 @property (nonatomic, strong) UIScrollView *pageView;
 @property (nonatomic) int activeDialogId;
 @property (nonatomic) int activeViewId;
+@property (nonatomic, assign) BOOL sideMenuPanned;
 //@property (nonatomic, strong) NSSet *tabBarHiddenInThesePages;
 @end
 
 static const NSTimeInterval animationDuration = 0.4;
 static const CGFloat backgroundOverlayViewAlpha = 0.5;
+static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
 @implementation ViewController
 
@@ -107,13 +109,37 @@ static const CGFloat backgroundOverlayViewAlpha = 0.5;
     }
 }
 
-- (void)edgeSwiped:(UISwipeGestureRecognizer *)gesture
+- (void)edgeSwiped:(UIScreenEdgePanGestureRecognizer *)recognizer
 {
-    if (gesture.state == UIGestureRecognizerStateEnded) {
-        if (self.sideMenuView.isHidden) {
-            [self showNavigationViewWithAnimation:YES];
+    if (self.sideMenuView) {
+        self.sideMenuView.hidden = NO;
+        self.backgroundOverlayView.hidden = NO;
+        CGPoint touchLocation = [recognizer translationInView:self.view];
+        NSLog(@"location = %@", NSStringFromCGPoint(touchLocation));
+        if (recognizer.state == UIGestureRecognizerStateBegan || recognizer.state == UIGestureRecognizerStateChanged) {
+            if (touchLocation.x < CGRectGetWidth(self.view.frame)-sideMenuOpenSpaceWidth) {
+                self.sideMenuView.frame = CGRectMake(touchLocation.x-CGRectGetWidth(self.sideMenuView.frame), 0, CGRectGetWidth(self.sideMenuView.frame), CGRectGetHeight(self.sideMenuView.frame));
+                self.backgroundOverlayView.alpha = backgroundOverlayViewAlpha * CGRectGetMaxX(self.sideMenuView.frame) / (CGRectGetWidth(self.view.frame) - sideMenuOpenSpaceWidth);
+                self.sideMenuPanned = YES;
+            }
+        } else if (recognizer.state == UIGestureRecognizerStateEnded) {
+            if (CGRectGetMaxX(self.sideMenuView.frame) > (CGRectGetWidth(self.view.frame)-sideMenuOpenSpaceWidth) / 2) {
+                [self showNavigationViewWithAnimation:YES];
+                self.sideMenuPanned = NO;
+            } else {
+                [self hideNavigationViewWithAnimation:YES];
+                self.sideMenuPanned = NO;
+            }
+            
         }
+
     }
+}
+
+- (void)sideMenuPanned:(UIPanGestureRecognizer *)recognizer
+{
+    CGPoint touchLocation = [recognizer translationInView:recognizer.view];
+    NSLog(@"location = %@", NSStringFromCGPoint(touchLocation));
 }
 
 - (void)createBackgroundOverlay
@@ -136,6 +162,7 @@ static const CGFloat backgroundOverlayViewAlpha = 0.5;
         [self sendIntValue:self.activeDialogId value:0];
         self.activeDialogId = 0;
     }
+    /*
     [UIView animateWithDuration:animationDuration animations:^{
         self.backgroundOverlayView.alpha = 0.0;
     } completion:^(BOOL finished) {
@@ -143,6 +170,7 @@ static const CGFloat backgroundOverlayViewAlpha = 0.5;
             self.backgroundOverlayView.hidden = YES;
         }
     }];
+     */
 }
 
 - (void)hideBackgroundOverlayViewWithAnimation:(BOOL)animate
@@ -551,7 +579,7 @@ static const CGFloat backgroundOverlayViewAlpha = 0.5;
 - (void)createNavigationView:(int)viewId
 {
     CGRect viewFrame = self.view.bounds;
-    CGRect frame = CGRectMake(CGRectGetMinX(viewFrame), CGRectGetMinY(viewFrame), CGRectGetWidth(viewFrame)-100, CGRectGetHeight(viewFrame));
+    CGRect frame = CGRectMake(CGRectGetMinX(viewFrame), CGRectGetMinY(viewFrame), CGRectGetWidth(viewFrame)-sideMenuOpenSpaceWidth, CGRectGetHeight(viewFrame));
     self.sideMenuView = [[UIView alloc] initWithFrame:frame];
     self.sideMenuView.tag = viewId;
     self.sideMenuView.hidden = YES;
@@ -567,35 +595,43 @@ static const CGFloat backgroundOverlayViewAlpha = 0.5;
 
 - (void)showNavigationViewWithAnimation:(BOOL)animate
 {
-    self.sideMenuView.hidden = NO;
-    self.backgroundOverlayView.hidden = NO;
-    self.backgroundOverlayView.alpha = 0.0;
-    if (self.sideMenuView) {
-        if (animate) {
-            [UIView animateWithDuration:animationDuration animations:^{
-                self.sideMenuView.transform = CGAffineTransformTranslate(self.sideMenuView.transform, CGRectGetWidth(self.sideMenuView.frame), 0.0);
-                self.backgroundOverlayView.alpha = backgroundOverlayViewAlpha;
-            }];
-        } else {
-            self.sideMenuView.transform = CGAffineTransformTranslate(self.sideMenuView.transform, CGRectGetWidth(self.sideMenuView.frame), 0.0);
-            self.backgroundOverlayView.alpha = backgroundOverlayViewAlpha;
+    if (self.sideMenuView.isHidden || self.sideMenuPanned) {
+        [self sendIntValue:self.sideMenuView.tag value:1];
+        self.backgroundOverlayView.hidden = NO;
+        self.backgroundOverlayView.alpha = backgroundOverlayViewAlpha * CGRectGetMaxX(self.sideMenuView.frame) / (CGRectGetWidth(self.view.frame) - sideMenuOpenSpaceWidth);
+        if (self.sideMenuView) {
+            if (animate) {
+                [UIView animateWithDuration:animationDuration animations:^{
+                    self.sideMenuView.transform = CGAffineTransformTranslate(self.sideMenuView.transform, CGRectGetWidth(self.sideMenuView.frame)-CGRectGetMaxX(self.sideMenuView.frame), 0.0);
+                    self.backgroundOverlayView.alpha = backgroundOverlayViewAlpha * CGRectGetMaxX(self.sideMenuView.frame) / (CGRectGetWidth(self.view.frame) - sideMenuOpenSpaceWidth);
+                }];
+            } else {
+                self.sideMenuView.transform = CGAffineTransformTranslate(self.sideMenuView.transform, CGRectGetWidth(self.sideMenuView.frame)-CGRectGetMaxX(self.sideMenuView.frame), 0.0);
+                self.backgroundOverlayView.alpha = backgroundOverlayViewAlpha * CGRectGetMaxX(self.sideMenuView.frame) / (CGRectGetWidth(self.view.frame) - sideMenuOpenSpaceWidth);
+            }
         }
+        self.sideMenuView.hidden = NO;
     }
 }
 
 - (void)hideNavigationViewWithAnimation:(BOOL)animate
 {
     if (self.sideMenuView) {
+        [self sendIntValue:self.sideMenuView.tag value:0];
         if (animate) {
             [UIView animateWithDuration:animationDuration animations:^{
-                self.sideMenuView.transform = CGAffineTransformTranslate(self.sideMenuView.transform, -(CGRectGetWidth(self.sideMenuView.frame)), 0.0);
+                self.sideMenuView.transform = CGAffineTransformTranslate(self.sideMenuView.transform, -((CGRectGetWidth(self.sideMenuView.frame)+CGRectGetMaxX(self.sideMenuView.frame))), 0.0);
+                self.backgroundOverlayView.alpha = backgroundOverlayViewAlpha * CGRectGetMaxX(self.sideMenuView.frame) / (CGRectGetWidth(self.view.frame) - sideMenuOpenSpaceWidth);
             } completion:^(BOOL finished) {
                 if (finished) {
                     self.sideMenuView.hidden = YES;
+                    self.backgroundOverlayView.hidden = YES;
                 }
             }];
         } else {
-            self.sideMenuView.transform = CGAffineTransformTranslate(self.sideMenuView.transform, -(CGRectGetWidth(self.sideMenuView.frame)), 0.0);
+            self.sideMenuView.transform = CGAffineTransformTranslate(self.sideMenuView.transform, -((CGRectGetWidth(self.sideMenuView.frame)+CGRectGetMaxX(self.sideMenuView.frame))), 0.0);
+            self.backgroundOverlayView.alpha = 0.0;
+            self.backgroundOverlayView.hidden = YES;
             self.sideMenuView.hidden = YES;
         }
     }
