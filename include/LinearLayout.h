@@ -11,7 +11,7 @@
 
 class LinearLayout : public Element {
  public:
-  LinearLayout(int _direction, int _id = 0) : Element(_id), direction(_direction) { }
+  LinearLayout(int _direction = FW_VERTICAL, int _id = 0) : Element(_id), direction(_direction) { }
 
   bool isA(const std::string & className) const override {
     if (className == "LinearLayout") return true;
@@ -24,6 +24,8 @@ class LinearLayout : public Element {
     ev2.dispatch(*this);
     ev.setHandled(true);
   }
+
+  void setDirection(int dir) { direction = dir; }
 
  protected:
   void create() override {
