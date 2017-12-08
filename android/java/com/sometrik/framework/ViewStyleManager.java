@@ -77,7 +77,7 @@ class ViewStyleManager {
   private IconAttachment iconAttachment = null;
   private int[] gradientColors = null;
   private Integer lineSpacing = null;
-  private boolean showDecorations = false;
+  private boolean showDecorations = true;
   private boolean isDefault = false;
   private boolean animateTransition = false;
   
@@ -647,7 +647,7 @@ class ViewStyleManager {
     if (!animators.isEmpty()) {
       AnimatorSet animatorSet = new AnimatorSet();
       animatorSet.playTogether(animators);
-      animatorSet.setDuration(300);
+      animatorSet.setDuration(200);
       animatorSet.start();
     }
   }
