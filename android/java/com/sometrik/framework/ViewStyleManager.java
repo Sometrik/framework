@@ -6,6 +6,7 @@ import java.util.regex.Pattern;
 
 import android.animation.Animator;
 import android.animation.AnimatorSet;
+import android.animation.LayoutTransition;
 import android.animation.ObjectAnimator;
 import android.app.Dialog;
 import android.content.res.ColorStateList;
@@ -78,6 +79,7 @@ class ViewStyleManager {
   private Integer lineSpacing = null;
   private boolean showDecorations = false;
   private boolean isDefault = false;
+  private boolean animateTransition = false;
   
   private static final float ANDROID_DEFAULT_LINESPACING_MODIFIER = 17.1f;
   
@@ -338,6 +340,10 @@ class ViewStyleManager {
       } else {
 	showDecorations = true;
       }
+    } else if (key.equals("animate-transition")) {
+      if (!value.equals("none")) {
+	animateTransition = true;
+      }
     }
   }
 
@@ -361,6 +367,9 @@ class ViewStyleManager {
   public void apply(View view, boolean animate) {
     ArrayList<Animator> animators = new ArrayList<Animator>();
     
+//    if (animateTransition && view instanceof ViewGroup) {
+//      ((ViewGroup)view).setLayoutTransition(new LayoutTransition());
+//    }
     if (opacity != null) {
       if (animate) {
 	animators.add(ObjectAnimator.ofFloat(view, View.ALPHA, opacity));	
