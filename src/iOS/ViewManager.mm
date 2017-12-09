@@ -68,10 +68,10 @@
             } else if ([value isEqualToString:@"wrap-content"]) {
                 
             } else {
-                if (!self.constraintsSet) {
-                    int width = (int)[value integerValue];
-                    [view.widthAnchor constraintEqualToConstant:width].active = true;
-                }
+                int width = (int)[value integerValue];
+                NSLayoutConstraint * c = [view.widthAnchor constraintEqualToConstant:width];
+                c.priority = 999;
+                c.active = true;
             }
         } else if ([key isEqualToString:@"height"]) {
             if ([value isEqualToString:@"match-parent"]) {
@@ -79,10 +79,10 @@
             } else if ([value isEqualToString:@"wrap-content"]) {
                 
             } else {
-                if (!self.constraintsSet) {
-                    int height = (int)[value integerValue];
-                    [view.heightAnchor constraintEqualToConstant:height].active = true;
-                }
+                int height = (int)[value integerValue];
+                NSLayoutConstraint * c = [view.heightAnchor constraintEqualToConstant:height];
+                c.priority = 999;
+                c.active = true;
             }
         } else if ([key isEqualToString:@"border-radius"]) {
             view.layer.cornerRadius = (int)[value integerValue];
