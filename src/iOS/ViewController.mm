@@ -4,6 +4,7 @@
 #include "iOSMainThread.h"
 
 #import "ImageWrapper.h"
+#import "FWImageView.h"
 
 #include <memory>
 
@@ -339,9 +340,8 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 - (void)createImageWithId:(int)viewId parentId:(int)parentId filename:(NSString *)filename
 {
     UIImage *image = [UIImage imageNamed:filename];
-    UIImageView *imageView = [[UIImageView alloc] initWithImage:image];
+    FWImageView *imageView = [[UIImageView alloc] initWithImage:image];
     imageView.tag = viewId;
-    imageView.contentScaleFactor = 1.0f;
     imageView.contentMode = UIViewContentModeScaleAspectFit;
     [self addView:imageView withId:viewId];
     [self addToParent:parentId view:imageView];
