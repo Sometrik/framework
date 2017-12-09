@@ -340,7 +340,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 - (void)createImageWithId:(int)viewId parentId:(int)parentId filename:(NSString *)filename
 {
     UIImage *image = [UIImage imageNamed:filename];
-    FWImageView *imageView = [[UIImageView alloc] initWithImage:image];
+    FWImageView *imageView = [[FWImageView alloc] initWithImage:image];
     imageView.tag = viewId;
     imageView.contentMode = UIViewContentModeScaleAspectFit;
     [self addView:imageView withId:viewId];
