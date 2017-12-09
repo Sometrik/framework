@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import com.sometrik.framework.NativeCommand.Selector;
 
+import android.animation.LayoutTransition;
 import android.graphics.Bitmap;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -38,6 +39,18 @@ public class FWPager extends ViewPager implements NativeCommandHandler {
   }
   
   @Override
+  public void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+    super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+    View currentView = adapter.currentItem;
+    if (currentView != null) {
+        currentView.measure(widthMeasureSpec, heightMeasureSpec);
+        super.onMeasure(widthMeasureSpec, View.MeasureSpec.makeMeasureSpec(currentView.getMeasuredHeight(), View.MeasureSpec.EXACTLY));
+        return;
+    }
+    super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+  }
+  
+  @Override
   public void onScreenOrientationChange(boolean isLandscape) {
     // TODO Auto-generated method stub
     
@@ -46,6 +59,7 @@ public class FWPager extends ViewPager implements NativeCommandHandler {
   public void addChild(View view) {
     adapter.addToList(view);
 	adapter.notifyDataSetChanged();
+	System.out.println("Pager add page");
 //    addView(view);s
   }
   @Override
@@ -140,6 +154,7 @@ public class FWPager extends ViewPager implements NativeCommandHandler {
   private class FWPagerAdapter extends PagerAdapter {
 
   private ArrayList<View> viewList;
+  private View currentItem;
   
     public FWPagerAdapter() {
       viewList = new ArrayList<View>();
@@ -155,6 +170,13 @@ public class FWPager extends ViewPager implements NativeCommandHandler {
       return viewList.size();
     }
     
+
+    @Override 
+    public void setPrimaryItem(ViewGroup container, int position, Object object ) {
+      super.setPrimaryItem(container, position, object);
+      currentItem = (View)object;
+    }
+
     @Override
     public void startUpdate(ViewGroup container) {
       super.startUpdate(container);
