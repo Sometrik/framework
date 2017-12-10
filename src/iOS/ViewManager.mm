@@ -1,5 +1,7 @@
 #import "ViewManager.h"
 
+#import "FWImageView.h"
+
 @implementation ViewManager;
 
 - (id)init
@@ -19,7 +21,10 @@
 
 - (void)addImageUrl:(NSString *)url width:(int)width height:(int)height
 {
-  
+    if ([self.view isKindOfClass:FWImageView.class]) {
+        FWImageView *imageView = (FWImageView *)self.view;
+        [imageView addImageUrl:url width:width height:height];
+    }
 }
 
 - (void)setImage:(UIImage *)data
