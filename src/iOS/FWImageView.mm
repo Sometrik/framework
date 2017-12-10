@@ -7,7 +7,7 @@
     NSLog(@"FWImageView, layoutSubview(): %f %f", self.frame.size.width, self.frame.size.height);
 }
 
-- (void)addImageUrl: (int)viewId width:(int)width height:(int)height url:(NSString *)url
+- (void)addImageUrl:(NSString *)url width:(int)width height:(int)height
 {
     self.url = url;
 }

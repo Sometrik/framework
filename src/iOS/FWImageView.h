@@ -2,7 +2,7 @@
 
 @interface FWImageView : UIImageView
 - (void)layoutSubviews;
-- (void)addImageUrl: (int)viewId width:(int)width height:(int)height url:(NSString *)url;
+- (void)addImageUrl:(NSString *)url width:(int)width height:(int)height;
 
 @property NSString * url;
 @end
