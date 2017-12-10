@@ -407,10 +407,14 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
 - (void)createPageLayoutWithId:(int)viewId parentId:(int)parentId
 {
+    CGFloat tabBarHeight = self.tabBar == nil ? 0.0 : 44.0;
+    CGFloat topBarsHeight = self.navBar == nil ? 0.0 : 64.0;
+    CGFloat frameHeight = self.view.bounds.size.height-topBarsHeight-tabBarHeight;
+  
     UIScrollView * scrollView = [[UIScrollView alloc] init];
     scrollView.tag = viewId;
     scrollView.pagingEnabled = YES;
-    scrollView.contentSize = CGSizeMake(0, self.view.bounds.size.height);
+    scrollView.contentSize = CGSizeMake(0, frameHeight);
     scrollView.frame = self.view.frame;
     scrollView.clipsToBounds = YES;
     scrollView.delegate = self;
