@@ -58,19 +58,7 @@ class Element : public EventHandler {
     is_visible = ev.isVisible();
   }
 
-  Element & insertChild(const std::shared_ptr<Element> & element) {
-    element->parent = this;
-    children.insert(children.begin(), element);
-
-    if (isInitialized()) {
-      element->initialize(thread);
-      element->initializeChildren();
-      element->load();
-    }
-    return *element;
-  }  
-
-  Element & addChild(const std::shared_ptr<Element> & element) {
+  virtual Element & addChild(const std::shared_ptr<Element> & element) {
     element->setParent(this);
     children.push_back(element);
 
