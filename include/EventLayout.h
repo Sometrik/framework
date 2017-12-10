@@ -22,6 +22,14 @@ class EventLayout : public Element {
     ev.setHandled(true);
   }
 
+  Element & addChild(const std::shared_ptr<Element> & element) override {
+    if (getChildren().empty()) {
+      return Element::addChild(element);
+    } else {
+      return *element;
+    }
+  }
+
  protected:
   void create() override {
     Command c(Command::CREATE_EVENT_LAYOUT, getParentInternalId(), getInternalId());
