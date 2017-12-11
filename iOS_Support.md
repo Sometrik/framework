@@ -255,8 +255,11 @@ s2 = [s1 cStringUsingEncoding:NSUTF8StringEncoding];
 - If using server side validation, it's simply forwarding the receipt to your server and back to AppStore that validates it and sends a response that consists of validation result (valid or invalid) and receipt info encoded (json).
 - Validating locally requires code to read and validate a PKCS #7 signature, and code to parse and validate the signed payload.
 - More info about receipt validation:
+
 [WWDC: Preventing Unauthorized Purchases with Receipts](https://developer.apple.com/videos/play/wwdc2014/305/)
+
 [Receipt Validation Programming Guide](https://developer.apple.com/library/content/releasenotes/General/ValidateAppStoreReceipt/Introduction.html#//apple_ref/doc/uid/TP40010573-CH105-SW1)
+
 
 
 
