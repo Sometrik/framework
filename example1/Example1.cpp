@@ -51,7 +51,14 @@ Example1::Example1() : FWApplication("com.sometrik.example1")
 
   auto flipper = std::make_shared<FlipperLayout>();
   mainView->addChild(flipper);
+
+  auto navigationBar = std::make_shared<NavigationBar>();
+  navigationBar->addChild(std::make_shared<NavigationBarItem>("Page 1")).style("icon", "icon1.png");
+  navigationBar->addChild(std::make_shared<NavigationBarItem>("Page 2")).style("icon", "icon2.png");
+  navigationBar->addChild(std::make_shared<NavigationBarItem>("Page 3")).style("icon", "icon3.png");
   
+  mainView->addChild(navigationBar);
+
   auto firstPage = std::make_shared<LinearLayout>(FW_VERTICAL);
   flipper->addChild(firstPage);
   
@@ -91,11 +98,9 @@ Example1::Example1() : FWApplication("com.sometrik.example1")
   
   firstPage->addChild(make_shared<Switch>("On", "Off"));
 
-#if 1
   auto secondPage = std::make_shared<LinearLayout>(FW_VERTICAL);
   secondPage->style("background", "#e03030");
   flipper->addChild(secondPage);
-  
     
   auto scrollLayout2 = std::make_shared<ScrollLayout>();
   secondPage->addChild(scrollLayout2);
@@ -105,16 +110,8 @@ Example1::Example1() : FWApplication("com.sometrik.example1")
   for (char c = 'A'; c <= 'Z'; c++) {
     string s;
     s += c;
-    scrollContent2->addChild(make_shared<TextLabel>(s));
+    scrollContent2->addChild(make_shared<TextLabel>(s)).style("font-size", 80);
   }
-    auto navigationBar = std::make_shared<NavigationBar>();
-    navigationBar->addChild(std::make_shared<NavigationBarItem>("Page 1")).style("icon", "icon1.png");
-    navigationBar->addChild(std::make_shared<NavigationBarItem>("Page 2")).style("icon", "icon2.png");
-    navigationBar->addChild(std::make_shared<NavigationBarItem>("Page 3")).style("icon", "icon3.png");
-    
-    secondPage->addChild(navigationBar);
-  
-#endif
 
 #if 1
   auto thirdPage = std::make_shared<LinearLayout>(FW_VERTICAL);

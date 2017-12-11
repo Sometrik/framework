@@ -5,6 +5,7 @@
 
 #import "ImageWrapper.h"
 #import "InAppPurchaseManager.h"
+#import "FWImageView.h"
 
 #include <memory>
 
@@ -342,9 +343,8 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 - (void)createImageWithId:(int)viewId parentId:(int)parentId filename:(NSString *)filename
 {
     UIImage *image = [UIImage imageNamed:filename];
-    UIImageView *imageView = [[UIImageView alloc] initWithImage:image];
+    FWImageView *imageView = [[FWImageView alloc] initWithImage:image];
     imageView.tag = viewId;
-    imageView.contentScaleFactor = 1.0f;
     imageView.contentMode = UIViewContentModeScaleAspectFit;
     [self addView:imageView withId:viewId];
     [self addToParent:parentId view:imageView];
@@ -410,10 +410,14 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
 - (void)createPageLayoutWithId:(int)viewId parentId:(int)parentId
 {
+    CGFloat tabBarHeight = self.tabBar == nil ? 0.0 : 44.0;
+    CGFloat topBarsHeight = self.navBar == nil ? 0.0 : 64.0;
+    CGFloat frameHeight = self.view.bounds.size.height-topBarsHeight-tabBarHeight;
+  
     UIScrollView * scrollView = [[UIScrollView alloc] init];
     scrollView.tag = viewId;
     scrollView.pagingEnabled = YES;
-    scrollView.contentSize = CGSizeMake(0, self.view.bounds.size.height);
+    scrollView.contentSize = CGSizeMake(0, frameHeight);
     scrollView.frame = self.view.frame;
     scrollView.clipsToBounds = YES;
     scrollView.delegate = self;

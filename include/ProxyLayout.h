@@ -1,17 +1,19 @@
 #ifndef _PROXYLAYOUT_H_
 #define _PROXYLAYOUT_H_
 
-#include <LinearLayout.h>
+#include <Element.h>
 #include <ScrollChangedEvent.h>
+#include <Pager.h>
 
-template <class T1, class T2>
-class ProxyLayout : public LinearLayout {
+template <class T1, class T2, class T3>
+class ProxyLayout : public T3 {
 public:
-  ProxyLayout(int _direction, int _initial_visible_count, int _id = 0) : LinearLayout(_direction, _id), max_visible_count(_initial_visible_count) { }
+
+  ProxyLayout(int _initial_visible_count) : max_visible_count(_initial_visible_count) { }
 
   bool isA(const std::string & className) const override {
     if (className == "ProxyLayout") return true;
-    return Element::isA(className);
+    return T3::isA(className);
   }
   
   void clear() {
@@ -33,7 +35,7 @@ public:
       if (visible_keys.count(it->first)) {
         it++;
       } else {
-        removeChild(it->second.get());
+        Element::removeChild(it->second.get());
         it = content.erase(it);
       }
     }
@@ -44,14 +46,14 @@ public:
       current_content_height = ev.getHeight();
 
       if (all_keys.size() > max_visible_count) {
-        begin();
+        Element::begin();
         unsigned int c = 10;
         for (unsigned int i = max_visible_count; i < max_visible_count + c && i < all_keys.size(); i++) {
           auto & p = all_keys[i];
           showKey(i, p.first, p.second);
         }
         max_visible_count += c;
-        commit();
+        Element::commit();
       }
     }
   }
@@ -59,15 +61,15 @@ public:
 protected:
   void showKey(unsigned int pos, const T1 & key, const T2 & data) {
     visible_keys.insert(key);
-      
+
     auto orig = getContent(key);
     if (orig.get()) {
       updateContent(*orig, key, data);
-      reorderChildren(*orig, pos);
+      Element::reorderChildren(*orig, pos);
     } else {
       auto e = createContent(key, data);
       content[key] = e;
-      addChild(e);
+      Element::addChild(e);
     }
   }
   

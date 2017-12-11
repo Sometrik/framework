@@ -32,3 +32,6 @@
 
 # Emacs backup file
 *~
+
+# MacOS stuff
+.DS_Store
