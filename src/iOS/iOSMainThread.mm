@@ -2,6 +2,7 @@
 
 #include <ValueEvent.h>
 #include <TimerEvent.h>
+#include <ImageRequestEvent.h>
 
 #import "EventWrapper.h"
 
@@ -315,4 +316,14 @@ iOSMainThread::sendTimerEvent(int viewId) {
     TimerEvent ev(0);
     Element::postEventToElement(viewId, ev);
 }
-        
+
+void
+iOSMainThread::sendImageRequest(int viewId, unsigned int width, unsigned int height, const std::string & url, int internalFormat) {
+    cerr << "sending image request, width = " << width << ", height = " << height << ", url = " << url << endl;
+  
+    ImageRequestEvent ev(ImageRequestEvent::REQUEST, viewId, width, height);
+    if (internalFormat != 0) {
+      ev.setInternalFormat((canvas::InternalFormat)internalFormat);
+    }
+    sendEvent(getApplication().getInternalId(), ev);
+}
