@@ -342,10 +342,17 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
 - (void)createImageWithId:(int)viewId parentId:(int)parentId filename:(NSString *)filename
 {
-    UIImage *image = [UIImage imageNamed:filename];
-    FWImageView *imageView = [[FWImageView alloc] initWithImage:image];
+    FWImageView * imageView;
+    if (filename != nil && ![filename hasPrefix:@"http://"] && ![filename hasPrefix:@"https://"]) {
+        UIImage *image = [UIImage imageNamed:filename];
+        imageView = [[FWImageView alloc] initWithImage:image];
+    } else {
+        imageView = [[FWImageView alloc] init];
+        [imageView addImageUrl:filename width:0 height:0];
+    }
     imageView.tag = viewId;
     imageView.contentMode = UIViewContentModeScaleAspectFit;
+    imageView.delegate = self;
     [self addView:imageView withId:viewId];
     [self addToParent:parentId view:imageView];
 }
@@ -881,7 +888,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
 - (void)sendEvent:(EventWrapper*)event
 {
-    mainThread->handleEventFromThread(event.targetElementId, (Event *)event.eventPtr);
+    mainThread->handleEventFromThread((int)event.targetElementId, (Event *)event.eventPtr);
 }
 
 - (void)setTitle:(NSString*)title
@@ -903,7 +910,11 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
 - (void)fwImageView:(FWImageView *)imageView didChangeSize:(CGSize)size ofImageUrl:(NSString *)url
 {
-    // width: size.width, height: size.height
+    string s;
+    if (url != nil) {
+      s = [url cStringUsingEncoding:NSUTF8StringEncoding];
+    }
+    mainThread->sendImageRequest((int)imageView.tag, size.width, size.height, s);
 }
 
 @end
