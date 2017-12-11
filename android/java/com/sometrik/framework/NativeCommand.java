@@ -11,8 +11,6 @@ import com.android.trivialdrivesample.util.IabResult;
 import com.android.trivialdrivesample.util.Inventory;
 import com.android.trivialdrivesample.util.Purchase;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.support.v4.app.ShareCompat;
 import android.text.Editable;
 import android.text.Html;
@@ -26,7 +24,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.view.inputmethod.EditorInfo;
-import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.CompoundButton;
@@ -104,6 +101,7 @@ public class NativeCommand {
     CREATE_PROGRESSBAR,
     CREATE_TOAST,
     CREATE_NOTIFICATION,
+    CREATE_PAGE_CONTROL,
     DELETE_ELEMENT,
     REMOVE_CHILD,
     REORDER_CHILD,
@@ -427,6 +425,15 @@ public class NativeCommand {
       FWNotification notif = new FWNotification(frame, getTextValueAsString(), getTextValue2AsString());
       notif.setId(childInternalId);
       frame.addToViewList(notif);
+      break;
+    }
+    
+    case CREATE_PAGE_CONTROL: {
+      FWPageIndicator indicator = new FWPageIndicator(frame, 5);
+      indicator.setId(childInternalId);
+      frame.addToViewList(indicator);
+      
+      
       break;
     }
     
