@@ -23,6 +23,11 @@ public class FWButton extends Button implements NativeCommandHandler {
     this.activeStyle = new ViewStyleManager(bitmapCache, scale, false);
     this.selectedStyle = new ViewStyleManager(bitmapCache, scale, false);
     
+    setMinHeight(0);
+    setMinimumHeight(0);
+    setMinWidth(0);
+    setMinimumWidth(0);
+    
     final FWButton button = this;
         
     setOnTouchListener(new OnTouchListener() {
