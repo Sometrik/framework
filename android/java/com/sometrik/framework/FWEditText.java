@@ -103,6 +103,7 @@ public class FWEditText extends EditText implements NativeCommandHandler {
   @Override
   public void setValue(String v) {
     setText(v);
+    setSelection(getText().length());
   }
 
   @Override
