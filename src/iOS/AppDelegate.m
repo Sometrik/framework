@@ -1,6 +1,7 @@
 #import "AppDelegate.h"
-
+#import "StoreKit/SKPaymentQueue.h"
 #include "ViewController.h"
+#import "InAppPurchaseManager.h"
 
 @implementation AppDelegate
 
@@ -40,10 +41,14 @@
   window = [[UIWindow alloc] initWithFrame: screenBounds];
   // view = [[OpenGLView alloc] initWithFrame: screenBounds];
   controller = [[ViewController alloc] init];
+    
   // controller.view = view;
   //  [window addSubview: view];
   [window setRootViewController:controller];
   [window makeKeyAndVisible];
+    
+  // Make app to observe payment transactions
+  [[SKPaymentQueue defaultQueue] addTransactionObserver:[InAppPurchaseManager sharedInstance]];
 }
 
 // the app is going to be suspended to the background,

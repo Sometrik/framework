@@ -38,6 +38,9 @@
 		26738C6B1FC5E1B200E24663 /* URI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26738C641FC5E1B200E24663 /* URI.cpp */; };
 		26738C6C1FC5E1B200E24663 /* utf8 in Resources */ = {isa = PBXBuildFile; fileRef = 26738C651FC5E1B200E24663 /* utf8 */; };
 		26738C721FC5E33F00E24663 /* Example1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26738C711FC5E33F00E24663 /* Example1.cpp */; };
+		26AC2E7F1FDA78E800625C2E /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 26AC2E7E1FDA78E800625C2E /* StoreKit.framework */; };
+		26AC2E841FDA80CB00625C2E /* product_ids.plist in Resources */ = {isa = PBXBuildFile; fileRef = 26AC2E831FDA80CB00625C2E /* product_ids.plist */; };
+		26B1F3A41FDE875300C4369F /* InAppPurchaseManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = 26B1F3A31FDE875300C4369F /* InAppPurchaseManager.mm */; };
 		26BBBA7B1FCE9C6800DD5174 /* ViewManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = 26BBBA751FCE9C6700DD5174 /* ViewManager.mm */; };
 		26BBBA7C1FCE9C6800DD5174 /* EventWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 26BBBA761FCE9C6700DD5174 /* EventWrapper.m */; };
 		26BBBA7D1FCE9C6800DD5174 /* ImageWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 26BBBA781FCE9C6800DD5174 /* ImageWrapper.m */; };
@@ -87,6 +90,12 @@
 		26738C6E1FC5E30500E24663 /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
 		26738C701FC5E33F00E24663 /* Example1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Example1.h; path = ../../../../../example1/Example1.h; sourceTree = "<group>"; };
 		26738C711FC5E33F00E24663 /* Example1.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Example1.cpp; path = ../../../../../example1/Example1.cpp; sourceTree = "<group>"; };
+		26AC2E7E1FDA78E800625C2E /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
+		26AC2E831FDA80CB00625C2E /* product_ids.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = product_ids.plist; sourceTree = "<group>"; };
+		26B1F3A01FDE875200C4369F /* InAppPurchaseManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InAppPurchaseManager.h; path = ../../../../src/iOS/InAppPurchaseManager.h; sourceTree = "<group>"; };
+		26B1F3A11FDE875300C4369F /* iOSThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = iOSThread.h; path = ../../../../src/iOS/iOSThread.h; sourceTree = "<group>"; };
+		26B1F3A21FDE875300C4369F /* iOSLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = iOSLogger.h; path = ../../../../src/iOS/iOSLogger.h; sourceTree = "<group>"; };
+		26B1F3A31FDE875300C4369F /* InAppPurchaseManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = InAppPurchaseManager.mm; path = ../../../../src/iOS/InAppPurchaseManager.mm; sourceTree = "<group>"; };
 		26BBBA751FCE9C6700DD5174 /* ViewManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ViewManager.mm; path = ../../../../src/iOS/ViewManager.mm; sourceTree = "<group>"; };
 		26BBBA761FCE9C6700DD5174 /* EventWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = EventWrapper.m; path = ../../../../src/iOS/EventWrapper.m; sourceTree = "<group>"; };
 		26BBBA771FCE9C6700DD5174 /* ViewManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewManager.h; path = ../../../../src/iOS/ViewManager.h; sourceTree = "<group>"; };
@@ -100,6 +109,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				26AC2E7F1FDA78E800625C2E /* StoreKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -188,6 +198,11 @@
 				26BBBA781FCE9C6800DD5174 /* ImageWrapper.m */,
 				26BBBA771FCE9C6700DD5174 /* ViewManager.h */,
 				26BBBA751FCE9C6700DD5174 /* ViewManager.mm */,
+				26B1F3A01FDE875200C4369F /* InAppPurchaseManager.h */,
+				26B1F3A31FDE875300C4369F /* InAppPurchaseManager.mm */,
+				26B1F3A21FDE875300C4369F /* iOSLogger.h */,
+				26B1F3A11FDE875300C4369F /* iOSThread.h */,
+				26AC2E831FDA80CB00625C2E /* product_ids.plist */,
 				26738C2C1FC5E12C00E24663 /* src */,
 			);
 			path = framework;
@@ -211,6 +226,7 @@
 		26738C6D1FC5E30500E24663 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				26AC2E7E1FDA78E800625C2E /* StoreKit.framework */,
 				26738C6E1FC5E30500E24663 /* ImageIO.framework */,
 			);
 			name = Frameworks;
@@ -257,6 +273,11 @@
 					26738C0F1FC5E0C300E24663 = {
 						CreatedOnToolsVersion = 9.1;
 						ProvisioningStyle = Automatic;
+						SystemCapabilities = {
+							com.apple.InAppPurchase = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};
@@ -283,6 +304,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				26AC2E841FDA80CB00625C2E /* product_ids.plist in Resources */,
 				26738C6C1FC5E1B200E24663 /* utf8 in Resources */,
 				26738C201FC5E0C300E24663 /* LaunchScreen.storyboard in Resources */,
 				26738C1D1FC5E0C300E24663 /* Assets.xcassets in Resources */,
@@ -322,6 +344,7 @@
 				26738C571FC5E19500E24663 /* ImageData.cpp in Sources */,
 				26738C561FC5E19500E24663 /* Image.cpp in Sources */,
 				26738C3D1FC5E15100E24663 /* Element.cpp in Sources */,
+				26B1F3A41FDE875300C4369F /* InAppPurchaseManager.mm in Sources */,
 				26738C3B1FC5E15100E24663 /* FWApplication.cpp in Sources */,
 				26BBBA7B1FCE9C6800DD5174 /* ViewManager.mm in Sources */,
 				26738C5A1FC5E19500E24663 /* rg_etc1.cpp in Sources */,

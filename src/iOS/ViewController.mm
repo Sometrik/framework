@@ -4,6 +4,7 @@
 #include "iOSMainThread.h"
 
 #import "ImageWrapper.h"
+#import "InAppPurchaseManager.h"
 
 #include <memory>
 
@@ -15,7 +16,7 @@ std::shared_ptr<iOSMainThread> mainThread;
 // Declare C++ function
 extern FWApplication * applicationMain();
 
-@interface ViewController () <UIScrollViewDelegate, UITabBarDelegate>
+@interface ViewController () <UIScrollViewDelegate, UITabBarDelegate, InAppPurchaseManagerDelegate>
 @property (nonatomic, strong) NSMutableDictionary *viewsDictionary;
 @property (nonatomic, strong) UIView *sideMenuView;
 @property (nonatomic, strong) UIView *backgroundOverlayView;
@@ -26,6 +27,7 @@ extern FWApplication * applicationMain();
 @property (nonatomic) int activeDialogId;
 @property (nonatomic) int activeViewId;
 @property (nonatomic, assign) BOOL sideMenuPanned;
+@property (nonatomic, strong) InAppPurchaseManager *inAppPurchaseManager;
 //@property (nonatomic, strong) NSSet *tabBarHiddenInThesePages;
 @end
 
@@ -43,7 +45,8 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
   self.activeDialogId = 0;
     
   [self createBackgroundOverlay];
-    
+  
+    self.inAppPurchaseManager = [InAppPurchaseManager sharedInstance];
   //self.view.layoutMargins = UIEdgeInsetsMake(64.0, 0, 50.0, 0);
 
   // Creating the C++ app
@@ -69,8 +72,8 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 }
 
 - (void)didReceiveMemoryWarning {
-  mainThread->sendMemoryWarning();
-  [super didReceiveMemoryWarning];
+    mainThread->sendMemoryWarning();
+    [super didReceiveMemoryWarning];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -132,7 +135,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             }
             
         }
-
+        
     }
 }
 
@@ -163,13 +166,13 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
         self.activeDialogId = 0;
     }
     /*
-    [UIView animateWithDuration:animationDuration animations:^{
-        self.backgroundOverlayView.alpha = 0.0;
-    } completion:^(BOOL finished) {
-        if (finished) {
-            self.backgroundOverlayView.hidden = YES;
-        }
-    }];
+     [UIView animateWithDuration:animationDuration animations:^{
+     self.backgroundOverlayView.alpha = 0.0;
+     } completion:^(BOOL finished) {
+     if (finished) {
+     self.backgroundOverlayView.hidden = YES;
+     }
+     }];
      */
 }
 
@@ -206,7 +209,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     [text addTarget:self action:@selector(textFieldChanged:) forControlEvents:UIControlEventEditingChanged];
     [self addView:text withId:viewId];
     [self addToParent:parentId view:text];
-  }
+}
 
 - (void)textFieldChanged:(UITextField *)sender
 {
@@ -221,8 +224,8 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     UIView *view = [self viewForId:viewId];
     
     if ([view isEqual:self.sideMenuView]) {
-      if (visibility == 0) {
-          [self hideNavigationViewWithAnimation:YES];
+        if (visibility == 0) {
+            [self hideNavigationViewWithAnimation:YES];
         } else {
             [self showNavigationViewWithAnimation:YES];
         }
@@ -275,7 +278,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     stackView.alignment = UIStackViewAlignmentFill;
     stackView.translatesAutoresizingMaskIntoConstraints = false;
     stackView.frame = self.view.frame;
-  
+    
     [self addView:stackView withId:viewId];
     [self addToParent:parentId view:stackView];
 }
@@ -472,7 +475,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     statusBarBackgroundView.barStyle = self.navBar.barStyle;
     statusBarBackgroundView.translucent = self.navBar.translucent;
     statusBarBackgroundView.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleWidth;
-
+    
     self.statusBarBackgroundView = statusBarBackgroundView;
     [self.view addSubview:statusBarBackgroundView];
 }
@@ -530,47 +533,47 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 {
     //if ([tabBar isEqual:self.tabBar]) {
     int itemIndex = (int)[self indexForTabBar:tabBar item:item];
-        [self showPage:itemIndex];
-        [self sendIntValue:(int)tabBar.tag value:(int)item.tag];
-        //[self updateTabBarVisibility:itemIndex];
+    [self showPage:itemIndex];
+    [self sendIntValue:(int)tabBar.tag value:(int)item.tag];
+    //[self updateTabBarVisibility:itemIndex];
     //}
 }
 
 /*
-- (void)updateTabBarVisibility:(int)pageIndex
-{
-    BOOL hidden = NO;
-    
-    for (NSNumber *number in self.tabBarHiddenInThesePages) {
-        if (pageIndex == number.intValue) {
-            hidden = YES;
-            break;
-        }
-    }
-    
-    if (hidden) {
-        if (self.tabBar) {
-            // Hide from first page
-            [self.tabBar setHidden:YES];
-        }
-    } else {
-        if (self.tabBar) {
-            // Show elsewhere
-            [self.tabBar setHidden:NO];
-        }
-    }
-}
-*/
+ - (void)updateTabBarVisibility:(int)pageIndex
+ {
+ BOOL hidden = NO;
+ 
+ for (NSNumber *number in self.tabBarHiddenInThesePages) {
+ if (pageIndex == number.intValue) {
+ hidden = YES;
+ break;
+ }
+ }
+ 
+ if (hidden) {
+ if (self.tabBar) {
+ // Hide from first page
+ [self.tabBar setHidden:YES];
+ }
+ } else {
+ if (self.tabBar) {
+ // Show elsewhere
+ [self.tabBar setHidden:NO];
+ }
+ }
+ }
+ */
 
 // returns index for item in tabBar.items array.
 - (NSInteger)indexForTabBar:(UITabBar *)tabBar item:(UITabBarItem *)item
 {
     //if (self.tabBar) {
-        for (int i = 0; i < tabBar.items.count; i++) {
-            if ([tabBar.items[i] isEqual:item]) {
-                return i;
-            }
+    for (int i = 0; i < tabBar.items.count; i++) {
+        if ([tabBar.items[i] isEqual:item]) {
+            return i;
         }
+    }
     //}
     return NSNotFound;
 }
@@ -650,7 +653,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 - (void)createDialogWithId:(int)viewId parentId:(int)parentId
 {
     self.activeDialogId = viewId;
-  
+    
     UIView * dialog = [[UIView alloc] init];
     dialog.tag = viewId;
     dialog.layer.backgroundColor = [UIColor grayColor].CGColor;
@@ -662,9 +665,9 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     dialog.layer.shadowRadius = 7.5;
     dialog.layer.shadowOffset = CGSizeMake(1, 4);
     dialog.clipsToBounds = NO;
-  
+    
     CGSize s = self.view.bounds.size;
-
+    
     dialog.frame = CGRectMake(50, 50, s.width - 100, s.height - 100);
     // dialog.center = CGPointMake(s.width / 2, (s.height / 2) - 65);
     
@@ -684,10 +687,10 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 - (void)createTimer:(int)viewId interval:(double)interval
 {
     NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:interval
-                                   target:self
-                                 selector:@selector(sendTimerEvent:)
-                                 userInfo:nil
-                                  repeats:YES];
+                                                      target:self
+                                                    selector:@selector(sendTimerEvent:)
+                                                    userInfo:nil
+                                                     repeats:YES];
     [[NSRunLoop mainRunLoop] addTimer:timer forMode:NSRunLoopCommonModes];
 }
 
@@ -708,11 +711,11 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     UIView *parentView = [self viewForId:parentId];
     if (parentView == nil) {
         NSLog(@"Element %d missing in addToParent", parentId);
-	return;
+        return;
     }
     
     BOOL add_basic_constraints = NO;
-  
+    
     if ([parentView isKindOfClass:UIStackView.class]) {
         UIStackView *stackView = (UIStackView *)parentView;
         [stackView addArrangedSubview:view];
@@ -725,7 +728,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             // int pageHeight = self.view.bounds.size.height;
             // view.frame = CGRectMake(pos * pageWidth, 0, pageWidth, pageHeight);
             scrollView.contentSize = CGSizeMake(scrollView.contentSize.width + pageWidth, scrollView.contentSize.height);
-          
+            
             NSLayoutConstraint *widthConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeWidth multiplier:1 constant:0];
             //NSLayoutConstraint *heightConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeHeight multiplier:1 constant:0];
             NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
@@ -741,14 +744,14 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
         
         [parentView addSubview:view];
         if (![view isKindOfClass:UITabBar.class] && ![view isKindOfClass:UINavigationBar.class]) {
-          add_basic_constraints = YES;
+            add_basic_constraints = YES;
         }
     }
-
+    
     if (add_basic_constraints) {
         ViewManager * viewManager = [self getViewManager:view.tag];
         viewManager.constraintsSet = YES;
-      
+        
         NSLayoutConstraint *widthConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeWidth multiplier:1 constant:0];
         NSLayoutConstraint *heightConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeHeight multiplier:1 constant:0];
         NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
@@ -760,7 +763,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 - (void)removeView:(int)viewId
 {
     if (self.activeDialogId == viewId) self.activeDialogId = 0;
-  
+    
     NSString * key = [NSString stringWithFormat:@"%d", viewId];
     ViewManager * viewManager = [self.viewsDictionary objectForKey:key];
     if (viewManager != nil) {
@@ -768,10 +771,10 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             UIView * view = (UIView*)viewManager.view;
             [view removeFromSuperview];
         } else {
-          
+            
         }
         [self.viewsDictionary removeObjectForKey:key];
-    
+        
         // just to take backgroundOverlayView off the screen as well
         [self hideBackgroundOverlayViewWithAnimation:YES];
     }
@@ -851,9 +854,17 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
 - (void)setTitle:(NSString*)title
 {
-  if (self.navBar != nil) {
-    self.navBar.items[0].title = title;
-  }
+    if (self.navBar != nil) {
+        self.navBar.items[0].title = title;
+    }
+}
+
+#pragma mark - In-App Purchase stuff
+
+// delegate method
+- (void)inAppPurchaseManagerDidReceiveProducts:(InAppPurchaseManager *)manager {
+    // show in-app purchase UI
+    // [self showInAppPurchaseView];
 }
 
 @end
