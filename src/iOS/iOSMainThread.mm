@@ -142,7 +142,8 @@ iOSMainThread::sendCommands(const std::vector<Command> & commands) {
         break;
         
       case Command::CREATE_ACTION_SHEET: {
-        
+        NSString * title = [NSString stringWithUTF8String:command.getTextValue().c_str()];
+        [viewController createActionSheetWithId:command.getChildInternalId() parentId:command.getInternalId() title:title];
       }
         break;
             
@@ -203,7 +204,13 @@ iOSMainThread::sendCommands(const std::vector<Command> & commands) {
 	}
       }
 	break;
-	                
+	
+      case Command::ADD_OPTION: {
+        NSString * title = [NSString stringWithUTF8String:command.getTextValue().c_str()];
+        [viewController addOption:command.getInternalId() optionId:command.getValue() title:title];
+      }
+        break;
+        
       case Command::LAUNCH_BROWSER: {
         NSString * input_url = [NSString stringWithUTF8String:command.getTextValue().c_str()];
         NSURL *url = [NSURL URLWithString:input_url];
@@ -275,6 +282,7 @@ iOSMainThread::startModal() {
 
 void
 iOSMainThread::endModal(int value) {
+  setModalResultValue(value);
   CFRunLoopStop(CFRunLoopGetCurrent());
 }
 

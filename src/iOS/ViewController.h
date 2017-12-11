@@ -26,6 +26,7 @@
 - (void)createTabBarItem:(int)viewId parentId:(int)parentId title:(NSString *)title;
 - (void)createActivityIndicatorWithId:(int)viewId parentId:(int)parentId;
 - (void)createPageControlWithId:(int)viewId parentId:(int)parentId numPages:(int)numPages;
+- (void)createActionSheetWithId:(int)viewId parentId:(int)parentId title:(NSString *)title;
 - (void)createDialogWithId:(int)viewId parentId:(int)parentId;
 - (void)createTimer:(int)viewId interval:(double)interval;
 
@@ -36,7 +37,7 @@
 - (void)addToParent:(int)parentId view:(UIView*)view;
 - (void)removeView:(int)viewId;
 - (void)reorderChildWithId:(int)viewId parentId:(int)parentId newPosition:(int)position;
-
+- (void)addOption:(int)viewId optionId:(int)optionId title:(NSString *)title;
 - (void)sendIntValue:(int)viewId value:(int)value;
 - (void)sendTextValue:(int)viewId value:(NSString *)value;
 

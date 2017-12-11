@@ -663,6 +663,15 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     [self addToParent:parentId view:view];    
 }
 
+- (void)createActionSheetWithId:(int)viewId parentId:(int)parentId title:(NSString *)title
+{
+    UIAlertController *actionSheet = [UIAlertController alertControllerWithTitle:title message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+  
+    [self addView:actionSheet withId:viewId];
+  
+    [self presentViewController:actionSheet animated:YES completion:nil];
+}
+
 - (void)createDialogWithId:(int)viewId parentId:(int)parentId
 {
     self.activeDialogId = viewId;
@@ -807,6 +816,17 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
         } else {
             [parentView insertSubview:childView atIndex:position];
         }
+    }
+}
+
+- (void)addOption:(int)viewId optionId:(int)optionId title:(NSString *)title
+{
+    id view = [self viewForId:viewId];
+    if ([view isKindOfClass:UIAlertController.class]) {
+        UIAlertController * alertController = (UIAlertController*)view;
+        [alertController addAction:[UIAlertAction actionWithTitle:title style:(optionId == 0 ? UIAlertActionStyleCancel : UIAlertActionStyleDefault) handler:^(UIAlertAction *action) {
+            mainThread->endModal(optionId);
+        }]];
     }
 }
 
