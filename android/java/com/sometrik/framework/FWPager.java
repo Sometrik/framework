@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import com.sometrik.framework.NativeCommand.Selector;
 
-import android.animation.LayoutTransition;
 import android.graphics.Bitmap;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -20,7 +19,7 @@ public class FWPager extends ViewPager implements NativeCommandHandler {
   public FWPager(final FrameWork frame) {
     super(frame);
     this.frame = frame;
-    
+
     final float scale = getContext().getResources().getDisplayMetrics().density;
     this.normalStyle = currentStyle = new ViewStyleManager(frame.bitmapCache, scale, true);
     this.activeStyle = new ViewStyleManager(frame.bitmapCache, scale, false);
@@ -42,6 +41,7 @@ public class FWPager extends ViewPager implements NativeCommandHandler {
   public void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
     super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     View currentView = adapter.currentItem;
+
     if (currentView != null) {
         currentView.measure(widthMeasureSpec, heightMeasureSpec);
         super.onMeasure(widthMeasureSpec, View.MeasureSpec.makeMeasureSpec(currentView.getMeasuredHeight(), View.MeasureSpec.EXACTLY));
@@ -113,6 +113,12 @@ public class FWPager extends ViewPager implements NativeCommandHandler {
   }
   @Override
   public void setStyle(Selector selector, String key, String value) {
+    
+    if (key.equals("page-margin")) {
+      this.setPageMargin(Integer.parseInt(value));
+      return;
+    }
+    
     if (selector == Selector.NORMAL) {
       normalStyle.setStyle(key, value);
     } else if (selector == Selector.ACTIVE) {
