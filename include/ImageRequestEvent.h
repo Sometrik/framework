@@ -32,6 +32,8 @@ class ImageRequestEvent : public Event {
   RequestMode getRequestMode() const { return mode; }
   
   const std::string & getImageUrl() const { return image_url; }
+  void setImageUrl(const std::string & url) { image_url = url; }
+
   unsigned int getRequestedWidth() const { return requested_width; }
   unsigned int getRequestedHeight() const { return requested_height; }
   unsigned int getRequestedLevels() const { return requested_levels; }
