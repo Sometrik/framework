@@ -486,8 +486,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
 - (void)navBarTapped5Times:(UITapGestureRecognizer *)recognizer
 {
-    NSLog(@"tap-tap-tap-tap-tap");
-    
+    mainThread->startDebugMode();
 }
 
 - (void)menuButtonTapped

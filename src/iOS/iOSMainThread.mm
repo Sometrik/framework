@@ -293,6 +293,12 @@ iOSMainThread::sendMemoryWarning() {
 }
 
 void
+iOSMainThread::startDebugMode() {
+  SysEvent ev(SysEvent::SHOW_DEBUG);
+  Element::postEventToElement(getApplication().getInternalId(), ev);
+}
+
+void
 iOSMainThread::sendIntValue(int viewId, int value) {
     ValueEvent ev(value);
     Element::postEventToElement(viewId, ev);
