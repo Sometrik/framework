@@ -8,6 +8,7 @@
 @interface FWImageView : UIImageView
 - (void)layoutSubviews;
 - (void)addImageUrl:(NSString *)url width:(int)width height:(int)height;
+- (void)clear;
 
 @property NSString * url;
 @property (nonatomic, assign) id<FWImageViewDelegate> delegate;

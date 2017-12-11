@@ -13,9 +13,9 @@
 
 - (void)clear
 {
-    if ([self.view isKindOfClass:UIImageView.class]) {
-        UIImageView * imageView = (UIImageView *)self.view;
-        imageView.image = nil;
+    if ([self.view isKindOfClass:FWImageView.class]) {
+        FWImageView * imageView = (FWImageView *)self.view;
+        [imageView clear];
     }
 }
 

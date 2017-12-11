@@ -15,4 +15,10 @@
     self.url = url;
 }
 
+- (void)clear
+{
+    self.image = nil;
+    self.url = nil;
+}
+
 @end
