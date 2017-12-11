@@ -246,3 +246,17 @@ NSString* m2 = [NSString stringWithUTF8String:s1.c_str()];
 NSString * s1;
 s2 = [s1 cStringUsingEncoding:NSUTF8StringEncoding];
 ```
+
+##  In-App Purchase Receipt Validation
+
+- The receipt for an application or in-app purchase is a record of the sale of the application and of any in-app purchases made from within the application.
+- When user makes a purchase and AppStore handles it, it sends a receipt to the app that needs to be validated.
+- There is two ways to do it. By using server or an app itself to handle it.
+- If using server side validation, it's simply forwarding the receipt to your server and back to AppStore that validates it and sends a response that consists of validation result (valid or invalid) and receipt info encoded (json).
+- Validating locally requires code to read and validate a PKCS #7 signature, and code to parse and validate the signed payload.
+- More info about receipt validation:
+[WWDC: Preventing Unauthorized Purchases with Receipts](https://developer.apple.com/videos/play/wwdc2014/305/)
+[Receipt Validation Programming Guide](https://developer.apple.com/library/content/releasenotes/General/ValidateAppStoreReceipt/Introduction.html#//apple_ref/doc/uid/TP40010573-CH105-SW1)
+
+
+
