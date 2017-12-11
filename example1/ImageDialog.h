@@ -18,7 +18,7 @@ public:
     auto label = std::make_shared<TextLabel>("Hello!");
     layout->addChild(label);
     
-    auto image = std::make_shared<ImageElement>("https://picsum.photos/200/300/?random");
+    auto image = std::make_shared<ImageElement>();
     image->style("width", 128);
     image->style("height", 256);
     image->style("border", "#ffffff");
