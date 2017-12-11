@@ -654,6 +654,15 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     [view startAnimating];
 }
 
+- (void)createPageControlWithId:(int)viewId parentId:(int)parentId numPages:(int)numPages
+{
+    UIPageControl * view = [[UIPageControl alloc] init];
+    view.tag = viewId;
+    view.numberOfPages = numPages;
+    [self addView:view withId:viewId];
+    [self addToParent:parentId view:view];    
+}
+
 - (void)createDialogWithId:(int)viewId parentId:(int)parentId
 {
     self.activeDialogId = viewId;

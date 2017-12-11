@@ -40,6 +40,9 @@
     if ([self.view isKindOfClass:UISwitch.class]) {
         UISwitch * sw = (UISwitch *)self.view;
         sw.on = value != 0 ? YES : NO;
+    } else if ([self.view isKindOfClass:UIPageControl.class]) {
+	UIPageControl * pageControl = (UIPageControl *)self.view;
+	pageControl.currentPage = value;
     }
 }
 

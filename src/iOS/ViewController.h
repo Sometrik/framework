@@ -25,6 +25,7 @@
 - (void)createNavigationView:(int)viewId;
 - (void)createTabBarItem:(int)viewId parentId:(int)parentId title:(NSString *)title;
 - (void)createActivityIndicatorWithId:(int)viewId parentId:(int)parentId;
+- (void)createPageControlWithId:(int)viewId parentId:(int)parentId numPages:(int)numPages;
 - (void)createDialogWithId:(int)viewId parentId:(int)parentId;
 - (void)createTimer:(int)viewId interval:(double)interval;
 
