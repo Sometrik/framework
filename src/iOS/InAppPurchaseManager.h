@@ -19,7 +19,7 @@
 @interface InAppPurchaseManager : NSObject
 
 @property (nonatomic, strong) NSArray *products;
-@property (nonatomic, assign) id <InAppPurchaseManagerDelegate> delegate;
+@property (nonatomic, assign) id<InAppPurchaseManagerDelegate> delegate;
 
 + (InAppPurchaseManager *)sharedInstance;
 - (void)addProductId:(NSString *)productId;

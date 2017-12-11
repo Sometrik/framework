@@ -41,6 +41,7 @@
 		26AC2E7F1FDA78E800625C2E /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 26AC2E7E1FDA78E800625C2E /* StoreKit.framework */; };
 		26AC2E841FDA80CB00625C2E /* product_ids.plist in Resources */ = {isa = PBXBuildFile; fileRef = 26AC2E831FDA80CB00625C2E /* product_ids.plist */; };
 		26B1F3A41FDE875300C4369F /* InAppPurchaseManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = 26B1F3A31FDE875300C4369F /* InAppPurchaseManager.mm */; };
+		26B1F3A71FDE8BBA00C4369F /* FWImageView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 26B1F3A51FDE8BBA00C4369F /* FWImageView.mm */; };
 		26BBBA7B1FCE9C6800DD5174 /* ViewManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = 26BBBA751FCE9C6700DD5174 /* ViewManager.mm */; };
 		26BBBA7C1FCE9C6800DD5174 /* EventWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 26BBBA761FCE9C6700DD5174 /* EventWrapper.m */; };
 		26BBBA7D1FCE9C6800DD5174 /* ImageWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 26BBBA781FCE9C6800DD5174 /* ImageWrapper.m */; };
@@ -96,6 +97,8 @@
 		26B1F3A11FDE875300C4369F /* iOSThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = iOSThread.h; path = ../../../../src/iOS/iOSThread.h; sourceTree = "<group>"; };
 		26B1F3A21FDE875300C4369F /* iOSLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = iOSLogger.h; path = ../../../../src/iOS/iOSLogger.h; sourceTree = "<group>"; };
 		26B1F3A31FDE875300C4369F /* InAppPurchaseManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = InAppPurchaseManager.mm; path = ../../../../src/iOS/InAppPurchaseManager.mm; sourceTree = "<group>"; };
+		26B1F3A51FDE8BBA00C4369F /* FWImageView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FWImageView.mm; path = ../../../../src/iOS/FWImageView.mm; sourceTree = "<group>"; };
+		26B1F3A61FDE8BBA00C4369F /* FWImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FWImageView.h; path = ../../../../src/iOS/FWImageView.h; sourceTree = "<group>"; };
 		26BBBA751FCE9C6700DD5174 /* ViewManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ViewManager.mm; path = ../../../../src/iOS/ViewManager.mm; sourceTree = "<group>"; };
 		26BBBA761FCE9C6700DD5174 /* EventWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = EventWrapper.m; path = ../../../../src/iOS/EventWrapper.m; sourceTree = "<group>"; };
 		26BBBA771FCE9C6700DD5174 /* ViewManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewManager.h; path = ../../../../src/iOS/ViewManager.h; sourceTree = "<group>"; };
@@ -198,6 +201,8 @@
 				26BBBA781FCE9C6800DD5174 /* ImageWrapper.m */,
 				26BBBA771FCE9C6700DD5174 /* ViewManager.h */,
 				26BBBA751FCE9C6700DD5174 /* ViewManager.mm */,
+				26B1F3A61FDE8BBA00C4369F /* FWImageView.h */,
+				26B1F3A51FDE8BBA00C4369F /* FWImageView.mm */,
 				26B1F3A01FDE875200C4369F /* InAppPurchaseManager.h */,
 				26B1F3A31FDE875300C4369F /* InAppPurchaseManager.mm */,
 				26B1F3A21FDE875300C4369F /* iOSLogger.h */,
@@ -336,6 +341,7 @@
 				26738C231FC5E0C300E24663 /* main.m in Sources */,
 				26738C591FC5E19500E24663 /* dxt.cpp in Sources */,
 				26738C3C1FC5E15100E24663 /* Selection.cpp in Sources */,
+				26B1F3A71FDE8BBA00C4369F /* FWImageView.mm in Sources */,
 				26738C581FC5E19500E24663 /* PackedImageData.cpp in Sources */,
 				26738C481FC5E16C00E24663 /* ViewController.mm in Sources */,
 				26BBBA7D1FCE9C6800DD5174 /* ImageWrapper.m in Sources */,

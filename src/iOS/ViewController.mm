@@ -17,7 +17,7 @@ std::shared_ptr<iOSMainThread> mainThread;
 // Declare C++ function
 extern FWApplication * applicationMain();
 
-@interface ViewController () <UIScrollViewDelegate, UITabBarDelegate, InAppPurchaseManagerDelegate>
+@interface ViewController () <UIScrollViewDelegate, UITabBarDelegate, InAppPurchaseManagerDelegate, FWImageViewDelegate>
 @property (nonatomic, strong) NSMutableDictionary *viewsDictionary;
 @property (nonatomic, strong) UIView *sideMenuView;
 @property (nonatomic, strong) UIView *backgroundOverlayView;
@@ -869,6 +869,13 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 - (void)inAppPurchaseManagerDidReceiveProducts:(InAppPurchaseManager *)manager {
     // show in-app purchase UI
     // [self showInAppPurchaseView];
+}
+
+#pragma mark - FWImageViewDelegate
+
+- (void)fwImageView:(FWImageView *)imageView didChangeSize:(CGSize)size ofImageUrl:(NSString *)url
+{
+    // width: size.width, height: size.height
 }
 
 @end
