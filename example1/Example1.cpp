@@ -20,6 +20,7 @@
 
 #include "FrontView.h"
 #include "ImageDialog.h"
+#include "ImageLoader.h"
 
 #include <iostream>
 
@@ -165,6 +166,17 @@ Example1::onTimerEvent(TimerEvent & ev) {
   children.insert(children.begin(), children.back());
   children.pop_back();
 #endif
+}
+
+void
+Example1::handleImageRequestEvent(ImageRequestEvent & ev) {
+  cerr << "received image request, url = " << ev.getImageUrl() << endl;
+  if (ev.getImageUrl().empty()) {
+    string url = "https://picsum.photos/" + to_string(ev.getRequestedWidth()) + "/" + to_string(ev.getRequestedHeight()) + "/?random";
+    ev.setImageUrl(url);
+  }
+  auto loader = make_shared<ImageLoader>(ev, "example1");
+  getThread().run(loader);
 }
 
 FWApplication * applicationMain() {

@@ -16,6 +16,7 @@ public:
     
     void onCommandEvent(CommandEvent & ev) override;
     void onTimerEvent(TimerEvent & ev) override;
+    void handleImageRequestEvent(ImageRequestEvent & ev) override;
     
 private:
     std::shared_ptr<TextField> textField;
