@@ -272,8 +272,13 @@ iOSMainThread::setImageData(int internal_id, std::shared_ptr<canvas::PackedImage
     int bpp = input->getBytesPerPixel(input->getInternalFormat());
     auto provider = CGDataProviderCreateWithData(0, input->getData(), bpp * input->getWidth() * input->getHeight(), 0);
     auto colorspace = CGColorSpaceCreateDeviceRGB();
-    auto f = input->getInternalFormat() == canvas::RGBA8 ? kCGImageAlphaPremultipliedLast : kCGImageAlphaNoneSkipLast;
-    auto img = CGImageCreate(input->getWidth(), input->getHeight(), 8, bpp * 8, bpp * input->getWidth(), colorspace, f, provider, 0, true, kCGRenderingIntentDefault);
+    CGBitmapInfo bitmapInfo = kCGBitmapByteOrder32Little;
+    if (input->getInternalFormat() == canvas::RGBA8) {
+      bitmapInfo |= kCGImageAlphaPremultipliedFirst;
+    } else {
+      bitmapInfo |= kCGImageAlphaNoneSkipFirst;
+    }
+    auto img = CGImageCreate(input->getWidth(), input->getHeight(), 8, bpp * 8, bpp * input->getWidth(), colorspace, bitmapInfo, provider, 0, true, kCGRenderingIntentDefault);
   
     UIImage * image;
     if ([UIImage respondsToSelector:@selector(imageWithCGImage:scale:orientation:)]) {
@@ -283,6 +288,10 @@ iOSMainThread::setImageData(int internal_id, std::shared_ptr<canvas::PackedImage
       image = [UIImage imageWithCGImage:img];
     }
     [viewManager setImage:image];
+    
+    CGColorSpaceRelease(colorspace);
+    CGImageRelease(img);
+    CGDataProviderRelease(provider);
   }
 }
 
