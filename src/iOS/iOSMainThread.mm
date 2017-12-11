@@ -266,8 +266,24 @@ iOSMainThread::handleEventFromThread(int target_element_id, Event * event) {
 }
 
 void
-iOSMainThread::setImageData(int internal_id, std::shared_ptr<canvas::PackedImageData> image) {
-
+iOSMainThread::setImageData(int internal_id, std::shared_ptr<canvas::PackedImageData> input) {
+  ViewManager * viewManager = [viewController getViewManager:internal_id];
+  if (viewManager != nil) {
+    int bpp = input->getBytesPerPixel(input->getInternalFormat());
+    auto provider = CGDataProviderCreateWithData(0, input->getData(), bpp * input->getWidth() * input->getHeight(), 0);
+    auto colorspace = CGColorSpaceCreateDeviceRGB();
+    auto f = input->getInternalFormat() == canvas::RGBA8 ? kCGImageAlphaPremultipliedLast : kCGImageAlphaNoneSkipLast;
+    auto img = CGImageCreate(input->getWidth(), input->getHeight(), 8, bpp * 8, bpp * input->getWidth(), colorspace, f, provider, 0, true, kCGRenderingIntentDefault);
+  
+    UIImage * image;
+    if ([UIImage respondsToSelector:@selector(imageWithCGImage:scale:orientation:)]) {
+      float scale = [[UIScreen mainScreen] scale];
+      image = [UIImage imageWithCGImage:img scale:scale orientation:UIImageOrientationUp];
+    } else {
+      image = [UIImage imageWithCGImage:img];
+    }
+    [viewManager setImage:image];
+  }
 }
 
 void
@@ -321,7 +337,13 @@ void
 iOSMainThread::sendImageRequest(int viewId, unsigned int width, unsigned int height, const std::string & url, int internalFormat) {
     cerr << "sending image request, width = " << width << ", height = " << height << ", url = " << url << endl;
   
-    ImageRequestEvent ev(ImageRequestEvent::REQUEST, viewId, width, height);
+    float scale = [[UIScreen mainScreen] scale];
+    if (scale != 1) {
+        width = (unsigned int)(width * scale);
+        height = (unsigned int)(height * scale);
+    }
+  
+    ImageRequestEvent ev(ImageRequestEvent::REQUEST, viewId, url, width, height);
     if (internalFormat != 0) {
       ev.setInternalFormat((canvas::InternalFormat)internalFormat);
     }
