@@ -46,7 +46,7 @@
     }
 }
 
-- (void)setTextValue:(NSString *)value;
+- (void)setTextValue:(NSString *)value
 {
     if ([self.view isKindOfClass:UILabel.class]) {
         UILabel * label = (UILabel*)self.view;
