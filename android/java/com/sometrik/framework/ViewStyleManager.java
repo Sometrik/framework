@@ -367,9 +367,9 @@ class ViewStyleManager {
   public void apply(View view, boolean animate) {
     ArrayList<Animator> animators = new ArrayList<Animator>();
     
-//    if (animateTransition && view instanceof ViewGroup) {
-//      ((ViewGroup)view).setLayoutTransition(new LayoutTransition());
-//    }
+    if (animateTransition && view instanceof ViewGroup) {
+      ((ViewGroup)view).setLayoutTransition(new LayoutTransition());
+    }
     if (opacity != null) {
       if (animate) {
 	animators.add(ObjectAnimator.ofFloat(view, View.ALPHA, opacity));	
