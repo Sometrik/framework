@@ -256,9 +256,9 @@ s2 = [s1 cStringUsingEncoding:NSUTF8StringEncoding];
 - Validating locally requires code to read and validate a PKCS #7 signature, and code to parse and validate the signed payload.
 - More info about receipt validation:
 
-[WWDC: Preventing Unauthorized Purchases with Receipts](https://developer.apple.com/videos/play/wwdc2014/305/)
+  - [WWDC: Preventing Unauthorized Purchases with Receipts](https://developer.apple.com/videos/play/wwdc2014/305/)
 
-[Receipt Validation Programming Guide](https://developer.apple.com/library/content/releasenotes/General/ValidateAppStoreReceipt/Introduction.html#//apple_ref/doc/uid/TP40010573-CH105-SW1)
+  - [Receipt Validation Programming Guide](https://developer.apple.com/library/content/releasenotes/General/ValidateAppStoreReceipt/Introduction.html#//apple_ref/doc/uid/TP40010573-CH105-SW1)
 
 
 
