@@ -16,6 +16,7 @@
 #include <FlipperLayout.h>
 #include <ActionBar.h>
 #include <TimerEvent.h>
+#include <FWActionSheet.h>
 
 #include "FrontView.h"
 #include "ImageDialog.h"
@@ -24,6 +25,7 @@
 
 #define ID_CLICK_ME_BUTTON 1
 #define ID_SHOW_MENU_BUTTON 2
+#define ID_SHOW_ACTIONSHEET 3
 
 using namespace std;
 
@@ -83,7 +85,7 @@ Example1::Example1() : FWApplication("com.sometrik.example1")
   auto buttonLayout = std::make_shared<LinearLayout>(FW_HORIZONTAL);
   buttonLayout->addChild(make_shared<Button>("Click me!", ID_CLICK_ME_BUTTON)).style("background", "#30e030").style("border-radius", 5);
   buttonLayout->addChild(make_shared<Button>("Show menu", ID_SHOW_MENU_BUTTON));
-  buttonLayout->addChild(make_shared<Button>("Useless button")).style("icon", "button.png");
+  buttonLayout->addChild(make_shared<Button>("Actionsheet", ID_SHOW_ACTIONSHEET)).style("icon", "button.png");
   firstPage->addChild(buttonLayout);
 
   auto scrollLayout = std::make_shared<ScrollLayout>();
@@ -140,6 +142,15 @@ Example1::onCommandEvent(CommandEvent & ev) {
       break;
     case ID_SHOW_FRONT_PAGE: {
       mainView->show();
+    }
+      break;
+    case ID_SHOW_ACTIONSHEET: {
+      auto sheet = make_shared<FWActionSheet>("Test");
+      sheet->addOption(1, "Do something");
+      sheet->addOption(2, "Do something else");
+      sheet->addOption(0, "Cancel");
+      int r = sheet->showModal(this);
+      cerr << "Actionsheet returned with " << r << endl;
     }
       break;
   }
