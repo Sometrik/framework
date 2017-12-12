@@ -158,6 +158,11 @@ Example1::onCommandEvent(CommandEvent & ev) {
       sheet->addOption(0, "Cancel");
       int r = sheet->showModal(this);
       cerr << "Actionsheet returned with " << r << endl;
+      if (r == 1) {
+	launchBrowser("http://www.slashdot.org/");
+      } else if (r == 2) {
+	launchBrowser("http://www.reddit.com/");
+      }
     }
       break;
   }
