@@ -215,9 +215,13 @@ iOSMainThread::sendCommands(const std::vector<Command> & commands) {
         
       case Command::LAUNCH_BROWSER: {
         NSString * input_url = [NSString stringWithUTF8String:command.getTextValue().c_str()];
+#if 1
+	[viewController createWebBrowser:10000000 url:(NSString *)input_url];
+#else
         NSURL *url = [NSURL URLWithString:input_url];
         [[UIApplication sharedApplication] openURL:url];
         // no need to release anything
+#endif
       }
         break;
         
