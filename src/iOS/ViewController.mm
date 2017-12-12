@@ -7,6 +7,8 @@
 #import "InAppPurchaseManager.h"
 #import "FWImageView.h"
 
+#import <WebKit/WebKit.h>
+
 #include <memory>
 
 using namespace std;
@@ -755,6 +757,31 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
                                                     userInfo:nil
                                                      repeats:YES];
     [[NSRunLoop mainRunLoop] addTimer:timer forMode:NSRunLoopCommonModes];
+}
+
+- (void)createWebBrowser:(int)viewId url:(NSString *)url
+{
+    WKWebViewConfiguration *configuration = [[WKWebViewConfiguration alloc] init];
+    WKWebView *webView = [[WKWebView alloc] initWithFrame:self.view.bounds configuration:configuration];
+    NSURL *webURL = [NSURL URLWithString:url];
+    NSURLRequest *request = [NSURLRequest requestWithURL:webURL];
+    [webView loadRequest:request];
+    
+    // add close button (x) to the top left corner of the view
+    UIButton *closeButton = [[UIButton alloc] initWithFrame:CGRectMake(10.0, 10.0, 40.0, 40.0)];
+    [closeButton setTitle:@"X" forState:UIControlStateNormal];
+    [closeButton addTarget:self action:@selector(webViewCloseButtonPushed:) forControlEvents:UIControlStateNormal];
+    [webView addSubview:closeButton];
+    webView.tag = viewId;
+    closeButton.tag = viewId; // same as it's used to remove webView
+    [self.view addSubview:webView];
+    [self addView:webView withId:viewId];
+    [self.view bringSubviewToFront:webView];
+}
+
+- (void)webViewCloseButtonPushed:(UIButton *)button
+{
+    [self removeView:(int)button.tag];
 }
 
 - (void)sendTimerEvent:(NSTimer *)timer
