@@ -48,6 +48,7 @@ iOSMainThread::sendCommands(const std::vector<Command> & commands) {
       }
         break;
         
+      case Command::CREATE_PAGER:
       case Command::CREATE_FLIPPER_LAYOUT: {
         [viewController createPageLayoutWithId:command.getChildInternalId() parentId:command.getInternalId()];
       }
