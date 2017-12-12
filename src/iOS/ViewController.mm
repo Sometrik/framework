@@ -276,8 +276,8 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     } else {
         stackView.axis = UILayoutConstraintAxisHorizontal;
     }
-    stackView.distribution = UIStackViewDistributionFill;
-    // stackView.distribution = UIStackViewDistributionFillProportionally;
+    // stackView.distribution = UIStackViewDistributionFill;
+    stackView.distribution = UIStackViewDistributionFillProportionally;
     stackView.alignment = UIStackViewAlignmentFill;
     stackView.translatesAutoresizingMaskIntoConstraints = false;
     stackView.frame = self.view.frame;
@@ -304,6 +304,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     label.numberOfLines = 0; // as many lines as needed
     label.lineBreakMode = NSLineBreakByWordWrapping;
     label.translatesAutoresizingMaskIntoConstraints = false;
+    [label sizeToFit];
     [self addView:label withId:viewId];
     [self addToParent:parentId view:label];
 }
@@ -804,8 +805,6 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
       
       NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
       NSLayoutConstraint *leftConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
-      // NSLayoutConstraint *rightConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
-      // NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeBottom multiplier:1.0f constant:0];
       NSLayoutConstraint *widthConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeWidth multiplier:1.0f constant:0];
       NSLayoutConstraint *heightConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeHeight multiplier:1.0f constant:0];
       [view.superview addConstraints:@[topConstraint, leftConstraint, widthConstraint, heightConstraint]];
