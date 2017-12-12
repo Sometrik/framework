@@ -29,7 +29,7 @@
 - (void)createActionSheetWithId:(int)viewId parentId:(int)parentId title:(NSString *)title;
 - (void)createDialogWithId:(int)viewId parentId:(int)parentId;
 - (void)createTimer:(int)viewId interval:(double)interval;
-- (void)createWebBrowser:(int)viewId url:(NSString *)url;
+- (void)createWebBrowserWithUrl:(NSString *)url;
 
 - (void)setImageFromThread:(int)viewId data:(UIImage *)data;
 - (void)showNavigationViewWithAnimation:(BOOL)animate;

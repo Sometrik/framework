@@ -38,6 +38,7 @@
 		26738C6B1FC5E1B200E24663 /* URI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26738C641FC5E1B200E24663 /* URI.cpp */; };
 		26738C6C1FC5E1B200E24663 /* utf8 in Resources */ = {isa = PBXBuildFile; fileRef = 26738C651FC5E1B200E24663 /* utf8 */; };
 		26738C721FC5E33F00E24663 /* Example1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26738C711FC5E33F00E24663 /* Example1.cpp */; };
+		26AC26301FDFE16F00A7C7D1 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 26AC262F1FDFE15A00A7C7D1 /* WebKit.framework */; };
 		26AC2E7F1FDA78E800625C2E /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 26AC2E7E1FDA78E800625C2E /* StoreKit.framework */; };
 		26AC2E841FDA80CB00625C2E /* product_ids.plist in Resources */ = {isa = PBXBuildFile; fileRef = 26AC2E831FDA80CB00625C2E /* product_ids.plist */; };
 		26B1F3A41FDE875300C4369F /* InAppPurchaseManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = 26B1F3A31FDE875300C4369F /* InAppPurchaseManager.mm */; };
@@ -93,6 +94,7 @@
 		26738C6E1FC5E30500E24663 /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
 		26738C701FC5E33F00E24663 /* Example1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Example1.h; path = ../../../../../example1/Example1.h; sourceTree = "<group>"; };
 		26738C711FC5E33F00E24663 /* Example1.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Example1.cpp; path = ../../../../../example1/Example1.cpp; sourceTree = "<group>"; };
+		26AC262F1FDFE15A00A7C7D1 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		26AC2E7E1FDA78E800625C2E /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		26AC2E831FDA80CB00625C2E /* product_ids.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = product_ids.plist; sourceTree = "<group>"; };
 		26B1F3A01FDE875200C4369F /* InAppPurchaseManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InAppPurchaseManager.h; path = ../../../../src/iOS/InAppPurchaseManager.h; sourceTree = "<group>"; };
@@ -121,6 +123,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				26AC2E7F1FDA78E800625C2E /* StoreKit.framework in Frameworks */,
+				26AC26301FDFE16F00A7C7D1 /* WebKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -241,6 +244,7 @@
 		26738C6D1FC5E30500E24663 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				26AC262F1FDFE15A00A7C7D1 /* WebKit.framework */,
 				26AC2E7E1FDA78E800625C2E /* StoreKit.framework */,
 				26738C6E1FC5E30500E24663 /* ImageIO.framework */,
 			);
