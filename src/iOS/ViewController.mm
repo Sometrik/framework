@@ -769,17 +769,23 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     NSURLRequest *request = [NSURLRequest requestWithURL:webURL];
     [webView loadRequest:request];
     self.webView = webView;
-    // add close button (x) to the top left corner of the view
-    UIButton *closeButton = [[UIButton alloc] initWithFrame:CGRectMake(10.0, 10.0, 40.0, 40.0)];
-    [closeButton setTitle:@"X" forState:UIControlStateNormal];
-    [closeButton addTarget:self action:@selector(webViewCloseButtonPushed:) forControlEvents:UIControlStateNormal];
-    [self.webView addSubview:closeButton];
     [self.view addSubview:self.webView];
     [self.view bringSubviewToFront:self.webView];
+    // add close button (x) to the top left corner of the view
+    UIButton *closeButton = [[UIButton alloc] initWithFrame:CGRectMake(10.0, 30.0, 40.0, 40.0)];
+    [closeButton setTitle:@"X" forState:UIControlStateNormal];
+    [closeButton addTarget:self action:@selector(webViewCloseButtonPushed:) forControlEvents:UIControlEventTouchUpInside];
+    [closeButton setTitleColor:UIColor.whiteColor forState:UIControlStateNormal];
+    [closeButton setBackgroundColor:UIColor.blackColor];
+    closeButton.layer.cornerRadius = closeButton.frame.size.width / 2;
+    closeButton.layer.borderWidth = 2.0;
+    closeButton.layer.borderColor = UIColor.whiteColor.CGColor;
+    [self.webView addSubview:closeButton];
 }
 
 - (void)webViewCloseButtonPushed:(UIButton *)button
 {
+    NSLog(@"closeButton pushed");
     [self.webView removeFromSuperview];
     self.webView = nil;
 }
