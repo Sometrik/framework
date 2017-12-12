@@ -11,5 +11,7 @@
 - (void)clear;
 
 @property NSString * url;
+@property (nonatomic, assign) NSInteger prevWidth;
+@property (nonatomic, assign) NSInteger prevHeight;
 @property (nonatomic, assign) id<FWImageViewDelegate> delegate;
 @end

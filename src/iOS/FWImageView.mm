@@ -7,6 +7,16 @@
 
 @implementation FWImageView
 
+- (instancetype)initWithFrame:(CGRect)frame
+{
+    if (self = [self initWithFrame:frame]) {
+        self.frame = frame;
+        self.prevWidth = 0;
+        self.prevHeight = 0;
+    }
+    return self;
+}
+
 // lazy initialization
 - (NSMutableArray *)images
 {
