@@ -51,6 +51,7 @@
     if ([self.view isKindOfClass:UILabel.class]) {
         UILabel * label = (UILabel*)self.view;
         label.text = value;
+        [label sizeToFit];
     } else if ([self.view isKindOfClass:UITextField.class]) {
         UITextField * textField = (UITextField*)self.view;
         textField.text = value;
@@ -186,6 +187,7 @@
         if ([key isEqualToString:@"icon"]) {
             UIImage * icon = [UIImage imageNamed:value];
             [button setImage:icon forState:UIControlStateNormal];
+            // [button setBackgroundImage:icon forState:UIControlStateNormal];
         } else if ([key isEqualToString:@"icon-attachment"]) {
             
         }
