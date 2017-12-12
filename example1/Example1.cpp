@@ -63,10 +63,15 @@ Example1::Example1() : FWApplication("com.sometrik.example1")
   mainView->addChild(navigationBar);
 
   auto firstPage = std::make_shared<LinearLayout>(FW_VERTICAL);
+  // firstPage->style("padding", 10);
   flipper->addChild(firstPage);
   
   auto image = std::make_shared<ImageElement>("test.png");
   firstPage->addChild(image);
+  
+  auto titleLayout = make_shared<FrameLayout>();
+  firstPage->addChild(titleLayout);
+  titleLayout->style("padding", 10);
   
   auto title = make_shared<TextLabel>("Hello again!", 1234);
   title->style("font-size", 20);
@@ -74,7 +79,7 @@ Example1::Example1() : FWApplication("com.sometrik.example1")
   title->style("shadow", 5);
   title->style("border", "#801010");
   title->style("border-radius", 5);
-  firstPage->addChild(title);
+  titleLayout->addChild(title);
 
   auto nameLayout = make_shared<LinearLayout>(FW_HORIZONTAL);
   firstPage->addChild(nameLayout);
@@ -106,6 +111,7 @@ Example1::Example1() : FWApplication("com.sometrik.example1")
   flipper->addChild(secondPage);
     
   auto scrollLayout2 = std::make_shared<ScrollLayout>();
+  // scrollLayout2->style("padding", 100);
   secondPage->addChild(scrollLayout2);
   auto scrollContent2 = std::make_shared<LinearLayout>(FW_VERTICAL);
   scrollLayout2->addChild(scrollContent2);
@@ -161,7 +167,6 @@ void
 Example1::onTimerEvent(TimerEvent & ev) {
 #if 1
   auto & children = scrollContent->getChildren();
-  cerr << "timer: front child = " << children.front()->getInternalId() << endl;
   scrollContent->reorderChildren(*(children.back()), 0);
   children.insert(children.begin(), children.back());
   children.pop_back();
