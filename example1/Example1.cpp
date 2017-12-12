@@ -27,6 +27,7 @@
 #define ID_CLICK_ME_BUTTON 1
 #define ID_SHOW_MENU_BUTTON 2
 #define ID_SHOW_ACTIONSHEET 3
+#define ID_OPEN_LINK 4
 
 using namespace std;
 
@@ -94,6 +95,8 @@ Example1::Example1() : FWApplication("com.sometrik.example1")
   buttonLayout->addChild(make_shared<Button>("Actionsheet", ID_SHOW_ACTIONSHEET)).style("icon", "button.png");
   firstPage->addChild(buttonLayout);
 
+  firstPage->addChild(make_shared<Button>("Open link", ID_OPEN_LINK));
+  
   auto scrollLayout = std::make_shared<ScrollLayout>();
   scrollLayout->style("min-height", 200);
   firstPage->addChild(scrollLayout);
@@ -163,6 +166,11 @@ Example1::onCommandEvent(CommandEvent & ev) {
       } else if (r == 2) {
 	launchBrowser("http://www.reddit.com/");
       }
+    }
+      break;
+      
+    case ID_OPEN_LINK: {
+      launchBrowser("http://www.yle.fi/");
     }
       break;
   }
