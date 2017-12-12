@@ -44,7 +44,8 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
   //self.tabBarHiddenInThesePages = [[NSSet alloc] initWithObjects:[NSNumber numberWithInt:0], nil];
   self.activeViewId = 0;
   self.activeDialogId = 0;
-    
+  self.view.layoutMargins = UIEdgeInsetsMake(0, 0, 0, 0);
+  
   [self createBackgroundOverlay];
   
     self.inAppPurchaseManager = [InAppPurchaseManager sharedInstance];
@@ -251,8 +252,9 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 {
     CGFloat tabBarHeight = self.tabBar == nil ? 0.0 : 44.0;
     CGFloat topBarsHeight = self.navBar == nil ? 0.0 : 64.0;
-    UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, topBarsHeight, self.view.bounds.size.width, self.view.bounds.size.height-topBarsHeight-tabBarHeight)];
+    UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height)];
     view.tag = viewId;
+    view.layoutMargins = UIEdgeInsetsMake(topBarsHeight, 0, tabBarHeight, 0);
     [self.view addSubview:view];
     [self addView:view withId:viewId];
     
@@ -287,7 +289,9 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 - (void)createFrameLayoutWithId:(int)viewId parentId:(int)parentId
 {
     UIView *view = [[UIView alloc] init];
+    view.layoutMargins = UIEdgeInsetsMake(0, 0, 0, 0);
     view.tag = viewId;
+    view.translatesAutoresizingMaskIntoConstraints = false;
     [self addView:view withId:viewId];
     [self addToParent:parentId view:view];
 }
@@ -299,6 +303,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     label.text = value;
     label.numberOfLines = 0; // as many lines as needed
     label.lineBreakMode = NSLineBreakByWordWrapping;
+    label.translatesAutoresizingMaskIntoConstraints = false;
     [self addView:label withId:viewId];
     [self addToParent:parentId view:label];
 }
@@ -307,6 +312,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 {
     UIButton *button = [[UIButton alloc] init];
     button.tag = viewId;
+    button.translatesAutoresizingMaskIntoConstraints = false;
     [button setTitle:caption forState:UIControlStateNormal];
     [button addTarget:self action:@selector(buttonPushed:) forControlEvents:UIControlEventTouchUpInside];
     [self addView:button withId:viewId];
@@ -325,6 +331,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 {
     UISwitch *sw = [[UISwitch alloc] init];
     sw.tag = viewId;
+    sw.translatesAutoresizingMaskIntoConstraints = false;
     [sw addTarget:self action:@selector(switchToggled:) forControlEvents:UIControlEventValueChanged];
     [self addView:sw withId:viewId];
     [self addToParent:parentId view:sw];
@@ -353,6 +360,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     imageView.tag = viewId;
     imageView.contentMode = UIViewContentModeScaleAspectFit;
     imageView.delegate = self;
+    imageView.translatesAutoresizingMaskIntoConstraints = false;
     [self addView:imageView withId:viewId];
     [self addToParent:parentId view:imageView];
 }
@@ -458,6 +466,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 {
     UIView *view = [[UIView alloc] init];
     view.tag = viewId;
+    view.translatesAutoresizingMaskIntoConstraints = false;
     UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(viewTapped:)];
     [view addGestureRecognizer:tapGestureRecognizer];
     [self addView:view withId:viewId];
@@ -513,6 +522,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     
     //self.tabBar = tabBar;
     tabBar.delegate = self;
+    tabBar.translatesAutoresizingMaskIntoConstraints = false;
     [self addView:tabBar withId:viewId];
     //[tabBar.bottomAnchor constraintEqualToAnchor:parentView.bottomAnchor];
     [self addToParent:parentId view:tabBar];
@@ -655,6 +665,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 {
     UIActivityIndicatorView * view = [[UIActivityIndicatorView alloc] init];
     view.tag = viewId;
+    view.translatesAutoresizingMaskIntoConstraints = false;
     [self addView:view withId:viewId];
     [self addToParent:parentId view:view];
     [view startAnimating];
@@ -664,6 +675,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 {
     UIPageControl * view = [[UIPageControl alloc] init];
     view.tag = viewId;
+    view.translatesAutoresizingMaskIntoConstraints = false;
     view.numberOfPages = numPages;
     [self addView:view withId:viewId];
     [self addToParent:parentId view:view];    
@@ -742,8 +754,8 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
         return;
     }
     
-    BOOL add_basic_constraints = NO;
-    
+    BOOL add_basic_constraints = NO, add_margin_constraints = NO;
+  
     if ([parentView isKindOfClass:UIStackView.class]) {
         UIStackView *stackView = (UIStackView *)parentView;
         [stackView addArrangedSubview:view];
@@ -757,34 +769,47 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             // view.frame = CGRectMake(pos * pageWidth, 0, pageWidth, pageHeight);
             scrollView.contentSize = CGSizeMake(scrollView.contentSize.width + pageWidth, scrollView.contentSize.height);
             
-            NSLayoutConstraint *widthConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeWidth multiplier:1 constant:0];
-            //NSLayoutConstraint *heightConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeHeight multiplier:1 constant:0];
             NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
             NSLayoutConstraint *leftConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:pos * pageWidth];
-            [view.superview addConstraints:@[widthConstraint, topConstraint, leftConstraint]];
+            NSLayoutConstraint *rightConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeRight multiplier:1.0f constant:(pos + 1) * pageWidth];
+            [view.superview addConstraints:@[topConstraint, leftConstraint, rightConstraint]];
         } else {
-            
             view.frame = parentView.frame;
-            add_basic_constraints = YES;
+          
+            add_basic_constraints = true;
         }
     } else {
         //view.frame = parentView.frame;
         
         [parentView addSubview:view];
-        if (![view isKindOfClass:UITabBar.class] && ![view isKindOfClass:UINavigationBar.class]) {
-            add_basic_constraints = YES;
+        if ([view isKindOfClass:UILabel.class]) {
+            add_margin_constraints = YES;
+        } else if (![view isKindOfClass:UITabBar.class] && ![view isKindOfClass:UINavigationBar.class]) {
+            add_margin_constraints = YES;
         }
     }
     
-    if (add_basic_constraints) {
+    if (add_margin_constraints) {
         ViewManager * viewManager = [self getViewManager:view.tag];
         viewManager.constraintsSet = YES;
         
-        NSLayoutConstraint *widthConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeWidth multiplier:1 constant:0];
-        NSLayoutConstraint *heightConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeHeight multiplier:1 constant:0];
-        NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
-        NSLayoutConstraint *leftConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
-        [view.superview addConstraints:@[widthConstraint, heightConstraint, topConstraint, leftConstraint]];
+        NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeTopMargin multiplier:1.0f constant:0];
+        NSLayoutConstraint *leftConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeLeftMargin multiplier:1.0f constant:0];
+        NSLayoutConstraint *rightConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeRightMargin multiplier:1.0f constant:0];
+        NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeBottomMargin multiplier:1.0f constant:0];
+        [view.superview addConstraints:@[topConstraint, leftConstraint, rightConstraint, bottomConstraint]];
+    } else if (add_basic_constraints) {
+      ViewManager * viewManager = [self getViewManager:view.tag];
+      viewManager.constraintsSet = YES;
+      
+      NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
+      NSLayoutConstraint *leftConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
+      // NSLayoutConstraint *rightConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
+      // NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeBottom multiplier:1.0f constant:0];
+      NSLayoutConstraint *widthConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeWidth multiplier:1.0f constant:0];
+      NSLayoutConstraint *heightConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeHeight multiplier:1.0f constant:0];
+      [view.superview addConstraints:@[topConstraint, leftConstraint, widthConstraint, heightConstraint]];
+      
     }
 }
 
