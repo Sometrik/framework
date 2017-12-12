@@ -45,6 +45,8 @@
 		26BBBA7B1FCE9C6800DD5174 /* ViewManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = 26BBBA751FCE9C6700DD5174 /* ViewManager.mm */; };
 		26BBBA7C1FCE9C6800DD5174 /* EventWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 26BBBA761FCE9C6700DD5174 /* EventWrapper.m */; };
 		26BBBA7D1FCE9C6800DD5174 /* ImageWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 26BBBA781FCE9C6800DD5174 /* ImageWrapper.m */; };
+		26D4DB3D1FDFB4F200C619B4 /* ImageLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26D4DB3C1FDFB4F200C619B4 /* ImageLoader.cpp */; };
+		26D4DB401FDFB6B200C619B4 /* FWImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 26D4DB3F1FDFB6B200C619B4 /* FWImage.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -105,6 +107,12 @@
 		26BBBA781FCE9C6800DD5174 /* ImageWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ImageWrapper.m; path = ../../../../src/iOS/ImageWrapper.m; sourceTree = "<group>"; };
 		26BBBA791FCE9C6800DD5174 /* EventWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EventWrapper.h; path = ../../../../src/iOS/EventWrapper.h; sourceTree = "<group>"; };
 		26BBBA7A1FCE9C6800DD5174 /* ImageWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ImageWrapper.h; path = ../../../../src/iOS/ImageWrapper.h; sourceTree = "<group>"; };
+		26D4DB391FDFB4F200C619B4 /* FrontView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FrontView.h; path = ../../../../../example1/FrontView.h; sourceTree = "<group>"; };
+		26D4DB3A1FDFB4F200C619B4 /* ImageLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ImageLoader.h; path = ../../../../../example1/ImageLoader.h; sourceTree = "<group>"; };
+		26D4DB3B1FDFB4F200C619B4 /* ImageDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ImageDialog.h; path = ../../../../../example1/ImageDialog.h; sourceTree = "<group>"; };
+		26D4DB3C1FDFB4F200C619B4 /* ImageLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ImageLoader.cpp; path = ../../../../../example1/ImageLoader.cpp; sourceTree = "<group>"; };
+		26D4DB3E1FDFB6B200C619B4 /* FWImage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = FWImage.h; path = ../../../../src/iOS/FWImage.h; sourceTree = "<group>"; };
+		26D4DB3F1FDFB6B200C619B4 /* FWImage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = FWImage.m; path = ../../../../src/iOS/FWImage.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -203,6 +211,8 @@
 				26BBBA751FCE9C6700DD5174 /* ViewManager.mm */,
 				26B1F3A61FDE8BBA00C4369F /* FWImageView.h */,
 				26B1F3A51FDE8BBA00C4369F /* FWImageView.mm */,
+				26D4DB3E1FDFB6B200C619B4 /* FWImage.h */,
+				26D4DB3F1FDFB6B200C619B4 /* FWImage.m */,
 				26B1F3A01FDE875200C4369F /* InAppPurchaseManager.h */,
 				26B1F3A31FDE875300C4369F /* InAppPurchaseManager.mm */,
 				26B1F3A21FDE875300C4369F /* iOSLogger.h */,
@@ -240,6 +250,10 @@
 		26738C6F1FC5E32F00E24663 /* example1 */ = {
 			isa = PBXGroup;
 			children = (
+				26D4DB391FDFB4F200C619B4 /* FrontView.h */,
+				26D4DB3B1FDFB4F200C619B4 /* ImageDialog.h */,
+				26D4DB3C1FDFB4F200C619B4 /* ImageLoader.cpp */,
+				26D4DB3A1FDFB4F200C619B4 /* ImageLoader.h */,
 				26738C711FC5E33F00E24663 /* Example1.cpp */,
 				26738C701FC5E33F00E24663 /* Example1.h */,
 			);
@@ -335,6 +349,8 @@
 				26BBBA7C1FCE9C6800DD5174 /* EventWrapper.m in Sources */,
 				26738C691FC5E1B200E24663 /* Base64.cpp in Sources */,
 				26738C3F1FC5E15100E24663 /* PosixThread.cpp in Sources */,
+				26D4DB3D1FDFB4F200C619B4 /* ImageLoader.cpp in Sources */,
+				26D4DB401FDFB6B200C619B4 /* FWImage.m in Sources */,
 				26738C401FC5E15100E24663 /* Runnable.cpp in Sources */,
 				26738C6A1FC5E1B200E24663 /* FNV.cpp in Sources */,
 				26738C491FC5E16C00E24663 /* iOSMainThread.mm in Sources */,

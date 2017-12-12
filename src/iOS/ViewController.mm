@@ -114,39 +114,6 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     }
 }
 
-- (void)edgeSwiped:(UIScreenEdgePanGestureRecognizer *)recognizer
-{
-    if (self.sideMenuView) {
-        self.sideMenuView.hidden = NO;
-        self.backgroundOverlayView.hidden = NO;
-        CGPoint touchLocation = [recognizer translationInView:self.view];
-        NSLog(@"location = %@", NSStringFromCGPoint(touchLocation));
-        if (recognizer.state == UIGestureRecognizerStateBegan || recognizer.state == UIGestureRecognizerStateChanged) {
-            if (touchLocation.x < CGRectGetWidth(self.view.frame)-sideMenuOpenSpaceWidth) {
-                self.sideMenuView.frame = CGRectMake(touchLocation.x-CGRectGetWidth(self.sideMenuView.frame), 0, CGRectGetWidth(self.sideMenuView.frame), CGRectGetHeight(self.sideMenuView.frame));
-                self.backgroundOverlayView.alpha = backgroundOverlayViewAlpha * CGRectGetMaxX(self.sideMenuView.frame) / (CGRectGetWidth(self.view.frame) - sideMenuOpenSpaceWidth);
-                self.sideMenuPanned = YES;
-            }
-        } else if (recognizer.state == UIGestureRecognizerStateEnded) {
-            if (CGRectGetMaxX(self.sideMenuView.frame) > (CGRectGetWidth(self.view.frame)-sideMenuOpenSpaceWidth) / 2) {
-                [self showNavigationViewWithAnimation:YES];
-                self.sideMenuPanned = NO;
-            } else {
-                [self hideNavigationViewWithAnimation:YES];
-                self.sideMenuPanned = NO;
-            }
-            
-        }
-        
-    }
-}
-
-- (void)sideMenuPanned:(UIPanGestureRecognizer *)recognizer
-{
-    CGPoint touchLocation = [recognizer translationInView:recognizer.view];
-    NSLog(@"location = %@", NSStringFromCGPoint(touchLocation));
-}
-
 - (void)createBackgroundOverlay
 {
     // create backgroundoverlay view that's behind sidePanel and dialog and if clicked closes the panel
@@ -615,6 +582,9 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     [self.view addSubview:self.sideMenuView];
     self.sideMenuView.transform = CGAffineTransformTranslate(self.sideMenuView.transform, -CGRectGetWidth(self.sideMenuView.frame), 0.0);
     [self addView:self.sideMenuView withId:viewId];
+    
+    UIPanGestureRecognizer *panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(sideMenuPanned:)];
+    [self.sideMenuView addGestureRecognizer:panGesture];
 }
 
 - (void)showNavigationViewWithAnimation:(BOOL)animate
@@ -657,6 +627,58 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             self.backgroundOverlayView.alpha = 0.0;
             self.backgroundOverlayView.hidden = YES;
             self.sideMenuView.hidden = YES;
+        }
+    }
+}
+
+- (void)edgeSwiped:(UIScreenEdgePanGestureRecognizer *)recognizer
+{
+    if (self.sideMenuView) {
+        self.sideMenuView.hidden = NO;
+        self.backgroundOverlayView.hidden = NO;
+        CGPoint touchLocation = [recognizer translationInView:self.view];
+        NSLog(@"location = %@", NSStringFromCGPoint(touchLocation));
+        if (recognizer.state == UIGestureRecognizerStateBegan || recognizer.state == UIGestureRecognizerStateChanged) {
+            if (touchLocation.x < CGRectGetWidth(self.view.frame)-sideMenuOpenSpaceWidth) {
+                self.sideMenuView.frame = CGRectMake(touchLocation.x-CGRectGetWidth(self.sideMenuView.frame), 0, CGRectGetWidth(self.sideMenuView.frame), CGRectGetHeight(self.sideMenuView.frame));
+                self.backgroundOverlayView.alpha = backgroundOverlayViewAlpha * CGRectGetMaxX(self.sideMenuView.frame) / (CGRectGetWidth(self.view.frame) - sideMenuOpenSpaceWidth);
+                self.sideMenuPanned = YES;
+            }
+        } else if (recognizer.state == UIGestureRecognizerStateEnded) {
+            if (CGRectGetMaxX(self.sideMenuView.frame) > (CGRectGetWidth(self.view.frame)-sideMenuOpenSpaceWidth) / 2) {
+                [self showNavigationViewWithAnimation:YES];
+                self.sideMenuPanned = NO;
+            } else {
+                [self hideNavigationViewWithAnimation:YES];
+                self.sideMenuPanned = NO;
+            }
+        }
+    }
+}
+
+- (void)sideMenuPanned:(UIPanGestureRecognizer *)recognizer
+{
+    CGPoint touchLocation = [recognizer translationInView:recognizer.view];
+    NSLog(@"panned location = %@", NSStringFromCGPoint(touchLocation));
+    BOOL gestureIsDraggingFromLeftToRight = [recognizer velocityInView:self.view].x > 0;
+    
+    if (recognizer.state == UIGestureRecognizerStateBegan) {
+        [recognizer setTranslation:touchLocation inView:self.view];
+    } else if (recognizer.state == UIGestureRecognizerStateChanged) {
+        recognizer.view.center = CGPointMake(recognizer.view.center.x + [recognizer translationInView:self.view].x, recognizer.view.center.y);
+        if (CGRectGetMaxX(recognizer.view.frame) > CGRectGetWidth(self.view.frame)-sideMenuOpenSpaceWidth) {
+            recognizer.view.frame = CGRectMake(0, 0, recognizer.view.frame.size.width, recognizer.view.frame.size.height);
+        }
+        [recognizer setTranslation:CGPointZero inView:self.view];
+        self.backgroundOverlayView.alpha = backgroundOverlayViewAlpha * CGRectGetMaxX(self.sideMenuView.frame) / (CGRectGetWidth(self.view.frame) - sideMenuOpenSpaceWidth);
+        self.sideMenuPanned = YES;
+    } else if (recognizer.state == UIGestureRecognizerStateEnded) {
+        if (CGRectGetMaxX(self.sideMenuView.frame) > (CGRectGetWidth(self.view.frame)-sideMenuOpenSpaceWidth) / 2) {
+            [self showNavigationViewWithAnimation:YES];
+            self.sideMenuPanned = NO;
+        } else {
+            [self hideNavigationViewWithAnimation:YES];
+            self.sideMenuPanned = NO;
         }
     }
 }
