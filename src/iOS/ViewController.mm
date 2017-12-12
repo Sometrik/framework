@@ -764,7 +764,8 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 {
     NSLog(@"WebView opened");
     WKWebViewConfiguration *configuration = [[WKWebViewConfiguration alloc] init];
-    WKWebView *webView = [[WKWebView alloc] initWithFrame:self.view.bounds configuration:configuration];
+    CGRect frame = CGRectMake(0, 20, self.view.bounds.size.width, self.view.bounds.size.height);
+    WKWebView *webView = [[WKWebView alloc] initWithFrame:frame configuration:configuration];
     NSURL *webURL = [NSURL URLWithString:url];
     NSURLRequest *request = [NSURLRequest requestWithURL:webURL];
     [webView loadRequest:request];
@@ -772,7 +773,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     [self.view addSubview:self.webView];
     [self.view bringSubviewToFront:self.webView];
     // add close button (x) to the top left corner of the view
-    UIButton *closeButton = [[UIButton alloc] initWithFrame:CGRectMake(10.0, 30.0, 40.0, 40.0)];
+    UIButton *closeButton = [[UIButton alloc] initWithFrame:CGRectMake(10.0, 20.0, 40.0, 40.0)];
     [closeButton setTitle:@"X" forState:UIControlStateNormal];
     [closeButton addTarget:self action:@selector(webViewCloseButtonPushed:) forControlEvents:UIControlEventTouchUpInside];
     [closeButton setTitleColor:UIColor.whiteColor forState:UIControlStateNormal];
