@@ -62,14 +62,15 @@
     if ([self.view isKindOfClass:UIView.class]) {
         UIView * view = (UIView *)self.view;
         if ([key isEqualToString:@"background-color"]) {
-            view.backgroundColor = [self colorFromString:value];
+            view.layer.backgroundColor = [self colorFromString:value].CGColor;
         } else if ([key isEqualToString:@"background"]) {
-            view.backgroundColor = [self colorFromString:value];
+            view.layer.backgroundColor = [self colorFromString:value].CGColor;
         } else if ([key isEqualToString:@"shadow"]) {
-            view.layer.shadowOpacity = 0.25;
+            view.layer.shadowOpacity = 0.5;
             // self.view.layer.masksToBounds = NO;
             view.layer.shadowRadius = (float)[value floatValue];
             view.layer.shadowOffset = CGSizeMake(0, 0);
+            view.layer.masksToBounds = FALSE;
         } else if ([key isEqualToString:@"width"]) {
             if ([value isEqualToString:@"match-parent"]) {
                 
@@ -98,17 +99,33 @@
             view.layer.borderColor = [self colorFromString:value].CGColor;
             view.layer.borderWidth = 1.0f;
         } else if ([key isEqualToString:@"margin"]) {
-            int v = (int)[value integerValue];
-            view.layoutMargins = UIEdgeInsetsMake(v, v, v, v);
         } else if ([key isEqualToString:@"margin-top"]) {
         } else if ([key isEqualToString:@"margin-right"]) {
         } else if ([key isEqualToString:@"margin-borrom"]) {
         } else if ([key isEqualToString:@"margin-left"]) {
         } else if ([key isEqualToString:@"padding"]) {
+            int v = (int)[value integerValue];
+            view.layoutMargins = UIEdgeInsetsMake(v, v, v, v);
         } else if ([key isEqualToString:@"padding-top"]) {
+            view.layoutMargins = UIEdgeInsetsMake((int)[value integerValue],
+                                                  view.layoutMargins.left,
+                                                  view.layoutMargins.bottom,
+                                                  view.layoutMargins.right);
         } else if ([key isEqualToString:@"padding-right"]) {
-        } else if ([key isEqualToString:@"padding-borrom"]) {
+            view.layoutMargins = UIEdgeInsetsMake(view.layoutMargins.top,
+                                                  view.layoutMargins.left,
+                                                  view.layoutMargins.bottom,
+                                                  (int)[value integerValue]);
+        } else if ([key isEqualToString:@"padding-bottom"]) {
+            view.layoutMargins = UIEdgeInsetsMake(view.layoutMargins.top,
+                                                  view.layoutMargins.left,
+                                                  (int)[value integerValue],
+                                                  view.layoutMargins.right);
         } else if ([key isEqualToString:@"padding-left"]) {
+            view.layoutMargins = UIEdgeInsetsMake(view.layoutMargins.top,
+                                                  (int)[value integerValue],
+                                                  view.layoutMargins.bottom,
+                                                  view.layoutMargins.right);
         } else if ([key isEqualToString:@"weight"]) {
             
         } else if ([key isEqualToString:@"opacity"]) {
