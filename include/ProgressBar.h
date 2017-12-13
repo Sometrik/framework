@@ -15,7 +15,7 @@ class ProgressBar : public Element {
 
 protected:
   void create() override {
-    Command c(Command::CREATE_PROGRESSBAR, getParentInternalId(), getInternalId());
+    Command c(Command::CREATE_PROGRESS_SPINNER, getParentInternalId(), getInternalId());
     sendCommand(c);
   }
 

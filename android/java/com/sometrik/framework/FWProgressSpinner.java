@@ -6,12 +6,12 @@ import android.graphics.Bitmap;
 import android.view.View;
 import android.widget.ProgressBar;
 
-public class FWProgressBar extends ProgressBar implements NativeCommandHandler {
+public class FWProgressSpinner extends ProgressBar implements NativeCommandHandler {
   private FrameWork frame;
   private ViewStyleManager normalStyle, activeStyle;
   private ViewStyleManager currentStyle;
   
-  public FWProgressBar(FrameWork frame) {
+  public FWProgressSpinner(FrameWork frame) {
     super(frame);
     this.frame = frame;
     this.setClickable(false);

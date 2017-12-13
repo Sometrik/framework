@@ -98,7 +98,7 @@ public class NativeCommand {
     CREATE_ACTIONBAR,
     CREATE_NAVIGATIONBAR,
     CREATE_NAVIGATIONBAR_ITEM,
-    CREATE_PROGRESSBAR,
+    CREATE_PROGRESS_SPINNER,
     CREATE_TOAST,
     CREATE_NOTIFICATION,
     CREATE_PAGE_CONTROL,
@@ -555,12 +555,12 @@ public class NativeCommand {
       frame.addToViewList(bar);
       break;
     }
-    case CREATE_PROGRESSBAR:
+    case CREATE_PROGRESS_SPINNER:
       if (view != null) {
-      FWProgressBar bar = new FWProgressBar(frame);
-      bar.setId(childInternalId);
-      view.addChild(bar);
-      frame.addToViewList(bar);
+      FWProgressSpinner spinner = new FWProgressSpinner(frame);
+      spinner.setId(childInternalId);
+      view.addChild(spinner);
+      frame.addToViewList(spinner);
       }
       break;
     case FLUSH_VIEW:
