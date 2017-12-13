@@ -484,22 +484,14 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 #pragma mark - TabBar
 - (void)createTabBar:(int)viewId parentId:(int)parentId
 {
-    CGFloat tabBarHeight = 44.0;
-    UIView *parentView = [self viewForId:parentId];
-    UITabBar *tabBar = [[UITabBar alloc] initWithFrame:CGRectMake(0, parentView.frame.size.height-tabBarHeight, parentView.frame.size.width, tabBarHeight)];
+    UITabBar *tabBar = [[UITabBar alloc] init];
     tabBar.tag = viewId;
-    // tabBar.contentMode = UIViewContentModeBottom;
-    // [tabBar setAutoresizingMask:UIViewAutoresizingFlexibleTopMargin];
-    
     //self.tabBar = tabBar;
     tabBar.delegate = self;
     tabBar.translatesAutoresizingMaskIntoConstraints = false;
     [self addView:tabBar withId:viewId];
-    //[tabBar.bottomAnchor constraintEqualToAnchor:parentView.bottomAnchor];
     [self addToParent:parentId view:tabBar];
-    //[self.view addSubview:self.tabBar];
     tabBar.items = [[NSArray alloc] init];
-    // Put tabbar to the bottom of the view
 }
 
 - (void)createTabBarItem:(int)viewId parentId:(int)parentId title:(NSString *)title
@@ -811,7 +803,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
         return;
     }
     
-    BOOL add_basic_constraints = NO, add_margin_constraints = NO;
+    BOOL add_tabbar_constraints = NO, add_basic_constraints = NO, add_margin_constraints = NO;
   
     if ([parentView isKindOfClass:UIStackView.class]) {
         UIStackView *stackView = (UIStackView *)parentView;
@@ -841,12 +833,24 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
         [parentView addSubview:view];
         if ([view isKindOfClass:UILabel.class]) {
             add_margin_constraints = YES;
-        } else if (![view isKindOfClass:UITabBar.class] && ![view isKindOfClass:UINavigationBar.class]) {
+        } else if ([view isKindOfClass:UITabBar.class]) {
+            add_tabbar_constraints = YES;
+        } else if (![view isKindOfClass:UINavigationBar.class]) {
             add_margin_constraints = YES;
         }
     }
-    
-    if (add_margin_constraints) {
+  
+    if (add_tabbar_constraints) {
+      ViewManager * viewManager = [self getViewManager:view.tag];
+      viewManager.constraintsSet = YES;
+      
+      NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeBottom multiplier:1.0f constant:-44];
+      NSLayoutConstraint *leftConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
+      NSLayoutConstraint *rightConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
+      NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeBottom multiplier:1.0f constant:0];
+      [view.superview addConstraints:@[topConstraint, leftConstraint, rightConstraint, bottomConstraint]];
+      
+    } else if (add_margin_constraints) {
         ViewManager * viewManager = [self getViewManager:view.tag];
         viewManager.constraintsSet = YES;
         
