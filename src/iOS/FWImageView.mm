@@ -29,9 +29,15 @@
 - (void)layoutSubviews {
     [super layoutSubviews];
     if (self.image == nil) {
-        NSLog(@"FWImageView, layoutSubview(): %f %f", self.frame.size.width, self.frame.size.height);
-        if ([self.delegate respondsToSelector:@selector(fwImageView:didChangeSize:ofImageUrl:)]) {
-            [self.delegate fwImageView:self didChangeSize:self.frame.size ofImageUrl:self.url];
+        CGFloat width = self.frame.size.width;
+        CGFloat height = self.frame.size.height;
+        if (width != self.prevWidth || height != self.prevHeight) {
+            self.prevWidth = width;
+            self.prevHeight = height;
+            NSLog(@"FWImageView, layoutSubview(): %f %f", self.frame.size.width, self.frame.size.height);
+            if ([self.delegate respondsToSelector:@selector(fwImageView:didChangeSize:ofImageUrl:)]) {
+                [self.delegate fwImageView:self didChangeSize:self.frame.size ofImageUrl:self.url];
+            }
         }
     }
 }
