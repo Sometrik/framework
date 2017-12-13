@@ -9,7 +9,7 @@
 
 - (instancetype)initWithFrame:(CGRect)frame
 {
-    if (self = [self initWithFrame:frame]) {
+    if (self = [super initWithFrame:frame]) {
         self.frame = frame;
         self.prevWidth = 0;
         self.prevHeight = 0;
