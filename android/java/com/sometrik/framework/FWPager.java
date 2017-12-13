@@ -44,6 +44,7 @@ public class FWPager extends ViewPager implements NativeCommandHandler {
 
     if (currentView != null) {
         currentView.measure(widthMeasureSpec, heightMeasureSpec);
+        System.out.println("Pager measure: " + currentView.getHeight());
         super.onMeasure(widthMeasureSpec, View.MeasureSpec.makeMeasureSpec(currentView.getMeasuredHeight(), View.MeasureSpec.EXACTLY));
         return;
     }
