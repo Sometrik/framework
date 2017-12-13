@@ -15,3 +15,4 @@ Credits
 
 * Mikael Rekola
 * Mikko Suni (for Android support)
+* Sami Rämö (for preliminary iOS support)
