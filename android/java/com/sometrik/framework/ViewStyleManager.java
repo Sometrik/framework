@@ -550,6 +550,15 @@ class ViewStyleManager {
 	  params.height = applyScaleToDimension(height);
 	}
 	view.setLayoutParams(params);
+      } else if (view.getParent() instanceof ViewGroup) {
+	ViewGroup.LayoutParams params = (ViewGroup.LayoutParams)view.getLayoutParams();
+      	if (width != null) {
+      	  params.width = applyScaleToDimension(width);
+      	}
+	if (height != null) {
+	  params.height = applyScaleToDimension(height);
+	}
+      	view.setLayoutParams(params);
       } else {
 	System.out.println("this style cannot be applied to view that doesn't have valid layout as parent");
       }

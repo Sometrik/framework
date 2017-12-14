@@ -693,6 +693,10 @@ public class NativeCommand {
   }
   
   private void removeChild(NativeCommandHandler parent, int childId) {
+
+    if (parent instanceof FWPager) {
+      ((FWPager) parent).removeViewFromPager(childId);
+    }
     if (parent instanceof ViewGroup) {
       ViewGroup group = (ViewGroup) parent;
       int childCount = group.getChildCount();
@@ -700,6 +704,7 @@ public class NativeCommand {
 	View view = group.getChildAt(i);
 	if (view.getId() == childId) {
 	  ((ViewGroup) parent).removeViewAt(i);
+
 	  break;
 	}
       }
@@ -709,7 +714,9 @@ public class NativeCommand {
   }
   
   private void reorderChild(NativeCommandHandler parent, int childId, int newPosition) {
-    if (parent instanceof ViewGroup) {
+    if (parent instanceof FWPager) {
+	((FWPager) parent).reorderChild(childId, newPosition);
+    } else if (parent instanceof ViewGroup) {
       ViewGroup group = (ViewGroup) parent;
       int childCount = group.getChildCount();
       for (int i = 0; i < childCount; i++) {
