@@ -56,13 +56,17 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
   // Creating the C++ app
   std::shared_ptr<FWApplication> application(applicationMain());
+    
+  float scale = [[UIScreen mainScreen] scale];
   
   mainThread = make_shared<iOSMainThread>(application, application);
   mainThread->viewController = self;
 //    mainThread->setActualDisplayWidth(screenWidth);
 //    mainThread->setActualDisplayHeight(screenHeight);
-//    mainThread->setDisplayScale(displayScale);
+  mainThread->setDisplayScale(scale);
   
+  NSLog(@"starting app, scale = %f", scale);
+
   application->initialize(mainThread.get());
   application->initializeChildren();
   application->load();
