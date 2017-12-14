@@ -185,9 +185,8 @@
     } else if ([self.view isKindOfClass:UIButton.class]) {
 	UIButton *button = (UIButton *)self.view;
         if ([key isEqualToString:@"icon"]) {
-            UIImage * icon = [UIImage imageNamed:value];
+            UIImage * icon = [self loadImage:value];
             [button setImage:icon forState:UIControlStateNormal];
-            // [button setBackgroundImage:icon forState:UIControlStateNormal];
         } else if ([key isEqualToString:@"icon-attachment"]) {
             
         }
@@ -199,11 +198,19 @@
     } else if ([self.view isKindOfClass:UITabBarItem.class]) {
         UITabBarItem *item = (UITabBarItem *)self.view;
         if ([key isEqualToString:@"icon"]) {
-            NSString *imageString = value;
-            UIImage *icon = [UIImage imageNamed:imageString];
-            item.image = icon;
+            item.image = [self loadImage:value];
         }
     }
+}
+
+- (UIImage *)loadImage:(NSString *)filename {
+    NSString *maskFilePath = [[NSBundle mainBundle] pathForResource:filename ofType:nil];
+    CGDataProviderRef dataProvider = CGDataProviderCreateWithFilename([maskFilePath UTF8String]);
+    CGImageRef imageRef = CGImageCreateWithPNGDataProvider(dataProvider, NULL, true, kCGRenderingIntentDefault);
+    UIImage * image = [UIImage imageWithCGImage:imageRef scale:2.0f orientation:UIImageOrientationUp];
+    CGImageRelease(imageRef);
+    CGDataProviderRelease(dataProvider);
+    return image;
 }
 
 - (UIColor *)colorFromString:(NSString *)hexString {
