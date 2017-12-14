@@ -108,7 +108,7 @@ iOSMainThread::sendCommands(const std::vector<Command> & commands) {
       }
         break;
         
-      case Command::CREATE_PROGRESSBAR: {
+      case Command::CREATE_PROGRESS_SPINNER: {
         [viewController createActivityIndicatorWithId:command.getChildInternalId() parentId:command.getInternalId()];
       }
         break;
