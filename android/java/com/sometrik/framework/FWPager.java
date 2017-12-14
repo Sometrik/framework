@@ -29,13 +29,6 @@ public class FWPager extends ViewPager implements NativeCommandHandler {
     
     adapter = new FWPagerAdapter();
     setAdapter(adapter);
-    setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-      @Override
-      public void onPageSelected(int position) {
-	System.out.println("Pager change page " + getElementId());
-	frame.sendNativeValueEvent(getElementId(), position, 0);
-      }
-    });
     
     pageChangeListener = new DetailOnPageChangeListener();
     this.setOnPageChangeListener(pageChangeListener);
@@ -299,6 +292,8 @@ public class FWPager extends ViewPager implements NativeCommandHandler {
 
     @Override
     public void onPageSelected(int position) {
+	System.out.println("Pager change page " + getElementId());
+	frame.sendNativeValueEvent(getElementId(), position, 0);
 	currentPage = position;
     }
 
