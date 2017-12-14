@@ -186,7 +186,12 @@ iOSMainThread::sendCommands(const std::vector<Command> & commands) {
         
       case Command::SET_INT_VALUE: {
 	if (command.getInternalId() == 1) {
-	  auto & app = getApplication();
+          auto & app = getApplication();
+          
+          if (app.getActiveViewId()) {
+	    [viewController setVisibility:app.getActiveViewId() visibility:0];
+	  }
+
 	  app.addToHistory(command.getChildInternalId());
 	  app.setActiveViewId(command.getChildInternalId());
 
@@ -278,6 +283,7 @@ iOSMainThread::setImageData(int internal_id, std::shared_ptr<canvas::PackedImage
   ViewManager * viewManager = [viewController getViewManager:internal_id];
   if (viewManager != nil) {
     int bpp = input->getBytesPerPixel(input->getInternalFormat());
+    
     auto provider = CGDataProviderCreateWithData(0, input->getData(), bpp * input->getWidth() * input->getHeight(), 0);
     auto colorspace = CGColorSpaceCreateDeviceRGB();
     CGBitmapInfo bitmapInfo = kCGBitmapByteOrder32Little;
