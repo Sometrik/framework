@@ -550,7 +550,7 @@ public class NativeCommand {
       break;
     }
     case CREATE_NAVIGATIONBAR: {
-      FWFrameLayout bar = new FWFrameLayout(frame, getChildInternalId());      
+      FWLayout bar = createLinearLayout(2);
       view.addChild(bar);
       frame.addToViewList(bar);
       break;
