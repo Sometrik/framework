@@ -12,7 +12,7 @@
 #include <NavigationBarItem.h>
 #include <NavigationDrawer.h>
 #include <FrameLayout.h>
-#include <ProgressBar.h>
+#include <ProgressSpinner.h>
 #include <FlipperLayout.h>
 #include <ActionBar.h>
 #include <TimerEvent.h>
@@ -28,6 +28,8 @@
 #define ID_SHOW_MENU_BUTTON 2
 #define ID_SHOW_ACTIONSHEET 3
 #define ID_OPEN_LINK 4
+#define ID_PROGRESS_SPINNER 5
+#define ID_HIDE_BUTTON 6
 
 using namespace std;
 
@@ -125,14 +127,14 @@ Example1::Example1() : FWApplication("com.sometrik.example1")
     scrollContent2->addChild(make_shared<TextLabel>(s)).style("font-size", 80);
   }
 
-#if 1
   auto thirdPage = std::make_shared<LinearLayout>(FW_VERTICAL);
   thirdPage->style("background", "#e03030");
   thirdPage->style("margin", 20);
   flipper->addChild(thirdPage);
   thirdPage->addChild(make_shared<TextLabel>("THIRD PAGE")).style("font-size", "20");
-  thirdPage->addChild(make_shared<ProgressBar>());
-#endif
+  thirdPage->addChild(make_shared<ProgressSpinner>(ID_PROGRESS_SPINNER));
+  thirdPage->addChild(make_shared<Button>("Hide spinner", ID_HIDE_BUTTON));
+
 }
 
 void
@@ -171,6 +173,11 @@ Example1::onCommandEvent(CommandEvent & ev) {
       
     case ID_OPEN_LINK: {
       launchBrowser("http://www.yle.fi/");
+    }
+      break;
+      
+    case ID_HIDE_BUTTON: {
+      getChildById(ID_PROGRESS_SPINNER).hide();
     }
       break;
   }
