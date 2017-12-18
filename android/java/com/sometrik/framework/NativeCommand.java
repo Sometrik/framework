@@ -429,10 +429,10 @@ public class NativeCommand {
     }
     
     case CREATE_PAGE_CONTROL: {
-      FWPageIndicator indicator = new FWPageIndicator(frame, 5);
+      FWPageIndicator indicator = new FWPageIndicator(frame, getValue());
       indicator.setId(childInternalId);
       frame.addToViewList(indicator);
-      
+      view.addChild(indicator);
       
       break;
     }
