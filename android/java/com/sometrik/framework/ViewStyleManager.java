@@ -368,7 +368,9 @@ class ViewStyleManager {
     ArrayList<Animator> animators = new ArrayList<Animator>();
     
     if (animateTransition && view instanceof ViewGroup) {
-      ((ViewGroup)view).setLayoutTransition(new LayoutTransition());
+      LayoutTransition transition = new LayoutTransition();
+      transition.enableTransitionType(LayoutTransition.CHANGING);
+      ((ViewGroup)view).setLayoutTransition(transition);
     }
     if (opacity != null) {
       if (animate) {
