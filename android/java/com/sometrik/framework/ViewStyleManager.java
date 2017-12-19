@@ -370,6 +370,8 @@ class ViewStyleManager {
     if (animateTransition && view instanceof ViewGroup) {
       LayoutTransition transition = new LayoutTransition();
       transition.enableTransitionType(LayoutTransition.CHANGING);
+      transition.setDuration(500);
+      transition.setStartDelay(LayoutTransition.CHANGING, 0);
       ((ViewGroup)view).setLayoutTransition(transition);
     }
     if (opacity != null) {
