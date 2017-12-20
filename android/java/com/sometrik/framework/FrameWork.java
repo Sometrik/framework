@@ -30,6 +30,7 @@ import android.content.res.AssetManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -61,6 +62,7 @@ public class FrameWork extends Activity {
   private double updateTimer = 0;
   private IabHelper purchaseHelper;
   private static final int RESULT_SETTINGS = 1;
+  private static final int RESULT_CHOOSE_FROM_GALLERY = 2;
   private Inventory inventory;
   private DisplayMetrics displayMetrics;
   private View currentlyShowingView;
@@ -647,6 +649,17 @@ public class FrameWork extends Activity {
     super.onActivityResult(requestCode, resultCode, data);
 
     switch (requestCode) {
+    
+    case RESULT_CHOOSE_FROM_GALLERY:
+      if (resultCode == RESULT_OK) {
+	System.out.println("RESULT OK");
+	 Uri selectedImg = data.getData();
+	System.out.println("Selected image: " + selectedImg.toString());
+	//TODO send to native
+      } else {
+	System.out.println("Error receiving image from gallery");
+      }
+      break;
     case RESULT_SETTINGS:
       // showUserSettings();
       break;
@@ -701,6 +714,13 @@ public class FrameWork extends Activity {
     int heightMeasureSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
     view.measure(widthMeasureSpec, heightMeasureSpec);
     return view.getMeasuredWidth();
+  }
+  
+  public void selectFromGallery() {
+    Intent intent = new Intent();  
+    intent.setType("image/*");  
+    intent.setAction(Intent.ACTION_GET_CONTENT);
+    startActivityForResult(Intent.createChooser(intent, "Choose Picture"), RESULT_CHOOSE_FROM_GALLERY);
   }
 
   
