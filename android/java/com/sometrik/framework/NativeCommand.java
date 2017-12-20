@@ -138,7 +138,9 @@ public class NativeCommand {
     LIST_PURCHASES,
     CONSUME_PURCHASE,
 
-    SHARE_LINK
+    // Other
+    SHARE_LINK,
+    SELECT_FROM_GALLERY
   }
 
   public NativeCommand(FrameWork frame, int messageTypeId, int internalId, int childInternalId, int value, byte[] textValue, byte[] textValue2, int flags, int row, int column, int sheet, int width, int height) {
@@ -617,6 +619,10 @@ public class NativeCommand {
 	view.reshape(value);
       }
       break;
+    case SELECT_FROM_GALLERY: {
+      frame.selectFromGallery();
+      break;
+    }
     case SHARE_LINK: {
       ShareCompat.IntentBuilder.from(frame)
       .setType("text/plain")

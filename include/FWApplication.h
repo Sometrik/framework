@@ -70,6 +70,10 @@ public:
     c.setTextValue(url);
     sendCommand(c);
   }
+  void selectFromGallery() {
+    Command c(Command::SELECT_FROM_GALLERY, getInternalId());
+    sendCommand(c);
+  }
   void setVersion(const std::string & v) { versionText = v; }
 
  protected:
