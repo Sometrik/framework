@@ -109,12 +109,7 @@ public class FWImageView extends ImageView implements NativeCommandHandler {
 
   @Override
   public void setStyle(Selector selector, String key, String value) {
-    if (selector == Selector.NORMAL) {
-      normalStyle.setStyle(key, value);
-    } else if (selector == Selector.ACTIVE) {
-      activeStyle.setStyle(key, value);
-    }
-    
+
     if (key.equals("scale")) {
       if (value.equals("fit-start")) {
 	setScaleType(ScaleType.FIT_START);
@@ -125,6 +120,13 @@ public class FWImageView extends ImageView implements NativeCommandHandler {
       } else if (value.equals("center")) {
 	setScaleType(ScaleType.CENTER);
       }
+      return;
+    }
+    
+    if (selector == Selector.NORMAL) {
+      normalStyle.setStyle(key, value);
+    } else if (selector == Selector.ACTIVE) {
+      activeStyle.setStyle(key, value);
     }
   }
   
