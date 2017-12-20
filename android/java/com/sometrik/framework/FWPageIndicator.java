@@ -33,9 +33,7 @@ public class FWPageIndicator extends LinearLayout implements NativeCommandHandle
     activeBallColor = Color.parseColor("#c1272d");
     
     for (int i = 0; i < pageCount; i++) {
-      BallIndicator shapeLayout = new BallIndicator(frame, 0, ballColor, activeBallColor);
-      indicatorList.add(shapeLayout);
-      addView(shapeLayout);
+      addBallIndicator();
     }
     
     if (pageCount > 0) {
@@ -52,19 +50,9 @@ public class FWPageIndicator extends LinearLayout implements NativeCommandHandle
 
 	  protected BallIndicator(FrameWork frameWork, int id, int ballColor, int activeBallColor) {
 	    super(frameWork, id);
-	      setStyle(Selector.values()[0], "height", "15");
-	      setStyle(Selector.values()[0], "width", "15");
-//	      setStyle(Selector.values()[0], "margin-left", "8");
-//	      setStyle(Selector.values()[0], "margin-right", "8");
-//	      this.setPadding(25, 0, 25, 0);
 	      this.ballColor = ballColor;
 	      this.activeBallColor = activeBallColor;
-	      
-//	      LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)getLayoutParams();
-//	      params.leftMargin = 12;
-//	      params.rightMargin = 12;
-//	      setLayoutParams(params);
-	      
+
 	      oval = new ShapeDrawable(new OvalShape());
 	      oval.setIntrinsicHeight(10);
 	      oval.setIntrinsicWidth(10);
@@ -94,6 +82,16 @@ public class FWPageIndicator extends LinearLayout implements NativeCommandHandle
 	    }
 	  }
   	}
+  	
+  	
+  void addBallIndicator() {
+    BallIndicator shapeLayout = new BallIndicator(frame, 0, ballColor, activeBallColor);
+    indicatorList.add(shapeLayout);
+    addView(shapeLayout);
+    shapeLayout.setStyle(Selector.NORMAL, "margin-left", "1");
+    shapeLayout.setStyle(Selector.NORMAL, "margin-right", "1");
+    shapeLayout.applyStyles();
+  }
   
   @Override
   public void onScreenOrientationChange(boolean isLandscape) {
@@ -174,9 +172,7 @@ public class FWPageIndicator extends LinearLayout implements NativeCommandHandle
       System.out.println("java pageControl reshape adding");
       int listSize = indicatorList.size();
       for (int i = listSize; i < size; i++) {
-	BallIndicator shapeLayout = new BallIndicator(frame, 0, ballColor, activeBallColor);
-	indicatorList.add(shapeLayout);
-	addView(shapeLayout);
+	addBallIndicator();
       }
     }
     invalidate();
