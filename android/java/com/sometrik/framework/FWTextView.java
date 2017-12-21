@@ -24,8 +24,6 @@ public class FWTextView extends TextView implements NativeCommandHandler {
     this.normalStyle = currentStyle = new ViewStyleManager(frame.bitmapCache, scale, true);
     this.activeStyle = new ViewStyleManager(frame.bitmapCache, scale, false);
     this.linkStyle = new ViewStyleManager(frame.bitmapCache, scale, false);
-    this.setClickable(false);
-    this.setFocusable(false);
 
     if (autolink) {
       this.setLinksClickable(false);
@@ -38,13 +36,18 @@ public class FWTextView extends TextView implements NativeCommandHandler {
       });
       this.setAutoLinkMask(15);
     }
+
+    this.setClickable(false);
+    this.setLongClickable(false);
+    this.setFocusable(false);
   }
   
   public abstract class TextViewLinkHandler extends LinkMovementMethod {
 
     public boolean onTouchEvent(TextView widget, Spannable buffer, MotionEvent event) {
-        if (event.getAction() != MotionEvent.ACTION_UP)
-            return super.onTouchEvent(widget, buffer, event);
+      if (event.getAction() != MotionEvent.ACTION_UP)
+	return false;
+        
 
         int x = (int) event.getX();
         int y = (int) event.getY();
@@ -62,8 +65,9 @@ public class FWTextView extends TextView implements NativeCommandHandler {
         URLSpan[] link = buffer.getSpans(off, off, URLSpan.class);
         if (link.length != 0) {
             onLinkClick(link[0].getURL());
+            return true;
         }
-        return true;
+        return false;
     }
 
     abstract public void onLinkClick(String url);
