@@ -343,6 +343,8 @@ class ViewStyleManager {
     } else if (key.equals("animate-transition")) {
       if (!value.equals("none")) {
 	animateTransition = true;
+      } else {
+	animateTransition = false;
       }
     }
   }
