@@ -500,7 +500,7 @@ class ViewStyleManager {
     } else if (backgroundContent != null) {
       view.setBackground(backgroundContent);
     }
-    
+
     // Layout parameters
     if (weight != null || width != null || height != null ||
 	margin != null || gravity != null) {
@@ -575,6 +575,11 @@ class ViewStyleManager {
       
       if (maxWidth > 0) imageView.setMaxWidth(applyScale(maxWidth));
       if (maxHeight > 0) imageView.setMaxHeight(applyScale(maxHeight));
+    } else if (view instanceof TextView) {
+      TextView textView = (TextView)view;
+      
+      if (maxWidth > 0) textView.setMaxWidth(applyScale(maxWidth));
+      if (maxHeight > 0) textView.setMaxHeight(applyScale(maxHeight));
     }
       
     if (view instanceof EditText) {
