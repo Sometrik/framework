@@ -1,7 +1,6 @@
 #ifndef _BASICPLATFORM_H_
 #define _BASICPLATFORM_H_
 
-#include <FWPlatform.h>
 #include <PosixThread.h>
 #include <CurlClient.h>
 
@@ -11,11 +10,22 @@
 
 #include <fstream>
 #include <unistd.h>
+#include <sstream>
+#include <iostream>
+
+class BasicLogger : public Logger {
+ public:
+  BasicLogger(const std::string & _name) : Logger(_name) { }
+  
+  void println(const char * s) override {
+    std::cerr << s << std::endl;
+  }
+};
 
 class BasicThread : public PosixThread {
  public:
- BasicThread(PlatformThread * _parent_thread, FWPlatform * _platform, std::shared_ptr<FWApplication> & _application, std::shared_ptr<Runnable> & _runnable)
-   : PosixThread(_parent_thread, _platform, _application, _runnable) { }
+ BasicThread(PlatformThread * _parent_thread, std::shared_ptr<FWApplication> & _application, std::shared_ptr<Runnable> & _runnable)
+   : PosixThread(_parent_thread,_application, _runnable) { }
 
 #ifndef NO_CANVAS
   std::unique_ptr<canvas::ContextFactory> createContextFactory() const override {
@@ -27,12 +37,10 @@ class BasicThread : public PosixThread {
   }
 
   std::shared_ptr<PlatformThread> createThread(std::shared_ptr<Runnable> & runnable) override {
-    auto & platform = getPlatform();
-    return std::make_shared<BasicThread>(this, &platform, application, runnable);
+    return std::make_shared<BasicThread>(this, application, runnable);
   }
 
-  int sendCommand(const Command & command) override {
-    return 0;
+  void sendCommands(const std::vector<Command> & commands) {
   }
 
   std::string getLocalFilename(const char * fn, FileType type) override { return fn; }
@@ -43,12 +51,21 @@ class BasicThread : public PosixThread {
     buffer << t.rdbuf();
     return buffer.str();
   }
+
+  void setImageData(int internal_id, std::shared_ptr<canvas::PackedImageData> image) override { }
+  void setSurface(int internal_id, canvas::Surface & surface) override { }
+  int startModal() override { return 0; }
+  void endModal(int value) override { }
+
+  std::unique_ptr<Logger> createLogger(const std::string & name) const override {
+    return std::unique_ptr<Logger>(new BasicLogger(name));
+  }
 };
 
 class BasicMainThread : public PlatformThread {
 public:
  BasicMainThread(std::shared_ptr<FWApplication> & _application, std::shared_ptr<Runnable> & _runnable)
-   : PlatformThread(0, new FWPlatform, _application, _runnable)
+   : PlatformThread(0, _application, _runnable)
   {
     
   }
@@ -63,16 +80,14 @@ public:
   }
 
   std::shared_ptr<PlatformThread> createThread(std::shared_ptr<Runnable> & runnable) override {
-    auto & platform = getPlatform();
-    return std::make_shared<BasicThread>(this, &platform, application, runnable);
+    return std::make_shared<BasicThread>(this, application, runnable);
   }
 
   void sleep(double t) override {
     usleep((unsigned int)(t * 1000000));
   }
 
-  int sendCommand(const Command & command) override {
-    return 0;    
+  void sendCommands(const std::vector<Command> & commands) {
   }
 
   std::string getLocalFilename(const char * fn, FileType type) override { return fn; }
@@ -97,6 +112,15 @@ public:
   std::vector<std::pair<int, std::shared_ptr<Event> > > pollEvents(bool block) override {
     std::vector<std::pair<int, std::shared_ptr<Event> > > r;
     return r;
+  }
+
+  void setImageData(int internal_id, std::shared_ptr<canvas::PackedImageData> image) override { }
+  void setSurface(int internal_id, canvas::Surface & surface) override { }
+  int startModal() override { return 0; }
+  void endModal(int value) override { }
+
+  std::unique_ptr<Logger> createLogger(const std::string & name) const override {
+    return std::unique_ptr<Logger>(new BasicLogger(name));
   }
 
  protected:
