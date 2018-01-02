@@ -87,14 +87,14 @@ class PlatformThread : public EventHandler {
   FWApplication & getApplication() { return *application; }
   const FWApplication & getApplication() const { return *application; }
 
-  void postEvent(int internal_id, const Event & ev) {
-    if (internal_id == 0) internal_id = getApplication().getInternalId();
-    getApplication().getThread().sendEvent(internal_id, ev);
+  void postEvent(int target_internal_id, const Event & ev) {
+    if (target_internal_id == 0) target_internal_id = getApplication().getInternalId();
+    getApplication().getThread().sendEvent(target_internal_id, ev);
   }
   void postEvent(const Event & ev) { postEvent(0, ev); }
 
-  std::shared_ptr<PlatformThread> run(std::shared_ptr<Runnable> runnable) {
-    auto thread = createThread(runnable);
+  std::shared_ptr<PlatformThread> run(std::shared_ptr<Runnable> new_runnable) {
+    auto thread = createThread(new_runnable);
     subthreads[thread->getInternalId()] = thread;
     if (thread->start()) {
       return thread;
