@@ -387,7 +387,7 @@ public class NativeCommand {
       if (view != null) {
 	FWTextView textView = new FWTextView(frame, getValue() != 0);
 	textView.setId(getChildInternalId());
-	textView.setText(getTextValueAsString());
+	textView.setValue(getTextValueAsString());
 	frame.addToViewList(textView);
 	view.addChild(textView);
       }
@@ -395,13 +395,17 @@ public class NativeCommand {
 
     case CREATE_LINK:
       if (view != null) {
-	FWTextView textView = new FWTextView(frame, false);
-	textView.setId(getChildInternalId());
-	textView.setMovementMethod(LinkMovementMethod.getInstance());
-	String text = "<a href='" + getTextValue2AsString() + "'>" + getTextValueAsString() + "</a>";
-	textView.setText(Html.fromHtml(text));
-	frame.addToViewList(textView);
-	view.addChild(textView);
+	if (view instanceof FWTextView) {
+	  ((FWTextView)view).addLink(getTextValueAsString(), getTextValue2AsString());
+	} else {
+	  FWTextView textView = new FWTextView(frame, false);
+	  textView.setId(getChildInternalId());
+	  textView.setMovementMethod(LinkMovementMethod.getInstance());
+	  String text = "<a href='" + getTextValue2AsString() + "'>" + getTextValueAsString() + "</a>";
+	  textView.setText(Html.fromHtml(text));
+	  frame.addToViewList(textView);
+	  view.addChild(textView);
+	}
       }
       break;
 

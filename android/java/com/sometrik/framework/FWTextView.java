@@ -1,5 +1,11 @@
 package com.sometrik.framework;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import com.sometrik.framework.NativeCommand.Selector;
 
 import android.graphics.Bitmap;
@@ -7,6 +13,8 @@ import android.text.Layout;
 import android.text.Spannable;
 import android.text.method.LinkMovementMethod;
 import android.text.style.URLSpan;
+import android.text.util.Linkify;
+import android.text.util.Linkify.TransformFilter;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
@@ -15,6 +23,7 @@ public class FWTextView extends TextView implements NativeCommandHandler {
 
   private FrameWork frame;
   ViewStyleManager normalStyle, activeStyle, currentStyle, linkStyle;
+  private HashMap<String, String> linkifyList;
 
   public FWTextView(final FrameWork frame, boolean autolink) {
     super(frame);
@@ -36,9 +45,26 @@ public class FWTextView extends TextView implements NativeCommandHandler {
       this.setAutoLinkMask(15);
       this.setFocusable(true);
     }
+    
+    linkifyList = new HashMap<String, String>();
 
     this.setClickable(false);
     this.setLongClickable(false);
+  }
+  
+  private void setToLink(String text, String url) {
+    TransformFilter transformFilter = new TransformFilter() {
+      public final String transformUrl(final Matcher match, String url) {
+	return "";
+      }
+    };
+    Pattern matcher = Pattern.compile(text);
+    Linkify.addLinks(this, matcher, url, null, transformFilter);
+  }
+  
+  public void addLink(String text, String url) {
+    linkifyList.put(text, url);
+    setToLink(text,url);
   }
 
   public abstract class TextViewLinkHandler extends LinkMovementMethod {
@@ -77,11 +103,20 @@ public class FWTextView extends TextView implements NativeCommandHandler {
 
   @Override
   public void addOption(int optionId, String text) {
+    
   }
 
   @Override
   public void setValue(String v) {
     setText(v);
+
+    if (linkifyList.size() > 0) {
+      Iterator it = linkifyList.entrySet().iterator();
+      while (it.hasNext()) {
+        Map.Entry<String, String> pair = (Map.Entry<String, String>)it.next();
+        setToLink(pair.getKey(), pair.getValue());
+      }
+    }
   }
 
   @Override
