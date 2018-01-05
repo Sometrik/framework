@@ -362,8 +362,8 @@ public class NativeCommand {
 
     case CREATE_TEXTVIEW:
       if (view != null) {
-	FWEditText editTextView = createBigEditText();
-	view.addChild(editTextView);
+	FWEditText editText = createEditText();
+	view.addChild(editText);
       }
       break;
       
@@ -785,26 +785,12 @@ public class NativeCommand {
       public void afterTextChanged(Editable editable) {
 	String inputText = editable.toString();
 	byte[] b = inputText.getBytes(frame.getCharset());
+	System.out.println("textChanged. New text: " + inputText);
 	frame.sendNativeValueEvent(getChildInternalId(), b);
       }
       public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
       public void onTextChanged(CharSequence s, int start, int before, int count) {}
    });
-    frame.addToViewList(editText);
-    return editText;
-  }
-  
-
-  private FWEditText createBigEditText() {
-    final FWEditText editText = new FWEditText(frame);
-    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-    editText.setMinLines(4);
-    editText.setLayoutParams(params);
-    editText.setId(getChildInternalId());
-    editText.setText(getTextValueAsString());
-    editText.setVerticalScrollBarEnabled(true);
-    editText.setMovementMethod(new ScrollingMovementMethod());
-    editText.addDelayedChangeListener(getChildInternalId());
     frame.addToViewList(editText);
     return editText;
   }

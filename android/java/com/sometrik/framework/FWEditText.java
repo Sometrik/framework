@@ -50,46 +50,6 @@ public class FWEditText extends EditText implements NativeCommandHandler {
     setLayoutParams(params);
   }
   
-  public void addDelayedChangeListener(final int viewId){
-    
-    addTextChangedListener(new TextWatcher() {
-      public void afterTextChanged(Editable editable) {  }
-
-      public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-	lastTypeTime = new Date();
-      }
-
-      @Override
-      public void onTextChanged(final CharSequence text, int arg1, int arg2, int arg3) {
-
-	System.out.println("BigEditText TextChanged");
-	// dispatch after done typing (1 sec after)
-	Timer t = new Timer();
-	TimerTask tt = new TimerTask() {
-	  @Override
-	  public void run() {
-	    Date myRunTime = new Date();
-	    System.out.println("BigEditText TextChanged run!");
-
-	    if ((lastTypeTime.getTime() + 2000) <= myRunTime.getTime()) {
-	      post(new Runnable() {
-		@Override
-		public void run() {
-		  System.out.println("typing finished. Sending update");
-		  System.out.println("update: " + text.toString());
-//		  frame.textChangedEvent(System.currentTimeMillis() / 1000.0, viewId, text);
-		}
-	      });
-	    } else {
-	      System.out.println("Canceled");
-	    }
-	  }
-	};
-	t.schedule(tt, 2000);
-      }
-    });
-  }
-  
   @Override
   public void addChild(View view) {
     System.out.println("FWEditText couldn't handle command");
