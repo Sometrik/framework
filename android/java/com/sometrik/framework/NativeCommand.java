@@ -396,7 +396,7 @@ public class NativeCommand {
     case CREATE_LINK:
       if (view != null) {
 	if (view instanceof FWTextView) {
-	  ((FWTextView)view).addLink(getTextValueAsString(), getTextValue2AsString());
+	  ((FWTextView)view).addLink(getTextValueAsString());
 	} else {
 	  FWTextView textView = new FWTextView(frame, false);
 	  textView.setId(getChildInternalId());
