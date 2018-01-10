@@ -1,5 +1,8 @@
 package com.sometrik.framework;
 
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -13,8 +16,6 @@ import android.text.Layout;
 import android.text.Spannable;
 import android.text.method.LinkMovementMethod;
 import android.text.style.URLSpan;
-import android.text.util.Linkify;
-import android.text.util.Linkify.TransformFilter;
 import android.util.Patterns;
 import android.view.MotionEvent;
 import android.view.View;
@@ -26,6 +27,7 @@ public class FWTextView extends TextView implements NativeCommandHandler {
   private ViewStyleManager normalStyle, activeStyle, currentStyle, linkStyle;
   private ArrayList<String> linkList;
   private boolean autolink;
+  private boolean linkOptionsSet = false;
 
   public FWTextView(final FrameWork frame, boolean autolink) {
     super(frame);
@@ -37,28 +39,6 @@ public class FWTextView extends TextView implements NativeCommandHandler {
     this.normalStyle = currentStyle = new ViewStyleManager(frame.bitmapCache, scale, true);
     this.activeStyle = new ViewStyleManager(frame.bitmapCache, scale, false);
     this.linkStyle = new ViewStyleManager(frame.bitmapCache, scale, false);
-    if (autolink) {
-      this.setLinksClickable(false);
-//      this.setMovementMethod(new TextViewLinkHandler() {
-//	@Override
-//	public void onLinkClick(String url) {
-//	  System.out.println("link clicked " + url);
-//	  frame.launchBrowser(url);
-//	}
-//      });
-//      this.setAutoLinkMask(15);
-      this.setFocusable(true);
-      
-
-      TransformFilter transformFilter = new TransformFilter() {
-        public final String transformUrl(final Matcher match, String url) {
-  	return url;
-        }
-      };
-     
-      Pattern urlPattern = Patterns.WEB_URL;
-      Linkify.addLinks(this, urlPattern, null, null, transformFilter);
-    }
     
 
     this.setClickable(false);
@@ -67,34 +47,81 @@ public class FWTextView extends TextView implements NativeCommandHandler {
   
   
   private void setToLink(String text) {
-    String textViewText = (String) getText();
+    String textViewText = getText().toString();
 
+    System.out.println("setToLink " + text);
     Pattern pattern = Pattern.compile(text);
     List<String> matches = new ArrayList<String>();
     Matcher m = pattern.matcher(getText());
     while (m.find()) {
-      String s = m.group(1);
-      matches.add(s);
+      if (m.groupCount() > 0) {
+	String s = m.group(1);
+	System.out.println("setToLink match " + s);
+	matches.add(s);
+      }
     }
+    String newText = textViewText;
     for (String match : matches) {
-      String newText = textViewText.replaceAll(match, "<a href=\"" + match + "\">" + match + "</a>");
-      setText(Html.fromHtml(newText));
+      newText = newText.replaceAll(match, "<a href=\"" + match + "\">" + match + "</a>");
+      System.out.println("setToLink new text " + newText);
     }
     
-    this.setLinksClickable(false);
-    this.setMovementMethod(new TextViewLinkHandler() {
-	@Override
-	public void onLinkClick(String url) {
-	System.out.println("link clicked " + url);
-	byte[] b = url.getBytes(frame.getCharset());
-	frame.sendNativeValueEvent(getElementId(), b);
-//	  frame.launchBrowser(url);
+    if (autolink) {
+      Pattern urlPattern = Patterns.WEB_URL;
+      
+      List<String> autoLinkMatches = new ArrayList<String>();
+      Matcher m2 = urlPattern.matcher(getText());
+      while (m2.find()) {
+	if (m2.groupCount() > 0) {
+	  String s = m2.group(1);
+	  autoLinkMatches.add(s);
 	}
-    });
+      }
+      for (String match : autoLinkMatches) {
+        newText = newText.replaceAll(match, "<a href=\"" + match + "\">" + match + "</a>");
+        System.out.println("setToLink (a) new text " + newText);
+      }
+    }
+    
 
-    this.setFocusable(true);
-    this.setClickable(false);
-    this.setLongClickable(false);
+    if (!newText.equals(textViewText)) {
+      try {
+      setText(Html.fromHtml(newText));
+      } catch(Exception e) {
+	e.printStackTrace();
+	System.out.println("Exception setToLink");
+      }
+    }
+    
+    if (!linkOptionsSet) {
+
+      this.setLinksClickable(false);
+      this.setMovementMethod(new TextViewLinkHandler() {
+  	@Override
+  	public void onLinkClick(String url) {
+
+    	System.out.println("link clicked " + url);
+  	try {
+  	  URL u = new URL(url);
+  	  u.toURI();
+  	  frame.launchBrowser(url);
+  	  return;
+  	} catch (URISyntaxException e) {
+  	  e.printStackTrace();
+  	} catch (MalformedURLException e) {
+  	  e.printStackTrace();
+  	}
+
+  	byte[] b = url.getBytes(frame.getCharset());
+  	frame.sendNativeValueEvent(getElementId(), b);
+  	}
+      });
+
+      this.setFocusable(true);
+      this.setClickable(false);
+      this.setLongClickable(false);
+      linkOptionsSet = true;
+    }
   }
   
   public void addLink(String text) {
@@ -119,6 +146,7 @@ public class FWTextView extends TextView implements NativeCommandHandler {
       int off = layout.getOffsetForHorizontal(line, x);
       
       URLSpan[] link = buffer.getSpans(off, off, URLSpan.class);
+	System.out.println("link movement clicked " + link);
       if (link.length != 0) {
 	if (event.getAction() == MotionEvent.ACTION_UP) {
 	  onLinkClick(link[0].getURL());
@@ -145,23 +173,7 @@ public class FWTextView extends TextView implements NativeCommandHandler {
   public void setValue(String v) {
     setText(v);
 
-    if (!linkList.isEmpty()) {
-      for (String link : linkList) {
-        setToLink(link);
-      }
-    }
-
-    if (autolink) {
-      TransformFilter transformFilter = new TransformFilter() {
-        public final String transformUrl(final Matcher match, String url) {
-  	return url;
-        }
-      };
-
-	//TODO remove http
-      Pattern urlPattern = Patterns.WEB_URL;
-      Linkify.addLinks(this, urlPattern, null, null, transformFilter);
-    }
+    
   }
 
   @Override
