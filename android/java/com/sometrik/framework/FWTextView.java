@@ -41,7 +41,6 @@ public class FWTextView extends TextView implements NativeCommandHandler {
     this.normalStyle = currentStyle = new ViewStyleManager(frame.bitmapCache, scale, true);
     this.activeStyle = new ViewStyleManager(frame.bitmapCache, scale, false);
     this.linkStyle = new ViewStyleManager(frame.bitmapCache, scale, false);
-    
 
     this.setClickable(false);
     this.setLongClickable(false);
@@ -69,6 +68,17 @@ public class FWTextView extends TextView implements NativeCommandHandler {
     public void updateDrawState(TextPaint ds) {
       super.updateDrawState(ds);
       ds.setUnderlineText(false);
+    }
+  }
+
+  private String cleanUpURLToShow(String link) {
+    try {
+      URL url = new URL(link);
+      System.out.println("cleanUpURL host: " + url.getHost() + " path: " + url.getPath());
+      return (url.getHost() + url.getPath()).toString();
+    } catch (MalformedURLException e) {
+      e.printStackTrace();
+      return link;
     }
   }
   
@@ -104,7 +114,7 @@ public class FWTextView extends TextView implements NativeCommandHandler {
 	}
       }
       for (String match : autoLinkMatches) {
-        newText = newText.replaceAll(match, "<a href=\"" + match + "\">" + match + "</a>");
+        newText = newText.replaceAll(match, "<a href=\"" + match + "\">" + cleanUpURLToShow(match) + "</a>");
         System.out.println("setToLink (a) new text " + newText);
       }
     }
