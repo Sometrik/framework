@@ -23,6 +23,12 @@ class TextLabel : public Element {
     }
   }
 
+  void setLink(const std::string text) {
+    Command c(Command::CREATE_LINK, getInternalId());
+    c.setTextValue(text);
+    sendCommand(c);
+  }
+
   std::string getText() { return value; }
 
  protected:

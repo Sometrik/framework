@@ -15,33 +15,84 @@ import android.widget.LinearLayout;
 public class FWPageIndicator extends LinearLayout implements NativeCommandHandler {
 
   private FrameWork frame;
-  private ArrayList<FrameLayout> indicatorList;
+  private ArrayList<BallIndicator> indicatorList;
+  private ViewStyleManager normalStyle, activeStyle, currentStyle;
+  private int activeBallColor;
+  private int ballColor;
   
   
   public FWPageIndicator(FrameWork frame, int pageCount) {
     super(frame);
     this.frame = frame;
-    indicatorList = new ArrayList<FrameLayout>();
+    indicatorList = new ArrayList<BallIndicator>();
+    
+    final float scale = getContext().getResources().getDisplayMetrics().density;
+    this.normalStyle = currentStyle = new ViewStyleManager(frame.bitmapCache, scale, true);
+    this.activeStyle = new ViewStyleManager(frame.bitmapCache, scale, false);
+    ballColor = Color.parseColor("#c1272d");
+    activeBallColor = Color.parseColor("#c1272d");
     
     for (int i = 0; i < pageCount; i++) {
-      FWFrameLayout shapeLayout = new FWFrameLayout(frame, 0);
-      shapeLayout.setStyle(Selector.values()[0], "width", "10");
-      shapeLayout.setStyle(Selector.values()[0], "height", "10");
-      ShapeDrawable oval = new ShapeDrawable(new OvalShape());
-      oval.setIntrinsicHeight(10);
-      oval.setIntrinsicWidth(10);
-      oval.getPaint().setColor(Color.parseColor("#c1272d"));
-      shapeLayout.setBackgroundDrawable(oval);
-      indicatorList.add(shapeLayout);
-      addView(shapeLayout);
+      addBallIndicator();
+    }
+    
+    if (pageCount > 0) {
+      setValue(0);
     }
   }
   
-  public void setIndicator(int position) {
-    
-    
-  }
+  	protected class BallIndicator extends FWFrameLayout {
+	  
+	  protected ShapeDrawable oval;
+	  private int activeBallColor;
+	  private int ballColor;
+	  private boolean active;
 
+	  protected BallIndicator(FrameWork frameWork, int id, int ballColor, int activeBallColor) {
+	    super(frameWork, id);
+	      this.ballColor = ballColor;
+	      this.activeBallColor = activeBallColor;
+
+	      oval = new ShapeDrawable(new OvalShape());
+	      oval.setIntrinsicHeight(10);
+	      oval.setIntrinsicWidth(10);
+	      oval.getPaint().setColor(ballColor);
+	      setBackgroundDrawable(oval);
+	      active = false;
+	  }
+	  
+	  private void setActive(boolean active) {
+	    this.active = active;
+	    oval.getPaint().setColor(active ? activeBallColor : ballColor);
+	    System.out.println("pageControl ball color " + (active ? activeBallColor : ballColor));
+	    setBackgroundDrawable(oval);
+	    invalidate();
+	  }
+	  
+	  private void setBallColor(int color) {
+	    ballColor = color;
+	    if (!active) {
+	      oval.getPaint().setColor(color);
+	    }
+	  }
+	  private void setActiveBallColor(int color) {
+	    activeBallColor = color;
+	    if (active) {
+	      oval.getPaint().setColor(color);
+	    }
+	  }
+  	}
+  	
+  	
+  void addBallIndicator() {
+    BallIndicator shapeLayout = new BallIndicator(frame, 0, ballColor, activeBallColor);
+    indicatorList.add(shapeLayout);
+    addView(shapeLayout);
+    shapeLayout.setStyle(Selector.NORMAL, "margin-left", "1");
+    shapeLayout.setStyle(Selector.NORMAL, "margin-right", "1");
+    shapeLayout.applyStyles();
+  }
+  
   @Override
   public void onScreenOrientationChange(boolean isLandscape) {
     // TODO Auto-generated method stub
@@ -92,8 +143,11 @@ public class FWPageIndicator extends LinearLayout implements NativeCommandHandle
 
   @Override
   public void setValue(int v) {
-    // TODO Auto-generated method stub
-    
+    for (int i = 0; i < indicatorList.size(); i++) {
+      BallIndicator indicator = indicatorList.get(i);
+      indicator.setActive(i == v);
+    }
+    invalidate();
   }
 
   @Override
@@ -104,26 +158,61 @@ public class FWPageIndicator extends LinearLayout implements NativeCommandHandle
 
   @Override
   public void reshape(int size) {
-    // TODO Auto-generated method stub
-    
+    System.out.println("java pageControl reshape " + size);
+//    if (size > 20) {
+//      size = 20;
+//    }
+    if (size < indicatorList.size()) {
+      int listSize = indicatorList.size();
+      for (int i = size; i < listSize; i++) {
+	removeView(indicatorList.get(indicatorList.size() - 1));
+	indicatorList.remove(indicatorList.size() - 1);
+      }
+    } else if (size > indicatorList.size()) {
+      System.out.println("java pageControl reshape adding");
+      int listSize = indicatorList.size();
+      for (int i = listSize; i < size; i++) {
+	addBallIndicator();
+      }
+    }
+    invalidate();
   }
 
   @Override
   public void setViewVisibility(boolean visible) {
-    // TODO Auto-generated method stub
-    
+    if (visible) {
+      this.setVisibility(VISIBLE);
+    } else {
+      this.setVisibility(GONE);
+    }
   }
 
   @Override
   public void setStyle(Selector selector, String key, String value) {
-    // TODO Auto-generated method stub
     
+    if (key.equals("color")) {
+      ballColor = Color.parseColor(value);
+      for (BallIndicator indicator : indicatorList) {
+	indicator.setBallColor(ballColor);
+      }
+      return;
+    } else if (key.equals("active-color")) {
+      activeBallColor = Color.parseColor(value);
+      for (BallIndicator indicator : indicatorList) {
+	indicator.setActiveBallColor(activeBallColor);
+      }
+      return;
+    }
+    if (selector == Selector.NORMAL) {
+      normalStyle.setStyle(key, value);
+    } else if (selector == Selector.ACTIVE) {
+      activeStyle.setStyle(key, value);      
+    }
   }
 
   @Override
   public void applyStyles() {
-    // TODO Auto-generated method stub
-    
+    currentStyle.apply(this);
   }
 
   @Override
@@ -152,7 +241,6 @@ public class FWPageIndicator extends LinearLayout implements NativeCommandHandle
 
   @Override
   public int getElementId() {
-    // TODO Auto-generated method stub
-    return 0;
+    return getId();
   }
 }

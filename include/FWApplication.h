@@ -21,7 +21,7 @@ public:
   
   std::string getName() const override { return name; }
 
-  virtual void setActiveViewId(int id) { activeViewId = id; }
+  virtual void setActiveViewId(int view_id) { activeViewId = view_id; }
   int getActiveViewId() const { return activeViewId; }
 
   void addToHistory(int view_internal_id) {
@@ -38,23 +38,23 @@ public:
   }
 
   virtual int popViewBackHistory() {
-    int id = 0;
+    int view_id = 0;
     if (!view_back_history.empty()) {
-      id = view_back_history.back();
+      view_id = view_back_history.back();
       view_back_history.pop_back();
-      view_forward_history.push_back(id);
+      view_forward_history.push_back(view_id);
     }
-    return id;
+    return view_id;
   }
 
   int popViewForwardHistory() {
-    int id = 0;
+    int view_id = 0;
     if (!view_forward_history.empty()) {
-      id = view_forward_history.back();
+      view_id = view_forward_history.back();
       view_forward_history.pop_back();
-      view_back_history.push_back(id);
+      view_back_history.push_back(view_id);
     }
-    return id;    
+    return view_id;
   }
   
   void onSysEvent(SysEvent & ev) override;
@@ -68,6 +68,10 @@ public:
   void shareLink(std::string url) {
     Command c(Command::SHARE_LINK, getInternalId());
     c.setTextValue(url);
+    sendCommand(c);
+  }
+  void selectFromGallery() {
+    Command c(Command::SELECT_FROM_GALLERY, getInternalId());
     sendCommand(c);
   }
   void setVersion(const std::string & v) { versionText = v; }

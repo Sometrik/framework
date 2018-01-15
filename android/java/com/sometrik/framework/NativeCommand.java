@@ -138,7 +138,9 @@ public class NativeCommand {
     LIST_PURCHASES,
     CONSUME_PURCHASE,
 
-    SHARE_LINK
+    // Other
+    SHARE_LINK,
+    SELECT_FROM_GALLERY
   }
 
   public NativeCommand(FrameWork frame, int messageTypeId, int internalId, int childInternalId, int value, byte[] textValue, byte[] textValue2, int flags, int row, int column, int sheet, int width, int height) {
@@ -360,8 +362,8 @@ public class NativeCommand {
 
     case CREATE_TEXTVIEW:
       if (view != null) {
-	FWEditText editTextView = createBigEditText();
-	view.addChild(editTextView);
+	FWEditText editText = createEditText();
+	view.addChild(editText);
       }
       break;
       
@@ -385,7 +387,7 @@ public class NativeCommand {
       if (view != null) {
 	FWTextView textView = new FWTextView(frame, getValue() != 0);
 	textView.setId(getChildInternalId());
-	textView.setText(getTextValueAsString());
+	textView.setValue(getTextValueAsString());
 	frame.addToViewList(textView);
 	view.addChild(textView);
       }
@@ -393,13 +395,17 @@ public class NativeCommand {
 
     case CREATE_LINK:
       if (view != null) {
-	FWTextView textView = new FWTextView(frame, false);
-	textView.setId(getChildInternalId());
-	textView.setMovementMethod(LinkMovementMethod.getInstance());
-	String text = "<a href='" + getTextValue2AsString() + "'>" + getTextValueAsString() + "</a>";
-	textView.setText(Html.fromHtml(text));
-	frame.addToViewList(textView);
-	view.addChild(textView);
+	if (view instanceof FWTextView) {
+	  ((FWTextView)view).addLink(getTextValueAsString());
+	} else {
+	  FWTextView textView = new FWTextView(frame, false);
+	  textView.setId(getChildInternalId());
+	  textView.setMovementMethod(LinkMovementMethod.getInstance());
+	  String text = "<a href='" + getTextValue2AsString() + "'>" + getTextValueAsString() + "</a>";
+	  textView.setText(Html.fromHtml(text));
+	  frame.addToViewList(textView);
+	  view.addChild(textView);
+	}
       }
       break;
 
@@ -429,10 +435,10 @@ public class NativeCommand {
     }
     
     case CREATE_PAGE_CONTROL: {
-      FWPageIndicator indicator = new FWPageIndicator(frame, 5);
+      FWPageIndicator indicator = new FWPageIndicator(frame, getValue());
       indicator.setId(childInternalId);
       frame.addToViewList(indicator);
-      
+      view.addChild(indicator);
       
       break;
     }
@@ -617,6 +623,10 @@ public class NativeCommand {
 	view.reshape(value);
       }
       break;
+    case SELECT_FROM_GALLERY: {
+      frame.selectFromGallery();
+      break;
+    }
     case SHARE_LINK: {
       ShareCompat.IntentBuilder.from(frame)
       .setType("text/plain")
@@ -779,26 +789,12 @@ public class NativeCommand {
       public void afterTextChanged(Editable editable) {
 	String inputText = editable.toString();
 	byte[] b = inputText.getBytes(frame.getCharset());
+	System.out.println("textChanged. New text: " + inputText);
 	frame.sendNativeValueEvent(getChildInternalId(), b);
       }
       public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
       public void onTextChanged(CharSequence s, int start, int before, int count) {}
    });
-    frame.addToViewList(editText);
-    return editText;
-  }
-  
-
-  private FWEditText createBigEditText() {
-    final FWEditText editText = new FWEditText(frame);
-    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-    editText.setMinLines(4);
-    editText.setLayoutParams(params);
-    editText.setId(getChildInternalId());
-    editText.setText(getTextValueAsString());
-    editText.setVerticalScrollBarEnabled(true);
-    editText.setMovementMethod(new ScrollingMovementMethod());
-    editText.addDelayedChangeListener(getChildInternalId());
     frame.addToViewList(editText);
     return editText;
   }
