@@ -1,18 +1,13 @@
 package com.sometrik.framework;
 
 import java.util.Date;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import com.sometrik.framework.NativeCommand.Selector;
 
 import android.graphics.Bitmap;
-import android.text.Editable;
 import android.text.InputFilter;
-import android.text.TextWatcher;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
