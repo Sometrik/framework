@@ -98,18 +98,28 @@ public class FWTextView extends TextView implements NativeCommandHandler {
     }
     String newText = textViewText;
     for (String match : matches) {
-      newText = newText.replaceAll(match, "<a href=\"" + match + "\">" + match + "</a>");
+      newText = newText.replaceAll("(" + match + ")" + "(?!\\w)", "<a href=\"" + match + "\">" + match + "</a>");
       System.out.println("setToLink new text " + newText);
     }
     
     if (autolink) {
-      Pattern urlPattern = Patterns.WEB_URL;
+      
+//      Pattern urlPattern = Patterns.WEB_URL;
+      String regex = "(@)?(href=')?(HREF=')?(HREF=\")?(href=\")?(http://)?[a-zA-Z_0-9\\-]+(\\.\\w[a-zA-Z_0-9\\-]+)+(/[#&\\n\\-=?\\+\\%/\\.\\w]+)?";
+//      String regex = "\\b(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]";
+      Pattern urlPattern = Pattern.compile(regex);
       
       List<String> autoLinkMatches = new ArrayList<String>();
       Matcher m2 = urlPattern.matcher(getText());
       while (m2.find()) {
 	if (m2.groupCount() > 0) {
 	  String s = m2.group(1);
+//	  try {
+//	    URL urlCheck = new URL(s);
+//	  } catch (MalformedURLException e) {
+//	    e.printStackTrace();
+//	    continue;
+//	  }
 	  autoLinkMatches.add(s);
 	}
       }
