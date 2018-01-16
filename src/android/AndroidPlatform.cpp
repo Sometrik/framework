@@ -38,6 +38,7 @@
 #include <AndroidOpenGLInitEvent.h>
 #include <ImageRequestEvent.h>
 #include <ScrollChangedEvent.h>
+#include <ImageUploadEvent.h>
 #include <InternalFormat.h>
 
 #include <android_fopen.h>
@@ -670,10 +671,9 @@ void Java_com_sometrik_framework_FrameWork_nativeSetSurface(JNIEnv* env, jobject
   }
 }
 
- void Java_com_sometrik_framework_FrameWork_nativeSurfaceDestroyed(JNIEnv* env, jobject thiz, int surfaceId, int gl_version) {
-   mainThread->deinitializeRenderer();
- }
-
+void Java_com_sometrik_framework_FrameWork_nativeSurfaceDestroyed(JNIEnv* env, jobject thiz, int surfaceId, int gl_version) {
+  mainThread->deinitializeRenderer();
+}
 void Java_com_sometrik_framework_FrameWork_nativeOnResume(JNIEnv* env, jobject thiz, int appId) {
   SysEvent ev(SysEvent::RESUME);
   mainThread->sendEvent(appId, ev);
@@ -730,6 +730,14 @@ void Java_com_sometrik_framework_FrameWork_textChangedEvent(JNIEnv* env, jobject
 
 void Java_com_sometrik_framework_FrameWork_intChangedEvent(JNIEnv* env, jobject thiz, jint id, jint changedInt, jint changedInt2) {
   ValueEvent ev(changedInt, changedInt2);
+  mainThread->sendEvent(id, ev);
+}
+
+void Java_com_sometrik_framework_FrameWork_imageUploadEvent(JNIEnv* env, jobject thiz, jint id, jbyteArray image) {
+  int len = env->GetArrayLength(image);
+  unsigned char* buf = new unsigned char[len];
+  env->GetByteArrayRegion(image, 0, len, reinterpret_cast<jbyte*>(buf));
+  ImageUploadEvent ev(buf);
   mainThread->sendEvent(id, ev);
 }
 

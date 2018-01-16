@@ -39,6 +39,7 @@ class ThreadEvent;
 class LeaveWorkspaceEvent;
 class MultiTouchEvent;
 class LoadEvent;
+class ImageUploadEvent;
 
 // Application specific
 class AuthEvent;
@@ -73,6 +74,7 @@ class EventHandler : public Notifier {
   virtual void onOpenGLInitEvent(OpenGLInitEvent & ev) { }
   virtual void onVisibilityEvent(VisibilityEvent & ev) { }
   virtual void onScrollChangedEvent(ScrollChangedEvent & ev) { }
+  virtual void onImageUploadEvent(ImageUploadEvent & ev) { }
 
   virtual void handleResultEvent(ResultEvent & ev) { }
   virtual void handleWindowEvent(WindowEvent & ev) { }
