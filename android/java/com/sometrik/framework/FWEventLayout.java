@@ -22,7 +22,8 @@ public class FWEventLayout extends FrameLayout implements NativeCommandHandler {
     this.activeStyle = new ViewStyleManager(frame.bitmapCache, scale, false);
 
     setClickable(true);
-    setFocusable(true);
+    setFocusable(false);
+    
       
     final FWEventLayout layout = this;
     
@@ -47,6 +48,7 @@ public class FWEventLayout extends FrameLayout implements NativeCommandHandler {
   
   @Override
   public boolean performClick() {
+    System.out.println("FWEventLayout click");
     frame.sendNativeValueEvent(getElementId(), 0, 0);
     return super.performClick();
   }
