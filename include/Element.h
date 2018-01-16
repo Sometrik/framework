@@ -207,6 +207,12 @@ class Element : public EventHandler {
       return false;
     }
   }
+
+  void selectFromGallery() {
+    Command c(Command::SELECT_FROM_GALLERY, id);
+    sendCommand(c);
+  }
+
   
   bool is_visible = true;
 
