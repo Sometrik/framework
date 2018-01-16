@@ -667,7 +667,7 @@ public class FrameWork extends Activity {
 	  byte[] byteArray = stream.toByteArray();
 	  System.out.println("image uploaded " + galleryChooseElementId);
 //	  this.nativev(galleryChooseElementId, byteArray);
-	  this.sendNativeValueEvent(galleryChooseElementId, byteArray);
+	  imageUploadEvent(galleryChooseElementId, byteArray);
 	} catch (FileNotFoundException e) {
 	  e.printStackTrace();
 	  System.out.println("error uploading image");
