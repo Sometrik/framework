@@ -104,10 +104,10 @@ public class FWTextView extends TextView implements NativeCommandHandler {
     
     if (autolink) {
       
-//      Pattern urlPattern = Patterns.WEB_URL;
-      String regex = "(@)?(href=')?(HREF=')?(HREF=\")?(href=\")?(http://)?[a-zA-Z_0-9\\-]+(\\.\\w[a-zA-Z_0-9\\-]+)+(/[#&\\n\\-=?\\+\\%/\\.\\w]+)?";
+      Pattern urlPattern = Patterns.WEB_URL;
+//      String regex = "(@)?(href=')?(HREF=')?(HREF=\")?(href=\")?(http://)?[a-zA-Z_0-9\\-]+(\\.\\w[a-zA-Z_0-9\\-]+)+(/[#&\\n\\-=?\\+\\%/\\.\\w]+)?";
 //      String regex = "\\b(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]";
-      Pattern urlPattern = Pattern.compile(regex);
+//      Pattern urlPattern = Pattern.compile(regex);
       
       List<String> autoLinkMatches = new ArrayList<String>();
       Matcher m2 = urlPattern.matcher(getText());
