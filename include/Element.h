@@ -209,7 +209,7 @@ class Element : public EventHandler {
   }
 
   void selectFromGallery() {
-    Command c(Command::SELECT_FROM_GALLERY, id);
+    Command c(Command::SELECT_FROM_GALLERY, getInternalId());
     sendCommand(c);
   }
 
