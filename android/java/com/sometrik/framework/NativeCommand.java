@@ -624,7 +624,7 @@ public class NativeCommand {
       }
       break;
     case SELECT_FROM_GALLERY: {
-      frame.selectFromGallery();
+      frame.selectFromGallery(internalId);
       break;
     }
     case SHARE_LINK: {
