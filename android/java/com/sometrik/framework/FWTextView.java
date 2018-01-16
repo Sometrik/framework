@@ -86,6 +86,7 @@ public class FWTextView extends TextView implements NativeCommandHandler {
     String textViewText = getText().toString();
 
     System.out.println("setToLink " + text);
+    
     Pattern pattern = Pattern.compile(text);
     List<String> matches = new ArrayList<String>();
     Matcher m = pattern.matcher(getText());
@@ -93,7 +94,17 @@ public class FWTextView extends TextView implements NativeCommandHandler {
       if (m.groupCount() > 0) {
 	String s = m.group(1);
 	System.out.println("setToLink match " + s);
-	matches.add(s);
+	boolean alreadyAdded = false;
+	for (String match : matches) {
+	  if (match.equals(s)) {
+	    System.out.println("match already added " + s);
+	    alreadyAdded = true;
+	    break;
+	  }
+	}
+	if (!alreadyAdded) {
+	  matches.add(s);
+	}
       }
     }
     String newText = textViewText;
@@ -173,6 +184,11 @@ public class FWTextView extends TextView implements NativeCommandHandler {
   }
   
   public void addLink(String text) {
+    for (String link : linkList) {
+      if (link.equals(text)) {
+	return;
+      }
+    }
     linkList.add(text);
     setToLink(text);
   }
