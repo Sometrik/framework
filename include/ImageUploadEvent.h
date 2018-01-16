@@ -8,8 +8,33 @@
 
 class ImageUploadEvent : public Event {
 public:
-  ImageUploadEvent(const unsigned char * _image)
-    : image(_image) { }
+  ImageUploadEvent(size_t _len, unsigned char * _image)
+    : len(_len), image(_image) { }
+
+  ImageUploadEvent(const ImageUploadEvent & other) {
+    len = other.len;
+    if (len) {
+      image = new unsigned char[len];
+      memcpy(image, other.image, len);
+    } else {
+      image = 0;
+    }
+  }
+
+  ~ImageUploadEvent() {
+    delete[] image;
+  }
+
+  ImageUploadEvent & operator=(const ImageUploadEvent & other) {
+    delete[] image;
+    len = other.len;
+    if (len) {
+      image = new unsigned char[len];
+      memcpy(image, other.image, len);
+    } else {
+      image = 0;
+    }
+  }
 
   Event * dup() const override { return new ImageUploadEvent(*this); }
   void dispatch(EventHandler & element) override {
@@ -24,7 +49,8 @@ public:
 
   const unsigned char * getImage() const { return image; }
  private:
-  const unsigned char * image;
+  size_t len;
+  unsigned char * image;
 };
 
 #endif
