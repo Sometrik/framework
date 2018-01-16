@@ -735,9 +735,11 @@ void Java_com_sometrik_framework_FrameWork_intChangedEvent(JNIEnv* env, jobject 
 
 void Java_com_sometrik_framework_FrameWork_imageUploadEvent(JNIEnv* env, jobject thiz, jint id, jbyteArray image) {
   int len = env->GetArrayLength(image);
+  jbyte * content_array = env->GetByteArrayElements(image, 0);
   unsigned char* buf = new unsigned char[len];
-  env->GetByteArrayRegion(image, 0, len, reinterpret_cast<jbyte*>(buf));
-  ImageUploadEvent ev(buf);
+  memcpy(buf, content_array, len);
+  env->ReleaseByteArrayElements(image, content_array, JNI_ABORT);
+  ImageUploadEvent ev(len, buf);
   mainThread->sendEvent(id, ev);
 }
 
