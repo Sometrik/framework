@@ -1,12 +1,14 @@
 package com.sometrik.framework;
 
+import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Timer;
 
 import com.android.trivialdrivesample.util.IabException;
 import com.android.trivialdrivesample.util.IabHelper;
@@ -35,6 +37,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.MediaStore;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
@@ -63,6 +66,7 @@ public class FrameWork extends Activity {
   private IabHelper purchaseHelper;
   private static final int RESULT_SETTINGS = 1;
   private static final int RESULT_CHOOSE_FROM_GALLERY = 2;
+  private int galleryChooseElementId = 0;
   private Inventory inventory;
   private DisplayMetrics displayMetrics;
   private View currentlyShowingView;
@@ -91,6 +95,7 @@ public class FrameWork extends Activity {
 
   private native void textChangedEvent(int id, byte[] textValue);
   public native void intChangedEvent(int id, int changedInt, int changedInt2);
+  public native void imageUploadEvent(int id, byte[] image);
   public native void visibilityChangedEvent(int id, boolean visible);
   public native void keyPressed(int keyId, int viewId);
   public native void touchEvent(int viewId, int mode, int fingerIndex, double timestamp, float x, float y);
@@ -655,6 +660,21 @@ public class FrameWork extends Activity {
 	System.out.println("RESULT OK");
 	 Uri selectedImg = data.getData();
 	System.out.println("Selected image: " + selectedImg.toString());
+	 try {
+	  Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImg);
+	  ByteArrayOutputStream stream = new ByteArrayOutputStream();
+	  bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+	  byte[] byteArray = stream.toByteArray();
+	  System.out.println("image uploaded " + galleryChooseElementId);
+//	  this.nativev(galleryChooseElementId, byteArray);
+	  this.sendNativeValueEvent(galleryChooseElementId, byteArray);
+	} catch (FileNotFoundException e) {
+	  e.printStackTrace();
+	  System.out.println("error uploading image");
+	} catch (IOException e) {
+	  e.printStackTrace();
+	  System.out.println("error uploading image");
+	}
 	//TODO send to native
       } else {
 	System.out.println("Error receiving image from gallery");
@@ -716,11 +736,16 @@ public class FrameWork extends Activity {
     return view.getMeasuredWidth();
   }
   
-  public void selectFromGallery() {
+  public void selectFromGallery(int nativeId) {
     Intent intent = new Intent();  
-    intent.setType("image/*");  
+    intent.setType("image/*");
+    System.out.println("image upload putting intent Id: " + nativeId);
+    intent.putExtra(MediaStore.EXTRA_OUTPUT, nativeId);
     intent.setAction(Intent.ACTION_GET_CONTENT);
-    startActivityForResult(Intent.createChooser(intent, "Choose Picture"), RESULT_CHOOSE_FROM_GALLERY);
+    Intent returnIntent = Intent.createChooser(intent, "Choose Picture");
+    galleryChooseElementId = nativeId;
+    returnIntent.putExtra(MediaStore.EXTRA_OUTPUT, nativeId);
+    startActivityForResult(returnIntent, RESULT_CHOOSE_FROM_GALLERY);
   }
 
   
