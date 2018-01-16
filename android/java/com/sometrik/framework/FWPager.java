@@ -1,5 +1,6 @@
 package com.sometrik.framework;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 import com.sometrik.framework.NativeCommand.Selector;
@@ -32,14 +33,44 @@ public class FWPager extends ViewPager implements NativeCommandHandler {
     
     pageChangeListener = new DetailOnPageChangeListener();
     this.setOnPageChangeListener(pageChangeListener);
+    this.setNestedScrollingEnabled(false);
+    
+    Class clss = getClass().getSuperclass();
+    try {
+      // Of course create other variables for the other two fields
+      Field flingField = clss.getDeclaredField("mFlingDistance");
+      flingField.setAccessible(true);
+      flingField.setInt(this, 1); 
+      
 
+//      Field closeEnoughField = clss.getDeclaredField("mCloseEnough");
+//      closeEnoughField.setAccessible(true);
+//      closeEnoughField.setInt(this, 1);
+//      
+//      
+//
+//      Field mMinimumVelocity = clss.getDeclaredField("mMinimumVelocity");
+//      mMinimumVelocity.setAccessible(true);
+//      mMinimumVelocity.setInt(this, 1); 
+    } catch (NoSuchFieldException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    } catch (IllegalAccessException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    } catch (IllegalArgumentException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
   }
+
   
   @Override
   public boolean onTouchEvent(MotionEvent ev) {
     if (getChildCount() == 0) {
       return false;
     }
+//    getParent().requestDisallowInterceptTouchEvent(true);
     return super.onTouchEvent(ev);
   }
 
@@ -48,6 +79,7 @@ public class FWPager extends ViewPager implements NativeCommandHandler {
     if (getChildCount() == 0) {
       return false;
     }
+//    getParent().requestDisallowInterceptTouchEvent(true);
     return super.onInterceptTouchEvent(ev);
   }
   
@@ -290,6 +322,10 @@ public class FWPager extends ViewPager implements NativeCommandHandler {
 
     private int currentPage;
 
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+      getParent().requestDisallowInterceptTouchEvent(true);
+    }
     @Override
     public void onPageSelected(int position) {
 	System.out.println("Pager change page " + getElementId());
