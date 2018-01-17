@@ -308,6 +308,7 @@ iOSMainThread::setImageData(int internal_id, std::shared_ptr<canvas::PackedImage
     CGColorSpaceRelease(colorspace);
     CGImageRelease(img);
     CGDataProviderRelease(provider);
+    CFRelease(cfdata);
   }
 }
 
