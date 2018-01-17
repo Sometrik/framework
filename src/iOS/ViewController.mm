@@ -253,6 +253,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     } else {
         stackView.axis = UILayoutConstraintAxisHorizontal;
     }
+    stackView.layoutMarginsRelativeArrangement = true;
     stackView.distribution = UIStackViewDistributionFill;
     // stackView.distribution = UIStackViewDistributionFillProportionally;
     stackView.alignment = UIStackViewAlignmentFill;
