@@ -139,11 +139,24 @@
         } else if ([key isEqualToString:@"border-radius"]) {
             view.layer.cornerRadius = (int)[value integerValue];
         } else if ([key isEqualToString:@"border"]) {
-	    if ([value isEqualToString:@"none"]) {
+	    if ([value isEqualToString:@"none"] || ![value length]) {
 	        view.layer.borderWidth = 0.0f;
 	    } else {
-                view.layer.borderColor = [self colorFromString:value].CGColor;
-                view.layer.borderWidth = 1.0f;
+		NSArray *array = [value componentsSeparatedByString:@" "];
+		if ([array count] <= 1) {
+	            view.layer.borderColor = [self colorFromString:value].CGColor;
+                    view.layer.borderWidth = 1.0f;
+                } else {
+		    view.layer.borderWidth = (int)[array[0] integerValue];
+		    if ([array count] >= 2) {
+		        // parse border style
+		    }
+		    if ([array count] >= 3) {
+		        view.layer.borderColor = [self colorFromString:array[2]].CGColor;
+		    } else {
+	                view.layer.borderColor = UIColor.blackColor.CGColor;
+		    }
+		}
 	    }
         } else if ([key isEqualToString:@"margin"]) {
 	    int v = (int)[value integerValue];
