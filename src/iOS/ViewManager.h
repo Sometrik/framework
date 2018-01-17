@@ -18,4 +18,6 @@
 @property NSLayoutConstraint *rightConstraint;
 @property NSLayoutConstraint *bottomConstraint;
 @property CAGradientLayer *gradient;
+@property NSInteger fontSize;
+@property NSInteger fontWeight;
 @end

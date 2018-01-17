@@ -13,6 +13,8 @@
     self.rightConstraint = nil;
     self.bottomConstraint = nil;
     self.gradient = nil;
+    self.fontSize = 0;
+    self.fontWeight = 0;
     return self;
 }
 
@@ -217,8 +219,8 @@
         UILabel *label = (UILabel *)self.view;
     
 	if ([key isEqualToString:@"font-size"]) {
-	    int b = (int)[value integerValue];
-            label.font = [label.font fontWithSize:b];
+	    self.fontSize = (int)[value integerValue];
+	    [self updateFont:label];
 	} else if ([key isEqualToString:@"color"]) {
 	    label.textColor = [self colorFromString:value];
 	} else if ([key isEqualToString:@"text-align"]) {
@@ -250,6 +252,12 @@
                 }
             }
         } else if ([key isEqualToString:@"font-weight"]) {
+	    if ([value isEqualToString:@"bold"]) {
+	        self.fontWeight = 800;
+	    } else {
+		self.fontWeight = (int)[value integerValue];
+	    }
+	    [self updateFont:label];
         } else if ([key isEqualToString:@"font-style"]) {
         } else if ([key isEqualToString:@"font-family"]) {
             
@@ -291,6 +299,15 @@
   [scanner setScanLocation:1]; // bypass '#' character
   [scanner scanHexInt:&rgbValue];
   return [UIColor colorWithRed:((rgbValue & 0xFF0000) >> 16)/255.0 green:((rgbValue & 0xFF00) >> 8)/255.0 blue:(rgbValue & 0xFF)/255.0 alpha:1.0];
+}
+
+- (void)updateFont:(UILabel*)label {
+    if (self.fontWeight) {
+        UIFontDescriptor * fontD = [label.font.fontDescriptor fontDescriptorWithSymbolicTraits:UIFontDescriptorTraitBold];
+        label.font = [UIFont fontWithDescriptor:fontD size:self.fontSize];
+    } else {
+        label.font = [label.font fontWithSize:self.fontSize];
+    }
 }
 
 @end
