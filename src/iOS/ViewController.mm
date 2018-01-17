@@ -48,6 +48,8 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
   self.activeViewId = 0;
   self.activeDialogId = 0;
   self.view.layoutMargins = UIEdgeInsetsMake(0, 0, 0, 0);
+//  [self.topLayoutGuide
+//  self.bottomLayoutGuide.length = 44;
   
   [self createBackgroundOverlay];
   
@@ -224,11 +226,12 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
 - (void)createFrameViewWithId:(int)viewId parentId:(int)parentId
 {
-    CGFloat tabBarHeight = self.tabBar == nil ? 0.0 : 44.0;
-    CGFloat topBarsHeight = self.navBar == nil ? 0.0 : 64.0;
+    // CGFloat tabBarHeight = self.tabBar == nil ? 0.0 : 44.0;
+    // CGFloat topBarsHeight = self.navBar == nil ? 0.0 : 64.0;
     UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height)];
     view.tag = viewId;
-    view.layoutMargins = UIEdgeInsetsMake(topBarsHeight, 0, tabBarHeight, 0);
+    // view.layoutMargins = UIEdgeInsetsMake(topBarsHeight, 0, tabBarHeight, 0);
+    view.layoutMargins = UIEdgeInsetsMake(0, 0, 0, 0);
     [self.view addSubview:view];
     [self addView:view withId:viewId];
     
@@ -255,7 +258,8 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     stackView.alignment = UIStackViewAlignmentFill;
     stackView.translatesAutoresizingMaskIntoConstraints = false;
     stackView.frame = self.view.frame;
-    
+    stackView.tag = viewId;
+
     [self addView:stackView withId:viewId];
     [self addToParent:parentId view:stackView];
 }
@@ -344,6 +348,8 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 {
     UIScrollView * scrollView = [[UIScrollView alloc] init];
     scrollView.tag = viewId;
+    scrollView.contentInset = UIEdgeInsetsMake(64, 0, 44, 0);
+    scrollView.contentOffset = CGPointMake(0, 64);
     scrollView.contentSize = CGSizeMake(self.view.bounds.size.width, 4000);
     scrollView.frame = self.view.frame;
     scrollView.clipsToBounds = YES;
@@ -400,13 +406,14 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
 - (void)createPageLayoutWithId:(int)viewId parentId:(int)parentId
 {
-    CGFloat tabBarHeight = self.tabBar == nil ? 0.0 : 44.0;
-    CGFloat topBarsHeight = self.navBar == nil ? 0.0 : 64.0;
-    CGFloat frameHeight = self.view.bounds.size.height-topBarsHeight-tabBarHeight;
+  CGFloat topBarsHeight = 64; // self.navBar == nil ? 0.0 : 64.0;
+  CGFloat tabBarHeight = 44; // self.tabBar == nil ? 0.0 : 44.0;
+  CGFloat frameHeight = self.view.bounds.size.height; // -topBarsHeight-tabBarHeight;
   
     UIScrollView * scrollView = [[UIScrollView alloc] init];
     scrollView.tag = viewId;
     scrollView.pagingEnabled = YES;
+    scrollView.contentInset = UIEdgeInsetsMake(0, 0, 0, 0);
     scrollView.contentSize = CGSizeMake(0, frameHeight);
     scrollView.frame = self.view.frame;
     scrollView.clipsToBounds = YES;
@@ -492,6 +499,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     tabBar.tag = viewId;
     //self.tabBar = tabBar;
     tabBar.delegate = self;
+    tabBar.translucent = YES;
     tabBar.translatesAutoresizingMaskIntoConstraints = false;
     [self addView:tabBar withId:viewId];
     [self addToParent:parentId view:tabBar];
@@ -718,10 +726,10 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     
     UIView * dialog = [[UIView alloc] init];
     dialog.tag = viewId;
-    dialog.layer.backgroundColor = [UIColor grayColor].CGColor;
-    dialog.layer.borderColor = [UIColor blackColor].CGColor;
-    dialog.layer.borderWidth = 1;
-    dialog.layer.cornerRadius = 10;
+    dialog.layer.backgroundColor = [UIColor whiteColor].CGColor;
+//    dialog.layer.borderColor = [UIColor blackColor].CGColor;
+//    dialog.layer.borderWidth = 1;
+    dialog.layer.cornerRadius = 5;
     dialog.layer.shadowColor = [UIColor blackColor].CGColor;
     dialog.layer.shadowOpacity = 1.0;
     dialog.layer.shadowRadius = 7.5;
@@ -856,13 +864,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
       
     } else if (add_margin_constraints) {
         ViewManager * viewManager = [self getViewManager:view.tag];
-        viewManager.constraintsSet = YES;
-        
-        NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeTopMargin multiplier:1.0f constant:0];
-        NSLayoutConstraint *leftConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeLeftMargin multiplier:1.0f constant:0];
-        NSLayoutConstraint *rightConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeRightMargin multiplier:1.0f constant:0];
-        NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeBottomMargin multiplier:1.0f constant:0];
-        [view.superview addConstraints:@[topConstraint, leftConstraint, rightConstraint, bottomConstraint]];
+	    [viewManager setConstraints];
     } else if (add_basic_constraints) {
       ViewManager * viewManager = [self getViewManager:view.tag];
       viewManager.constraintsSet = YES;
