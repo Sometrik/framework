@@ -467,8 +467,8 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     debugTapGesture.numberOfTapsRequired = 5;
     [navBar addGestureRecognizer:debugTapGesture];
     
-    UIBarButtonItem *menuButton = [[UIBarButtonItem alloc] initWithTitle:@"Menu" style:UIBarButtonItemStylePlain target:self action:@selector(menuButtonTapped)];
-    navItem.leftBarButtonItem = menuButton;
+    UIBarButtonItem *backButton = [[UIBarButtonItem alloc] initWithTitle:@"Back" style:UIBarButtonItemStylePlain target:self action:@selector(backButtonTapped)];
+    navItem.leftBarButtonItem = backButton;
     [navBar setItems:@[navItem]];
     navBar.translucent = YES;
     self.navBar = navBar;
@@ -488,9 +488,14 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     mainThread->startDebugMode();
 }
 
-- (void)menuButtonTapped
+- (void)backButtonTapped
 {
-    [self showNavigationViewWithAnimation:YES];
+    if (self.activeDialogId) {
+        [self sendIntValue:self.activeDialogId value:0];
+        self.activeDialogId = 0;
+    } else if (!mainThread->back()) {
+	[self showNavigationViewWithAnimation:YES];
+    }
 }
 
 #pragma mark - TabBar
