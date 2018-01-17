@@ -3,6 +3,7 @@
 #include <ValueEvent.h>
 #include <TimerEvent.h>
 #include <ImageRequestEvent.h>
+#include <FWViewBase.h>
 
 #import "EventWrapper.h"
 
@@ -339,6 +340,32 @@ void
 iOSMainThread::startDebugMode() {
   SysEvent ev(SysEvent::SHOW_DEBUG);
   Element::postEventToElement(getApplication().getInternalId(), ev);
+}
+
+bool
+iOSMainThread::back() {
+  auto & app = getApplication();
+  int id = app.popViewBackHistory();
+  if (id) {
+    if (app.getActiveViewId()) {
+      [viewController setVisibility:app.getActiveViewId() visibility:0];
+    }
+    app.setActiveViewId(id);
+
+    [viewController setVisibility:app.getActiveViewId() visibility:1];
+
+    string title;
+    auto e = Element::getRegisteredElement(id);
+    if (e) {
+	auto e2 = dynamic_cast<FWViewBase*>(e);
+	if (e2) title = e2->getTitle().c_str();
+    }
+    [viewController setTitle:[NSString stringWithUTF8String:title.c_str()]];
+
+    return true;
+  } else {
+    return false;
+  }
 }
 
 void
