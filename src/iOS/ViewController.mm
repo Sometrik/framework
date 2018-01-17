@@ -723,6 +723,11 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
   
     [self addView:actionSheet withId:viewId];
   
+    [actionSheet addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
+        NSLog(@"User clicked button called %@ or tapped elsewhere",action.title);
+        mainThread->endModal(0);
+    }]];
+
     [self presentViewController:actionSheet animated:YES completion:nil];
 }
 
