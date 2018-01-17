@@ -269,7 +269,9 @@
             [button setImage:icon forState:UIControlStateNormal];
         } else if ([key isEqualToString:@"icon-attachment"]) {
             
-        }
+	} else if ([key isEqualToString:@"color"]) {
+	    [button setTitleColor:[self colorFromString:value] forState:UIControlStateNormal];
+	}
     } else if ([self.view isKindOfClass:UITextField.class]) {
         UITextField *textField = (UITextField *)self.view;
 	if ([value isEqualToString:@"hint"]) {
