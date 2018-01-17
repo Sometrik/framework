@@ -17,4 +17,5 @@
 @property NSLayoutConstraint *leftConstraint;
 @property NSLayoutConstraint *rightConstraint;
 @property NSLayoutConstraint *bottomConstraint;
+@property CAGradientLayer *gradient;
 @end

@@ -12,6 +12,7 @@
     self.leftConstraint = nil;
     self.rightConstraint = nil;
     self.bottomConstraint = nil;
+    self.gradient = nil;
     return self;
 }
 
@@ -84,7 +85,29 @@
         if ([key isEqualToString:@"background-color"]) {
             view.layer.backgroundColor = [self colorFromString:value].CGColor;
         } else if ([key isEqualToString:@"background"]) {
-            view.layer.backgroundColor = [self colorFromString:value].CGColor;
+	    NSRange searchedRange = NSMakeRange(0, [value length]);
+	    NSString * pattern = @"^linear-gradient\\(\\s*([^, ]+),\\s*([^, ]+)\\s*\\)$";
+	    NSError * error = nil;
+	    NSRegularExpression * regex = [NSRegularExpression regularExpressionWithPattern:pattern options:0 error:&error];
+	    NSTextCheckingResult *match = [regex firstMatchInString:value options:0 range:searchedRange];
+	    if (match != nil) {
+	        NSString * color1 = [value substringWithRange:[match rangeAtIndex:1]];
+	        NSString * color2 = [value substringWithRange:[match rangeAtIndex:2]];
+		CAGradientLayer * gradient = self.gradient;
+		if (gradient == nil) gradient = [CAGradientLayer layer];
+		gradient.colors = @[(id)[self colorFromString:color1].CGColor, (id)[self colorFromString:color2].CGColor];
+		if (self.gradient == nil) {
+		    gradient.frame = view.bounds;
+		    [view.layer insertSublayer:gradient atIndex:0];
+		    self.gradient = gradient;
+		}
+	    } else {
+		if (self.gradient != nil) {
+		    [self.gradient removeFromSuperlayer];
+		    self.gradient = nil;
+		}
+	        view.layer.backgroundColor = [self colorFromString:value].CGColor;
+	    }
         } else if ([key isEqualToString:@"shadow"]) {
             view.layer.shadowOpacity = 0.5;
             // self.view.layer.masksToBounds = NO;
