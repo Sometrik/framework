@@ -284,7 +284,8 @@ iOSMainThread::setImageData(int internal_id, std::shared_ptr<canvas::PackedImage
   if (viewManager != nil) {
     int bpp = input->getBytesPerPixel(input->getInternalFormat());
     
-    auto provider = CGDataProviderCreateWithData(0, input->getData(), bpp * input->getWidth() * input->getHeight(), 0);
+    auto cfdata = CFDataCreate(0, input->getData(), bpp * input->getWidth() * input->getHeight());
+    auto provider = CGDataProviderCreateWithCFData(cfdata);
     auto colorspace = CGColorSpaceCreateDeviceRGB();
     CGBitmapInfo bitmapInfo = kCGBitmapByteOrder32Little;
     if (input->getInternalFormat() == canvas::RGBA8) {
@@ -293,7 +294,7 @@ iOSMainThread::setImageData(int internal_id, std::shared_ptr<canvas::PackedImage
       bitmapInfo |= kCGImageAlphaNoneSkipFirst;
     }
     auto img = CGImageCreate(input->getWidth(), input->getHeight(), 8, bpp * 8, bpp * input->getWidth(), colorspace, bitmapInfo, provider, 0, true, kCGRenderingIntentDefault);
-  
+    
     UIImage * image;
     if ([UIImage respondsToSelector:@selector(imageWithCGImage:scale:orientation:)]) {
       float scale = [[UIScreen mainScreen] scale];
@@ -301,6 +302,7 @@ iOSMainThread::setImageData(int internal_id, std::shared_ptr<canvas::PackedImage
     } else {
       image = [UIImage imageWithCGImage:img];
     }
+    
     [viewManager setImage:image];
     
     CGColorSpaceRelease(colorspace);
