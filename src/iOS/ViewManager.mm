@@ -298,16 +298,22 @@
     return image;
 }
 
-- (UIColor *)colorFromString:(NSString *)hexString {
-  unsigned int rgbValue = 0;
-  NSScanner *scanner = [NSScanner scannerWithString:hexString];
-  [scanner setScanLocation:1]; // bypass '#' character
-  [scanner scanHexInt:&rgbValue];
-  if (rgbValue <= 0xffffff) {
-    return [UIColor colorWithRed:((rgbValue & 0xFF0000) >> 16)/255.0 green:((rgbValue & 0xFF00) >> 8)/255.0 blue:(rgbValue & 0xFF)/255.0 alpha:1.0];
-  } else {
-    return [UIColor colorWithRed:((rgbValue & 0xFF0000) >> 16)/255.0 green:((rgbValue & 0xFF00) >> 8)/255.0 blue:(rgbValue & 0xFF)/255.0 alpha:((rgbValue & 0xFF000000) >> 24)/255.0];
-  }
+- (UIColor *)colorFromString:(NSString *)value {
+    if ([key isEqualToString:@"white"]) {
+        return UIColor.whiteColor.CGColor;
+    } else if ([key isEqualToString:@"black"]) {
+        return UIColor.blackColor.CGColor;
+    } else {
+	unsigned int rgbValue = 0;
+	NSScanner *scanner = [NSScanner scannerWithString:value];
+	[scanner setScanLocation:1]; // bypass '#' character
+	[scanner scanHexInt:&rgbValue];
+	if (rgbValue <= 0xffffff) {
+	    return [UIColor colorWithRed:((rgbValue & 0xFF0000) >> 16)/255.0 green:((rgbValue & 0xFF00) >> 8)/255.0 blue:(rgbValue & 0xFF)/255.0 alpha:1.0];
+	} else {
+	    return [UIColor colorWithRed:((rgbValue & 0xFF0000) >> 16)/255.0 green:((rgbValue & 0xFF00) >> 8)/255.0 blue:(rgbValue & 0xFF)/255.0 alpha:((rgbValue & 0xFF000000) >> 24)/255.0];
+	}
+    }
 }
 
 - (UIFont *)createFont:(UIFont *)currentFont {
