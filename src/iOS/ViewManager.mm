@@ -220,7 +220,7 @@
     
 	if ([key isEqualToString:@"font-size"]) {
 	    self.fontSize = (int)[value integerValue];
-	    [self updateFont:label];
+            label.font = [self createFont:label.font];
 	} else if ([key isEqualToString:@"color"]) {
 	    label.textColor = [self colorFromString:value];
 	} else if ([key isEqualToString:@"text-align"]) {
@@ -257,7 +257,7 @@
 	    } else {
 		self.fontWeight = (int)[value integerValue];
 	    }
-	    [self updateFont:label];
+	    label.font = [self createFont:label.font];
         } else if ([key isEqualToString:@"font-style"]) {
         } else if ([key isEqualToString:@"font-family"]) {
             
@@ -271,6 +271,9 @@
             
 	} else if ([key isEqualToString:@"color"]) {
 	    [button setTitleColor:[self colorFromString:value] forState:UIControlStateNormal];
+	} else if ([key isEqualToString:@"font-size"]) {
+	    self.fontSize = (int)[value integerValue];
+            button.titleLabel.font = [self createFont:button.titleLabel.font];
 	}
     } else if ([self.view isKindOfClass:UITextField.class]) {
         UITextField *textField = (UITextField *)self.view;
@@ -303,12 +306,12 @@
   return [UIColor colorWithRed:((rgbValue & 0xFF0000) >> 16)/255.0 green:((rgbValue & 0xFF00) >> 8)/255.0 blue:(rgbValue & 0xFF)/255.0 alpha:1.0];
 }
 
-- (void)updateFont:(UILabel*)label {
+- (UIFont *)createFont:(UIFont *)currentFont {
     if (self.fontWeight) {
-        UIFontDescriptor * fontD = [label.font.fontDescriptor fontDescriptorWithSymbolicTraits:UIFontDescriptorTraitBold];
-        label.font = [UIFont fontWithDescriptor:fontD size:self.fontSize];
+        UIFontDescriptor * fontD = [currentFont.fontDescriptor fontDescriptorWithSymbolicTraits:UIFontDescriptorTraitBold];
+        return [UIFont fontWithDescriptor:fontD size:self.fontSize];
     } else {
-        label.font = [label.font fontWithSize:self.fontSize];
+        return [currentFont fontWithSize:self.fontSize];
     }
 }
 
