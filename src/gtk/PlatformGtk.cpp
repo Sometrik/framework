@@ -665,7 +665,6 @@ protected:
 	  auto view = views_by_id[id];
 	  if (view) {
 	    cerr << "found view\n";
-	    auto & app = getApplication();
 	    app.setActiveViewId(id);
 	    gtk_stack_set_visible_child((GtkStack*)stack, view);
 
