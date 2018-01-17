@@ -8,6 +8,10 @@
 {
     self = [super init];
     self.constraintsSet = NO;
+    self.topConstraint = nil;
+    self.leftConstraint = nil;
+    self.rightConstraint = nil;
+    self.bottomConstraint = nil;
     return self;
 }
 
@@ -17,6 +21,21 @@
         FWImageView * imageView = (FWImageView *)self.view;
         [imageView clear];
     }
+}
+
+- (void)setConstraints
+{
+    self.constraintsSet = YES;
+
+    
+    UIView * view = self.view;
+    
+    self.topConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeTopMargin multiplier:1.0f constant:0];
+    self.leftConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeLeftMargin multiplier:1.0f constant:0];
+    self.rightConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeRightMargin multiplier:1.0f constant:0];
+    self.bottomConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeBottomMargin multiplier:1.0f constant:0];
+
+   [view.superview addConstraints:@[self.topConstraint, self.leftConstraint, self.rightConstraint, self.bottomConstraint]];
 }
 
 - (void)addImageUrl:(NSString *)url width:(int)width height:(int)height
@@ -97,13 +116,30 @@
         } else if ([key isEqualToString:@"border-radius"]) {
             view.layer.cornerRadius = (int)[value integerValue];
         } else if ([key isEqualToString:@"border"]) {
-            view.layer.borderColor = [self colorFromString:value].CGColor;
-            view.layer.borderWidth = 1.0f;
+	    if ([value isEqualToString:@"none"]) {
+	        view.layer.borderWidth = 0.0f;
+	    } else {
+                view.layer.borderColor = [self colorFromString:value].CGColor;
+                view.layer.borderWidth = 1.0f;
+	    }
         } else if ([key isEqualToString:@"margin"]) {
+	    int v = (int)[value integerValue];
+	    self.topConstraint.constant = v;
+	    self.leftConstraint.constant = v;
+	    self.rightConstraint.constant = -v;
+	    self.bottomConstraint.constant = -v;
         } else if ([key isEqualToString:@"margin-top"]) {
+	    int v = (int)[value integerValue];
+	    self.topConstraint.constant = v;
         } else if ([key isEqualToString:@"margin-right"]) {
-        } else if ([key isEqualToString:@"margin-borrom"]) {
+	    int v = (int)[value integerValue];
+	    self.rightConstraint.constant = -v;
+        } else if ([key isEqualToString:@"margin-bottom"]) {
+	    int v = (int)[value integerValue];
+	    self.bottomConstraint.constant = -v;
         } else if ([key isEqualToString:@"margin-left"]) {
+	    int v = (int)[value integerValue];
+	    self.leftConstraint.constant = v;
         } else if ([key isEqualToString:@"padding"]) {
             int v = (int)[value integerValue];
             view.layoutMargins = UIEdgeInsetsMake(v, v, v, v);
