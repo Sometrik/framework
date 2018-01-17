@@ -34,6 +34,7 @@ public:
     } else {
       image = 0;
     }
+    return *this;
   }
 
   Event * dup() const override { return new ImageUploadEvent(*this); }
