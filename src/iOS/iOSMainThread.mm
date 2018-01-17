@@ -3,7 +3,9 @@
 #include <ValueEvent.h>
 #include <TimerEvent.h>
 #include <ImageRequestEvent.h>
-#include <FWViewBase.h>
+#include <FWViewBase.h>
+
+#include "iOSThread.h"
 
 #import "EventWrapper.h"
 
@@ -265,6 +267,15 @@ iOSMainThread::sleep(double t) {
   usleep((unsigned int)(t * 1000000));
 }
 
+std::string
+iOSMainThread::loadTextAsset(const char * filename) {
+  NSString * filename2 = [NSString stringWithUTF8String:filename];
+  NSString * path = [[NSBundle mainBundle] pathForResource:filename2 ofType:nil];
+  NSString * content = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:NULL];
+  string s = [content cStringUsingEncoding:NSUTF8StringEncoding];
+  return s;
+}
+
 void
 iOSMainThread::sendEvent(int internal_id, const Event & ev) {
     EventWrapper * ew = [[EventWrapper alloc] init];
@@ -328,6 +339,11 @@ void
 iOSMainThread::endModal(int value) {
   setModalResultValue(value);
   CFRunLoopStop(CFRunLoopGetCurrent());
+}
+
+std::shared_ptr<PlatformThread>
+iOSMainThread::createThread(std::shared_ptr<Runnable> & runnable) {
+  return std::make_shared<iOSThread>(this, application, runnable);
 }
 
 void

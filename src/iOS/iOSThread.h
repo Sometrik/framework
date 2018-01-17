@@ -3,41 +3,6 @@
 
 #include <PosixThread.h>
 
-#include <iOSClient.h>
-#include <FilenameConverter.h>
-#include <ContextQuartz2D.h>
-
-#include "iOSLogger.h"
-
-namespace canvas {
-  class BundleFilenameConverter : public FilenameConverter {
-  public:
-    bool convert(const std::string & input, std::string & output) {
-      const char * filename = input.c_str();
-      int n = (int)input.size();
-      for (int i = n - 1; i >= 0; i--)  {
-        if (filename[i] == '/')  {
-          filename = filename + i + 1;
-          break;
-        }
-      }
-      
-      // Given a fileName, convert into a path that can be used to open from the mainBundle
-      NSString* fileNameNS = [NSString stringWithUTF8String:filename];
-      NSString* baseName = [fileNameNS stringByDeletingPathExtension];
-      NSString* extension = [fileNameNS pathExtension];
-      NSString *path = [[NSBundle mainBundle] pathForResource: baseName ofType: extension ];
-      const char * filename2 = [path cStringUsingEncoding:1];
-      if (filename2) {
-        output = filename2;
-        return true;
-      } else {
-        return false;
-      }
-    }
-  };
-};
-
 class iOSThread : public PosixThread {
 public:
   iOSThread(PlatformThread * _parent_thread, std::shared_ptr<FWApplication> & _application, std::shared_ptr<Runnable> & _runnable)
@@ -56,7 +21,11 @@ public:
   }
   
   std::string loadTextAsset(const char * filename) override {
-    return "";
+    NSString * filename2 = [NSString stringWithUTF8String:filename];
+    NSString * path = [[NSBundle mainBundle] pathForResource:filename2 ofType:nil];
+    NSString * content = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:NULL];
+    std::string s = [content cStringUsingEncoding:NSUTF8StringEncoding];
+    return s;
   }
   
   std::string getBundleFilename(const char * filename) override {
