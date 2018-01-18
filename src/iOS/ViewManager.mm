@@ -276,7 +276,30 @@
 	} else if ([key isEqualToString:@"font-size"]) {
 	    self.fontSize = (int)[value integerValue];
             button.titleLabel.font = [self createFont:button.titleLabel.font];
-	}
+        } else if ([key isEqualToString:@"padding"]) {
+            int v = (int)[value integerValue];
+            button.contentEdgeInsets = UIEdgeInsetsMake(v, v, v, v);
+        } else if ([key isEqualToString:@"padding-top"]) {
+            button.contentEdgeInsets = UIEdgeInsetsMake((int)[value integerValue],
+                                                        button.contentEdgeInsets.left,
+                                                        button.contentEdgeInsets.bottom,
+                                                        button.contentEdgeInsets.right);
+        } else if ([key isEqualToString:@"padding-right"]) {
+            button.contentEdgeInsets = UIEdgeInsetsMake(button.contentEdgeInsets.top,
+                                                        button.contentEdgeInsets.left,
+                                                        button.contentEdgeInsets.bottom,
+                                                        (int)[value integerValue]);
+        } else if ([key isEqualToString:@"padding-bottom"]) {
+            button.contentEdgeInsets = UIEdgeInsetsMake(button.contentEdgeInsets.top,
+                                                        button.contentEdgeInsets.left,
+                                                        (int)[value integerValue],
+                                                        button.contentEdgeInsets.right);
+        } else if ([key isEqualToString:@"padding-left"]) {
+            button.contentEdgeInsets = UIEdgeInsetsMake(button.contentEdgeInsets.top,
+                                                        (int)[value integerValue],
+                                                        button.contentEdgeInsets.bottom,
+                                                        button.contentEdgeInsets.right);
+        }
     } else if ([self.view isKindOfClass:UITextField.class]) {
         UITextField *textField = (UITextField *)self.view;
 	if ([value isEqualToString:@"hint"]) {
