@@ -261,7 +261,9 @@
         } else if ([key isEqualToString:@"font-style"]) {
         } else if ([key isEqualToString:@"font-family"]) {
             
-        }
+        } else if ([key isEqualToString:@"line-spacing"]) {
+
+	}
     } else if ([self.view isKindOfClass:UIButton.class]) {
 	UIButton *button = (UIButton *)self.view;
         if ([key isEqualToString:@"icon"]) {
