@@ -606,9 +606,6 @@ class ViewStyleManager {
       if (color != null) textView.setTextColor(color);
       if (fontSize != null) {
 	textView.setTextSize(fontSize);
-	if (lineHeight != null) {
-	  textView.setLineSpacing(lineHeight - fontSize, 1);
-	}
       }
       if (lineHeight != null)  {
 	if (fontSize == null) {
