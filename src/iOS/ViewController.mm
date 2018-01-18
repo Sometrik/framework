@@ -287,9 +287,9 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     label.numberOfLines = 0; // as many lines as needed
     label.lineBreakMode = NSLineBreakByWordWrapping;
     label.translatesAutoresizingMaskIntoConstraints = false;
-    [label sizeToFit];
     [self addView:label withId:viewId];
     [self addToParent:parentId view:label];
+    [label sizeToFit];
 }
 
 - (void)createButtonWithId:(int)viewId parentId:(int)parentId caption:(NSString *)caption
@@ -737,6 +737,11 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
 - (void)createDialogWithId:(int)viewId parentId:(int)parentId
 {
+    if (self.activeDialogId != 0) {
+        [self sendIntValue:self.activeDialogId value:0];
+	self.activeDialogId = 0;
+    }
+
     self.activeDialogId = viewId;
     
     UIView * dialog = [[UIView alloc] init];
@@ -895,8 +900,11 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
 - (void)removeView:(int)viewId
 {
-    if (self.activeDialogId == viewId) self.activeDialogId = 0;
-    
+    if (self.activeDialogId == viewId) {
+        [self sendIntValue:self.activeDialogId value:0];
+	self.activeDialogId = 0;
+    }
+
     NSString * key = [NSString stringWithFormat:@"%d", viewId];
     ViewManager * viewManager = [self.viewsDictionary objectForKey:key];
     if (viewManager != nil) {
