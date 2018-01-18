@@ -76,7 +76,7 @@ class ViewStyleManager {
   private String iconFile = null;
   private IconAttachment iconAttachment = null;
   private int[] gradientColors = null;
-  private Integer lineSpacing = null;
+  private Integer lineHeight = null;
   private Integer maxLines = null;
   private boolean showDecorations = true;
   private boolean isDefault = false;
@@ -279,8 +279,8 @@ class ViewStyleManager {
       } else {
 	fontSize = new Integer(value);
       }
-    } else if (key.equals("line-spacing")) {
-      lineSpacing = new Integer(value);
+    } else if (key.equals("line-height")) {
+      lineHeight = new Integer(value);
     } else if (key.equals("max-lines")) {
       maxLines = new Integer(value);
     } else if (key.equals("white-space")) {
@@ -604,13 +604,19 @@ class ViewStyleManager {
       TextView textView = (TextView)view;
 
       if (color != null) textView.setTextColor(color);
-      if (fontSize != null) textView.setTextSize(fontSize);
-      if (lineSpacing != null)  {
-//	float textSize = textView.getTextSize();
-//	float defaultLineSpacing = textSize / ANDROID_DEFAULT_LINESPACING_MODIFIER;
-//	textView.setLineSpacing(defaultLineSpacing - lineSpacing, 1);
-	
-	textView.setLineSpacing(lineSpacing, 1);
+      if (fontSize != null) {
+	textView.setTextSize(fontSize);
+	if (lineHeight != null) {
+	  textView.setLineSpacing(lineHeight - fontSize, 1);
+	}
+      }
+      if (lineHeight != null)  {
+	if (fontSize == null) {
+	  //15 is android default text size
+	  textView.setLineSpacing(lineHeight - 15, 1);
+	} else {
+	  textView.setLineSpacing(lineHeight - fontSize, 1);
+	}
       }
       if (maxLines != null && maxLines != 0) {
 	textView.setMaxLines(maxLines);
