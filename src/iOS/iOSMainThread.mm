@@ -198,6 +198,8 @@ iOSMainThread::sendCommands(const std::vector<Command> & commands) {
 	  app.addToHistory(command.getChildInternalId());
 	  app.setActiveViewId(command.getChildInternalId());
 
+	  [viewController setVisibility:app.getActiveViewId() visibility:1];
+
 	  NSString * title = [NSString stringWithUTF8String:command.getTextValue().c_str()];
 	  [viewController setTitle:title];
 	} else {
