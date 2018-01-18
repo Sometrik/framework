@@ -253,10 +253,6 @@ public class FWTextView extends TextView implements NativeCommandHandler {
     } else if (selector == Selector.LINK) {
       linkStyle.setStyle(key, value);
     }
-
-    if (key.equals("max-lines")) {
-      setMaxLines(Integer.parseInt(value));
-    }
   }
 
   @Override

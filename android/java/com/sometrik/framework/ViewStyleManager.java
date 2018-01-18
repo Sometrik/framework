@@ -77,6 +77,7 @@ class ViewStyleManager {
   private IconAttachment iconAttachment = null;
   private int[] gradientColors = null;
   private Integer lineSpacing = null;
+  private Integer maxLines = null;
   private boolean showDecorations = true;
   private boolean isDefault = false;
   private boolean animateTransition = false;
@@ -280,6 +281,8 @@ class ViewStyleManager {
       }
     } else if (key.equals("line-spacing")) {
       lineSpacing = new Integer(value);
+    } else if (key.equals("max-lines")) {
+      maxLines = new Integer(value);
     } else if (key.equals("white-space")) {
       if (value.equals("normal")) whiteSpace = WhiteSpace.NORMAL;
       else if (value.equals("nowrap")) whiteSpace = WhiteSpace.NOWRAP;
@@ -608,6 +611,9 @@ class ViewStyleManager {
 //	textView.setLineSpacing(defaultLineSpacing - lineSpacing, 1);
 	
 	textView.setLineSpacing(lineSpacing, 1);
+      }
+      if (maxLines != null && maxLines != 0) {
+	textView.setMaxLines(maxLines);
       }
       if (whiteSpace != null) {
 	switch (whiteSpace) {
