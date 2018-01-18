@@ -104,7 +104,9 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             [tabBar.superview bringSubviewToFront:tabBar];
         } else if ([viewManager.view isKindOfClass:UIScrollView.class]) {
             UIScrollView *scrollView = (UIScrollView *)viewManager.view;
-            [scrollView.panGestureRecognizer requireGestureRecognizerToFail:panEdgeGestureRecognizer];
+	    if (scrollView.pagingEnabled) {
+		[scrollView.panGestureRecognizer requireGestureRecognizerToFail:panEdgeGestureRecognizer];
+	    }
         }
     }
     
