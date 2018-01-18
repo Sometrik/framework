@@ -299,10 +299,10 @@
 }
 
 - (UIColor *)colorFromString:(NSString *)value {
-    if ([key isEqualToString:@"white"]) {
-        return UIColor.whiteColor.CGColor;
-    } else if ([key isEqualToString:@"black"]) {
-        return UIColor.blackColor.CGColor;
+    if ([value isEqualToString:@"white"]) {
+        return UIColor.whiteColor;
+    } else if ([value isEqualToString:@"black"]) {
+        return UIColor.blackColor;
     } else {
 	unsigned int rgbValue = 0;
 	NSScanner *scanner = [NSScanner scannerWithString:value];
