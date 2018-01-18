@@ -243,8 +243,10 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
         view.hidden = YES;
     }
     
-    //UIView *parentView = [self.viewsDictionary objectForKey:[NSString stringWithFormat:@"%d", parentId]];
-    //[parentView addSubview:view];
+    if (self.navBar) {
+        [self.view bringSubviewToFront:self.statusBarBackgroundView];
+        [self.view bringSubviewToFront:self.navBar];
+    }
 }
 
 - (void)createLinearLayoutWithId:(int)viewId parentId:(int)parentId direction:(int)direction
