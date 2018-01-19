@@ -14,7 +14,6 @@ import android.widget.LinearLayout;
 public class FWEditText extends EditText implements NativeCommandHandler {
 
   private FrameWork frame;
-  private Date lastTypeTime;
   ViewStyleManager normalStyle, activeStyle, currentStyle;
   
   public FWEditText(FrameWork frameWork) {
@@ -88,7 +87,7 @@ public class FWEditText extends EditText implements NativeCommandHandler {
   }
   
   @Override
-  public void applyStyles() {    
+  public void applyStyles() {
     currentStyle.apply(this);  
   }
 
