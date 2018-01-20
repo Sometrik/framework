@@ -19,7 +19,7 @@ std::shared_ptr<iOSMainThread> mainThread;
 // Declare C++ function
 extern FWApplication * applicationMain();
 
-@interface ViewController () <UIScrollViewDelegate, UITabBarDelegate, InAppPurchaseManagerDelegate, FWImageViewDelegate>
+@interface ViewController () <UIScrollViewDelegate, UITabBarDelegate, InAppPurchaseManagerDelegate, FWImageViewDelegate, UITextFieldDelegate>
 @property (nonatomic, strong) NSMutableDictionary *viewsDictionary;
 @property (nonatomic, strong) UIView *sideMenuView;
 @property (nonatomic, strong) UIView *backgroundOverlayView;
@@ -185,6 +185,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     text.returnKeyType = UIReturnKeyDone;
     text.clearButtonMode = UITextFieldViewModeWhileEditing;
     text.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
+    text.delegate = self;
     // text.borderStyle = UITextBorderStyleRoundedRect;
     [text addTarget:self action:@selector(textFieldChanged:) forControlEvents:UIControlEventEditingChanged];
     [self addView:text withId:viewId];
@@ -197,6 +198,11 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     NSLog(@"viewId = %d", viewId);
     NSLog(@"textField.text = %@", sender.text);
     [self sendTextValue:viewId value:sender.text];
+}
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
+    [textField resignFirstResponder];
+    return NO;
 }
 
 - (void)setVisibility:(int)viewId visibility:(int)visibility
