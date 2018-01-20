@@ -56,6 +56,8 @@ public class NativeCommand {
   private final int FLAG_SLIDERVIEW = 256;
   private final int FLAG_STICKY_HEADER = 512;
   
+  private static final int ANDROID_DEFAULT_ACTIONBAR_HEIGHT = 56;
+  
   public enum Selector {
     NORMAL,
     ACTIVE,
@@ -522,9 +524,9 @@ public class NativeCommand {
       break;
     }
     case CREATE_DIALOG: {
-      	FWDialog dialog = new FWDialog(frame, childInternalId);
-      	dialog.setValue(getTextValueAsString());
-      	frame.addToViewList(dialog);
+      FWDialog dialog = new FWDialog(frame, childInternalId);
+      dialog.setValue(getTextValueAsString());
+      frame.addToViewList(dialog);
     }
       break;
     case CREATE_ACTION_SHEET: {
@@ -557,6 +559,7 @@ public class NativeCommand {
     }
     case CREATE_NAVIGATIONBAR: {
       FWLayout bar = createLinearLayout(2);
+      bar.setStyle(Selector.values()[0], "height", String.valueOf(ANDROID_DEFAULT_ACTIONBAR_HEIGHT));
       view.addChild(bar);
       frame.addToViewList(bar);
       break;

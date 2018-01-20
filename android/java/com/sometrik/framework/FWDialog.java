@@ -51,7 +51,7 @@ public class FWDialog extends Dialog implements NativeCommandHandler {
     titleView.setStyle(Selector.NORMAL, "padding-bottom", "12");
     titleView.setStyle(Selector.NORMAL, "font-weight", "bold");
     titleView.setStyle(Selector.NORMAL, "padding-left", "14");
-    titleView.setStyle(Selector.NORMAL, "color", "#c1272d");
+    titleView.setStyle(Selector.NORMAL, "color", "#000000");
     titleView.applyStyles();
     baseView.addView(titleView);
 
@@ -59,9 +59,9 @@ public class FWDialog extends Dialog implements NativeCommandHandler {
     LinearLayout.LayoutParams dividerParams = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, 5);
     dividerView.setBackgroundColor(Color.parseColor("#c1272d"));
     dividerView.setLayoutParams(dividerParams);
-    baseView.addView(dividerView);
+//    baseView.addView(dividerView);
     
-    this.setOnCancelListener(new OnCancelListener(){
+    this.setOnCancelListener(new OnCancelListener() {
       @Override
       public void onCancel(DialogInterface arg0) {
 	frame.intChangedEvent(id, 0, 0);
