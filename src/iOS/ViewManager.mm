@@ -205,11 +205,17 @@
             
         } else if ([key isEqualToString:@"opacity"]) {
         } else if ([key isEqualToString:@"top"]) {
-            
+	    int v = (int)[value integerValue];
+	    self.topConstraint.constant = v;            
         } else if ([key isEqualToString:@"right"]) {
-            
+       	    int v = (int)[value integerValue];
+	    self.rightConstraint.constant = v;
         } else if ([key isEqualToString:@"bottom"]) {
+	    int v = (int)[value integerValue];
+	    self.bottomConstraint.constant = v;
         } else if ([key isEqualToString:@"left"]) {
+	    int v = (int)[value integerValue];
+	    self.leftConstraint.constant = v;
         } else if ([key isEqualToString:@"gravity"]) {
         } else if ([key isEqualToString:@"zoom"]) {
         }
@@ -221,6 +227,7 @@
 	if ([key isEqualToString:@"font-size"]) {
 	    self.fontSize = (int)[value integerValue];
             label.font = [self createFont:label.font];
+//	    [label sizeToFit];
 	} else if ([key isEqualToString:@"color"]) {
 	    label.textColor = [self colorFromString:value];
 	} else if ([key isEqualToString:@"text-align"]) {
@@ -238,19 +245,21 @@
                     label.lineBreakMode = NSLineBreakByClipping;
                 }
             } else {
-                label.numberOfLines = 0;
+                // label.numberOfLines = 0;
                 label.lineBreakMode = NSLineBreakByWordWrapping;
             }
         } else if ([key isEqualToString:@"text-overflow"]) {
             if ([value isEqualToString:@"ellipsis"]) {
                 label.lineBreakMode = NSLineBreakByTruncatingTail;
             } else {
-                if (label.numberOfLines == 0) {
+                if (label.numberOfLines != 1) {
                     label.lineBreakMode = NSLineBreakByWordWrapping;
                 } else {
                     label.lineBreakMode = NSLineBreakByClipping;
                 }
             }
+	} else if ([key isEqualToString:@"max-lines"]) {
+	    label.numberOfLines = (int)[value integerValue];	   
         } else if ([key isEqualToString:@"font-weight"]) {
 	    if ([value isEqualToString:@"bold"]) {
 	        self.fontWeight = 800;
