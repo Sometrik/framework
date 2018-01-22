@@ -1,6 +1,7 @@
 #import "ViewManager.h"
 
 #import "FWImageView.h"
+#import "PaddedLabel.h"
 
 @implementation ViewManager;
 
@@ -221,8 +222,8 @@
         }
     }
     
-    if ([self.view isKindOfClass:UILabel.class]) {
-        UILabel *label = (UILabel *)self.view;
+    if ([self.view isKindOfClass:PaddedLabel.class]) {
+        PaddedLabel *label = (UILabel *)self.view;
     
 	if ([key isEqualToString:@"font-size"]) {
 	    self.fontSize = (int)[value integerValue];
@@ -272,7 +273,30 @@
             
         } else if ([key isEqualToString:@"line-spacing"]) {
 
-	}
+	} else if ([key isEqualToString:@"padding"]) {
+            int v = (int)[value integerValue];
+            label.edgeInsets = UIEdgeInsetsMake(v, v, v, v);
+        } else if ([key isEqualToString:@"padding-top"]) {
+            label.edgeInsets = UIEdgeInsetsMake((int)[value integerValue],
+                                                label.edgeInsets.left,
+                                                label.edgeInsets.bottom,
+                                                label.edgeInsets.right);
+        } else if ([key isEqualToString:@"padding-right"]) {
+            label.edgeInsets = UIEdgeInsetsMake(label.edgeInsets.top,
+                                                label.edgeInsets.left,
+                                                label.edgeInsets.bottom,
+                                                (int)[value integerValue]);
+        } else if ([key isEqualToString:@"padding-bottom"]) {
+            label.edgeInsets = UIEdgeInsetsMake(label.edgeInsets.top,
+                                                label.edgeInsets.left,
+                                                (int)[value integerValue],
+                                                label.edgeInsets.right);
+        } else if ([key isEqualToString:@"padding-left"]) {
+            label.edgeInsets = UIEdgeInsetsMake(label.edgeInsets.top,
+                                                (int)[value integerValue],
+                                                label.edgeInsets.bottom,
+                                                label.edgeInsets.right);
+        }
     } else if ([self.view isKindOfClass:UIButton.class]) {
 	UIButton *button = (UIButton *)self.view;
         if ([key isEqualToString:@"icon"]) {

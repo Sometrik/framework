@@ -6,6 +6,7 @@
 #import "ImageWrapper.h"
 #import "InAppPurchaseManager.h"
 #import "FWImageView.h"
+#import "PaddedLabel.h"
 
 #import <WebKit/WebKit.h>
 
@@ -288,7 +289,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
 - (void)createTextWithId:(int)viewId parentId:(int)parentId value:(NSString*)value
 {
-    UILabel *label = [[UILabel alloc] init];
+    PaddedLabel *label = [[PaddedLabel alloc] init];
     label.tag = viewId;
     label.text = value;
     label.numberOfLines = 0; // as many lines as needed
