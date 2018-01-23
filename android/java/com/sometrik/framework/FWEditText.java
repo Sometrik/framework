@@ -29,6 +29,7 @@ public class FWEditText extends EditText implements NativeCommandHandler {
     setOnTouchListener(new OnTouchListener() {
       @Override
       public boolean onTouch(View v, MotionEvent event) {
+	System.out.println("editText on touch");
 	if (event.getAction() == MotionEvent.ACTION_DOWN) {
 	  editText.currentStyle = editText.activeStyle;
 	  editText.currentStyle.apply(editText);
@@ -42,6 +43,15 @@ public class FWEditText extends EditText implements NativeCommandHandler {
     
     LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
     setLayoutParams(params);
+    this.clearFocus();
+    this.setFocusable(true);
+  }
+  
+  @Override
+  public boolean performClick() {
+    System.out.println("FWEditText onClick");
+    frame.setSoftKeyboardShow(this, true);
+    return super.performClick();
   }
   
   @Override
@@ -62,12 +72,12 @@ public class FWEditText extends EditText implements NativeCommandHandler {
 
   @Override
   public void setValue(int v) {
-    if (v > 0) {
-      this.requestFocus();
-      frame.setSoftKeyboardShow(this, true);
-    } else {
-      frame.setSoftKeyboardShow(this, false);
-    }
+//    if (v > 0) {
+//      this.requestFocus();
+//      frame.setSoftKeyboardShow(this, true);
+//    } else {
+//      frame.setSoftKeyboardShow(this, false);
+//    }
   }
 
   @Override
@@ -117,14 +127,14 @@ public class FWEditText extends EditText implements NativeCommandHandler {
     if (visibility){
       this.setVisibility(VISIBLE);
     } else {
-      this.setVisibility(INVISIBLE);
+      this.setVisibility(GONE);
     }
   }
 
   @Override
   public void clear() {
-    System.out.println("Clear on EditText");
     this.setText("");
+    this.clearFocus();
   }
 
   @Override
