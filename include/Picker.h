@@ -7,7 +7,7 @@
 
 class Picker : public Element {
  public:
-  Picker() { }
+  Picker(int id = 0) : Element(id) { }
 
   bool isA(const std::string & className) const override {
     if (className == "Picker") return true;
@@ -25,11 +25,27 @@ class Picker : public Element {
     c.setTextValue(name);
     sendCommand(c);
   }
+  void setSelection(int position) {
+    Command c(Command::SET_INT_VALUE, getInternalId());
+    c.setValue(position);
+    sendCommand(c);
+  }
 
   void onValueEvent(ValueEvent & ev) override {
     value = ev.getValue();
     notify(value);
+    CommandEvent ev2(getId(), ev.getValue(), ev.getValue2());
+    ev2.dispatch(*this);
     ev.setHandled(true);
+  }
+
+  int getValue() {
+    return value;
+  }
+
+  void clear() {
+    Command c(Command::CLEAR, getInternalId());
+    sendCommand(c);
   }
 
   bool call() override { return call(value); }
