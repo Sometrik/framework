@@ -4,24 +4,25 @@ import java.util.ArrayList;
 
 import com.sometrik.framework.NativeCommand.Selector;
 
+import android.content.Context;
 import android.graphics.Bitmap;
-import android.text.InputFilter;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 public class FWPicker extends Spinner implements NativeCommandHandler { 
   private FrameWork frame;
-  private ArrayAdapter<String> adapter;
-  private ArrayList<Integer> idList;
+  private CustomPickerAdapter adapter;
+  private boolean ignoreNextSelection = true;
   ViewStyleManager normalStyle, activeStyle, currentStyle;
 
   public FWPicker(FrameWork frameWork) {
     super(frameWork);
     this.frame = frameWork;
-    adapter = new ArrayAdapter<String>(frame, android.R.layout.simple_spinner_item);
-    idList = new ArrayList<Integer>();
+    adapter = new CustomPickerAdapter(frame, android.R.layout.simple_spinner_item);
+    setAdapter(adapter);
     
     final float scale = getContext().getResources().getDisplayMetrics().density;
     this.normalStyle = currentStyle = new ViewStyleManager(frame.bitmapCache, scale, true);
@@ -31,7 +32,14 @@ public class FWPicker extends Spinner implements NativeCommandHandler {
 
       @Override
       public void onItemSelected(AdapterView<?> view, View arg1, int position, long itemId) {
-	frame.sendNativeValueEvent(getId(), idList.get(position), 0);
+	System.out.println("FWPicker onItemSelected " + position);
+	if (ignoreNextSelection) {
+	  ignoreNextSelection = false;
+	  System.out.println("FWPicker not sending event");
+	  return;
+	} else {
+	  frame.sendNativeValueEvent(getId(), position, 0);
+	}
       }
 
       @Override
@@ -47,15 +55,18 @@ public class FWPicker extends Spinner implements NativeCommandHandler {
 
   @Override
   public void addChild(View view) {
-    System.out.println("Picker couldn't handle addChild");
-    //TODO
+    System.out.println("FWPicker addChild");
+    if (view instanceof FWLayout) {
+      System.out.println("FWPicker is FWLayout " + ((FWLayout)view).getChildCount());
+    }
+    adapter.add(view);
+    adapter.viewList.add(view);
+    adapter.notifyDataSetChanged();
   }
 
   @Override
   public void addOption(int optionId, String text) {
-    idList.add(optionId);
-    adapter.add(text);
-    setAdapter(adapter);
+
   }
 
   @Override
@@ -65,7 +76,8 @@ public class FWPicker extends Spinner implements NativeCommandHandler {
 
   @Override
   public void setValue(int v) {
-
+    ignoreNextSelection = true;
+    setSelection(v);
   }
 
   @Override
@@ -79,7 +91,8 @@ public class FWPicker extends Spinner implements NativeCommandHandler {
   
   @Override
   public void applyStyles() {
-    currentStyle.apply(this);  }
+    currentStyle.apply(this);  
+    }
 
   @Override
   public void setError(boolean hasError, String errorText) { }
@@ -106,13 +119,14 @@ public class FWPicker extends Spinner implements NativeCommandHandler {
 
   @Override
   public void clear() {
-    System.out.println("couldn't handle command");
+    System.out.println("FWPicker clear");
+    adapter.viewList.clear();
+    adapter.clear();
+    adapter.notifyDataSetChanged();
   }
 
   @Override
   public void flush() {
-    // TODO Auto-generated method stub
-    
   }
 
   @Override
@@ -145,6 +159,50 @@ public class FWPicker extends Spinner implements NativeCommandHandler {
   @Override
   public void addImageUrl(String url, int width, int height) {
     // TODO Auto-generated method stub
+    
+  }
+  
+  private class CustomPickerAdapter extends ArrayAdapter<View> {
+
+    private ArrayList<View> viewList;
+    public CustomPickerAdapter(Context context, int resource) {
+      super(context, resource);
+      viewList = new ArrayList<View>();
+    }
+    
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+      return getDropDownView(position, convertView, parent);
+//	System.out.println("FWPicker getView " + position);
+//      convertView = viewList.get(position);
+//      if (convertView instanceof FWLayout) {
+//	System.out.println("FWPicker is FWLayout in getView " + convertView.getId() + " "+ ((FWLayout) convertView).getChildCount());
+//      }
+//      return convertView;
+    }
+    
+    @Override
+    public int getViewTypeCount() {
+      return 1;
+    }
+    
+    @Override
+    public int getCount() {
+      return viewList.size();
+    }
+    
+    @Override
+    public View getDropDownView(int position, View convertView, ViewGroup parent) {
+	System.out.println("FWPicker getDropDown " + position);
+//      if (convertView != null) {
+//	return convertView;
+//      }
+      View view = viewList.get(position);
+      if (view instanceof FWLayout) {
+	System.out.println("FWPicker is FWLayout in getDropDown " + view.getId() + " "+ ((FWLayout) view).getChildCount());
+      }
+      return view;
+    }
     
   }
 }
