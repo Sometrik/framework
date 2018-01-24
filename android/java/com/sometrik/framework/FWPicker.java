@@ -44,8 +44,15 @@ public class FWPicker extends Spinner implements NativeCommandHandler {
 
       @Override
       public void onNothingSelected(AdapterView<?> arg0) {
+	  System.out.println("FWPicker nothing selected");
       }
     });
+  }
+  
+  @Override
+  public boolean performClick() {
+    adapter.notifyDataSetChanged();
+    return super.performClick();
   }
 
   @Override
@@ -172,7 +179,10 @@ public class FWPicker extends Spinner implements NativeCommandHandler {
     
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-      return getDropDownView(position, convertView, parent);
+      View view = new View(frame);
+      view = viewList.get(position);
+      return view;
+//      return getDropDownView(position, convertView, parent);
 //	System.out.println("FWPicker getView " + position);
 //      convertView = viewList.get(position);
 //      if (convertView instanceof FWLayout) {
@@ -194,9 +204,6 @@ public class FWPicker extends Spinner implements NativeCommandHandler {
     @Override
     public View getDropDownView(int position, View convertView, ViewGroup parent) {
 	System.out.println("FWPicker getDropDown " + position);
-//      if (convertView != null) {
-//	return convertView;
-//      }
       View view = viewList.get(position);
       if (view instanceof FWLayout) {
 	System.out.println("FWPicker is FWLayout in getDropDown " + view.getId() + " "+ ((FWLayout) view).getChildCount());
