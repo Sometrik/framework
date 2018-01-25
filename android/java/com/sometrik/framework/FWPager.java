@@ -1,6 +1,5 @@
 package com.sometrik.framework;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 import com.sometrik.framework.NativeCommand.Selector;
@@ -19,6 +18,9 @@ public class FWPager extends ViewPager implements NativeCommandHandler {
   ViewStyleManager normalStyle, activeStyle, currentStyle, linkStyle;
   private DetailOnPageChangeListener pageChangeListener;
   
+  float x1 = 0, x2, y1 = 0, y2, dx, dy;
+
+  
   public FWPager(final FrameWork frame) {
     super(frame);
     this.frame = frame;
@@ -34,34 +36,6 @@ public class FWPager extends ViewPager implements NativeCommandHandler {
     pageChangeListener = new DetailOnPageChangeListener();
     this.setOnPageChangeListener(pageChangeListener);
     this.setNestedScrollingEnabled(false);
-    
-    Class clss = getClass().getSuperclass();
-    try {
-      // Of course create other variables for the other two fields
-      Field flingField = clss.getDeclaredField("mFlingDistance");
-      flingField.setAccessible(true);
-      flingField.setInt(this, 1); 
-      
-
-//      Field closeEnoughField = clss.getDeclaredField("mCloseEnough");
-//      closeEnoughField.setAccessible(true);
-//      closeEnoughField.setInt(this, 1);
-//      
-//      
-//
-//      Field mMinimumVelocity = clss.getDeclaredField("mMinimumVelocity");
-//      mMinimumVelocity.setAccessible(true);
-//      mMinimumVelocity.setInt(this, 1); 
-    } catch (NoSuchFieldException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    } catch (IllegalAccessException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    } catch (IllegalArgumentException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
   }
 
   
@@ -73,15 +47,6 @@ public class FWPager extends ViewPager implements NativeCommandHandler {
 //    getParent().requestDisallowInterceptTouchEvent(true);
     return super.onTouchEvent(ev);
   }
-
-  @Override
-  public boolean onInterceptTouchEvent(MotionEvent ev) {
-    if (getChildCount() == 0) {
-      return false;
-    }
-//    getParent().requestDisallowInterceptTouchEvent(true);
-    return super.onInterceptTouchEvent(ev);
-  }
   
   @Override
   public void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -90,11 +55,9 @@ public class FWPager extends ViewPager implements NativeCommandHandler {
 
     if (currentView != null) {
         currentView.measure(widthMeasureSpec, heightMeasureSpec);
-        System.out.println("Pager measure: " + currentView.getHeight());
         super.onMeasure(widthMeasureSpec, View.MeasureSpec.makeMeasureSpec(currentView.getMeasuredHeight(), View.MeasureSpec.EXACTLY));
         return;
     } else {
-      System.out.println("currentView is null: ");
       super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
   }
@@ -324,7 +287,8 @@ public class FWPager extends ViewPager implements NativeCommandHandler {
 
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-      getParent().requestDisallowInterceptTouchEvent(true);
+	System.out.println("Pager page scrolled " + positionOffset);
+//      getParent().requestDisallowInterceptTouchEvent(true);
     }
     @Override
     public void onPageSelected(int position) {
