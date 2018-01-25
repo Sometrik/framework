@@ -151,9 +151,6 @@ public class FrameWork extends Activity {
     editor = prefs.edit();
     
     // ActionBar is hidden by default with this
-//    actionBar = getActionBar();
-//    actionBar.hide();
-    
     getActionBar().hide();
     getActionBar().setDisplayHomeAsUpEnabled(true);
 //    getActionBar().setHomeButtonEnabled(true);
@@ -169,6 +166,7 @@ public class FrameWork extends Activity {
 
     final FrameWork framework = this;
     
+    //this mainHandler is used to process messages that come from native application.
     mainHandler = new Handler() {
 
       public void handleMessage(Message msg) {
@@ -210,6 +208,7 @@ public class FrameWork extends Activity {
     initNative();
   }
 
+  //PurchaseHelper is used to process in-app purchases
   public Boolean initializePurchaseHelper(String key, IabHelper.OnIabSetupFinishedListener listener) {
     // Get PurchaseHelper. Requires App public key
     purchaseHelper = new IabHelper(this, key);
@@ -221,8 +220,12 @@ public class FrameWork extends Activity {
     return false;
   }
 
+  /**
+   * Retrieves Google Account Email. Requires Account permissions to be added to
+   * manifest and approved by user.
+   * @return Email address of the first google account.
+   */
   private String getUserGoogleAccountEmail() {
-
     if (hasAccountPermission()) {
       Log.d("accountFinder", "Checking for user Google Account");
       AccountManager manager = AccountManager.get(this);
@@ -244,6 +247,10 @@ public class FrameWork extends Activity {
     }
   }
 
+/**
+ * Retrives history of purchases made by the user.
+ * @return Inventory object containing purchases.
+ */
   public Inventory getPurchaseHelperInventory() {
     System.out.println("about to query purchaseHelper inventory");
     try {
@@ -256,6 +263,9 @@ public class FrameWork extends Activity {
     return null;
   }
 
+  /**
+   * Sends device and asset information to native application. Should be called at the beginning of the program.
+   */
   private void initNative() {
     System.out.println("Display scale: density = " + displayMetrics.scaledDensity + ", dpi = " + displayMetrics.densityDpi);
     int xSize = displayMetrics.widthPixels;
@@ -273,6 +283,9 @@ public class FrameWork extends Activity {
     onInit(getAssets(), xSize, ySize, displayMetrics.scaledDensity, getUserGoogleAccountEmail(), defaultLocale.getLanguage(), defaultLocale.getCountry(), versionName);
   }
   
+  /**
+   * Retrieves all saved prefre
+   */
   public void initNativePreferences() {
     Map<String, String> allPrefs = (Map<String, String>) prefs.getAll();
     if (allPrefs == null || allPrefs.size() == 0) {
@@ -290,7 +303,9 @@ public class FrameWork extends Activity {
     return stringId == 0 ? applicationInfo.nonLocalizedLabel.toString() : context.getString(stringId);
   }
 
-  // Get screen settings
+  /**
+   * Sets FrameWork screen metric variables
+   */
   public DisplayMetrics setupDisplayMetrics() {
     displayMetrics = new DisplayMetrics();
     Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
@@ -306,25 +321,42 @@ public class FrameWork extends Activity {
 
     return displayMetrics;
   }
-  
+
   public SharedPreferences.Editor getPreferencesEditor() { return editor; }
 
+  /**
+   * Adds NativeCommandHandler to viewlist so they can be sent commands by the native application
+   * @param view
+   */
   public void addToViewList(NativeCommandHandler view) {
     views.put(view.getElementId(), view);
   }
 
+  /**
+   * Launches FWWebActivity to display in-app browser
+   * @param url
+   */
   public void launchBrowser(String url) {
     Intent intent = new Intent(this, FWWebActivity.class);
     intent.putExtra(FWWebActivity.URL_EXTRA, url);
     startActivity(intent);
   }
   
+  /**
+   * Removies view from viewlist
+   * @param viewId id of the NativeCommandHandler
+   */
   public void removeViewFromList(int viewId) {
     NativeCommandHandler view = views.get(viewId);
     if (view != null) view.deinitialize();
     views.remove(viewId);
   }
   
+  /**
+   * Sets android keyboard open or closed
+   * @param view that is currently active
+   * @param enabled if false hides keyboard
+   */
   public void setSoftKeyboardShow(View view, boolean enabled) {
     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
     if (enabled) {
@@ -334,6 +366,12 @@ public class FrameWork extends Activity {
     }
   }
   
+  /**
+   * Sends value event to native application. Reduces the change of events being sent while doing transitionAnimations
+   * @param elementId Id of the element the event will be sent to
+   * @param value 
+   * @param value2
+   */
   public void sendNativeValueEvent(int elementId, int value, int value2) {
     if (!transitionAnimation) {
       System.out.println("click while not transitioning");
@@ -343,80 +381,75 @@ public class FrameWork extends Activity {
     }
   }
 
+  /**
+   * Sends value event to native application. Reduces the change of events being sent while doing transitionAnimations
+   * @param elementId Id of the element the event will be sent to
+   * @param value
+   */
   public void sendNativeValueEvent(int elementId, byte[] value) {
     if (!transitionAnimation) {
       textChangedEvent(elementId, value);
     }
   }
 
+  /**
+   * Displays given view. If there is a navigation drawer the view will be attached to it.
+   * Sends information about the active view to native application. is able to do simple transition animations.
+   * @param view
+   * @param animation not used
+   * @param newViewAnimationFromX sets where the animation will begin. Used to set on which side tranlate animations will come from
+   */
   public void setCurrentView(final View view, Animation animation, final int newViewAnimationFromX) {
+    //Prevents new view being shown while doing transitionAnimation
     if (transitionAnimation) {
       return;
     }
 
+    //Disables transitionAnimation after the animation is complete
     Runnable runnable = new Runnable() {
       @Override
       public void run() {
 	transitionAnimation = false;
       }
     };
-	mainHandler.postDelayed(runnable, 300);
+    mainHandler.postDelayed(runnable, 300);
 
-	 transitionAnimation = true;
-	  currentView = view.getId();
-	  currentlyShowingView = view;
-	  
-	if (drawerLayout.getChildCount() > 0) {
-	  drawerLayout.removeAllViews();
-	}
+    transitionAnimation = true;
+    currentView = view.getId();
+    currentlyShowingView = view;
 
-	if (currentDrawerViewId != 0) {
-	  NativeCommandHandler drawerView = views.get(currentDrawerViewId);
-	  if (drawerView != null) {
-	    drawerLayout.addView(view);
-	    drawerLayout.addView((View) drawerView);
-	    setContentView(drawerLayout);
-	  } else {
-	    setContentView(view);
-	  }
-	} else {
-	  setContentView(view);
-	}
-	  
-	  TranslateAnimation q;
-//	  if (recordHistory) {
-	    q = new TranslateAnimation(newViewAnimationFromX, 0, 0, 0);
-//	  } else {
-//	    q = new TranslateAnimation(-1000, 0, 0, 0);
-//	  }
-	  setNativeActiveView(view.getId(), false);
-	  q.setAnimationListener(new Animation.AnimationListener() {
-	    @Override
-	    public void onAnimationEnd(Animation animation) { 
-//	      transitionAnimation = false; 
-	      }
-	    @Override
-	    public void onAnimationRepeat(Animation animation) {  }
-	    @Override
-	    public void onAnimationStart(Animation animation) { }
-	  });
-	  q.setDuration(200);
-	  view.startAnimation(q);
-//	}
-//
-//	@Override
-//	public void onAnimationEnd(Animation animation) {
-//	}
-//
-//	@Override
-//	public void onAnimationRepeat(Animation animation) {
-//	}
-//    });
-//
-//    View sadas = (View) views.get(currentView);
-//    sadas.startAnimation(animation);
+    //Remove views from drawerLayout so that the new view can be inserted into drawerLayout
+    if (drawerLayout.getChildCount() > 0) {
+      drawerLayout.removeAllViews();
+    }
+
+    //Insert new view into drawerLayout if it exists
+    if (currentDrawerViewId != 0) {
+      NativeCommandHandler drawerView = views.get(currentDrawerViewId);
+      if (drawerView != null) {
+	drawerLayout.addView(view);
+	drawerLayout.addView((View) drawerView);
+	setContentView(drawerLayout);
+      } else {
+	setContentView(view);
+      }
+    } else {
+      setContentView(view);
+    }
+
+    TranslateAnimation q;
+    q = new TranslateAnimation(newViewAnimationFromX, 0, 0, 0);
+    //send info of the new active view to native application
+    setNativeActiveView(view.getId(), false);
+    q.setDuration(200);
+    view.startAnimation(q);
   }
 
+  /**
+   * Displays given view. If there is a navigation drawer the view will be attached to it.
+   * Sends information about the active view to native application.
+   * @param view new view to be displayed.
+   */
   public void setCurrentView(final View view) {
     if (currentView == view.getId()){
       System.out.println("view already set");
@@ -449,6 +482,11 @@ public class FrameWork extends Activity {
   
   public int getCurrentViewId() { return currentView; }
 
+  /**
+   * Creates NativeSurface that will be set on native application
+   * @param id that will be set on this native surface
+   * @return
+   */
   public NativeSurface createNativeOpenGLView(final int id) {
     final ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
     final ConfigurationInfo configurationInfo = activityManager.getDeviceConfigurationInfo();
@@ -489,11 +527,10 @@ public class FrameWork extends Activity {
     return surfaceView;
   }
   
-  public void setActionBarTitle(String title){
-
-  }
-
-  //Screen touchevent listener. Will send information to MyGLSurfaceView messagehandler
+  /**
+   * Screen touchevent listener. Will send information to MyGLSurfaceView messagehandler
+   *
+   */
   private class MyOnTouchListener implements OnTouchListener {
 
     FrameWork frameWork;
@@ -736,6 +773,11 @@ public class FrameWork extends Activity {
     return view.getMeasuredWidth();
   }
   
+  /**
+   * Moves application to activity where user can choose a image from the device's gallery.
+   * Sets id for ImageUploadEvent to be sent to.
+   * @param nativeId Id of a element where imageUploadEvent will be sent
+   */
   public void selectFromGallery(int nativeId) {
     Intent intent = new Intent();  
     intent.setType("image/*");
