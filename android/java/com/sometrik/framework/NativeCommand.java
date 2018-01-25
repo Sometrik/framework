@@ -850,7 +850,7 @@ public class NativeCommand {
     List<Purchase> purchaseList = inventory.getAllPurchases();
     System.out.println("getting purchase history. Purchase child size: " + purchaseList.size());
     for (Purchase purchase : inventory.getAllPurchases()) {
-      frame.onPurchaseEvent(frame.getAppId(), purchase.getSku(), false, purchase.getPurchaseTime() / 1000.0);
+      FrameWork.onPurchaseEvent(frame.getAppId(), purchase.getSku(), false, purchase.getPurchaseTime() / 1000.0);
     }
   }
   
