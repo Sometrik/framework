@@ -52,6 +52,7 @@ public class FWButton extends Button implements NativeCommandHandler {
   @Override
   public boolean performClick() {
     requestFocus();
+    System.out.println("FWButton " + getElementId() + " click ");
     frame.sendNativeValueEvent(getElementId(), 0, 0);
 //    frame.hideSoftKeyboard();
     return super.performClick();
