@@ -28,3 +28,14 @@ Use this to sign your .apk file Either create a new keystore or use the one in c
 
 Go to Google Play Console and select the application and go to releases.
 on releases you can publish a new version of Beta or release full product.
+
+
+## New project creation notes
+
+   #### Appcompat
+Android project requires appcompat v7. This needs to be added to a new project as library or possibly as source.
+For billing to work
+
+   #### Billing
+Google sample of play store billing has to be added to the project as source. These include files from trivialdrivesample.util such as IabHelper.java, Inventory.java and Purchase.java. From vending.billing the lInAppBillingService.aidl file must also be added
+https://github.com/googlesamples/android-play-billing/tree/master/TrivialDrive/app/src/main
