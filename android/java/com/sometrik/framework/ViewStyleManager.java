@@ -24,6 +24,7 @@ import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RectShape;
 import android.graphics.drawable.shapes.RoundRectShape;
 import android.text.TextUtils.TruncateAt;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -605,7 +606,7 @@ class ViewStyleManager {
 
       if (color != null) textView.setTextColor(color);
       if (fontSize != null) {
-	textView.setTextSize(fontSize);
+	textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSize);
       }
       if (lineHeight != null)  {
 	if (fontSize == null) {
