@@ -27,7 +27,6 @@ public class FWPicker extends Spinner implements NativeCommandHandler {
     final float scale = getContext().getResources().getDisplayMetrics().density;
     this.normalStyle = currentStyle = new ViewStyleManager(frame.bitmapCache, scale, true);
     this.activeStyle = new ViewStyleManager(frame.bitmapCache, scale, false);
-    
     setOnItemSelectedListener(new OnItemSelectedListener() {
 
       @Override
@@ -205,8 +204,8 @@ public class FWPicker extends Spinner implements NativeCommandHandler {
     public View getDropDownView(int position, View convertView, ViewGroup parent) {
 	System.out.println("FWPicker getDropDown " + position);
       View view = viewList.get(position);
-      if (view instanceof FWLayout) {
-	System.out.println("FWPicker is FWLayout in getDropDown " + view.getId() + " "+ ((FWLayout) view).getChildCount());
+      if (view instanceof NativeCommandHandler) {
+	((NativeCommandHandler)view).applyStyles();
       }
       return view;
     }
