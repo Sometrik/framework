@@ -4,10 +4,11 @@
 #include <InputElement.h>
 #include <Command.h>
 #include <ValueEvent.h>
+#include <CommandEvent.h>
 
 class TextField : public InputElement {
  public:
- TextField(unsigned int _flags = 0) : InputElement(0, _flags) {  }
+ TextField(int id = 0, unsigned int _flags = 0) : InputElement(id, _flags) {  }
 
   bool isA(const std::string & className) const override {
     if (className == "TextField") return true;
@@ -17,6 +18,8 @@ class TextField : public InputElement {
   void onValueEvent(ValueEvent & ev) override {
     value = ev.getTextValue();
     notify(value);
+    CommandEvent ev2(getId(), ev.getValue(), ev.getValue2());
+    ev2.dispatch(*this);
     ev.setHandled(true);
   }
 
