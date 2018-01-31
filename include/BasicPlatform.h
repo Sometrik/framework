@@ -3,6 +3,7 @@
 
 #include <PosixThread.h>
 #include <CurlClient.h>
+#include <Logger.h>
 
 #ifndef NO_CANVAS
 #include <Context.h>
