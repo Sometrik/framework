@@ -7,6 +7,7 @@
 #import "InAppPurchaseManager.h"
 #import "FWImageView.h"
 #import "PaddedLabel.h"
+#import "LinearLayoutView.h"
 
 #import <WebKit/WebKit.h>
 
@@ -187,6 +188,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     text.clearButtonMode = UITextFieldViewModeWhileEditing;
     text.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
     text.delegate = self;
+    text.translatesAutoresizingMaskIntoConstraints = false;
     // text.borderStyle = UITextBorderStyleRoundedRect;
     [text addTarget:self action:@selector(textFieldChanged:) forControlEvents:UIControlEventEditingChanged];
     [self addView:text withId:viewId];
@@ -258,6 +260,19 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
 - (void)createLinearLayoutWithId:(int)viewId parentId:(int)parentId direction:(int)direction
 {
+#if 1
+    LinearLayoutView *layout = [[LinearLayoutView alloc] initWithFrame:self.view.bounds];
+    if (direction == 1) {
+        layout.orientation = LinearLayoutViewOrientationVertical;
+    } else {
+        layout.orientation = LinearLayoutViewOrientationHorizontal;
+    }
+    layout.translatesAutoresizingMaskIntoConstraints = false;
+    layout.layoutMargins = UIEdgeInsetsMake(0, 0, 0, 0);
+    layout.tag = viewId;
+    [self addView:layout withId:viewId];
+    [self addToParent:parentId view:layout];
+#else
     UIStackView *stackView = [[UIStackView alloc] init];
     if (direction == 1) {
         stackView.axis = UILayoutConstraintAxisVertical;
@@ -272,9 +287,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     stackView.frame = self.view.frame;
     stackView.tag = viewId;
     stackView.layoutMargins = UIEdgeInsetsMake(0, 0, 0, 0);
-
-    [self addView:stackView withId:viewId];
-    [self addToParent:parentId view:stackView];
+#endif
 }
 
 - (void)createFrameLayoutWithId:(int)viewId parentId:(int)parentId
@@ -839,17 +852,32 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
 - (void)addToParent:(int)parentId view:(UIView*)view
 {
-    UIView *parentView = [self viewForId:parentId];
-    if (parentView == nil) {
+    ViewManager * parentViewManager = [self getViewManager:parentId];
+    if (parentViewManager == nil) {
         NSLog(@"Element %d missing in addToParent", parentId);
         return;
     }
-    
+    UIView * parentView = (UIView *)parentViewManager.view;
+
+    ViewManager * viewManager = [self getViewManager:view.tag];
+    viewManager.level = parentViewManager.level + 1;    
+
     BOOL add_tabbar_constraints = NO, add_basic_constraints = NO, add_margin_constraints = NO;
   
     if ([parentView isKindOfClass:UIStackView.class]) {
         UIStackView *stackView = (UIStackView *)parentView;
         [stackView addArrangedSubview:view];
+    } else if ([parentView isKindOfClass:LinearLayoutView.class]) {
+	view.autoresizingMask = 0;
+        LinearLayoutView * layout = (LinearLayoutView *)parentView;
+	LayoutParams * item = [LayoutParams layoutItemForView:view];
+        // item.padding = LinearLayoutMakePadding(5.0, 10.0, 5.0, 10.0);
+        // item.horizontalAlignment = LinearLayoutItemHorizontalAlignmentCenter;	
+        item.fillMode = LinearLayoutItemFillModeNormal;
+        // item.fillMode = LinearLayoutItemFillModeStretch;
+	item.level = parentViewManager.level + 1;
+        [layout addItem:item];
+        viewManager.layoutParams = item;
     } else if ([parentView isKindOfClass:UIScrollView.class]) {
         NSUInteger pos = [[parentView subviews] count];
         [parentView addSubview:view];
@@ -863,6 +891,12 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
             NSLayoutConstraint *leftConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:pos * pageWidth];
             NSLayoutConstraint *rightConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeRight multiplier:1.0f constant:(pos + 1) * pageWidth];
+	    // NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeBottom multiplier:1.0f constant:0];
+
+	    topConstraint.priority = 999 - viewManager.level;
+	    leftConstraint.priority = 999 - viewManager.level;
+	    rightConstraint.priority = 999 - viewManager.level;
+
             [view.superview addConstraints:@[topConstraint, leftConstraint, rightConstraint]];
         } else {
             view.frame = parentView.frame;
@@ -883,28 +917,31 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     }
   
     if (add_tabbar_constraints) {
-      ViewManager * viewManager = [self getViewManager:view.tag];
       viewManager.constraintsSet = YES;
       
       NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeBottom multiplier:1.0f constant:-44];
       NSLayoutConstraint *leftConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
       NSLayoutConstraint *rightConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
       NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeBottom multiplier:1.0f constant:0];
+
       [view.superview addConstraints:@[topConstraint, leftConstraint, rightConstraint, bottomConstraint]];
-      
+      	
     } else if (add_margin_constraints) {
-        ViewManager * viewManager = [self getViewManager:view.tag];
-	    [viewManager setConstraints];
+	[viewManager setConstraints];
     } else if (add_basic_constraints) {
-      ViewManager * viewManager = [self getViewManager:view.tag];
       viewManager.constraintsSet = YES;
       
       NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
       NSLayoutConstraint *leftConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
       NSLayoutConstraint *widthConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeWidth multiplier:1.0f constant:0];
       NSLayoutConstraint *heightConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeHeight multiplier:1.0f constant:0];
-      [view.superview addConstraints:@[topConstraint, leftConstraint, widthConstraint, heightConstraint]];
-      
+
+      topConstraint.priority = 999 - viewManager.level;
+      leftConstraint.priority = 999 - viewManager.level;
+      widthConstraint.priority = 999 - viewManager.level;
+      heightConstraint.priority = 999 - viewManager.level;
+
+      [view.superview addConstraints:@[topConstraint, leftConstraint, widthConstraint, heightConstraint]];     
     }
 }
 
@@ -942,6 +979,12 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             [stackView insertArrangedSubview:childView atIndex:position];
             [stackView setNeedsLayout];
             [stackView layoutIfNeeded];
+	} else if ([parentView isKindOfClass:[LinearLayoutView class]]) {
+	    LinearLayoutView * layout = (LinearLayoutView *)parentView;
+
+	    ViewManager * viewManager = [self getViewManager:viewId];
+
+	    [layout moveItem:viewManager.layoutParams toIndex:position];
         } else {
             [parentView insertSubview:childView atIndex:position];
         }

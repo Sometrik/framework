@@ -1,5 +1,7 @@
 #import <UIKit/UIKit.h>
 
+#import "LayoutParams.h"
+
 @interface ViewManager : NSObject
 - (id)init;
 - (void)clear;
@@ -20,4 +22,6 @@
 @property CAGradientLayer *gradient;
 @property NSInteger fontSize;
 @property NSInteger fontWeight;
+@property LayoutParams * layoutParams;
+@property NSInteger level;
 @end

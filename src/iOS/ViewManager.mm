@@ -3,6 +3,16 @@
 #import "FWImageView.h"
 #import "PaddedLabel.h"
 
+LinearLayoutItemPadding LLMakePadding(CGFloat top, CGFloat left, CGFloat bottom, CGFloat right) {
+    LinearLayoutItemPadding padding;
+    padding.top = top;
+    padding.left = left;
+    padding.bottom = bottom;
+    padding.right = right;
+    
+    return padding;
+}
+
 @implementation ViewManager;
 
 - (id)init
@@ -16,6 +26,8 @@
     self.gradient = nil;
     self.fontSize = 0;
     self.fontWeight = 0;
+    self.layoutParams = nil;
+    self.level = 0;
     return self;
 }
 
@@ -30,7 +42,6 @@
 - (void)setConstraints
 {
     self.constraintsSet = YES;
-
     
     UIView * view = self.view;
     
@@ -38,6 +49,11 @@
     self.leftConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeLeftMargin multiplier:1.0f constant:0];
     self.rightConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeRightMargin multiplier:1.0f constant:0];
     self.bottomConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeBottomMargin multiplier:1.0f constant:0];
+
+    self.topConstraint.priority = 999 - self.level;
+    self.leftConstraint.priority = 999 - self.level;
+    self.rightConstraint.priority = 999 - self.level;
+    self.bottomConstraint.priority = 999 - self.level;
 
    [view.superview addConstraints:@[self.topConstraint, self.leftConstraint, self.rightConstraint, self.bottomConstraint]];
 }
@@ -119,25 +135,41 @@
             view.layer.masksToBounds = FALSE;
         } else if ([key isEqualToString:@"width"]) {
             if ([value isEqualToString:@"match-parent"]) {
-                
+	        if (self.layoutParams != nil) {
+		    self.layoutParams.fixedWidth = -1;
+		    [view.superview setNeedsLayout];
+		}                
             } else if ([value isEqualToString:@"wrap-content"]) {
                 
             } else {
                 int width = (int)[value integerValue];
-                NSLayoutConstraint * c = [view.widthAnchor constraintEqualToConstant:width];
-                c.priority = 999;
-                c.active = true;
+		if (self.layoutParams != nil) {
+		  self.layoutParams.fixedWidth = width;
+		  [view.superview setNeedsLayout];
+		} else {
+		  NSLayoutConstraint * c = [view.widthAnchor constraintEqualToConstant:width];
+                  c.priority = 999 - self.level;
+                  c.active = true;
+		}
             }
         } else if ([key isEqualToString:@"height"]) {
             if ([value isEqualToString:@"match-parent"]) {
-                
+	        if (self.layoutParams != nil) {
+		    self.layoutParams.fixedHeight = -1;
+  		    [view.superview setNeedsLayout];
+		}                
             } else if ([value isEqualToString:@"wrap-content"]) {
                 
             } else {
                 int height = (int)[value integerValue];
-                NSLayoutConstraint * c = [view.heightAnchor constraintEqualToConstant:height];
-                c.priority = 999;
-                c.active = true;
+		if (self.layoutParams != nil) {
+		  self.layoutParams.fixedHeight = height;
+		  [view.superview setNeedsLayout];
+		} else {
+		  NSLayoutConstraint * c = [view.heightAnchor constraintEqualToConstant:height];
+                  c.priority = 999 - self.level;
+                  c.active = true;
+		}
             }
         } else if ([key isEqualToString:@"border-radius"]) {
             view.layer.cornerRadius = (int)[value integerValue];
@@ -163,22 +195,38 @@
 	    }
         } else if ([key isEqualToString:@"margin"]) {
 	    int v = (int)[value integerValue];
-	    self.topConstraint.constant = v;
-	    self.leftConstraint.constant = v;
-	    self.rightConstraint.constant = -v;
-	    self.bottomConstraint.constant = -v;
+	    if (self.layoutParams != nil) {
+		self.layoutParams.padding = LLMakePadding(v, v, v, v);
+	    } else {
+		self.topConstraint.constant = v;
+		self.leftConstraint.constant = v;
+		self.rightConstraint.constant = -v;
+		self.bottomConstraint.constant = -v;
+	    }
         } else if ([key isEqualToString:@"margin-top"]) {
 	    int v = (int)[value integerValue];
-	    self.topConstraint.constant = v;
+	    if (self.layoutParams != nil) {
+	    } else {
+		self.topConstraint.constant = v;
+	    }
         } else if ([key isEqualToString:@"margin-right"]) {
 	    int v = (int)[value integerValue];
-	    self.rightConstraint.constant = -v;
+	    if (self.layoutParams != nil) {
+	    } else {
+		self.rightConstraint.constant = -v;
+	    }
         } else if ([key isEqualToString:@"margin-bottom"]) {
 	    int v = (int)[value integerValue];
-	    self.bottomConstraint.constant = -v;
+	    if (self.layoutParams != nil) {
+	    } else {
+		self.bottomConstraint.constant = -v;
+	    }
         } else if ([key isEqualToString:@"margin-left"]) {
 	    int v = (int)[value integerValue];
-	    self.leftConstraint.constant = v;
+	    if (self.layoutParams != nil) {
+	    } else {
+		self.leftConstraint.constant = v;
+	    }
         } else if ([key isEqualToString:@"padding"]) {
             int v = (int)[value integerValue];
             view.layoutMargins = UIEdgeInsetsMake(v, v, v, v);
@@ -218,12 +266,32 @@
 	    int v = (int)[value integerValue];
 	    self.leftConstraint.constant = v;
         } else if ([key isEqualToString:@"gravity"]) {
+	    if (self.layoutParams != nil) {
+                if ([value isEqualToString:@"bottom"]) {
+		  self.layoutParams.verticalAlignment = LinearLayoutItemVerticalAlignmentBottom;
+		} else if ([value isEqualToString:@"top"]) {
+		  self.layoutParams.verticalAlignment = LinearLayoutItemVerticalAlignmentTop;
+		} else if ([value isEqualToString:@"left"]) {
+		  self.layoutParams.horizontalAlignment = LinearLayoutItemHorizontalAlignmentLeft;
+		} else if ([value isEqualToString:@"right"]) {
+		  self.layoutParams.horizontalAlignment = LinearLayoutItemHorizontalAlignmentRight;
+		} else if ([value isEqualToString:@"center"]) {
+		  self.layoutParams.horizontalAlignment = LinearLayoutItemHorizontalAlignmentCenter;
+		  self.layoutParams.verticalAlignment = LinearLayoutItemVerticalAlignmentCenter;
+		} else if ([value isEqualToString:@"center-vertical"]) {
+		  self.layoutParams.verticalAlignment = LinearLayoutItemVerticalAlignmentCenter;
+		} else if ([value isEqualToString:@"center-horizontal"]) {
+		  self.layoutParams.horizontalAlignment = LinearLayoutItemHorizontalAlignmentCenter;
+		} else if ([value isEqualToString:@"start"]) {
+		  self.layoutParams.horizontalAlignment = LinearLayoutItemHorizontalAlignmentLeft;
+		}
+	    }
         } else if ([key isEqualToString:@"zoom"]) {
         }
     }
     
     if ([self.view isKindOfClass:PaddedLabel.class]) {
-        PaddedLabel *label = (UILabel *)self.view;
+        PaddedLabel *label = (PaddedLabel*)self.view;
     
 	if ([key isEqualToString:@"font-size"]) {
 	    self.fontSize = (int)[value integerValue];
