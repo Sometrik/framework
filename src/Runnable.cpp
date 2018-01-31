@@ -1,6 +1,9 @@
 #include <Runnable.h>
+#include <Logger.h>
 
 #include <PlatformThread.h>
+
+#include <exception>
 
 using namespace std;
 
@@ -15,4 +18,14 @@ Runnable::getLogger() {
 std::string
 Runnable::getName() const {
   return typeid(*this).name();
+}
+
+void
+Runnable::start(PlatformThread * _thread) {
+  initialize(_thread);
+  try {
+    run();
+  } catch (std::exception & e) {
+    getLogger().println("exception: " + std::string(e.what()));
+  }
 }

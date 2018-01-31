@@ -3,10 +3,10 @@
 
 #include <Element.h>
 #include <Mutex.h>
-#include <Logger.h>
 
-#include <exception>
 #include <string>
+
+class Logger;
 
 class Runnable : public Element {
  public:
@@ -15,15 +15,8 @@ class Runnable : public Element {
     unregisterElement(this);
   }
   
-  void start(PlatformThread * _thread) {
-    initialize(_thread);
-    try {
-      run();
-    } catch (std::exception & e) {
-      getLogger().println("exception: " + std::string(e.what()));
-    }
-  }
-
+  void start(PlatformThread * _thread);
+  
   std::string getStatusText() const {
     MutexLocker m(mutex);
     return status_text;
