@@ -47,13 +47,13 @@ Example1::Example1() : FWApplication("com.sometrik.example1")
   navigationLayout->addChild(make_shared<TextLabel>("Hello sidebar!"));
   navigationLayout->addChild(make_shared<Button>("OK"));
   addChild(navigationDrawer);
-  
+   
+  mainView = std::make_shared<FrameView>("Secondary page");
+  mainView->style("background-color", "#eeeeee");
+  addChild(mainView);
+
   frontView = std::make_shared<FrontView>();
   addChild(frontView);
-  
-  mainView = std::make_shared<FrameView>("Secondary page");
-  mainView->style("background-color", "#555555");
-  addChild(mainView);
 
   auto flipper = std::make_shared<FlipperLayout>();
   mainView->addChild(flipper);
@@ -65,11 +65,16 @@ Example1::Example1() : FWApplication("com.sometrik.example1")
   
   mainView->addChild(navigationBar);
 
+#if 1
   auto firstPage = std::make_shared<LinearLayout>(FW_VERTICAL);
   // firstPage->style("padding", 10);
+  firstPage->style("border", 1);
   flipper->addChild(firstPage);
   
   auto image = std::make_shared<ImageElement>("test.png");
+  image->style("width", 200);
+  image->style("height", 200);
+  image->style("gravity", "left");
   firstPage->addChild(image);
   
   auto titleLayout = make_shared<FrameLayout>();
@@ -78,6 +83,7 @@ Example1::Example1() : FWApplication("com.sometrik.example1")
   
   auto title = make_shared<TextLabel>("Hello again!", 1234);
   title->style("font-size", 20);
+  title->style("padding", 20);
   title->style("background-color", "#e03030");
   title->style("shadow", 5);
   title->style("border", "#801010");
@@ -85,6 +91,9 @@ Example1::Example1() : FWApplication("com.sometrik.example1")
   titleLayout->addChild(title);
 
   auto nameLayout = make_shared<LinearLayout>(FW_HORIZONTAL);
+  nameLayout->style("border", 1);
+  nameLayout->style("width", "match-parent");
+  nameLayout->style("margin", 10);
   firstPage->addChild(nameLayout);
   nameLayout->addChild(make_shared<TextLabel>("Kirjoita nimesi:"));
   
@@ -92,6 +101,7 @@ Example1::Example1() : FWApplication("com.sometrik.example1")
   nameLayout->addChild(textField);
   
   auto buttonLayout = std::make_shared<LinearLayout>(FW_HORIZONTAL);
+  buttonLayout->style("border", 1);
   buttonLayout->addChild(make_shared<Button>("Click me!", ID_CLICK_ME_BUTTON)).style("background", "#30e030").style("border-radius", 5);
   buttonLayout->addChild(make_shared<Button>("Show menu", ID_SHOW_MENU_BUTTON));
   buttonLayout->addChild(make_shared<Button>("Actionsheet", ID_SHOW_ACTIONSHEET)).style("icon", "button.png");
@@ -106,7 +116,9 @@ Example1::Example1() : FWApplication("com.sometrik.example1")
   scrollLayout->addChild(scrollContent);
   
   for (int i = 0; i < 100; i++) {
-    scrollContent->addChild(std::make_shared<TextLabel>("Number: " + to_string(i)));
+    auto label = std::make_shared<TextLabel>("Number: " + to_string(i));
+    label->style("white-space", "nowrap");
+    scrollContent->addChild(label);
   }
   
   firstPage->addChild(make_shared<Switch>("On", "Off"));
@@ -126,10 +138,13 @@ Example1::Example1() : FWApplication("com.sometrik.example1")
     s += c;
     scrollContent2->addChild(make_shared<TextLabel>(s)).style("font-size", 80);
   }
+#endif
 
   auto thirdPage = std::make_shared<LinearLayout>(FW_VERTICAL);
-  thirdPage->style("background", "#e03030");
+  thirdPage->style("background", "#ff0000");
   thirdPage->style("margin", 20);
+  thirdPage->style("border", 1);
+
   flipper->addChild(thirdPage);
   thirdPage->addChild(make_shared<TextLabel>("THIRD PAGE")).style("font-size", "20");
   thirdPage->addChild(make_shared<ProgressSpinner>(ID_PROGRESS_SPINNER));
@@ -160,7 +175,6 @@ Example1::onCommandEvent(CommandEvent & ev) {
       auto sheet = make_shared<FWActionSheet>("Test");
       sheet->addOption(1, "Do something");
       sheet->addOption(2, "Do something else");
-      sheet->addOption(0, "Cancel");
       int r = sheet->showModal(this);
       cerr << "Actionsheet returned with " << r << endl;
       if (r == 1) {
@@ -185,12 +199,10 @@ Example1::onCommandEvent(CommandEvent & ev) {
 
 void
 Example1::onTimerEvent(TimerEvent & ev) {
-#if 1
   auto & children = scrollContent->getChildren();
   scrollContent->reorderChildren(*(children.back()), 0);
   children.insert(children.begin(), children.back());
   children.pop_back();
-#endif
 }
 
 void
