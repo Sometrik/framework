@@ -191,17 +191,19 @@ iOSMainThread::sendCommands(const std::vector<Command> & commands) {
 	if (command.getInternalId() == 1) {
           auto & app = getApplication();
           
-          if (app.getActiveViewId()) {
-	    [viewController setVisibility:app.getActiveViewId() visibility:0];
-	  }
+	  if (command.getChildInternalId() != app.getActiveViewId()) {
+	     if (app.getActiveViewId()) {
+	       [viewController setVisibility:app.getActiveViewId() visibility:0];
+	     }
 
-	  app.addToHistory(command.getChildInternalId());
-	  app.setActiveViewId(command.getChildInternalId());
+	     app.addToHistory(command.getChildInternalId());
+	     app.setActiveViewId(command.getChildInternalId());
 
-	  [viewController setVisibility:app.getActiveViewId() visibility:1];
+	     [viewController setVisibility:app.getActiveViewId() visibility:1];
 
-	  NSString * title = [NSString stringWithUTF8String:command.getTextValue().c_str()];
-	  [viewController setTitle:title];
+	     NSString * title = [NSString stringWithUTF8String:command.getTextValue().c_str()];
+	     [viewController setTitle:title];
+	   }
 	} else {
 	  ViewManager * viewManager = [viewController getViewManager:command.getInternalId()];
 	  if (viewManager != nil) {
