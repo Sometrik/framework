@@ -19,7 +19,7 @@ public:
     layout->addChild(label);
     
     auto image = std::make_shared<ImageElement>();
-    image->style("width", 128);
+    image->style("width", "match-parent");
     image->style("height", 256);
     image->style("border", "#ffffff");
     layout->addChild(image);
