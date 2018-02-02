@@ -1,11 +1,6 @@
 #import <UIKit/UIKit.h>
 
 typedef enum {
-    LinearLayoutItemFillModeNormal,
-    LinearLayoutItemFillModeStretch
-} LinearLayoutItemFillMode;
-
-typedef enum {
     LinearLayoutItemHorizontalAlignmentLeft,
     LinearLayoutItemHorizontalAlignmentRight,
     LinearLayoutItemHorizontalAlignmentCenter
@@ -27,12 +22,12 @@ typedef struct {
 @interface LayoutParams : NSObject
 
 @property (nonatomic, strong) UIView *view;
-@property (nonatomic, assign) LinearLayoutItemFillMode fillMode;
 @property (nonatomic, assign) LinearLayoutItemHorizontalAlignment horizontalAlignment;
 @property (nonatomic, assign) LinearLayoutItemVerticalAlignment verticalAlignment;
 @property (nonatomic, assign) LinearLayoutItemPadding padding;
 @property int fixedWidth;
 @property int fixedHeight;
+@property int weight;
 @property NSLayoutConstraint *topConstraint;
 @property NSLayoutConstraint *leftConstraint;
 @property NSLayoutConstraint *rightConstraint;

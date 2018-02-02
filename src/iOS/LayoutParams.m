@@ -7,13 +7,15 @@
     if (self) {
         self.horizontalAlignment = LinearLayoutItemHorizontalAlignmentLeft;
         self.verticalAlignment = LinearLayoutItemVerticalAlignmentTop;
-        self.fillMode = LinearLayoutItemFillModeNormal;
 	self.topConstraint = nil;
 	self.leftConstraint = nil;
 	self.widthConstraint = nil;
 	self.heightConstraint = nil;
 	self.padding = LinearLayoutMakePadding(0, 0, 0, 0);
 	self.level = 0;
+	self.fixedWidth = 0;
+	self.fixedHeight = 0;
+	self.weight = 0;
     }
     return self;
 }
@@ -24,13 +26,15 @@
         self.view = aView;
         self.horizontalAlignment = LinearLayoutItemHorizontalAlignmentLeft;
         self.verticalAlignment = LinearLayoutItemVerticalAlignmentTop;
-        self.fillMode = LinearLayoutItemFillModeNormal;
 	self.topConstraint = nil;
 	self.leftConstraint = nil;
 	self.widthConstraint = nil;
 	self.heightConstraint = nil;
 	self.padding = LinearLayoutMakePadding(0, 0, 0, 0);
 	self.level = 0;
+	self.fixedWidth = 0;
+	self.fixedHeight = 0;
+	self.weight = 0;
     }
     return self;
 }
