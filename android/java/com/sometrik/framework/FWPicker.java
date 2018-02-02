@@ -17,6 +17,7 @@ public class FWPicker extends Spinner implements NativeCommandHandler {
   private CustomPickerAdapter adapter;
   private boolean ignoreNextSelection = true;
   ViewStyleManager normalStyle, activeStyle, currentStyle;
+//  private FWImageView arrowImage;
 
   public FWPicker(FrameWork frameWork) {
     super(frameWork);
@@ -28,7 +29,7 @@ public class FWPicker extends Spinner implements NativeCommandHandler {
     this.normalStyle = currentStyle = new ViewStyleManager(frame.bitmapCache, scale, true);
     this.activeStyle = new ViewStyleManager(frame.bitmapCache, scale, false);
     setOnItemSelectedListener(new OnItemSelectedListener() {
-
+  
       @Override
       public void onItemSelected(AdapterView<?> view, View arg1, int position, long itemId) {
 	System.out.println("FWPicker onItemSelected " + position);
@@ -180,14 +181,16 @@ public class FWPicker extends Spinner implements NativeCommandHandler {
     public View getView(int position, View convertView, ViewGroup parent) {
       View view = new View(frame);
       view = viewList.get(position);
+      if (view instanceof NativeCommandHandler) {
+	FWImageView arrowImage = new FWImageView(frame, 0);
+	arrowImage.setImageFromAssets("icons_arrow-down.png");
+	arrowImage.setStyle(Selector.values()[0], "width", "24");
+	arrowImage.setStyle(Selector.values()[0], "height", "24");
+	arrowImage.setStyle(Selector.values()[0], "scale", "fit-center");
+	((NativeCommandHandler) view).addChild(arrowImage);
+      }
+      
       return view;
-//      return getDropDownView(position, convertView, parent);
-//	System.out.println("FWPicker getView " + position);
-//      convertView = viewList.get(position);
-//      if (convertView instanceof FWLayout) {
-//	System.out.println("FWPicker is FWLayout in getView " + convertView.getId() + " "+ ((FWLayout) convertView).getChildCount());
-//      }
-//      return convertView;
     }
     
     @Override
