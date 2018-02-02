@@ -29,7 +29,7 @@ extern FWApplication * applicationMain();
 @property (nonatomic, strong) UINavigationBar *navBar;
 @property (nonatomic, strong) UIToolbar *statusBarBackgroundView;
 @property (nonatomic, strong) UIScrollView *pageView;
-@property (nonatomic) int activeDialogId;
+@property (nonatomic, strong) NSMutableArray *dialogIds;
 @property (nonatomic) int activeViewId;
 @property (nonatomic, assign) BOOL sideMenuPanned;
 @property (nonatomic, strong) WKWebView *webView;
@@ -47,8 +47,11 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
   [super viewDidLoad];
   // Do any additional setup after loading the view, typically from a nib.
   //self.tabBarHiddenInThesePages = [[NSSet alloc] initWithObjects:[NSNumber numberWithInt:0], nil];
+
   self.activeViewId = 0;
-  self.activeDialogId = 0;
+
+  self.dialogIds = [[NSMutableArray alloc] init];
+
   self.view.layoutMargins = UIEdgeInsetsMake(0, 0, 0, 0);
 //  [self.topLayoutGuide
 //  self.bottomLayoutGuide.length = 44;
@@ -143,9 +146,10 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     if (!self.sideMenuView.isHidden) {
         [self hideNavigationViewWithAnimation:YES];
     }
-    if (self.activeDialogId) {
-        [self sendIntValue:self.activeDialogId value:0];
-        self.activeDialogId = 0;
+    if (self.dialogIds.count > 0) {
+        int topDialogId = [[self.dialogIds lastObject] intValue];
+        [self sendIntValue:topDialogId value:0];
+        [self.dialogIds removeLastObject];
     }
     /*
      [UIView animateWithDuration:animationDuration animations:^{
@@ -222,6 +226,15 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
         BOOL viewHidden = visibility == 0 ? true : false;
         if (view) {
             view.hidden = viewHidden;
+	    if (visibility != 0) {
+#if 0
+	        [view.superview bringSubviewToFront:view];
+		if (self.navBar) {
+		     [self.view bringSubviewToFront:self.statusBarBackgroundView];
+		     [self.view bringSubviewToFront:self.navBar];
+	        }
+#endif
+            }
         }
     }
 }
@@ -517,9 +530,10 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
 - (void)backButtonTapped
 {
-    if (self.activeDialogId) {
-        [self sendIntValue:self.activeDialogId value:0];
-        self.activeDialogId = 0;
+    if (self.dialogIds.count > 0) {
+        int topDialogId = [[self.dialogIds lastObject] intValue];
+        [self sendIntValue:topDialogId value:0];
+        [self.dialogIds removeLastObject];
     } else if (!mainThread->back()) {
 	[self showNavigationViewWithAnimation:YES];
     }
@@ -760,12 +774,13 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
 - (void)createDialogWithId:(int)viewId parentId:(int)parentId
 {
-    if (self.activeDialogId != 0) {
-        [self sendIntValue:self.activeDialogId value:0];
-	self.activeDialogId = 0;
+    if (self.dialogIds.count > 0) {
+        int topDialogId = [[self.dialogIds lastObject] intValue];
+        [self sendIntValue:topDialogId value:0];
+        [self.dialogIds removeLastObject];
     }
 
-    self.activeDialogId = viewId;
+    [self.dialogIds addObject:[NSNumber numberWithInt:viewId]];
     
     UIView * dialog = [[UIView alloc] init];
     dialog.tag = viewId;
@@ -778,14 +793,23 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     dialog.layer.shadowRadius = 7.5;
     dialog.layer.shadowOffset = CGSizeMake(1, 4);
     dialog.clipsToBounds = NO;
+    dialog.translatesAutoresizingMaskIntoConstraints = false;
     
+    [self addView:dialog withId:viewId];
+    [self.view addSubview:dialog];
+
+#if 0    
     CGSize s = self.view.bounds.size;
     
     dialog.frame = CGRectMake(50, 50, s.width - 100, s.height - 100);
     // dialog.center = CGPointMake(s.width / 2, (s.height / 2) - 65);
-    
-    [self addView:dialog withId:viewId];
-    [self.view addSubview:dialog];
+#else
+    NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:dialog attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:dialog.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:100];
+    NSLayoutConstraint *leftConstraint = [NSLayoutConstraint constraintWithItem:dialog attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:dialog.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:50];
+    NSLayoutConstraint *rightConstraint = [NSLayoutConstraint constraintWithItem:dialog attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:dialog.superview attribute:NSLayoutAttributeRight multiplier:1.0f constant:-50];
+    NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:dialog attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:dialog.superview attribute:NSLayoutAttributeBottom multiplier:1.0f constant:-50];
+    [dialog.superview addConstraints:@[topConstraint, leftConstraint, rightConstraint, bottomConstraint]];
+#endif
     
     dialog.alpha = 0.0;
     self.backgroundOverlayView.alpha = 0.0;
@@ -873,8 +897,6 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 	LayoutParams * item = [LayoutParams layoutItemForView:view];
         // item.padding = LinearLayoutMakePadding(5.0, 10.0, 5.0, 10.0);
         // item.horizontalAlignment = LinearLayoutItemHorizontalAlignmentCenter;	
-        item.fillMode = LinearLayoutItemFillModeNormal;
-        // item.fillMode = LinearLayoutItemFillModeStretch;
 	item.level = parentViewManager.level + 1;
         [layout addItem:item];
         viewManager.layoutParams = item;
@@ -947,9 +969,12 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
 - (void)removeView:(int)viewId
 {
-    if (self.activeDialogId == viewId) {
-        [self sendIntValue:self.activeDialogId value:0];
-	self.activeDialogId = 0;
+    if (self.dialogIds.count > 0) {
+        int topDialogId = [[self.dialogIds lastObject] intValue];
+        if (topDialogId == viewId) {
+            [self sendIntValue:topDialogId value:0];
+            [self.dialogIds removeLastObject];
+        }
     }
 
     NSString * key = [NSString stringWithFormat:@"%d", viewId];
