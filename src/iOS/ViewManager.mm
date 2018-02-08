@@ -172,7 +172,10 @@ LinearLayoutItemPadding LLMakePadding(CGFloat top, CGFloat left, CGFloat bottom,
 		}
             }
         } else if ([key isEqualToString:@"border-radius"]) {
-            view.layer.cornerRadius = (int)[value integerValue];
+	    NSArray *array = [value componentsSeparatedByString:@" "];
+	    if ([array count] >= 1) {
+		view.layer.cornerRadius = (int)[array[0] integerValue];
+	    }
         } else if ([key isEqualToString:@"border"]) {
 	    if ([value isEqualToString:@"none"] || ![value length]) {
 	        view.layer.borderWidth = 0.0f;
@@ -206,24 +209,40 @@ LinearLayoutItemPadding LLMakePadding(CGFloat top, CGFloat left, CGFloat bottom,
         } else if ([key isEqualToString:@"margin-top"]) {
 	    int v = (int)[value integerValue];
 	    if (self.layoutParams != nil) {
+		self.layoutParams.padding = LLMakePadding(v, 
+							  self.layoutParams.padding.left,
+							  self.layoutParams.padding.bottom,
+							  self.layoutParams.padding.right);
 	    } else {
 		self.topConstraint.constant = v;
 	    }
         } else if ([key isEqualToString:@"margin-right"]) {
 	    int v = (int)[value integerValue];
 	    if (self.layoutParams != nil) {
+		self.layoutParams.padding = LLMakePadding(self.layoutParams.padding.top, 
+							  self.layoutParams.padding.left,
+							  self.layoutParams.padding.bottom,
+							  v);
 	    } else {
 		self.rightConstraint.constant = -v;
 	    }
         } else if ([key isEqualToString:@"margin-bottom"]) {
 	    int v = (int)[value integerValue];
 	    if (self.layoutParams != nil) {
+		self.layoutParams.padding = LLMakePadding(self.layoutParams.padding.top, 
+							  self.layoutParams.padding.left,
+							  v,
+							  self.layoutParams.padding.right);
 	    } else {
 		self.bottomConstraint.constant = -v;
 	    }
         } else if ([key isEqualToString:@"margin-left"]) {
 	    int v = (int)[value integerValue];
 	    if (self.layoutParams != nil) {
+		self.layoutParams.padding = LLMakePadding(self.layoutParams.padding.top, 
+							  v,
+							  self.layoutParams.padding.bottom,
+							  self.layoutParams.padding.right);
 	    } else {
 		self.leftConstraint.constant = v;
 	    }
@@ -251,7 +270,9 @@ LinearLayoutItemPadding LLMakePadding(CGFloat top, CGFloat left, CGFloat bottom,
                                                   view.layoutMargins.bottom,
                                                   view.layoutMargins.right);
         } else if ([key isEqualToString:@"weight"]) {
-            
+	    if (self.layoutParams != nil) {
+		self.layoutParams.weight = (int)[value integerValue];
+	    }
         } else if ([key isEqualToString:@"opacity"]) {
         } else if ([key isEqualToString:@"top"]) {
 	    int v = (int)[value integerValue];
@@ -368,8 +389,10 @@ LinearLayoutItemPadding LLMakePadding(CGFloat top, CGFloat left, CGFloat bottom,
     } else if ([self.view isKindOfClass:UIButton.class]) {
 	UIButton *button = (UIButton *)self.view;
         if ([key isEqualToString:@"icon"]) {
+#if 0
             UIImage * icon = [self loadImage:value];
             [button setImage:icon forState:UIControlStateNormal];
+#endif
         } else if ([key isEqualToString:@"icon-attachment"]) {
             
 	} else if ([key isEqualToString:@"color"]) {
