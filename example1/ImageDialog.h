@@ -6,6 +6,7 @@
 #include <LinearLayout.h>
 #include <Button.h>
 #include <ImageElement.h>
+#include <TextField.h>
 
 #include <memory>
 
@@ -23,6 +24,9 @@ public:
     image->style("height", 256);
     image->style("border", "#ffffff");
     layout->addChild(image);
+
+    auto textField = std::make_shared<TextField>();
+    layout->addChild(textField);
     
     auto button = std::make_shared<Button>("OK");
     layout->addChild(button);
