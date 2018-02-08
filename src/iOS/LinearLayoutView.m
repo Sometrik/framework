@@ -65,15 +65,15 @@
         CGFloat endPadding = 0.0;
 
         CGFloat width, height;
-        if (item.fixedWidth == -1) {
-            width = self.frame.size.width;
+        if (item.fixedWidth == -1 && self.orientation == LinearLayoutViewOrientationVertical) {
+            width = self.frame.size.width - (item.padding.left + item.padding.right);
         } else if (item.fixedWidth > 0) {
             width = item.fixedWidth;
         } else {
             width = [self calcIntrinsicWidth:item.view];
         }
-        if (item.fixedHeight == -1) {
-            height = self.frame.size.height;
+        if (item.fixedHeight == -1 && self.orientation == LinearLayoutViewOrientationVertical) {
+            height = self.frame.size.height - (item.padding.top + item.padding.bottom);
         } else if (item.fixedHeight > 0) {
             height = item.fixedHeight;
         } else {
@@ -84,7 +84,7 @@
             startPadding = item.padding.left;
             endPadding = item.padding.right;
             
-            if (item.verticalAlignment == LinearLayoutItemVerticalAlignmentTop || item.fillMode == LinearLayoutItemFillModeStretch) {
+            if (item.verticalAlignment == LinearLayoutItemVerticalAlignmentTop || item.fixedHeight == -1) {
                 absolutePosition = item.padding.top;
             } else if (item.verticalAlignment == LinearLayoutItemVerticalAlignmentBottom) {
                 absolutePosition = self.frame.size.height - height - item.padding.bottom;
@@ -95,7 +95,7 @@
             startPadding = item.padding.top;
             endPadding = item.padding.bottom;
             
-            if (item.horizontalAlignment == LinearLayoutItemHorizontalAlignmentLeft || item.fillMode == LinearLayoutItemFillModeStretch) {
+            if (item.horizontalAlignment == LinearLayoutItemHorizontalAlignmentLeft || item.fixedWidth == -1) {
                 absolutePosition = item.padding.left;
             } else if (item.horizontalAlignment == LinearLayoutItemHorizontalAlignmentRight) {
                 absolutePosition = self.frame.size.width - width - item.padding.right;
@@ -108,19 +108,12 @@
        
         CGFloat currentOffset = 0.0;
         if (self.orientation == LinearLayoutViewOrientationHorizontal) {
-            
-            if (item.fillMode == LinearLayoutItemFillModeStretch) {
-                height = self.frame.size.height - (item.padding.top + item.padding.bottom);
-            }
-    	    item.leftConstraint.constant = relativePosition;
+            item.leftConstraint.constant = relativePosition;
             item.topConstraint.constant = absolutePosition;
             item.rightConstraint.constant = relativePosition + width;
             item.bottomConstraint.constant = absolutePosition + height;
             currentOffset = width;
         } else {
-            if (item.fillMode == LinearLayoutItemFillModeStretch) {
-                width = self.frame.size.width - (item.padding.left + item.padding.right);
-            }
             item.leftConstraint.constant = absolutePosition;
             item.topConstraint.constant = relativePosition;
             item.rightConstraint.constant = absolutePosition + width;
@@ -141,7 +134,7 @@
 }
 
 - (void)adjustFrameSize {
-#if 1
+#if 0
     int width = [self calcIntrinsicWidth:self];
     int height = [self calcIntrinsicHeight:self];
     self.frame = CGRectMake(self.frame.origin.x, self.frame.origin.y, width, height);
