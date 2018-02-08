@@ -8,6 +8,7 @@
 #import "FWImageView.h"
 #import "PaddedLabel.h"
 #import "LinearLayoutView.h"
+#import "FWScrollView.h"
 
 #import <WebKit/WebKit.h>
 
@@ -385,30 +386,17 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
 - (void)createScrollLayoutWithId:(int)viewId parentId:(int)parentId
 {
-    UIScrollView * scrollView = [[UIScrollView alloc] init];
+    FWScrollView * scrollView = [[UIScrollView alloc] init];
     scrollView.tag = viewId;
     scrollView.contentInset = UIEdgeInsetsMake(64, 0, 44, 0);
     scrollView.contentOffset = CGPointMake(0, 64);
-    scrollView.contentSize = CGSizeMake(self.view.bounds.size.width, 4000);
+    // scrollView.contentSize = CGSizeMake(self.view.bounds.size.width, 4000);
     scrollView.frame = self.view.frame;
     scrollView.clipsToBounds = YES;
     scrollView.delegate = self;
     scrollView.translatesAutoresizingMaskIntoConstraints = false;
     [self addView:scrollView withId:viewId];
     [self addToParent:parentId view:scrollView];
-}
-
-- (void)calculateScrollViewContentSize:(int)scrollViewId
-{
-    UIView *possibleScrollView = [self viewForId:scrollViewId];
-    if (possibleScrollView && [possibleScrollView isKindOfClass:[UIScrollView class]]) {
-        UIScrollView *scrollView = (UIScrollView *)possibleScrollView;
-        CGRect contentRect = CGRectZero;
-        for (UIView *view in scrollView.subviews) {
-            contentRect = CGRectUnion(contentRect, view.frame);
-        }
-        scrollView.contentSize = CGSizeMake(scrollView.contentSize.width, contentRect.size.height);
-    }
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
