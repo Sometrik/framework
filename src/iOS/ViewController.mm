@@ -274,7 +274,6 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
 - (void)createLinearLayoutWithId:(int)viewId parentId:(int)parentId direction:(int)direction
 {
-#if 1
     LinearLayoutView *layout = [[LinearLayoutView alloc] initWithFrame:self.view.bounds];
     if (direction == 1) {
         layout.orientation = LinearLayoutViewOrientationVertical;
@@ -286,22 +285,6 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     layout.tag = viewId;
     [self addView:layout withId:viewId];
     [self addToParent:parentId view:layout];
-#else
-    UIStackView *stackView = [[UIStackView alloc] init];
-    if (direction == 1) {
-        stackView.axis = UILayoutConstraintAxisVertical;
-    } else {
-        stackView.axis = UILayoutConstraintAxisHorizontal;
-    }
-    stackView.layoutMarginsRelativeArrangement = true;
-    stackView.distribution = UIStackViewDistributionFill;
-    // stackView.distribution = UIStackViewDistributionFillProportionally;
-    stackView.alignment = UIStackViewAlignmentFill;
-    stackView.translatesAutoresizingMaskIntoConstraints = false;
-    stackView.frame = self.view.frame;
-    stackView.tag = viewId;
-    stackView.layoutMargins = UIEdgeInsetsMake(0, 0, 0, 0);
-#endif
 }
 
 - (void)createFrameLayoutWithId:(int)viewId parentId:(int)parentId
@@ -876,10 +859,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
     BOOL add_tabbar_constraints = NO, add_basic_constraints = NO, add_margin_constraints = NO;
   
-    if ([parentView isKindOfClass:UIStackView.class]) {
-        UIStackView *stackView = (UIStackView *)parentView;
-        [stackView addArrangedSubview:view];
-    } else if ([parentView isKindOfClass:LinearLayoutView.class]) {
+    if ([parentView isKindOfClass:LinearLayoutView.class]) {
 	view.autoresizingMask = 0;
         LinearLayoutView * layout = (LinearLayoutView *)parentView;
 	LayoutParams * item = [LayoutParams layoutItemForView:view];
@@ -986,13 +966,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     UIView *parentView = [self viewForId:parentId];
     UIView *childView = [self viewForId:viewId];
     if (parentView && childView) {
-        if ([parentView isKindOfClass:[UIStackView class]]) {
-            UIStackView *stackView = (UIStackView *)parentView;
-            [childView removeFromSuperview];
-            [stackView insertArrangedSubview:childView atIndex:position];
-            [stackView setNeedsLayout];
-            [stackView layoutIfNeeded];
-	} else if ([parentView isKindOfClass:[LinearLayoutView class]]) {
+	if ([parentView isKindOfClass:[LinearLayoutView class]]) {
 	    LinearLayoutView * layout = (LinearLayoutView *)parentView;
 
 	    ViewManager * viewManager = [self getViewManager:viewId];
