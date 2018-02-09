@@ -24,7 +24,7 @@
     for (UIView *view in self.subviews) {
 	contentRect = CGRectUnion(contentRect, view.frame);
     }
-    self.contentSize = CGSizeMake(self.frame.width, contentRect.size.height);
+    self.contentSize = CGSizeMake(self.frame.size.width, contentRect.size.height);
 }
 
 @end
