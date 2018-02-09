@@ -227,8 +227,10 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
         }
     } else {
         BOOL viewHidden = visibility == 0 ? true : false;
-        if (view) {
+        if (view && ((viewHidden && !view.hidden) || (!viewHidden && view.hidden))) {
             view.hidden = viewHidden;
+	    [view.superview setNeedsLayout];
+
 	    if (visibility != 0) {
 #if 0
 	        [view.superview bringSubviewToFront:view];
@@ -371,11 +373,16 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
 - (void)createScrollLayoutWithId:(int)viewId parentId:(int)parentId
 {
+#if 0
     FWScrollView * scrollView = [[FWScrollView alloc] init];
+#else
+    UIScrollView * scrollView = [[UIScrollView alloc] init];
+    scrollView.contentSize = CGSizeMake(self.view.frame.size.width, 4000);
+#endif
     scrollView.tag = viewId;
     scrollView.contentInset = UIEdgeInsetsMake(0, 0, 0, 0);
     scrollView.contentOffset = CGPointMake(0, 0);
-    // scrollView.frame = self.view.frame;
+    scrollView.frame = self.view.frame;
     scrollView.clipsToBounds = YES;
     scrollView.delegate = self;
     scrollView.translatesAutoresizingMaskIntoConstraints = false;
@@ -417,9 +424,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
 - (void)createPageLayoutWithId:(int)viewId parentId:(int)parentId
 {
-  CGFloat topBarsHeight = 64; // self.navBar == nil ? 0.0 : 64.0;
-  CGFloat tabBarHeight = 44; // self.tabBar == nil ? 0.0 : 44.0;
-  CGFloat frameHeight = self.view.frame.size.height; // -topBarsHeight-tabBarHeight;
+    CGFloat frameHeight = self.view.frame.size.height - 20;
   
     UIScrollView * scrollView = [[UIScrollView alloc] init];
     scrollView.tag = viewId;
@@ -882,7 +887,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
         UIScrollView * scrollView = (UIScrollView *)parentView;
         if (scrollView.pagingEnabled) {
             int pageWidth = self.view.frame.size.width;
-            scrollView.contentSize = CGSizeMake(scrollView.contentSize.width + pageWidth, self.view.frame.size.height);
+            scrollView.contentSize = CGSizeMake(scrollView.contentSize.width + pageWidth, scrollView.contentSize.height);
             
             NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
             NSLayoutConstraint *leftConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:pos * pageWidth];
