@@ -54,7 +54,8 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
   self.dialogIds = [[NSMutableArray alloc] init];
 
   self.view.layoutMargins = UIEdgeInsetsMake(0, 0, 0, 0);
-//  [self.topLayoutGuide
+  self.automaticallyAdjustsScrollViewInsets = NO;
+    //  [self.topLayoutGuide
 //  self.bottomLayoutGuide.length = 44;
   
   [self createBackgroundOverlay];
@@ -418,7 +419,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 {
   CGFloat topBarsHeight = 64; // self.navBar == nil ? 0.0 : 64.0;
   CGFloat tabBarHeight = 44; // self.tabBar == nil ? 0.0 : 44.0;
-  CGFloat frameHeight = self.view.bounds.size.height; // -topBarsHeight-tabBarHeight;
+  CGFloat frameHeight = self.view.frame.size.height; // -topBarsHeight-tabBarHeight;
   
     UIScrollView * scrollView = [[UIScrollView alloc] init];
     scrollView.tag = viewId;
@@ -873,10 +874,8 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
         [parentView addSubview:view];
         UIScrollView * scrollView = (UIScrollView *)parentView;
         if (scrollView.pagingEnabled) {
-            int pageWidth = self.view.bounds.size.width;
-            // int pageHeight = self.view.bounds.size.height;
-            // view.frame = CGRectMake(pos * pageWidth, 0, pageWidth, pageHeight);
-            scrollView.contentSize = CGSizeMake(scrollView.contentSize.width + pageWidth, scrollView.contentSize.height);
+            int pageWidth = self.view.frame.size.width;
+            scrollView.contentSize = CGSizeMake(scrollView.contentSize.width + pageWidth, self.view.frame.size.height);
             
             NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
             NSLayoutConstraint *leftConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:pos * pageWidth];
