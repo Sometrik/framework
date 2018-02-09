@@ -8,6 +8,7 @@
 #import "FWImageView.h"
 #import "PaddedLabel.h"
 #import "LinearLayoutView.h"
+#import "FrameLayoutView.h"
 #import "FWScrollView.h"
 
 #import <WebKit/WebKit.h>
@@ -290,7 +291,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
 - (void)createFrameLayoutWithId:(int)viewId parentId:(int)parentId
 {
-    UIView *view = [[UIView alloc] init];
+    FrameLayoutView *view = [[FrameLayoutView alloc] init];
     view.layoutMargins = UIEdgeInsetsMake(0, 0, 0, 0);
     view.tag = viewId;
     view.translatesAutoresizingMaskIntoConstraints = false;
@@ -869,6 +870,13 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 	item.level = parentViewManager.level + 1;
         [layout addItem:item];
         viewManager.layoutParams = item;
+    } else if ([parentView isKindOfClass:FrameLayoutView.class]) {
+	view.autoresizingMask = 0;
+        FrameLayoutView * layout = (FrameLayoutView *)parentView;
+	LayoutParams * item = [LayoutParams layoutItemForView:view];
+	item.level = parentViewManager.level + 1;
+        [layout addItem:item];
+        viewManager.layoutParams = item;
     } else if ([parentView isKindOfClass:UIScrollView.class]) {
         NSUInteger pos = [[parentView subviews] count];
         [parentView addSubview:view];
@@ -971,6 +979,8 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 	    ViewManager * viewManager = [self getViewManager:viewId];
 
 	    [layout moveItem:viewManager.layoutParams toIndex:position];
+	} else if ([parentView isKindOfClass:[FrameLayoutView class]]) {
+
         } else {
             [parentView insertSubview:childView atIndex:position];
         }
