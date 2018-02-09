@@ -1,5 +1,7 @@
 #import "LinearLayoutView.h"
 
+#import "FrameLayoutView.h"
+
 @interface LinearLayoutView()
 - (void)setup;
 - (void)adjustFrameSize;
@@ -188,7 +190,7 @@
             for (LayoutParams *item in child.items) {
                 int w = 0;
                 if (item.fixedWidth == -1) {
-                    // w = item.view.superview.frame.size.width;
+		    w = item.padding.left + item.padding.right;
                 } else if (item.fixedWidth > 0) {
                     w = item.fixedWidth + item.padding.left + item.padding.right;
                 } else {
@@ -198,6 +200,21 @@
             }
             return view.layoutMargins.left + view.layoutMargins.right + width;
         }
+    } else if ([view isKindOfClass:FrameLayoutView.class]) {
+      FrameLayoutView * child = (FrameLayoutView*)view;
+      int width = 0;
+      for (LayoutParams *item in child.items) {
+	int w = 0;
+	if (item.fixedWidth == -1) {
+	  w = item.padding.left + item.padding.right;
+	} else if (item.fixedWidth > 0) {
+	  w = item.fixedWidth + item.padding.left + item.padding.right;
+	} else {
+	  w = [self calcIntrinsicWidth:item.view] + item.padding.left + item.padding.right;
+	}
+	if (w > width) width = w;
+      }
+      return view.layoutMargins.left + view.layoutMargins.right + width;      
     } else {
         NSUInteger c = [[view subviews] count];
         if (c >= 1) {
@@ -219,7 +236,7 @@
             for (LayoutParams *item in child.items) {
                 int h = 0;
                 if (item.fixedHeight == -1) {
-                    // h = item.view.superview.frame.size.height;
+		    h = item.padding.top + item.padding.bottom;
                 } else if (item.fixedHeight > 0) {
                     h = item.fixedHeight + item.padding.top + item.padding.bottom;
                 } else {
@@ -229,6 +246,21 @@
             }
             return view.layoutMargins.top + view.layoutMargins.bottom + height;
         }
+    } else if ([view isKindOfClass:FrameLayoutView.class]) {
+        FrameLayoutView * child = (FrameLayoutView*)view;
+      int height = 0;
+      for (LayoutParams *item in child.items) {
+	int h = 0;
+	if (item.fixedHeight == -1) {
+	  h = item.padding.top + item.padding.bottom;
+	} else if (item.fixedHeight > 0) {
+	  h = item.fixedHeight + item.padding.top + item.padding.bottom;
+	} else {
+	  h = [self calcIntrinsicHeight:item.view] + item.padding.top + item.padding.bottom;
+	}
+	if (h > height) height = h;
+      }
+      return view.layoutMargins.top + view.layoutMargins.bottom + height;
     } else {
         NSUInteger c = [[view subviews] count];
         if (c >= 1) {
