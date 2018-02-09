@@ -62,7 +62,10 @@
     CGFloat absolutePosition = 0.0;
     
     for (LayoutParams *item in _items) {
-        
+      if (item.view.hidden) {
+	continue;
+      }
+
         CGFloat startPadding = 0.0;
         CGFloat endPadding = 0.0;
 
@@ -72,14 +75,14 @@
         } else if (item.fixedWidth > 0) {
             width = item.fixedWidth;
         } else {
-            width = [self calcIntrinsicWidth:item.view] + item.padding.left + item.padding.right;
+	  width = [self calcIntrinsicWidth:item.view];
         }
         if (item.fixedHeight == -1 && self.orientation == LinearLayoutViewOrientationVertical) {
             height = self.frame.size.height - (item.padding.top + item.padding.bottom + self.layoutMargins.top + self.layoutMargins.bottom);
         } else if (item.fixedHeight > 0) {
             height = item.fixedHeight;
         } else {
-	  height = [self calcIntrinsicHeight:item.view] + item.padding.top + item.padding.bottom;
+	    height = [self calcIntrinsicHeight:item.view];
         }
 
         if (self.orientation == LinearLayoutViewOrientationHorizontal) {
