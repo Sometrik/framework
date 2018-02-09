@@ -40,9 +40,6 @@
 
 - (void)layoutSubviews {
     
-    CGFloat relativePosition = 0.0;
-    CGFloat absolutePosition = 0.0;
-    
     for (LayoutParams *item in _items) {
         CGFloat width, height;
         if (item.fixedWidth == -1) {
@@ -50,14 +47,14 @@
         } else if (item.fixedWidth > 0) {
             width = item.fixedWidth;
         } else {
-            width = [self calcIntrinsicWidth:item.view] + item.padding.left + item.padding.right;
+	    width = [self calcIntrinsicWidth:item.view];
         }
         if (item.fixedHeight == -1) {
             height = self.frame.size.height - (item.padding.top + item.padding.bottom + self.layoutMargins.top + self.layoutMargins.bottom);
         } else if (item.fixedHeight > 0) {
             height = item.fixedHeight;
         } else {
-	  height = [self calcIntrinsicHeight:item.view] + item.padding.top + item.padding.bottom;
+	    height = [self calcIntrinsicHeight:item.view];
         }
               
         item.leftConstraint.constant = item.padding.left;
@@ -127,7 +124,7 @@
             for (LayoutParams *item in child.items) {
                 int h = 0;
                 if (item.fixedHeight == -1) {
-                    // h = item.view.superview.frame.size.height;
+		    h = item.padding.top + item.padding.bottom;
                 } else if (item.fixedHeight > 0) {
                     h = item.fixedHeight + item.padding.top + item.padding.bottom;
                 } else {
