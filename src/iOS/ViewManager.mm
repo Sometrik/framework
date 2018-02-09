@@ -87,13 +87,17 @@ LinearLayoutItemPadding LLMakePadding(CGFloat top, CGFloat left, CGFloat bottom,
 
 - (void)setTextValue:(NSString *)value
 {
-    if ([self.view isKindOfClass:UILabel.class] || [self.view isKindOfClass:PaddedLabel.class]) {
+    if ([self.view isKindOfClass:UILabel.class]) {
         UILabel * label = (UILabel*)self.view;
         label.text = value;
-        [label sizeToFit];
+	[label.superview setNeedsLayout];
     } else if ([self.view isKindOfClass:UITextField.class]) {
         UITextField * textField = (UITextField*)self.view;
         textField.text = value;
+    } else if ([self.view isKindOfClass:UIButton.class]) {
+        UIButton * button = (UIButton*)self.view;
+        [button setTitle:value forState:UIControlStateNormal];
+	[button.superview setNeedsLayout];
     }
 }
 
@@ -315,7 +319,7 @@ LinearLayoutItemPadding LLMakePadding(CGFloat top, CGFloat left, CGFloat bottom,
 	if ([key isEqualToString:@"font-size"]) {
 	    self.fontSize = (int)[value integerValue];
             label.font = [self createFont:label.font];
-//	    [label sizeToFit];
+	    [label.superview setNeedsLayout];
 	} else if ([key isEqualToString:@"color"]) {
 	    label.textColor = [self colorFromString:value];
 	} else if ([key isEqualToString:@"text-align"]) {
