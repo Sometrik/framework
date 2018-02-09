@@ -77,6 +77,8 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
   
   NSLog(@"starting app, scale = %f", scale);
 
+  [self addView:self.view withId:1];
+
   application->initialize(mainThread.get());
   application->initializeChildren();
   application->load();
@@ -85,9 +87,20 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 - (void)viewWillTransitionToSize: (CGSize)size withTransitionCoordinator:(id)coordinator
 {
   [super viewWillTransitionToSize: size withTransitionCoordinator:coordinator];
-  [coordinator animateAlongsideTransition: nil completion: ^(id _Nonnull context) {
 
-  }];
+  // self.view.frame = CGRectMake(0, 0, size.width, size.height);
+  // [self.view setNeedsLayout];
+
+  [coordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext> context) {
+
+        // Place code here to perform animations during the rotation.
+        // You can pass nil or leave this block empty if not necessary.
+
+    } completion:^(id<UIViewControllerTransitionCoordinatorContext> context) {
+
+        // Code here will execute after the rotation has finished.
+        // Equivalent to placing it in the deprecated method -[didRotateFromInterfaceOrientation:]
+    }];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -257,12 +270,19 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 {
     // CGFloat tabBarHeight = self.tabBar == nil ? 0.0 : 44.0;
     // CGFloat topBarsHeight = self.navBar == nil ? 0.0 : 64.0;
-    UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height)];
+#if 0
+    FrameLayoutView *view = [[FrameLayoutView alloc] init];
+#else
+    UIView * view = [[UIView alloc] init];
+#endif
+    
     view.tag = viewId;
     // view.layoutMargins = UIEdgeInsetsMake(topBarsHeight, 0, tabBarHeight, 0);
     view.layoutMargins = UIEdgeInsetsMake(0, 0, 0, 0);
-    [self.view addSubview:view];
+    view.frame = CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height);
+    // [self.view addSubview:view];
     [self addView:view withId:viewId];
+    [self addToParent:1 view:view];
     
     if (self.activeViewId == 0) {
         self.activeViewId = viewId;
