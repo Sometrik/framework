@@ -373,10 +373,9 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 {
     FWScrollView * scrollView = [[FWScrollView alloc] init];
     scrollView.tag = viewId;
-    scrollView.contentInset = UIEdgeInsetsMake(64, 0, 44, 0);
-    scrollView.contentOffset = CGPointMake(0, 64);
-    // scrollView.contentSize = CGSizeMake(self.view.bounds.size.width, 4000);
-    scrollView.frame = self.view.frame;
+    scrollView.contentInset = UIEdgeInsetsMake(0, 0, 0, 0);
+    scrollView.contentOffset = CGPointMake(0, 0);
+    // scrollView.frame = self.view.frame;
     scrollView.clipsToBounds = YES;
     scrollView.delegate = self;
     scrollView.translatesAutoresizingMaskIntoConstraints = false;
