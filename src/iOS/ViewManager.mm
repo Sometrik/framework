@@ -134,42 +134,38 @@ LinearLayoutItemPadding LLMakePadding(CGFloat top, CGFloat left, CGFloat bottom,
             view.layer.shadowOffset = CGSizeMake(0, 0);
             view.layer.masksToBounds = FALSE;
         } else if ([key isEqualToString:@"width"]) {
+	    int w;
             if ([value isEqualToString:@"match-parent"]) {
-	        if (self.layoutParams != nil) {
-		    self.layoutParams.fixedWidth = -1;
-		    [view.superview setNeedsLayout];
-		}                
+	        w = -1;
             } else if ([value isEqualToString:@"wrap-content"]) {
-                
+	        w = 0;
             } else {
-                int width = (int)[value integerValue];
-		if (self.layoutParams != nil) {
-		  self.layoutParams.fixedWidth = width;
-		  [view.superview setNeedsLayout];
-		} else {
-		  NSLayoutConstraint * c = [view.widthAnchor constraintEqualToConstant:width];
-                  c.priority = 999 - self.level;
-                  c.active = true;
-		}
+                w = (int)[value integerValue];
+	    }
+	    if (self.layoutParams != nil) {
+		self.layoutParams.fixedWidth = w;
+		[view.superview setNeedsLayout];
+	    } else if (w > 0) {
+		NSLayoutConstraint * c = [view.widthAnchor constraintEqualToConstant:w];
+                c.priority = 999 - self.level;
+                c.active = true;
             }
         } else if ([key isEqualToString:@"height"]) {
+	    int h;
             if ([value isEqualToString:@"match-parent"]) {
-	        if (self.layoutParams != nil) {
-		    self.layoutParams.fixedHeight = -1;
-  		    [view.superview setNeedsLayout];
-		}                
+	       h = -1;
             } else if ([value isEqualToString:@"wrap-content"]) {
-                
+	       h = 0;                
             } else {
-                int height = (int)[value integerValue];
-		if (self.layoutParams != nil) {
-		  self.layoutParams.fixedHeight = height;
-		  [view.superview setNeedsLayout];
-		} else {
-		  NSLayoutConstraint * c = [view.heightAnchor constraintEqualToConstant:height];
-                  c.priority = 999 - self.level;
-                  c.active = true;
-		}
+               h = (int)[value integerValue];
+	    }
+	    if (self.layoutParams != nil) {
+		self.layoutParams.fixedHeight = h;
+		[view.superview setNeedsLayout];
+	    } else if (h > 0) {
+		NSLayoutConstraint * c = [view.heightAnchor constraintEqualToConstant:h];
+                c.priority = 999 - self.level;
+                c.active = true;
             }
         } else if ([key isEqualToString:@"border-radius"]) {
 	    NSArray *array = [value componentsSeparatedByString:@" "];
@@ -201,10 +197,12 @@ LinearLayoutItemPadding LLMakePadding(CGFloat top, CGFloat left, CGFloat bottom,
 	    if (self.layoutParams != nil) {
 		self.layoutParams.padding = LLMakePadding(v, v, v, v);
 	    } else {
+#if 0
 		self.topConstraint.constant = v;
 		self.leftConstraint.constant = v;
 		self.rightConstraint.constant = -v;
 		self.bottomConstraint.constant = -v;
+#endif
 	    }
         } else if ([key isEqualToString:@"margin-top"]) {
 	    int v = (int)[value integerValue];
@@ -214,7 +212,9 @@ LinearLayoutItemPadding LLMakePadding(CGFloat top, CGFloat left, CGFloat bottom,
 							  self.layoutParams.padding.bottom,
 							  self.layoutParams.padding.right);
 	    } else {
+#if 0
 		self.topConstraint.constant = v;
+#endif
 	    }
         } else if ([key isEqualToString:@"margin-right"]) {
 	    int v = (int)[value integerValue];
@@ -224,7 +224,9 @@ LinearLayoutItemPadding LLMakePadding(CGFloat top, CGFloat left, CGFloat bottom,
 							  self.layoutParams.padding.bottom,
 							  v);
 	    } else {
+#if 0
 		self.rightConstraint.constant = -v;
+#endif
 	    }
         } else if ([key isEqualToString:@"margin-bottom"]) {
 	    int v = (int)[value integerValue];
@@ -234,7 +236,9 @@ LinearLayoutItemPadding LLMakePadding(CGFloat top, CGFloat left, CGFloat bottom,
 							  v,
 							  self.layoutParams.padding.right);
 	    } else {
+#if 0
 		self.bottomConstraint.constant = -v;
+#endif
 	    }
         } else if ([key isEqualToString:@"margin-left"]) {
 	    int v = (int)[value integerValue];
@@ -244,7 +248,9 @@ LinearLayoutItemPadding LLMakePadding(CGFloat top, CGFloat left, CGFloat bottom,
 							  self.layoutParams.padding.bottom,
 							  self.layoutParams.padding.right);
 	    } else {
+#if 0
 		self.leftConstraint.constant = v;
+#endif
 	    }
         } else if ([key isEqualToString:@"padding"]) {
             int v = (int)[value integerValue];
@@ -274,18 +280,6 @@ LinearLayoutItemPadding LLMakePadding(CGFloat top, CGFloat left, CGFloat bottom,
 		self.layoutParams.weight = (int)[value integerValue];
 	    }
         } else if ([key isEqualToString:@"opacity"]) {
-        } else if ([key isEqualToString:@"top"]) {
-	    int v = (int)[value integerValue];
-	    self.topConstraint.constant = v;            
-        } else if ([key isEqualToString:@"right"]) {
-       	    int v = (int)[value integerValue];
-	    self.rightConstraint.constant = v;
-        } else if ([key isEqualToString:@"bottom"]) {
-	    int v = (int)[value integerValue];
-	    self.bottomConstraint.constant = v;
-        } else if ([key isEqualToString:@"left"]) {
-	    int v = (int)[value integerValue];
-	    self.leftConstraint.constant = v;
         } else if ([key isEqualToString:@"gravity"]) {
 	    if (self.layoutParams != nil) {
                 if ([value isEqualToString:@"bottom"]) {
