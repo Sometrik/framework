@@ -160,6 +160,8 @@
     CGFloat currentOffset = 0.0;
     
     for (LayoutParams *item in _items) {
+        if (item.view.hidden) continue;
+
         if (_orientation == LinearLayoutViewOrientationHorizontal) {
             currentOffset += item.padding.left + item.view.frame.size.width + item.padding.right;
         } else {
@@ -191,6 +193,8 @@
         } else {
             int width = 0;
             for (LayoutParams *item in child.items) {
+	        if (item.view.hidden) continue;
+
                 int w = 0;
                 if (item.fixedWidth == -1) {
 		    w = item.padding.left + item.padding.right;
@@ -207,6 +211,8 @@
       FrameLayoutView * child = (FrameLayoutView*)view;
       int width = 0;
       for (LayoutParams *item in child.items) {
+        if (item.view.hidden) continue;
+
 	int w = 0;
 	if (item.fixedWidth == -1) {
 	  w = item.padding.left + item.padding.right;
@@ -237,6 +243,8 @@
         } else {
             int height = 0;
             for (LayoutParams *item in child.items) {
+	        if (item.view.hidden) continue;
+
                 int h = 0;
                 if (item.fixedHeight == -1) {
 		    h = item.padding.top + item.padding.bottom;
@@ -253,6 +261,8 @@
         FrameLayoutView * child = (FrameLayoutView*)view;
       int height = 0;
       for (LayoutParams *item in child.items) {
+        if (item.view.hidden) continue;
+
 	int h = 0;
 	if (item.fixedHeight == -1) {
 	  h = item.padding.top + item.padding.bottom;
