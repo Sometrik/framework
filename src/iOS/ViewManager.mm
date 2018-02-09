@@ -87,7 +87,7 @@ LinearLayoutItemPadding LLMakePadding(CGFloat top, CGFloat left, CGFloat bottom,
 
 - (void)setTextValue:(NSString *)value
 {
-    if ([self.view isKindOfClass:UILabel.class]) {
+    if ([self.view isKindOfClass:UILabel.class] || [self.view isKindOfClass:PaddedLabel.class]) {
         UILabel * label = (UILabel*)self.view;
         label.text = value;
         [label sizeToFit];
@@ -170,7 +170,11 @@ LinearLayoutItemPadding LLMakePadding(CGFloat top, CGFloat left, CGFloat bottom,
         } else if ([key isEqualToString:@"border-radius"]) {
 	    NSArray *array = [value componentsSeparatedByString:@" "];
 	    if ([array count] >= 1) {
-		view.layer.cornerRadius = (int)[array[0] integerValue];
+	        int r = (int)[array[0] integerValue];
+		view.layer.cornerRadius = r;
+		if ([view isKindOfClass:UIImageView.class]) {
+		    view.layer.masksToBounds = r > 0;
+		}
 	    }
         } else if ([key isEqualToString:@"border"]) {
 	    if ([value isEqualToString:@"none"] || ![value length]) {
