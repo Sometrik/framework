@@ -39,6 +39,7 @@
     _autoAdjustFrameSize = YES;
     self.autoresizesSubviews = NO;
     self.translatesAutoresizingMaskIntoConstraints = false;
+    self.layoutOffset = 0;
 }
 
 #if 0
@@ -60,6 +61,7 @@
     
     CGFloat relativePosition = 0.0;
     CGFloat absolutePosition = 0.0;
+    self.layoutOffset = 0;
     
     for (LayoutParams *item in _items) {
       if (item.view.hidden) {
@@ -135,6 +137,7 @@
         [item.view setNeedsDisplay];
         
         relativePosition += currentOffset + endPadding;
+	self.layoutOffset += startPadding + currentOffset + endPadding;
     }
         
     if (_autoAdjustFrameSize == YES) {
@@ -156,22 +159,6 @@
 #endif
 }
 
-- (CGFloat)layoutOffset {
-    CGFloat currentOffset = 0.0;
-    
-    for (LayoutParams *item in _items) {
-        if (item.view.hidden) continue;
-
-        if (_orientation == LinearLayoutViewOrientationHorizontal) {
-            currentOffset += item.padding.left + item.view.frame.size.width + item.padding.right;
-        } else {
-            currentOffset += item.padding.top + item.view.frame.size.height + item.padding.bottom;
-        }
-    }
-    
-    return currentOffset;
-}
-
 - (void)setOrientation:(LinearLayoutViewOrientation)anOrientation {
     _orientation = anOrientation;
     [self setNeedsLayout];
@@ -179,10 +166,14 @@
 
 - (void)addSubview:(UIView *)view {
     [super addSubview:view];
-    
+#if 1
+    [self setNeedsLayout];
+    [self.superview setNeedsLayout];
+#else
     if (_autoAdjustFrameSize == YES) {
         [self adjustFrameSize];
     }
+#endif
 }
 
 - (int)calcIntrinsicWidth:(UIView *)view {
