@@ -331,7 +331,6 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     label.translatesAutoresizingMaskIntoConstraints = false;
     [self addView:label withId:viewId];
     [self addToParent:parentId view:label];
-    [label sizeToFit];
 }
 
 - (void)createButtonWithId:(int)viewId parentId:(int)parentId caption:(NSString *)caption
@@ -483,7 +482,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
 - (void)createEventLayoutWithId:(int)viewId parentId:(int)parentId
 {
-    UIView *view = [[UIView alloc] init];
+    FrameLayoutView *view = [[FrameLayoutView alloc] init];
     view.tag = viewId;
     view.translatesAutoresizingMaskIntoConstraints = false;
     view.layoutMargins = UIEdgeInsetsMake(0, 0, 0, 0);
