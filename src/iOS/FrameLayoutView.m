@@ -58,11 +58,17 @@
         } else {
 	    height = [self calcIntrinsicHeight:item.view];
         }
+
+	if (item.verticalAlignment == LinearLayoutItemVerticalAlignmentBottom) {
+	  item.topConstraint.constant = self.frame.size.height - item.padding.bottom - height;
+	  item.bottomConstraint.constant = self.frame.size.height - item.padding.bottom;
+	} else {
+	  item.topConstraint.constant = item.padding.top;
+	  item.bottomConstraint.constant = item.padding.top + height;
+        }
               
         item.leftConstraint.constant = item.padding.left;
-        item.topConstraint.constant = item.padding.top;
         item.rightConstraint.constant = item.padding.left + width;
-        item.bottomConstraint.constant = item.padding.top + height;
        
         [item.view setNeedsLayout];
         [item.view needsUpdateConstraints];
