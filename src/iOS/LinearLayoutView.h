@@ -12,7 +12,6 @@ typedef enum {
 @property (nonatomic, readonly) NSMutableArray *items;
 @property (nonatomic, assign) LinearLayoutViewOrientation orientation;
 @property (nonatomic, assign) CGFloat layoutOffset;
-@property (nonatomic, assign) BOOL autoAdjustFrameSize;
 
 - (void)addItem:(LayoutParams *)linearLayoutItem;
 - (void)removeItem:(LayoutParams *)linearLayoutItem;

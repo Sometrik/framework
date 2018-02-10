@@ -4,7 +4,6 @@
 
 @interface LinearLayoutView()
 - (void)setup;
-- (void)adjustFrameSize;
 @end
 
 @implementation LinearLayoutView
@@ -36,7 +35,6 @@
 - (void)setup {
     _items = [[NSMutableArray alloc] init];
     _orientation = LinearLayoutViewOrientationVertical;
-    _autoAdjustFrameSize = YES;
     self.autoresizesSubviews = NO;
     self.translatesAutoresizingMaskIntoConstraints = false;
     self.layoutOffset = 0;
@@ -139,24 +137,6 @@
         relativePosition += currentOffset + endPadding;
 	self.layoutOffset += startPadding + currentOffset + endPadding;
     }
-        
-    if (_autoAdjustFrameSize == YES) {
-        [self adjustFrameSize];
-    }
-}
-
-- (void)adjustFrameSize {
-#if 0
-    int width = [self calcIntrinsicWidth:self];
-    int height = [self calcIntrinsicHeight:self];
-    self.frame = CGRectMake(self.frame.origin.x, self.frame.origin.y, width, height);
-#else
-    if (self.orientation == LinearLayoutViewOrientationHorizontal) {
-        self.frame = CGRectMake(self.frame.origin.x, self.frame.origin.y, self.layoutOffset + self.layoutMargins.top + self.layoutMargins.bottom, self.frame.size.height);
-    } else {
-        self.frame = CGRectMake(self.frame.origin.x, self.frame.origin.y, self.frame.size.width, self.layoutOffset + self.layoutMargins.left + self.layoutMargins.right);
-    }
-#endif
 }
 
 - (void)setOrientation:(LinearLayoutViewOrientation)anOrientation {
@@ -166,14 +146,8 @@
 
 - (void)addSubview:(UIView *)view {
     [super addSubview:view];
-#if 1
     [self setNeedsLayout];
     [self.superview setNeedsLayout];
-#else
-    if (_autoAdjustFrameSize == YES) {
-        [self adjustFrameSize];
-    }
-#endif
 }
 
 - (int)calcIntrinsicWidth:(UIView *)view {
@@ -187,9 +161,7 @@
 	        if (item.view.hidden) continue;
 
                 int w = 0;
-                if (item.fixedWidth == -1) {
-		    w = item.padding.left + item.padding.right;
-                } else if (item.fixedWidth > 0) {
+                if (item.fixedWidth > 0) {
                     w = item.fixedWidth + item.padding.left + item.padding.right;
                 } else {
                     w = [self calcIntrinsicWidth:item.view] + item.padding.left + item.padding.right;
@@ -205,9 +177,7 @@
         if (item.view.hidden) continue;
 
 	int w = 0;
-	if (item.fixedWidth == -1) {
-	  w = item.padding.left + item.padding.right;
-	} else if (item.fixedWidth > 0) {
+	if (item.fixedWidth > 0) {
 	  w = item.fixedWidth + item.padding.left + item.padding.right;
 	} else {
 	  w = [self calcIntrinsicWidth:item.view] + item.padding.left + item.padding.right;
@@ -216,13 +186,7 @@
       }
       return view.layoutMargins.left + view.layoutMargins.right + width;      
     } else {
-        NSUInteger c = [[view subviews] count];
-        if (c >= 1) {
-            UIView * subview = [[view subviews] objectAtIndex:0];
-            return view.layoutMargins.left + view.layoutMargins.right + [self calcIntrinsicWidth:subview];
-        } else {
-            return view.intrinsicContentSize.width;
-        }
+      return view.intrinsicContentSize.width;
     }
 }
 
@@ -237,9 +201,7 @@
 	        if (item.view.hidden) continue;
 
                 int h = 0;
-                if (item.fixedHeight == -1) {
-		    h = item.padding.top + item.padding.bottom;
-                } else if (item.fixedHeight > 0) {
+                if (item.fixedHeight > 0) {
                     h = item.fixedHeight + item.padding.top + item.padding.bottom;
                 } else {
                     h = [self calcIntrinsicHeight:item.view] + item.padding.top + item.padding.bottom;
@@ -255,9 +217,7 @@
         if (item.view.hidden) continue;
 
 	int h = 0;
-	if (item.fixedHeight == -1) {
-	  h = item.padding.top + item.padding.bottom;
-	} else if (item.fixedHeight > 0) {
+	if (item.fixedHeight > 0) {
 	  h = item.fixedHeight + item.padding.top + item.padding.bottom;
 	} else {
 	  h = [self calcIntrinsicHeight:item.view] + item.padding.top + item.padding.bottom;
@@ -266,13 +226,7 @@
       }
       return view.layoutMargins.top + view.layoutMargins.bottom + height;
     } else {
-        NSUInteger c = [[view subviews] count];
-        if (c >= 1) {
-            UIView * subview = [[view subviews] objectAtIndex:0];
-            return view.layoutMargins.top + view.layoutMargins.bottom + [self calcIntrinsicHeight:subview];
-        } else {
-            return view.intrinsicContentSize.height;
-        }
+      return view.intrinsicContentSize.height;
     }
 }
 
