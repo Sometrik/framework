@@ -101,8 +101,11 @@ LinearLayoutItemPadding LLMakePadding(CGFloat top, CGFloat left, CGFloat bottom,
     }
 }
 
-- (void)setStyle:(NSString *)key value:(NSString *)value {
-    
+- (void)setStyle:(NSString *)key value:(NSString *)value selector:(StyleSelector)selector {
+    if (selector != SelectorNormal && ![self.view isKindOfClass:UIButton.class]) {
+	return;
+    }    
+
     if ([self.view isKindOfClass:UIView.class]) {
         UIView * view = (UIView *)self.view;
         if ([key isEqualToString:@"background-color"]) {
@@ -390,15 +393,28 @@ LinearLayoutItemPadding LLMakePadding(CGFloat top, CGFloat left, CGFloat bottom,
         }
     } else if ([self.view isKindOfClass:UIButton.class]) {
 	UIButton *button = (UIButton *)self.view;
+	UIControlState state;
+	if (selector == SelectorNormal) {
+	  state = UIControlStateNormal;
+	} else if (selector == SelectorActive) {
+	  state = UIControlStateHighlighted;
+	} else if (selector == SelectorDisabled) {
+	  state = UIControlStateDisabled;
+	} else if (selector == SelectorSelected) {
+	  state = UIControlStateSelected;
+	} else {
+	  return;
+	}	  
+	
         if ([key isEqualToString:@"icon"]) {
 #if 0
             UIImage * icon = [self loadImage:value];
-            [button setImage:icon forState:UIControlStateNormal];
+            [button setImage:icon forState:state];
 #endif
         } else if ([key isEqualToString:@"icon-attachment"]) {
             
 	} else if ([key isEqualToString:@"color"]) {
-	    [button setTitleColor:[self colorFromString:value] forState:UIControlStateNormal];
+	    [button setTitleColor:[self colorFromString:value] forState:state];
 	} else if ([key isEqualToString:@"font-size"]) {
 	    self.fontSize = (int)[value integerValue];
             button.titleLabel.font = [self createFont:button.titleLabel.font];
