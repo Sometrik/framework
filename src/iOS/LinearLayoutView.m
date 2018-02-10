@@ -60,32 +60,46 @@
     CGFloat relativePosition = 0.0;
     CGFloat absolutePosition = 0.0;
     self.layoutOffset = 0;
+
+    CGFloat extraSpace = 0.0;
+
+    if (self.orientation == LinearLayoutViewOrientationVertical) {
+        extraSpace = self.frame.size.height;
+    } else {
+        extraSpace = self.frame.size.width;
+    }
     
     for (LayoutParams *item in _items) {
-      if (item.view.hidden) {
-	continue;
-      }
+        if (item.view.hidden) {
+            continue;
+        }
+        if (self.orientation == LinearLayoutViewOrientationVertical) {
+            extraSpace -= [self calcHeight:item];
+        } else {
+            extraSpace -= [self calcWidth:item];
+        }
+    }
+
+    if (extraSpace < 0) {
+        extraSpace = 0;
+    } else {
+        extraSpace /= [_items count];
+    }
+    
+    for (LayoutParams *item in _items) {
+        if (item.view.hidden) {
+            continue;
+        }
 
         CGFloat startPadding = 0.0;
         CGFloat endPadding = 0.0;
 
-        CGFloat width, height;
-        if (item.fixedWidth == -1 && self.orientation == LinearLayoutViewOrientationVertical) {
-            width = self.frame.size.width - (item.padding.left + item.padding.right + self.layoutMargins.left + self.layoutMargins.right);
-        } else if (item.fixedWidth > 0) {
-            width = item.fixedWidth;
-        } else {
-	  width = [self calcIntrinsicWidth:item.view];
-        }
-        if (item.fixedHeight == -1 && self.orientation == LinearLayoutViewOrientationVertical) {
-            height = self.frame.size.height - (item.padding.top + item.padding.bottom + self.layoutMargins.top + self.layoutMargins.bottom);
-        } else if (item.fixedHeight > 0) {
-            height = item.fixedHeight;
-        } else {
-	    height = [self calcIntrinsicHeight:item.view];
-        }
+        CGFloat width = [self calcWidth:item];
+        CGFloat height = [self calcHeight:item];
 
         if (self.orientation == LinearLayoutViewOrientationHorizontal) {
+  	    width += extraSpace;
+
             startPadding = item.padding.left;
             endPadding = item.padding.right;
             
@@ -99,6 +113,8 @@
                 absolutePosition = (self.frame.size.height / 2) - ((height + (item.padding.bottom - item.padding.top)) / 2);
             }            
         } else {           
+  	    height += extraSpace;
+
             startPadding = item.padding.top;
             endPadding = item.padding.bottom;
             
@@ -148,6 +164,26 @@
     [super addSubview:view];
     [self setNeedsLayout];
     [self.superview setNeedsLayout];
+}
+
+- (int)calcWidth:(LayoutParams *)item {
+    if (item.fixedWidth == -1 && self.orientation == LinearLayoutViewOrientationVertical) {
+        return self.frame.size.width - (item.padding.left + item.padding.right + self.layoutMargins.left + self.layoutMargins.right);
+    } else if (item.fixedWidth > 0) {
+        return item.fixedWidth;
+    } else {
+        return [self calcIntrinsicWidth:item.view];
+    }
+}
+
+- (int)calcHeight:(LayoutParams *)item {
+    if (item.fixedHeight == -1 && self.orientation == LinearLayoutViewOrientationVertical) {
+        return self.frame.size.height - (item.padding.top + item.padding.bottom + self.layoutMargins.top + self.layoutMargins.bottom);
+    } else if (item.fixedHeight > 0) {
+        return item.fixedHeight;
+    } else {
+        return [self calcIntrinsicHeight:item.view];
+    }
 }
 
 - (int)calcIntrinsicWidth:(UIView *)view {
