@@ -128,14 +128,12 @@ iOSMainThread::sendCommands(const std::vector<Command> & commands) {
 
       case Command::SET_STYLE: {
 	Selector selector = (Selector)command.getValue();
-	if (selector == Selector::NORMAL) {
-	  ViewManager * viewManager = [viewController getViewManager:command.getInternalId()];
-	  if (viewManager != nil) {
-	    NSString * key = [NSString stringWithUTF8String:command.getTextValue().c_str()];
-            NSString * value = [NSString stringWithUTF8String:command.getTextValue2().c_str()];
-            [viewManager setStyle:key value:value];
-	  }
-        }
+	ViewManager * viewManager = [viewController getViewManager:command.getInternalId()];
+	if (viewManager != nil) {
+	  NSString * key = [NSString stringWithUTF8String:command.getTextValue().c_str()];
+          NSString * value = [NSString stringWithUTF8String:command.getTextValue2().c_str()];
+          [viewManager setStyle:key value:value selector:(StyleSelector)selector];
+	}
       }
         break;
             
