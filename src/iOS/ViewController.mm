@@ -62,7 +62,6 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
   [self createBackgroundOverlay];
   
     self.inAppPurchaseManager = [InAppPurchaseManager sharedInstance];
-  //self.view.layoutMargins = UIEdgeInsetsMake(64.0, 0, 50.0, 0);
 
   // Creating the C++ app
   std::shared_ptr<FWApplication> application(applicationMain());
@@ -878,7 +877,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     ViewManager * viewManager = [self getViewManager:view.tag];
     viewManager.level = parentViewManager.level + 1;    
 
-    BOOL add_tabbar_constraints = NO, add_basic_constraints = NO, add_margin_constraints = NO;
+    BOOL add_basic_constraints = NO, add_margin_constraints = NO;
   
     if ([parentView isKindOfClass:LinearLayoutView.class]) {
 	view.autoresizingMask = 0;
@@ -926,24 +925,12 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
         [parentView addSubview:view];
         if ([view isKindOfClass:UILabel.class]) {
             add_margin_constraints = YES;
-        } else if ([view isKindOfClass:UITabBar.class]) {
-            add_tabbar_constraints = YES;
         } else if (![view isKindOfClass:UINavigationBar.class]) {
             add_margin_constraints = YES;
         }
     }
   
-    if (add_tabbar_constraints) {
-      viewManager.constraintsSet = YES;
-      
-      NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeBottom multiplier:1.0f constant:-44];
-      NSLayoutConstraint *leftConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
-      NSLayoutConstraint *rightConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
-      NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeBottom multiplier:1.0f constant:0];
-
-      [view.superview addConstraints:@[topConstraint, leftConstraint, rightConstraint, bottomConstraint]];
-      	
-    } else if (add_margin_constraints) {
+    if (add_margin_constraints) {
 	[viewManager setConstraints];
     } else if (add_basic_constraints) {
       viewManager.constraintsSet = YES;
