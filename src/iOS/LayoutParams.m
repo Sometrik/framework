@@ -11,7 +11,7 @@
 	self.leftConstraint = nil;
 	self.widthConstraint = nil;
 	self.heightConstraint = nil;
-	self.padding = LinearLayoutMakePadding(0, 0, 0, 0);
+	self.margin = LinearLayoutMakeMargin(0, 0, 0, 0);
 	self.level = 0;
 	self.fixedWidth = 0;
 	self.fixedHeight = 0;
@@ -30,7 +30,7 @@
 	self.leftConstraint = nil;
 	self.widthConstraint = nil;
 	self.heightConstraint = nil;
-	self.padding = LinearLayoutMakePadding(0, 0, 0, 0);
+	self.margin = LinearLayoutMakeMargin(0, 0, 0, 0);
 	self.level = 0;
 	self.fixedWidth = 0;
 	self.fixedHeight = 0;
@@ -44,14 +44,14 @@
     return item;
 }
 
-LinearLayoutItemPadding LinearLayoutMakePadding(CGFloat top, CGFloat left, CGFloat bottom, CGFloat right) {
-    LinearLayoutItemPadding padding;
-    padding.top = top;
-    padding.left = left;
-    padding.bottom = bottom;
-    padding.right = right;
+LinearLayoutItemMargin LinearLayoutMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, CGFloat right) {
+    LinearLayoutItemMargin margin;
+    margin.top = top;
+    margin.left = left;
+    margin.bottom = bottom;
+    margin.right = right;
     
-    return padding;
+    return margin;
 }
 
 @end

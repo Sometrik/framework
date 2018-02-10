@@ -45,14 +45,14 @@
 
         CGFloat width, height;
         if (item.fixedWidth == -1) {
-            width = self.frame.size.width - (item.padding.left + item.padding.right + self.layoutMargins.left + self.layoutMargins.right);
+            width = self.frame.size.width - (item.margin.left + item.margin.right + self.layoutMargins.left + self.layoutMargins.right);
         } else if (item.fixedWidth > 0) {
             width = item.fixedWidth;
         } else {
 	    width = [self calcIntrinsicWidth:item.view];
         }
         if (item.fixedHeight == -1) {
-            height = self.frame.size.height - (item.padding.top + item.padding.bottom + self.layoutMargins.top + self.layoutMargins.bottom);
+            height = self.frame.size.height - (item.margin.top + item.margin.bottom + self.layoutMargins.top + self.layoutMargins.bottom);
         } else if (item.fixedHeight > 0) {
             height = item.fixedHeight;
         } else {
@@ -60,15 +60,15 @@
         }
 
 	if (item.verticalAlignment == LinearLayoutItemVerticalAlignmentBottom) {
-	  item.topConstraint.constant = self.frame.size.height - item.padding.bottom - height;
-	  item.bottomConstraint.constant = self.frame.size.height - item.padding.bottom;
+	  item.topConstraint.constant = self.frame.size.height - item.margin.bottom - height;
+	  item.bottomConstraint.constant = self.frame.size.height - item.margin.bottom;
 	} else {
-	  item.topConstraint.constant = item.padding.top;
-	  item.bottomConstraint.constant = item.padding.top + height;
+	  item.topConstraint.constant = item.margin.top;
+	  item.bottomConstraint.constant = item.margin.top + height;
         }
               
-        item.leftConstraint.constant = item.padding.left;
-        item.rightConstraint.constant = item.padding.left + width;
+        item.leftConstraint.constant = item.margin.left;
+        item.rightConstraint.constant = item.margin.left + width;
        
         [item.view setNeedsLayout];
         [item.view needsUpdateConstraints];
@@ -88,9 +88,9 @@
 
                 int w = 0;
 		if (item.fixedWidth > 0) {
-                    w = item.fixedWidth + item.padding.left + item.padding.right;
+                    w = item.fixedWidth + item.margin.left + item.margin.right;
                 } else {
-                    w = [self calcIntrinsicWidth:item.view] + item.padding.left + item.padding.right;
+                    w = [self calcIntrinsicWidth:item.view] + item.margin.left + item.margin.right;
                 }
                 if (w > width) width = w;
             }
@@ -104,9 +104,9 @@
 
 	int w = 0;
 	if (item.fixedWidth > 0) {
-	  w = item.fixedWidth + item.padding.left + item.padding.right;
+	  w = item.fixedWidth + item.margin.left + item.margin.right;
 	} else {
-	  w = [self calcIntrinsicWidth:item.view] + item.padding.left + item.padding.right;
+	  w = [self calcIntrinsicWidth:item.view] + item.margin.left + item.margin.right;
 	}
 	if (w > width) width = w;
       }
@@ -128,9 +128,9 @@
 
                 int h = 0;
 		if (item.fixedHeight > 0) {
-                    h = item.fixedHeight + item.padding.top + item.padding.bottom;
+                    h = item.fixedHeight + item.margin.top + item.margin.bottom;
                 } else {
-                    h = [self calcIntrinsicHeight:item.view] + item.padding.top + item.padding.bottom;
+                    h = [self calcIntrinsicHeight:item.view] + item.margin.top + item.margin.bottom;
                 }
                 if (h > height) height = h;
             }
@@ -144,9 +144,9 @@
 
 	int h = 0;
 	if (item.fixedHeight > 0) {
-	  h = item.fixedHeight + item.padding.top + item.padding.bottom;
+	  h = item.fixedHeight + item.margin.top + item.margin.bottom;
 	} else {
-	  h = [self calcIntrinsicHeight:item.view] + item.padding.top + item.padding.bottom;
+	  h = [self calcIntrinsicHeight:item.view] + item.margin.top + item.margin.bottom;
 	}
 	if (h > height) height = h;
       }

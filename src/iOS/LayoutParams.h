@@ -17,14 +17,14 @@ typedef struct {
     CGFloat left;
     CGFloat bottom;
     CGFloat right;
-} LinearLayoutItemPadding;
+} LinearLayoutItemMargin;
 
 @interface LayoutParams : NSObject
 
 @property (nonatomic, strong) UIView *view;
 @property (nonatomic, assign) LinearLayoutItemHorizontalAlignment horizontalAlignment;
 @property (nonatomic, assign) LinearLayoutItemVerticalAlignment verticalAlignment;
-@property (nonatomic, assign) LinearLayoutItemPadding padding;
+@property (nonatomic, assign) LinearLayoutItemMargin margin;
 @property int fixedWidth;
 @property int fixedHeight;
 @property int weight;
@@ -38,6 +38,6 @@ typedef struct {
 - (id)initWithView:(UIView *)aView;
 + (LayoutParams *)layoutItemForView:(UIView *)aView;
 
-LinearLayoutItemPadding LinearLayoutMakePadding(CGFloat top, CGFloat left, CGFloat bottom, CGFloat right);
+LinearLayoutItemMargin LinearLayoutMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, CGFloat right);
 
 @end

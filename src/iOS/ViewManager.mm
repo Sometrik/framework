@@ -3,14 +3,14 @@
 #import "FWImageView.h"
 #import "PaddedLabel.h"
 
-LinearLayoutItemPadding LLMakePadding(CGFloat top, CGFloat left, CGFloat bottom, CGFloat right) {
-    LinearLayoutItemPadding padding;
-    padding.top = top;
-    padding.left = left;
-    padding.bottom = bottom;
-    padding.right = right;
+LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, CGFloat right) {
+    LinearLayoutItemMargin margin;
+    margin.top = top;
+    margin.left = left;
+    margin.bottom = bottom;
+    margin.right = right;
     
-    return padding;
+    return margin;
 }
 
 @implementation ViewManager;
@@ -206,7 +206,7 @@ LinearLayoutItemPadding LLMakePadding(CGFloat top, CGFloat left, CGFloat bottom,
         } else if ([key isEqualToString:@"margin"]) {
 	    int v = (int)[value integerValue];
 	    if (self.layoutParams != nil) {
-		self.layoutParams.padding = LLMakePadding(v, v, v, v);
+		self.layoutParams.margin = LLMakeMargin(v, v, v, v);
 	    } else {
 #if 0
 		self.topConstraint.constant = v;
@@ -218,10 +218,10 @@ LinearLayoutItemPadding LLMakePadding(CGFloat top, CGFloat left, CGFloat bottom,
         } else if ([key isEqualToString:@"margin-top"]) {
 	    int v = (int)[value integerValue];
 	    if (self.layoutParams != nil) {
-		self.layoutParams.padding = LLMakePadding(v, 
-							  self.layoutParams.padding.left,
-							  self.layoutParams.padding.bottom,
-							  self.layoutParams.padding.right);
+		self.layoutParams.margin = LLMakeMargin(v, 
+							  self.layoutParams.margin.left,
+							  self.layoutParams.margin.bottom,
+							  self.layoutParams.margin.right);
 	    } else {
 #if 0
 		self.topConstraint.constant = v;
@@ -230,9 +230,9 @@ LinearLayoutItemPadding LLMakePadding(CGFloat top, CGFloat left, CGFloat bottom,
         } else if ([key isEqualToString:@"margin-right"]) {
 	    int v = (int)[value integerValue];
 	    if (self.layoutParams != nil) {
-		self.layoutParams.padding = LLMakePadding(self.layoutParams.padding.top, 
-							  self.layoutParams.padding.left,
-							  self.layoutParams.padding.bottom,
+		self.layoutParams.margin = LLMakeMargin(self.layoutParams.margin.top, 
+							  self.layoutParams.margin.left,
+							  self.layoutParams.margin.bottom,
 							  v);
 	    } else {
 #if 0
@@ -242,10 +242,10 @@ LinearLayoutItemPadding LLMakePadding(CGFloat top, CGFloat left, CGFloat bottom,
         } else if ([key isEqualToString:@"margin-bottom"]) {
 	    int v = (int)[value integerValue];
 	    if (self.layoutParams != nil) {
-		self.layoutParams.padding = LLMakePadding(self.layoutParams.padding.top, 
-							  self.layoutParams.padding.left,
+		self.layoutParams.margin = LLMakeMargin(self.layoutParams.margin.top, 
+							  self.layoutParams.margin.left,
 							  v,
-							  self.layoutParams.padding.right);
+							  self.layoutParams.margin.right);
 	    } else {
 #if 0
 		self.bottomConstraint.constant = -v;
@@ -254,10 +254,10 @@ LinearLayoutItemPadding LLMakePadding(CGFloat top, CGFloat left, CGFloat bottom,
         } else if ([key isEqualToString:@"margin-left"]) {
 	    int v = (int)[value integerValue];
 	    if (self.layoutParams != nil) {
-		self.layoutParams.padding = LLMakePadding(self.layoutParams.padding.top, 
+		self.layoutParams.margin = LLMakeMargin(self.layoutParams.margin.top, 
 							  v,
-							  self.layoutParams.padding.bottom,
-							  self.layoutParams.padding.right);
+							  self.layoutParams.margin.bottom,
+							  self.layoutParams.margin.right);
 	    } else {
 #if 0
 		self.leftConstraint.constant = v;
