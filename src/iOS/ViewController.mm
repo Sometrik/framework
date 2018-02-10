@@ -270,11 +270,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 {
     // CGFloat tabBarHeight = self.tabBar == nil ? 0.0 : 44.0;
     // CGFloat topBarsHeight = self.navBar == nil ? 0.0 : 64.0;
-#if 0
     FrameLayoutView *view = [[FrameLayoutView alloc] init];
-#else
-    UIView * view = [[UIView alloc] init];
-#endif
     
     view.tag = viewId;
     // view.layoutMargins = UIEdgeInsetsMake(topBarsHeight, 0, tabBarHeight, 0);
@@ -911,13 +907,14 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
             NSLayoutConstraint *leftConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:pos * pageWidth];
             NSLayoutConstraint *rightConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeRight multiplier:1.0f constant:(pos + 1) * pageWidth];
-	    // NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeBottom multiplier:1.0f constant:0];
+	    NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeBottom multiplier:1.0f constant:0];
 
 	    topConstraint.priority = 999 - viewManager.level;
 	    leftConstraint.priority = 999 - viewManager.level;
 	    rightConstraint.priority = 999 - viewManager.level;
+	    bottomConstraint.priority = 999 - viewManager.level;
 
-            [view.superview addConstraints:@[topConstraint, leftConstraint, rightConstraint]];
+            [view.superview addConstraints:@[topConstraint, leftConstraint, rightConstraint, bottomConstraint]];
         } else {
             view.frame = parentView.frame;
           
