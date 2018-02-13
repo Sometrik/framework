@@ -6,6 +6,8 @@
 
 @property (nonatomic, readonly) NSMutableArray *items;
 
+- (LayoutParams*)findParams:(UIView *)view;
+
 - (void)addItem:(LayoutParams *)linearLayoutItem;
 - (void)removeItem:(LayoutParams *)linearLayoutItem;
 - (void)removeAllItems;
