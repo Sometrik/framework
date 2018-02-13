@@ -25,6 +25,7 @@ typedef struct {
 @property (nonatomic, assign) LinearLayoutItemHorizontalAlignment horizontalAlignment;
 @property (nonatomic, assign) LinearLayoutItemVerticalAlignment verticalAlignment;
 @property (nonatomic, assign) LinearLayoutItemMargin margin;
+@property (nonatomic, assign) LinearLayoutItemMargin padding;
 @property int fixedWidth;
 @property int fixedHeight;
 @property int weight;

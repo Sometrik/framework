@@ -12,6 +12,7 @@
 	self.widthConstraint = nil;
 	self.heightConstraint = nil;
 	self.margin = LinearLayoutMakeMargin(0, 0, 0, 0);
+	self.padding = LinearLayoutMakeMargin(0, 0, 0, 0);
 	self.level = 0;
 	self.fixedWidth = 0;
 	self.fixedHeight = 0;
@@ -31,6 +32,7 @@
 	self.widthConstraint = nil;
 	self.heightConstraint = nil;
 	self.margin = LinearLayoutMakeMargin(0, 0, 0, 0);
+	self.padding = LinearLayoutMakeMargin(0, 0, 0, 0);
 	self.level = 0;
 	self.fixedWidth = 0;
 	self.fixedHeight = 0;
