@@ -18,10 +18,6 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
 - (id)init
 {
     self = [super init];
-    self.topConstraint = nil;
-    self.leftConstraint = nil;
-    self.rightConstraint = nil;
-    self.bottomConstraint = nil;
     self.gradient = nil;
     self.fontSize = 0;
     self.fontWeight = 0;
@@ -36,22 +32,6 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
         FWImageView * imageView = (FWImageView *)self.view;
         [imageView clear];
     }
-}
-
-- (void)setConstraints  
-    UIView * view = self.view;
-    
-    self.topConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
-    self.leftConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
-    self.rightConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
-    self.bottomConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeBottom multiplier:1.0f constant:0];
-
-    self.topConstraint.priority = 999 - self.level;
-    self.leftConstraint.priority = 999 - self.level;
-    self.rightConstraint.priority = 999 - self.level;
-    self.bottomConstraint.priority = 999 - self.level;
-
-   [view.superview addConstraints:@[self.topConstraint, self.leftConstraint, self.rightConstraint, self.bottomConstraint]];
 }
 
 - (void)addImageUrl:(NSString *)url width:(int)width height:(int)height
