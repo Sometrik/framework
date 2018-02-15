@@ -33,6 +33,8 @@ typedef struct {
 @property NSLayoutConstraint *leftConstraint;
 @property NSLayoutConstraint *rightConstraint;
 @property NSLayoutConstraint *bottomConstraint;
+@property NSLayoutConstraint *centerXConstraint;
+@property NSLayoutConstraint *centerYConstraint;
 @property NSLayoutConstraint *widthConstraint;
 @property NSLayoutConstraint *heightConstraint;
 @property NSInteger level;
