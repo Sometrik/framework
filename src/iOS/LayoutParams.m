@@ -9,6 +9,8 @@
         self.verticalAlignment = LinearLayoutItemVerticalAlignmentTop;
 	self.topConstraint = nil;
 	self.leftConstraint = nil;
+	self.rightConstraint = nil;
+	self.bottomConstraint = nil;
 	self.widthConstraint = nil;
 	self.heightConstraint = nil;
 	self.margin = LinearLayoutMakeMargin(0, 0, 0, 0);
@@ -29,6 +31,8 @@
         self.verticalAlignment = LinearLayoutItemVerticalAlignmentTop;
 	self.topConstraint = nil;
 	self.leftConstraint = nil;
+	self.rightConstraint = nil;
+	self.bottomConstraint = nil;
 	self.widthConstraint = nil;
 	self.heightConstraint = nil;
 	self.margin = LinearLayoutMakeMargin(0, 0, 0, 0);
