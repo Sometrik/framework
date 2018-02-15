@@ -50,12 +50,6 @@ public class FWLayout extends LinearLayout implements NativeCommandHandler {
    
   @Override
   public void setStyle(Selector selector, String key, String value) {
-    if (key.equals("opacity") || key.equals("shadow") || key.equals("background") || key.equals("background-color") || key.equals("color") ||
-	key.equals("zoom") || key.equals("border") || key.equals("border-radius") || key.equals("border-color")) {
-      // Skip styles that do not work on iOS
-      return;
-    }
-    
     if (selector == Selector.NORMAL) {
       normalStyle.setStyle(key, value);
     } else if (selector == Selector.ACTIVE) {
