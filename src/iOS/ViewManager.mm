@@ -18,7 +18,6 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
 - (id)init
 {
     self = [super init];
-    self.constraintsSet = NO;
     self.topConstraint = nil;
     self.leftConstraint = nil;
     self.rightConstraint = nil;
@@ -39,10 +38,7 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
     }
 }
 
-- (void)setConstraints
-{
-    self.constraintsSet = YES;
-    
+- (void)setConstraints  
     UIView * view = self.view;
     
     self.topConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
@@ -152,11 +148,7 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
 	    if (self.layoutParams != nil) {
 		self.layoutParams.fixedWidth = w;
 		[view.superview setNeedsLayout];
-	    } else if (w > 0) {
-		NSLayoutConstraint * c = [view.widthAnchor constraintEqualToConstant:w];
-                c.priority = 999 - self.level;
-                c.active = true;
-            }
+	    }
         } else if ([key isEqualToString:@"height"]) {
 	    int h;
             if ([value isEqualToString:@"match-parent"]) {
@@ -169,11 +161,7 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
 	    if (self.layoutParams != nil) {
 		self.layoutParams.fixedHeight = h;
 		[view.superview setNeedsLayout];
-	    } else if (h > 0) {
-		NSLayoutConstraint * c = [view.heightAnchor constraintEqualToConstant:h];
-                c.priority = 999 - self.level;
-                c.active = true;
-            }
+	    }
         } else if ([key isEqualToString:@"border-radius"]) {
 	    NSArray *array = [value componentsSeparatedByString:@" "];
 	    if ([array count] >= 1) {
@@ -207,13 +195,6 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
 	    int v = (int)[value integerValue];
 	    if (self.layoutParams != nil) {
 		self.layoutParams.margin = LLMakeMargin(v, v, v, v);
-	    } else {
-#if 0
-		self.topConstraint.constant = v;
-		self.leftConstraint.constant = v;
-		self.rightConstraint.constant = -v;
-		self.bottomConstraint.constant = -v;
-#endif
 	    }
         } else if ([key isEqualToString:@"margin-top"]) {
 	    int v = (int)[value integerValue];
@@ -222,10 +203,6 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
 							  self.layoutParams.margin.left,
 							  self.layoutParams.margin.bottom,
 							  self.layoutParams.margin.right);
-	    } else {
-#if 0
-		self.topConstraint.constant = v;
-#endif
 	    }
         } else if ([key isEqualToString:@"margin-right"]) {
 	    int v = (int)[value integerValue];
@@ -234,10 +211,6 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
 							  self.layoutParams.margin.left,
 							  self.layoutParams.margin.bottom,
 							  v);
-	    } else {
-#if 0
-		self.rightConstraint.constant = -v;
-#endif
 	    }
         } else if ([key isEqualToString:@"margin-bottom"]) {
 	    int v = (int)[value integerValue];
@@ -246,10 +219,6 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
 							  self.layoutParams.margin.left,
 							  v,
 							  self.layoutParams.margin.right);
-	    } else {
-#if 0
-		self.bottomConstraint.constant = -v;
-#endif
 	    }
         } else if ([key isEqualToString:@"margin-left"]) {
 	    int v = (int)[value integerValue];
@@ -258,34 +227,44 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
 							  v,
 							  self.layoutParams.margin.bottom,
 							  self.layoutParams.margin.right);
-	    } else {
-#if 0
-		self.leftConstraint.constant = v;
-#endif
 	    }
         } else if ([key isEqualToString:@"padding"]) {
-            int v = (int)[value integerValue];
-            view.layoutMargins = UIEdgeInsetsMake(v, v, v, v);
+	    int v = (int)[value integerValue];
+	    if (self.layoutParams != nil) {
+		self.layoutParams.padding = LLMakeMargin(v, v, v, v);
+	    }
         } else if ([key isEqualToString:@"padding-top"]) {
-            view.layoutMargins = UIEdgeInsetsMake((int)[value integerValue],
-                                                  view.layoutMargins.left,
-                                                  view.layoutMargins.bottom,
-                                                  view.layoutMargins.right);
+	    int v = (int)[value integerValue];
+	    if (self.layoutParams != nil) {
+		self.layoutParams.padding = LLMakeMargin(v,
+							 self.layoutParams.padding.left,
+							 self.layoutParams.padding.bottom,
+							 self.layoutParams.padding.right);
+	    }
         } else if ([key isEqualToString:@"padding-right"]) {
-            view.layoutMargins = UIEdgeInsetsMake(view.layoutMargins.top,
-                                                  view.layoutMargins.left,
-                                                  view.layoutMargins.bottom,
-                                                  (int)[value integerValue]);
+	    int v = (int)[value integerValue];
+	    if (self.layoutParams != nil) {
+		self.layoutParams.padding = LLMakeMargin(self.layoutParams.padding.top,
+							 self.layoutParams.padding.left,
+							 self.layoutParams.padding.bottom,
+							 v);
+	    }
         } else if ([key isEqualToString:@"padding-bottom"]) {
-            view.layoutMargins = UIEdgeInsetsMake(view.layoutMargins.top,
-                                                  view.layoutMargins.left,
-                                                  (int)[value integerValue],
-                                                  view.layoutMargins.right);
+	    int v = (int)[value integerValue];
+	    if (self.layoutParams != nil) {
+		self.layoutParams.padding = LLMakeMargin(self.layoutParams.padding.top,
+							 self.layoutParams.padding.left,
+							 v,
+							 self.layoutParams.padding.right);
+	    }
         } else if ([key isEqualToString:@"padding-left"]) {
-            view.layoutMargins = UIEdgeInsetsMake(view.layoutMargins.top,
-                                                  (int)[value integerValue],
-                                                  view.layoutMargins.bottom,
-                                                  view.layoutMargins.right);
+	    int v = (int)[value integerValue];
+	    if (self.layoutParams != nil) {
+		self.layoutParams.padding = LLMakeMargin(self.layoutParams.padding.top,
+							 v,
+							 self.layoutParams.padding.bottom,
+							 self.layoutParams.padding.right);
+	    }
         } else if ([key isEqualToString:@"weight"]) {
 	    if (self.layoutParams != nil) {
 		self.layoutParams.weight = (int)[value integerValue];
