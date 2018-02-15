@@ -65,6 +65,7 @@
 
 	    item.leftConstraint.active = YES;
 	    item.rightConstraint.active = YES;
+	    item.centerXConstraint.active = NO;
 	    item.widthConstraint.active = NO;	    
         } else {
 	  CGFloat width;
@@ -79,12 +80,20 @@
 
 	  if (item.horizontalAlignment == LinearLayoutItemHorizontalAlignmentRight) {
 	    item.rightConstraint.constant = -(paddingRight + item.margin.left);
-	    item.rightConstraint.active = YES;
+
 	    item.leftConstraint.active = NO;
-	  } else {
+	    item.rightConstraint.active = YES;
+	    item.centerXConstraint.active = NO;
+	  } else if (item.horizontalAlignment == LinearLayoutItemHorizontalAlignmentLeft) {
 	    item.leftConstraint.constant = paddingLeft + item.margin.left;
+
 	    item.leftConstraint.active = YES;
 	    item.rightConstraint.active = NO;
+	    item.centerXConstraint.active = NO;
+	  } else {
+	    item.leftConstraint.active = NO;
+	    item.rightConstraint.active = NO;
+	    item.centerXConstraint.active = YES;	    
 	  }
 	}
 
@@ -94,6 +103,7 @@
 
 	    item.topConstraint.active = YES;
 	    item.bottomConstraint.active = YES;
+	    item.centerYConstraint.active = NO;
 	    item.heightConstraint.active = NO;
         } else {
 	  CGFloat height;
@@ -108,12 +118,18 @@
 
 	  if (item.verticalAlignment == LinearLayoutItemVerticalAlignmentBottom) {
 	    item.bottomConstraint.constant = -(paddingBottom + item.margin.bottom);
-	    item.bottomConstraint.active = YES;
 	    item.topConstraint.active = NO;
-	  } else {
+	    item.bottomConstraint.active = YES;
+	    item.centerYConstraint.active = NO;
+	  } else if (item.verticalAlignment == LinearLayoutItemVerticalAlignmentTop) {
 	    item.topConstraint.constant = paddingTop + item.margin.top;
 	    item.topConstraint.active = YES;
 	    item.bottomConstraint.active = NO;
+	    item.centerYConstraint.active = NO;
+	  } else {
+	    item.topConstraint.active = NO;
+	    item.bottomConstraint.active = NO;
+	    item.centerYConstraint.active = YES;
 	  }
 	}
 
@@ -226,6 +242,8 @@
     linearLayoutItem.leftConstraint = [NSLayoutConstraint constraintWithItem:linearLayoutItem.view attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
     linearLayoutItem.rightConstraint = [NSLayoutConstraint constraintWithItem:linearLayoutItem.view attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
     linearLayoutItem.bottomConstraint = [NSLayoutConstraint constraintWithItem:linearLayoutItem.view attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeBottom multiplier:1.0f constant:0];
+    linearLayoutItem.centerXConstraint = [NSLayoutConstraint constraintWithItem:linearLayoutItem.view attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterX multiplier:1.f constant:0.0f];
+    linearLayoutItem.centerYConstraint = [NSLayoutConstraint constraintWithItem:linearLayoutItem.view attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterY multiplier:1.f constant:0.0f];
     linearLayoutItem.widthConstraint = [NSLayoutConstraint constraintWithItem:linearLayoutItem.view attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:0.0f constant:0];
     linearLayoutItem.heightConstraint = [NSLayoutConstraint constraintWithItem:linearLayoutItem.view attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:0.0f constant:0];
 
@@ -233,11 +251,10 @@
     linearLayoutItem.leftConstraint.priority = 999 - linearLayoutItem.level;
     linearLayoutItem.rightConstraint.priority = 999 - linearLayoutItem.level;
     linearLayoutItem.bottomConstraint.priority = 999 - linearLayoutItem.level;
+    linearLayoutItem.centerXConstraint.priority = 999 - linearLayoutItem.level;
+    linearLayoutItem.centerYConstraint.priority = 999 - linearLayoutItem.level;
     linearLayoutItem.widthConstraint.priority = 999 - linearLayoutItem.level;
     linearLayoutItem.heightConstraint.priority = 999 - linearLayoutItem.level;
-
-    // [self addConstraints:@[linearLayoutItem.topConstraint, linearLayoutItem.leftConstraint]];
-    // [self addConstraints:@[linearLayoutItem.rightConstraint, linearLayoutItem.bottomConstraint]];
 }
 
 - (void)removeItem:(LayoutParams *)linearLayoutItem {
