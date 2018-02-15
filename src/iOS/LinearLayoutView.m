@@ -59,15 +59,13 @@
     }
 
     CGFloat relativePosition = 0.0;
-    self.layoutOffset = 0;
-
     CGFloat extraSpace = 0.0;
 
     if (self.orientation == LinearLayoutViewOrientationVertical) {
-        extraSpace = self.frame.size.height;
+        extraSpace = self.frame.size.height - paddingTop - paddingBottom;
         relativePosition = paddingTop;
     } else {
-        extraSpace = self.frame.size.width;
+        extraSpace = self.frame.size.width - paddingLeft - paddingRight;
         relativePosition = paddingLeft;
     }
     
@@ -75,11 +73,21 @@
         if (item.view.hidden) {
             continue;
         }
+	int size;
         if (self.orientation == LinearLayoutViewOrientationVertical) {
-            extraSpace -= [self calcHeight:item];
+	    if (item.fixedHeight > 0) {
+	      size = item.fixedHeight + item.margin.top + item.margin.bottom;
+	    } else {
+	      size = [self calcIntrinsicHeight:item.view] + item.margin.top + item.margin.bottom + item.padding.top + item.padding.bottom;
+	    }
         } else {
-            extraSpace -= [self calcWidth:item];
+	    if (item.fixedWidth > 0) {
+	      size = item.fixedWidth + item.margin.left + item.margin.right;
+	    } else {
+	      size = [self calcIntrinsicWidth:item.view] + item.margin.left + item.margin.right + item.padding.left + item.padding.right;
+	    }
         }
+	extraSpace -= size;
     }
 
     if (extraSpace < 0) {
@@ -97,13 +105,23 @@
 
         CGFloat startMargin = 0.0;
         CGFloat endMargin = 0.0;
-        CGFloat currentOffset = 0.0;
+        CGFloat currentDimension = 0.0;
 
-        CGFloat width = [self calcWidth:item];
-        CGFloat height = [self calcHeight:item];
-        
+        CGFloat minWidth, minHeight;
+
+        if (item.fixedWidth > 0) {
+            minWidth = item.fixedWidth;
+        } else {
+            minWidth = [self calcIntrinsicWidth:item.view] + item.padding.left + item.padding.right;
+        }
+        if (item.fixedHeight > 0) {
+            minHeight = item.fixedHeight;
+        } else {
+            minHeight = [self calcIntrinsicHeight:item.view] + item.padding.top + item.padding.bottom;
+        }
+
         if (self.orientation == LinearLayoutViewOrientationHorizontal) {
-            width += extraSpace;
+            minWidth += extraSpace;
 
             startMargin = item.margin.left;
             endMargin = item.margin.right;
@@ -113,7 +131,7 @@
             relativePosition += startMargin;
 
             item.leftConstraint.constant = relativePosition;
-            item.widthConstraint.constant = width;
+            item.widthConstraint.constant = minWidth;
             item.leftConstraint.active = YES;
             item.widthConstraint.active = YES;
             item.rightConstraint.active = NO;
@@ -127,7 +145,7 @@
                 item.centerYConstraint.active = NO;
                 item.heightConstraint.active = NO;
             } else {
-                item.heightConstraint.constant = height;
+                item.heightConstraint.constant = minHeight;
                 item.heightConstraint.active = YES;
 
                 if (item.verticalAlignment == LinearLayoutItemVerticalAlignmentTop) {
@@ -148,9 +166,9 @@
                 }
 	        }
 
-            currentOffset = width;
+            currentDimension = minWidth;
         } else {           
-            height += extraSpace;
+            minHeight += extraSpace;
 
             startMargin = item.margin.top;
             endMargin = item.margin.bottom;
@@ -160,7 +178,7 @@
             relativePosition += startMargin;
 
             item.topConstraint.constant = relativePosition;
-            item.heightConstraint.constant = height;
+            item.heightConstraint.constant = minHeight;
             item.topConstraint.active = YES;
             item.bottomConstraint.active = NO;
             item.centerYConstraint.active = NO;
@@ -174,7 +192,7 @@
                 item.centerXConstraint.active = NO;
                 item.widthConstraint.active = NO;
             } else {
-                item.widthConstraint.constant = width;
+                item.widthConstraint.constant = minWidth;
                 item.widthConstraint.active = YES;
 
                 if (item.horizontalAlignment == LinearLayoutItemHorizontalAlignmentLeft) {
@@ -194,76 +212,19 @@
                     item.centerXConstraint.active = YES;
                 }
 	        }
-            currentOffset = height;
+            currentDimension = minHeight;
         }
-               
-#if 0
-        [item.view setNeedsLayout];
-        [item.view needsUpdateConstraints];
-        [item.view setNeedsDisplay];
-#endif
 
-        relativePosition += currentOffset + endMargin;
-        self.layoutOffset += startMargin + currentOffset + endMargin;
+        relativePosition += currentDimension + endMargin;
     }
+    
+    self.layoutOffset = relativePosition;
 }
 
 - (void)addSubview:(UIView *)view {
     [super addSubview:view];
     [self setNeedsLayout];
     [self.superview setNeedsLayout];
-}
-
-- (int)calcWidth:(LayoutParams *)item {
-    LayoutParams * myParams = nil;
-    if ([self.superview isKindOfClass:LinearLayoutView.class]) {
-        LinearLayoutView * layout = (LinearLayoutView*)self.superview;
-        myParams = [layout findParams:self];
-    } else if ([self.superview isKindOfClass:FrameLayoutView.class]) {
-        FrameLayoutView * layout = (FrameLayoutView*)self.superview;
-        myParams = [layout findParams:self];
-    }
-
-    CGFloat paddingLeft = 0, paddingRight = 0;
-    if (myParams != nil) {
-        paddingLeft = myParams.padding.left;
-        paddingRight = myParams.padding.right;
-    }
-
-    if (item.fixedWidth == -1 && self.orientation == LinearLayoutViewOrientationVertical) {
-        return self.frame.size.width - (item.margin.left + item.margin.right + paddingLeft + paddingRight);
-    } else if (item.fixedWidth > 0) {
-        return item.fixedWidth;
-    } else {
-        return [self calcIntrinsicWidth:item.view] + item.padding.left + item.padding.right;
-    }
-}
-
-- (int)calcHeight:(LayoutParams *)item {
-    LayoutParams * myParams = nil;
-    if ([self.superview isKindOfClass:LinearLayoutView.class]) {
-        LinearLayoutView * layout = (LinearLayoutView*)self.superview;
-	myParams = [layout findParams:self];
-    } else if ([self.superview isKindOfClass:FrameLayoutView.class]) {
-        FrameLayoutView * layout = (FrameLayoutView*)self.superview;
-	myParams = [layout findParams:self];    
-    }
-
-    CGFloat paddingLeft = 0, paddingRight = 0, paddingTop = 0, paddingBottom = 0;
-    if (myParams != nil) {
-      paddingLeft = myParams.padding.left;
-      paddingRight = myParams.padding.right;
-      paddingTop = myParams.padding.top;
-      paddingBottom = myParams.padding.bottom;
-    }
-
-    if (item.fixedHeight == -1 && self.orientation == LinearLayoutViewOrientationHorizontal) {
-        return self.frame.size.height - (item.margin.top + item.margin.bottom + paddingTop + paddingLeft);
-    } else if (item.fixedHeight > 0) {
-        return item.fixedHeight;
-    } else {
-        return [self calcIntrinsicHeight:item.view] + item.padding.top + item.padding.bottom;
-    }
 }
 
 - (int)calcIntrinsicWidth:(UIView *)view {
