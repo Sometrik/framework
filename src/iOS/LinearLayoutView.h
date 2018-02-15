@@ -13,6 +13,8 @@ typedef enum {
 @property (nonatomic, assign) LinearLayoutViewOrientation orientation;
 @property (nonatomic, assign) CGFloat layoutOffset;
 
+- (LayoutParams*)findParams:(UIView *)view;
+
 - (void)addItem:(LayoutParams *)linearLayoutItem;
 - (void)removeItem:(LayoutParams *)linearLayoutItem;
 - (void)removeAllItems;
