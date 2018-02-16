@@ -26,6 +26,7 @@ public:
     layout->addChild(image);
 
     auto textField = std::make_shared<TextField>();
+    textField->style("width", "match-parent");
     layout->addChild(textField);
     
     auto button = std::make_shared<Button>("OK");
