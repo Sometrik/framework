@@ -36,7 +36,7 @@ extern FWApplication * applicationMain();
 @property (nonatomic, assign) BOOL sideMenuPanned;
 @property (nonatomic, strong) WKWebView *webView;
 @property (nonatomic, strong) InAppPurchaseManager *inAppPurchaseManager;
-//@property (nonatomic, strong) NSSet *tabBarHiddenInThesePages;
+@property (nonatomic, strong) NSString * currentTitle;
 @end
 
 static const NSTimeInterval animationDuration = 0.4;
@@ -48,10 +48,9 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 - (void)viewDidLoad {
   [super viewDidLoad];
   // Do any additional setup after loading the view, typically from a nib.
-  //self.tabBarHiddenInThesePages = [[NSSet alloc] initWithObjects:[NSNumber numberWithInt:0], nil];
 
   self.activeViewId = 0;
-
+  self.currentTitle = nil;
   self.dialogIds = [[NSMutableArray alloc] init];
 
   self.view.layoutMargins = UIEdgeInsetsMake(0, 0, 0, 0);
@@ -301,7 +300,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
 - (void)createLinearLayoutWithId:(int)viewId parentId:(int)parentId direction:(int)direction
 {
-    LinearLayoutView *layout = [[LinearLayoutView alloc] initWithFrame:self.view.bounds];
+    LinearLayoutView *layout = [[LinearLayoutView alloc] init];
     if (direction == 1) {
         layout.orientation = LinearLayoutViewOrientationVertical;
     } else {
@@ -309,7 +308,6 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     }
     layout.translatesAutoresizingMaskIntoConstraints = false;
     layout.layoutMargins = UIEdgeInsetsMake(0, 0, 0, 0);
-    // layout.frame = CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height);
     layout.tag = viewId;
     [self addView:layout withId:viewId];
     [self addToParent:parentId view:layout];
@@ -500,8 +498,13 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 {
     // Create navigation bar with a button for opening side menu
     UINavigationBar *navBar = [[UINavigationBar alloc] initWithFrame:CGRectMake(0, 20, self.view.frame.size.width, 44)];
-    UINavigationItem *navItem = [[UINavigationItem alloc] initWithTitle:@"title"];
-    
+    UINavigationItem *navItem;
+    if (self.currentTitle != nil) {
+      navItem = [[UINavigationItem alloc] initWithTitle:self.currentTitle];
+    } else {
+      navItem = [[UINavigationItem alloc] init];
+    }
+
     // Add debug event by tapping nav bar 5 times
     UITapGestureRecognizer *debugTapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(navBarTapped5Times:)];
     debugTapGesture.numberOfTapsRequired = 5;
@@ -967,11 +970,20 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     ViewManager * viewManager = [self.viewsDictionary objectForKey:key];
     if (viewManager != nil) {
         if ([viewManager.view isKindOfClass:UIView.class]) {
+	  UIView * view = viewManager.view;
+ 	  UIView * parentView = view.superview;
+
+	  if ([parentView isKindOfClass:LinearLayoutView.class]) {
+	    LinearLayoutView * layout = (LinearLayoutView*)parentView;
+	    [layout removeItem:viewManager.layoutParams];
+	  } else if ([parentView isKindOfClass:LinearLayoutView.class]) {
+	    FrameLayoutView * layout = (FrameLayoutView*)parentView;
+	    [layout removeItem:viewManager.layoutParams];
+	  } else {
             UIView * view = (UIView*)viewManager.view;
             [view removeFromSuperview];
-        } else {
-            
-        }
+	  }
+	}
         [self.viewsDictionary removeObjectForKey:key];
         
         // just to take backgroundOverlayView off the screen as well
@@ -1066,6 +1078,8 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
 - (void)setTitle:(NSString*)title
 {
+    self.currentTitle = title;
+
     if (self.navBar != nil) {
         self.navBar.items[0].title = title;
     }
