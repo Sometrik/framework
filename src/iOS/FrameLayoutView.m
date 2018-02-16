@@ -42,10 +42,10 @@
     LayoutParams * myParams = nil;
     if ([self.superview isKindOfClass:LinearLayoutView.class]) {
         LinearLayoutView * layout = (LinearLayoutView*)self.superview;
-	myParams = [layout findParams:self];
+        myParams = [layout findParams:self];
     } else if ([self.superview isKindOfClass:FrameLayoutView.class]) {
         FrameLayoutView * layout = (FrameLayoutView*)self.superview;
-	myParams = [layout findParams:self];    
+        myParams = [layout findParams:self];
     }
 
     CGFloat paddingLeft = 0, paddingRight = 0, paddingTop = 0, paddingBottom = 0;
@@ -149,10 +149,10 @@
         } else {
             int width = 0;
             for (LayoutParams *item in child.items) {
-	        if (item.view.hidden) continue;
+                if (item.view.hidden) continue;
 
                 int w = 0;
-		if (item.fixedWidth > 0) {
+                if (item.fixedWidth > 0) {
                     w = item.fixedWidth + item.margin.left + item.margin.right;
                 } else {
                     w = [self calcIntrinsicWidth:item.view] + item.padding.left + item.padding.right + item.margin.left + item.margin.right;
