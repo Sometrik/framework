@@ -37,7 +37,6 @@
     _orientation = LinearLayoutViewOrientationVertical;
     self.autoresizesSubviews = NO;
     self.translatesAutoresizingMaskIntoConstraints = false;
-    self.layoutOffset = 0;
 }
 
 - (void)layoutSubviews {
@@ -73,21 +72,21 @@
         if (item.view.hidden) {
             continue;
         }
-	int size;
+        int size;
         if (self.orientation == LinearLayoutViewOrientationVertical) {
-	    if (item.fixedHeight > 0) {
-	      size = item.fixedHeight + item.margin.top + item.margin.bottom;
-	    } else {
-	      size = [self calcIntrinsicHeight:item.view] + item.margin.top + item.margin.bottom + item.padding.top + item.padding.bottom;
-	    }
+            if (item.fixedHeight > 0) {
+                size = item.fixedHeight + item.margin.top + item.margin.bottom;
+            } else {
+                size = [self calcIntrinsicHeight:item.view] + item.margin.top + item.margin.bottom + item.padding.top + item.padding.bottom;
+            }
         } else {
-	    if (item.fixedWidth > 0) {
-	      size = item.fixedWidth + item.margin.left + item.margin.right;
-	    } else {
-	      size = [self calcIntrinsicWidth:item.view] + item.margin.left + item.margin.right + item.padding.left + item.padding.right;
-	    }
+            if (item.fixedWidth > 0) {
+                size = item.fixedWidth + item.margin.left + item.margin.right;
+            } else {
+                size = [self calcIntrinsicWidth:item.view] + item.margin.left + item.margin.right + item.padding.left + item.padding.right;
+            }
         }
-	extraSpace -= size;
+        extraSpace -= size;
     }
 
     if (extraSpace < 0) {
@@ -125,9 +124,7 @@
 
             startMargin = item.margin.left;
             endMargin = item.margin.right;
-            
-            // if (height + item.margin.top + item.margin.bottom + paddingTop + paddingBottom > self.frame.size.height) height = self.frame.size.height - item.margin.top - item.margin.bottom - paddingTop - paddingBottom;
-        
+                    
             relativePosition += startMargin;
 
             item.leftConstraint.constant = relativePosition;
@@ -144,7 +141,11 @@
                 item.bottomConstraint.active = YES;
                 item.centerYConstraint.active = NO;
                 item.heightConstraint.active = NO;
+                item.maxHeightConstraint.active = NO;
             } else {
+                item.maxHeightConstraint.constant = -(paddingTop + item.margin.top + paddingBottom + item.margin.bottom);
+                item.maxHeightConstraint.active = YES;
+
                 item.heightConstraint.constant = minHeight;
                 item.heightConstraint.active = YES;
 
@@ -173,8 +174,6 @@
             startMargin = item.margin.top;
             endMargin = item.margin.bottom;
             
-            // if (width + item.margin.left + item.margin.right + paddingLeft + paddingRight > self.frame.size.width) width = self.frame.size.width - item.margin.left - item.margin.right - paddingLeft - paddingRight;
-
             relativePosition += startMargin;
 
             item.topConstraint.constant = relativePosition;
@@ -191,7 +190,11 @@
                 item.rightConstraint.active = YES;
                 item.centerXConstraint.active = NO;
                 item.widthConstraint.active = NO;
+                item.maxWidthConstraint.active = NO;
             } else {
+                item.maxWidthConstraint.constant = -(paddingLeft + item.margin.left + paddingRight + item.margin.right);
+                item.maxWidthConstraint.active = YES;
+
                 item.widthConstraint.constant = minWidth;
                 item.widthConstraint.active = YES;
 
@@ -217,8 +220,6 @@
 
         relativePosition += currentDimension + endMargin;
     }
-    
-    self.layoutOffset = relativePosition;
 }
 
 - (void)addSubview:(UIView *)view {
@@ -230,12 +231,21 @@
 - (int)calcIntrinsicWidth:(UIView *)view {
     if ([view isKindOfClass:LinearLayoutView.class]) {
         LinearLayoutView * child = (LinearLayoutView*)view;
+        int width = 0;
         if (child.orientation == LinearLayoutViewOrientationHorizontal) {
-            return child.layoutOffset;
-        } else {
-            int width = 0;
             for (LayoutParams *item in child.items) {
-	        if (item.view.hidden) continue;
+                if (item.view.hidden) continue;
+                
+                width += item.margin.left + item.margin.right;
+                if (item.fixedWidth > 0) {
+                    width += item.fixedWidth;
+                } else {
+                    width += [self calcIntrinsicWidth:item.view] + item.padding.left + item.padding.right;
+                }
+            }
+        } else {
+            for (LayoutParams *item in child.items) {
+                if (item.view.hidden) continue;
 
                 int w = 0;
                 if (item.fixedWidth > 0) {
@@ -245,37 +255,46 @@
                 }
                 if (w > width) width = w;
             }
-            return width;
         }
+        return width;
     } else if ([view isKindOfClass:FrameLayoutView.class]) {
-      FrameLayoutView * child = (FrameLayoutView*)view;
-      int width = 0;
-      for (LayoutParams *item in child.items) {
-        if (item.view.hidden) continue;
+        FrameLayoutView * child = (FrameLayoutView*)view;
+        int width = 0;
+        for (LayoutParams *item in child.items) {
+            if (item.view.hidden) continue;
 
-	int w = 0;
-	if (item.fixedWidth > 0) {
-	  w = item.fixedWidth + item.margin.left + item.margin.right;
-	} else {
-	  w = [self calcIntrinsicWidth:item.view] + item.padding.left + item.padding.right + item.margin.left + item.margin.right;
-	}
-	if (w > width) width = w;
-      }
-      return width;
+            int w = 0;
+            if (item.fixedWidth > 0) {
+                w = item.fixedWidth + item.margin.left + item.margin.right;
+            } else {
+                w = [self calcIntrinsicWidth:item.view] + item.padding.left + item.padding.right + item.margin.left + item.margin.right;
+            }
+            if (w > width) width = w;
+        }
+        return width;
     } else {
-      return view.intrinsicContentSize.width;
+        return view.intrinsicContentSize.width;
     }
 }
 
 - (int)calcIntrinsicHeight:(UIView *)view {
     if ([view isKindOfClass:LinearLayoutView.class]) {
         LinearLayoutView * child = (LinearLayoutView*)view;
+        int height = 0;
         if (child.orientation == LinearLayoutViewOrientationVertical) {
-            return child.layoutOffset;
-        } else {
-            int height = 0;
             for (LayoutParams *item in child.items) {
-	        if (item.view.hidden) continue;
+                if (item.view.hidden) continue;
+                
+                height += item.margin.top + item.margin.bottom;
+                if (item.fixedHeight > 0) {
+                    height += item.fixedHeight;
+                } else {
+                    height += [self calcIntrinsicHeight:item.view] + item.padding.top + item.padding.bottom;
+                }
+            }
+        } else {
+            for (LayoutParams *item in child.items) {
+                if (item.view.hidden) continue;
 
                 int h = 0;
                 if (item.fixedHeight > 0) {
@@ -285,25 +304,25 @@
                 }
                 if (h > height) height = h;
             }
-            return height;
         }
+        return height;
     } else if ([view isKindOfClass:FrameLayoutView.class]) {
         FrameLayoutView * child = (FrameLayoutView*)view;
-      int height = 0;
-      for (LayoutParams *item in child.items) {
-        if (item.view.hidden) continue;
+        int height = 0;
+        for (LayoutParams *item in child.items) {
+            if (item.view.hidden) continue;
 
-	int h = 0;
-	if (item.fixedHeight > 0) {
-	  h = item.fixedHeight + item.margin.top + item.margin.bottom;
-	} else {
-	  h = [self calcIntrinsicHeight:item.view] + item.padding.top + item.padding.bottom + item.margin.top + item.margin.bottom;
-	}
-	if (h > height) height = h;
-      }
-      return height;
+            int h = 0;
+            if (item.fixedHeight > 0) {
+                h = item.fixedHeight + item.margin.top + item.margin.bottom;
+            } else {
+                h = [self calcIntrinsicHeight:item.view] + item.padding.top + item.padding.bottom + item.margin.top + item.margin.bottom;
+            }
+            if (h > height) height = h;
+        }
+        return height;
     } else {
-      return view.intrinsicContentSize.height;
+        return view.intrinsicContentSize.height;
     }
 }
 
@@ -332,6 +351,8 @@
     item.centerYConstraint = [NSLayoutConstraint constraintWithItem:item.view attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterY multiplier:1.f constant:0.0f];
     item.widthConstraint = [NSLayoutConstraint constraintWithItem:item.view attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:0.0f constant:0];
     item.heightConstraint = [NSLayoutConstraint constraintWithItem:item.view attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:0.0f constant:0];
+    item.maxWidthConstraint = [NSLayoutConstraint constraintWithItem:item.view attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationLessThanOrEqual toItem:self attribute:NSLayoutAttributeWidth multiplier:1.0f constant:0];
+    item.maxHeightConstraint = [NSLayoutConstraint constraintWithItem:item.view attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationLessThanOrEqual toItem:self attribute:NSLayoutAttributeHeight multiplier:1.0f constant:0];
 
     item.topConstraint.priority = 999 - item.level;
     item.leftConstraint.priority = 999 - item.level;
@@ -339,8 +360,10 @@
     item.bottomConstraint.priority = 999 - item.level;
     item.centerXConstraint.priority = 999 - item.level;
     item.centerYConstraint.priority = 999 - item.level;
-    item.widthConstraint.priority = 999 - item.level;
-    item.heightConstraint.priority = 999 - item.level;
+    item.widthConstraint.priority = 999 - item.level - 1;
+    item.heightConstraint.priority = 999 - item.level - 1;
+    item.maxWidthConstraint.priority = 999 - item.level;
+    item.maxHeightConstraint.priority = 999 - item.level;
 }
 
 - (void)removeItem:(LayoutParams *)item {
