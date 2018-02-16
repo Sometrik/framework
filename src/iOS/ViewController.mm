@@ -401,8 +401,8 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     scrollView.contentSize = CGSizeMake(self.view.frame.size.width, 4000);
 #endif
     scrollView.tag = viewId;
-    scrollView.contentInset = UIEdgeInsetsMake(0, 0, 0, 0);
-    scrollView.contentOffset = CGPointMake(0, 0);
+    scrollView.contentInset = UIEdgeInsetsMake(64, 0, 0, 0);
+    // scrollView.contentOffset = CGPointMake(0, 64);
     scrollView.frame = self.view.frame;
     scrollView.clipsToBounds = YES;
     scrollView.delegate = self;
@@ -904,8 +904,8 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
         NSUInteger pos = [[parentView subviews] count];
         [parentView addSubview:view];
         UIScrollView * scrollView = (UIScrollView *)parentView;
+        int pageWidth = self.view.frame.size.width;
         if (scrollView.pagingEnabled) {
-            int pageWidth = self.view.frame.size.width;
             scrollView.contentSize = CGSizeMake(scrollView.contentSize.width + pageWidth, scrollView.contentSize.height);
             
 	    NSLayoutConstraint *leftConstraint;
@@ -929,9 +929,17 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 	    heightConstraint.priority = 999 - viewManager.level;
             [view.superview addConstraints:@[topConstraint, leftConstraint, widthConstraint, heightConstraint]];
         } else {
-            view.frame = parentView.frame;
-          
-            add_constraints = true;
+	    NSLayoutConstraint * topConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
+	    NSLayoutConstraint * leftConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
+	    NSLayoutConstraint * widthConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:0.0f constant:pageWidth];
+	    NSLayoutConstraint * heightConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:0.0f constant:4000];
+
+	    topConstraint.priority = 999 - viewManager.level;
+	    leftConstraint.priority = 999 - viewManager.level;
+	    widthConstraint.priority = 999 - viewManager.level;
+	    heightConstraint.priority = 999 - viewManager.level;
+
+	    [view.superview addConstraints:@[topConstraint, leftConstraint, widthConstraint, heightConstraint]];
         }
     } else {
         [parentView addSubview:view];
