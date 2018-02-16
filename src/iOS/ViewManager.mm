@@ -82,6 +82,156 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
 	return;
     }    
 
+    BOOL padding_applied = NO;
+
+    if ([self.view isKindOfClass:PaddedLabel.class]) {
+        PaddedLabel *label = (PaddedLabel*)self.view;
+    
+	if ([key isEqualToString:@"font-size"]) {
+	    self.fontSize = (int)[value integerValue];
+            label.font = [self createFont:label.font];
+	    [label.superview setNeedsLayout];
+	} else if ([key isEqualToString:@"color"]) {
+	    label.textColor = [self colorFromString:value];
+	} else if ([key isEqualToString:@"text-align"]) {
+	    if ([value isEqualToString:@"center"]) {
+	        label.textAlignment = NSTextAlignmentCenter;
+	    } else if ([value isEqualToString:@"right"]) {
+		label.textAlignment = NSTextAlignmentRight;
+	    } else {
+		label.textAlignment = NSTextAlignmentLeft;
+	    }
+        } else if ([key isEqualToString:@"white-space"]) {
+            if ([value isEqualToString:@"nowrap"]) {
+                label.numberOfLines = 1;
+                if (label.lineBreakMode != NSLineBreakByTruncatingTail) {
+                    label.lineBreakMode = NSLineBreakByClipping;
+                }
+            } else {
+                // label.numberOfLines = 0;
+                label.lineBreakMode = NSLineBreakByWordWrapping;
+            }
+        } else if ([key isEqualToString:@"text-overflow"]) {
+            if ([value isEqualToString:@"ellipsis"]) {
+                label.lineBreakMode = NSLineBreakByTruncatingTail;
+            } else {
+                if (label.numberOfLines != 1) {
+                    label.lineBreakMode = NSLineBreakByWordWrapping;
+                } else {
+                    label.lineBreakMode = NSLineBreakByClipping;
+                }
+            }
+	} else if ([key isEqualToString:@"max-lines"]) {
+	    label.numberOfLines = (int)[value integerValue];	   
+        } else if ([key isEqualToString:@"font-weight"]) {
+	    if ([value isEqualToString:@"bold"]) {
+	        self.fontWeight = 800;
+	    } else {
+		self.fontWeight = (int)[value integerValue];
+	    }
+	    label.font = [self createFont:label.font];
+        } else if ([key isEqualToString:@"font-style"]) {
+        } else if ([key isEqualToString:@"font-family"]) {
+            
+        } else if ([key isEqualToString:@"line-spacing"]) {
+
+	} else if ([key isEqualToString:@"padding"]) {
+            int v = (int)[value integerValue];
+            label.edgeInsets = UIEdgeInsetsMake(v, v, v, v);
+	    padding_applied = YES;
+        } else if ([key isEqualToString:@"padding-top"]) {
+            label.edgeInsets = UIEdgeInsetsMake((int)[value integerValue],
+                                                label.edgeInsets.left,
+                                                label.edgeInsets.bottom,
+                                                label.edgeInsets.right);
+	    padding_applied = YES;
+        } else if ([key isEqualToString:@"padding-right"]) {
+            label.edgeInsets = UIEdgeInsetsMake(label.edgeInsets.top,
+                                                label.edgeInsets.left,
+                                                label.edgeInsets.bottom,
+                                                (int)[value integerValue]);
+	    padding_applied = YES;
+        } else if ([key isEqualToString:@"padding-bottom"]) {
+            label.edgeInsets = UIEdgeInsetsMake(label.edgeInsets.top,
+                                                label.edgeInsets.left,
+                                                (int)[value integerValue],
+                                                label.edgeInsets.right);
+	    padding_applied = YES;
+        } else if ([key isEqualToString:@"padding-left"]) {
+            label.edgeInsets = UIEdgeInsetsMake(label.edgeInsets.top,
+                                                (int)[value integerValue],
+                                                label.edgeInsets.bottom,
+                                                label.edgeInsets.right);
+	    padding_applied = YES;
+        }
+    } else if ([self.view isKindOfClass:UIButton.class]) {
+	UIButton *button = (UIButton *)self.view;
+	UIControlState state;
+	if (selector == SelectorNormal) {
+	  state = UIControlStateNormal;
+	} else if (selector == SelectorActive) {
+	  state = UIControlStateHighlighted;
+	} else if (selector == SelectorDisabled) {
+	  state = UIControlStateDisabled;
+	} else if (selector == SelectorSelected) {
+	  state = UIControlStateSelected;
+	} else {
+	  return;
+	}	  
+	
+        if ([key isEqualToString:@"icon"]) {
+#if 0
+            UIImage * icon = [self loadImage:value];
+            [button setImage:icon forState:state];
+#endif
+        } else if ([key isEqualToString:@"icon-attachment"]) {
+            
+	} else if ([key isEqualToString:@"color"]) {
+	    [button setTitleColor:[self colorFromString:value] forState:state];
+	} else if ([key isEqualToString:@"font-size"]) {
+	    self.fontSize = (int)[value integerValue];
+            button.titleLabel.font = [self createFont:button.titleLabel.font];
+        } else if ([key isEqualToString:@"padding"]) {
+            int v = (int)[value integerValue];
+            button.contentEdgeInsets = UIEdgeInsetsMake(v, v, v, v);
+	    padding_applied = YES;
+        } else if ([key isEqualToString:@"padding-top"]) {
+            button.contentEdgeInsets = UIEdgeInsetsMake((int)[value integerValue],
+                                                        button.contentEdgeInsets.left,
+                                                        button.contentEdgeInsets.bottom,
+                                                        button.contentEdgeInsets.right);
+	    padding_applied = YES;
+        } else if ([key isEqualToString:@"padding-right"]) {
+            button.contentEdgeInsets = UIEdgeInsetsMake(button.contentEdgeInsets.top,
+                                                        button.contentEdgeInsets.left,
+                                                        button.contentEdgeInsets.bottom,
+                                                        (int)[value integerValue]);
+	    padding_applied = YES;
+        } else if ([key isEqualToString:@"padding-bottom"]) {
+            button.contentEdgeInsets = UIEdgeInsetsMake(button.contentEdgeInsets.top,
+                                                        button.contentEdgeInsets.left,
+                                                        (int)[value integerValue],
+                                                        button.contentEdgeInsets.right);
+	    padding_applied = YES;
+        } else if ([key isEqualToString:@"padding-left"]) {
+            button.contentEdgeInsets = UIEdgeInsetsMake(button.contentEdgeInsets.top,
+                                                        (int)[value integerValue],
+                                                        button.contentEdgeInsets.bottom,
+                                                        button.contentEdgeInsets.right);
+	    padding_applied = YES;
+        }
+    } else if ([self.view isKindOfClass:UITextField.class]) {
+        UITextField *textField = (UITextField *)self.view;
+	if ([value isEqualToString:@"hint"]) {
+	    textField.placeholder = value;
+        }
+    } else if ([self.view isKindOfClass:UITabBarItem.class]) {
+        UITabBarItem *item = (UITabBarItem *)self.view;
+        if ([key isEqualToString:@"icon"]) {
+            item.image = [self loadImage:value];
+        }
+    }
+
     if ([self.view isKindOfClass:UIView.class]) {
         UIView * view = (UIView *)self.view;
         if ([key isEqualToString:@"background-color"]) {
@@ -180,70 +330,33 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
 	    int v = (int)[value integerValue];
 	    if (self.layoutParams != nil) {
 		self.layoutParams.margin = LLMakeMargin(v, 
-							  self.layoutParams.margin.left,
-							  self.layoutParams.margin.bottom,
-							  self.layoutParams.margin.right);
+							self.layoutParams.margin.left,
+							self.layoutParams.margin.bottom,
+							self.layoutParams.margin.right);
 	    }
         } else if ([key isEqualToString:@"margin-right"]) {
 	    int v = (int)[value integerValue];
 	    if (self.layoutParams != nil) {
 		self.layoutParams.margin = LLMakeMargin(self.layoutParams.margin.top, 
-							  self.layoutParams.margin.left,
-							  self.layoutParams.margin.bottom,
-							  v);
+							self.layoutParams.margin.left,
+							self.layoutParams.margin.bottom,
+							v);
 	    }
         } else if ([key isEqualToString:@"margin-bottom"]) {
 	    int v = (int)[value integerValue];
 	    if (self.layoutParams != nil) {
 		self.layoutParams.margin = LLMakeMargin(self.layoutParams.margin.top, 
-							  self.layoutParams.margin.left,
-							  v,
-							  self.layoutParams.margin.right);
+							self.layoutParams.margin.left,
+							v,
+							self.layoutParams.margin.right);
 	    }
         } else if ([key isEqualToString:@"margin-left"]) {
 	    int v = (int)[value integerValue];
 	    if (self.layoutParams != nil) {
 		self.layoutParams.margin = LLMakeMargin(self.layoutParams.margin.top, 
-							  v,
-							  self.layoutParams.margin.bottom,
-							  self.layoutParams.margin.right);
-	    }
-        } else if ([key isEqualToString:@"padding"]) {
-	    int v = (int)[value integerValue];
-	    if (self.layoutParams != nil) {
-		self.layoutParams.padding = LLMakeMargin(v, v, v, v);
-	    }
-        } else if ([key isEqualToString:@"padding-top"]) {
-	    int v = (int)[value integerValue];
-	    if (self.layoutParams != nil) {
-		self.layoutParams.padding = LLMakeMargin(v,
-							 self.layoutParams.padding.left,
-							 self.layoutParams.padding.bottom,
-							 self.layoutParams.padding.right);
-	    }
-        } else if ([key isEqualToString:@"padding-right"]) {
-	    int v = (int)[value integerValue];
-	    if (self.layoutParams != nil) {
-		self.layoutParams.padding = LLMakeMargin(self.layoutParams.padding.top,
-							 self.layoutParams.padding.left,
-							 self.layoutParams.padding.bottom,
-							 v);
-	    }
-        } else if ([key isEqualToString:@"padding-bottom"]) {
-	    int v = (int)[value integerValue];
-	    if (self.layoutParams != nil) {
-		self.layoutParams.padding = LLMakeMargin(self.layoutParams.padding.top,
-							 self.layoutParams.padding.left,
-							 v,
-							 self.layoutParams.padding.right);
-	    }
-        } else if ([key isEqualToString:@"padding-left"]) {
-	    int v = (int)[value integerValue];
-	    if (self.layoutParams != nil) {
-		self.layoutParams.padding = LLMakeMargin(self.layoutParams.padding.top,
-							 v,
-							 self.layoutParams.padding.bottom,
-							 self.layoutParams.padding.right);
+                                                        v,
+							self.layoutParams.margin.bottom,
+							self.layoutParams.margin.right);
 	    }
         } else if ([key isEqualToString:@"weight"]) {
 	    if (self.layoutParams != nil) {
@@ -272,146 +385,37 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
 		}
 	    }
         } else if ([key isEqualToString:@"zoom"]) {
-        }
-    }
-    
-    if ([self.view isKindOfClass:PaddedLabel.class]) {
-        PaddedLabel *label = (PaddedLabel*)self.view;
-    
-	if ([key isEqualToString:@"font-size"]) {
-	    self.fontSize = (int)[value integerValue];
-            label.font = [self createFont:label.font];
-	    [label.superview setNeedsLayout];
-	} else if ([key isEqualToString:@"color"]) {
-	    label.textColor = [self colorFromString:value];
-	} else if ([key isEqualToString:@"text-align"]) {
-	    if ([value isEqualToString:@"center"]) {
-	        label.textAlignment = NSTextAlignmentCenter;
-	    } else if ([value isEqualToString:@"right"]) {
-		label.textAlignment = NSTextAlignmentRight;
-	    } else {
-		label.textAlignment = NSTextAlignmentLeft;
+        } else if (!padding_applied && self.layoutParams != nil) {
+	    if ([key isEqualToString:@"padding"]) {
+		int v = (int)[value integerValue];
+                self.layoutParams.padding = LLMakeMargin(v, v, v, v);
+            } else if ([key isEqualToString:@"padding-top"]) {
+		int v = (int)[value integerValue];
+                self.layoutParams.padding = LLMakeMargin(v,
+                                                         self.layoutParams.padding.left,
+                                                         self.layoutParams.padding.bottom,
+                                                         self.layoutParams.padding.right);
+	    } else if ([key isEqualToString:@"padding-right"]) {
+		int v = (int)[value integerValue];
+                self.layoutParams.padding = LLMakeMargin(self.layoutParams.padding.top,
+                                                         self.layoutParams.padding.left,
+                                                         self.layoutParams.padding.bottom,
+                                                         v);
+	    } else if ([key isEqualToString:@"padding-bottom"]) {
+	        int v = (int)[value integerValue];
+                self.layoutParams.padding = LLMakeMargin(self.layoutParams.padding.top,
+                                                         self.layoutParams.padding.left,
+                                                         v,
+                                                         self.layoutParams.padding.right);
+            } else if ([key isEqualToString:@"padding-left"]) {
+		int v = (int)[value integerValue];
+                self.layoutParams.padding = LLMakeMargin(self.layoutParams.padding.top,
+                                                         v,
+                                                         self.layoutParams.padding.bottom,
+                                                         self.layoutParams.padding.right);
 	    }
-        } else if ([key isEqualToString:@"white-space"]) {
-            if ([value isEqualToString:@"nowrap"]) {
-                label.numberOfLines = 1;
-                if (label.lineBreakMode != NSLineBreakByTruncatingTail) {
-                    label.lineBreakMode = NSLineBreakByClipping;
-                }
-            } else {
-                // label.numberOfLines = 0;
-                label.lineBreakMode = NSLineBreakByWordWrapping;
-            }
-        } else if ([key isEqualToString:@"text-overflow"]) {
-            if ([value isEqualToString:@"ellipsis"]) {
-                label.lineBreakMode = NSLineBreakByTruncatingTail;
-            } else {
-                if (label.numberOfLines != 1) {
-                    label.lineBreakMode = NSLineBreakByWordWrapping;
-                } else {
-                    label.lineBreakMode = NSLineBreakByClipping;
-                }
-            }
-	} else if ([key isEqualToString:@"max-lines"]) {
-	    label.numberOfLines = (int)[value integerValue];	   
-        } else if ([key isEqualToString:@"font-weight"]) {
-	    if ([value isEqualToString:@"bold"]) {
-	        self.fontWeight = 800;
-	    } else {
-		self.fontWeight = (int)[value integerValue];
-	    }
-	    label.font = [self createFont:label.font];
-        } else if ([key isEqualToString:@"font-style"]) {
-        } else if ([key isEqualToString:@"font-family"]) {
-            
-        } else if ([key isEqualToString:@"line-spacing"]) {
-
-	} else if ([key isEqualToString:@"padding"]) {
-            int v = (int)[value integerValue];
-            label.edgeInsets = UIEdgeInsetsMake(v, v, v, v);
-        } else if ([key isEqualToString:@"padding-top"]) {
-            label.edgeInsets = UIEdgeInsetsMake((int)[value integerValue],
-                                                label.edgeInsets.left,
-                                                label.edgeInsets.bottom,
-                                                label.edgeInsets.right);
-        } else if ([key isEqualToString:@"padding-right"]) {
-            label.edgeInsets = UIEdgeInsetsMake(label.edgeInsets.top,
-                                                label.edgeInsets.left,
-                                                label.edgeInsets.bottom,
-                                                (int)[value integerValue]);
-        } else if ([key isEqualToString:@"padding-bottom"]) {
-            label.edgeInsets = UIEdgeInsetsMake(label.edgeInsets.top,
-                                                label.edgeInsets.left,
-                                                (int)[value integerValue],
-                                                label.edgeInsets.right);
-        } else if ([key isEqualToString:@"padding-left"]) {
-            label.edgeInsets = UIEdgeInsetsMake(label.edgeInsets.top,
-                                                (int)[value integerValue],
-                                                label.edgeInsets.bottom,
-                                                label.edgeInsets.right);
         }
-    } else if ([self.view isKindOfClass:UIButton.class]) {
-	UIButton *button = (UIButton *)self.view;
-	UIControlState state;
-	if (selector == SelectorNormal) {
-	  state = UIControlStateNormal;
-	} else if (selector == SelectorActive) {
-	  state = UIControlStateHighlighted;
-	} else if (selector == SelectorDisabled) {
-	  state = UIControlStateDisabled;
-	} else if (selector == SelectorSelected) {
-	  state = UIControlStateSelected;
-	} else {
-	  return;
-	}	  
-	
-        if ([key isEqualToString:@"icon"]) {
-#if 0
-            UIImage * icon = [self loadImage:value];
-            [button setImage:icon forState:state];
-#endif
-        } else if ([key isEqualToString:@"icon-attachment"]) {
-            
-	} else if ([key isEqualToString:@"color"]) {
-	    [button setTitleColor:[self colorFromString:value] forState:state];
-	} else if ([key isEqualToString:@"font-size"]) {
-	    self.fontSize = (int)[value integerValue];
-            button.titleLabel.font = [self createFont:button.titleLabel.font];
-        } else if ([key isEqualToString:@"padding"]) {
-            int v = (int)[value integerValue];
-            button.contentEdgeInsets = UIEdgeInsetsMake(v, v, v, v);
-        } else if ([key isEqualToString:@"padding-top"]) {
-            button.contentEdgeInsets = UIEdgeInsetsMake((int)[value integerValue],
-                                                        button.contentEdgeInsets.left,
-                                                        button.contentEdgeInsets.bottom,
-                                                        button.contentEdgeInsets.right);
-        } else if ([key isEqualToString:@"padding-right"]) {
-            button.contentEdgeInsets = UIEdgeInsetsMake(button.contentEdgeInsets.top,
-                                                        button.contentEdgeInsets.left,
-                                                        button.contentEdgeInsets.bottom,
-                                                        (int)[value integerValue]);
-        } else if ([key isEqualToString:@"padding-bottom"]) {
-            button.contentEdgeInsets = UIEdgeInsetsMake(button.contentEdgeInsets.top,
-                                                        button.contentEdgeInsets.left,
-                                                        (int)[value integerValue],
-                                                        button.contentEdgeInsets.right);
-        } else if ([key isEqualToString:@"padding-left"]) {
-            button.contentEdgeInsets = UIEdgeInsetsMake(button.contentEdgeInsets.top,
-                                                        (int)[value integerValue],
-                                                        button.contentEdgeInsets.bottom,
-                                                        button.contentEdgeInsets.right);
-        }
-    } else if ([self.view isKindOfClass:UITextField.class]) {
-        UITextField *textField = (UITextField *)self.view;
-	if ([value isEqualToString:@"hint"]) {
-	    textField.placeholder = value;
-        }
-    } else if ([self.view isKindOfClass:UITabBarItem.class]) {
-        UITabBarItem *item = (UITabBarItem *)self.view;
-        if ([key isEqualToString:@"icon"]) {
-            item.image = [self loadImage:value];
-        }
-    }
+    }    
 }
 
 - (UIImage *)loadImage:(NSString *)filename {
