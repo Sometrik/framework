@@ -230,40 +230,40 @@
     return nil;
 }
 
-- (void)addItem:(LayoutParams *)linearLayoutItem {
-    if (linearLayoutItem == nil || [_items containsObject:linearLayoutItem] == YES || linearLayoutItem.view == nil) {
+- (void)addItem:(LayoutParams *)item {
+    if (item == nil || [_items containsObject:item] == YES || item.view == nil) {
         return;
     }
     
-    [_items addObject:linearLayoutItem];
-    [self addSubview:linearLayoutItem.view];
+    [_items addObject:item];
+    [self addSubview:item.view];
 
-    linearLayoutItem.topConstraint = [NSLayoutConstraint constraintWithItem:linearLayoutItem.view attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
-    linearLayoutItem.leftConstraint = [NSLayoutConstraint constraintWithItem:linearLayoutItem.view attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
-    linearLayoutItem.rightConstraint = [NSLayoutConstraint constraintWithItem:linearLayoutItem.view attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
-    linearLayoutItem.bottomConstraint = [NSLayoutConstraint constraintWithItem:linearLayoutItem.view attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeBottom multiplier:1.0f constant:0];
-    linearLayoutItem.centerXConstraint = [NSLayoutConstraint constraintWithItem:linearLayoutItem.view attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterX multiplier:1.f constant:0.0f];
-    linearLayoutItem.centerYConstraint = [NSLayoutConstraint constraintWithItem:linearLayoutItem.view attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterY multiplier:1.f constant:0.0f];
-    linearLayoutItem.widthConstraint = [NSLayoutConstraint constraintWithItem:linearLayoutItem.view attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:0.0f constant:0];
-    linearLayoutItem.heightConstraint = [NSLayoutConstraint constraintWithItem:linearLayoutItem.view attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:0.0f constant:0];
+    item.topConstraint = [NSLayoutConstraint constraintWithItem:item.view attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
+    item.leftConstraint = [NSLayoutConstraint constraintWithItem:item.view attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
+    item.rightConstraint = [NSLayoutConstraint constraintWithItem:item.view attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
+    item.bottomConstraint = [NSLayoutConstraint constraintWithItem:item.view attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeBottom multiplier:1.0f constant:0];
+    item.centerXConstraint = [NSLayoutConstraint constraintWithItem:item.view attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterX multiplier:1.f constant:0.0f];
+    item.centerYConstraint = [NSLayoutConstraint constraintWithItem:item.view attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterY multiplier:1.f constant:0.0f];
+    item.widthConstraint = [NSLayoutConstraint constraintWithItem:item.view attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:0.0f constant:0];
+    item.heightConstraint = [NSLayoutConstraint constraintWithItem:item.view attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:0.0f constant:0];
 
-    linearLayoutItem.topConstraint.priority = 999 - linearLayoutItem.level;
-    linearLayoutItem.leftConstraint.priority = 999 - linearLayoutItem.level;
-    linearLayoutItem.rightConstraint.priority = 999 - linearLayoutItem.level;
-    linearLayoutItem.bottomConstraint.priority = 999 - linearLayoutItem.level;
-    linearLayoutItem.centerXConstraint.priority = 999 - linearLayoutItem.level;
-    linearLayoutItem.centerYConstraint.priority = 999 - linearLayoutItem.level;
-    linearLayoutItem.widthConstraint.priority = 999 - linearLayoutItem.level;
-    linearLayoutItem.heightConstraint.priority = 999 - linearLayoutItem.level;
+    item.topConstraint.priority = 999 - item.level;
+    item.leftConstraint.priority = 999 - item.level;
+    item.rightConstraint.priority = 999 - item.level;
+    item.bottomConstraint.priority = 999 - item.level;
+    item.centerXConstraint.priority = 999 - item.level;
+    item.centerYConstraint.priority = 999 - item.level;
+    item.widthConstraint.priority = 999 - item.level;
+    item.heightConstraint.priority = 999 - item.level;
 }
 
-- (void)removeItem:(LayoutParams *)linearLayoutItem {
-    if (linearLayoutItem == nil || [_items containsObject:linearLayoutItem] == NO) {
+- (void)removeItem:(LayoutParams *)item {
+    if (item == nil || [_items containsObject:item] == NO) {
         return;
     }
     
-    [linearLayoutItem.view removeFromSuperview];
-    [_items removeObject:linearLayoutItem];
+    [item.view removeFromSuperview];
+    [_items removeObject:item];
 }
 
 - (void)removeAllItems {
