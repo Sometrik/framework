@@ -403,7 +403,6 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     scrollView.tag = viewId;
     scrollView.contentInset = UIEdgeInsetsMake(64, 0, 0, 0);
     // scrollView.contentOffset = CGPointMake(0, 64);
-    scrollView.frame = self.view.frame;
     scrollView.clipsToBounds = YES;
     scrollView.delegate = self;
     scrollView.translatesAutoresizingMaskIntoConstraints = false;
@@ -830,25 +829,28 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 - (void)createWebBrowserWithUrl:(NSString *)url
 {
     NSLog(@"WebView opened");
-    WKWebViewConfiguration *configuration = [[WKWebViewConfiguration alloc] init];
-    CGRect frame = CGRectMake(0, 20, self.view.bounds.size.width, self.view.bounds.size.height);
-    WKWebView *webView = [[WKWebView alloc] initWithFrame:frame configuration:configuration];
+    if (self.webView == nil) {
+        WKWebViewConfiguration *configuration = [[WKWebViewConfiguration alloc] init];
+        CGRect frame = CGRectMake(0, 20, self.view.bounds.size.width, self.view.bounds.size.height);
+        self.webView = [[WKWebView alloc] initWithFrame:frame configuration:configuration];
+        [self.view addSubview:self.webView];
+        [self.view bringSubviewToFront:self.webView];
+        self.webView.layer.zPosition = 1000000.0f;
+
+        // add close button (x) to the top left corner of the view
+        UIButton *closeButton = [[UIButton alloc] initWithFrame:CGRectMake(10.0, 20.0, 40.0, 40.0)];
+        [closeButton setTitle:@"X" forState:UIControlStateNormal];
+        [closeButton addTarget:self action:@selector(webViewCloseButtonPushed:) forControlEvents:UIControlEventTouchUpInside];
+        [closeButton setTitleColor:UIColor.whiteColor forState:UIControlStateNormal];
+        [closeButton setBackgroundColor:UIColor.blackColor];
+        closeButton.layer.cornerRadius = closeButton.frame.size.width / 2;
+        closeButton.layer.borderWidth = 2.0;
+        closeButton.layer.borderColor = UIColor.whiteColor.CGColor;
+        [self.webView addSubview:closeButton];
+    }
     NSURL *webURL = [NSURL URLWithString:url];
     NSURLRequest *request = [NSURLRequest requestWithURL:webURL];
-    [webView loadRequest:request];
-    self.webView = webView;
-    [self.view addSubview:self.webView];
-    [self.view bringSubviewToFront:self.webView];
-    // add close button (x) to the top left corner of the view
-    UIButton *closeButton = [[UIButton alloc] initWithFrame:CGRectMake(10.0, 20.0, 40.0, 40.0)];
-    [closeButton setTitle:@"X" forState:UIControlStateNormal];
-    [closeButton addTarget:self action:@selector(webViewCloseButtonPushed:) forControlEvents:UIControlEventTouchUpInside];
-    [closeButton setTitleColor:UIColor.whiteColor forState:UIControlStateNormal];
-    [closeButton setBackgroundColor:UIColor.blackColor];
-    closeButton.layer.cornerRadius = closeButton.frame.size.width / 2;
-    closeButton.layer.borderWidth = 2.0;
-    closeButton.layer.borderColor = UIColor.whiteColor.CGColor;
-    [self.webView addSubview:closeButton];
+    [self.webView loadRequest:request];
 }
 
 - (void)webViewCloseButtonPushed:(UIButton *)button
@@ -885,19 +887,19 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     BOOL add_constraints = NO;
   
     if ([parentView isKindOfClass:LinearLayoutView.class]) {
-	view.autoresizingMask = 0;
+        // view.autoresizingMask = 0;
         LinearLayoutView * layout = (LinearLayoutView *)parentView;
-	LayoutParams * item = [LayoutParams layoutItemForView:view];
+        LayoutParams * item = [LayoutParams layoutItemForView:view];
         // item.padding = LinearLayoutMakePadding(5.0, 10.0, 5.0, 10.0);
         // item.horizontalAlignment = LinearLayoutItemHorizontalAlignmentCenter;	
-	item.level = parentViewManager.level + 1;
+        item.level = parentViewManager.level + 1;
         [layout addItem:item];
         viewManager.layoutParams = item;
     } else if ([parentView isKindOfClass:FrameLayoutView.class]) {
-	view.autoresizingMask = 0;
+        // view.autoresizingMask = 0;
         FrameLayoutView * layout = (FrameLayoutView *)parentView;
-	LayoutParams * item = [LayoutParams layoutItemForView:view];
-	item.level = parentViewManager.level + 1;
+        LayoutParams * item = [LayoutParams layoutItemForView:view];
+        item.level = parentViewManager.level + 1;
         [layout addItem:item];
         viewManager.layoutParams = item;
     } else if ([parentView isKindOfClass:UIScrollView.class]) {
@@ -908,59 +910,61 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
         if (scrollView.pagingEnabled) {
             scrollView.contentSize = CGSizeMake(scrollView.contentSize.width + pageWidth, scrollView.contentSize.height);
             
-	    NSLayoutConstraint *leftConstraint;
+            NSLayoutConstraint *leftConstraint;
             NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
-	    NSLayoutConstraint *widthConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeWidth multiplier:1.0f constant:0];
-	    NSLayoutConstraint *heightConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeHeight multiplier:1.0f constant:0];
+            NSLayoutConstraint *widthConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeWidth multiplier:1.0f constant:0];
+            NSLayoutConstraint *heightConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeHeight multiplier:1.0f constant:0];
 
-	    if (pos == 0) {
-		leftConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
-	    } else {
+            if (pos == 0) {
+                leftConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
+            } else {
 #if 0
-		leftConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:[[parentView subviews] lastObject] attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
+                leftConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:[[parentView subviews] lastObject] attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
 #else
-		leftConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:(pos * pageWidth)];
+                leftConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:(pos * pageWidth)];
 #endif
-	    }
+            }
 
-	    topConstraint.priority = 999 - viewManager.level;
-	    leftConstraint.priority = 999 - viewManager.level;
-	    widthConstraint.priority = 999 - viewManager.level;
-	    heightConstraint.priority = 999 - viewManager.level;
+            topConstraint.priority = 999 - viewManager.level;
+            leftConstraint.priority = 999 - viewManager.level;
+            widthConstraint.priority = 999 - viewManager.level;
+            heightConstraint.priority = 999 - viewManager.level;
             [view.superview addConstraints:@[topConstraint, leftConstraint, widthConstraint, heightConstraint]];
         } else {
-	    NSLayoutConstraint * topConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
-	    NSLayoutConstraint * leftConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
-	    NSLayoutConstraint * widthConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:0.0f constant:pageWidth];
-	    NSLayoutConstraint * heightConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:0.0f constant:4000];
+#if 1
+            NSLayoutConstraint * topConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
+            NSLayoutConstraint * leftConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
+            NSLayoutConstraint * widthConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:0.0f constant:pageWidth];
+            NSLayoutConstraint * heightConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:0.0f constant:4000];
 
-	    topConstraint.priority = 999 - viewManager.level;
-	    leftConstraint.priority = 999 - viewManager.level;
-	    widthConstraint.priority = 999 - viewManager.level;
-	    heightConstraint.priority = 999 - viewManager.level;
+            topConstraint.priority = 999 - viewManager.level;
+            leftConstraint.priority = 999 - viewManager.level;
+            widthConstraint.priority = 999 - viewManager.level;
+            heightConstraint.priority = 999 - viewManager.level;
 
-	    [view.superview addConstraints:@[topConstraint, leftConstraint, widthConstraint, heightConstraint]];
+            [view.superview addConstraints:@[topConstraint, leftConstraint, widthConstraint, heightConstraint]];
+#endif
         }
     } else {
         [parentView addSubview:view];
 
-	if (![view isKindOfClass:UINavigationBar.class]) {
+        if (![view isKindOfClass:UINavigationBar.class]) {
             add_constraints = YES;
         }
     }
   
     if (add_constraints) {
-	NSLayoutConstraint * topConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
-	NSLayoutConstraint * leftConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
-	NSLayoutConstraint * rightConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
-	NSLayoutConstraint * bottomConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeBottom multiplier:1.0f constant:0];
+        NSLayoutConstraint * topConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
+        NSLayoutConstraint * leftConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
+        NSLayoutConstraint * rightConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
+        NSLayoutConstraint * bottomConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeBottom multiplier:1.0f constant:0];
 
-	topConstraint.priority = 999 - viewManager.level;
-	leftConstraint.priority = 999 - viewManager.level;
-	rightConstraint.priority = 999 - viewManager.level;
-	bottomConstraint.priority = 999 - viewManager.level;
+        topConstraint.priority = 999 - viewManager.level;
+        leftConstraint.priority = 999 - viewManager.level;
+        rightConstraint.priority = 999 - viewManager.level;
+        bottomConstraint.priority = 999 - viewManager.level;
 
-	[view.superview addConstraints:@[topConstraint, leftConstraint, rightConstraint, bottomConstraint]];
+        [view.superview addConstraints:@[topConstraint, leftConstraint, rightConstraint, bottomConstraint]];
     }
 }
 
@@ -978,20 +982,20 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     ViewManager * viewManager = [self.viewsDictionary objectForKey:key];
     if (viewManager != nil) {
         if ([viewManager.view isKindOfClass:UIView.class]) {
-	  UIView * view = viewManager.view;
- 	  UIView * parentView = view.superview;
+            UIView * view = viewManager.view;
+            UIView * parentView = view.superview;
 
-	  if ([parentView isKindOfClass:LinearLayoutView.class]) {
-	    LinearLayoutView * layout = (LinearLayoutView*)parentView;
-	    [layout removeItem:viewManager.layoutParams];
-	  } else if ([parentView isKindOfClass:LinearLayoutView.class]) {
-	    FrameLayoutView * layout = (FrameLayoutView*)parentView;
-	    [layout removeItem:viewManager.layoutParams];
-	  } else {
-            UIView * view = (UIView*)viewManager.view;
-            [view removeFromSuperview];
-	  }
-	}
+            if ([parentView isKindOfClass:LinearLayoutView.class]) {
+                LinearLayoutView * layout = (LinearLayoutView*)parentView;
+                [layout removeItem:viewManager.layoutParams];
+            } else if ([parentView isKindOfClass:LinearLayoutView.class]) {
+                FrameLayoutView * layout = (FrameLayoutView*)parentView;
+                [layout removeItem:viewManager.layoutParams];
+            } else {
+                UIView * view = (UIView*)viewManager.view;
+                [view removeFromSuperview];
+            }
+        }
         [self.viewsDictionary removeObjectForKey:key];
         
         // just to take backgroundOverlayView off the screen as well
