@@ -37,6 +37,8 @@ typedef struct {
 @property NSLayoutConstraint *centerYConstraint;
 @property NSLayoutConstraint *widthConstraint;
 @property NSLayoutConstraint *heightConstraint;
+@property NSLayoutConstraint *maxWidthConstraint;
+@property NSLayoutConstraint *maxHeightConstraint;
 @property NSInteger level;
 - (id)initWithView:(UIView *)aView;
 + (LayoutParams *)layoutItemForView:(UIView *)aView;
