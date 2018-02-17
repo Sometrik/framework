@@ -13,7 +13,7 @@ public:
   }
   
   std::unique_ptr<HTTPClientFactory> createHTTPClientFactory() const override {
-    return std::unique_ptr<iOSClientFactory>(new iOSClientFactory);
+    return std::unique_ptr<iOSCFClientFactory>(new iOSCFClientFactory);
   }
   
   std::unique_ptr<canvas::ContextFactory> createContextFactory() const override {

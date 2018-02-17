@@ -3,7 +3,7 @@
 
 #include "ViewController.h"
 
-#include <iOSClient.h>
+#include <iOSCFClient.h>
 #include <ContextQuartz2D.h>
 #include <PlatformThread.h>
 
@@ -49,7 +49,7 @@ public:
   void sendCommands(const std::vector<Command> & commands) override;
   void sleep(double t) override;
   std::unique_ptr<HTTPClientFactory> createHTTPClientFactory() const override {
-    return std::unique_ptr<iOSClientFactory>(new iOSClientFactory);
+    return std::unique_ptr<iOSCFClientFactory>(new iOSCFClientFactory);
   }
   std::unique_ptr<canvas::ContextFactory> createContextFactory() const override {
     return std::unique_ptr<canvas::Quartz2DContextFactory>(new canvas::Quartz2DContextFactory(getDisplayScale(), new canvas::BundleFilenameConverter));
