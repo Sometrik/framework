@@ -337,7 +337,11 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
 - (void)createButtonWithId:(int)viewId parentId:(int)parentId caption:(NSString *)caption
 {
+#if 0
     UIButton *button = [[UIButton alloc] init];
+#else
+    UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
+#endif
     button.tag = viewId;
     button.translatesAutoresizingMaskIntoConstraints = false;
     [button setTitle:caption forState:UIControlStateNormal];

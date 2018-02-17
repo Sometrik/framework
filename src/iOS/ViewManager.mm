@@ -180,10 +180,8 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
 	}	  
 	
         if ([key isEqualToString:@"icon"]) {
-#if 0
             UIImage * icon = [self loadImage:value];
             [button setImage:icon forState:state];
-#endif
         } else if ([key isEqualToString:@"icon-attachment"]) {
             
 	} else if ([key isEqualToString:@"color"]) {
