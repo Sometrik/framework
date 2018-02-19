@@ -361,6 +361,7 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
 		self.layoutParams.weight = (int)[value integerValue];
 	    }
         } else if ([key isEqualToString:@"opacity"]) {
+	    view.alpha = (float)[value floatValue];
         } else if ([key isEqualToString:@"gravity"]) {
 	    if (self.layoutParams != nil) {
                 if ([value isEqualToString:@"bottom"]) {
