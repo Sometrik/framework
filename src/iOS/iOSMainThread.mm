@@ -13,6 +13,17 @@ using namespace std;
 
 iOSMainThread::iOSMainThread(std::shared_ptr<FWApplication> _application, std::shared_ptr<Runnable> _runnable) : PlatformThread(0, _application, _runnable) {
   defaults = [NSUserDefaults standardUserDefaults];
+
+  FWPreferences preferences;
+  NSArray *keys = [[[NSUserDefaults standardUserDefaults] dictionaryRepresentation] allKeys];
+  for (NSString * key in keys) {
+    NSString * value = [defaults valueForKey:key];
+    NSLog(@"loaded data: %@ %@", key, value);  
+    if ([value isKindOfClass:[NSString class]]) {
+      preferences.setText([key UTF8String], [value UTF8String]);
+    }
+  }
+  _application->setPreferences(preferences);
 }
 
 void
@@ -244,20 +255,20 @@ iOSMainThread::sendCommands(const std::vector<Command> & commands) {
         break;
         
       case Command::UPDATE_PREFERENCE: {
-	NSString *storedVal = [NSString stringWithUTF8String:command.getTextValue().c_str()];
-	NSString *storedKey = [NSString stringWithUTF8String:command.getTextValue2().c_str()];
-	[defaults setObject:storedVal forKey:storedKey];
-	[defaults synchronize];
+	NSString *storedKey = [NSString stringWithUTF8String:command.getTextValue().c_str()];
+	NSString *storedVal = [NSString stringWithUTF8String:command.getTextValue2().c_str()];
+	[defaults setValue:storedVal forKey:storedKey];
       }
         break;
         
       case Command::DELETE_PREFERENCE: {
-        
+	NSString *storedKey = [NSString stringWithUTF8String:command.getTextValue().c_str()];
+	[defaults setValue:nil forKey:storedKey];        
       }
         break;
         
       case Command::COMMIT_PREFERENCES: {
-        
+	[defaults synchronize];        
       }
         break;
     }
