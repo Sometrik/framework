@@ -158,13 +158,16 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
 - (void)backgroundOverlayViewTapped:(UITapGestureRecognizer *)gesture
 {
-    if (!self.sideMenuView.isHidden) {
-        [self hideNavigationViewWithAnimation:YES];
-    }
-    if (self.dialogIds.count > 0) {
-        int topDialogId = [[self.dialogIds lastObject] intValue];
-        [self sendIntValue:topDialogId value:0];
-        [self.dialogIds removeLastObject];
+    if (self.webView == nil) {
+        if (!self.sideMenuView.isHidden) {
+            [self hideNavigationViewWithAnimation:YES];
+        }
+        if (self.dialogIds.count > 0) {
+	    NSLog(@"background overlay tapped");
+            int topDialogId = [[self.dialogIds lastObject] intValue];
+            [self sendIntValue:topDialogId value:0];
+            [self.dialogIds removeLastObject];
+        }
     }
     /*
      [UIView animateWithDuration:animationDuration animations:^{
@@ -536,12 +539,15 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
 - (void)backButtonTapped
 {
-    if (self.dialogIds.count > 0) {
-        int topDialogId = [[self.dialogIds lastObject] intValue];
-        [self sendIntValue:topDialogId value:0];
-        [self.dialogIds removeLastObject];
-    } else if (!mainThread->back()) {
-	[self showNavigationViewWithAnimation:YES];
+    if (self.webView == nil) {
+        if (self.dialogIds.count > 0) {
+            NSLog(@"back button tapped");
+            int topDialogId = [[self.dialogIds lastObject] intValue];
+            [self sendIntValue:topDialogId value:0];
+            [self.dialogIds removeLastObject];
+        } else if (!mainThread->back()) {
+            [self showNavigationViewWithAnimation:YES];
+        }
     }
 }
 
@@ -781,6 +787,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 - (void)createDialogWithId:(int)viewId parentId:(int)parentId
 {
     if (self.dialogIds.count > 0) {
+        NSLog(@"closing old dialog");
         int topDialogId = [[self.dialogIds lastObject] intValue];
         [self sendIntValue:topDialogId value:0];
         [self.dialogIds removeLastObject];
@@ -798,7 +805,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     dialog.layer.shadowOpacity = 1.0;
     dialog.layer.shadowRadius = 7.5;
     dialog.layer.shadowOffset = CGSizeMake(1, 4);
-    dialog.clipsToBounds = NO;
+    dialog.clipsToBounds = YES;
     dialog.translatesAutoresizingMaskIntoConstraints = false;
     
     [self addView:dialog withId:viewId];
@@ -837,9 +844,14 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
         WKWebViewConfiguration *configuration = [[WKWebViewConfiguration alloc] init];
         CGRect frame = CGRectMake(0, 20, self.view.bounds.size.width, self.view.bounds.size.height);
         self.webView = [[WKWebView alloc] initWithFrame:frame configuration:configuration];
+	    self.webView.translatesAutoresizingMaskIntoConstraints = false;
         [self.view addSubview:self.webView];
-        [self.view bringSubviewToFront:self.webView];
-        self.webView.layer.zPosition = 1000000.0f;
+        
+        NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:self.webView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.webView.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:20];
+        NSLayoutConstraint *leftConstraint = [NSLayoutConstraint constraintWithItem:self.webView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self.webView.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
+        NSLayoutConstraint *rightConstraint = [NSLayoutConstraint constraintWithItem:self.webView attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self.webView.superview attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
+        NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:self.webView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self.webView.superview attribute:NSLayoutAttributeBottom multiplier:1.0f constant:0];
+        [self.webView.superview addConstraints:@[topConstraint, leftConstraint, rightConstraint, bottomConstraint]];
 
         // add close button (x) to the top left corner of the view
         UIButton *closeButton = [[UIButton alloc] initWithFrame:CGRectMake(10.0, 20.0, 40.0, 40.0)];
@@ -852,9 +864,13 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
         closeButton.layer.borderColor = UIColor.whiteColor.CGColor;
         [self.webView addSubview:closeButton];
     }
+    // self.webView.layer.zPosition = 1000000.0f;
+    [self.view bringSubviewToFront:self.webView];
+    
     NSURL *webURL = [NSURL URLWithString:url];
     NSURLRequest *request = [NSURLRequest requestWithURL:webURL];
     [self.webView loadRequest:request];
+    mainThread->startModal();
 }
 
 - (void)webViewCloseButtonPushed:(UIButton *)button
@@ -862,6 +878,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     NSLog(@"closeButton pushed");
     [self.webView removeFromSuperview];
     self.webView = nil;
+    mainThread->endModal(0);
 }
 
 - (void)sendTimerEvent:(NSTimer *)timer
@@ -977,6 +994,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     if (self.dialogIds.count > 0) {
         int topDialogId = [[self.dialogIds lastObject] intValue];
         if (topDialogId == viewId) {
+            NSLog(@"removing dialog");
             [self sendIntValue:topDialogId value:0];
             [self.dialogIds removeLastObject];
         }
