@@ -100,7 +100,7 @@ class AppInputDialog : public Dialog {
     okButton->style("margin-right", "2");
     okButton->style("margin-bottom", "4");
     buttonLayout->addChild(okButton);
-    auto cancelButton = std::make_shared<Button>("Cancel", 0);
+    auto cancelButton = std::make_shared<Button>("Cancel", 2);
     cancelButton->style("width", "match-parent");
     cancelButton->style("height", "match-parent");
     cancelButton->style("color", "#ffffff");
@@ -123,7 +123,7 @@ class AppInputDialog : public Dialog {
   void onCommandEvent(CommandEvent & ev) override {
     if (ev.getElementId() == 1) {
       endModal(1);
-    } else {
+    } else if (ev.getElementId() == 2) {
       endModal(0);
     }
   }
