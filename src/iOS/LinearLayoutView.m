@@ -220,6 +220,10 @@
 
         relativePosition += currentDimension + endMargin;
     }
+
+    for (CALayer * layer in self.layer.sublayers) {
+      layer.frame = self.bounds;
+    }
 }
 
 - (void)addSubview:(UIView *)view {

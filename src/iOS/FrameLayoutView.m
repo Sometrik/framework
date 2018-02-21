@@ -147,6 +147,10 @@
         [item.view setNeedsDisplay];
 #endif
     }
+
+    for (CALayer * layer in self.layer.sublayers) {
+      layer.frame = self.bounds;
+    }
 }
 
 - (int)calcIntrinsicWidth:(UIView *)view {
