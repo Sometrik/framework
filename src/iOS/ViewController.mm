@@ -147,13 +147,22 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 - (void)createBackgroundOverlay
 {
     // create backgroundoverlay view that's behind sidePanel and dialog and if clicked closes the panel
-    self.backgroundOverlayView = [[UIView alloc] initWithFrame:self.view.bounds];
-    self.backgroundOverlayView.hidden = YES;
-    self.backgroundOverlayView.backgroundColor = UIColor.blackColor;
-    // self.backgroundOverlayView.translatesAutoresizingMaskIntoConstraints = false;
-    [self.view addSubview:self.backgroundOverlayView];
+    UIView * view = [[UIView alloc] init];
+    view.hidden = YES;
+    view.backgroundColor = UIColor.blackColor;
+    view.translatesAutoresizingMaskIntoConstraints = false;
+    [self.view addSubview:view];
+
+    self.backgroundOverlayView = view;
+
+    NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
+    NSLayoutConstraint *leftConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
+    NSLayoutConstraint *rightConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
+    NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeBottom multiplier:1.0f constant:0];
+    [view.superview addConstraints:@[topConstraint, leftConstraint, rightConstraint, bottomConstraint]];
+
     UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(backgroundOverlayViewTapped:)];
-    [self.backgroundOverlayView addGestureRecognizer:tapGestureRecognizer];
+    [view addGestureRecognizer:tapGestureRecognizer];
 }
 
 - (void)backgroundOverlayViewTapped:(UITapGestureRecognizer *)gesture
