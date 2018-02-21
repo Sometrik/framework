@@ -156,7 +156,7 @@
 - (int)calcIntrinsicWidth:(UIView *)view {
     if ([view isKindOfClass:LinearLayoutView.class]) {
         LinearLayoutView * child = (LinearLayoutView*)view;
-       int width = 0;
+        int width = 0;
         if (child.orientation == LinearLayoutViewOrientationHorizontal) {
             for (LayoutParams *item in child.items) {
                 if (item.view.hidden) continue;
@@ -183,22 +183,22 @@
         }
         return width;
     } else if ([view isKindOfClass:FrameLayoutView.class]) {
-      FrameLayoutView * child = (FrameLayoutView*)view;
-      int width = 0;
-      for (LayoutParams *item in child.items) {
-	if (item.view.hidden) continue;
+        FrameLayoutView * child = (FrameLayoutView*)view;
+        int width = 0;
+        for (LayoutParams *item in child.items) {
+            if (item.view.hidden) continue;
 
-	int w = 0;
-	if (item.fixedWidth > 0) {
-	  w = item.fixedWidth + item.margin.left + item.margin.right;
-	} else {
-	  w = [self calcIntrinsicWidth:item.view] + item.padding.left + item.padding.right + item.margin.left + item.margin.right;
-	}
-	if (w > width) width = w;
-      }
-      return width;
+            int w = 0;
+            if (item.fixedWidth > 0) {
+                w = item.fixedWidth + item.margin.left + item.margin.right;
+            } else {
+                w = [self calcIntrinsicWidth:item.view] + item.padding.left + item.padding.right + item.margin.left + item.margin.right;
+            }
+            if (w > width) width = w;
+        }
+        return width;
     } else {
-      return view.intrinsicContentSize.width;
+        return view.intrinsicContentSize.width;
     }
 }
 
@@ -222,7 +222,7 @@
 	        if (item.view.hidden) continue;
 
                 int h = 0;
-		if (item.fixedHeight > 0) {
+                if (item.fixedHeight > 0) {
                     h = item.fixedHeight + item.margin.top + item.margin.bottom;
                 } else {
                     h = [self calcIntrinsicHeight:item.view] + item.padding.top + item.padding.bottom + item.margin.top + item.margin.bottom;
@@ -233,29 +233,29 @@
         return height;
     } else if ([view isKindOfClass:FrameLayoutView.class]) {
         FrameLayoutView * child = (FrameLayoutView*)view;
-      int height = 0;
-      for (LayoutParams *item in child.items) {
-	if (item.view.hidden) continue;
+        int height = 0;
+        for (LayoutParams *item in child.items) {
+            if (item.view.hidden) continue;
 
-	int h = 0;
-	if (item.fixedHeight > 0) {
-	  h = item.fixedHeight + item.margin.top + item.margin.bottom;
-	} else {
-	  h = [self calcIntrinsicHeight:item.view] + item.padding.top + item.padding.bottom + item.margin.top + item.margin.bottom;
-	}
-	if (h > height) height = h;
-      }
-      return height;
+            int h = 0;
+            if (item.fixedHeight > 0) {
+                h = item.fixedHeight + item.margin.top + item.margin.bottom;
+            } else {
+                h = [self calcIntrinsicHeight:item.view] + item.padding.top + item.padding.bottom + item.margin.top + item.margin.bottom;
+            }
+            if (h > height) height = h;
+        }
+        return height;
     } else {
-      return view.intrinsicContentSize.height;
+        return view.intrinsicContentSize.height;
     }
 }
 
 - (LayoutParams*)findParams:(UIView *)view {
     for (LayoutParams *item in self.items) {
         if (item.view == view) {
-	    return item;
-	}
+            return item;
+        }
     }
     return nil;
 }
