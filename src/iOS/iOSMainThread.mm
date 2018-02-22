@@ -4,6 +4,7 @@
 #include <TimerEvent.h>
 #include <ImageRequestEvent.h>
 #include <FWViewBase.h>
+#include <VisibilityEvent.h>
 
 #include "iOSThread.h"
 
@@ -400,6 +401,12 @@ iOSMainThread::back() {
 void
 iOSMainThread::sendIntValue(int viewId, int value) {
     ValueEvent ev(value);
+    Element::postEventToElement(viewId, ev);
+}
+
+void
+iOSMainThread::sendVisibilityEvent(int viewId, bool visibility) {
+    VisibilityEvent ev(visibility);
     Element::postEventToElement(viewId, ev);
 }
 

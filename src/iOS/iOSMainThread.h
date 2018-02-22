@@ -84,6 +84,7 @@ public:
   bool back();
   void sendIntValue(int viewId, int value);
   void sendTextValue(int viewId, const std::string & value);
+  void sendVisibilityEvent(int viewId, bool visibility);
   void sendTimerEvent(int timerId);
   void sendImageRequest(int viewId, unsigned int width, unsigned int height, const std::string & url, int internalFormat = 0);
     
