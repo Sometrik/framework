@@ -666,6 +666,8 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 {
     if (self.sideMenuView.isHidden || self.sideMenuPanned) {
         [self sendIntValue:self.sideMenuView.tag value:1];
+        mainThread->sendVisibilityEvent(self.sideMenuView.tag, 1);
+
         self.backgroundOverlayView.hidden = NO;
         self.backgroundOverlayView.alpha = backgroundOverlayViewAlpha * CGRectGetMaxX(self.sideMenuView.frame) / (CGRectGetWidth(self.view.frame) - sideMenuOpenSpaceWidth);
         if (self.sideMenuView) {
@@ -687,6 +689,8 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 {
     if (self.sideMenuView) {
         [self sendIntValue:self.sideMenuView.tag value:0];
+        mainThread->sendVisibilityEvent(self.sideMenuView.tag, 0);
+
         if (animate) {
             [UIView animateWithDuration:animationDuration animations:^{
                 self.sideMenuView.transform = CGAffineTransformTranslate(self.sideMenuView.transform, -((CGRectGetWidth(self.sideMenuView.frame)+CGRectGetMaxX(self.sideMenuView.frame))), 0.0);
@@ -965,7 +969,11 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             NSLayoutConstraint * topConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
             NSLayoutConstraint * leftConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
             NSLayoutConstraint * widthConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeWidth multiplier:1.0f constant:0];
+#if 0
             NSLayoutConstraint * heightConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:0.0f constant:4000];
+#else
+            NSLayoutConstraint * heightConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeHeight multiplier:1.0f constant:0];
+#endif
 
             topConstraint.priority = 999 - viewManager.level;
             leftConstraint.priority = 999 - viewManager.level;
