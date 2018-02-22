@@ -4,7 +4,6 @@
 #include <Element.h>
 #include <Command.h>
 #include <ValueEvent.h>
-#include <VisibilityEvent.h>
 
 class NavigationDrawer : public Element {
  public:
@@ -16,7 +15,8 @@ class NavigationDrawer : public Element {
   }
 
   void onValueEvent(ValueEvent & ev) override {
-    notify();
+    is_visible = ev.getValue() != 0;
+    notify(is_visible);
     ev.setHandled(true);
   }
 
