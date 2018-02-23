@@ -343,6 +343,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     label.numberOfLines = 0; // as many lines as needed
     label.lineBreakMode = NSLineBreakByWordWrapping;
     label.translatesAutoresizingMaskIntoConstraints = false;
+    label.preferredMaxLayoutWidth = self.view.bounds.size.width;
     [self addView:label withId:viewId];
     [self addToParent:parentId view:label];
 }
@@ -503,10 +504,11 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     view.tag = viewId;
     view.translatesAutoresizingMaskIntoConstraints = false;
     view.layoutMargins = UIEdgeInsetsMake(0, 0, 0, 0);
-    UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(viewTapped:)];
-    [view addGestureRecognizer:tapGestureRecognizer];
     [self addView:view withId:viewId];
     [self addToParent:parentId view:view];
+
+    UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(viewTapped:)];
+    [view addGestureRecognizer:tapGestureRecognizer];
 }
 
 - (void)createNavigationBar:(int)viewId parentId:(int)parentId
@@ -902,8 +904,8 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 - (void)viewTapped:(UITapGestureRecognizer *)gesture
 {
     int viewId = (int)gesture.view.tag;
-    NSLog(@"viewId = %d", viewId);
-    [self sendIntValue:viewId value:viewId];
+    NSLog(@"VIEW TAPPED: viewId = %d", viewId);
+    [self sendIntValue:viewId value:1];
 }
 
 - (void)addToParent:(int)parentId view:(UIView*)view
