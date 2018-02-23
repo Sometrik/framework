@@ -23,6 +23,7 @@ typedef enum {
 
 @property (nonatomic) NSInteger viewId; // don't use id as it is reserved word in objective-c
 @property id view;
+@property id containerView;
 @property BOOL constraintsSet;
 @property NSLayoutConstraint *topConstraint;
 @property NSLayoutConstraint *leftConstraint;
