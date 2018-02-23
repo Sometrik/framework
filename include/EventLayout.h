@@ -23,11 +23,10 @@ class EventLayout : public Element {
   }
 
   Element & addChild(const std::shared_ptr<Element> & element) override {
-    if (getChildren().empty()) {
-      return Element::addChild(element);
-    } else {
-      return *element;
+    if (!getChildren().empty()) {
+      removeChildren();
     }
+    return Element::addChild(element);    
   }
 
  protected:
