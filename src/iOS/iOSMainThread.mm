@@ -132,6 +132,11 @@ iOSMainThread::sendCommands(const std::vector<Command> & commands) {
 	[viewController createPageControlWithId:command.getChildInternalId() parentId:command.getInternalId() numPages:command.getValue()];
       }
 	break;
+	
+	   case Command::CREATE_PICKER: {
+    [viewController createPickerWithId:command.getChildInternalId() parentId:command.getInternalId()];       	
+       }
+	 break;
 
       case Command::CREATE_DIALOG: {
         [viewController createDialogWithId:command.getChildInternalId() parentId:command.getInternalId() ];

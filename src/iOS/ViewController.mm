@@ -774,6 +774,47 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     [self addToParent:parentId view:view];    
 }
 
+- (void)createPickerWithId:(int)viewId parentId:(int)parentId
+{
+    UIPickerView * view = [UIPickerView new];
+    view.tag = viewId;
+    view.delegate = self;
+    view.dataSource = self;
+    view.showsSelectionIndicator = YES;
+    view.translatesAutoresizingMaskIntoConstraints = false;
+    [self addView:view withId:viewId];
+    [self addToParent:parentId view:view];    
+}
+
+- (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView {
+    return 1;
+}
+
+- (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component {
+    return 3;
+}
+
+- (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component {
+    NSString * title = nil;
+    switch(row) {
+            case 0:
+                title = @"a";
+                break;
+            case 1:
+                title = @"b";
+                break;
+            case 2:
+                title = @"c";
+                break;
+    }
+    return title;
+}
+
+-(void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component
+{
+	NSLog(@"picker selected %d", row);
+}
+
 - (void)createActionSheetWithId:(int)viewId parentId:(int)parentId title:(NSString *)title
 {
     UIAlertController *actionSheet = [UIAlertController alertControllerWithTitle:title message:nil preferredStyle:UIAlertControllerStyleActionSheet];
@@ -1066,6 +1107,8 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
         [alertController addAction:[UIAlertAction actionWithTitle:title style:(optionId == 0 ? UIAlertActionStyleCancel : UIAlertActionStyleDefault) handler:^(UIAlertAction *action) {
             mainThread->endModal(optionId);
         }]];
+    } else if ([view isKindOfClass:UIPickerView.class]) {
+    	
     }
 }
 
