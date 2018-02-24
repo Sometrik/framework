@@ -15,7 +15,6 @@ typedef enum {
 @interface ViewManager : NSObject
 - (id)init;
 - (void)clear;
-- (void)setConstraints;
 - (void)setImage:(UIImage *)data;
 - (void)addImageUrl:(NSString *)url width:(int)width height:(int)height;
 - (void)setStyle:(NSString *)key value:(NSString *)value selector:(StyleSelector)selector;
@@ -26,7 +25,6 @@ typedef enum {
 @property (nonatomic) NSInteger viewId; // don't use id as it is reserved word in objective-c
 @property id view;
 @property id containerView;
-@property CAGradientLayer *gradient;
 @property LayoutParams * layoutParams;
 @property NSInteger level;
 @property ViewStyle * normalStyle;

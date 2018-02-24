@@ -18,7 +18,6 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
 - (id)init
 {
     self = [super init];
-    self.gradient = nil;
     self.layoutParams = nil;
     self.level = 0;
     self.normalStyle = [[ViewStyle alloc] init];
@@ -96,7 +95,6 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
     
         if ([key isEqualToString:@"font-size"]) {
             targetStyle.fontSize = (int)[value integerValue];
-            label.font = [self createFont:label.font];
             [label.superview setNeedsLayout];
         } else if ([key isEqualToString:@"color"]) {
             label.textColor = [self colorFromString:value];
@@ -136,7 +134,6 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
             } else {
                 targetStyle.fontWeight = (int)[value integerValue];
             }
-            label.font = [self createFont:label.font];
         } else if ([key isEqualToString:@"font-style"]) {
         } else if ([key isEqualToString:@"font-family"]) {
             
@@ -195,7 +192,6 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
             [button setTitleColor:[self colorFromString:value] forState:state];
         } else if ([key isEqualToString:@"font-size"]) {
             targetStyle.fontSize = (int)[value integerValue];
-            button.titleLabel.font = [self createFont:button.titleLabel.font];
         } else if ([key isEqualToString:@"padding"]) {
             int v = (int)[value integerValue];
             button.contentEdgeInsets = UIEdgeInsetsMake(v, v, v, v);
@@ -250,18 +246,18 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
             if (match != nil) {
                 NSString * color1 = [value substringWithRange:[match rangeAtIndex:1]];
                 NSString * color2 = [value substringWithRange:[match rangeAtIndex:2]];
-                CAGradientLayer * gradient = self.gradient;
+                CAGradientLayer * gradient = targetStyle.gradient;
                 if (gradient == nil) gradient = [CAGradientLayer layer];
                 gradient.colors = @[(id)[self colorFromString:color1].CGColor, (id)[self colorFromString:color2].CGColor];
-                if (self.gradient == nil) {
+                if (targetStyle.gradient == nil) {
                     gradient.frame = view.bounds;
                     [view.layer insertSublayer:gradient atIndex:0];
-                    self.gradient = gradient;
+                    targetStyle.gradient = gradient;
                 }
             } else {
-                if (self.gradient != nil) {
-                    [self.gradient removeFromSuperlayer];
-                    self.gradient = nil;
+                if (targetStyle.gradient != nil) {
+                    [targetStyle.gradient removeFromSuperlayer];
+                    targetStyle.gradient = nil;
                 }
                 view.layer.backgroundColor = [self colorFromString:value].CGColor;
             }
@@ -368,7 +364,7 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
                 self.layoutParams.weight = (int)[value integerValue];
             }
         } else if ([key isEqualToString:@"opacity"]) {
-            view.alpha = (float)[value floatValue];
+            targetStyle.alpha = (float)[value floatValue];
         } else if ([key isEqualToString:@"gravity"]) {
             if (self.layoutParams != nil) {
                 if ([value isEqualToString:@"bottom"]) {
@@ -391,6 +387,7 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
                 }
             }
         } else if ([key isEqualToString:@"zoom"]) {
+            targetStyle.zoom = (float)[value floatValue];
         } else if (!padding_applied && self.layoutParams != nil) {
             if ([key isEqualToString:@"padding"]) {
                 int v = (int)[value integerValue];
@@ -425,7 +422,9 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
 }
 
 - (void)applyStyles:(BOOL)animate {
-    
+    if ([self.view isKindOfClass:UIView.class]) {
+        [self.currentStyle apply:self.view animate:animate];
+    }
 }
 
 - (UIImage *)loadImage:(NSString *)filename {
@@ -453,15 +452,6 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
         } else {
             return [UIColor colorWithRed:((rgbValue & 0xFF0000) >> 16)/255.0 green:((rgbValue & 0xFF00) >> 8)/255.0 blue:(rgbValue & 0xFF)/255.0 alpha:((rgbValue & 0xFF000000) >> 24)/255.0];
         }
-    }
-}
-
-- (UIFont *)createFont:(UIFont *)currentFont {
-    if (self.currentStyle.fontWeight) {
-        UIFontDescriptor * fontD = [currentFont.fontDescriptor fontDescriptorWithSymbolicTraits:UIFontDescriptorTraitBold];
-        return [UIFont fontWithDescriptor:fontD size:self.currentStyle.fontSize];
-    } else {
-        return [currentFont fontWithSize:self.currentStyle.fontSize];
     }
 }
 
