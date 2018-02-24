@@ -10,6 +10,8 @@
 
 #import "EventWrapper.h"
 
+#include <unordered_set>
+
 using namespace std;
 
 iOSMainThread::iOSMainThread(std::shared_ptr<FWApplication> _application, std::shared_ptr<Runnable> _runnable) : PlatformThread(0, _application, _runnable) {
@@ -29,6 +31,8 @@ iOSMainThread::iOSMainThread(std::shared_ptr<FWApplication> _application, std::s
 
 void
 iOSMainThread::sendCommands(const std::vector<Command> & commands) {
+  unordered_set<int> changedViews;
+
   for (auto & command : commands) {
     if (command.getType() == Command::CREATE_FRAMEVIEW || command.getType() == Command::CREATE_OPENGL_VIEW) {
       auto & app = getApplication();
@@ -145,6 +149,7 @@ iOSMainThread::sendCommands(const std::vector<Command> & commands) {
 	  NSString * key = [NSString stringWithUTF8String:command.getTextValue().c_str()];
           NSString * value = [NSString stringWithUTF8String:command.getTextValue2().c_str()];
           [viewManager setStyle:key value:value selector:(StyleSelector)selector];
+	  changedViews.insert(command.getInternalId());
 	}
       }
         break;
@@ -272,6 +277,13 @@ iOSMainThread::sendCommands(const std::vector<Command> & commands) {
 	[defaults synchronize];        
       }
         break;
+    }
+  }
+
+  for (auto id : changedViews) {
+    ViewManager * viewManager = [viewController getViewManager:id];
+    if (viewManager != nil) {
+      [viewManager applyStyles:NO];
     }
   }
 }
