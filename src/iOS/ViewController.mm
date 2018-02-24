@@ -1025,12 +1025,12 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
                 UIView * view = (UIView*)viewManager.view;
                 [view removeFromSuperview];
             }
+  
+            if (view == self.sideMenuView) {
+                [self hideBackgroundOverlayViewWithAnimation:YES];
+            }
         }
         [self.viewsDictionary removeObjectForKey:key];
-  
-        if (view == self.sideMenuView) {
-            [self hideBackgroundOverlayViewWithAnimation:YES];
-        }
     }
 }
 
