@@ -511,7 +511,12 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     debugTapGesture.numberOfTapsRequired = 5;
     [navBar addGestureRecognizer:debugTapGesture];
     
+#if 0
     UIBarButtonItem *backButton = [[UIBarButtonItem alloc] initWithTitle:@"Back" style:UIBarButtonItemStylePlain target:self action:@selector(backButtonTapped)];
+#else
+    UIImage *image = [UIImage imageNamed:@"icons_hamburger-menu.png"];
+    UIBarButtonItem *backButton = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(backButtonTapped)];
+#endif
     navItem.leftBarButtonItem = backButton;
     [navBar setItems:@[navItem]];
     navBar.translucent = YES;
