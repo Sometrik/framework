@@ -457,11 +457,11 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
 }
 
 - (UIFont *)createFont:(UIFont *)currentFont {
-    if (self.activeStyle.fontWeight) {
+    if (self.currentStyle.fontWeight) {
         UIFontDescriptor * fontD = [currentFont.fontDescriptor fontDescriptorWithSymbolicTraits:UIFontDescriptorTraitBold];
-        return [UIFont fontWithDescriptor:fontD size:self.activeStyle.fontSize];
+        return [UIFont fontWithDescriptor:fontD size:self.currentStyle.fontSize];
     } else {
-        return [currentFont fontWithSize:self.activeStyle.fontSize];
+        return [currentFont fontWithSize:self.currentStyle.fontSize];
     }
 }
 
