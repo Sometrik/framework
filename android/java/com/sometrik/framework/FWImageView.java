@@ -57,7 +57,7 @@ public class FWImageView extends ImageView implements NativeCommandHandler {
     }
   }
     
-  private void setImageFromAssets(String filename) {
+  public void setImageFromAssets(String filename) {
     deinitialize();
     Bitmap bitmap = frame.bitmapCache.loadBitmap(filename);
     setImageBitmap(bitmap);
