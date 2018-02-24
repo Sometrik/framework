@@ -1,6 +1,7 @@
 #import <UIKit/UIKit.h>
 
 #import "LayoutParams.h"
+#import "ViewStyle.h"
 
 typedef enum {
   SelectorNormal = 0,	// State during normal operation
@@ -24,14 +25,8 @@ typedef enum {
 @property (nonatomic) NSInteger viewId; // don't use id as it is reserved word in objective-c
 @property id view;
 @property id containerView;
-@property BOOL constraintsSet;
-@property NSLayoutConstraint *topConstraint;
-@property NSLayoutConstraint *leftConstraint;
-@property NSLayoutConstraint *rightConstraint;
-@property NSLayoutConstraint *bottomConstraint;
 @property CAGradientLayer *gradient;
-@property NSInteger fontSize;
-@property NSInteger fontWeight;
 @property LayoutParams * layoutParams;
 @property NSInteger level;
+@property ViewStyle * activeStyle;
 @end
