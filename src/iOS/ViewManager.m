@@ -21,7 +21,9 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
     self.gradient = nil;
     self.layoutParams = nil;
     self.level = 0;
+    self.normalStyle = [[ViewStyle alloc] init];
     self.activeStyle = [[ViewStyle alloc] init];
+    self.currentStyle = self.normalStyle;
     return self;
 }
 
@@ -79,7 +81,9 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
 - (void)setStyle:(NSString *)key value:(NSString *)value selector:(StyleSelector)selector {
     if (selector != SelectorNormal && ![self.view isKindOfClass:UIButton.class]) {
 	return;
-    }    
+    }
+
+    ViewStyle * targetStyle = self.normalStyle;
 
     BOOL padding_applied = NO;
 
@@ -87,7 +91,7 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
         PaddedLabel *label = (PaddedLabel*)self.view;
     
 	if ([key isEqualToString:@"font-size"]) {
-	    self.activeStyle.fontSize = (int)[value integerValue];
+	    targetStyle.fontSize = (int)[value integerValue];
             label.font = [self createFont:label.font];
 	    [label.superview setNeedsLayout];
 	} else if ([key isEqualToString:@"color"]) {
@@ -124,9 +128,9 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
 	    label.numberOfLines = (int)[value integerValue];	   
         } else if ([key isEqualToString:@"font-weight"]) {
 	    if ([value isEqualToString:@"bold"]) {
-	        self.activeStyle.fontWeight = 800;
+	        targetStyle.fontWeight = 800;
 	    } else {
-		self.activeStyle.fontWeight = (int)[value integerValue];
+		targetStyle.fontWeight = (int)[value integerValue];
 	    }
 	    label.font = [self createFont:label.font];
         } else if ([key isEqualToString:@"font-style"]) {
@@ -186,7 +190,7 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
 	} else if ([key isEqualToString:@"color"]) {
 	    [button setTitleColor:[self colorFromString:value] forState:state];
 	} else if ([key isEqualToString:@"font-size"]) {
-	    self.activeStyle.fontSize = (int)[value integerValue];
+	    targetStyle.fontSize = (int)[value integerValue];
             button.titleLabel.font = [self createFont:button.titleLabel.font];
         } else if ([key isEqualToString:@"padding"]) {
             int v = (int)[value integerValue];
@@ -414,6 +418,10 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
 	    }
         }
     }    
+}
+
+- (void)applyStyles:(BOOL)animate {
+    
 }
 
 - (UIImage *)loadImage:(NSString *)filename {

@@ -19,6 +19,7 @@ typedef enum {
 - (void)setImage:(UIImage *)data;
 - (void)addImageUrl:(NSString *)url width:(int)width height:(int)height;
 - (void)setStyle:(NSString *)key value:(NSString *)value selector:(StyleSelector)selector;
+- (void)applyStyles:(BOOL)animate;
 - (void)setIntValue:(int)value;
 - (void)setTextValue:(NSString *)value;
 
@@ -28,5 +29,7 @@ typedef enum {
 @property CAGradientLayer *gradient;
 @property LayoutParams * layoutParams;
 @property NSInteger level;
+@property ViewStyle * normalStyle;
 @property ViewStyle * activeStyle;
+@property ViewStyle * currentStyle;
 @end
