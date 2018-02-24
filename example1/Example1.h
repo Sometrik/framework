@@ -9,6 +9,7 @@ class NavigationDrawer;
 class LinearLayout;
 class FrontView;
 class FrameView;
+class TextLabel;
 
 class Example1 : public FWApplication {
 public:
@@ -25,6 +26,8 @@ private:
     std::shared_ptr<LinearLayout> scrollContent;
     std::shared_ptr<FrontView> frontView;
     std::shared_ptr<FrameView> mainView;
+    std::shared_ptr<TextLabel> title;
+    int counter = 0;
 };
 
 #endif

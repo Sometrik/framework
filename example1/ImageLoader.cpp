@@ -114,6 +114,5 @@ ImageLoader::run() {
     http->Get(request.getImageUrl(), ii, true);
   } catch (exception & e) {
     cerr << "got exception: " << e.what() << endl;
-    assert(0);
   }
 }

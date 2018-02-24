@@ -17,6 +17,7 @@
 #include <ActionBar.h>
 #include <TimerEvent.h>
 #include <FWActionSheet.h>
+#include <EventLayout.h>
 
 #include "FrontView.h"
 #include "ImageDialog.h"
@@ -35,6 +36,8 @@ using namespace std;
 
 Example1::Example1() : FWApplication("com.sometrik.example1")
 {
+  style("background", "#ffff00");
+
   createTimer(1000);
   
   actionBar = std::make_shared<ActionBar>();
@@ -46,19 +49,23 @@ Example1::Example1() : FWApplication("com.sometrik.example1")
   navigationDrawer->style("background", "#cccccc");
   navigationLayout->addChild(make_shared<TextLabel>("Hello sidebar!"));
   navigationLayout->addChild(make_shared<Button>("OK"));
+  auto & eventLayout = navigationLayout->addChild(make_shared<EventLayout>(1235));
+  eventLayout.addChild(make_shared<TextLabel>("TEST TEST")).style("padding", 10);
   addChild(navigationDrawer);
    
-  mainView = std::make_shared<FrameView>("Secondary page");
-  mainView->style("background-color", "#eeeeee");
-  addChild(mainView);
-
   frontView = std::make_shared<FrontView>();
   addChild(frontView);
 
+  mainView = std::make_shared<FrameView>("Secondary page");
+  mainView->style("background", "#008000");
+  addChild(mainView);
+
   auto flipper = std::make_shared<FlipperLayout>();
+  // flipper->style("background-color", "#008080");
   mainView->addChild(flipper);
 
   auto navigationBar = std::make_shared<NavigationBar>();
+  navigationBar->style("background-color", "#ff0000");
   navigationBar->addChild(std::make_shared<NavigationBarItem>("Page 1")).style("icon", "icon1.png");
   navigationBar->addChild(std::make_shared<NavigationBarItem>("Page 2")).style("icon", "icon2.png");
   navigationBar->addChild(std::make_shared<NavigationBarItem>("Page 3")).style("icon", "icon3.png");
@@ -69,19 +76,21 @@ Example1::Example1() : FWApplication("com.sometrik.example1")
   auto firstPage = std::make_shared<LinearLayout>(FW_VERTICAL);
   // firstPage->style("padding", 10);
   firstPage->style("border", 1);
+  firstPage->style("background-color", "#800000");
   flipper->addChild(firstPage);
   
   auto image = std::make_shared<ImageElement>("test.png");
   image->style("width", 200);
   image->style("height", 200);
-  image->style("gravity", "left");
+  image->style("gravity", "center");
   firstPage->addChild(image);
   
-  auto titleLayout = make_shared<FrameLayout>();
+  auto titleLayout = make_shared<EventLayout>(1234);
   firstPage->addChild(titleLayout);
   titleLayout->style("padding", 10);
+  titleLayout->style("border", 1);
   
-  auto title = make_shared<TextLabel>("Hello again!", 1234);
+  title = make_shared<TextLabel>("Hello again!");
   title->style("font-size", 20);
   title->style("padding", 20);
   title->style("background-color", "#e03030");
@@ -94,6 +103,7 @@ Example1::Example1() : FWApplication("com.sometrik.example1")
   nameLayout->style("border", 1);
   nameLayout->style("width", "match-parent");
   nameLayout->style("margin", 10);
+  nameLayout->style("background-color", "#008000");
   firstPage->addChild(nameLayout);
   nameLayout->addChild(make_shared<TextLabel>("Kirjoita nimesi:"));
   
@@ -110,7 +120,10 @@ Example1::Example1() : FWApplication("com.sometrik.example1")
   firstPage->addChild(make_shared<Button>("Open link", ID_OPEN_LINK));
   
   auto scrollLayout = std::make_shared<ScrollLayout>();
-  scrollLayout->style("min-height", 200);
+  scrollLayout->style("height", 200);
+  scrollLayout->style("width", "match-parent");
+  scrollLayout->style("background-color", "#808080");
+  scrollLayout->style("border", "1");
   firstPage->addChild(scrollLayout);
   scrollContent = std::make_shared<LinearLayout>(FW_VERTICAL);
   scrollLayout->addChild(scrollContent);
@@ -123,12 +136,14 @@ Example1::Example1() : FWApplication("com.sometrik.example1")
   
   firstPage->addChild(make_shared<Switch>("On", "Off"));
 
-  auto secondPage = std::make_shared<LinearLayout>(FW_VERTICAL);
-  secondPage->style("background", "#e03030");
+  auto secondPage = std::make_shared<FrameLayout>();
+  secondPage->style("background-color", "#e03030");
   flipper->addChild(secondPage);
     
   auto scrollLayout2 = std::make_shared<ScrollLayout>();
-  // scrollLayout2->style("padding", 100);
+  scrollLayout2->style("border", "1");
+  scrollLayout2->style("height", "match-parent");
+  scrollLayout2->style("width", "match-parent");
   secondPage->addChild(scrollLayout2);
   auto scrollContent2 = std::make_shared<LinearLayout>(FW_VERTICAL);
   scrollLayout2->addChild(scrollContent2);
@@ -203,6 +218,8 @@ Example1::onTimerEvent(TimerEvent & ev) {
   scrollContent->reorderChildren(*(children.back()), 0);
   children.insert(children.begin(), children.back());
   children.pop_back();
+  
+  title->text(to_string(counter++));
 }
 
 void
