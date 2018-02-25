@@ -24,7 +24,7 @@ std::shared_ptr<iOSMainThread> mainThread;
 // Declare C++ function
 extern FWApplication * applicationMain();
 
-@interface ViewController () <UIScrollViewDelegate, UITabBarDelegate, InAppPurchaseManagerDelegate, FWImageViewDelegate, UITextFieldDelegate, UIPickerViewDelegate, UIPickerViewDataSource>
+@interface ViewController () <UIScrollViewDelegate, UITabBarDelegate, InAppPurchaseManagerDelegate, FWImageViewDelegate, UITextFieldDelegate, UIPickerViewDelegate, UIPickerViewDataSource, UIGestureRecognizerDelegate>
 @property (nonatomic, strong) NSMutableDictionary *viewsDictionary;
 @property (nonatomic, strong) UIView *sideMenuView;
 @property (nonatomic, strong) UIView *backgroundOverlayView;
@@ -335,11 +335,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
 - (void)createButtonWithId:(int)viewId parentId:(int)parentId caption:(NSString *)caption
 {
-#if 0
-    UIButton *button = [[UIButton alloc] init];
-#else
     UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
-#endif
     button.tag = viewId;
     button.translatesAutoresizingMaskIntoConstraints = false;
     [button setTitle:caption forState:UIControlStateNormal];
@@ -505,11 +501,17 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     [self addToParent:parentId view:view];
 
     UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(viewTapped:)];
+    tapGestureRecognizer.delegate = self;
     [view addGestureRecognizer:tapGestureRecognizer];
-#if 0
-    [view addTarget:self action:@selector(viewTouchDown:) forControlEvents:UIControlEventTouchDown];
-    [view addTarget:self action:@selector(viewTouchUp:) forControlEvents:UIControlEventTouchUpInside|UIControlEventTouchUpOutside];
-#endif
+    
+    UILongPressGestureRecognizer *longPressGestureRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(viewTouched:)];
+    longPressGestureRecognizer.minimumPressDuration = 0;
+    longPressGestureRecognizer.delegate = self;
+    [view addGestureRecognizer:longPressGestureRecognizer];
+}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer: (UIGestureRecognizer *)otherGestureRecognizer {
+    return YES;
 }
 
 - (void)createNavigationBar:(int)viewId parentId:(int)parentId
@@ -989,6 +991,16 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     int viewId = (int)gesture.view.tag;
     NSLog(@"VIEW TAPPED: viewId = %d", viewId);
     [self sendIntValue:viewId value:1];
+}
+
+- (void)viewTouched:(UILongPressGestureRecognizer *)gesture
+{
+    ViewManager * viewManager = [self getViewManager:(int)gesture.view.tag];
+    if (gesture.state == UIGestureRecognizerStateBegan) {
+        [viewManager switchStyle:SelectorActive];
+    } else if (gesture.state == UIGestureRecognizerStateEnded) {
+        [viewManager switchStyle:SelectorNormal];
+    }
 }
 
 - (void)addToParent:(int)parentId view:(UIView*)view
