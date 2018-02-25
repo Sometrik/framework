@@ -343,6 +343,8 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     button.translatesAutoresizingMaskIntoConstraints = false;
     [button setTitle:caption forState:UIControlStateNormal];
     [button addTarget:self action:@selector(buttonPushed:) forControlEvents:UIControlEventTouchUpInside];
+    [button addTarget:self action:@selector(buttonTouchDown:) forControlEvents:UIControlEventTouchDown];
+    [button addTarget:self action:@selector(buttonTouchUp:) forControlEvents:UIControlEventTouchUpInside|UIControlEventTouchUpOutside];
     [self addView:button withId:viewId];
     [self addToParent:parentId view:button];
 }
@@ -350,9 +352,19 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 - (void)buttonPushed:(UIButton *)sender
 {
     int viewId = (int)sender.tag;
-    NSLog(@"viewId = %d", viewId);
-    NSLog(@"buttonTitle = %@", sender.titleLabel.text);
     [self sendIntValue:viewId value:viewId];
+}
+
+- (void)buttonTouchDown:(UIButton *)sender
+{
+    ViewManager * viewManager = [self getViewManager:(int)sender.tag];
+    [viewManager switchStyle:SelectorActive];
+}
+
+- (void)buttonTouchUp:(UIButton *)sender
+{
+    ViewManager * viewManager = [self getViewManager:(int)sender.tag];
+    [viewManager switchStyle:SelectorNormal];
 }
 
 - (void)createSwitchWithId:(int)viewId parentId:(int)parentId
@@ -493,6 +505,10 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
     UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(viewTapped:)];
     [view addGestureRecognizer:tapGestureRecognizer];
+#if 0
+    [view addTarget:self action:@selector(viewTouchDown:) forControlEvents:UIControlEventTouchDown];
+    [view addTarget:self action:@selector(viewTouchUp:) forControlEvents:UIControlEventTouchUpInside|UIControlEventTouchUpOutside];
+#endif
 }
 
 - (void)createNavigationBar:(int)viewId parentId:(int)parentId
