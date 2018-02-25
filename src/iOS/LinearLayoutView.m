@@ -228,8 +228,7 @@
 
 - (void)addSubview:(UIView *)view {
     [super addSubview:view];
-    [self setNeedsLayout];
-    [self.superview setNeedsLayout];
+    [self relayoutAll];
 }
 
 - (int)calcIntrinsicWidth:(UIView *)view {
@@ -377,7 +376,7 @@
     
     [item.view removeFromSuperview];
     [_items removeObject:item];
-    [self.superview setNeedsLayout];
+    [self relayoutAll];
 }
 
 - (void)removeAllItems {
@@ -386,7 +385,15 @@
         [item.view removeFromSuperview];
     }
     [self.items removeAllObjects];
-    [self.superview setNeedsLayout];
+    [self relayoutAll];
+}
+
+- (void)relayoutAll {
+    UIView * view = self;
+    while (view != nil && ([view isKindOfClass:FrameLayoutView.class] || [view isKindOfClass:LinearLayoutView.class])) {
+        [view setNeedsLayout];
+        view = view.superview;
+    }
 }
 
 - (void)insertItem:(LayoutParams *)newItem beforeItem:(LayoutParams *)existingItem {
