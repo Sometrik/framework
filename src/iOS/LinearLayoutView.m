@@ -377,6 +377,7 @@
     
     [item.view removeFromSuperview];
     [_items removeObject:item];
+    [self.superview setNeedsLayout];
 }
 
 - (void)removeAllItems {
@@ -385,6 +386,7 @@
         [item.view removeFromSuperview];
     }
     [self.items removeAllObjects];
+    [self.superview setNeedsLayout];
 }
 
 - (void)insertItem:(LayoutParams *)newItem beforeItem:(LayoutParams *)existingItem {
