@@ -7,7 +7,9 @@
 @property NSInteger fontWeight;
 @property float alpha;
 @property float zoom;
-
+@property float shadow;
+@property UIColor * color;
+@property UIColor * backgroundColor;
 @property CAGradientLayer *gradient;
 
 @end
