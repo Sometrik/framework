@@ -796,7 +796,9 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     FWPicker * view = [[FWPicker alloc] init];
     view.tag = viewId;
     view.translatesAutoresizingMaskIntoConstraints = false;
-    [view setTitle:@"blahblahblahblah" forState:UIControlStateNormal];    
+
+    UIImage *image = [self loadImage:@"icons_arrow-down.png"];
+    [view setImage:image forState:UIControlStateNormal];
 
     [self addView:view withId:viewId];
     [self addToParent:parentId view:view];    
