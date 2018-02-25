@@ -58,10 +58,9 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
     } else if ([self.view isKindOfClass:UIPageControl.class]) {
         UIPageControl * pageControl = (UIPageControl *)self.view;
         pageControl.currentPage = value;
-    } else if ([self.view isKindOfClass:UIPickerView.class]) {
-    	UIPickerView * picker = (UIPickerView *)self.view;
-        [picker reloadAllComponents];
-    	[picker selectRow:value inComponent:0 animated:NO];
+    } else if ([self.view isKindOfClass:FWPicker.class]) {
+    	FWPicker * picker = (FWPicker *)self.view;
+    	[picker setSelection:value];
     }
 }
 
