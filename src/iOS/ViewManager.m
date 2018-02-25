@@ -2,6 +2,7 @@
 
 #import "FWImageView.h"
 #import "PaddedLabel.h"
+#import "FWPicker.h"
 
 LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, CGFloat right) {
     LinearLayoutItemMargin margin;
