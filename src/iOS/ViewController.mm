@@ -10,6 +10,7 @@
 #import "LinearLayoutView.h"
 #import "FrameLayoutView.h"
 #import "FWScrollView.h"
+#import "FWPicker.h"
 
 #import <WebKit/WebKit.h>
 
@@ -36,7 +37,7 @@ extern FWApplication * applicationMain();
 @property (nonatomic, assign) BOOL sideMenuPanned;
 @property (nonatomic, strong) WKWebView *webView;
 @property (nonatomic, strong) InAppPurchaseManager *inAppPurchaseManager;
-@property (nonatomic, strong) NSString * currentTitle;
+@property (nonatomic, assign) NSString * currentTitle;
 @end
 
 static const NSTimeInterval animationDuration = 0.4;
@@ -530,7 +531,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 #if 0
     UIBarButtonItem *backButton = [[UIBarButtonItem alloc] initWithTitle:@"Back" style:UIBarButtonItemStylePlain target:self action:@selector(backButtonTapped)];
 #else
-    UIImage *image = [UIImage imageNamed:@"icons_hamburger-menu.png"];
+    UIImage *image = [self loadImage:@"icons_hamburger-menu.png"];
     UIBarButtonItem *backButton = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(backButtonTapped)];
 #endif
     navItem.leftBarButtonItem = backButton;
@@ -792,43 +793,73 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
 - (void)createPickerWithId:(int)viewId parentId:(int)parentId
 {
-    UIPickerView * view = [UIPickerView new];
+    FWPicker * view = [[FWPicker alloc] init];
     view.tag = viewId;
+    view.translatesAutoresizingMaskIntoConstraints = false;
+    [view setTitle:@"blahblahblahblah" forState:UIControlStateNormal];    
+
+    [self addView:view withId:viewId];
+    [self addToParent:parentId view:view];    
+
+    [view addTarget:self action:@selector(showPicker:) forControlEvents:UIControlEventTouchUpInside];
+}
+
+- (void)showPicker:(UIButton *)sender {   
+    UIView * pickerHolder = [[UIView alloc] init];
+    pickerHolder.translatesAutoresizingMaskIntoConstraints = false;
+    [self.view addSubview:pickerHolder];
+
+    NSLayoutConstraint *topConstraint0 = [NSLayoutConstraint constraintWithItem:pickerHolder attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:pickerHolder.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
+    NSLayoutConstraint *leftConstraint0 = [NSLayoutConstraint constraintWithItem:pickerHolder attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:pickerHolder.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
+    NSLayoutConstraint *rightConstraint0 = [NSLayoutConstraint constraintWithItem:pickerHolder attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:pickerHolder.superview attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
+    NSLayoutConstraint *bottomConstraint0 = [NSLayoutConstraint constraintWithItem:pickerHolder attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:pickerHolder.superview attribute:NSLayoutAttributeBottom multiplier:1.0f constant:0];
+    [pickerHolder.superview addConstraints:@[topConstraint0, leftConstraint0, rightConstraint0, bottomConstraint0]];
+
+    UIView * pickerBackground = [self createBackgroundOverlay:pickerHolder];
+    // dialogBackground.tag = viewId;
+    pickerBackground.alpha = backgroundOverlayViewAlpha;
+
+    UIPickerView * view = [UIPickerView new];
     view.delegate = self;
     view.dataSource = self;
     view.showsSelectionIndicator = YES;
     view.translatesAutoresizingMaskIntoConstraints = false;
-    [self addView:view withId:viewId];
-    [self addToParent:parentId view:view];    
-}
+    view.tag = sender.tag;
+    view.layer.backgroundColor = UIColor.whiteColor.CGColor;
+    [pickerHolder addSubview:view];
+
+    NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeBottom multiplier:0.6f constant:0];
+    NSLayoutConstraint *leftConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
+    NSLayoutConstraint *rightConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
+    NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeBottom multiplier:1.0f constant:0];
+    [view.superview addConstraints:@[topConstraint, leftConstraint, rightConstraint, bottomConstraint]];
+
+    mainThread->startModal();
+} 
 
 - (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView {
     return 1;
 }
 
 - (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component {
-    return 3;
+    FWPicker * picker = (FWPicker *)[self viewForId:pickerView.tag];
+    return [picker.options count];
 }
 
 - (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component {
-    NSString * title = nil;
-    switch(row) {
-            case 0:
-                title = @"a";
-                break;
-            case 1:
-                title = @"b";
-                break;
-            case 2:
-                title = @"c";
-                break;
-    }
-    return title;
+    FWPicker * picker = (FWPicker *)[self viewForId:pickerView.tag];
+    return picker.options[row];
 }
 
 -(void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component
 {
-	NSLog(@"picker selected %d", row);
+    FWPicker * picker = (FWPicker *)[self viewForId:pickerView.tag];
+    [picker setSelection:row];
+
+    [pickerView.superview removeFromSuperview];
+
+    NSLog(@"picker selected %d", row);
+    mainThread->endModal(row);
 }
 
 - (void)createActionSheetWithId:(int)viewId parentId:(int)parentId title:(NSString *)title
@@ -1123,8 +1154,9 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
         [alertController addAction:[UIAlertAction actionWithTitle:title style:(optionId == 0 ? UIAlertActionStyleCancel : UIAlertActionStyleDefault) handler:^(UIAlertAction *action) {
             mainThread->endModal(optionId);
         }]];
-    } else if ([view isKindOfClass:UIPickerView.class]) {
-    	
+    } else if ([view isKindOfClass:FWPicker.class]) {
+	FWPicker * picker = (FWPicker *)view;
+	[picker addOption:title];
     }
 }
 
@@ -1191,6 +1223,16 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     if (self.navBar != nil) {
         self.navBar.items[0].title = title;
     }
+}
+
+- (UIImage *)loadImage:(NSString *)filename {
+    NSString *maskFilePath = [[NSBundle mainBundle] pathForResource:filename ofType:nil];
+    CGDataProviderRef dataProvider = CGDataProviderCreateWithFilename([maskFilePath UTF8String]);
+    CGImageRef imageRef = CGImageCreateWithPNGDataProvider(dataProvider, NULL, true, kCGRenderingIntentDefault);
+    UIImage * image = [UIImage imageWithCGImage:imageRef scale:3.0f orientation:UIImageOrientationUp];
+    CGImageRelease(imageRef);
+    CGDataProviderRelease(dataProvider);
+    return image;
 }
 
 #pragma mark - In-App Purchase stuff
