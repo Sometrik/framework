@@ -328,7 +328,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     label.numberOfLines = 0; // as many lines as needed
     label.lineBreakMode = NSLineBreakByWordWrapping;
     label.translatesAutoresizingMaskIntoConstraints = false;
-    label.preferredMaxLayoutWidth = self.view.bounds.size.width;
+    label.preferredMaxLayoutWidth = self.view.frame.size.width;
     [self addView:label withId:viewId];
     [self addToParent:parentId view:label];
 }
