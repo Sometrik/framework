@@ -82,23 +82,46 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
 }
 
 - (void)setStyle:(NSString *)key value:(NSString *)value selector:(StyleSelector)selector {
-    if (selector != SelectorNormal && ![self.view isKindOfClass:UIButton.class]) {
+    ViewStyle * targetStyle = [self getStyleForSelector:selector];
+
+    if (targetStyle == nil) {
         return;
     }
+    
+    if ([key isEqualToString:@"color"]) {
+        targetStyle.color = [self colorFromString:value];
+    } else if ([key isEqualToString:@"opacity"]) {
+        targetStyle.alpha = (float)[value floatValue];
+    } else if ([key isEqualToString:@"zoom"]) {
+        targetStyle.zoom = (float)[value floatValue];
+    } else if ([key isEqualToString:@"font-size"]) {
+        targetStyle.fontSize = (int)[value integerValue];
+        if ([self.view isKindOfClass:UIView.class]) {
+            UIView * view = (UIView*)self.view;
+            [view.superview setNeedsLayout];
+        }
+    } else if ([key isEqualToString:@"font-weight"]) {
+        if ([value isEqualToString:@"bold"]) {
+            targetStyle.fontWeight = 800;
+        } else {
+            targetStyle.fontWeight = (int)[value integerValue];
+        }
+    } else if ([key isEqualToString:@"font-style"]) {
+    } else if ([key isEqualToString:@"font-family"]) {
+    } else if ([key isEqualToString:@"background-color"]) {
+        targetStyle.backgroundColor = [self colorFromString:value];
+    }
 
-    ViewStyle * targetStyle = self.normalStyle;
+    if (selector != SelectorNormal) {
+        return;
+    }
 
     BOOL padding_applied = NO;
 
     if ([self.view isKindOfClass:PaddedLabel.class]) {
         PaddedLabel *label = (PaddedLabel*)self.view;
     
-        if ([key isEqualToString:@"font-size"]) {
-            targetStyle.fontSize = (int)[value integerValue];
-            [label.superview setNeedsLayout];
-        } else if ([key isEqualToString:@"color"]) {
-            label.textColor = [self colorFromString:value];
-        } else if ([key isEqualToString:@"text-align"]) {
+        if ([key isEqualToString:@"text-align"]) {
             if ([value isEqualToString:@"center"]) {
                 label.textAlignment = NSTextAlignmentCenter;
             } else if ([value isEqualToString:@"right"]) {
@@ -128,15 +151,6 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
             }
         } else if ([key isEqualToString:@"max-lines"]) {
             label.numberOfLines = (int)[value integerValue];
-        } else if ([key isEqualToString:@"font-weight"]) {
-            if ([value isEqualToString:@"bold"]) {
-                targetStyle.fontWeight = 800;
-            } else {
-                targetStyle.fontWeight = (int)[value integerValue];
-            }
-        } else if ([key isEqualToString:@"font-style"]) {
-        } else if ([key isEqualToString:@"font-family"]) {
-            
         } else if ([key isEqualToString:@"line-spacing"]) {
 
         } else if ([key isEqualToString:@"padding"]) {
@@ -170,28 +184,13 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
         }
     } else if ([self.view isKindOfClass:UIButton.class]) {
         UIButton *button = (UIButton *)self.view;
-        UIControlState state;
-        if (selector == SelectorNormal) {
-            state = UIControlStateNormal;
-        } else if (selector == SelectorActive) {
-            state = UIControlStateHighlighted;
-        } else if (selector == SelectorDisabled) {
-            state = UIControlStateDisabled;
-        } else if (selector == SelectorSelected) {
-            state = UIControlStateSelected;
-        } else {
-            return;
-        }
+        UIControlState state = UIControlStateNormal;
 	
         if ([key isEqualToString:@"icon"]) {
             UIImage * icon = [self loadImage:value];
             [button setImage:icon forState:state];
         } else if ([key isEqualToString:@"icon-attachment"]) {
             
-        } else if ([key isEqualToString:@"color"]) {
-            [button setTitleColor:[self colorFromString:value] forState:state];
-        } else if ([key isEqualToString:@"font-size"]) {
-            targetStyle.fontSize = (int)[value integerValue];
         } else if ([key isEqualToString:@"padding"]) {
             int v = (int)[value integerValue];
             button.contentEdgeInsets = UIEdgeInsetsMake(v, v, v, v);
@@ -235,9 +234,7 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
 
     if ([self.view isKindOfClass:UIView.class]) {
         UIView * view = (UIView *)self.view;
-        if ([key isEqualToString:@"background-color"]) {
-            view.layer.backgroundColor = [self colorFromString:value].CGColor;
-        } else if ([key isEqualToString:@"background"]) {
+        if ([key isEqualToString:@"background"]) {
             NSRange searchedRange = NSMakeRange(0, [value length]);
             NSString * pattern = @"^linear-gradient\\(\\s*([^, ]+),\\s*([^, ]+)\\s*\\)$";
             NSError * error = nil;
@@ -259,14 +256,10 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
                     [targetStyle.gradient removeFromSuperlayer];
                     targetStyle.gradient = nil;
                 }
-                view.layer.backgroundColor = [self colorFromString:value].CGColor;
+                targetStyle.backgroundColor = [self colorFromString:value];
             }
         } else if ([key isEqualToString:@"shadow"]) {
-            view.layer.shadowOpacity = 0.5;
-            // self.view.layer.masksToBounds = NO;
-            view.layer.shadowRadius = (float)[value floatValue];
-            view.layer.shadowOffset = CGSizeMake(0, 0);
-            view.layer.masksToBounds = FALSE;
+	        targetStyle.shadow = (float)[value floatValue];
         } else if ([key isEqualToString:@"width"]) {
             int w;
             if ([value isEqualToString:@"match-parent"]) {
@@ -363,8 +356,6 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
             if (self.layoutParams != nil) {
                 self.layoutParams.weight = (int)[value integerValue];
             }
-        } else if ([key isEqualToString:@"opacity"]) {
-            targetStyle.alpha = (float)[value floatValue];
         } else if ([key isEqualToString:@"gravity"]) {
             if (self.layoutParams != nil) {
                 if ([value isEqualToString:@"bottom"]) {
@@ -386,8 +377,6 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
                     self.layoutParams.horizontalAlignment = LinearLayoutItemHorizontalAlignmentLeft;
                 }
             }
-        } else if ([key isEqualToString:@"zoom"]) {
-            targetStyle.zoom = (float)[value floatValue];
         } else if (!padding_applied && self.layoutParams != nil) {
             if ([key isEqualToString:@"padding"]) {
                 int v = (int)[value integerValue];
@@ -431,7 +420,7 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
     NSString *maskFilePath = [[NSBundle mainBundle] pathForResource:filename ofType:nil];
     CGDataProviderRef dataProvider = CGDataProviderCreateWithFilename([maskFilePath UTF8String]);
     CGImageRef imageRef = CGImageCreateWithPNGDataProvider(dataProvider, NULL, true, kCGRenderingIntentDefault);
-    UIImage * image = [UIImage imageWithCGImage:imageRef scale:2.0f orientation:UIImageOrientationUp];
+    UIImage * image = [UIImage imageWithCGImage:imageRef scale:3.0f orientation:UIImageOrientationUp];
     CGImageRelease(imageRef);
     CGDataProviderRelease(dataProvider);
     return image;
@@ -452,6 +441,22 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
         } else {
             return [UIColor colorWithRed:((rgbValue & 0xFF0000) >> 16)/255.0 green:((rgbValue & 0xFF00) >> 8)/255.0 blue:(rgbValue & 0xFF)/255.0 alpha:((rgbValue & 0xFF000000) >> 24)/255.0];
         }
+    }
+}
+
+- (ViewStyle*)getStyleForSelector:(StyleSelector)selector {
+    switch (selector) {
+    case SelectorNormal: return self.normalStyle;
+    case SelectorActive: return self.activeStyle;
+    }
+    return nil;
+}
+
+- (void)switchStyle:(StyleSelector)selector {
+    ViewStyle * newStyle = [self getStyleForSelector:selector];
+    if (newStyle != nil && newStyle != self.currentStyle) {
+        self.currentStyle = newStyle;
+        [self applyStyles:YES];
     }
 }
 
