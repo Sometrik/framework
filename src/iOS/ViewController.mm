@@ -423,7 +423,9 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
     if (!scrollView.pagingEnabled) { // Do nothing if scrollView has paging enabled
-        NSLog(@"scrollView scrolled");
+	float diff = scrollView.contentSize.height - (scrollView.frame.size.height + scrollView.contentOffset.y);
+        NSLog(@"scrollView scrolled, diff = %f", diff);
+        mainThread->sendScrollChangedEvent(scrollView.tag, scrollView.contentOffset.y, (int)diff, scrollView.frame.size.height);
     }
 }
 
@@ -1062,23 +1064,18 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             heightConstraint.priority = 999 - viewManager.level;
             [view.superview addConstraints:@[topConstraint, leftConstraint, widthConstraint, heightConstraint]];
         } else {
-#if 1
-            NSLayoutConstraint * topConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
-            NSLayoutConstraint * leftConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
-            NSLayoutConstraint * widthConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeWidth multiplier:1.0f constant:0];
-#if 1
-            NSLayoutConstraint * heightConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:0.0f constant:4000];
-#else
-            NSLayoutConstraint * heightConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeHeight multiplier:1.0f constant:0];
-#endif
+	    FWScrollView * fwScrollView = (FWScrollView*)scrollView;
+            fwScrollView.topConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
+            fwScrollView.leftConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
+            fwScrollView.widthConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeWidth multiplier:1.0f constant:0];
+            fwScrollView.heightConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:0.0f constant:4000];
 
-            topConstraint.priority = 999 - viewManager.level;
-            leftConstraint.priority = 999 - viewManager.level;
-            widthConstraint.priority = 999 - viewManager.level;
-            heightConstraint.priority = 999 - viewManager.level;
+            fwScrollView.topConstraint.priority = 999 - viewManager.level;
+            fwScrollView.leftConstraint.priority = 999 - viewManager.level;
+            fwScrollView.widthConstraint.priority = 999 - viewManager.level;
+            fwScrollView.heightConstraint.priority = 999 - viewManager.level;
 
-            [view.superview addConstraints:@[topConstraint, leftConstraint, widthConstraint, heightConstraint]];
-#endif
+            [view.superview addConstraints:@[fwScrollView.topConstraint, fwScrollView.leftConstraint, fwScrollView.widthConstraint, fwScrollView.heightConstraint]];
         }
     } else {
         [parentView addSubview:view];
