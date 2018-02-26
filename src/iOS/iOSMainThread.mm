@@ -5,6 +5,7 @@
 #include <ImageRequestEvent.h>
 #include <FWViewBase.h>
 #include <VisibilityEvent.h>
+#include <ScrollChangedEvent.h>
 
 #include "iOSThread.h"
 
@@ -424,6 +425,12 @@ iOSMainThread::sendIntValue(int viewId, int value) {
 void
 iOSMainThread::sendVisibilityEvent(int viewId, bool visibility) {
     VisibilityEvent ev(visibility);
+    Element::postEventToElement(viewId, ev);
+}
+
+void
+iOSMainThread::sendScrollChangedEvent(int viewId, int scrollPos, int scrollRem, int height) {
+    ScrollChangedEvent ev(scrollPos, scrollRem, height);
     Element::postEventToElement(viewId, ev);
 }
 
