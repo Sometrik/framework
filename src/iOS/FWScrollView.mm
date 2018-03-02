@@ -29,17 +29,21 @@
 }
 
 - (void)layoutSubviews {
-    int height = 4000;
-    if ([[self subviews] count] >= 1) {
-        UIView * view = [[self subviews] lastObject];
-        // height = [self calcIntrinsicHeight:view];
+    int width = self.frame.size.width;
+    int height = 0;
+
+    for (UIView * view in [self subviews]) {
+        if ([view isKindOfClass:UIImageView.class]) continue; // ignore scroll indicators
+        height = [self calcIntrinsicHeight:view];
+        break;
     }
 
+    self.widthConstraint.constant = width;
     self.heightConstraint.constant = height;
 
     [super layoutSubviews];
 
-    self.contentSize = CGSizeMake(self.superview.frame.size.width, height);
+    self.contentSize = CGSizeMake(width, height);
 }
 
 - (int)calcIntrinsicHeight:(UIView *)view {
