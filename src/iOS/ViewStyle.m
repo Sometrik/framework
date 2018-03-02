@@ -45,15 +45,30 @@
     }
 
     if (animate) {
-        [UIView animateWithDuration:0.5 animations:^{
-            view.alpha = self.alpha;
+        if (self.shadow > 0) {
+#if 1
+            CABasicAnimation* animation = [CABasicAnimation animationWithKeyPath:@"shadowRadius"];
+            animation.fromValue = [NSNumber numberWithFloat:view.layer.shadowRadius];
+            animation.toValue = [NSNumber numberWithFloat:self.shadow];
+            animation.duration = 0.3;
+            [view.layer addAnimation:animation forKey:@"shadowRadius"];
             view.layer.shadowRadius = self.shadow;
+#else
+            [CATransaction begin];
+            [CATransaction setAnimationDuration:0.3];
+            [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut] ];
+            view.layer.shadowRadius = self.shadow;
+            [CATransaction commit];
+#endif
+        }
+        [UIView animateWithDuration:0.3 animations:^{
+            view.alpha = self.alpha;
             view.transform = CGAffineTransformMakeScale(self.zoom, self.zoom);
         }];
     } else {
         view.alpha = self.alpha;
-        view.layer.shadowRadius = self.shadow;
         view.transform = CGAffineTransformMakeScale(self.zoom, self.zoom);
+        view.layer.shadowRadius = self.shadow;
     }
 }
 
