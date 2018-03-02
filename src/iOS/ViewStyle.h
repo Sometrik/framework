@@ -11,5 +11,12 @@
 @property UIColor * color;
 @property UIColor * backgroundColor;
 @property CAGradientLayer *gradient;
+@property int paddingTop;
+@property int paddingRight;
+@property int paddingBottom;
+@property int paddingLeft;
+@property int borderRadius;
+@property int borderWidth;
+@property UIColor * borderColor;
 
 @end

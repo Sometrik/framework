@@ -90,6 +90,8 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
     if (targetStyle == nil) {
         return;
     }
+
+    BOOL hasNativePadding = [self.view isKindOfClass:UIButton.class] || [self.view isKindOfClass:PaddedLabel.class];
     
     if ([key isEqualToString:@"color"]) {
         targetStyle.color = [self colorFromString:value];
@@ -113,13 +115,52 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
     } else if ([key isEqualToString:@"font-family"]) {
     } else if ([key isEqualToString:@"background-color"]) {
         targetStyle.backgroundColor = [self colorFromString:value];
+    } else if ([key isEqualToString:@"padding"]) {
+        int v = (int)[value integerValue];
+        targetStyle.paddingTop = v;
+        targetStyle.paddingRight = v;
+        targetStyle.paddingBottom = v;
+        targetStyle.paddingLeft = v;
+    } else if ([key isEqualToString:@"padding-top"]) {
+        targetStyle.paddingTop = (int)[value integerValue];
+    } else if ([key isEqualToString:@"padding-right"]) {
+        targetStyle.paddingRight = (int)[value integerValue];
+    } else if ([key isEqualToString:@"padding-bottom"]) {
+        targetStyle.paddingBottom = (int)[value integerValue];
+    } else if ([key isEqualToString:@"padding-left"]) {
+        targetStyle.paddingLeft = (int)[value integerValue];
+    } else if ([key isEqualToString:@"shadow"]) {
+        targetStyle.shadow = (float)[value floatValue];
+    } else if ([key isEqualToString:@"border-radius"]) {
+        NSArray *array = [value componentsSeparatedByString:@" "];
+        if ([array count] >= 1) {
+            targetStyle.borderRadius = (int)[array[0] integerValue];
+        }
+    } else if ([key isEqualToString:@"border"]) {
+        if ([value isEqualToString:@"none"] || ![value length]) {
+            targetStyle.borderWidth = 0;
+        } else {
+            NSArray *array = [value componentsSeparatedByString:@" "];
+            if ([array count] <= 1) {
+                targetStyle.borderColor = [self colorFromString:value];
+                targetStyle.borderWidth = 1.0f;
+            } else {
+                targetStyle.borderWidth = (int)[array[0] integerValue];
+                if ([array count] >= 2) {
+                    // parse border style
+                }
+                if ([array count] >= 3) {
+                    targetStyle.borderColor = [self colorFromString:array[2]];
+                } else {
+                    targetStyle.borderColor = UIColor.blackColor;
+                }
+            }
+        }
     }
 
     if (selector != SelectorNormal) {
         return;
     }
-
-    BOOL padding_applied = NO;
 
     if ([self.view isKindOfClass:PaddedLabel.class]) {
         PaddedLabel *label = (PaddedLabel*)self.view;
@@ -155,35 +196,6 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
         } else if ([key isEqualToString:@"max-lines"]) {
             label.numberOfLines = (int)[value integerValue];
         } else if ([key isEqualToString:@"line-spacing"]) {
-
-        } else if ([key isEqualToString:@"padding"]) {
-            int v = (int)[value integerValue];
-            label.edgeInsets = UIEdgeInsetsMake(v, v, v, v);
-            padding_applied = YES;
-        } else if ([key isEqualToString:@"padding-top"]) {
-            label.edgeInsets = UIEdgeInsetsMake((int)[value integerValue],
-                                                label.edgeInsets.left,
-                                                label.edgeInsets.bottom,
-                                                label.edgeInsets.right);
-            padding_applied = YES;
-        } else if ([key isEqualToString:@"padding-right"]) {
-            label.edgeInsets = UIEdgeInsetsMake(label.edgeInsets.top,
-                                                label.edgeInsets.left,
-                                                label.edgeInsets.bottom,
-                                                (int)[value integerValue]);
-            padding_applied = YES;
-        } else if ([key isEqualToString:@"padding-bottom"]) {
-            label.edgeInsets = UIEdgeInsetsMake(label.edgeInsets.top,
-                                                label.edgeInsets.left,
-                                                (int)[value integerValue],
-                                                label.edgeInsets.right);
-            padding_applied = YES;
-        } else if ([key isEqualToString:@"padding-left"]) {
-            label.edgeInsets = UIEdgeInsetsMake(label.edgeInsets.top,
-                                                (int)[value integerValue],
-                                                label.edgeInsets.bottom,
-                                                label.edgeInsets.right);
-            padding_applied = YES;
         }
     } else if ([self.view isKindOfClass:UIButton.class]) {
         UIButton *button = (UIButton *)self.view;
@@ -193,35 +205,6 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
             UIImage * icon = [self loadImage:value];
             [button setImage:icon forState:state];
         } else if ([key isEqualToString:@"icon-attachment"]) {
-            
-        } else if ([key isEqualToString:@"padding"]) {
-            int v = (int)[value integerValue];
-            button.contentEdgeInsets = UIEdgeInsetsMake(v, v, v, v);
-            padding_applied = YES;
-        } else if ([key isEqualToString:@"padding-top"]) {
-            button.contentEdgeInsets = UIEdgeInsetsMake((int)[value integerValue],
-                                                        button.contentEdgeInsets.left,
-                                                        button.contentEdgeInsets.bottom,
-                                                        button.contentEdgeInsets.right);
-            padding_applied = YES;
-        } else if ([key isEqualToString:@"padding-right"]) {
-            button.contentEdgeInsets = UIEdgeInsetsMake(button.contentEdgeInsets.top,
-                                                        button.contentEdgeInsets.left,
-                                                        button.contentEdgeInsets.bottom,
-                                                        (int)[value integerValue]);
-            padding_applied = YES;
-        } else if ([key isEqualToString:@"padding-bottom"]) {
-            button.contentEdgeInsets = UIEdgeInsetsMake(button.contentEdgeInsets.top,
-                                                        button.contentEdgeInsets.left,
-                                                        (int)[value integerValue],
-                                                        button.contentEdgeInsets.right);
-            padding_applied = YES;
-        } else if ([key isEqualToString:@"padding-left"]) {
-            button.contentEdgeInsets = UIEdgeInsetsMake(button.contentEdgeInsets.top,
-                                                        (int)[value integerValue],
-                                                        button.contentEdgeInsets.bottom,
-                                                        button.contentEdgeInsets.right);
-            padding_applied = YES;
         }
     } else if ([self.view isKindOfClass:UITextField.class]) {
         UITextField *textField = (UITextField *)self.view;
@@ -261,8 +244,6 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
                 }
                 targetStyle.backgroundColor = [self colorFromString:value];
             }
-        } else if ([key isEqualToString:@"shadow"]) {
-	        targetStyle.shadow = (float)[value floatValue];
         } else if ([key isEqualToString:@"width"]) {
             int w;
             if ([value isEqualToString:@"match-parent"]) {
@@ -288,35 +269,6 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
             if (self.layoutParams != nil) {
                 self.layoutParams.fixedHeight = h;
                 [view.superview setNeedsLayout];
-            }
-        } else if ([key isEqualToString:@"border-radius"]) {
-            NSArray *array = [value componentsSeparatedByString:@" "];
-            if ([array count] >= 1) {
-                int r = (int)[array[0] integerValue];
-                view.layer.cornerRadius = r;
-                if ([view isKindOfClass:UIImageView.class]) {
-                    view.layer.masksToBounds = r > 0;
-                }
-            }
-        } else if ([key isEqualToString:@"border"]) {
-            if ([value isEqualToString:@"none"] || ![value length]) {
-                view.layer.borderWidth = 0.0f;
-            } else {
-                NSArray *array = [value componentsSeparatedByString:@" "];
-                if ([array count] <= 1) {
-                    view.layer.borderColor = [self colorFromString:value].CGColor;
-                    view.layer.borderWidth = 1.0f;
-                } else {
-                    view.layer.borderWidth = (int)[array[0] integerValue];
-                    if ([array count] >= 2) {
-                        // parse border style
-                    }
-                    if ([array count] >= 3) {
-                        view.layer.borderColor = [self colorFromString:array[2]].CGColor;
-                    } else {
-                        view.layer.borderColor = UIColor.blackColor.CGColor;
-                    }
-                }
             }
         } else if ([key isEqualToString:@"margin"]) {
             int v = (int)[value integerValue];
@@ -380,7 +332,7 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
                     self.layoutParams.horizontalAlignment = LinearLayoutItemHorizontalAlignmentLeft;
                 }
             }
-        } else if (!padding_applied && self.layoutParams != nil) {
+        } else if (!hasNativePadding && self.layoutParams != nil) {
             if ([key isEqualToString:@"padding"]) {
                 int v = (int)[value integerValue];
                 self.layoutParams.padding = LLMakeMargin(v, v, v, v);

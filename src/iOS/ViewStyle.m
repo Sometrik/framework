@@ -14,6 +14,12 @@
         self.shadow = 0;
         self.backgroundColor = nil;
         self.gradient = nil;
+        self.paddingTop = 0;
+        self.paddingRight = 0;
+        self.paddingBottom = 0;
+        self.paddingLeft = 0;
+        self.borderRadius = -1;
+        self.borderWidth = -1;
     }
     return self;
 }
@@ -25,16 +31,33 @@
             label.font = [self createFont:label.font];
         }
         if (self.color != nil) label.textColor = self.color;
+        label.edgeInsets = UIEdgeInsetsMake(self.paddingTop, self.paddingLeft, self.paddingBottom, self.paddingRight);
     } else if ([view isKindOfClass:UIButton.class]) {
         UIButton * button = (UIButton*)view;
         if ([self isFontDefined]) {
             button.titleLabel.font = [self createFont:button.titleLabel.font];
         }
         if (self.color != nil) [button setTitleColor:self.color forState:UIControlStateNormal];
+        button.contentEdgeInsets = UIEdgeInsetsMake(self.paddingTop, self.paddingLeft, self.paddingBottom, self.paddingRight);
     }
     
     if (self.backgroundColor != nil) {
         view.layer.backgroundColor = self.backgroundColor.CGColor;
+    }
+
+    if (self.borderRadius != -1) {
+        view.layer.cornerRadius = self.borderRadius;
+        if ([view isKindOfClass:UIImageView.class]) {
+            view.layer.masksToBounds = self.borderRadius > 0;
+        }
+    }
+
+    if (self.borderWidth != -1) {
+        view.layer.borderWidth = self.borderWidth;
+    }
+
+    if (self.borderColor != nil) {
+        view.layer.borderColor = self.borderColor.CGColor;
     }
 
     if (self.shadow > 0) {
