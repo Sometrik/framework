@@ -283,6 +283,8 @@
     item.heightConstraint.priority = 999 - item.level - 1;
     item.maxWidthConstraint.priority = 999 - item.level;
     item.maxHeightConstraint.priority = 999 - item.level;
+
+    [self relayoutAll];
 }
 
 - (void)removeItem:(LayoutParams *)item {
@@ -323,6 +325,7 @@
     NSUInteger index = [_items indexOfObject:existingItem];
     [_items insertObject:newItem atIndex:index];
     [self addSubview:newItem.view];
+    [self relayoutAll];
 }
 
 - (void)insertItem:(LayoutParams *)newItem afterItem:(LayoutParams *)existingItem {
@@ -338,6 +341,7 @@
     }
     
     [self addSubview:newItem.view];
+    [self relayoutAll];
 }
 
 - (void)insertItem:(LayoutParams *)newItem atIndex:(NSUInteger)index {
@@ -347,6 +351,7 @@
     
     [_items insertObject:newItem atIndex:index];
     [self addSubview:newItem.view];
+    [self relayoutAll];
 }
 
 - (void)moveItem:(LayoutParams *)movingItem beforeItem:(LayoutParams *)existingItem {
