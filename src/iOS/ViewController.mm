@@ -425,7 +425,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     if (!scrollView.pagingEnabled) { // Do nothing if scrollView has paging enabled
 	float diff = scrollView.contentSize.height - (scrollView.frame.size.height + scrollView.contentOffset.y);
         NSLog(@"scrollView scrolled, diff = %f", diff);
-        mainThread->sendScrollChangedEvent(scrollView.tag, scrollView.contentOffset.y, (int)diff, scrollView.frame.size.height);
+        mainThread->sendScrollChangedEvent(scrollView.tag, scrollView.contentOffset.y, (int)diff, scrollView.contentSize.height);
     }
 }
 
