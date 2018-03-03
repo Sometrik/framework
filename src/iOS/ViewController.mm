@@ -586,6 +586,9 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
         if (items != nil) {
             [items addObject:tabBarItem];
             [tabBar setItems:(NSArray *)items animated:false];
+            if ([items count] == 1) {
+                [tabBar setSelectedItem:tabBarItem];
+            }
         }
         [self addView:tabBarItem withId:viewId];
     }
