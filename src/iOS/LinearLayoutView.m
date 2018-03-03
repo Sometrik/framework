@@ -60,6 +60,7 @@
 
     CGFloat relativePosition = 0.0;
     CGFloat extraSpace = 0.0;
+    CGFloat totalWeight = 0.0;
 
     if (self.orientation == LinearLayoutViewOrientationVertical) {
         extraSpace = self.frame.size.height - paddingTop - paddingBottom;
@@ -88,15 +89,12 @@
             }
         }
         extraSpace -= size;
+	totalWeight += item.weight;
     }
 
     if (extraSpace < 0) {
         extraSpace = 0;
-    } else {
-        extraSpace /= [_items count];
     }
-
-    extraSpace = 0;
     
     for (LayoutParams *item in _items) {
         if (item.view.hidden) {
@@ -120,8 +118,15 @@
             minHeight = [self calcIntrinsicHeight:item.view] + item.padding.top + item.padding.bottom;
         }
 
+	CGFloat itemExtraSpace;
+	if (totalWeight > 0) {
+	    itemExtraSpace = item.weight * extraSpace / totalWeight;
+	} else {
+	    itemExtraSpace = extraSpace / [_items count];
+	}
+
         if (self.orientation == LinearLayoutViewOrientationHorizontal) {
-            minWidth += extraSpace;
+            minWidth += itemExtraSpace;
 
             startMargin = item.margin.left;
             endMargin = item.margin.right;
@@ -170,7 +175,7 @@
 
             currentDimension = minWidth;
         } else {           
-            minHeight += extraSpace;
+            minHeight += itemExtraSpace;
 
             startMargin = item.margin.top;
             endMargin = item.margin.bottom;
