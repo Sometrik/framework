@@ -1,6 +1,7 @@
 #import "LinearLayoutView.h"
 
 #import "FrameLayoutView.h"
+#import "FWScrollView.h"
 
 @interface LinearLayoutView()
 - (void)setup;
@@ -226,11 +227,6 @@
     }
 }
 
-- (void)addSubview:(UIView *)view {
-    [super addSubview:view];
-    [self relayoutAll];
-}
-
 - (int)calcIntrinsicWidth:(UIView *)view {
     if ([view isKindOfClass:LinearLayoutView.class]) {
         LinearLayoutView * child = (LinearLayoutView*)view;
@@ -367,6 +363,8 @@
     item.heightConstraint.priority = 999 - item.level - 1;
     item.maxWidthConstraint.priority = 999 - item.level;
     item.maxHeightConstraint.priority = 999 - item.level;
+
+    [self relayoutAll];
 }
 
 - (void)removeItem:(LayoutParams *)item {
@@ -390,11 +388,13 @@
 
 - (void)relayoutAll {
     UIView * view = self;
-    while (view != nil && ([view isKindOfClass:FrameLayoutView.class] || [view isKindOfClass:LinearLayoutView.class] || [view isKindOfClass:UIScrollView.class])) {
+    while (view != nil && ([view isKindOfClass:FrameLayoutView.class] || [view isKindOfClass:LinearLayoutView.class] || [view isKindOfClass:FWScrollView.class])) {
         [view setNeedsLayout];
-	if ([view isKindOfClass:UIScrollView.class]) {
+#if 0
+	if ([view isKindOfClass:FWScrollView.class]) {
 	    break;
 	}
+#endif
         view = view.superview;
     }
 }
@@ -407,6 +407,7 @@
     NSUInteger index = [_items indexOfObject:existingItem];
     [_items insertObject:newItem atIndex:index];
     [self addSubview:newItem.view];
+    [self relayoutAll];
 }
 
 - (void)insertItem:(LayoutParams *)newItem afterItem:(LayoutParams *)existingItem {
@@ -422,6 +423,7 @@
     }
     
     [self addSubview:newItem.view];
+    [self relayoutAll];
 }
 
 - (void)insertItem:(LayoutParams *)newItem atIndex:(NSUInteger)index {
@@ -431,6 +433,7 @@
     
     [_items insertObject:newItem atIndex:index];
     [self addSubview:newItem.view];
+    [self relayoutAll];
 }
 
 - (void)moveItem:(LayoutParams *)movingItem beforeItem:(LayoutParams *)existingItem {
