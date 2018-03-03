@@ -156,6 +156,10 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
                 }
             }
         }
+    } else if ([key isEqualToString:@"content-inset-top"]) {
+        targetStyle.contentInsetTop = (int)[value integerValue];
+    } else if ([key isEqualToString:@"content-inset-bottom"]) {
+        targetStyle.contentInsetBottom = (int)[value integerValue];
     }
 
     if (selector != SelectorNormal) {

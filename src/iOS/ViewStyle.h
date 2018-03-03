@@ -18,5 +18,6 @@
 @property int borderRadius;
 @property int borderWidth;
 @property UIColor * borderColor;
-
+@property int contentInsetTop;
+@property int contentInsetBottom;
 @end
