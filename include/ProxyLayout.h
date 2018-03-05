@@ -59,13 +59,13 @@ public:
   }
 
 protected:
-  void showKey(unsigned int pos, const T1 & key, const T2 & data) {
+  void showKey(size_t pos, const T1 & key, const T2 & data) {
     visible_keys.insert(key);
 
     auto orig = getContent(key);
     if (orig.get()) {
       updateContent(*orig, key, data);
-      Element::reorderChildren(*orig, pos);
+      Element::reorderChildren(*orig, (unsigned int)pos);
     } else {
       auto e = createContent(key, data);
       content[key] = e;
