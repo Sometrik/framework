@@ -33,6 +33,12 @@ class ActionBar : public Element {
     ev.setHandled(true);
   }
 
+  void text(const std::string & l) override {
+    Command c(Command::SET_TEXT_VALUE, getInternalId());
+    c.setTextValue(l);
+    sendCommand(c);
+  }
+
  protected:
   void create() override {
     Command c(Command::CREATE_ACTIONBAR, getParentInternalId(), getInternalId());
