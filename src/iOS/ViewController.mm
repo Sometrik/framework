@@ -38,6 +38,9 @@ extern FWApplication * applicationMain();
 @property (nonatomic, strong) WKWebView *webView;
 @property (nonatomic, strong) InAppPurchaseManager *inAppPurchaseManager;
 @property (nonatomic, assign) NSString * currentTitle;
+@property (nonatomic, strong) FWPicker * currentPicker;
+@property (nonatomic, assign) int currentPickerSelection;
+@property (nonatomic, strong) UIView * currentPickerHolder;
 @end
 
 static const NSTimeInterval animationDuration = 0.4;
@@ -65,6 +68,10 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
   
     self.inAppPurchaseManager = [InAppPurchaseManager sharedInstance];
 
+    self.currentPicker = nil;
+    self.currentPickerSelection = 0;
+    self.currentPickerHolder = nil;
+    
     // Creating the C++ app
     std::shared_ptr<FWApplication> application(applicationMain());
     
@@ -172,10 +179,16 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 {
     int viewId = (int)gesture.view.tag;
 
-    if (viewId != 0 && self.dialogIds.count > 0) {
-	NSLog(@"background overlay tapped");
+    if (gesture.view.superview == self.currentPickerHolder) {
+        NSLog(@"Removing picker holder on background click");
+        [self.currentPickerHolder removeFromSuperview];
+        self.currentPicker = nil;
+        self.currentPickerHolder = nil;
+    } else if (viewId != 0 && self.dialogIds.count > 0) {
+        NSLog(@"background overlay tapped");
         int dialogId = [[self.dialogIds lastObject] intValue];
         if (dialogId == viewId) {
+	    NSLog(@"Sending cancel value for dialog");
             [self sendIntValue:dialogId value:0];
             [self.dialogIds removeLastObject];
         }
@@ -348,6 +361,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
 - (void)buttonPushed:(UIButton *)sender
 {
+    NSLog(@"Sending value for button");
     int viewId = (int)sender.tag;
     [self sendIntValue:viewId value:viewId];
 }
@@ -377,11 +391,9 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 - (void)switchToggled:(UISwitch *)sender
 {
     int viewId = (int)sender.tag;
-    NSLog(@"viewId = %d", viewId);
     BOOL switchState = sender.on;
     int value = switchState ? 1 : 0;
     [self sendIntValue:viewId value:value];
-    NSLog(@"Switch is %@", switchState ? @"on" : @"off");
 }
 
 - (void)createImageWithId:(int)viewId parentId:(int)parentId filename:(NSString *)filename
@@ -437,6 +449,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
                     UITabBar *tabBar = (UITabBar *)viewManager.view;
                     if (page <= tabBar.items.count) {
                         [tabBar setSelectedItem:tabBar.items[page]];
+			NSLog(@"Sending value for tab");
                         [self sendIntValue:(int)scrollView.tag value:(int)page];
                     }
                 }
@@ -596,12 +609,9 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
 - (void)tabBar:(UITabBar *)tabBar didSelectItem:(UITabBarItem *)item
 {
-    //if ([tabBar isEqual:self.tabBar]) {
     int itemIndex = (int)[self indexForTabBar:tabBar item:item];
     [self showPage:itemIndex];
     [self sendIntValue:(int)tabBar.tag value:(int)item.tag];
-    //[self updateTabBarVisibility:itemIndex];
-    //}
 }
 
 /*
@@ -807,7 +817,10 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     [view addTarget:self action:@selector(showPicker:) forControlEvents:UIControlEventTouchUpInside];
 }
 
-- (void)showPicker:(UIButton *)sender {   
+- (void)showPicker:(UIButton *)sender {
+    if (self.currentPickerHolder != nil) {
+        [self.currentPickerHolder removeFromSuperview];
+    }
     UIView * pickerHolder = [[UIView alloc] init];
     pickerHolder.translatesAutoresizingMaskIntoConstraints = false;
     [self.view addSubview:pickerHolder];
@@ -819,8 +832,21 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     [pickerHolder.superview addConstraints:@[topConstraint0, leftConstraint0, rightConstraint0, bottomConstraint0]];
 
     UIView * pickerBackground = [self createBackgroundOverlay:pickerHolder];
-    // dialogBackground.tag = viewId;
     pickerBackground.alpha = backgroundOverlayViewAlpha;
+
+    UIToolbar *toolBar = [[UIToolbar alloc] init];
+    // toolBar.barStyle = ?
+    toolBar.translucent = NO;
+    toolBar.translatesAutoresizingMaskIntoConstraints = false;
+    UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithTitle:@"Done" style:UIBarButtonItemStylePlain target:self action:@selector(doneButtonTapped)];
+    [toolBar setItems:@[doneButton]];
+    [pickerHolder addSubview:toolBar];
+
+    NSLayoutConstraint *topConstraint0b = [NSLayoutConstraint constraintWithItem:toolBar attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:toolBar.superview attribute:NSLayoutAttributeBottom multiplier:0.6f constant:-64];
+    NSLayoutConstraint *leftConstraint0b = [NSLayoutConstraint constraintWithItem:toolBar attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:toolBar.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
+    NSLayoutConstraint *rightConstraint0b = [NSLayoutConstraint constraintWithItem:toolBar attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:toolBar.superview attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
+    NSLayoutConstraint *bottomConstraint0b = [NSLayoutConstraint constraintWithItem:toolBar attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:toolBar.superview attribute:NSLayoutAttributeBottom multiplier:0.6f constant:0];
+    [toolBar.superview addConstraints:@[topConstraint0b, leftConstraint0b, rightConstraint0b, bottomConstraint0b]];
 
     UIPickerView * view = [UIPickerView new];
     view.delegate = self;
@@ -837,7 +863,9 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeBottom multiplier:1.0f constant:0];
     [view.superview addConstraints:@[topConstraint, leftConstraint, rightConstraint, bottomConstraint]];
 
-    mainThread->startModal();
+    self.currentPicker = (FWPicker *)sender;
+    self.currentPickerSelection = 0;
+    self.currentPickerHolder = pickerHolder;
 } 
 
 - (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView {
@@ -846,23 +874,38 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
 - (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component {
     FWPicker * picker = (FWPicker *)[self viewForId:pickerView.tag];
-    return [picker.options count];
+    if (picker != nil) {
+        return [picker.options count];
+    } else {
+        return 0;
+    }
 }
 
 - (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component {
     FWPicker * picker = (FWPicker *)[self viewForId:pickerView.tag];
-    return picker.options[row];
+    if (picker != nil && row >= 0 && row < [picker.options count]) {
+        NSString * old = [picker.options objectAtIndex:row];
+        // NSString * tmp = [NSString alloc];
+        return old;
+    } else {
+        return @"";
+    }
 }
 
 -(void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component
 {
-    FWPicker * picker = (FWPicker *)[self viewForId:pickerView.tag];
-    [picker setSelection:row];
+    self.currentPickerSelection = row;
+}
 
-    [pickerView.superview removeFromSuperview];
+- (void)doneButtonTapped
+{	
+    NSLog(@"picker selected %d", self.currentPickerSelection);
+    [self sendIntValue:self.currentPicker.tag value:self.currentPickerSelection];
 
-    NSLog(@"picker selected %d", row);
-    mainThread->endModal(row);
+    [self.currentPicker setSelection:self.currentPickerSelection];
+    [self.currentPickerHolder removeFromSuperview];
+    self.currentPickerHolder = nil;
+    self.currentPicker = nil;
 }
 
 - (void)createActionSheetWithId:(int)viewId parentId:(int)parentId title:(NSString *)title
@@ -1102,7 +1145,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     for (int i = 0; i < self.dialogIds.count; i++) {
         int dialogId = [[self.dialogIds objectAtIndex:i] intValue];
         if (dialogId == viewId) {
-            NSLog(@"removing dialog");
+            NSLog(@"removing dialog %d", viewId);
             [self sendIntValue:dialogId value:0];
             [self.dialogIds removeObjectAtIndex:i];
             break;
@@ -1160,6 +1203,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     if ([view isKindOfClass:UIAlertController.class]) {
         UIAlertController * alertController = (UIAlertController*)view;
         [alertController addAction:[UIAlertAction actionWithTitle:title style:(optionId == 0 ? UIAlertActionStyleCancel : UIAlertActionStyleDefault) handler:^(UIAlertAction *action) {
+	    NSLog(@"end modal from option");
             mainThread->endModal(optionId);
         }]];
     } else if ([view isKindOfClass:FWPicker.class]) {

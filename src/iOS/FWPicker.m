@@ -26,7 +26,11 @@
 }
 
 - (void)setSelection:(NSInteger)row {
-    [self setTitle:self.options[row] forState:UIControlStateNormal];    
+    if (row >= 0 && row < [self.options count]) {
+        [self setTitle:self.options[row] forState:UIControlStateNormal];
+    } else {
+        [self setTitle:@"" forState:UIControlStateNormal];
+    }
 }
 
 @end
