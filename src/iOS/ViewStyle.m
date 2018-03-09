@@ -12,6 +12,7 @@
         self.fontSize = 0;
         self.fontWeight = 0;
         self.shadow = 0;
+	self.color = nil;
         self.backgroundColor = nil;
         self.gradient = nil;
         self.paddingTop = 0;
