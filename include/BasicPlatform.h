@@ -63,10 +63,10 @@ class BasicThread : public PosixThread {
   }
 };
 
-class BasicMainThread : public PlatformThread {
+class BasicMainThread : public PosixThread {
 public:
  BasicMainThread(std::shared_ptr<FWApplication> & _application, std::shared_ptr<Runnable> & _runnable)
-   : PlatformThread(0, _application, _runnable)
+   : PosixThread(0, _application, _runnable)
   {
     
   }
@@ -84,10 +84,6 @@ public:
     return std::make_shared<BasicThread>(this, application, runnable);
   }
 
-  void sleep(double t) override {
-    usleep((unsigned int)(t * 1000000));
-  }
-
   void sendCommands(const std::vector<Command> & commands) {
   }
 
@@ -100,21 +96,6 @@ public:
     return buffer.str();
   }
 
-  bool start() override { return false; }
-  bool testDestroy() override { return false; }
-
-  void sendEvent(int internal_id, const Event & ev) override {
-  }
-
-  void startEventLoop() override {
-
-  }
-
-  std::vector<std::pair<int, std::shared_ptr<Event> > > pollEvents(bool block) override {
-    std::vector<std::pair<int, std::shared_ptr<Event> > > r;
-    return r;
-  }
-
   void setImageData(int internal_id, std::shared_ptr<canvas::PackedImageData> image) override { }
   void setSurface(int internal_id, canvas::Surface & surface) override { }
   int startModal() override { return 0; }
@@ -123,9 +104,6 @@ public:
   std::unique_ptr<Logger> createLogger(const std::string & name) const override {
     return std::unique_ptr<Logger>(new BasicLogger(name));
   }
-
- protected:
-  void setDestroyed() override { }
 };
 
 #endif
