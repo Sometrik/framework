@@ -3,5 +3,6 @@
 
 #define FW_ID_MENU	-1
 #define FW_ID_BACK	-2
+#define FW_ID_COMPOSE	-3
 
 #endif
