@@ -6,6 +6,7 @@
 #include <PlatformThread.h>
 #include <SysEvent.h>
 #include <LinearLayout.h>
+#include <FrameLayout.h>
 #include <TextLabel.h>
 #include <TextField.h>
 #include <Button.h>
@@ -53,11 +54,17 @@ class AppInputDialog : public Dialog {
  public:
   AppInputDialog(const std::string & title, const std::string & message) : Dialog(title) {
     style("height", "wrap-content");
+
+    auto topLayout = make_shared<FrameLayout>();
+    addChild(topLayout);
+
     auto mainLayout = make_shared<LinearLayout>(1);
     mainLayout->style("width", "match-parent");
     mainLayout->style("height", "wrap-content");
     mainLayout->style("background-color", "#ffffff");
-    addChild(mainLayout);
+    mainLayout->style("margin", 4);
+
+    topLayout->addChild(mainLayout);
 
 //    auto dialogTitle = std::make_shared<TextLabel>(title);
 //    dialogTitle->style("background-color", "#ffffff");
@@ -74,9 +81,7 @@ class AppInputDialog : public Dialog {
 //    mainLayout->addChild(dialogTitle);
 
     auto dialogMessage = make_shared<TextLabel>(message);
-    dialogMessage->style("padding-left", "14");
-    dialogMessage->style("padding-right", "14");
-    dialogMessage->style("padding-top", "8");
+    dialogMessage->style("padding", "14");
     mainLayout->addChild(dialogMessage);
 
     textField = make_shared<TextField>();
@@ -86,9 +91,11 @@ class AppInputDialog : public Dialog {
     textField->style("padding-top", "10");
     textField->style("hint", "Enter code here");
     textField->style("padding-left", "14");
+    textField->style("margin-bottom", 4);
     mainLayout->addChild(textField);
 
     auto buttonLayout = make_shared<LinearLayout>(2);
+
     auto okButton = std::make_shared<Button>("OK", 1);
     okButton->style("width", "match-parent");
     okButton->style("height", "match-parent");
