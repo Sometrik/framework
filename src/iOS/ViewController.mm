@@ -1,6 +1,8 @@
 #import "ViewController.h"
 
 #include <FWApplication.h>
+#include <FWDefs.h>
+
 #include "iOSMainThread.h"
 
 #import "ImageWrapper.h"
@@ -30,6 +32,7 @@ extern FWApplication * applicationMain();
 @property (nonatomic, strong) UIView *backgroundOverlayView;
 @property (nonatomic, strong) UITabBar *tabBar;
 @property (nonatomic, strong) UINavigationBar *navBar;
+@property (nonatomic, strong) UINavigationItem *navItem;
 @property (nonatomic, strong) UIToolbar *statusBarBackgroundView;
 @property (nonatomic, strong) UIScrollView *pageView;
 @property (nonatomic, strong) NSMutableArray *dialogIds;
@@ -217,7 +220,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     return UIStatusBarStyleDefault;
 }
 
-- (void)createTextFieldWithId: (int)viewId parentId:(int)parentId {
+- (void)createTextFieldWithId: (int)viewId parentId:(int)parentId value:(NSString*)value {
     UITextField* text = [[UITextField alloc] init];
     text.tag = viewId;
     text.borderStyle = UITextBorderStyleRoundedRect;
@@ -228,10 +231,15 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     text.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
     text.delegate = self;
     text.translatesAutoresizingMaskIntoConstraints = false;
+    text.text = value;
     // text.borderStyle = UITextBorderStyleRoundedRect;
     [text addTarget:self action:@selector(textFieldChanged:) forControlEvents:UIControlEventEditingChanged];
     [self addView:text withId:viewId];
     [self addToParent:parentId view:text];
+}
+
+- (void)createTextViewWithId: (int)viewId parentId:(int)parentId value:(NSString*)value {
+
 }
 
 - (void)textFieldChanged:(UITextField *)sender
@@ -509,7 +517,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     [view addGestureRecognizer:tapGestureRecognizer];
     
     UILongPressGestureRecognizer *longPressGestureRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(viewTouched:)];
-    longPressGestureRecognizer.minimumPressDuration = 0;
+    longPressGestureRecognizer.minimumPressDuration = 0.5f;
     longPressGestureRecognizer.delegate = self;
     [view addGestureRecognizer:longPressGestureRecognizer];
 }
@@ -524,26 +532,24 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
     // Create navigation bar with a button for opening side menu
     UINavigationBar *navBar = [[UINavigationBar alloc] initWithFrame:CGRectMake(0, statusBarHeight, self.view.frame.size.width, 44)];
-    UINavigationItem *navItem;
     if (self.currentTitle != nil) {
-      navItem = [[UINavigationItem alloc] initWithTitle:self.currentTitle];
+      self.navItem = [[UINavigationItem alloc] initWithTitle:self.currentTitle];
     } else {
-      navItem = [[UINavigationItem alloc] init];
+      self.navItem = [[UINavigationItem alloc] init];
     }
+
+    navBar.tag = viewId;
 
     // Add debug event by tapping nav bar 5 times
     UITapGestureRecognizer *debugTapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(navBarTapped5Times:)];
     debugTapGesture.numberOfTapsRequired = 5;
     [navBar addGestureRecognizer:debugTapGesture];
     
-#if 0
-    UIBarButtonItem *backButton = [[UIBarButtonItem alloc] initWithTitle:@"Back" style:UIBarButtonItemStylePlain target:self action:@selector(backButtonTapped)];
-#else
     UIImage *image = [self loadImage:@"icons_hamburger-menu.png"];
-    UIBarButtonItem *backButton = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(backButtonTapped)];
-#endif
-    navItem.leftBarButtonItem = backButton;
-    [navBar setItems:@[navItem]];
+    UIBarButtonItem *menuButton = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(menuButtonTapped)];
+    self.navItem.leftBarButtonItem = menuButton;
+    [navBar setItems:@[self.navItem]];
+
     navBar.translucent = YES;
     self.navBar = navBar;
     [self.view addSubview:navBar];
@@ -562,12 +568,20 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     mainThread->startDebugMode();
 }
 
+- (void)menuButtonTapped
+{
+    [self showNavigationViewWithAnimation:YES];
+}
+
 - (void)backButtonTapped
 {
-    if (!mainThread->back()) {
-        [self showNavigationViewWithAnimation:YES];
-    }
+#if 1
+    mainThread->back();
+#else
+    mainThread->sendCommandEvent(self.navBar.tag, FW_ID_BACK);
+#endif
 }
+
 
 #pragma mark - TabBar
 - (void)createTabBar:(int)viewId parentId:(int)parentId
@@ -1346,6 +1360,17 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
     if (self.navBar != nil) {
         self.navBar.items[0].title = title;
+    }
+}
+
+- (void)setBackButtonVisibility:(BOOL)v {
+    if (v) {
+        UIBarButtonItem *backButton = [[UIBarButtonItem alloc] initWithTitle:@"Back" style:UIBarButtonItemStylePlain target:self action:@selector(backButtonTapped)];
+        self.navItem.leftBarButtonItem = backButton;
+    } else {
+        UIImage *image = [self loadImage:@"icons_hamburger-menu.png"];
+        UIBarButtonItem *backButton = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(menuButtonTapped)];
+        self.navItem.leftBarButtonItem = backButton;
     }
 }
 

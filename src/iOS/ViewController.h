@@ -9,7 +9,8 @@
 
 - (void)setVisibility:(int)viewId visibility:(int)visibility;
 
-- (void)createTextFieldWithId: (int)viewId parentId:(int)parentId;
+- (void)createTextFieldWithId: (int)viewId parentId:(int)parentId value:(NSString*)value;
+- (void)createTextViewWithId: (int)viewId parentId:(int)parentId value:(NSString*)value;
 - (void)createFrameViewWithId:(int)viewId parentId:(int)parentId;
 - (void)createLinearLayoutWithId:(int)viewId parentId:(int)parentId direction:(int)direction;
 - (void)createFrameLayoutWithId:(int)viewId parentId:(int)parentId;
@@ -46,6 +47,7 @@
 - (void)sendEventToMainThread:(EventWrapper*) event;
 
 - (void)setTitle:(NSString*)title;
+- (void)setBackButtonVisibility:(BOOL)v;
 
 - (ViewManager *)getViewManager:(int)viewId;
 
