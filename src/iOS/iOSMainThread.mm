@@ -230,8 +230,10 @@ iOSMainThread::sendCommands(const std::vector<Command> & commands) {
 
 	     [viewController setVisibility:app.getActiveViewId() visibility:1];
 
+#if 0
 	     NSString * title = [NSString stringWithUTF8String:command.getTextValue().c_str()];
 	     [viewController setTitle:title];
+#endif
 	   }
 	} else {
 	  ViewManager * viewManager = [viewController getViewManager:command.getInternalId()];
