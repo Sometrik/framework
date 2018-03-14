@@ -84,6 +84,9 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
     } else if ([self.view isKindOfClass:UINavigationBar.class]) {
         UINavigationBar * navBar = (UINavigationBar*)self.view;
         navBar.items[0].title = value;
+    } else if ([self.view isKindOfClass:FWImageView.class]) {
+        UIImageView * imageView = (UIImageView*)self.view;
+        imageView.image = [UIImage imageNamed:value];
     }
 }
 
