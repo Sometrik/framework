@@ -6,6 +6,7 @@
 #include <FWViewBase.h>
 #include <VisibilityEvent.h>
 #include <ScrollChangedEvent.h>
+#include <CommandEvent.h>
 
 #include "iOSThread.h"
 
@@ -87,7 +88,14 @@ iOSMainThread::sendCommands(const std::vector<Command> & commands) {
 	break;
         
       case Command::CREATE_TEXTFIELD: {
-        [viewController createTextFieldWithId:command.getChildInternalId() parentId:command.getInternalId()];
+        NSString * value = [NSString stringWithUTF8String:command.getTextValue().c_str()];
+        [viewController createTextFieldWithId:command.getChildInternalId() parentId:command.getInternalId() value:value];
+      }
+        break;
+
+      case Command::CREATE_TEXTVIEW: {
+        NSString * value = [NSString stringWithUTF8String:command.getTextValue().c_str()];
+        [viewController createTextViewWithId:command.getChildInternalId() parentId:command.getInternalId() value:value];
       }
         break;
         
@@ -283,6 +291,11 @@ iOSMainThread::sendCommands(const std::vector<Command> & commands) {
 	[defaults synchronize];        
       }
         break;
+
+      case Command::SET_BACK_BUTTON_VISIBILITY: {
+	[viewController setBackButtonVisibility:command.getValue() ? true : false];
+	}
+	break;
     }
   }
 
@@ -393,8 +406,11 @@ iOSMainThread::startDebugMode() {
 bool
 iOSMainThread::back() {
   auto & app = getApplication();
-  int id = app.popViewBackHistory();
-  if (id) {
+  while ( 1 ) {
+    int id = app.popViewBackHistory();
+    if (!id) break;
+    if (id == app.getActiveViewId()) continue;
+	
     if (app.getActiveViewId()) {
       [viewController setVisibility:app.getActiveViewId() visibility:0];
     }
@@ -411,9 +427,8 @@ iOSMainThread::back() {
     [viewController setTitle:[NSString stringWithUTF8String:title.c_str()]];
 
     return true;
-  } else {
-    return false;
   }
+  return false;
 }
 
 void
@@ -425,6 +440,12 @@ iOSMainThread::sendIntValue(int viewId, int value) {
 void
 iOSMainThread::sendVisibilityEvent(int viewId, bool visibility) {
     VisibilityEvent ev(visibility);
+    Element::postEventToElement(viewId, ev);
+}
+
+void
+iOSMainThread::sendCommandEvent(int viewId, int elementId) {
+    CommandEvent ev(elementId);
     Element::postEventToElement(viewId, ev);
 }
 
