@@ -215,12 +215,12 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
         }
     } else if ([self.view isKindOfClass:UITextField.class]) {
         UITextField *textField = (UITextField *)self.view;
-        if ([value isEqualToString:@"hint"]) {
+        if ([key isEqualToString:@"hint"]) {
             textField.placeholder = value;
         }
     } else if ([self.view isKindOfClass:UITextView.class]) {
         UITextView *textView = (UITextView *)self.view;
-        if ([value isEqualToString:@"hint"]) {
+        if ([key isEqualToString:@"hint"]) {
             // textView.placeholder = value;
         }
     } else if ([self.view isKindOfClass:UITabBarItem.class]) {
@@ -228,6 +228,15 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
         if ([key isEqualToString:@"icon"]) {
             item.image = [self loadImage:value];
         }
+    } else if ([self.view isKindOfClass:UIImageView.class]) {
+        UIImageView * imageView = (UIImageView *)self.view;
+	if ([key isEqualToString:@"scale"]) {
+	  if ([value isEqualToString:@"center"]) {
+	    imageView.contentMode = UIViewContentModeScaleAspectFill;
+	  } else {
+	    imageView.contentMode = UIViewContentModeScaleAspectFit;
+	  }
+	}
     }
 
     if ([self.view isKindOfClass:UIView.class]) {
