@@ -239,33 +239,22 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 }
 
 - (void)createTextViewWithId: (int)viewId parentId:(int)parentId value:(NSString*)value {
-#if 1
-    UITextField* text = [[UITextField alloc] init];
-    text.tag = viewId;
-    text.borderStyle = UITextBorderStyleRoundedRect;
-    text.autocorrectionType = UITextAutocorrectionTypeNo;
-    text.keyboardType = UIKeyboardTypeDefault;
-    text.returnKeyType = UIReturnKeyDone;
-    text.clearButtonMode = UITextFieldViewModeWhileEditing;
-    text.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
-    text.delegate = self;
-    text.translatesAutoresizingMaskIntoConstraints = false;
-    text.text = value;
-    // text.borderStyle = UITextBorderStyleRoundedRect;
-    [text addTarget:self action:@selector(textFieldChanged:) forControlEvents:UIControlEventEditingChanged];
-    [self addView:text withId:viewId];
-    [self addToParent:parentId view:text];
-#else
     UITextView *view = [[UITextView alloc] init];
     view.tag = viewId;
+    // view.borderStyle = UITextBorderStyleRoundedRect;
+    view.keyboardType = UIKeyboardTypeDefault;
     view.returnKeyType = UIReturnKeyDone;
+    // view.clearButtonMode = UITextFieldViewModeWhileEditing;
     view.delegate = self;
+    view.textColor = [UIColor blackColor];
+    [view setEditable:YES];
+    [view setUserInteractionEnabled:YES];
+    view.allowsEditingTextAttributes = NO;
+    // view.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
     view.translatesAutoresizingMaskIntoConstraints = false;
     view.text = value;
-    // [view addTarget:self action:@selector(textViewChanged:) forControlEvents:UIControlEventEditingChanged];
     [self addView:view withId:viewId];
     [self addToParent:parentId view:view];
-#endif
 }
 
 - (void)textFieldChanged:(UITextField *)sender
@@ -274,8 +263,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     [self sendTextValue:viewId value:sender.text];
 }
 
-- (void)textViewChanged:(UITextView *)sender
-{
+- (void)textViewDidChange:(UITextView *)sender {
     int viewId = (int)sender.tag;
     NSLog(@"viewId = %d", viewId);
     NSLog(@"textView.text = %@", sender.text);
@@ -285,6 +273,16 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
     [textField resignFirstResponder];
     return NO;
+}
+
+- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
+    NSRange resultRange = [text rangeOfCharacterFromSet:[NSCharacterSet newlineCharacterSet] options:NSBackwardsSearch];
+    if ([text length] == 1 && resultRange.location != NSNotFound) {
+        [textView resignFirstResponder];
+        return NO;
+    }
+
+    return YES;
 }
 
 - (void)setVisibility:(int)viewId visibility:(int)visibility
@@ -1458,7 +1456,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     if (url != nil) {
       s = [url cStringUsingEncoding:NSUTF8StringEncoding];
     }
-    mainThread->sendImageRequest((int)imageView.tag, size.width, size.height, s);
+    mainThread->sendImageRequest((int)imageView.tag, size.width, 0, s);
 }
 
 @end
