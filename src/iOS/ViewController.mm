@@ -223,7 +223,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 - (void)createTextFieldWithId: (int)viewId parentId:(int)parentId value:(NSString*)value {
     UITextField* text = [[UITextField alloc] init];
     text.tag = viewId;
-    text.borderStyle = UITextBorderStyleRoundedRect;
+    text.borderStyle = UITextBorderStyleBezel;
     text.autocorrectionType = UITextAutocorrectionTypeNo;
     text.keyboardType = UIKeyboardTypeDefault;
     text.returnKeyType = UIReturnKeyDone;
@@ -547,13 +547,13 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     [view addGestureRecognizer:tapGestureRecognizer];
     
     UILongPressGestureRecognizer *longPressGestureRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(viewTouched:)];
-    longPressGestureRecognizer.minimumPressDuration = 0.5f;
+    longPressGestureRecognizer.minimumPressDuration = 0.25f;
     longPressGestureRecognizer.delegate = self;
     [view addGestureRecognizer:longPressGestureRecognizer];
 }
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer: (UIGestureRecognizer *)otherGestureRecognizer {
-    return YES;
+    return gestureRecognizer.view == otherGestureRecognizer.view;
 }
 
 - (void)createNavigationBar:(int)viewId parentId:(int)parentId
@@ -588,6 +588,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     navBar.translucent = YES;
     self.navBar = navBar;
     [self.view addSubview:navBar];
+    [self addView:navBar withId:viewId];
     
     UIToolbar *statusBarBackgroundView = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, statusBarHeight)];
     statusBarBackgroundView.barStyle = self.navBar.barStyle;
@@ -865,7 +866,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     view.translatesAutoresizingMaskIntoConstraints = false;
     view.numberOfPages = numPages;
     [self addView:view withId:viewId];
-    [self addToParent:parentId view:view];    
+    [self addToParent:parentId view:view];
 }
 
 - (void)createPickerWithId:(int)viewId parentId:(int)parentId
@@ -1048,7 +1049,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 }
 
 - (void)createActionSheetWithId:(int)viewId parentId:(int)parentId title:(NSString *)title
-{
+{  
     UIAlertController *actionSheet = [UIAlertController alertControllerWithTitle:title message:nil preferredStyle:UIAlertControllerStyleActionSheet];
   
     [self addView:actionSheet withId:viewId];
@@ -1171,9 +1172,10 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
 - (void)viewTapped:(UITapGestureRecognizer *)gesture
 {
-    int viewId = (int)gesture.view.tag;
-    NSLog(@"VIEW TAPPED: viewId = %d", viewId);
-    [self sendIntValue:viewId value:1];
+    if (gesture.state == UIGestureRecognizerStateEnded) {
+        int viewId = (int)gesture.view.tag;
+        [self sendIntValue:viewId value:1];
+    }
 }
 
 - (void)viewTouched:(UILongPressGestureRecognizer *)gesture
