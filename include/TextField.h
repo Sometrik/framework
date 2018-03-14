@@ -8,7 +8,9 @@
 
 class TextField : public InputElement {
  public:
- TextField(int id = 0, unsigned int _flags = 0) : InputElement(id, _flags) {  }
+ TextField(int id = 0, unsigned int _flags = 0) : InputElement(id, _flags) {
+    style("width", "match-parent");
+  }
 
   bool isA(const std::string & className) const override {
     if (className == "TextField") return true;
