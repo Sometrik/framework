@@ -74,6 +74,9 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
     } else if ([self.view isKindOfClass:UITextField.class]) {
         UITextField * textField = (UITextField*)self.view;
         textField.text = value;
+    } else if ([self.view isKindOfClass:UITextView.class]) {
+        UITextView * textView = (UITextView*)self.view;
+        textView.text = value;
     } else if ([self.view isKindOfClass:UIButton.class]) {
         UIButton * button = (UIButton*)self.view;
         [button setTitle:value forState:UIControlStateNormal];
@@ -214,6 +217,11 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
         UITextField *textField = (UITextField *)self.view;
         if ([value isEqualToString:@"hint"]) {
             textField.placeholder = value;
+        }
+    } else if ([self.view isKindOfClass:UITextView.class]) {
+        UITextView *textView = (UITextView *)self.view;
+        if ([value isEqualToString:@"hint"]) {
+            // textView.placeholder = value;
         }
     } else if ([self.view isKindOfClass:UITabBarItem.class]) {
         UITabBarItem *item = (UITabBarItem *)self.view;
