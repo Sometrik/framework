@@ -47,7 +47,7 @@
         if (self.contentInsetTop != scrollView.contentInset.top ||
             self.contentInsetBottom != scrollView.contentInset.bottom) {
             scrollView.contentInset = UIEdgeInsetsMake(self.contentInsetTop, 0, self.contentInsetBottom, 0);
-            scrollView.contentOffset = CGPointMake(0, -	self.contentInsetTop);
+            scrollView.contentOffset = CGPointMake(0, -self.contentInsetTop);
         }
     }
     
