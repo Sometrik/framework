@@ -69,6 +69,7 @@ class Command {
     ADD_COLUMN,
     RESHAPE_TABLE,
     RESHAPE_SHEET,
+    SET_BACK_BUTTON_VISIBILITY,
     QUIT_APP,
 
     // Timers

@@ -127,7 +127,8 @@ public class NativeCommand {
     ADD_SHEET,
     ADD_COLUMN,
     RESHAPE_TABLE,
-    RESHAPE_SHEET,	
+    RESHAPE_SHEET,
+    SET_BACK_BUTTON_VISIBILITY,
     QUIT_APP,
 
     // Timers
