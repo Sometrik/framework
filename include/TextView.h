@@ -4,10 +4,13 @@
 #include <InputElement.h>
 #include <Command.h>
 #include <ValueEvent.h>
+#include <CommandEvent.h>
 
 class TextView : public InputElement {
  public:
- TextView() { }
+ TextView(int _id = 0, unsigned int _flags = 0) : InputElement(_id, _flags) {
+    style("width", "match-parent");
+ }
 
   bool isA(const std::string & className) const override {
     if (className == "TextView") return true;
@@ -17,30 +20,43 @@ class TextView : public InputElement {
   void onValueEvent(ValueEvent & ev) override {
     value = ev.getTextValue();
     notify(value);
+    CommandEvent ev2(getId(), ev.getValue(), ev.getValue2());
+    ev2.dispatch(*this);
     ev.setHandled(true);
+  }
+
+  void clear() {
+    sendCommand(Command(Command::CLEAR, getInternalId()));
   }
 
   bool call(bool t) override { return call(t ? "true" : "false"); }
   bool call(const std::string & s) override {
-    setValue(s);
+    text(s);
     return true;
   }
 
-  const std::string & getValue() { return value; }
+  void text(const std::string & _value) override {
+    value = _value;
 
-  void setValue(const std::string & s) {
-    if (s != value) {
-      value = s;
-      
+    if (isInitialized()) {
       Command c(Command::SET_TEXT_VALUE, getInternalId());
       c.setTextValue(value);
-      sendCommand(c);    
+      sendCommand(c);
     }
   }
+
+  void setCursorFocus(bool enabled) {
+    Command c(Command::SET_INT_VALUE, getInternalId());
+    c.setValue(enabled ? 1 : 0);
+    sendCommand(c);
+  }
+
+  const std::string & getValue() const { return value; }
 
  protected:
   void create() override {
     Command c(Command::CREATE_TEXTVIEW, getParentInternalId(), getInternalId());
+    c.setTextValue(value);
     sendCommand(c);
   }
   
