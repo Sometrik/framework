@@ -26,7 +26,7 @@ std::shared_ptr<iOSMainThread> mainThread;
 // Declare C++ function
 extern FWApplication * applicationMain();
 
-@interface ViewController () <UIScrollViewDelegate, UITabBarDelegate, InAppPurchaseManagerDelegate, FWImageViewDelegate, UITextFieldDelegate, UIPickerViewDelegate, UIPickerViewDataSource, UIGestureRecognizerDelegate>
+@interface ViewController () <UIScrollViewDelegate, UITabBarDelegate, InAppPurchaseManagerDelegate, FWImageViewDelegate, UITextFieldDelegate, UITextViewDelegate, UIPickerViewDelegate, UIPickerViewDataSource, UIGestureRecognizerDelegate>
 @property (nonatomic, strong) NSMutableDictionary *viewsDictionary;
 @property (nonatomic, strong) UIView *sideMenuView;
 @property (nonatomic, strong) UIView *backgroundOverlayView;
@@ -239,14 +239,46 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 }
 
 - (void)createTextViewWithId: (int)viewId parentId:(int)parentId value:(NSString*)value {
-
+#if 1
+    UITextField* text = [[UITextField alloc] init];
+    text.tag = viewId;
+    text.borderStyle = UITextBorderStyleRoundedRect;
+    text.autocorrectionType = UITextAutocorrectionTypeNo;
+    text.keyboardType = UIKeyboardTypeDefault;
+    text.returnKeyType = UIReturnKeyDone;
+    text.clearButtonMode = UITextFieldViewModeWhileEditing;
+    text.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
+    text.delegate = self;
+    text.translatesAutoresizingMaskIntoConstraints = false;
+    text.text = value;
+    // text.borderStyle = UITextBorderStyleRoundedRect;
+    [text addTarget:self action:@selector(textFieldChanged:) forControlEvents:UIControlEventEditingChanged];
+    [self addView:text withId:viewId];
+    [self addToParent:parentId view:text];
+#else
+    UITextView *view = [[UITextView alloc] init];
+    view.tag = viewId;
+    view.returnKeyType = UIReturnKeyDone;
+    view.delegate = self;
+    view.translatesAutoresizingMaskIntoConstraints = false;
+    view.text = value;
+    // [view addTarget:self action:@selector(textViewChanged:) forControlEvents:UIControlEventEditingChanged];
+    [self addView:view withId:viewId];
+    [self addToParent:parentId view:view];
+#endif
 }
 
 - (void)textFieldChanged:(UITextField *)sender
 {
     int viewId = (int)sender.tag;
+    [self sendTextValue:viewId value:sender.text];
+}
+
+- (void)textViewChanged:(UITextView *)sender
+{
+    int viewId = (int)sender.tag;
     NSLog(@"viewId = %d", viewId);
-    NSLog(@"textField.text = %@", sender.text);
+    NSLog(@"textView.text = %@", sender.text);
     [self sendTextValue:viewId value:sender.text];
 }
 
@@ -544,10 +576,15 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     UITapGestureRecognizer *debugTapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(navBarTapped5Times:)];
     debugTapGesture.numberOfTapsRequired = 5;
     [navBar addGestureRecognizer:debugTapGesture];
-    
+     
     UIImage *image = [self loadImage:@"icons_hamburger-menu.png"];
     UIBarButtonItem *menuButton = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(menuButtonTapped)];
+
+    UIImage *image2 = [self loadImage:@"write_icon_small.png"];
+    UIBarButtonItem *composeButton = [[UIBarButtonItem alloc] initWithImage:image2 style:UIBarButtonItemStylePlain target:self action:@selector(composeButtonTapped)];
+
     self.navItem.leftBarButtonItem = menuButton;
+    self.navItem.rightBarButtonItem = composeButton;
     [navBar setItems:@[self.navItem]];
 
     navBar.translucent = YES;
@@ -570,7 +607,12 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
 - (void)menuButtonTapped
 {
-    [self showNavigationViewWithAnimation:YES];
+    [self showNavigationViewWithAnimation:NO];
+}
+
+- (void)composeButtonTapped
+{
+    mainThread->sendCommandEvent(self.navBar.tag, FW_ID_COMPOSE);
 }
 
 - (void)backButtonTapped
@@ -675,7 +717,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     self.sideMenuView.layer.shadowColor = [UIColor blackColor].CGColor;
     self.sideMenuView.layer.shadowOpacity = 1.0;
     self.sideMenuView.layer.shadowRadius = 7.5;
-    self.sideMenuView.layer.shadowOffset = CGSizeMake(1, 4);
+    self.sideMenuView.layer.shadowOffset = CGSizeMake(1, 4);    
     
     [self.view addSubview:self.sideMenuView];
     self.sideMenuView.transform = CGAffineTransformTranslate(self.sideMenuView.transform, -CGRectGetWidth(self.sideMenuView.frame), 0.0);
@@ -683,6 +725,21 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     
     UIPanGestureRecognizer *panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(sideMenuPanned:)];
     [self.sideMenuView addGestureRecognizer:panGesture];
+
+    UIView * sideMenuContainer = [[UIView alloc] init];
+    sideMenuContainer.translatesAutoresizingMaskIntoConstraints = false;
+    [self.sideMenuView addSubview:sideMenuContainer];
+
+    CGFloat statusBarHeight = [UIApplication sharedApplication].statusBarFrame.size.height;
+
+    NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:sideMenuContainer attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:sideMenuContainer.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:statusBarHeight];
+    NSLayoutConstraint *leftConstraint = [NSLayoutConstraint constraintWithItem:sideMenuContainer attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:sideMenuContainer.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
+    NSLayoutConstraint *rightConstraint = [NSLayoutConstraint constraintWithItem:sideMenuContainer attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:sideMenuContainer.superview attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
+    NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:sideMenuContainer attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:sideMenuContainer.superview attribute:NSLayoutAttributeBottom multiplier:1.0f constant:0];
+    [sideMenuContainer.superview addConstraints:@[topConstraint, leftConstraint, rightConstraint, bottomConstraint]];
+    
+    ViewManager * viewManager = [self getViewManager:viewId];
+    viewManager.containerView = sideMenuContainer;
 }
 
 - (void)showNavigationViewWithAnimation:(BOOL)animate
@@ -1365,7 +1422,8 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
 - (void)setBackButtonVisibility:(BOOL)v {
     if (v) {
-        UIBarButtonItem *backButton = [[UIBarButtonItem alloc] initWithTitle:@"Back" style:UIBarButtonItemStylePlain target:self action:@selector(backButtonTapped)];
+        UIImage *image = [self loadImage:@"icons_arrow-left-red.png"];
+        UIBarButtonItem *backButton = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(backButtonTapped)];
         self.navItem.leftBarButtonItem = backButton;
     } else {
         UIImage *image = [self loadImage:@"icons_hamburger-menu.png"];
