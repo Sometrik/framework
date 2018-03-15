@@ -394,15 +394,13 @@ iOSMainThread::createThread(std::shared_ptr<Runnable> & runnable) {
 }
 
 void
-iOSMainThread::sendMemoryWarning() {
-  SysEvent ev(SysEvent::MEMORY_WARNING);
-  Element::postEventToElement(getApplication().getInternalId(), ev);
-}
-
-void
 iOSMainThread::startDebugMode() {
   SysEvent ev(SysEvent::SHOW_DEBUG);
+#if 1
+  sendEvent(getApplication().getInternalId(), ev);
+#else
   Element::postEventToElement(getApplication().getInternalId(), ev);
+#endif
 }
 
 bool
@@ -436,37 +434,61 @@ iOSMainThread::back() {
 void
 iOSMainThread::sendIntValue(int viewId, int value) {
     ValueEvent ev(value);
+#if 1
+    sendEvent(viewId, ev);
+#else
     Element::postEventToElement(viewId, ev);
+#endif
 }
 
 void
 iOSMainThread::sendVisibilityEvent(int viewId, bool visibility) {
     VisibilityEvent ev(visibility);
+#if 1
+    sendEvent(viewId, ev);
+#else
     Element::postEventToElement(viewId, ev);
+#endif
 }
 
 void
 iOSMainThread::sendCommandEvent(int viewId, int elementId) {
     CommandEvent ev(elementId);
+#if 1
+    sendEvent(viewId, ev);
+#else
     Element::postEventToElement(viewId, ev);
+#endif
 }
 
 void
 iOSMainThread::sendScrollChangedEvent(int viewId, int scrollPos, int scrollRem, int height) {
     ScrollChangedEvent ev(scrollPos, scrollRem, height);
+#if 1
+    sendEvent(viewId, ev);
+#else
     Element::postEventToElement(viewId, ev);
+#endif
 }
 
 void
 iOSMainThread::sendTextValue(int viewId, const std::string & value) {
     ValueEvent ev(value);
+#if 1
+    sendEvent(viewId, ev);
+#else
     Element::postEventToElement(viewId, ev);
+#endif
 }
 
 void
 iOSMainThread::sendTimerEvent(int viewId) {
     TimerEvent ev(0);
+#if 1
+    sendEvent(viewId, ev);
+#else
     Element::postEventToElement(viewId, ev);
+#endif
 }
 
 void

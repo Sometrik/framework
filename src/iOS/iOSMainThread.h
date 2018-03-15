@@ -79,7 +79,6 @@ public:
     return std::unique_ptr<Logger>(new iOSLogger(name));
   }
 
-  void sendMemoryWarning();
   void startDebugMode();
   bool back();
   void sendIntValue(int viewId, int value);
