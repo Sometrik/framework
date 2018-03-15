@@ -1,15 +1,17 @@
 #ifndef _IOSMAINTHREAD_H_
 #define _IOSMAINTHREAD_H_
 
-#include "ViewController.h"
+#import "ViewController.h"
 
 #include <iOSCFClient.h>
 #include <ContextQuartz2D.h>
-#include <PlatformThread.h>
+#include <PosixThread.h>
 
 #include "iOSLogger.h"
 
 #include <FilenameConverter.h>
+
+#define USE_THREAD
 
 namespace canvas {
   class BundleFilenameConverter : public FilenameConverter {
@@ -40,14 +42,26 @@ namespace canvas {
   };
 };
 
-class iOSMainThread : public PlatformThread {
+class iOSMainThread : public PosixThread {
 public:
   iOSMainThread(std::shared_ptr<FWApplication> _application, std::shared_ptr<Runnable> _runnable);
-    
-  bool start() override { return true; }
-  bool testDestroy() override { return false; }
+
+#ifdef USE_THREAD
+  void startRunnable() override {
+    application->initialize(this);
+    application->initializeChildren();
+    application->load();
+
+    startEventLoop();
+#if 0
+    deinitializeRenderer();
+#endif
+  }
+#endif
+
+  void startEventLoop() override;
+
   void sendCommands(const std::vector<Command> & commands) override;
-  void sleep(double t) override;
   std::unique_ptr<HTTPClientFactory> createHTTPClientFactory() const override {
     return std::unique_ptr<iOSCFClientFactory>(new iOSCFClientFactory);
   }
@@ -61,12 +75,9 @@ public:
   std::string getLocalFilename(const char * filename, FileType type) override {
     return "";
   }
+#ifndef USE_THREAD
   void sendEvent(int internal_id, const Event & ev) override;
-  std::vector<std::pair<int, std::shared_ptr<Event> > > pollEvents(bool blocking = false) override {
-    std::vector<std::pair<int, std::shared_ptr<Event> > > r;
-    return r;
-  }
-  void startEventLoop() override { }
+#endif
   void setImageData(int internal_id, std::shared_ptr<canvas::PackedImageData> image) override;
   void setSurface(int internal_id, canvas::Surface & surface) override;
   int startModal() override;
@@ -80,7 +91,7 @@ public:
   }
 
   void startDebugMode();
-  bool back();
+  // bool back();
   void sendIntValue(int viewId, int value);
   void sendTextValue(int viewId, const std::string & value);
   void sendVisibilityEvent(int viewId, bool visibility);
@@ -92,11 +103,10 @@ public:
   void handleEventFromThread(int target_element_id, Event * event);
     
   ViewController * viewController = 0;
-  NSUserDefaults * defaults = 0;
-  
- protected:
-  void setDestroyed() override { }
-  
+
+  int exit_loop = 0;
+  bool isDestroyed = false;
+  bool canDraw = false;
 };
 
 #endif

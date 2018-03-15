@@ -14,6 +14,7 @@
 #import "FrameLayoutView.h"
 #import "FWScrollView.h"
 #import "FWPicker.h"
+#import "NativeCommand.h"
 
 #import <WebKit/WebKit.h>
 
@@ -79,6 +80,18 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     // Creating the C++ app
     std::shared_ptr<FWApplication> application(applicationMain());
     
+    NSUserDefaults * defaults = [NSUserDefaults standardUserDefaults];
+    FWPreferences preferences;
+    NSArray *keys = [[defaults dictionaryRepresentation] allKeys];
+    for (NSString * key in keys) {
+      NSString * value = [defaults valueForKey:key];
+      NSLog(@"loaded data: %@ %@", key, value);  
+      if ([value isKindOfClass:[NSString class]]) {
+        preferences.setText([key UTF8String], [value UTF8String]);
+      }
+    }
+    application->setPreferences(preferences);
+
     float scale = [[UIScreen mainScreen] scale];
   
     mainThread = make_shared<iOSMainThread>(application, application);
@@ -91,9 +104,13 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
     [self addView:self.view withId:1];
 
+#ifdef USE_THREAD
+    mainThread->start();
+#else
     application->initialize(mainThread.get());
     application->initializeChildren();
     application->load();
+#endif
 }
 
 - (void)viewWillTransitionToSize: (CGSize)size withTransitionCoordinator:(id)coordinator
@@ -618,11 +635,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
 - (void)backButtonTapped
 {
-#if 0
-    mainThread->back();
-#else
     mainThread->sendCommandEvent(self.navBar.tag, FW_ID_BACK);
-#endif
 }
 
 
@@ -1058,7 +1071,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
   
     [actionSheet addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
         NSLog(@"User clicked button called %@ or tapped elsewhere",action.title);
-        mainThread->endModal(0);
+        [self sendIntValue:viewId value:0];
     }]];
 
     [self presentViewController:actionSheet animated:YES completion:nil];
@@ -1156,7 +1169,6 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     NSURL *webURL = [NSURL URLWithString:url];
     NSURLRequest *request = [NSURLRequest requestWithURL:webURL];
     [self.webView loadRequest:request];
-    // mainThread->startModal();
 }
 
 - (void)webViewCloseButtonPushed:(UIButton *)button
@@ -1164,7 +1176,6 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     NSLog(@"closeButton pushed");
     [self.webView removeFromSuperview];
     self.webView = nil;
-    // mainThread->endModal(0);
 }
 
 - (void)sendTimerEvent:(NSTimer *)timer
@@ -1221,7 +1232,10 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
         [layout addItem:item];
         viewManager.layoutParams = item;
     } else if ([parentView isKindOfClass:UIScrollView.class]) {
-        NSUInteger pos = [[parentView subviews] count];
+        NSUInteger pos = 0;
+        for (UIView * view in [parentView subviews]) {
+            if (![view isKindOfClass:UIImageView.class]) pos++;
+        }
         [parentView addSubview:view];
         UIScrollView * scrollView = (UIScrollView *)parentView;
         int pageWidth = self.view.frame.size.width;
@@ -1349,7 +1363,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
         UIAlertController * alertController = (UIAlertController*)view;
         [alertController addAction:[UIAlertAction actionWithTitle:title style:(optionId == 0 ? UIAlertActionStyleCancel : UIAlertActionStyleDefault) handler:^(UIAlertAction *action) {
 	    NSLog(@"end modal from option");
-            mainThread->endModal(optionId);
+	    [self sendIntValue:viewId value:optionId];
         }]];
     } else if ([view isKindOfClass:FWPicker.class]) {
 	FWPicker * picker = (FWPicker *)view;
@@ -1380,6 +1394,8 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 - (void)setImageFromThread:(int)viewId data:(UIImage *)data
 {
     ImageWrapper * iw = [[ImageWrapper alloc] init];
+    iw.targetElementId = viewId;
+    iw.image = data;
     [self performSelectorOnMainThread:@selector(handleImage:) withObject:iw waitUntilDone:NO];
 }
 
@@ -1388,6 +1404,252 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     ViewManager * viewManager = [self getViewManager:iw.targetElementId];
     if (viewManager) {
         [viewManager setImage:iw.image];
+    }
+}
+
+- (void)sendCommandsFromThread:(NSArray*)data
+{
+    [self performSelectorOnMainThread:@selector(handleCommands:) withObject:data waitUntilDone:NO];
+}
+
+- (void)handleCommands:(NSArray*)data
+{
+    unordered_set<int> changedViews;
+    for (NativeCommand *command in data) {       
+        switch (command.type) {
+            case CREATE_APPLICATION:
+            // set app name from textValue
+            break;
+            
+        case CREATE_FRAMEVIEW: {
+            [self createFrameViewWithId:command.childInternalId parentId:command.internalId];
+        }
+            break;
+        
+        case CREATE_LINEAR_LAYOUT: {
+            [self createLinearLayoutWithId:command.childInternalId parentId:command.internalId direction:command.value];
+        }
+            break;
+        
+        case CREATE_EVENT_LAYOUT: {
+            [self createEventLayoutWithId:command.childInternalId parentId:command.internalId];
+        }
+            break;
+        
+        case CREATE_FRAME_LAYOUT: {
+            [self createFrameLayoutWithId:command.childInternalId parentId:command.internalId];
+        }
+            break;
+        
+        case CREATE_PAGER:
+        case CREATE_FLIPPER_LAYOUT: {
+            [self createPageLayoutWithId:command.childInternalId parentId:command.internalId];
+        }
+            break;
+        
+        case CREATE_TEXT: {
+            [self createTextWithId:command.childInternalId parentId:command.internalId value:command.textValue];
+        }
+            break;
+
+        case CREATE_BUTTON: {
+            [self createButtonWithId:command.childInternalId parentId:command.internalId caption:command.textValue];
+        }
+            break;
+        
+        case CREATE_TEXTFIELD: {
+            [self createTextFieldWithId:command.childInternalId parentId:command.internalId value:command.textValue];
+        }
+            break;
+
+        case CREATE_TEXTVIEW: {
+            [self createTextViewWithId:command.childInternalId parentId:command.internalId value:command.textValue];
+        }
+            break;
+        
+        case CREATE_IMAGEVIEW: {
+            [self createImageWithId:command.childInternalId parentId:command.internalId filename:command.textValue];
+        }
+            break;
+        
+        case CREATE_SCROLL_LAYOUT: {
+            [self createScrollLayoutWithId:command.childInternalId parentId:command.internalId];
+        }
+            break;
+        
+        case CREATE_SWITCH: {
+            [self createSwitchWithId:command.childInternalId parentId:command.internalId];
+        }
+            break;
+        
+        case CREATE_ACTIONBAR: {
+            [self createNavigationBar:command.childInternalId parentId:command.internalId];
+        }
+            break;
+        
+        case CREATE_NAVIGATIONBAR: {
+            [self createTabBar:command.childInternalId parentId:command.internalId];
+        }
+            break;
+        
+        case CREATE_NAVIGATIONVIEW: {
+            [self createNavigationView:command.childInternalId];
+        }
+            break;
+            
+        case CREATE_NAVIGATIONBAR_ITEM: {
+            [self createTabBarItem:command.childInternalId parentId:command.internalId title:command.textValue];
+        }
+            break;
+        
+        case CREATE_PROGRESS_SPINNER: {
+            [self createActivityIndicatorWithId:command.childInternalId parentId:command.internalId];
+        }
+            break;
+
+        case CREATE_PAGE_CONTROL: {
+            [self createPageControlWithId:command.childInternalId parentId:command.internalId numPages:command.value];
+        }
+            break;
+	
+        case CREATE_PICKER: {
+            [self createPickerWithId:command.childInternalId parentId:command.internalId];
+        }
+            break;
+
+        case CREATE_DIALOG: {
+            [self createDialogWithId:command.childInternalId parentId:command.internalId ];
+        }
+            break;
+
+        case SET_STYLE: {
+            Selector selector = (Selector)command.value;
+            ViewManager * viewManager = [self getViewManager:command.internalId];
+            if (viewManager != nil) {
+                [viewManager setStyle:command.textValue value:command.textValue2 selector:(StyleSelector)selector];
+                changedViews.insert(command.internalId);
+            }
+        }
+            break;
+            
+        case SET_VISIBILITY: {
+            [self setVisibility:command.internalId visibility:command.value];
+        }
+            break;
+        
+        case CREATE_ALERT_DIALOG: {
+      	
+        }
+            break;
+        
+        case CREATE_ACTION_SHEET: {
+            [self createActionSheetWithId:command.childInternalId parentId:command.internalId title:command.textValue];
+        }
+            break;
+            
+        case CLEAR: {
+            ViewManager * viewManager = [self getViewManager:command.internalId];
+            if (viewManager) {
+                [viewManager clear];
+            }
+        }
+            break;
+            
+        case REORDER_CHILD: {
+            [self reorderChildWithId:command.childInternalId parentId:command.internalId newPosition:command.value];
+        }
+            break;
+
+        case REMOVE_CHILD: {
+        
+        }
+            break;
+        
+        case DELETE_ELEMENT: {
+            [self removeView:command.internalId];
+        }
+            break;
+        
+        case ADD_IMAGE_URL: {
+            ViewManager * viewManager = [self getViewManager:command.internalId];
+            if (viewManager != nil) {
+                [viewManager addImageUrl:command.textValue width:command.width height:command.height];
+            }
+        }
+            break;
+        
+        case SET_INT_VALUE: {
+            if (command.internalId == 1) {
+                if (command.childInternalId != self.activeViewId) {
+                    if (self.activeViewId) {
+                        [self setVisibility:self.activeViewId visibility:0];
+                    }
+                    self.activeViewId = command.childInternalId;
+                    [self setVisibility:self.activeViewId visibility:1];
+#if 0
+                    NSString * title = [NSString stringWithUTF8String:command.getTextValue().c_str()];
+                    [self setTitle:title];
+#endif
+                }
+            } else {
+                ViewManager * viewManager = [self getViewManager:command.internalId];
+                if (viewManager != nil) {
+                    [viewManager setIntValue:command.value];
+                }
+            }
+        }
+            break;
+
+        case SET_TEXT_VALUE: {
+            ViewManager * viewManager = [self getViewManager:command.internalId];
+            if (viewManager != nil) {
+                [viewManager setTextValue:command.textValue];
+            }
+        }
+            break;
+	
+        case ADD_OPTION: {
+            [self addOption:command.internalId optionId:command.value title:command.textValue];
+        }
+            break;
+        
+        case LAUNCH_BROWSER: {
+            [self createWebBrowserWithUrl:(NSString *)command.textValue];
+        }
+            break;
+        
+        case CREATE_TIMER: {
+            [self createTimer:command.internalId interval:command.value / 1000.0];
+        }
+            break;
+        
+        case UPDATE_PREFERENCE: {
+            [[NSUserDefaults standardUserDefaults] setValue:command.textValue forKey:command.textValue2];
+        }
+            break;
+        
+        case DELETE_PREFERENCE: {
+            [[NSUserDefaults standardUserDefaults] setValue:nil forKey:command.textValue];
+        }
+            break;
+        
+        case COMMIT_PREFERENCES: {
+            [[NSUserDefaults standardUserDefaults] synchronize];
+        }
+            break;
+
+        case SET_BACK_BUTTON_VISIBILITY: {
+            [self setBackButtonVisibility:command.value ? true : false];
+        }
+            break;
+        }
+    }
+
+    for (auto id : changedViews) {
+        ViewManager * viewManager = [self getViewManager:id];
+        if (viewManager != nil) {
+            [viewManager applyStyles:NO];
+        }
     }
 }
 

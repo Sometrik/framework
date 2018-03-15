@@ -7,311 +7,112 @@
 #include <VisibilityEvent.h>
 #include <ScrollChangedEvent.h>
 #include <CommandEvent.h>
+#include <UpdateEvent.h>
+#include <DrawEvent.h>
 
 #include "iOSThread.h"
 
 #import "EventWrapper.h"
+#import "NativeCommand.h"
 
 #include <unordered_set>
 
 using namespace std;
 
-iOSMainThread::iOSMainThread(std::shared_ptr<FWApplication> _application, std::shared_ptr<Runnable> _runnable) : PlatformThread(0, _application, _runnable) {
-  defaults = [NSUserDefaults standardUserDefaults];
-
-  FWPreferences preferences;
-  NSArray *keys = [[[NSUserDefaults standardUserDefaults] dictionaryRepresentation] allKeys];
-  for (NSString * key in keys) {
-    NSString * value = [defaults valueForKey:key];
-    NSLog(@"loaded data: %@ %@", key, value);  
-    if ([value isKindOfClass:[NSString class]]) {
-      preferences.setText([key UTF8String], [value UTF8String]);
-    }
-  }
-  _application->setPreferences(preferences);
+iOSMainThread::iOSMainThread(std::shared_ptr<FWApplication> _application, std::shared_ptr<Runnable> _runnable) : PosixThread(0, _application, _runnable) {
 }
 
 void
-iOSMainThread::sendCommands(const std::vector<Command> & commands) {
-  unordered_set<int> changedViews;
+iOSMainThread::startEventLoop() {
+    void * surface = 0;
+    
+    while (!isDestroyed && !exit_loop) {
+      auto evs = pollEvents();
 
+      bool redraw = false, update_sent = false;
+      for (auto & ev : evs) {
+        if (dynamic_cast<UpdateEvent*>(ev.second.get())) {
+          if (update_sent) continue;
+          update_sent = true;
+        }
+
+	Element::postEventToElement(ev.first, *ev.second.get());
+
+        auto ev2 = dynamic_cast<SysEvent*>(ev.second.get());
+        if (ev2) {
+          if (ev2->getType() == SysEvent::DESTROY) {
+            exit_loop = true;
+          } else if (ev2->getType() == SysEvent::PAUSE) {
+          }
+        }
+
+        if (ev.second.get()->isRedrawNeeded()) {
+          redraw = true;
+        }
+      }
+
+      if (canDraw && surface && redraw) {
+        DrawEvent dev;
+        postEvent(getApplication().getActiveViewId(), dev);
+
+#if 0
+        if (!eglSwapBuffers(display, surface)) {
+          // Swap buffers failed
+        }
+#endif
+      }
+
+#if 0
+      if (prev_heartbeat_time + 10 <= time(0)) {
+        getApplication().showToast("Application is not responding: " + getApplication().getStatusText(), 9);
+	sendHeartbeat();
+      }
+#endif
+    }
+
+    if (exit_loop > 0) exit_loop--;
+  }
+
+void
+iOSMainThread::sendCommands(const std::vector<Command> & commands) {
+  NSMutableArray * data = [[NSMutableArray alloc] init];
   for (auto & command : commands) {
     if (command.getType() == Command::CREATE_FRAMEVIEW || command.getType() == Command::CREATE_OPENGL_VIEW) {
       auto & app = getApplication();
       if (!app.getActiveViewId()) {
         app.setActiveViewId(command.getChildInternalId());
       }
+
+      if (command.getType() == Command::SET_INT_VALUE && command.getInternalId() == 1 && command.getChildInternalId() != app.getActiveViewId()) {
+	if (app.getActiveViewId()) {
+	  app.addToHistory(app.getActiveViewId());
+	}
+	app.setActiveViewId(command.getChildInternalId());
+      }
     }
 
-    switch (command.getType()) {
-      case Command::CREATE_APPLICATION: {
-        NSString * appName = [NSString stringWithUTF8String:command.getTextValue().c_str()];
-      }
-        break;
-        
-      case Command::CREATE_FRAMEVIEW: {
-          [viewController createFrameViewWithId:command.getChildInternalId() parentId:command.getInternalId()];
-      }
-        break;
-        
-      case Command::CREATE_LINEAR_LAYOUT: {
-          [viewController createLinearLayoutWithId:command.getChildInternalId() parentId:command.getInternalId() direction:command.getValue()];
-      }
-        break;
-        
-      case Command::CREATE_EVENT_LAYOUT: {
-          [viewController createEventLayoutWithId:command.getChildInternalId() parentId:command.getInternalId()];
-      }
-        break;
-        
-      case Command::CREATE_FRAME_LAYOUT: {
-          [viewController createFrameLayoutWithId:command.getChildInternalId() parentId:command.getInternalId()];
-      }
-        break;
-        
-      case Command::CREATE_PAGER:
-      case Command::CREATE_FLIPPER_LAYOUT: {
-        [viewController createPageLayoutWithId:command.getChildInternalId() parentId:command.getInternalId()];
-      }
-        break;
-        
-      case Command::CREATE_TEXT: {
-        NSString * value = [NSString stringWithUTF8String:command.getTextValue().c_str()];
-        [viewController createTextWithId:command.getChildInternalId() parentId:command.getInternalId() value:value];
-      }
-        break;
+    NativeCommand * nc = [[NativeCommand alloc] init];
+    nc.type = (CommandType)command.getType();
+    nc.internalId = command.getInternalId();
+    nc.childInternalId = command.getChildInternalId();
+    nc.value = command.getValue();
+    nc.key = [NSString stringWithUTF8String:command.getKey().c_str()];
+    nc.textValue = [NSString stringWithUTF8String:command.getTextValue().c_str()];
+    nc.textValue2 = [NSString stringWithUTF8String:command.getTextValue2().c_str()];
+    nc.row = command.getRow();
+    nc.column = command.getColumn();
+    nc.sheet = command.getSheet();
+    nc.width = command.getWidth();
+    nc.height = command.getHeight();
+    nc.flags = command.getFlags();
+    [data addObject:nc];
+  }
 
-      case Command::CREATE_BUTTON: {
-        NSString * caption = [NSString stringWithUTF8String:command.getTextValue().c_str()];
-        [viewController createButtonWithId:command.getChildInternalId() parentId:command.getInternalId() caption:caption];
-      }
-	break;
-        
-      case Command::CREATE_TEXTFIELD: {
-        NSString * value = [NSString stringWithUTF8String:command.getTextValue().c_str()];
-        [viewController createTextFieldWithId:command.getChildInternalId() parentId:command.getInternalId() value:value];
-      }
-        break;
-
-      case Command::CREATE_TEXTVIEW: {
-        NSString * value = [NSString stringWithUTF8String:command.getTextValue().c_str()];
-        [viewController createTextViewWithId:command.getChildInternalId() parentId:command.getInternalId() value:value];
-      }
-        break;
-        
-      case Command::CREATE_IMAGEVIEW: {
-        NSString * filename = [NSString stringWithUTF8String:command.getTextValue().c_str()];
-        [viewController createImageWithId:command.getChildInternalId() parentId:command.getInternalId() filename:filename];
-      }
-        break;
-        
-      case Command::CREATE_SCROLL_LAYOUT: {
-        [viewController createScrollLayoutWithId:command.getChildInternalId() parentId:command.getInternalId()];
-      }
-        break;
-        
-      case Command::CREATE_SWITCH: {
-        [viewController createSwitchWithId:command.getChildInternalId() parentId:command.getInternalId()];
-      }
-        break;
-        
-      case Command::CREATE_ACTIONBAR: {
-        [viewController createNavigationBar:command.getChildInternalId() parentId:command.getInternalId()];
-      }
-        break;
-        
-      case Command::CREATE_NAVIGATIONBAR: {
-        [viewController createTabBar:command.getChildInternalId() parentId:command.getInternalId()];
-      }
-        break;
-        
-      case Command::CREATE_NAVIGATIONVIEW: {
-          [viewController createNavigationView:command.getChildInternalId()];
-      }
-        break;
-            
-      case Command::CREATE_NAVIGATIONBAR_ITEM: {
-        NSString * title = [NSString stringWithUTF8String:command.getTextValue().c_str()];
-        [viewController createTabBarItem:command.getChildInternalId() parentId:command.getInternalId() title:title];
-      }
-        break;
-        
-      case Command::CREATE_PROGRESS_SPINNER: {
-        [viewController createActivityIndicatorWithId:command.getChildInternalId() parentId:command.getInternalId()];
-      }
-        break;
-
-      case Command::CREATE_PAGE_CONTROL: {
-	[viewController createPageControlWithId:command.getChildInternalId() parentId:command.getInternalId() numPages:command.getValue()];
-      }
-	break;
-	
-	   case Command::CREATE_PICKER: {
-    [viewController createPickerWithId:command.getChildInternalId() parentId:command.getInternalId()];       	
-       }
-	 break;
-
-      case Command::CREATE_DIALOG: {
-        [viewController createDialogWithId:command.getChildInternalId() parentId:command.getInternalId() ];
-      }
-        break;
-
-      case Command::SET_STYLE: {
-	Selector selector = (Selector)command.getValue();
-	ViewManager * viewManager = [viewController getViewManager:command.getInternalId()];
-	if (viewManager != nil) {
-	  NSString * key = [NSString stringWithUTF8String:command.getTextValue().c_str()];
-          NSString * value = [NSString stringWithUTF8String:command.getTextValue2().c_str()];
-          [viewManager setStyle:key value:value selector:(StyleSelector)selector];
-	  changedViews.insert(command.getInternalId());
-	}
-      }
-        break;
-            
-      case Command::SET_VISIBILITY: {
-          [viewController setVisibility:command.getInternalId() visibility:command.getValue()];
-      }
-        break;
-        
-      case Command::CREATE_ALERT_DIALOG: {
-      	
-      }
-        break;
-        
-      case Command::CREATE_ACTION_SHEET: {
-        NSString * title = [NSString stringWithUTF8String:command.getTextValue().c_str()];
-        [viewController createActionSheetWithId:command.getChildInternalId() parentId:command.getInternalId() title:title];
-      }
-        break;
-            
-      case Command::CLEAR: {
-          ViewManager * viewManager = [viewController getViewManager:command.getInternalId()];
-          if (viewManager) {
-              [viewManager clear];
-          }
-      }
-        break;
-            
-      case Command::REORDER_CHILD: {
-          [viewController reorderChildWithId:command.getChildInternalId() parentId:command.getInternalId() newPosition:command.getValue()];
-      }
-	break;
-
-      case Command::REMOVE_CHILD: {
-        
-      }
-        break;
-        
-      case Command::DELETE_ELEMENT: {
-        [viewController removeView:command.getInternalId()];
-      }
-        break;
-        
-      case Command::ADD_IMAGE_URL: {
-        ViewManager * viewManager = [viewController getViewManager:command.getInternalId()];
-	if (viewManager != nil) {
-	  NSString * url = [NSString stringWithUTF8String:command.getTextValue().c_str()];
-          [viewManager addImageUrl:url width:command.getWidth() height:command.getHeight()];
-	}
-      }
-        break;
-        
-      case Command::SET_INT_VALUE: {
-	if (command.getInternalId() == 1) {
-          auto & app = getApplication();
-          
-	  if (command.getChildInternalId() != app.getActiveViewId()) {
-	     if (app.getActiveViewId()) {
-	       [viewController setVisibility:app.getActiveViewId() visibility:0];
-	     }
-
-	     app.addToHistory(command.getChildInternalId());
-	     app.setActiveViewId(command.getChildInternalId());
-
-	     [viewController setVisibility:app.getActiveViewId() visibility:1];
-
-#if 0
-	     NSString * title = [NSString stringWithUTF8String:command.getTextValue().c_str()];
-	     [viewController setTitle:title];
-#endif
-	   }
-	} else {
-	  ViewManager * viewManager = [viewController getViewManager:command.getInternalId()];
-	  if (viewManager != nil) {
-	    [viewManager setIntValue:command.getValue()];
-	  }
-	}
-      }
-	break;
-
-      case Command::SET_TEXT_VALUE: {
-	ViewManager * viewManager = [viewController getViewManager:command.getInternalId()];
-	if (viewManager != nil) {
-	  NSString * value = [NSString stringWithUTF8String:command.getTextValue().c_str()];
-	  [viewManager setTextValue:value];
-	}
-      }
-	break;
-	
-      case Command::ADD_OPTION: {
-        NSString * title = [NSString stringWithUTF8String:command.getTextValue().c_str()];
-        [viewController addOption:command.getInternalId() optionId:command.getValue() title:title];
-      }
-        break;
-        
-      case Command::LAUNCH_BROWSER: {
-        NSString * input_url = [NSString stringWithUTF8String:command.getTextValue().c_str()];
-#if 1
-	[viewController createWebBrowserWithUrl:(NSString *)input_url];
+#ifdef USE_THREAD
+  [viewController sendCommandsFromThread:data];
 #else
-        NSURL *url = [NSURL URLWithString:input_url];
-        [[UIApplication sharedApplication] openURL:url];
-        // no need to release anything
+  [viewController handleCommands:data];
 #endif
-      }
-        break;
-        
-      case Command::CREATE_TIMER: {
-        [viewController createTimer:command.getInternalId() interval:command.getValue() / 1000.0];
-      }
-        break;
-        
-      case Command::UPDATE_PREFERENCE: {
-	NSString *storedKey = [NSString stringWithUTF8String:command.getTextValue().c_str()];
-	NSString *storedVal = [NSString stringWithUTF8String:command.getTextValue2().c_str()];
-	[defaults setValue:storedVal forKey:storedKey];
-      }
-        break;
-        
-      case Command::DELETE_PREFERENCE: {
-	NSString *storedKey = [NSString stringWithUTF8String:command.getTextValue().c_str()];
-	[defaults setValue:nil forKey:storedKey];        
-      }
-        break;
-        
-      case Command::COMMIT_PREFERENCES: {
-	[defaults synchronize];        
-      }
-        break;
-
-      case Command::SET_BACK_BUTTON_VISIBILITY: {
-	[viewController setBackButtonVisibility:command.getValue() ? true : false];
-	}
-	break;
-    }
-  }
-
-  for (auto id : changedViews) {
-    ViewManager * viewManager = [viewController getViewManager:id];
-    if (viewManager != nil) {
-      [viewManager applyStyles:NO];
-    }
-  }
-}
-
-void
-iOSMainThread::sleep(double t) {
-  usleep((unsigned int)(t * 1000000));
 }
 
 std::string
@@ -323,6 +124,7 @@ iOSMainThread::loadTextAsset(const char * filename) {
   return s;
 }
 
+#ifndef USE_THREAD
 void
 iOSMainThread::sendEvent(int internal_id, const Event & ev) {
     EventWrapper * ew = [[EventWrapper alloc] init];
@@ -330,6 +132,7 @@ iOSMainThread::sendEvent(int internal_id, const Event & ev) {
     ew.eventPtr = ev.dup();
     [viewController sendEventToMainThread:ew];
 }
+#endif
 
 void
 iOSMainThread::handleEventFromThread(int target_element_id, Event * event) {
@@ -339,36 +142,32 @@ iOSMainThread::handleEventFromThread(int target_element_id, Event * event) {
 
 void
 iOSMainThread::setImageData(int internal_id, std::shared_ptr<canvas::PackedImageData> input) {
-  ViewManager * viewManager = [viewController getViewManager:internal_id];
-  if (viewManager != nil) {
-    int bpp = input->getBytesPerPixel(input->getInternalFormat());
-    
-    auto cfdata = CFDataCreate(0, input->getData(), bpp * input->getWidth() * input->getHeight());
-    auto provider = CGDataProviderCreateWithCFData(cfdata);
-    auto colorspace = CGColorSpaceCreateDeviceRGB();
-    CGBitmapInfo bitmapInfo = kCGBitmapByteOrder32Little;
-    if (input->getInternalFormat() == canvas::RGBA8) {
-      bitmapInfo |= kCGImageAlphaPremultipliedFirst;
-    } else {
-      bitmapInfo |= kCGImageAlphaNoneSkipFirst;
-    }
-    auto img = CGImageCreate(input->getWidth(), input->getHeight(), 8, bpp * 8, bpp * input->getWidth(), colorspace, bitmapInfo, provider, 0, true, kCGRenderingIntentDefault);
-    
-    UIImage * image;
-    if ([UIImage respondsToSelector:@selector(imageWithCGImage:scale:orientation:)]) {
-      float scale = [[UIScreen mainScreen] scale];
-      image = [UIImage imageWithCGImage:img scale:scale orientation:UIImageOrientationUp];
-    } else {
-      image = [UIImage imageWithCGImage:img];
-    }
-    
-    [viewManager setImage:image];
-    
-    CGColorSpaceRelease(colorspace);
-    CGImageRelease(img);
-    CGDataProviderRelease(provider);
-    CFRelease(cfdata);
+  int bpp = input->getBytesPerPixel(input->getInternalFormat());
+  auto cfdata = CFDataCreate(0, input->getData(), bpp * input->getWidth() * input->getHeight());
+  auto provider = CGDataProviderCreateWithCFData(cfdata);
+  auto colorspace = CGColorSpaceCreateDeviceRGB();
+  CGBitmapInfo bitmapInfo = kCGBitmapByteOrder32Little;
+  if (input->getInternalFormat() == canvas::RGBA8) {
+    bitmapInfo |= kCGImageAlphaPremultipliedFirst;
+  } else {
+    bitmapInfo |= kCGImageAlphaNoneSkipFirst;
   }
+  auto img = CGImageCreate(input->getWidth(), input->getHeight(), 8, bpp * 8, bpp * input->getWidth(), colorspace, bitmapInfo, provider, 0, true, kCGRenderingIntentDefault);
+    
+  UIImage * image;
+  if ([UIImage respondsToSelector:@selector(imageWithCGImage:scale:orientation:)]) {
+    float scale = [[UIScreen mainScreen] scale];
+    image = [UIImage imageWithCGImage:img scale:scale orientation:UIImageOrientationUp];
+  } else {
+    image = [UIImage imageWithCGImage:img];
+  }
+  
+  [viewController setImageFromThread:internal_id data:image];
+    
+  CGColorSpaceRelease(colorspace);
+  CGImageRelease(img);
+  CGDataProviderRelease(provider);
+  CFRelease(cfdata);
 }
 
 void
@@ -378,14 +177,23 @@ iOSMainThread::setSurface(int internal_id, canvas::Surface & surface) {
 
 int
 iOSMainThread::startModal() {
+#ifdef USE_THREAD
+  setModalResultValue(0);
+  startEventLoop();
+#else
   CFRunLoopRun();
+#endif
   return getModalResultValue();
 }
 
 void
 iOSMainThread::endModal(int value) {
   setModalResultValue(value);
+#ifdef USE_THREAD
+  exit_loop++;
+#else
   CFRunLoopStop(CFRunLoopGetCurrent());
+#endif
 }
 
 std::shared_ptr<PlatformThread>
@@ -403,6 +211,7 @@ iOSMainThread::startDebugMode() {
 #endif
 }
 
+#if 0
 bool
 iOSMainThread::back() {
   auto & app = getApplication();
@@ -430,6 +239,7 @@ iOSMainThread::back() {
   }
   return false;
 }
+#endif
 
 void
 iOSMainThread::sendIntValue(int viewId, int value) {
@@ -495,7 +305,7 @@ void
 iOSMainThread::sendImageRequest(int viewId, unsigned int width, unsigned int height, const std::string & url, int internalFormat) {
     cerr << "sending image request, width = " << width << ", height = " << height << ", url = " << url << endl;
   
-    float scale = [[UIScreen mainScreen] scale];
+    float scale = getDisplayScale();
     if (scale != 1) {
         width = (unsigned int)(width * scale);
         height = (unsigned int)(height * scale);

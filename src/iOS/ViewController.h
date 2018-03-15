@@ -34,6 +34,8 @@
 - (void)createWebBrowserWithUrl:(NSString *)url;
 
 - (void)setImageFromThread:(int)viewId data:(UIImage *)data;
+- (void)sendCommandsFromThread:(NSArray*)data;
+- (void)handleCommands:(NSArray*)data;
 - (void)showNavigationViewWithAnimation:(BOOL)animate;
 - (void)hideNavigationViewWithAnimation:(BOOL)animate;
 
