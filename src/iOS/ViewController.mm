@@ -2,6 +2,7 @@
 
 #include <FWApplication.h>
 #include <FWDefs.h>
+#include <SysEvent.h>
 
 #include "iOSMainThread.h"
 
@@ -115,7 +116,8 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 }
 
 - (void)didReceiveMemoryWarning {
-    mainThread->sendMemoryWarning();
+    SysEvent ev(SysEvent::MEMORY_WARNING);
+    mainThread->sendEvent(mainThread->getApplication().getInternalId(), ev);
     [super didReceiveMemoryWarning];
 }
 
@@ -616,7 +618,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
 - (void)backButtonTapped
 {
-#if 1
+#if 0
     mainThread->back();
 #else
     mainThread->sendCommandEvent(self.navBar.tag, FW_ID_BACK);
@@ -1154,7 +1156,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     NSURL *webURL = [NSURL URLWithString:url];
     NSURLRequest *request = [NSURLRequest requestWithURL:webURL];
     [self.webView loadRequest:request];
-    mainThread->startModal();
+    // mainThread->startModal();
 }
 
 - (void)webViewCloseButtonPushed:(UIButton *)button
@@ -1162,7 +1164,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     NSLog(@"closeButton pushed");
     [self.webView removeFromSuperview];
     self.webView = nil;
-    mainThread->endModal(0);
+    // mainThread->endModal(0);
 }
 
 - (void)sendTimerEvent:(NSTimer *)timer
