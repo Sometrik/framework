@@ -9,7 +9,8 @@ public:
     : PosixThread(_parent_thread, _application, _runnable) { }
   
   void sendCommands(const std::vector<Command> & commands) override {
-    
+    auto * parent = getParentThread();
+    if (parent) parent->sendCommands(commands);
   }
   
   std::unique_ptr<HTTPClientFactory> createHTTPClientFactory() const override {
