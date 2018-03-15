@@ -197,9 +197,14 @@ FWApplication::onSysEvent(SysEvent & ev) {
   if (ev.getType() == SysEvent::BACK) {
     int poppedView = popViewBackHistory();
     if (poppedView != 0) {
+#ifdef __ANDROID__
       Command c(Command::SET_INT_VALUE, poppedView);
       c.setValue(3);
       sendCommand(c);
+#else
+      Element * e = getRegisteredElement(poppedView);
+      if (e) e->show();
+#endif
     } else {
       Command c(Command::QUIT_APP, poppedView);
       sendCommand(c);
