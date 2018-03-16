@@ -10,6 +10,7 @@
 @property float shadow;
 @property UIColor * color;
 @property UIColor * backgroundColor;
+@property UIColor * tintColor;
 @property CAGradientLayer *gradient;
 @property int paddingTop;
 @property int paddingRight;

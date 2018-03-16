@@ -101,6 +101,8 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
     
     if ([key isEqualToString:@"color"]) {
         targetStyle.color = [self colorFromString:value];
+    } else if ([key isEqualToString:@"tint"]) {
+        targetStyle.tintColor = [self colorFromString:value];
     } else if ([key isEqualToString:@"opacity"]) {
         targetStyle.alpha = (float)[value floatValue];
     } else if ([key isEqualToString:@"zoom"]) {

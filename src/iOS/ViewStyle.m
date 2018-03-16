@@ -14,6 +14,7 @@
         self.shadow = 0;
 	self.color = nil;
         self.backgroundColor = nil;
+	self.tintColor = nil;
         self.gradient = nil;
         self.paddingTop = 0;
         self.paddingRight = 0;
@@ -53,6 +54,10 @@
     
     if (self.backgroundColor != nil) {
         view.layer.backgroundColor = self.backgroundColor.CGColor;
+    }
+
+    if (self.tintColor != nil) {
+        view.tintColor = self.tintColor;
     }
 
     if (self.borderRadius != -1) {
