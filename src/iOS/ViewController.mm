@@ -1119,6 +1119,10 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     ViewManager * viewManager = [self getViewManager:viewId];
     viewManager.containerView = dialog;
 
+    if (self.webView) {
+	[self.view bringSubviewToFront:self.webView];
+    }
+
     [UIView animateWithDuration:animationDuration/2 animations:^{
         dialogHolder.alpha = 1.0;
     }];
