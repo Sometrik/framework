@@ -483,7 +483,6 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 {
     if (!scrollView.pagingEnabled) { // Do nothing if scrollView has paging enabled
 	float diff = scrollView.contentSize.height - (scrollView.frame.size.height + scrollView.contentOffset.y);
-        NSLog(@"scrollView scrolled, diff = %f", diff);
         mainThread->sendScrollChangedEvent(scrollView.tag, scrollView.contentOffset.y, (int)diff, scrollView.contentSize.height);
     }
 }
@@ -581,6 +580,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
     // Create navigation bar with a button for opening side menu
     UINavigationBar *navBar = [[UINavigationBar alloc] initWithFrame:CGRectMake(0, statusBarHeight, self.view.frame.size.width, 44)];
+    
     if (self.currentTitle != nil) {
       self.navItem = [[UINavigationItem alloc] initWithTitle:self.currentTitle];
     } else {
