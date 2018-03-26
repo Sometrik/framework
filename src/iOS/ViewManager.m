@@ -45,9 +45,14 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
 
 - (void)setImage:(UIImage *)data
 {
-    if ([self.view isKindOfClass:UIImageView.class]) {
-        UIImageView * imageView = (UIImageView *)self.view;
+    if ([self.view isKindOfClass:FWImageView.class]) {
+        FWImageView * imageView = (FWImageView *)self.view;
         imageView.image = data;
+	if (data.size.width < imageView.prevWidth) {
+	  imageView.contentMode = UIViewContentModeCenter;
+	} else {
+	  imageView.contentMode = UIViewContentModeScaleAspectFit;
+	}
     }
 }
 
