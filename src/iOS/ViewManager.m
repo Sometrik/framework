@@ -48,11 +48,7 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
     if ([self.view isKindOfClass:FWImageView.class]) {
         FWImageView * imageView = (FWImageView *)self.view;
         imageView.image = data;
-	if (data.size.width < imageView.prevWidth) {
-	  imageView.contentMode = UIViewContentModeCenter;
-	} else {
-	  imageView.contentMode = UIViewContentModeScaleAspectFit;
-	}
+	[imageView updateContentMode];
     }
 }
 
@@ -361,7 +357,10 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
                     self.layoutParams.horizontalAlignment = LinearLayoutItemHorizontalAlignmentCenter;
                 } else if ([value isEqualToString:@"start"]) {
                     self.layoutParams.horizontalAlignment = LinearLayoutItemHorizontalAlignmentLeft;
-                }
+                } else if ([value isEqualToString:@"center-vertical|left"]) {
+		    self.layoutParams.horizontalAlignment = LinearLayoutItemHorizontalAlignmentLeft;
+                    self.layoutParams.verticalAlignment = LinearLayoutItemVerticalAlignmentCenter;
+		}
             }
         } else if (!hasNativePadding && self.layoutParams != nil) {
             if ([key isEqualToString:@"padding"]) {

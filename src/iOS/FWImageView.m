@@ -73,4 +73,15 @@
     self.url = nil;
 }
 
+- (void)updateContentMode {
+    if (self.image != nil && self.prevWidth > 0 && self.prevHeight > 0 &&
+	(self.contentMode == UIViewContentModeCenter || self.contentMode == UIViewContentModeScaleAspectFit)) {
+        if (self.image.size.width <= self.prevWidth && self.image.size.height <= self.prevHeight) {
+            self.contentMode = UIViewContentModeCenter;
+        } else {
+            self.contentMode = UIViewContentModeScaleAspectFit;
+        }
+    }
+}
+
 @end

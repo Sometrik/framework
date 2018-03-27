@@ -9,6 +9,7 @@
 - (void)layoutSubviews;
 - (void)addImageUrl:(NSString *)url width:(int)width height:(int)height;
 - (void)clear;
+- (void)updateContentMode;
 
 @property NSString * url;
 @property (nonatomic, assign) NSInteger prevWidth;
