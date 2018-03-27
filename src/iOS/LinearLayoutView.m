@@ -91,10 +91,6 @@
         extraSpace -= size;
 	totalWeight += item.weight;
     }
-
-    if (extraSpace < 0) {
-        extraSpace = 0;
-    }
     
     for (LayoutParams *item in _items) {
         if (item.view.hidden) {
