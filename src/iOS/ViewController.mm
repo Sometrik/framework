@@ -1628,7 +1628,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             break;
         
         case UPDATE_PREFERENCE: {
-            [[NSUserDefaults standardUserDefaults] setValue:command.textValue forKey:command.textValue2];
+            [[NSUserDefaults standardUserDefaults] setValue:command.textValue2 forKey:command.textValue];
         }
             break;
         
