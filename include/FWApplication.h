@@ -71,6 +71,10 @@ public:
     sendCommand(c);
   }
   void setVersion(const std::string & v) { versionText = v; }
+
+  void showMessageDialog(const std::string & title, const std::string & message);
+  std::string showInputDialog(const std::string & title, const std::string & message);
+
  protected:
   void run() override {
     // not used
@@ -103,9 +107,6 @@ public:
     sendCommand(Command(Command::COMMIT_PREFERENCES, getInternalId()));
     preferences.clearChanges();
   }
-
-  void showMessageDialog(const std::string & title, const std::string & message);
-  std::string showInputDialog(const std::string & title, const std::string & message);
 
   const std::string & getVersion() const { return versionText; }
 
