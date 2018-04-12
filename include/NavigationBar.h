@@ -10,7 +10,12 @@
 class NavigationBar : public Element {
  public:
   NavigationBar(int _id = 0, unsigned int _flags = 0)
-   : Element(_id, _flags) { }
+   : Element(_id, _flags) {
+#ifndef __ANDROID__
+    style("width", "match-parent");
+    style("gravity", "bottom");
+#endif
+  }
 
   bool isA(const std::string & className) const override {
     if (className == "NavigationBar") return true;

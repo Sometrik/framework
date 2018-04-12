@@ -8,7 +8,12 @@
 
 class ScrollLayout : public Element {
  public:
-  ScrollLayout(int _id = 0) : Element(_id) { }
+  ScrollLayout(int _id = 0) : Element(_id) {
+#ifndef __ANDROID__
+    style("width", "match-parent");
+    style("height", "match-parent");
+#endif
+  }
 
   bool isA(const std::string & className) const override {
     if (className == "ScrollLayout") return true;
