@@ -224,6 +224,8 @@ class PlatformThread : public EventHandler {
   bool exit_when_threads_terminated = false;
 
  protected:
+  PlatformThread * getParentThread() { return parent_thread; }
+
   std::shared_ptr<FWApplication> application;
 
  private:
