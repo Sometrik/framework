@@ -14,6 +14,7 @@
 #import "FrameLayoutView.h"
 #import "FWScrollView.h"
 #import "FWPicker.h"
+#import "FWButton.h"
 #import "NativeCommand.h"
 
 #import <WebKit/WebKit.h>
@@ -399,7 +400,11 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
 - (void)createButtonWithId:(int)viewId parentId:(int)parentId caption:(NSString *)caption
 {
+#if 0
     UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
+#else
+    FWButton *button = [[FWButton alloc] init];
+#endif
     button.tag = viewId;
     button.translatesAutoresizingMaskIntoConstraints = false;
     [button setTitle:caption forState:UIControlStateNormal];

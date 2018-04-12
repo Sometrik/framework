@@ -3,6 +3,7 @@
 #import "FWImageView.h"
 #import "PaddedLabel.h"
 #import "FWPicker.h"
+#import "FWButton.h"
 
 LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, CGFloat right) {
     LinearLayoutItemMargin margin;
@@ -210,14 +211,27 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
             label.numberOfLines = (int)[value integerValue];
         } else if ([key isEqualToString:@"line-spacing"]) {
         }
-    } else if ([self.view isKindOfClass:UIButton.class]) {
-        UIButton *button = (UIButton *)self.view;
+    } else if ([self.view isKindOfClass:FWButton.class]) {
+        FWButton *button = (UIButton *)self.view;
         UIControlState state = UIControlStateNormal;
 	
         if ([key isEqualToString:@"icon"]) {
             UIImage * icon = [self loadImage:value];
             [button setImage:icon forState:state];
         } else if ([key isEqualToString:@"icon-attachment"]) {
+            if ([value isEqualToString:@"left"]) {
+                button.iconAttachment = FWButtonIconAttachmentLeft;
+                [button setNeedsLayout];
+            } else if ([value isEqualToString:@"right"]) {
+                button.iconAttachment = FWButtonIconAttachmentRight;
+                [button setNeedsLayout];
+            } else if ([value isEqualToString:@"top"]) {
+                button.iconAttachment = FWButtonIconAttachmentTop;
+                [button setNeedsLayout];
+            } else if ([value isEqualToString:@"bottom"]) {
+                button.iconAttachment = FWButtonIconAttachmentBottom;
+                [button setNeedsLayout];
+            }
         }
     } else if ([self.view isKindOfClass:UITextField.class]) {
         UITextField *textField = (UITextField *)self.view;
