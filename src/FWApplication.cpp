@@ -17,15 +17,19 @@ class AppMessageDialog : public Dialog {
  public:
   AppMessageDialog(const std::string & title, const std::string & message) : Dialog(title) {
     style("height", "wrap-content");
+
+    auto topLayout = make_shared<FrameLayout>();
+    addChild(topLayout);
+
     auto mainLayout = make_shared<LinearLayout>(1);
     mainLayout->style("width", "match-parent");
     mainLayout->style("height", "wrap-content");
-    addChild(mainLayout);
+    topLayout->addChild(mainLayout);
 
     auto dialogMessage = make_shared<TextLabel>(message);
+    mainLayout->style("margin", "16");
+    mainLayout->style("weight", 0);
     mainLayout->addChild(dialogMessage);
-    mainLayout->style("margin-left", "8");
-    mainLayout->style("margin-right", "8");
 
     auto okButton = std::make_shared<Button>("OK");
     okButton->style("width", "match-parent");
@@ -33,10 +37,10 @@ class AppMessageDialog : public Dialog {
     okButton->style("color", "#ffffff");
     okButton->style("background", "#c1272d");
     okButton->style("border-radius", "4");
-    okButton->style("weight", "1");
-    okButton->style("margin-left", "8");
-    okButton->style("margin-right", "8");
-    okButton->style("margin-bottom", "2");
+    okButton->style("weight", "0");
+    okButton->style("margin-left", "16");
+    okButton->style("margin-right", "16");
+    okButton->style("margin-bottom", "16");
     mainLayout->addChild(okButton);
   }
 
