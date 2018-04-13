@@ -64,6 +64,14 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
     } else if ([self.view isKindOfClass:FWPicker.class]) {
     	FWPicker * picker = (FWPicker *)self.view;
     	[picker setSelection:value];
+    } else if ([self.view isKindOfClass:UIScrollView.class]) { // FWScrollView is not applicable here
+        UIScrollView * scrollView = (UIScrollView *)self.view;
+        if (scrollView.isPagingEnabled) {
+            CGRect frame = scrollView.frame;
+            frame.origin.x = frame.size.width * value;
+            frame.origin.y = 0;
+            [scrollView scrollRectToVisible:frame animated:YES];
+        }
     }
 }
 
