@@ -599,8 +599,13 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     debugTapGesture.numberOfTapsRequired = 5;
     [navBar addGestureRecognizer:debugTapGesture];
      
+    UIBarButtonItem *menuButton;
     UIImage *image = [self loadImage:@"icons_hamburger-menu.png"];
-    UIBarButtonItem *menuButton = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(menuButtonTapped)];
+    if (image == nil) {
+        menuButton = [[UIBarButtonItem alloc] initWithTitle:@"Menu" style:UIBarButtonItemStylePlain target:self action:@selector(menuButtonTapped)];
+    } else {
+        menuButton = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(menuButtonTapped)];
+    }
 
     UIImage *image2 = [self loadImage:@"write_icon_small.png"];
     UIBarButtonItem *composeButton = [[UIBarButtonItem alloc] initWithImage:image2 style:UIBarButtonItemStylePlain target:self action:@selector(composeButtonTapped)];
@@ -683,7 +688,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 {
     int itemIndex = (int)[self indexForTabBar:tabBar item:item];
     [self showPage:itemIndex];
-    [self sendIntValue:(int)tabBar.tag value:(int)item.tag];
+    [self sendIntValue:(int)item.tag value:1];
 }
 
 /*
@@ -1700,8 +1705,13 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
         self.navItem.leftBarButtonItem = backButton;
     } else {
         UIImage *image = [self loadImage:@"icons_hamburger-menu.png"];
-        UIBarButtonItem *backButton = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(menuButtonTapped)];
-        self.navItem.leftBarButtonItem = backButton;
+        UIBarButtonItem *menuButton;
+	if (image == nil) {
+            menuButton = [[UIBarButtonItem alloc] initWithTitle:@"Menu" style:UIBarButtonItemStylePlain target:self action:@selector(menuButtonTapped)];
+	} else {
+	    menuButton = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(menuButtonTapped)];
+	}
+        self.navItem.leftBarButtonItem = menuButton;
     }
 }
 
