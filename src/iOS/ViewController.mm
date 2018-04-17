@@ -12,6 +12,7 @@
 #import "PaddedLabel.h"
 #import "LinearLayoutView.h"
 #import "FrameLayoutView.h"
+#import "DialogView.h"
 #import "FWScrollView.h"
 #import "FWPicker.h"
 #import "FWButton.h"
@@ -1111,7 +1112,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     dialogBackground.tag = viewId;
     dialogBackground.alpha = backgroundOverlayViewAlpha;
 
-    FrameLayoutView * dialog = [[FrameLayoutView alloc] init];
+    DialogView * dialog = [[DialogView alloc] init];
     dialog.layer.backgroundColor = [UIColor whiteColor].CGColor;
     dialog.layer.cornerRadius = 5;
     dialog.layer.shadowColor = [UIColor blackColor].CGColor;
