@@ -1110,8 +1110,8 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     UIView * dialogBackground = [self createBackgroundOverlay:dialogHolder];
     dialogBackground.tag = viewId;
     dialogBackground.alpha = backgroundOverlayViewAlpha;
-    
-    UIView * dialog = [[UIView alloc] init];
+
+    FrameLayoutView * dialog = [[FrameLayoutView alloc] init];
     dialog.layer.backgroundColor = [UIColor whiteColor].CGColor;
     dialog.layer.cornerRadius = 5;
     dialog.layer.shadowColor = [UIColor blackColor].CGColor;
@@ -1119,7 +1119,6 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     dialog.layer.shadowRadius = 7.5;
     dialog.layer.shadowOffset = CGSizeMake(1, 4);
     dialog.clipsToBounds = YES;
-    dialog.translatesAutoresizingMaskIntoConstraints = false;
     dialog.tag = viewId;
     [dialogHolder addSubview:dialog];
 
