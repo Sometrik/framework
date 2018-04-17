@@ -1,10 +1,8 @@
 #import <UIKit/UIKit.h>
-
+#import "FWLayoutView.h"
 #import "LayoutParams.h"
 
-@interface FrameLayoutView : UIView
-
-@property (nonatomic, readonly) NSMutableArray *items;
+@interface FrameLayoutView : FWLayoutView
 
 - (LayoutParams*)findParams:(UIView *)view;
 

@@ -34,7 +34,7 @@
 }
 
 - (void)setup {
-    _items = [[NSMutableArray alloc] init];
+    self.items = [[NSMutableArray alloc] init];
     _orientation = LinearLayoutViewOrientationVertical;
     self.autoresizesSubviews = NO;
     self.translatesAutoresizingMaskIntoConstraints = false;
@@ -70,7 +70,7 @@
         relativePosition = paddingLeft;
     }
     
-    for (LayoutParams *item in _items) {
+    for (LayoutParams *item in self.items) {
         if (item.view.hidden) {
             continue;
         }
@@ -92,7 +92,7 @@
 	totalWeight += item.weight;
     }
     
-    for (LayoutParams *item in _items) {
+    for (LayoutParams *item in self.items) {
         if (item.view.hidden) {
             continue;
         }
@@ -118,7 +118,7 @@
 	if (totalWeight > 0) {
 	    itemExtraSpace = item.weight * extraSpace / totalWeight;
 	} else {
-	    itemExtraSpace = extraSpace / [_items count];
+	    itemExtraSpace = extraSpace / [self.items count];
 	}
 
         if (self.orientation == LinearLayoutViewOrientationHorizontal) {
@@ -336,11 +336,11 @@
 }
 
 - (void)addItem:(LayoutParams *)item {
-    if (item == nil || [_items containsObject:item] == YES || item.view == nil) {
+    if (item == nil || [self.items containsObject:item] == YES || item.view == nil) {
         return;
     }
     
-    [_items addObject:item];
+    [self.items addObject:item];
     [self addSubview:item.view];
 
     item.topConstraint = [NSLayoutConstraint constraintWithItem:item.view attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
@@ -369,12 +369,12 @@
 }
 
 - (void)removeItem:(LayoutParams *)item {
-    if (item == nil || [_items containsObject:item] == NO) {
+    if (item == nil || [self.items containsObject:item] == NO) {
         return;
     }
     
     [item.view removeFromSuperview];
-    [_items removeObject:item];
+    [self.items removeObject:item];
     [self relayoutAll];
 }
 
@@ -387,40 +387,27 @@
     [self relayoutAll];
 }
 
-- (void)relayoutAll {
-    UIView * view = self;
-    while (view != nil && ([view isKindOfClass:FrameLayoutView.class] || [view isKindOfClass:LinearLayoutView.class] || [view isKindOfClass:FWScrollView.class])) {
-        [view setNeedsLayout];
-#if 0
-	if ([view isKindOfClass:FWScrollView.class]) {
-	    break;
-	}
-#endif
-        view = view.superview;
-    }
-}
-
 - (void)insertItem:(LayoutParams *)newItem beforeItem:(LayoutParams *)existingItem {
-    if (newItem == nil || [_items containsObject:newItem] == YES || existingItem == nil ||  [_items containsObject:existingItem] == NO) {
+    if (newItem == nil || [self.items containsObject:newItem] == YES || existingItem == nil ||  [self.items containsObject:existingItem] == NO) {
         return;
     }
     
-    NSUInteger index = [_items indexOfObject:existingItem];
-    [_items insertObject:newItem atIndex:index];
+    NSUInteger index = [self.items indexOfObject:existingItem];
+    [self.items insertObject:newItem atIndex:index];
     [self addSubview:newItem.view];
     [self relayoutAll];
 }
 
 - (void)insertItem:(LayoutParams *)newItem afterItem:(LayoutParams *)existingItem {
-    if (newItem == nil || [_items containsObject:newItem] == YES || existingItem == nil || [_items containsObject:existingItem] == NO) {
+    if (newItem == nil || [self.items containsObject:newItem] == YES || existingItem == nil || [self.items containsObject:existingItem] == NO) {
         return;
     }
     
-    if (existingItem == [_items lastObject]) {
-        [_items addObject:newItem];
+    if (existingItem == [self.items lastObject]) {
+        [self.items addObject:newItem];
     } else {
-        NSUInteger index = [_items indexOfObject:existingItem];
-        [_items insertObject:newItem atIndex:++index];
+        NSUInteger index = [self.items indexOfObject:existingItem];
+        [self.items insertObject:newItem atIndex:++index];
     }
     
     [self addSubview:newItem.view];
@@ -428,69 +415,69 @@
 }
 
 - (void)insertItem:(LayoutParams *)newItem atIndex:(NSUInteger)index {
-    if (newItem == nil || [_items containsObject:newItem] == YES || index >= [_items count]) {
+    if (newItem == nil || [self.items containsObject:newItem] == YES || index >= [self.items count]) {
         return;
     }
     
-    [_items insertObject:newItem atIndex:index];
+    [self.items insertObject:newItem atIndex:index];
     [self addSubview:newItem.view];
     [self relayoutAll];
 }
 
 - (void)moveItem:(LayoutParams *)movingItem beforeItem:(LayoutParams *)existingItem {
-    if (movingItem == nil || [_items containsObject:movingItem] == NO || existingItem == nil || [_items containsObject:existingItem] == NO || movingItem == existingItem) {
+    if (movingItem == nil || [self.items containsObject:movingItem] == NO || existingItem == nil || [self.items containsObject:existingItem] == NO || movingItem == existingItem) {
         return;
     }
     
-    [_items removeObject:movingItem];
+    [self.items removeObject:movingItem];
     
-    NSUInteger existingItemIndex = [_items indexOfObject:existingItem];
-    [_items insertObject:movingItem atIndex:existingItemIndex];
+    NSUInteger existingItemIndex = [self.items indexOfObject:existingItem];
+    [self.items insertObject:movingItem atIndex:existingItemIndex];
     
     [self setNeedsLayout];
 }
 
 - (void)moveItem:(LayoutParams *)movingItem afterItem:(LayoutParams *)existingItem {
-    if (movingItem == nil || [_items containsObject:movingItem] == NO || existingItem == nil || [_items containsObject:existingItem] == NO || movingItem == existingItem) {
+    if (movingItem == nil || [self.items containsObject:movingItem] == NO || existingItem == nil || [self.items containsObject:existingItem] == NO || movingItem == existingItem) {
         return;
     }
     
-    [_items removeObject:movingItem];
+    [self.items removeObject:movingItem];
     
-    if (existingItem == [_items lastObject]) {
-        [_items addObject:movingItem];
+    if (existingItem == [self.items lastObject]) {
+        [self.items addObject:movingItem];
     } else {
-        NSUInteger existingItemIndex = [_items indexOfObject:existingItem];
-        [_items insertObject:movingItem atIndex:++existingItemIndex];
+        NSUInteger existingItemIndex = [self.items indexOfObject:existingItem];
+        [self.items insertObject:movingItem atIndex:++existingItemIndex];
     }
     
     [self setNeedsLayout];
 }
 
 - (void)moveItem:(LayoutParams *)movingItem toIndex:(NSUInteger)index {
-    if (movingItem == nil || [_items containsObject:movingItem] == NO || index >= [_items count] || [_items indexOfObject:movingItem] == index) {
+    if (movingItem == nil || [self.items containsObject:movingItem] == NO || index >= [self.items count] || [self.items indexOfObject:movingItem] == index) {
         return;
     }
     
-    [_items removeObject:movingItem];
+    [self.items removeObject:movingItem];
     
-    if (index == ([_items count] - 1)) {
-        [_items addObject:movingItem];
+    if (index == ([self.items count] - 1)) {
+        [self.items addObject:movingItem];
     } else {
-        [_items insertObject:movingItem atIndex:index];
+        [self.items insertObject:movingItem atIndex:index];
     }
     
     [self setNeedsLayout];
 }
 
 - (void)swapItem:(LayoutParams *)firstItem withItem:(LayoutParams *)secondItem {
-    if (firstItem == nil || [_items containsObject:firstItem] == NO || secondItem == nil || [_items containsObject:secondItem] == NO || firstItem == secondItem) {
+    if (firstItem == nil || [self.items containsObject:firstItem] == NO || secondItem == nil || [self.items containsObject:secondItem] == NO || firstItem == secondItem) {
         return;
     }
     
-    NSUInteger firstItemIndex = [_items indexOfObject:firstItem];
-    NSUInteger secondItemIndex = [_items indexOfObject:secondItem];
-    [_items exchangeObjectAtIndex:firstItemIndex withObjectAtIndex:secondItemIndex];
+    NSUInteger firstItemIndex = [self.items indexOfObject:firstItem];
+    NSUInteger secondItemIndex = [self.items indexOfObject:secondItem];
+    [self.items exchangeObjectAtIndex:firstItemIndex withObjectAtIndex:secondItemIndex];
     
     [self setNeedsLayout];
 }

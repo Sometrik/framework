@@ -1,5 +1,5 @@
 #import <UIKit/UIKit.h>
-
+#import "FWLayoutView.h"
 #import "LayoutParams.h"
 
 typedef enum {
@@ -7,9 +7,8 @@ typedef enum {
     LinearLayoutViewOrientationHorizontal
 } LinearLayoutViewOrientation;
 
-@interface LinearLayoutView : UIView
+@interface LinearLayoutView : FWLayoutView
 
-@property (nonatomic, readonly) NSMutableArray *items;
 @property (nonatomic, assign) LinearLayoutViewOrientation orientation;
 
 - (LayoutParams*)findParams:(UIView *)view;
