@@ -1,7 +1,6 @@
 #import "PaddedLabel.h"
 
-#import "FrameLayoutView.h"
-#import "LinearLayoutView.h"
+#import "FWLayoutView.h"
 
 @implementation PaddedLabel
 
@@ -43,7 +42,7 @@
 
 - (void)relayoutAll {
     UIView * view = self.superview;
-    while (view != nil && ([view isKindOfClass:FrameLayoutView.class] || [view isKindOfClass:LinearLayoutView.class] || [view isKindOfClass:UIScrollView.class])) {
+    while (view != nil && ([view isKindOfClass:FWLayoutView.class] || [view isKindOfClass:UIScrollView.class])) {
         [view setNeedsLayout];
 	if ([view isKindOfClass:UIScrollView.class]) {
 	  break;

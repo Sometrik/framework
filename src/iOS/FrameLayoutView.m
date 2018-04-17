@@ -1,7 +1,5 @@
 #import "FrameLayoutView.h"
 
-#import "LinearLayoutView.h"
-
 @interface FrameLayoutView()
 - (void)setup;
 @end
@@ -40,11 +38,8 @@
 
 - (void)layoutSubviews {
     LayoutParams * myParams = nil;
-    if ([self.superview isKindOfClass:LinearLayoutView.class]) {
-        LinearLayoutView * layout = (LinearLayoutView*)self.superview;
-        myParams = [layout findParams:self];
-    } else if ([self.superview isKindOfClass:FrameLayoutView.class]) {
-        FrameLayoutView * layout = (FrameLayoutView*)self.superview;
+    if ([self.superview isKindOfClass:FWLayoutView.class]) {
+        FWLayoutView * layout = (FWLayoutView*)self.superview;
         myParams = [layout findParams:self];
     }
 
