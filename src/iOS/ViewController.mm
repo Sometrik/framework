@@ -108,7 +108,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
     CGFloat statusBarHeight = [UIApplication sharedApplication].statusBarFrame.size.height;
     UIToolbar *statusBarBackgroundView = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, statusBarHeight)];
-    statusBarBackgroundView.barStyle = UIStatusBarStyleDefault;
+    //statusBarBackgroundView.barStyle = UIStatusBarStyleDefault;
     statusBarBackgroundView.translucent = YES;
     statusBarBackgroundView.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleWidth;
     
@@ -122,6 +122,34 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     application->initializeChildren();
     application->load();
 #endif
+    
+    // Add notification handlers to catch notifications when keyboard opens and closes
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleKeyboardWillShowNotification:) name:UIKeyboardWillShowNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleKeyboardWillHideNotification:) name:UIKeyboardWillHideNotification object:nil];
+}
+
+- (void)handleKeyboardWillShowNotification:(NSNotification *)notification
+{
+    id frameEnd = notification.userInfo[@"UIKeyboardFrameEndUserInfoKey"];
+    if (frameEnd != nil) {
+        CGRect rect = [frameEnd CGRectValue];
+        [self keyboardTopPositionChanged:(int)rect.origin.y];
+    }
+    
+}
+
+- (void)handleKeyboardWillHideNotification:(NSNotification *)notification
+{
+    id frameEnd = notification.userInfo[@"UIKeyboardFrameEndUserInfoKey"];
+    if (frameEnd != nil) {
+        CGRect rect = [frameEnd CGRectValue];
+        [self keyboardTopPositionChanged:(int)rect.origin.y];
+    }
+}
+
+- (void)keyboardTopPositionChanged:(int)pos
+{
+    NSLog(@"%d", pos);
 }
 
 - (void)viewWillTransitionToSize: (CGSize)size withTransitionCoordinator:(id)coordinator
