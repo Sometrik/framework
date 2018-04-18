@@ -1,15 +1,11 @@
 #import "LinearLayoutView.h"
 
-@interface LinearLayoutView()
-- (void)setup;
-@end
-
 @implementation LinearLayoutView
 
 - (id)init {
     self = [super init];
     if (self) {
-        [self setup];
+        self.orientation = LinearLayoutViewOrientationVertical;
     }
     return self;
 }
@@ -17,7 +13,7 @@
 - (id)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
-        [self setup];
+        self.orientation = LinearLayoutViewOrientationVertical;
     }
     return self;
 }
@@ -25,16 +21,9 @@
 - (id)initWithCoder:(NSCoder *)aDecoder {
     self = [super initWithCoder:aDecoder];
     if (self) {
-        [self setup];
+        self.orientation = LinearLayoutViewOrientationVertical;
     }
     return self;
-}
-
-- (void)setup {
-    self.items = [[NSMutableArray alloc] init];
-    _orientation = LinearLayoutViewOrientationVertical;
-    self.autoresizesSubviews = NO;
-    self.translatesAutoresizingMaskIntoConstraints = false;
 }
 
 - (void)layoutSubviews {
