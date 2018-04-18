@@ -616,7 +616,8 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     navBar.translatesAutoresizingMaskIntoConstraints = false;
     navBar.tag = viewId;
     navBar.translucent = YES;
-    
+    navBar.layer.zPosition = 1000;
+
     if (self.currentTitle != nil) {
       self.navItem = [[UINavigationItem alloc] initWithTitle:self.currentTitle];
     } else {
@@ -647,6 +648,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     // statusBarBackgroundView.barStyle = UIStatusBarStyleDefault;
     statusBarBackgroundView.translucent = YES;
     statusBarBackgroundView.translatesAutoresizingMaskIntoConstraints = false;
+    statusBarBackgroundView.layer.zPosition = 1000;
     
     UIView * parentView = (UIView *)[self viewForId:parentId];
     [parentView addSubview:statusBarBackgroundView];
