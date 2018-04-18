@@ -108,7 +108,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
     CGFloat statusBarHeight = [UIApplication sharedApplication].statusBarFrame.size.height;
     UIToolbar *statusBarBackgroundView = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, statusBarHeight)];
-    statusBarBackgroundView.barStyle = UIStatusBarStyleDefault;
+    // statusBarBackgroundView.barStyle = UIStatusBarStyleDefault;
     statusBarBackgroundView.translucent = YES;
     statusBarBackgroundView.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleWidth;
     
@@ -149,7 +149,11 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
 - (void)keyboardTopPositionChanged:(int)pos
 {
-    NSLog(@"%d", pos);
+    for (NSNumber * dialogId in self.dialogIds) {
+	ViewManager * viewManager = [self getViewManager:dialogId.intValue];
+	DialogView * dialog = (DialogView *)viewManager.containerView;
+	dialog.bottomConstraint.constant = -(self.view.frame.size.height - pos + 15);
+    }
 }
 
 - (void)viewWillTransitionToSize: (CGSize)size withTransitionCoordinator:(id)coordinator
@@ -1165,8 +1169,8 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:dialog attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:dialog.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:65];
     NSLayoutConstraint *leftConstraint = [NSLayoutConstraint constraintWithItem:dialog attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:dialog.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
     NSLayoutConstraint *rightConstraint = [NSLayoutConstraint constraintWithItem:dialog attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:dialog.superview attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
-    NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:dialog attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:dialog.superview attribute:NSLayoutAttributeBottom multiplier:1.0f constant:-15];
-    [dialog.superview addConstraints:@[topConstraint, leftConstraint, rightConstraint, bottomConstraint]];
+    dialog.bottomConstraint = [NSLayoutConstraint constraintWithItem:dialog attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:dialog.superview attribute:NSLayoutAttributeBottom multiplier:1.0f constant:-15];
+    [dialog.superview addConstraints:@[topConstraint, leftConstraint, rightConstraint, dialog.bottomConstraint]];
 
     ViewManager * viewManager = [self getViewManager:viewId];
     viewManager.containerView = dialog;
