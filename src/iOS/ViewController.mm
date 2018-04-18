@@ -141,9 +141,9 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 - (void)keyboardTopPositionChanged:(int)pos
 {
     for (NSNumber * dialogId in self.dialogIds) {
-	ViewManager * viewManager = [self getViewManager:dialogId.intValue];
-	DialogView * dialog = (DialogView *)viewManager.containerView;
-	dialog.bottomConstraint.constant = -(self.view.frame.size.height - pos + 15);
+        ViewManager * viewManager = [self getViewManager:dialogId.intValue];
+        DialogView * dialog = (DialogView *)viewManager.containerView;
+        dialog.maxBottomConstraint.constant = -(self.view.frame.size.height - pos + 15);
         [dialog setNeedsLayout];
     }
 }
@@ -1053,7 +1053,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     [self presentViewController:actionSheet animated:YES completion:nil];
 }
 
-- (void)createDialogWithId:(int)viewId parentId:(int)parentId
+- (void)createDialogWithId:(int)viewId parentId:(int)parentId title:(NSString*)title
 {
     [self.dialogIds addObject:[NSNumber numberWithInt:viewId]];
 
@@ -1088,8 +1088,13 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:dialog attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:dialog.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:65];
     NSLayoutConstraint *leftConstraint = [NSLayoutConstraint constraintWithItem:dialog attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:dialog.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
     NSLayoutConstraint *rightConstraint = [NSLayoutConstraint constraintWithItem:dialog attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:dialog.superview attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
-    dialog.bottomConstraint = [NSLayoutConstraint constraintWithItem:dialog attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:dialog.superview attribute:NSLayoutAttributeBottom multiplier:1.0f constant:-15];
-    [dialog.superview addConstraints:@[topConstraint, leftConstraint, rightConstraint, dialog.bottomConstraint]];
+    dialog.heightConstraint = [NSLayoutConstraint constraintWithItem:dialog attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:0.0f constant:0];
+    dialog.maxBottomConstraint = [NSLayoutConstraint constraintWithItem:dialog attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationLessThanOrEqual toItem:dialog.superview attribute:NSLayoutAttributeBottom multiplier:1.0f constant:-15];
+    
+    dialog.heightConstraint.priority = 998;
+    dialog.maxBottomConstraint.priority = 999;
+
+    [dialog.superview addConstraints:@[topConstraint, leftConstraint, rightConstraint, dialog.heightConstraint, dialog.maxBottomConstraint]];
 
     ViewManager * viewManager = [self getViewManager:viewId];
     viewManager.containerView = dialog;
@@ -1497,7 +1502,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             break;
 
         case CREATE_DIALOG: {
-            [self createDialogWithId:command.childInternalId parentId:command.internalId ];
+            [self createDialogWithId:command.childInternalId parentId:command.internalId title:command.textValue];
         }
             break;
 
