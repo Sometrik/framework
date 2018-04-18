@@ -122,7 +122,7 @@
 
 - (void)relayoutAll {
     UIView * view = self;
-    while (view != nil && ([view isKindOfClass:FrameLayoutView.class] || [view isKindOfClass:LinearLayoutView.class] || [view isKindOfClass:FWScrollView.class])) {
+    while (view != nil && ([view isKindOfClass:FWLayoutView.class] || [view isKindOfClass:FWScrollView.class])) {
         [view setNeedsLayout];
 #if 0
         if ([view isKindOfClass:FWScrollView.class]) {
