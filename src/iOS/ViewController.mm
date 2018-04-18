@@ -108,7 +108,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
     CGFloat statusBarHeight = [UIApplication sharedApplication].statusBarFrame.size.height;
     UIToolbar *statusBarBackgroundView = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, statusBarHeight)];
-    //statusBarBackgroundView.barStyle = UIStatusBarStyleDefault;
+    statusBarBackgroundView.barStyle = UIStatusBarStyleDefault;
     statusBarBackgroundView.translucent = YES;
     statusBarBackgroundView.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleWidth;
     
@@ -206,8 +206,8 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 {
     [super viewDidAppear:animated];
     if (self.navBar) {
-        [self.view bringSubviewToFront:self.statusBarBackgroundView];
-        [self.view bringSubviewToFront:self.navBar];
+        [self.statusBarBackgroundView.superview bringSubviewToFront:self.statusBarBackgroundView];
+        [self.navBar.superview bringSubviewToFront:self.navBar];
     }
     if (self.sideMenuView) {
         [self.view bringSubviewToFront:self.backgroundOverlayView];
@@ -395,8 +395,8 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     [view.superview addConstraints:@[topConstraint, leftConstraint, rightConstraint, bottomConstraint]];
 
     if (self.navBar) {
-        [self.view bringSubviewToFront:self.statusBarBackgroundView];
-        [self.view bringSubviewToFront:self.navBar];
+        [self.statusBarBackgroundView.superview bringSubviewToFront:self.statusBarBackgroundView];
+        [self.navBar.superview bringSubviewToFront:self.navBar];
     }
 }
 
@@ -654,8 +654,19 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
     navBar.translucent = YES;
 
+    UIToolbar *statusBarBackgroundView = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, statusBarHeight)];
+    // statusBarBackgroundView.barStyle = UIStatusBarStyleDefault;
+    statusBarBackgroundView.translucent = YES;
+    statusBarBackgroundView.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleWidth;
+    
+    self.statusBarBackgroundView = statusBarBackgroundView;
+
+    UIView * parentView = (UIView *)[self viewForId:parentId];
+    [parentView addSubview:statusBarBackgroundView];
+
     [self addView:navBar withId:viewId];
-    [self addToParent:parentId view:navBar];
+    // [self addToParent:parentId view:navBar];
+    [parentView addSubview:navBar];
     
     self.navBar = navBar;
 }
