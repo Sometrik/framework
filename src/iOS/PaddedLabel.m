@@ -25,7 +25,7 @@
 }
 
 - (void)setBounds:(CGRect)bounds {
-  int adjustedBoundsWidth = bounds.size.width - (self.edgeInsets.left + self.edgeInsets.right + 2);
+  int adjustedBoundsWidth = bounds.size.width; // - (self.edgeInsets.left + self.edgeInsets.right + 2);
   if (adjustedBoundsWidth < self.preferredMaxLayoutWidth) {
       NSLog(@"Bounds changed %f => %f", self.bounds.size.width, bounds.size.width);
     [super setBounds:bounds];
