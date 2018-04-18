@@ -106,15 +106,6 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
     [self addView:self.view withId:1];
 
-    CGFloat statusBarHeight = [UIApplication sharedApplication].statusBarFrame.size.height;
-    UIToolbar *statusBarBackgroundView = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, statusBarHeight)];
-    // statusBarBackgroundView.barStyle = UIStatusBarStyleDefault;
-    statusBarBackgroundView.translucent = YES;
-    statusBarBackgroundView.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleWidth;
-    
-    self.statusBarBackgroundView = statusBarBackgroundView;
-    [self.view addSubview:statusBarBackgroundView];
-
 #ifdef USE_THREAD
     mainThread->start();
 #else
@@ -153,6 +144,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 	ViewManager * viewManager = [self getViewManager:dialogId.intValue];
 	DialogView * dialog = (DialogView *)viewManager.containerView;
 	dialog.bottomConstraint.constant = -(self.view.frame.size.height - pos + 15);
+        [dialog setNeedsLayout];
     }
 }
 
@@ -626,15 +618,17 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     CGFloat statusBarHeight = [UIApplication sharedApplication].statusBarFrame.size.height;
 
     // Create navigation bar with a button for opening side menu
-    UINavigationBar *navBar = [[UINavigationBar alloc] initWithFrame:CGRectMake(0, statusBarHeight, self.view.frame.size.width, 44)];
+    UINavigationBar *navBar = [[UINavigationBar alloc] init];
+
+    navBar.translatesAutoresizingMaskIntoConstraints = false;
+    navBar.tag = viewId;
+    navBar.translucent = YES;
     
     if (self.currentTitle != nil) {
       self.navItem = [[UINavigationItem alloc] initWithTitle:self.currentTitle];
     } else {
       self.navItem = [[UINavigationItem alloc] init];
     }
-
-    navBar.tag = viewId;
 
     // Add debug event by tapping nav bar 5 times
     UITapGestureRecognizer *debugTapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(navBarTapped5Times:)];
@@ -656,22 +650,31 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     self.navItem.rightBarButtonItem = composeButton;
     [navBar setItems:@[self.navItem]];
 
-    navBar.translucent = YES;
-
-    UIToolbar *statusBarBackgroundView = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, statusBarHeight)];
+    UIToolbar *statusBarBackgroundView = [[UIToolbar alloc] init];
     // statusBarBackgroundView.barStyle = UIStatusBarStyleDefault;
     statusBarBackgroundView.translucent = YES;
-    statusBarBackgroundView.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleWidth;
+    statusBarBackgroundView.translatesAutoresizingMaskIntoConstraints = false;
     
-    self.statusBarBackgroundView = statusBarBackgroundView;
-
     UIView * parentView = (UIView *)[self viewForId:parentId];
     [parentView addSubview:statusBarBackgroundView];
 
     [self addView:navBar withId:viewId];
     // [self addToParent:parentId view:navBar];
     [parentView addSubview:navBar];
+
+    NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:statusBarBackgroundView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:statusBarBackgroundView.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
+    NSLayoutConstraint *leftConstraint = [NSLayoutConstraint constraintWithItem:statusBarBackgroundView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:statusBarBackgroundView.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
+    NSLayoutConstraint *rightConstraint = [NSLayoutConstraint constraintWithItem:statusBarBackgroundView attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:statusBarBackgroundView.superview attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
+    NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:statusBarBackgroundView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:statusBarBackgroundView.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:statusBarHeight];
+    [statusBarBackgroundView.superview addConstraints:@[topConstraint, leftConstraint, rightConstraint, bottomConstraint]];
+
+    NSLayoutConstraint *topConstraint2 = [NSLayoutConstraint constraintWithItem:navBar attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:navBar.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:statusBarHeight];
+    NSLayoutConstraint *leftConstraint2 = [NSLayoutConstraint constraintWithItem:navBar attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:navBar.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
+    NSLayoutConstraint *rightConstraint2 = [NSLayoutConstraint constraintWithItem:navBar attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:navBar.superview attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
+    NSLayoutConstraint *bottomConstraint2 = [NSLayoutConstraint constraintWithItem:navBar attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:navBar.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:statusBarHeight + 44];
+    [navBar.superview addConstraints:@[topConstraint2, leftConstraint2, rightConstraint2, bottomConstraint2]];
     
+    self.statusBarBackgroundView = statusBarBackgroundView;
     self.navBar = navBar;
 }
 
