@@ -16,6 +16,7 @@ class ImageDialog : public Dialog {
 public:
   ImageDialog() : Dialog("Image") {
     auto layout = std::make_shared<LinearLayout>(FW_VERTICAL);
+    layout->style("width", "match-parent");
     addChild(layout);
     
     auto label = std::make_shared<TextLabel>("Hello!");
