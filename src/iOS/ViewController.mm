@@ -30,7 +30,7 @@ std::shared_ptr<iOSMainThread> mainThread;
 // Declare C++ function
 extern FWApplication * applicationMain();
 
-@interface ViewController () <UIScrollViewDelegate, UITabBarDelegate, InAppPurchaseManagerDelegate, FWImageViewDelegate, UITextFieldDelegate, UITextViewDelegate, UIPickerViewDelegate, UIPickerViewDataSource, UIGestureRecognizerDelegate>
+@interface ViewController () <UIScrollViewDelegate, UITabBarDelegate, InAppPurchaseManagerDelegate, FWImageViewDelegate, UITextFieldDelegate, UITextViewDelegate, UIGestureRecognizerDelegate>
 @property (nonatomic, strong) NSMutableDictionary *viewsDictionary;
 @property (nonatomic, strong) UIView *sideMenuView;
 @property (nonatomic, strong) UIView *backgroundOverlayView;
@@ -434,13 +434,8 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
 - (void)createButtonWithId:(int)viewId parentId:(int)parentId caption:(NSString *)caption
 {
-#if 0
-    UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
-#else
     FWButton *button = [[FWButton alloc] init];
-#endif
     button.tag = viewId;
-    button.translatesAutoresizingMaskIntoConstraints = false;
     [button setTitle:caption forState:UIControlStateNormal];
     [button setTitleColor:UIColor.blackColor forState:UIControlStateNormal];
     [button addTarget:self action:@selector(buttonPushed:) forControlEvents:UIControlEventTouchUpInside];
@@ -501,7 +496,6 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     imageView.contentMode = UIViewContentModeScaleAspectFit;
     imageView.clipsToBounds = YES;
     imageView.delegate = self;
-    imageView.translatesAutoresizingMaskIntoConstraints = false;
     [self addView:imageView withId:viewId];
     [self addToParent:parentId view:imageView];
 }
@@ -513,7 +507,6 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     scrollView.contentInset = UIEdgeInsetsMake(0, 0, 0, 0);
     scrollView.clipsToBounds = YES;
     scrollView.delegate = self;
-    scrollView.translatesAutoresizingMaskIntoConstraints = false;
     [self addView:scrollView withId:viewId];
     [self addToParent:parentId view:scrollView];
 }
@@ -770,13 +763,11 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 // returns index for item in tabBar.items array.
 - (NSInteger)indexForTabBar:(UITabBar *)tabBar item:(UITabBarItem *)item
 {
-    //if (self.tabBar) {
     for (int i = 0; i < tabBar.items.count; i++) {
         if ([tabBar.items[i] isEqual:item]) {
             return i;
         }
     }
-    //}
     return NSNotFound;
 }
 
@@ -948,7 +939,6 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 {
     FWPicker * view = [[FWPicker alloc] init];
     view.tag = viewId;
-    view.translatesAutoresizingMaskIntoConstraints = false;
 
     UIImage *image = [self loadImage:@"icons_arrow-down.png"];
     [view setImage:image forState:UIControlStateNormal];
@@ -978,7 +968,6 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
     self.currentPickerHolder = pickerHolder;
 
-#if 1
     CGFloat statusBarHeight = [UIApplication sharedApplication].statusBarFrame.size.height;
 
     FrameLayoutView *layout = [[FrameLayoutView alloc] init];
@@ -1027,41 +1016,6 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 	item.fixedWidth = -1;
 	[layout2 addItem:item];
     }
-#else
-    UIView * pickerBackground = [self createBackgroundOverlay:pickerHolder];
-    pickerBackground.alpha = backgroundOverlayViewAlpha;
-
-    UIToolbar *toolBar = [[UIToolbar alloc] init];
-    // toolBar.barStyle = ?
-    toolBar.translucent = NO;
-    toolBar.translatesAutoresizingMaskIntoConstraints = false;
-    UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithTitle:@"Done" style:UIBarButtonItemStylePlain target:self action:@selector(doneButtonTapped)];
-    [toolBar setItems:@[doneButton]];
-    [pickerHolder addSubview:toolBar];
-
-    NSLayoutConstraint *topConstraint0b = [NSLayoutConstraint constraintWithItem:toolBar attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:toolBar.superview attribute:NSLayoutAttributeBottom multiplier:0.6f constant:-64];
-    NSLayoutConstraint *leftConstraint0b = [NSLayoutConstraint constraintWithItem:toolBar attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:toolBar.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
-    NSLayoutConstraint *rightConstraint0b = [NSLayoutConstraint constraintWithItem:toolBar attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:toolBar.superview attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
-    NSLayoutConstraint *bottomConstraint0b = [NSLayoutConstraint constraintWithItem:toolBar attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:toolBar.superview attribute:NSLayoutAttributeBottom multiplier:0.6f constant:0];
-    [toolBar.superview addConstraints:@[topConstraint0b, leftConstraint0b, rightConstraint0b, bottomConstraint0b]];
-
-    UIPickerView * view = [UIPickerView new];
-    view.delegate = self;
-    view.dataSource = self;
-    view.showsSelectionIndicator = YES;
-    view.translatesAutoresizingMaskIntoConstraints = false;
-    view.tag = sender.tag;
-    view.layer.backgroundColor = UIColor.whiteColor.CGColor;
-    [pickerHolder addSubview:view];
-
-    NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeBottom multiplier:0.6f constant:0];
-    NSLayoutConstraint *leftConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
-    NSLayoutConstraint *rightConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
-    NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeBottom multiplier:1.0f constant:0];
-    [view.superview addConstraints:@[topConstraint, leftConstraint, rightConstraint, bottomConstraint]];
-
-    self.currentPickerSelection = 0;
-#endif
 } 
 
 - (void)pickerButtonPushed:(UIButton *)sender
@@ -1078,46 +1032,6 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
 - (void)cancelPicker
 {
-    [self.currentPickerHolder removeFromSuperview];
-    self.currentPickerHolder = nil;
-    self.currentPicker = nil;
-}
-
-- (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView {
-    return 1;
-}
-
-- (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component {
-    FWPicker * picker = (FWPicker *)[self viewForId:pickerView.tag];
-    if (picker != nil) {
-        return [picker.options count];
-    } else {
-        return 0;
-    }
-}
-
-- (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component {
-    FWPicker * picker = (FWPicker *)[self viewForId:pickerView.tag];
-    if (picker != nil && row >= 0 && row < [picker.options count]) {
-        NSString * old = [picker.options objectAtIndex:row];
-        // NSString * tmp = [NSString alloc];
-        return old;
-    } else {
-        return @"";
-    }
-}
-
--(void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component
-{
-    self.currentPickerSelection = row;
-}
-
-- (void)doneButtonTapped
-{	
-    NSLog(@"picker selected %d", self.currentPickerSelection);
-    [self sendIntValue:self.currentPicker.tag value:self.currentPickerSelection];
-
-    [self.currentPicker setSelection:self.currentPickerSelection];
     [self.currentPickerHolder removeFromSuperview];
     self.currentPickerHolder = nil;
     self.currentPicker = nil;
