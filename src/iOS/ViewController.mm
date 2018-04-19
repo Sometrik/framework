@@ -107,15 +107,6 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
     [self addView:self.view withId:1];
 
-    CGFloat statusBarHeight = [UIApplication sharedApplication].statusBarFrame.size.height;
-    UIToolbar *statusBarBackgroundView = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, statusBarHeight)];
-    //statusBarBackgroundView.barStyle = UIStatusBarStyleDefault;
-    statusBarBackgroundView.translucent = YES;
-    statusBarBackgroundView.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleWidth;
-    
-    self.statusBarBackgroundView = statusBarBackgroundView;
-    [self.view addSubview:statusBarBackgroundView];
-
 #ifdef USE_THREAD
     mainThread->start();
 #else
