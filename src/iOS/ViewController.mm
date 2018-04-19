@@ -690,12 +690,14 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     } else {
         menuButton = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(menuButtonTapped)];
     }
+    self.navItem.leftBarButtonItem = menuButton;
 
     UIImage *image2 = [self loadImage:@"write_icon_small.png"];
-    UIBarButtonItem *composeButton = [[UIBarButtonItem alloc] initWithImage:image2 style:UIBarButtonItemStylePlain target:self action:@selector(composeButtonTapped)];
+    if (image2 != nil) {
+	UIBarButtonItem *composeButton = [[UIBarButtonItem alloc] initWithImage:image2 style:UIBarButtonItemStylePlain target:self action:@selector(composeButtonTapped)];
+	self.navItem.rightBarButtonItem = composeButton;
+    }
 
-    self.navItem.leftBarButtonItem = menuButton;
-    self.navItem.rightBarButtonItem = composeButton;
     [navBar setItems:@[self.navItem]];
 
     UIToolbar *statusBarBackgroundView = [[UIToolbar alloc] init];
