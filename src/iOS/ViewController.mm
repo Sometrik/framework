@@ -30,7 +30,7 @@ std::shared_ptr<iOSMainThread> mainThread;
 // Declare C++ function
 extern FWApplication * applicationMain();
 
-@interface ViewController () <UIScrollViewDelegate, UITabBarDelegate, InAppPurchaseManagerDelegate, FWImageViewDelegate, UITextFieldDelegate, UITextViewDelegate, UIPickerViewDelegate, UIPickerViewDataSource, UIGestureRecognizerDelegate>
+@interface ViewController () <UIScrollViewDelegate, UITabBarDelegate, InAppPurchaseManagerDelegate, FWImageViewDelegate, UITextFieldDelegate, UITextViewDelegate, UIGestureRecognizerDelegate>
 @property (nonatomic, strong) NSMutableDictionary *viewsDictionary;
 @property (nonatomic, strong) UIView *sideMenuView;
 @property (nonatomic, strong) UIView *backgroundOverlayView;
@@ -150,7 +150,12 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
 - (void)keyboardTopPositionChanged:(int)pos
 {
-    NSLog(@"%d", pos);
+    for (NSNumber * dialogId in self.dialogIds) {
+        ViewManager * viewManager = [self getViewManager:dialogId.intValue];
+        DialogView * dialog = (DialogView *)viewManager.containerView;
+        dialog.maxBottomConstraint.constant = -(self.view.frame.size.height - pos + 15);
+        [dialog setNeedsLayout];
+    }
 }
 
 - (void)viewWillTransitionToSize: (CGSize)size withTransitionCoordinator:(id)coordinator
@@ -440,13 +445,8 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
 - (void)createButtonWithId:(int)viewId parentId:(int)parentId caption:(NSString *)caption
 {
-#if 0
-    UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
-#else
     FWButton *button = [[FWButton alloc] init];
-#endif
     button.tag = viewId;
-    button.translatesAutoresizingMaskIntoConstraints = false;
     [button setTitle:caption forState:UIControlStateNormal];
     [button setTitleColor:UIColor.blackColor forState:UIControlStateNormal];
     [button addTarget:self action:@selector(buttonPushed:) forControlEvents:UIControlEventTouchUpInside];
@@ -507,7 +507,6 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     imageView.contentMode = UIViewContentModeScaleAspectFit;
     imageView.clipsToBounds = YES;
     imageView.delegate = self;
-    imageView.translatesAutoresizingMaskIntoConstraints = false;
     [self addView:imageView withId:viewId];
     [self addToParent:parentId view:imageView];
 }
@@ -519,7 +518,6 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     scrollView.contentInset = UIEdgeInsetsMake(0, 0, 0, 0);
     scrollView.clipsToBounds = YES;
     scrollView.delegate = self;
-    scrollView.translatesAutoresizingMaskIntoConstraints = false;
     [self addView:scrollView withId:viewId];
     [self addToParent:parentId view:scrollView];
 }
@@ -643,15 +641,18 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     CGFloat statusBarHeight = [UIApplication sharedApplication].statusBarFrame.size.height;
 
     // Create navigation bar with a button for opening side menu
-    UINavigationBar *navBar = [[UINavigationBar alloc] initWithFrame:CGRectMake(0, statusBarHeight, self.view.frame.size.width, 44)];
-    
+    UINavigationBar *navBar = [[UINavigationBar alloc] init];
+
+    navBar.translatesAutoresizingMaskIntoConstraints = false;
+    navBar.tag = viewId;
+    navBar.translucent = YES;
+    navBar.layer.zPosition = 1000;
+
     if (self.currentTitle != nil) {
       self.navItem = [[UINavigationItem alloc] initWithTitle:self.currentTitle];
     } else {
       self.navItem = [[UINavigationItem alloc] init];
     }
-
-    navBar.tag = viewId;
 
     // Add debug event by tapping nav bar 5 times
     UITapGestureRecognizer *debugTapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(navBarTapped5Times:)];
@@ -673,22 +674,32 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     self.navItem.rightBarButtonItem = composeButton;
     [navBar setItems:@[self.navItem]];
 
-    navBar.translucent = YES;
-
-    UIToolbar *statusBarBackgroundView = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, statusBarHeight)];
+    UIToolbar *statusBarBackgroundView = [[UIToolbar alloc] init];
     // statusBarBackgroundView.barStyle = UIStatusBarStyleDefault;
     statusBarBackgroundView.translucent = YES;
-    statusBarBackgroundView.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleWidth;
+    statusBarBackgroundView.translatesAutoresizingMaskIntoConstraints = false;
+    statusBarBackgroundView.layer.zPosition = 1000;
     
-    self.statusBarBackgroundView = statusBarBackgroundView;
-
     UIView * parentView = (UIView *)[self viewForId:parentId];
     [parentView addSubview:statusBarBackgroundView];
 
     [self addView:navBar withId:viewId];
     // [self addToParent:parentId view:navBar];
     [parentView addSubview:navBar];
+
+    NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:statusBarBackgroundView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:statusBarBackgroundView.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
+    NSLayoutConstraint *leftConstraint = [NSLayoutConstraint constraintWithItem:statusBarBackgroundView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:statusBarBackgroundView.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
+    NSLayoutConstraint *rightConstraint = [NSLayoutConstraint constraintWithItem:statusBarBackgroundView attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:statusBarBackgroundView.superview attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
+    NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:statusBarBackgroundView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:statusBarBackgroundView.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:statusBarHeight];
+    [statusBarBackgroundView.superview addConstraints:@[topConstraint, leftConstraint, rightConstraint, bottomConstraint]];
+
+    NSLayoutConstraint *topConstraint2 = [NSLayoutConstraint constraintWithItem:navBar attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:navBar.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:statusBarHeight];
+    NSLayoutConstraint *leftConstraint2 = [NSLayoutConstraint constraintWithItem:navBar attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:navBar.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
+    NSLayoutConstraint *rightConstraint2 = [NSLayoutConstraint constraintWithItem:navBar attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:navBar.superview attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
+    NSLayoutConstraint *bottomConstraint2 = [NSLayoutConstraint constraintWithItem:navBar attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:navBar.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:statusBarHeight + 44];
+    [navBar.superview addConstraints:@[topConstraint2, leftConstraint2, rightConstraint2, bottomConstraint2]];
     
+    self.statusBarBackgroundView = statusBarBackgroundView;
     self.navBar = navBar;
 }
 
@@ -784,13 +795,11 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 // returns index for item in tabBar.items array.
 - (NSInteger)indexForTabBar:(UITabBar *)tabBar item:(UITabBarItem *)item
 {
-    //if (self.tabBar) {
     for (int i = 0; i < tabBar.items.count; i++) {
         if ([tabBar.items[i] isEqual:item]) {
             return i;
         }
     }
-    //}
     return NSNotFound;
 }
 
@@ -962,7 +971,6 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 {
     FWPicker * view = [[FWPicker alloc] init];
     view.tag = viewId;
-    view.translatesAutoresizingMaskIntoConstraints = false;
 
     UIImage *image = [self loadImage:@"icons_arrow-down.png"];
     [view setImage:image forState:UIControlStateNormal];
@@ -992,7 +1000,6 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
     self.currentPickerHolder = pickerHolder;
 
-#if 1
     CGFloat statusBarHeight = [UIApplication sharedApplication].statusBarFrame.size.height;
 
     FrameLayoutView *layout = [[FrameLayoutView alloc] init];
@@ -1041,41 +1048,6 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 	item.fixedWidth = -1;
 	[layout2 addItem:item];
     }
-#else
-    UIView * pickerBackground = [self createBackgroundOverlay:pickerHolder];
-    pickerBackground.alpha = backgroundOverlayViewAlpha;
-
-    UIToolbar *toolBar = [[UIToolbar alloc] init];
-    // toolBar.barStyle = ?
-    toolBar.translucent = NO;
-    toolBar.translatesAutoresizingMaskIntoConstraints = false;
-    UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithTitle:@"Done" style:UIBarButtonItemStylePlain target:self action:@selector(doneButtonTapped)];
-    [toolBar setItems:@[doneButton]];
-    [pickerHolder addSubview:toolBar];
-
-    NSLayoutConstraint *topConstraint0b = [NSLayoutConstraint constraintWithItem:toolBar attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:toolBar.superview attribute:NSLayoutAttributeBottom multiplier:0.6f constant:-64];
-    NSLayoutConstraint *leftConstraint0b = [NSLayoutConstraint constraintWithItem:toolBar attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:toolBar.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
-    NSLayoutConstraint *rightConstraint0b = [NSLayoutConstraint constraintWithItem:toolBar attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:toolBar.superview attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
-    NSLayoutConstraint *bottomConstraint0b = [NSLayoutConstraint constraintWithItem:toolBar attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:toolBar.superview attribute:NSLayoutAttributeBottom multiplier:0.6f constant:0];
-    [toolBar.superview addConstraints:@[topConstraint0b, leftConstraint0b, rightConstraint0b, bottomConstraint0b]];
-
-    UIPickerView * view = [UIPickerView new];
-    view.delegate = self;
-    view.dataSource = self;
-    view.showsSelectionIndicator = YES;
-    view.translatesAutoresizingMaskIntoConstraints = false;
-    view.tag = sender.tag;
-    view.layer.backgroundColor = UIColor.whiteColor.CGColor;
-    [pickerHolder addSubview:view];
-
-    NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeBottom multiplier:0.6f constant:0];
-    NSLayoutConstraint *leftConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
-    NSLayoutConstraint *rightConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
-    NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeBottom multiplier:1.0f constant:0];
-    [view.superview addConstraints:@[topConstraint, leftConstraint, rightConstraint, bottomConstraint]];
-
-    self.currentPickerSelection = 0;
-#endif
 } 
 
 - (void)pickerButtonPushed:(UIButton *)sender
@@ -1097,46 +1069,6 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     self.currentPicker = nil;
 }
 
-- (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView {
-    return 1;
-}
-
-- (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component {
-    FWPicker * picker = (FWPicker *)[self viewForId:pickerView.tag];
-    if (picker != nil) {
-        return [picker.options count];
-    } else {
-        return 0;
-    }
-}
-
-- (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component {
-    FWPicker * picker = (FWPicker *)[self viewForId:pickerView.tag];
-    if (picker != nil && row >= 0 && row < [picker.options count]) {
-        NSString * old = [picker.options objectAtIndex:row];
-        // NSString * tmp = [NSString alloc];
-        return old;
-    } else {
-        return @"";
-    }
-}
-
--(void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component
-{
-    self.currentPickerSelection = row;
-}
-
-- (void)doneButtonTapped
-{	
-    NSLog(@"picker selected %d", self.currentPickerSelection);
-    [self sendIntValue:self.currentPicker.tag value:self.currentPickerSelection];
-
-    [self.currentPicker setSelection:self.currentPickerSelection];
-    [self.currentPickerHolder removeFromSuperview];
-    self.currentPickerHolder = nil;
-    self.currentPicker = nil;
-}
-
 - (void)createActionSheetWithId:(int)viewId parentId:(int)parentId title:(NSString *)title
 {  
     UIAlertController *actionSheet = [UIAlertController alertControllerWithTitle:title message:nil preferredStyle:UIAlertControllerStyleActionSheet];
@@ -1151,7 +1083,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     [self presentViewController:actionSheet animated:YES completion:nil];
 }
 
-- (void)createDialogWithId:(int)viewId parentId:(int)parentId
+- (void)createDialogWithId:(int)viewId parentId:(int)parentId title:(NSString*)title
 {
     [self.dialogIds addObject:[NSNumber numberWithInt:viewId]];
 
@@ -1186,8 +1118,13 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:dialog attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:dialog.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:65];
     NSLayoutConstraint *leftConstraint = [NSLayoutConstraint constraintWithItem:dialog attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:dialog.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
     NSLayoutConstraint *rightConstraint = [NSLayoutConstraint constraintWithItem:dialog attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:dialog.superview attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
-    NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:dialog attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:dialog.superview attribute:NSLayoutAttributeBottom multiplier:1.0f constant:-15];
-    [dialog.superview addConstraints:@[topConstraint, leftConstraint, rightConstraint, bottomConstraint]];
+    dialog.heightConstraint = [NSLayoutConstraint constraintWithItem:dialog attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:0.0f constant:0];
+    dialog.maxBottomConstraint = [NSLayoutConstraint constraintWithItem:dialog attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationLessThanOrEqual toItem:dialog.superview attribute:NSLayoutAttributeBottom multiplier:1.0f constant:-15];
+    
+    dialog.heightConstraint.priority = 998;
+    dialog.maxBottomConstraint.priority = 999;
+
+    [dialog.superview addConstraints:@[topConstraint, leftConstraint, rightConstraint, dialog.heightConstraint, dialog.maxBottomConstraint]];
 
     ViewManager * viewManager = [self getViewManager:viewId];
     viewManager.containerView = dialog;
@@ -1595,7 +1532,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             break;
 
         case CREATE_DIALOG: {
-            [self createDialogWithId:command.childInternalId parentId:command.internalId ];
+            [self createDialogWithId:command.childInternalId parentId:command.internalId title:command.textValue];
         }
             break;
 

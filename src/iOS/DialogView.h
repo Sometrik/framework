@@ -3,5 +3,6 @@
 #import "LayoutParams.h"
 
 @interface DialogView : FrameLayoutView
-
+@property NSLayoutConstraint *heightConstraint;
+@property NSLayoutConstraint *maxBottomConstraint;
 @end

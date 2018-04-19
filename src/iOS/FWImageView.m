@@ -7,12 +7,32 @@
 
 @implementation FWImageView
 
+- (instancetype)init
+{
+    if (self = [super init]) {
+        self.prevWidth = 0;
+        self.prevHeight = 0;
+	self.translatesAutoresizingMaskIntoConstraints = false;
+    }
+    return self;
+}
+
+- (instancetype)initWithImage:(UIImage *)image
+{
+    if (self = [super initWithImage:image]) {
+        self.prevWidth = 0;
+        self.prevHeight = 0;
+	self.translatesAutoresizingMaskIntoConstraints = false;
+    }
+    return self;
+}
+
 - (instancetype)initWithFrame:(CGRect)frame
 {
     if (self = [super initWithFrame:frame]) {
-        self.frame = frame;
         self.prevWidth = 0;
         self.prevHeight = 0;
+	self.translatesAutoresizingMaskIntoConstraints = false;
     }
     return self;
 }

@@ -6,6 +6,7 @@
     self = [super init];
     if (self) {
         self.options = [[NSMutableArray alloc] init];
+	self.translatesAutoresizingMaskIntoConstraints = false;
     }
     return self;
 }

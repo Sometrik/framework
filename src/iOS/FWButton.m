@@ -6,6 +6,7 @@
 {
     if (self = [super init]) {
         self.iconAttachment = FWButtonIconAttachmentTop;
+	self.translatesAutoresizingMaskIntoConstraints = false;
     }
     return self;
 }

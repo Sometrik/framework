@@ -12,6 +12,7 @@
         self.leftConstraint = nil;
         self.widthConstraint = nil;
         self.heightConstraint = nil;
+	self.translatesAutoresizingMaskIntoConstraints = false;
     }
     return self;
 }
@@ -24,6 +25,7 @@
         self.leftConstraint = nil;
         self.widthConstraint = nil;
         self.heightConstraint = nil;
+	self.translatesAutoresizingMaskIntoConstraints = false;
     }
     return self;
 }
