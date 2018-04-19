@@ -71,6 +71,7 @@ public:
     sendCommand(c);
   }
   void setVersion(const std::string & v) { versionText = v; }
+  void setBuildNumber(const std::string & n) { buildNumber = n; }
 
   void showMessageDialog(const std::string & title, const std::string & message);
   std::string showInputDialog(const std::string & title, const std::string & message);
@@ -109,6 +110,7 @@ public:
   }
 
   const std::string & getVersion() const { return versionText; }
+  const std::string & getBuildNumber() const { return buildNumber; }
 
  private:
   std::string name, iap_public_key;
@@ -117,7 +119,8 @@ public:
   std::vector<int> view_back_history, view_forward_history;
   FWPreferences preferences;
   MobileAccount mobileAccount;
-  std::string versionText = "0.1";
+  std::string versionText;
+  std::string buildNumber;
 };
 
 #endif
