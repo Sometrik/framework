@@ -48,6 +48,7 @@ extern FWApplication * applicationMain();
 @property (nonatomic, strong) FWPicker * currentPicker;
 @property (nonatomic, assign) int currentPickerSelection;
 @property (nonatomic, strong) UIView * currentPickerHolder;
+@property (nonatomic, strong) UIScreenEdgePanGestureRecognizer *panEdgeGestureRecognizer;
 @end
 
 static const NSTimeInterval animationDuration = 0.4;
@@ -108,7 +109,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
     CGFloat statusBarHeight = [UIApplication sharedApplication].statusBarFrame.size.height;
     UIToolbar *statusBarBackgroundView = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, statusBarHeight)];
-    statusBarBackgroundView.barStyle = UIStatusBarStyleDefault;
+    //statusBarBackgroundView.barStyle = UIStatusBarStyleDefault;
     statusBarBackgroundView.translucent = YES;
     statusBarBackgroundView.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleWidth;
     
@@ -182,9 +183,10 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     [super viewWillAppear:animated];
     
     // make side menu open by swiping from the left edge of the screen
-    UIScreenEdgePanGestureRecognizer *panEdgeGestureRecognizer = [[UIScreenEdgePanGestureRecognizer alloc] initWithTarget:self action:@selector(edgeSwiped:)];
-    panEdgeGestureRecognizer.edges = UIRectEdgeLeft;
-    [self.view addGestureRecognizer:panEdgeGestureRecognizer];
+    self.panEdgeGestureRecognizer = [[UIScreenEdgePanGestureRecognizer alloc] initWithTarget:self action:@selector(edgeSwiped:)];
+    self.panEdgeGestureRecognizer.edges = UIRectEdgeLeft;
+    self.panEdgeGestureRecognizer.delegate = self;
+    [self.view addGestureRecognizer:self.panEdgeGestureRecognizer];
     
     // some additional setups for views
     for (NSString *key in self.viewsDictionary.allKeys) {
@@ -195,7 +197,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
         } else if ([viewManager.view isKindOfClass:UIScrollView.class]) {
             UIScrollView *scrollView = (UIScrollView *)viewManager.view;
             if (scrollView.pagingEnabled) {
-                [scrollView.panGestureRecognizer requireGestureRecognizerToFail:panEdgeGestureRecognizer];
+                [scrollView.panGestureRecognizer requireGestureRecognizerToFail:self.panEdgeGestureRecognizer];
             }
         }
     }
@@ -614,7 +616,26 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 }
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer: (UIGestureRecognizer *)otherGestureRecognizer {
+    if ([otherGestureRecognizer isEqual:self.pageView.panGestureRecognizer] && [gestureRecognizer isEqual:self.panEdgeGestureRecognizer]) {
+        return YES;
+    }
     return gestureRecognizer.view == otherGestureRecognizer.view;
+}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRequireFailureOfGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
+{
+    if ([otherGestureRecognizer isEqual:self.pageView.panGestureRecognizer] && [gestureRecognizer isEqual:self.panEdgeGestureRecognizer]) {
+        return NO;
+    }
+    return YES;
+}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldBeRequiredToFailByGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
+{
+    if ([otherGestureRecognizer isEqual:self.pageView.panGestureRecognizer] && [gestureRecognizer isEqual:self.panEdgeGestureRecognizer]) {
+        return YES;
+    }
+    return NO;
 }
 
 - (void)createNavigationBar:(int)viewId parentId:(int)parentId
