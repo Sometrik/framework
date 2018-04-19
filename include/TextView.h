@@ -11,6 +11,9 @@ class TextView : public InputElement {
  TextView(int _id = 0, unsigned int _flags = 0) : InputElement(_id, _flags) {
     style("width", "match-parent");
  }
+ TextView(const std::string & _value, int _id = 0, unsigned int _flags = 0) : InputElement(_id, _flags), value(_value) {
+    style("width", "match-parent");
+ }
 
   bool isA(const std::string & className) const override {
     if (className == "TextView") return true;
