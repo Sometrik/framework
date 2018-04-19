@@ -440,11 +440,15 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     [self addToParent:parentId view:view];
 }
 
-- (void)createTextWithId:(int)viewId parentId:(int)parentId value:(NSString*)value
+- (void)createTextWithId:(int)viewId parentId:(int)parentId value:(NSString*)value autolink:(BOOL)autolink
 {
     PaddedLabel *label = [[PaddedLabel alloc] init];
     label.tag = viewId;
-    label.text = value;
+    if (autolink) {
+      label.attributedText = [label createAttributedString:value];
+    } else {
+      label.text = value;
+    }
     label.numberOfLines = 0; // as many lines as needed
     label.lineBreakMode = NSLineBreakByWordWrapping;
     label.translatesAutoresizingMaskIntoConstraints = false;
@@ -1492,7 +1496,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             break;
         
         case CREATE_TEXT: {
-            [self createTextWithId:command.childInternalId parentId:command.internalId value:command.textValue];
+            [self createTextWithId:command.childInternalId parentId:command.internalId value:command.textValue autolink:command.value != 0];
         }
             break;
 

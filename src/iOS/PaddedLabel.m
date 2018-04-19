@@ -76,4 +76,47 @@
   return size;
 }
 
+- (NSAttributedString *)createAttributedString:(NSString *)input
+{
+    NSError *error = NULL;
+    NSRegularExpression *linkRegex = [NSRegularExpression regularExpressionWithPattern:@"(@\\S+|#\\S+|https?://\\S+)" options:0 error:&error];
+    
+    NSMutableArray *linkRanges = [[NSMutableArray alloc] init];
+    NSMutableArray *linkTargets = [[NSMutableArray alloc] init];
+       
+    [linkRegex enumerateMatchesInString:input options:0 range:NSMakeRange(0, input.length) usingBlock:^(NSTextCheckingResult *result, NSMatchingFlags flags, BOOL *stop) {       
+        NSRange range = [result rangeAtIndex:0];
+        [linkRanges addObject:[NSValue valueWithRange:range]];
+        [linkTargets addObject:[input substringWithRange:range]];
+    }];
+       
+    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:input attributes:
+  @{
+//    NSFontAttributeName: baseFont
+    }];
+    
+    [attributedString beginEditing];
+    
+    for (NSInteger i = 0; i < linkRanges.count; i++) {
+        NSString *urlString = linkTargets[i];
+        NSValue *urlRangeValue = linkRanges[i];
+        NSRange urlRange;
+        [urlRangeValue getValue:&urlRange];
+        unichar firstChar = [urlString characterAtIndex:0];
+        if (firstChar == '#' || firstChar == '@') {
+            [attributedString addAttributes:@{
+                                              NSForegroundColorAttributeName: UIColor.redColor,
+                                              } range:urlRange];
+        } else {
+            [attributedString addAttributes:@{
+                                              NSLinkAttributeName: [NSURL URLWithString:urlString],
+                                              NSForegroundColorAttributeName: UIColor.redColor,
+                                              } range:urlRange];
+        }
+    }
+    [attributedString endEditing];
+    
+    return attributedString;
+}
+
 @end

@@ -77,10 +77,14 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
 
 - (void)setTextValue:(NSString *)value
 {
-    if ([self.view isKindOfClass:UILabel.class]) {
-        UILabel * label = (UILabel*)self.view;
-        label.text = value;
-        [label.superview setNeedsLayout];
+    if ([self.view isKindOfClass:PaddedLabel.class]) {
+        PaddedLabel * label = (PaddedLabel*)self.view;
+	if (label.attributedText != nil) {
+	  label.attributedText = [label createAttributedString:value];
+	} else {
+	  label.text = value;
+	}
+        [label relayoutAll];
     } else if ([self.view isKindOfClass:UITextField.class]) {
         UITextField * textField = (UITextField*)self.view;
         textField.text = value;
