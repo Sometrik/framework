@@ -130,6 +130,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     
     // Add tap gesture recognizer to self.view so when tapped, keyboard should close
     UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(backgroundTapped:)];
+    tapGestureRecognizer.delegate = self;
     [self.view addGestureRecognizer:tapGestureRecognizer];
 }
 
@@ -640,13 +641,14 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     return gestureRecognizer.view == otherGestureRecognizer.view;
 }
 
-- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRequireFailureOfGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
+/*- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRequireFailureOfGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
 {
     if ([otherGestureRecognizer isEqual:self.pageView.panGestureRecognizer] && [gestureRecognizer isEqual:self.panEdgeGestureRecognizer]) {
         return NO;
     }
     return YES;
 }
+*/
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldBeRequiredToFailByGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
 {
@@ -654,6 +656,17 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
         return YES;
     }
     return NO;
+}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch
+{
+    UITapGestureRecognizer *tapGestureRecognizer = self.view.gestureRecognizers.firstObject;
+    if ([gestureRecognizer isEqual:tapGestureRecognizer]) {
+        if ([touch locationInView:self.view].y > (self.view.frame.size.height - self.tabBar.frame.size.height) && self.tabBar) {
+            return NO;
+        }
+    }
+    return YES;
 }
 
 - (void)createNavigationBar:(int)viewId parentId:(int)parentId
@@ -749,7 +762,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 {
     UITabBar *tabBar = [[UITabBar alloc] init];
     tabBar.tag = viewId;
-    //self.tabBar = tabBar;
+    self.tabBar = tabBar;
     tabBar.delegate = self;
     tabBar.translucent = YES;
     tabBar.translatesAutoresizingMaskIntoConstraints = false;
