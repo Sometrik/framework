@@ -4,6 +4,7 @@
 #include <FrameView.h>
 #include <LinearLayout.h>
 #include <Button.h>
+#include <TextView.h>
 
 #define ID_SHOW_FRONT_PAGE 1234
 
@@ -20,6 +21,9 @@ public:
 	button.style("margin", 25);
 	button.style("color", "#000000");
 	button.style("padding", 25);
+	auto & textView = layout.addChild(std::make_shared<TextView>("Joku linkki http://www.google.fi/ ja joku toinen http://yle.fi/"));	
+	textView.style("height", 100);
+	textView.style("border", 1);
     }
 private:
     
