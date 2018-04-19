@@ -3,7 +3,7 @@
 //  Sometrik-project
 //
 //  Created by Sami Rämö on 17/04/2018.
-//  Copyright © 2018. All rights reserved.
+//  Copyright © 2018 sometrik. All rights reserved.
 //
 
 #import "FWLayoutView.h"
