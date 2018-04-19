@@ -133,6 +133,18 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     [self.view addGestureRecognizer:tapGestureRecognizer];
 }
 
+- (NSString *)getAppVersion
+{
+    NSString *version = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
+    return version;
+}
+
+- (NSString *)getAppBuildNumber
+{
+    NSString *build = [[[NSBundle mainBundle] infoDictionary] objectForKey:(NSString *)kCFBundleVersionKey];
+    return build;
+}
+
 - (void)handleKeyboardWillShowNotification:(NSNotification *)notification
 {
     id frameEnd = notification.userInfo[@"UIKeyboardFrameEndUserInfoKey"];
