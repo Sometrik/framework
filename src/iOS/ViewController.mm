@@ -127,6 +127,10 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     // Add notification handlers to catch notifications when keyboard opens and closes
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleKeyboardWillShowNotification:) name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleKeyboardWillHideNotification:) name:UIKeyboardWillHideNotification object:nil];
+    
+    // Add tap gesture recognizer to self.view so when tapped, keyboard should close
+    UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(backgroundTapped:)];
+    [self.view addGestureRecognizer:tapGestureRecognizer];
 }
 
 - (void)handleKeyboardWillShowNotification:(NSNotification *)notification
@@ -136,7 +140,6 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
         CGRect rect = [frameEnd CGRectValue];
         [self keyboardTopPositionChanged:(int)rect.origin.y];
     }
-    
 }
 
 - (void)handleKeyboardWillHideNotification:(NSNotification *)notification
@@ -156,6 +159,11 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
         dialog.maxBottomConstraint.constant = -(self.view.frame.size.height - pos + 15);
         [dialog setNeedsLayout];
     }
+}
+
+- (void)backgroundTapped:(UITapGestureRecognizer *)gestureRecognizer
+{
+    [self.view endEditing:YES];
 }
 
 - (void)viewWillTransitionToSize: (CGSize)size withTransitionCoordinator:(id)coordinator
