@@ -49,6 +49,7 @@ extern FWApplication * applicationMain();
 @property (nonatomic, assign) int currentPickerSelection;
 @property (nonatomic, strong) UIView * currentPickerHolder;
 @property (nonatomic, strong) UIScreenEdgePanGestureRecognizer *panEdgeGestureRecognizer;
+@property (nonatomic, assign) BOOL keyboardVisible;
 @end
 
 static const NSTimeInterval animationDuration = 0.4;
@@ -144,6 +145,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
         CGRect rect = [frameEnd CGRectValue];
         [self keyboardTopPositionChanged:(int)rect.origin.y];
     }
+    self.keyboardVisible = YES;
 }
 
 - (void)handleKeyboardWillHideNotification:(NSNotification *)notification
@@ -153,6 +155,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
         CGRect rect = [frameEnd CGRectValue];
         [self keyboardTopPositionChanged:(int)rect.origin.y];
     }
+    self.keyboardVisible = NO;
 }
 
 - (void)keyboardTopPositionChanged:(int)pos
@@ -653,7 +656,9 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 {
     UITapGestureRecognizer *tapGestureRecognizer = self.view.gestureRecognizers.firstObject;
     if ([gestureRecognizer isEqual:tapGestureRecognizer]) {
-        if ([touch locationInView:self.view].y > (self.view.frame.size.height - self.tabBar.frame.size.height) && self.tabBar) {
+        if (self.keyboardVisible) {
+            return YES;
+        } else {
             return NO;
         }
     }
