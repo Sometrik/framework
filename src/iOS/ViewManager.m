@@ -119,7 +119,10 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
         targetStyle.zoom = (float)[value floatValue];
     } else if ([key isEqualToString:@"font-size"]) {
         targetStyle.fontSize = (int)[value integerValue];
-        if ([self.view isKindOfClass:UIView.class]) {
+        if ([self.view isKindOfClass:PaddedLabel.class]) {
+            PaddedLabel * label = (PaddedLabel*)self.view;
+            [label relayoutAll];
+        } else if ([self.view isKindOfClass:UIView.class]) {
             UIView * view = (UIView*)self.view;
             [view.superview setNeedsLayout];
         }
