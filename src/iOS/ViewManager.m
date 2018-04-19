@@ -79,7 +79,7 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
 {
     if ([self.view isKindOfClass:PaddedLabel.class]) {
         PaddedLabel * label = (PaddedLabel*)self.view;
-	if (label.attributedText != nil) {
+	if (label.autolink) {
 	  label.attributedText = [label createAttributedString:value];
 	} else {
 	  label.text = value;

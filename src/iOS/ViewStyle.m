@@ -31,10 +31,17 @@
 - (void)apply:(UIView *)view animate:(BOOL)animate {
     if ([view isKindOfClass:PaddedLabel.class]) {
         PaddedLabel * label = (PaddedLabel*)view;
-        if ([self isFontDefined]) {
+	if (label.autolink) {
+	  label.defaultFont = [self createFont:label.font];
+	  label.boldFont = [self createBoldFont:label.font];
+	  label.defaultColor = self.color;
+	  label.attributedText = [label createAttributedString:label.text];
+	} else {
+	  if ([self isFontDefined]) {
             label.font = [self createFont:label.font];
-        }
-        if (self.color != nil) label.textColor = self.color;
+	  }
+	  if (self.color != nil) label.textColor = self.color;
+	}
         label.edgeInsets = UIEdgeInsetsMake(self.paddingTop, self.paddingLeft, self.paddingBottom, self.paddingRight);
     } else if ([view isKindOfClass:UIButton.class]) {
         UIButton * button = (UIButton*)view;
@@ -118,6 +125,12 @@
     } else {
         return [currentFont fontWithSize:size];
     }
+}
+
+- (UIFont *)createBoldFont:(UIFont *)currentFont {
+    NSInteger size = self.fontSize > 0 ? self.fontSize : currentFont.pointSize;
+    UIFontDescriptor * fontD = [currentFont.fontDescriptor fontDescriptorWithSymbolicTraits:UIFontDescriptorTraitBold];
+    return [UIFont fontWithDescriptor:fontD size:size];
 }
 
 - (BOOL)isFontDefined {

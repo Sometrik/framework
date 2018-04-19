@@ -444,10 +444,12 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 {
     PaddedLabel *label = [[PaddedLabel alloc] init];
     label.tag = viewId;
+    label.autolink = autolink;
     if (autolink) {
-      label.attributedText = [label createAttributedString:value];
+        label.userInteractionEnabled = YES;
+        label.attributedText = [label createAttributedString:value];
     } else {
-      label.text = value;
+        label.text = value;
     }
     label.numberOfLines = 0; // as many lines as needed
     label.lineBreakMode = NSLineBreakByWordWrapping;

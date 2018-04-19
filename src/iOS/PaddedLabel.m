@@ -8,6 +8,7 @@
     self = [super init];
     if (self) {
         self.edgeInsets = UIEdgeInsetsMake(0, 0, 0, 0);
+	self.autolink = NO;
     }
     return self;
 }
@@ -16,6 +17,7 @@
     self = [super initWithFrame:frame];
     if (self) {
         self.edgeInsets = UIEdgeInsetsMake(0, 0, 0, 0);
+	self.autolink = NO;
     }
     return self;
 }
@@ -79,7 +81,7 @@
 - (NSAttributedString *)createAttributedString:(NSString *)input
 {
     NSError *error = NULL;
-    NSRegularExpression *linkRegex = [NSRegularExpression regularExpressionWithPattern:@"(@\\S+|#\\S+|https?://\\S+)" options:0 error:&error];
+    NSRegularExpression *linkRegex = [NSRegularExpression regularExpressionWithPattern:@"([@|#][A-Za-z0-9_]+|https?://\\S+)" options:0 error:&error];
     
     NSMutableArray *linkRanges = [[NSMutableArray alloc] init];
     NSMutableArray *linkTargets = [[NSMutableArray alloc] init];
@@ -90,9 +92,16 @@
         [linkTargets addObject:[input substringWithRange:range]];
     }];
        
+    UIFont * boldFont = self.boldFont;
+    if (boldFont == nil) {
+        UIFontDescriptor * fontD = [self.font.fontDescriptor fontDescriptorWithSymbolicTraits:UIFontDescriptorTraitBold];
+        boldFont = [UIFont fontWithDescriptor:fontD size:self.font.pointSize];
+    }
+
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:input attributes:
   @{
-//    NSFontAttributeName: baseFont
+      NSFontAttributeName: self.defaultFont != nil ? self.defaultFont : self.font,
+      NSForegroundColorAttributeName: self.defaultColor != nil ? self.defaultColor : UIColor.blackColor,
     }];
     
     [attributedString beginEditing];
@@ -105,12 +114,14 @@
         unichar firstChar = [urlString characterAtIndex:0];
         if (firstChar == '#' || firstChar == '@') {
             [attributedString addAttributes:@{
+                                              NSFontAttributeName: boldFont,
                                               NSForegroundColorAttributeName: UIColor.redColor,
                                               } range:urlRange];
         } else {
             [attributedString addAttributes:@{
                                               NSLinkAttributeName: [NSURL URLWithString:urlString],
                                               NSForegroundColorAttributeName: UIColor.redColor,
+                                              NSUnderlineStyleAttributeName: [NSNumber numberWithInt:NSUnderlineStyleNone],
                                               } range:urlRange];
         }
     }
