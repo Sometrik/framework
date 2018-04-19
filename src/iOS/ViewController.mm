@@ -735,7 +735,11 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
 - (void)menuButtonTapped
 {
-    [self showNavigationViewWithAnimation:NO];
+    if (self.sideMenuView.isHidden) {
+        [self showNavigationViewWithAnimation:NO];
+    } else {
+	[self hideNavigationViewWithAnimation:NO];
+    }
 }
 
 - (void)composeButtonTapped
