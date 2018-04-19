@@ -95,6 +95,12 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
       }
     }
     application->setPreferences(preferences);
+	
+    NSString *version = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
+    NSString *build = [[[NSBundle mainBundle] infoDictionary] objectForKey:(NSString *)kCFBundleVersionKey];
+
+    application->setVersion([version UTF8String]);
+    application->setBuildNumber([build UTF8String]);
 
     float scale = [[UIScreen mainScreen] scale];
   
@@ -104,7 +110,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 //    mainThread->setActualDisplayHeight(screenHeight);
     mainThread->setDisplayScale(scale);
   
-    NSLog(@"starting app, scale = %f", scale);
+    NSLog(@"starting app, scale = %f, version = %@, build = %@", scale, version, build);
 
     [self addView:self.view withId:1];
 
@@ -124,18 +130,6 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(backgroundTapped:)];
     tapGestureRecognizer.delegate = self;
     [self.view addGestureRecognizer:tapGestureRecognizer];
-}
-
-- (NSString *)getAppVersion
-{
-    NSString *version = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
-    return version;
-}
-
-- (NSString *)getAppBuildNumber
-{
-    NSString *build = [[[NSBundle mainBundle] infoDictionary] objectForKey:(NSString *)kCFBundleVersionKey];
-    return build;
 }
 
 - (void)handleKeyboardWillShowNotification:(NSNotification *)notification
