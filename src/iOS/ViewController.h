@@ -23,7 +23,7 @@ typedef enum
 - (void)createFrameViewWithId:(int)viewId parentId:(int)parentId;
 - (void)createLinearLayoutWithId:(int)viewId parentId:(int)parentId direction:(int)direction;
 - (void)createFrameLayoutWithId:(int)viewId parentId:(int)parentId;
-- (void)createTextWithId:(int)viewId parentId:(int)parentId value:(NSString *)value;
+- (void)createTextWithId:(int)viewId parentId:(int)parentId value:(NSString *)value autolink:(BOOL)autolink;
 - (void)createButtonWithId:(int)viewId parentId:(int)parentId caption:(NSString *)caption;
 - (void)createSwitchWithId:(int)viewId parentId:(int)parentId;
 - (void)createImageWithId:(int)viewId parentId:(int)parentId filename:(NSString *)filename;
