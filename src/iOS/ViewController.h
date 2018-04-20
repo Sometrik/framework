@@ -3,6 +3,15 @@
 #import "EventWrapper.h"
 #import "ViewManager.h"
 
+typedef enum
+{
+    AnimationStyleNone = 0,
+    AnimationStyleLeftToRight,
+    AnimationStyleRightToLeft,
+    //AnimationStyleBottomToTop, // for some reason constraints not working with this
+    AnimationStyleTopToBottom
+} AnimationStyle;
+
 @interface ViewController : UIViewController
 - (void)viewWillTransitionToSize: (CGSize)size withTransitionCoordinator:(id)coordinator;
 - (void)didReceiveMemoryWarning;
@@ -29,7 +38,7 @@
 - (void)createPageControlWithId:(int)viewId parentId:(int)parentId numPages:(int)numPages;
 - (void)createPickerWithId:(int)viewId parentId:(int)parentId;
 - (void)createActionSheetWithId:(int)viewId parentId:(int)parentId title:(NSString *)title;
-- (void)createDialogWithId:(int)viewId parentId:(int)parentId title:(NSString *)title;
+- (void)createDialogWithId:(int)viewId parentId:(int)parentId title:(NSString *)title animationStyle:(AnimationStyle)style;
 - (void)createTimer:(int)viewId interval:(double)interval;
 - (void)createWebBrowserWithUrl:(NSString *)url;
 

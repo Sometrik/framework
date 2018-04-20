@@ -1113,7 +1113,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     [self presentViewController:actionSheet animated:YES completion:nil];
 }
 
-- (void)createDialogWithId:(int)viewId parentId:(int)parentId title:(NSString*)title
+- (void)createDialogWithId:(int)viewId parentId:(int)parentId title:(NSString*)title animationStyle:(AnimationStyle)style
 {
     [self.dialogIds addObject:[NSNumber numberWithInt:viewId]];
 
@@ -1153,7 +1153,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     
     dialog.heightConstraint.priority = 998;
     dialog.maxBottomConstraint.priority = 999;
-
+    
     [dialog.superview addConstraints:@[topConstraint, leftConstraint, rightConstraint, dialog.heightConstraint, dialog.maxBottomConstraint]];
 
     ViewManager * viewManager = [self getViewManager:viewId];
@@ -1163,9 +1163,75 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 	[self.view bringSubviewToFront:self.webView];
     }
 
+    CGFloat topConstraintConstantFinal = topConstraint.constant;
+    CGFloat leftConstraintConstantFinal = leftConstraint.constant;
+    CGFloat rightConstraintConstantFinal = rightConstraint.constant;
+    CGFloat bottomConstraintConstantFinal = dialog.maxBottomConstraint.constant;
+    
+    [dialogHolder layoutIfNeeded];
+    
+    switch (style) {
+        case AnimationStyleNone:
+            break;
+        case AnimationStyleTopToBottom:
+            topConstraint.constant = -(topConstraint.constant + dialog.maxBottomConstraint.constant);
+            dialog.maxBottomConstraint.constant = -(self.view.frame.size.height);
+            break;
+        /*case AnimationStyleBottomToTop:
+            topConstraint.constant = self.view.frame.size.height;
+            dialog.maxBottomConstraint.constant = 0;//self.view.frame.size.height - dialog.maxBottomConstraint.constant + topConstraint.constant;
+            break;*/
+        case AnimationStyleLeftToRight:
+            leftConstraint.constant = -(leftConstraint.constant + self.view.frame.size.width);
+            rightConstraint.constant = -(self.view.frame.size.width - rightConstraint.constant);
+            break;
+        case AnimationStyleRightToLeft:
+            leftConstraint.constant = self.view.frame.size.width;
+            rightConstraint.constant = self.view.frame.size.width + rightConstraint.constant;
+            break;
+        default:
+            break;
+    }
+    
+    [dialog.superview addConstraints:@[topConstraint, leftConstraint, rightConstraint, dialog.heightConstraint]];//, dialog.maxBottomConstraint]];
+    //dialogHolder.alpha = 1.0;
     [UIView animateWithDuration:animationDuration/2 animations:^{
         dialogHolder.alpha = 1.0;
+    } completion:^(BOOL finished) {
+      
+        [UIView animateWithDuration:animationDuration*2 delay:0 usingSpringWithDamping:0.5 initialSpringVelocity:0.2 options:UIViewAnimationOptionPreferredFramesPerSecondDefault animations:^{
+            //dialogHolder.alpha = 1.0;
+            switch (style) {
+                case AnimationStyleNone:
+                    break;
+                case AnimationStyleTopToBottom:
+                    topConstraint.constant = topConstraintConstantFinal;
+                    dialog.maxBottomConstraint.constant = bottomConstraintConstantFinal;
+                    break;
+                /*case AnimationStyleBottomToTop:
+                    topConstraint.constant = topConstraintConstantFinal;
+                    dialog.maxBottomConstraint.constant = bottomConstraintConstantFinal;
+                    break;*/
+                case AnimationStyleLeftToRight:
+                    leftConstraint.constant = leftConstraintConstantFinal;
+                    rightConstraint.constant = rightConstraintConstantFinal;
+                    break;
+                case AnimationStyleRightToLeft:
+                    leftConstraint.constant = leftConstraintConstantFinal;
+                    rightConstraint.constant = rightConstraintConstantFinal;
+                    break;
+                default:
+                    break;
+            }
+            [dialogHolder layoutIfNeeded];
+            
+        } completion:^(BOOL finished) {
+            [dialog layoutIfNeeded];
+        }];
     }];
+    //[UIView animateWithDuration:animationDuration/2 animations:^{
+    //    dialogHolder.alpha = 1.0;
+    //}];
 }
 
 - (void)createTimer:(int)viewId interval:(double)interval
@@ -1562,7 +1628,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             break;
 
         case CREATE_DIALOG: {
-            [self createDialogWithId:command.childInternalId parentId:command.internalId title:command.textValue];
+            [self createDialogWithId:command.childInternalId parentId:command.internalId title:command.textValue animationStyle:AnimationStyleRightToLeft];
         }
             break;
 
