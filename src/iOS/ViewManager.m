@@ -227,7 +227,7 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
         } else if ([key isEqualToString:@"line-spacing"]) {
         }
     } else if ([self.view isKindOfClass:FWButton.class]) {
-        FWButton *button = (UIButton *)self.view;
+        FWButton *button = (FWButton *)self.view;
         UIControlState state = UIControlStateNormal;
 	
         if ([key isEqualToString:@"icon"]) {
