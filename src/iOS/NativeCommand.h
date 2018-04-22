@@ -81,16 +81,16 @@ typedef enum {
 
 @interface NativeCommand : NSObject
 @property (nonatomic) CommandType type;
-@property (nonatomic) NSInteger internalId;
-@property (nonatomic) NSInteger childInternalId;
-@property (nonatomic) NSInteger value;
+@property (nonatomic) int internalId;
+@property (nonatomic) int childInternalId;
+@property (nonatomic) int value;
 @property (nonatomic, strong) NSString * key;
 @property (nonatomic, strong) NSString * textValue;
 @property (nonatomic, strong) NSString * textValue2;
-@property (nonatomic) NSInteger row;
-@property (nonatomic) NSInteger column;
-@property (nonatomic) NSInteger sheet;
-@property (nonatomic) NSInteger width;
-@property (nonatomic) NSInteger height;
-@property (nonatomic) NSInteger flags;
+@property (nonatomic) int row;
+@property (nonatomic) int column;
+@property (nonatomic) int sheet;
+@property (nonatomic) int width;
+@property (nonatomic) int height;
+@property (nonatomic) int flags;
 @end
