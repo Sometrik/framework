@@ -393,6 +393,12 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
 - (void)createFrameViewWithId:(int)viewId parentId:(int)parentId
 {
+    ViewManager * parentViewManager = [self getViewManager:parentId];
+    if (parentViewManager == nil) {
+        NSLog(@"Element %d missing in createFrameViewWithIdt", parentId);
+        return;
+    }
+
     // CGFloat tabBarHeight = self.tabBar == nil ? 0.0 : 44.0;
     // CGFloat topBarsHeight = self.navBar == nil ? 0.0 : 64.0;
     FrameLayoutView *view = [[FrameLayoutView alloc] init];
@@ -400,7 +406,9 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     view.tag = viewId;
     view.layoutMargins = UIEdgeInsetsMake(0, 0, 0, 0);
     [self addView:view withId:viewId];
-    [self addToParent:1 view:view];
+
+    UIView * parentView = (UIView *)parentViewManager.containerView;
+    [parentView addSubview:view];
     
     if (self.activeViewId == 0) {
         self.activeViewId = viewId;
@@ -1708,7 +1716,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
         case SET_INT_VALUE: {
             if (command.internalId == 1) {
                 if (command.childInternalId != self.activeViewId) {
-                    if (self.activeViewId) {
+                    if (self.activeViewId && ![self isParentView:self.activeViewId childId:command.childInternalId]) {
                         [self setVisibility:self.activeViewId visibility:0];
                     }
                     self.activeViewId = command.childInternalId;
@@ -1836,6 +1844,19 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     CGImageRelease(imageRef);
     CGDataProviderRelease(dataProvider);
     return image;
+}
+
+- (BOOL)isParentView:(int)parentId childId:(int)childId
+{
+    id id1 = [self viewForId:parentId];
+    id id2 = [self viewForId:childId];
+    if ([id1 isKindOfClass:UIView.class] && [id2 isKindOfClass:UIView.class]) {
+        UIView * parentView = (UIView *)id1;
+        UIView * childView = (UIView *)id2;
+        return [childView isDescendantOfView:parentView];
+    } else {
+        return NO;
+    }
 }
 
 #pragma mark - In-App Purchase stuff
