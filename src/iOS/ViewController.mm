@@ -374,7 +374,10 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
         BOOL viewHidden = visibility == 0 ? true : false;
         if (view && ((viewHidden && !view.hidden) || (!viewHidden && view.hidden))) {
             view.hidden = viewHidden;
-            [view.superview setNeedsLayout];
+	    if ([view.superview isKindOfClass:FWLayoutView.class]) {
+		FWLayoutView * layout = (FWLayoutView*)view.superview;
+            	[layout relayoutAll];
+	    }
         }
     }
 }
@@ -1434,11 +1437,8 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             UIView * view = viewManager.view;
             UIView * parentView = view.superview;
 
-            if ([parentView isKindOfClass:LinearLayoutView.class]) {
-                LinearLayoutView * layout = (LinearLayoutView*)parentView;
-                [layout removeItem:viewManager.layoutParams];
-            } else if ([parentView isKindOfClass:LinearLayoutView.class]) {
-                FrameLayoutView * layout = (FrameLayoutView*)parentView;
+            if ([parentView isKindOfClass:FWLayoutView.class]) {
+                FWLayoutView * layout = (FWLayoutView*)parentView;
                 [layout removeItem:viewManager.layoutParams];
             } else {
                 UIView * view = (UIView*)viewManager.view;
@@ -1458,16 +1458,27 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     UIView *parentView = [self viewForId:parentId];
     UIView *childView = [self viewForId:viewId];
     if (parentView && childView) {
-	if ([parentView isKindOfClass:[LinearLayoutView class]]) {
-	    LinearLayoutView * layout = (LinearLayoutView *)parentView;
-
+	if ([parentView isKindOfClass:[FWLayoutView class]]) {
+	    FWLayoutView * layout = (FWLayoutView *)parentView;
 	    ViewManager * viewManager = [self getViewManager:viewId];
-
 	    [layout moveItem:viewManager.layoutParams toIndex:position];
-	} else if ([parentView isKindOfClass:[FrameLayoutView class]]) {
-
         } else {
             [parentView insertSubview:childView atIndex:position];
+        }
+    }
+}
+
+- (void)removeChildWithId:(int)viewId parentId:(int)parentId
+{
+    UIView *parentView = [self viewForId:parentId];
+    UIView *childView = [self viewForId:viewId];
+    if (parentView && childView) {
+	if ([parentView isKindOfClass:[FWLayoutView class]]) {
+	    FWLayoutView * layout = (FWLayoutView *)parentView;
+	    ViewManager * viewManager = [self getViewManager:viewId];
+	    [layout removeItem:viewManager.layoutParams];
+        } else {
+            [childView removeFromSuperview];
         }
     }
 }
@@ -1677,7 +1688,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             break;
 
         case REMOVE_CHILD: {
-        
+            [self removeChildWithId:command.childInternalId parentId:command.internalId];
         }
             break;
         
