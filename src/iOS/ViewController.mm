@@ -323,7 +323,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     view.delegate = self;
     view.textColor = [UIColor blackColor];
     view.dataDetectorTypes = UIDataDetectorTypeAll;
-    [view setEditable:NO];
+    [view setEditable:YES];
     [view setUserInteractionEnabled:YES];
     view.allowsEditingTextAttributes = NO;
     // view.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
@@ -486,18 +486,21 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
 - (void)buttonPushed:(UIButton *)sender
 {
+    NSLog(@"buttonPushed");
     int viewId = (int)sender.tag;
     [self sendIntValue:viewId value:1];
 }
 
 - (void)buttonTouchDown:(UIButton *)sender
 {
+    NSLog(@"buttonTouchDown");
     ViewManager * viewManager = [self getViewManager:(int)sender.tag];
     [viewManager switchStyle:SelectorActive];
 }
 
 - (void)buttonTouchUp:(UIButton *)sender
 {
+    NSLog(@"buttonTouchUp");
     ViewManager * viewManager = [self getViewManager:(int)sender.tag];
     [viewManager switchStyle:SelectorNormal];
 }
