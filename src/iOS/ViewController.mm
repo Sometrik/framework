@@ -1889,7 +1889,6 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
 - (void)paddedLabel:(PaddedLabel *)label didOpenLinkURL:(NSURL *)url
 {
-    NSLog(@"url = %@", url);
     NSString *urlString = url.absoluteString;
     [self createWebBrowserWithUrl:urlString];
 }
