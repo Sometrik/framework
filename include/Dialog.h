@@ -26,8 +26,8 @@ class Dialog : public Element {
   }
 
   void onValueEvent(ValueEvent & ev) override {
-    endModal(ev.getValue());
     ev.setHandled(true);
+    endModal(ev.getValue());
   }
 
   const std::string & getTitle() const { return title; }
