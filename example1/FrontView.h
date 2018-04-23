@@ -21,7 +21,7 @@ public:
 	button.style("margin", 25);
 	button.style("color", "#000000");
 	button.style("padding", 25);
-	auto & textView = layout.addChild(std::make_shared<TextLabel>("Joku linkki http://www.google.fi/ ja joku toinen http://yle.fi/", true));
+	auto & textView = layout.addChild(std::make_shared<TextLabel>("Joku linkki http://www.google.fi/ ja joku toinen http://yle.fi/, ja pitkä linkki https://stackoverflow.com/questions/4201959/label-under-image-in-uibutton", true));
 	textView.style("border", 1);
     }
 };
