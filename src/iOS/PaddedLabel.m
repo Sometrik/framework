@@ -8,7 +8,9 @@
     self = [super init];
     if (self) {
         self.edgeInsets = UIEdgeInsetsMake(0, 0, 0, 0);
-	self.autolink = NO;
+        self.autolink = NO;
+        UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTap:)];
+        [self addGestureRecognizer:tapGesture];
     }
     return self;
 }
@@ -130,4 +132,30 @@
     return attributedString;
 }
 
+- (void)didTap:(UITapGestureRecognizer *)gestureRecognizer
+{
+    NSLog(@"tap");
+    NSTextStorage *textStorage = [[NSTextStorage alloc] initWithAttributedString:self.attributedText];
+    NSLayoutManager *layoutManager = [[NSLayoutManager alloc] init];
+    [textStorage addLayoutManager:layoutManager];
+    NSTextContainer *textContainer = [[NSTextContainer alloc] initWithSize:self.frame.size];
+    
+    textContainer.lineFragmentPadding = 0;
+    NSRange glyphRange;
+    
+    CGPoint touchPoint = [gestureRecognizer locationOfTouch:0 inView:self];
+    [layoutManager addTextContainer:textContainer];
+    NSUInteger index = [layoutManager characterIndexForPoint:touchPoint inTextContainer:textContainer fractionOfDistanceBetweenInsertionPoints:0];
+    
+    NSLog(@"CharacterIndex = %d", index);
+    NSRange range = NSMakeRange(index, 1);
+    NSDictionary *attributes = [self.attributedText attributesAtIndex:index effectiveRange:&range];
+    NSLog(@"attributes %@", attributes);
+    if ([attributes objectForKey:NSLinkAttributeName] != nil) {
+        NSURL *url = [attributes objectForKey:NSLinkAttributeName];
+        if ([self.delegate respondsToSelector:@selector(paddedLabel:didOpenLinkURL:)]) {
+            [self.delegate paddedLabel:self didOpenLinkURL:url];
+        }
+    }
+}
 @end

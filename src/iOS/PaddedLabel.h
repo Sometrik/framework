@@ -1,4 +1,9 @@
 #import <UIKit/UIKit.h>
+@class PaddedLabel;
+
+@protocol PaddedLabelDelegate <NSObject>
+- (void)paddedLabel:(PaddedLabel *)label didOpenLinkURL:(NSURL *)url;
+@end
 
 @interface PaddedLabel : UILabel
 - (void)setBounds:(CGRect)bounds;
@@ -10,4 +15,5 @@
 @property (nonatomic, strong) UIFont * defaultFont;
 @property (nonatomic, strong) UIFont * boldFont;
 @property (nonatomic, strong) UIColor * defaultColor;
+@property (nonatomic, assign) id<PaddedLabelDelegate> delegate;
 @end

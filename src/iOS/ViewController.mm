@@ -30,7 +30,7 @@ std::shared_ptr<iOSMainThread> mainThread;
 // Declare C++ function
 extern FWApplication * applicationMain();
 
-@interface ViewController () <UIScrollViewDelegate, UITabBarDelegate, InAppPurchaseManagerDelegate, FWImageViewDelegate, UITextFieldDelegate, UITextViewDelegate, UIGestureRecognizerDelegate>
+@interface ViewController () <UIScrollViewDelegate, UITabBarDelegate, InAppPurchaseManagerDelegate, FWImageViewDelegate, UITextFieldDelegate, UITextViewDelegate, UIGestureRecognizerDelegate, PaddedLabelDelegate>
 @property (nonatomic, strong) NSMutableDictionary *viewsDictionary;
 @property (nonatomic, strong) UIView *sideMenuView;
 @property (nonatomic, strong) UIView *backgroundOverlayView;
@@ -444,6 +444,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 {
     PaddedLabel *label = [[PaddedLabel alloc] init];
     label.tag = viewId;
+    label.delegate = self;
     label.autolink = autolink;
     if (autolink) {
         label.userInteractionEnabled = YES;
@@ -1844,6 +1845,15 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
       s = [url cStringUsingEncoding:NSUTF8StringEncoding];
     }
     mainThread->sendImageRequest((int)imageView.tag, size.width, 0, s);
+}
+
+#pragma mark - PaddedLabelDelegate
+
+- (void)paddedLabel:(PaddedLabel *)label didOpenLinkURL:(NSURL *)url
+{
+    NSLog(@"url = %@", url);
+    NSString *urlString = url.absoluteString;
+    [self createWebBrowserWithUrl:urlString];
 }
 
 @end
