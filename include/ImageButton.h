@@ -8,6 +8,7 @@ class ImageButton : public EventLayout {
 public:
   ImageButton(const std::string & _filename, int _id = 0) : EventLayout(_id) {
     image = std::make_shared<ImageElement>(_filename, _id);
+    image->style("gravity", "center");
     addChild(image);
   }
   
