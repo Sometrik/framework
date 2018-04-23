@@ -97,11 +97,9 @@
             minHeight = [self calcIntrinsicHeight:item.view] + item.padding.top + item.padding.bottom;
         }
 
-	CGFloat itemExtraSpace;
+	CGFloat itemExtraSpace = 0;
 	if (totalWeight > 0) {
 	    itemExtraSpace = item.weight * extraSpace / totalWeight;
-	} else {
-	    itemExtraSpace = extraSpace / [self.items count];
 	}
 
         if (self.orientation == LinearLayoutViewOrientationHorizontal) {

@@ -227,7 +227,7 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
         } else if ([key isEqualToString:@"line-spacing"]) {
         }
     } else if ([self.view isKindOfClass:FWButton.class]) {
-        FWButton *button = (UIButton *)self.view;
+        FWButton *button = (FWButton *)self.view;
         UIControlState state = UIControlStateNormal;
 	
         if ([key isEqualToString:@"icon"]) {
@@ -254,10 +254,7 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
             textField.placeholder = value;
         }
     } else if ([self.view isKindOfClass:UITextView.class]) {
-        UITextView *textView = (UITextView *)self.view;
-        if ([key isEqualToString:@"hint"]) {
-            // textView.placeholder = value;
-        }
+        
     } else if ([self.view isKindOfClass:UITabBarItem.class]) {
         UITabBarItem *item = (UITabBarItem *)self.view;
         if ([key isEqualToString:@"icon"]) {

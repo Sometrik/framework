@@ -26,7 +26,6 @@ public:
 
   void addToHistory(int view_internal_id) {
     view_back_history.push_back(view_internal_id);
-    view_forward_history.clear();
   }
 
   int getViewBackHistory() {
@@ -42,17 +41,6 @@ public:
     if (!view_back_history.empty()) {
       view_id = view_back_history.back();
       view_back_history.pop_back();
-      view_forward_history.push_back(view_id);
-    }
-    return view_id;
-  }
-
-  int popViewForwardHistory() {
-    int view_id = 0;
-    if (!view_forward_history.empty()) {
-      view_id = view_forward_history.back();
-      view_forward_history.pop_back();
-      view_back_history.push_back(view_id);
     }
     return view_id;
   }
@@ -116,7 +104,7 @@ public:
   std::string name, iap_public_key;
   bool full_screen;
   int activeViewId = 0;
-  std::vector<int> view_back_history, view_forward_history;
+  std::vector<int> view_back_history;
   FWPreferences preferences;
   MobileAccount mobileAccount;
   std::string versionText;

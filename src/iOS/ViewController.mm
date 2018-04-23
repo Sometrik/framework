@@ -265,8 +265,9 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
         NSLog(@"background overlay tapped");
         int dialogId = [[self.dialogIds lastObject] intValue];
         if (dialogId == viewId) {
-	    NSLog(@"Sending cancel value for dialog");
+	    NSLog(@"Sending cancel value for dialog %d", viewId);
             [self sendIntValue:dialogId value:0];
+	    NSLog(@"Cancel value done");
             [self.dialogIds removeLastObject];
         }
     } else if (!self.sideMenuView.isHidden) {
@@ -322,7 +323,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     view.delegate = self;
     view.textColor = [UIColor blackColor];
     view.dataDetectorTypes = UIDataDetectorTypeAll;
-    [view setEditable:NO];
+    [view setEditable:YES];
     [view setUserInteractionEnabled:YES];
     view.allowsEditingTextAttributes = NO;
     // view.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
@@ -374,7 +375,10 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
         BOOL viewHidden = visibility == 0 ? true : false;
         if (view && ((viewHidden && !view.hidden) || (!viewHidden && view.hidden))) {
             view.hidden = viewHidden;
-            [view.superview setNeedsLayout];
+	    if ([view.superview isKindOfClass:FWLayoutView.class]) {
+		FWLayoutView * layout = (FWLayoutView*)view.superview;
+            	[layout relayoutAll];
+	    }
         }
     }
 }
@@ -390,6 +394,12 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
 - (void)createFrameViewWithId:(int)viewId parentId:(int)parentId
 {
+    ViewManager * parentViewManager = [self getViewManager:parentId];
+    if (parentViewManager == nil) {
+        NSLog(@"Element %d missing in createFrameViewWithIdt", parentId);
+        return;
+    }
+
     // CGFloat tabBarHeight = self.tabBar == nil ? 0.0 : 44.0;
     // CGFloat topBarsHeight = self.navBar == nil ? 0.0 : 64.0;
     FrameLayoutView *view = [[FrameLayoutView alloc] init];
@@ -397,7 +407,9 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     view.tag = viewId;
     view.layoutMargins = UIEdgeInsetsMake(0, 0, 0, 0);
     [self addView:view withId:viewId];
-    [self addToParent:1 view:view];
+
+    UIView * parentView = (UIView *)parentViewManager.containerView;
+    [parentView addSubview:view];
     
     if (self.activeViewId == 0) {
         self.activeViewId = viewId;
@@ -475,19 +487,21 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
 - (void)buttonPushed:(UIButton *)sender
 {
-    NSLog(@"Sending value for button");
+    NSLog(@"buttonPushed");
     int viewId = (int)sender.tag;
-    [self sendIntValue:viewId value:viewId];
+    [self sendIntValue:viewId value:1];
 }
 
 - (void)buttonTouchDown:(UIButton *)sender
 {
+    NSLog(@"buttonTouchDown");
     ViewManager * viewManager = [self getViewManager:(int)sender.tag];
     [viewManager switchStyle:SelectorActive];
 }
 
 - (void)buttonTouchUp:(UIButton *)sender
 {
+    NSLog(@"buttonTouchUp");
     ViewManager * viewManager = [self getViewManager:(int)sender.tag];
     [viewManager switchStyle:SelectorNormal];
 }
@@ -1435,12 +1449,11 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             UIView * view = viewManager.view;
             UIView * parentView = view.superview;
 
-            if ([parentView isKindOfClass:LinearLayoutView.class]) {
-                LinearLayoutView * layout = (LinearLayoutView*)parentView;
+            if ([parentView isKindOfClass:FWLayoutView.class]) {
+                FWLayoutView * layout = (FWLayoutView*)parentView;
                 [layout removeItem:viewManager.layoutParams];
-            } else if ([parentView isKindOfClass:LinearLayoutView.class]) {
-                FrameLayoutView * layout = (FrameLayoutView*)parentView;
-                [layout removeItem:viewManager.layoutParams];
+                UIView * view = (UIView*)viewManager.view;
+                [view removeFromSuperview]; // some views might be added directly
             } else {
                 UIView * view = (UIView*)viewManager.view;
                 [view removeFromSuperview];
@@ -1459,16 +1472,28 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     UIView *parentView = [self viewForId:parentId];
     UIView *childView = [self viewForId:viewId];
     if (parentView && childView) {
-	if ([parentView isKindOfClass:[LinearLayoutView class]]) {
-	    LinearLayoutView * layout = (LinearLayoutView *)parentView;
-
+	if ([parentView isKindOfClass:[FWLayoutView class]]) {
+	    FWLayoutView * layout = (FWLayoutView *)parentView;
 	    ViewManager * viewManager = [self getViewManager:viewId];
-
 	    [layout moveItem:viewManager.layoutParams toIndex:position];
-	} else if ([parentView isKindOfClass:[FrameLayoutView class]]) {
-
         } else {
             [parentView insertSubview:childView atIndex:position];
+        }
+    }
+}
+
+- (void)removeChildWithId:(int)viewId parentId:(int)parentId
+{
+    UIView *parentView = [self viewForId:parentId];
+    UIView *childView = [self viewForId:viewId];
+    if (parentView && childView) {
+	if ([parentView isKindOfClass:[FWLayoutView class]]) {
+	    FWLayoutView * layout = (FWLayoutView *)parentView;
+	    ViewManager * viewManager = [self getViewManager:viewId];
+	    [layout removeItem:viewManager.layoutParams];
+            [childView removeFromSuperview]; // some views might be added directly
+        } else {
+            [childView removeFromSuperview];
         }
     }
 }
@@ -1678,7 +1703,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             break;
 
         case REMOVE_CHILD: {
-        
+            [self removeChildWithId:command.childInternalId parentId:command.internalId];
         }
             break;
         
@@ -1698,7 +1723,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
         case SET_INT_VALUE: {
             if (command.internalId == 1) {
                 if (command.childInternalId != self.activeViewId) {
-                    if (self.activeViewId) {
+                    if (self.activeViewId && ![self isParentView:self.activeViewId childId:command.childInternalId]) {
                         [self setVisibility:self.activeViewId visibility:0];
                     }
                     self.activeViewId = command.childInternalId;
@@ -1826,6 +1851,19 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     CGImageRelease(imageRef);
     CGDataProviderRelease(dataProvider);
     return image;
+}
+
+- (BOOL)isParentView:(int)parentId childId:(int)childId
+{
+    id id1 = [self viewForId:parentId];
+    id id2 = [self viewForId:childId];
+    if ([id1 isKindOfClass:UIView.class] && [id2 isKindOfClass:UIView.class]) {
+        UIView * parentView = (UIView *)id1;
+        UIView * childView = (UIView *)id2;
+        return [childView isDescendantOfView:parentView];
+    } else {
+        return NO;
+    }
 }
 
 #pragma mark - In-App Purchase stuff

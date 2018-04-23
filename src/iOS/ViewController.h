@@ -51,6 +51,7 @@ typedef enum
 - (void)addToParent:(int)parentId view:(UIView*)view;
 - (void)removeView:(int)viewId;
 - (void)reorderChildWithId:(int)viewId parentId:(int)parentId newPosition:(int)position;
+- (void)removeChildWithId:(int)viewId parentId:(int)parentId;
 - (void)addOption:(int)viewId optionId:(int)optionId title:(NSString *)title;
 - (void)sendIntValue:(int)viewId value:(int)value;
 - (void)sendTextValue:(int)viewId value:(NSString *)value;
