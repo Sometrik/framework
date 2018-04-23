@@ -30,7 +30,7 @@ std::shared_ptr<iOSMainThread> mainThread;
 // Declare C++ function
 extern FWApplication * applicationMain();
 
-@interface ViewController () <UIScrollViewDelegate, UITabBarDelegate, InAppPurchaseManagerDelegate, FWImageViewDelegate, UITextFieldDelegate, UITextViewDelegate, UIGestureRecognizerDelegate, PaddedLabelDelegate>
+@interface ViewController () <UIScrollViewDelegate, UITabBarDelegate, InAppPurchaseManagerDelegate, FWImageViewDelegate, UITextFieldDelegate, UITextViewDelegate, UIGestureRecognizerDelegate, PaddedLabelDelegate, WKUIDelegate>
 @property (nonatomic, strong) NSMutableDictionary *viewsDictionary;
 @property (nonatomic, strong) UIView *sideMenuView;
 @property (nonatomic, strong) UIView *backgroundOverlayView;
@@ -51,6 +51,7 @@ extern FWApplication * applicationMain();
 @property (nonatomic, strong) UIScreenEdgePanGestureRecognizer *panEdgeGestureRecognizer;
 @property (nonatomic, assign) BOOL keyboardVisible;
 @property (nonatomic, assign) AnimationStyle pickerAnimationStyle;
+@property (nonatomic, strong) NSURL *currentURL;
 @end
 
 static const NSTimeInterval animationDuration = 0.4;
@@ -692,7 +693,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     navBar.translatesAutoresizingMaskIntoConstraints = false;
     navBar.tag = viewId;
     navBar.translucent = YES;
-    navBar.layer.zPosition = 1000;
+    //navBar.layer.zPosition = 1000;
 
     if (self.currentTitle != nil) {
       self.navItem = [[UINavigationItem alloc] initWithTitle:self.currentTitle];
@@ -1133,7 +1134,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     }
     [pickerHolder.superview addConstraints:@[topConstraint0, leftConstraint0, rightConstraint0, bottomConstraint0]];
     [pickerHolder.superview layoutIfNeeded];
-    [UIView animateWithDuration:animationDuration*2 delay:0 usingSpringWithDamping:0.5 initialSpringVelocity:0.2 options:UIViewAnimationOptionPreferredFramesPerSecondDefault animations:^{
+    [UIView animateWithDuration:animationDuration*2 delay:0 usingSpringWithDamping:0.3 initialSpringVelocity:0.2 options:UIViewAnimationOptionPreferredFramesPerSecondDefault animations:^{
         switch (self.pickerAnimationStyle) {
             case AnimationStyleNone:
                 break;
@@ -1278,7 +1279,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
         dialogHolder.alpha = 1.0;
     } completion:^(BOOL finished) {
       
-        [UIView animateWithDuration:animationDuration*2 delay:0 usingSpringWithDamping:0.5 initialSpringVelocity:0.2 options:UIViewAnimationOptionPreferredFramesPerSecondDefault animations:^{
+        [UIView animateWithDuration:animationDuration*2 delay:0 usingSpringWithDamping:0.3 initialSpringVelocity:0.2 options:UIViewAnimationOptionPreferredFramesPerSecondDefault animations:^{
             //dialogHolder.alpha = 1.0;
             switch (style) {
                 case AnimationStyleNone:
@@ -1326,13 +1327,17 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 - (void)createWebBrowserWithUrl:(NSString *)url
 {
     NSLog(@"WebView opened");
+    self.currentURL = [NSURL URLWithString:url];
+    
     if (self.webView == nil) {
-	CGFloat statusBarHeight = [UIApplication sharedApplication].statusBarFrame.size.height;
-
+        CGFloat statusBarHeight = [UIApplication sharedApplication].statusBarFrame.size.height;
+        CGFloat navBarHeight = 44.0;
         WKWebViewConfiguration *configuration = [[WKWebViewConfiguration alloc] init];
         CGRect frame = CGRectMake(0, statusBarHeight, self.view.bounds.size.width, self.view.bounds.size.height);
         self.webView = [[WKWebView alloc] initWithFrame:frame configuration:configuration];
 	    self.webView.translatesAutoresizingMaskIntoConstraints = false;
+        self.webView.UIDelegate = self;
+        self.webView.scrollView.contentInset = UIEdgeInsetsMake(navBarHeight, 0, 0, 0);
         [self.view addSubview:self.webView];
         
         NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:self.webView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.webView.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:statusBarHeight];
@@ -1341,8 +1346,25 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
         NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:self.webView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self.webView.superview attribute:NSLayoutAttributeBottom multiplier:1.0f constant:0];
         [self.webView.superview addConstraints:@[topConstraint, leftConstraint, rightConstraint, bottomConstraint]];
 
+        UINavigationBar *navBar = [[UINavigationBar alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(self.view.frame), navBarHeight)];
+        UINavigationItem *navItem = [[UINavigationItem alloc] initWithTitle:url];
+        UIBarButtonItem *closeButton = [[UIBarButtonItem alloc] initWithTitle:@"X" style:UIBarButtonItemStyleDone target:self action:@selector(webViewCloseButtonPushed:)];
+        navItem.leftBarButtonItem = closeButton;
+        UIBarButtonItem *actionButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:self action:@selector(webViewActionButtonPushed:)];
+        navItem.rightBarButtonItem = actionButton;
+        [navBar setItems:@[navItem]];
+        //navBar.translucent = YES;
+        navBar.barStyle = UIBarStyleDefault;
+        [self.webView addSubview:navBar];
+        
+        NSLayoutConstraint *navTopConstraint = [NSLayoutConstraint constraintWithItem:navBar attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:navBar.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
+        NSLayoutConstraint *navLeftConstraint = [NSLayoutConstraint constraintWithItem:navBar attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:navBar.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
+        NSLayoutConstraint *navRightConstraint = [NSLayoutConstraint constraintWithItem:navBar attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:navBar.superview attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
+        NSLayoutConstraint *navHeightConstraint = [NSLayoutConstraint constraintWithItem:navBar attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0f constant:44];
+        [navBar.superview addConstraints:@[navTopConstraint, navLeftConstraint, navRightConstraint, navHeightConstraint]];
+        
         // add close button (x) to the top left corner of the view
-        UIButton *closeButton = [[UIButton alloc] initWithFrame:CGRectMake(10.0, statusBarHeight, 40.0, 40.0)];
+        /*UIButton *closeButton = [[UIButton alloc] initWithFrame:CGRectMake(10.0, statusBarHeight, 40.0, 40.0)];
         [closeButton setTitle:@"X" forState:UIControlStateNormal];
         [closeButton addTarget:self action:@selector(webViewCloseButtonPushed:) forControlEvents:UIControlEventTouchUpInside];
         [closeButton setTitleColor:UIColor.whiteColor forState:UIControlStateNormal];
@@ -1351,12 +1373,13 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
         closeButton.layer.borderWidth = 2.0;
         closeButton.layer.borderColor = UIColor.whiteColor.CGColor;
         [self.webView addSubview:closeButton];
+         */
     }
     // self.webView.layer.zPosition = 1000000.0f;
     [self.view bringSubviewToFront:self.webView];
     
-    NSURL *webURL = [NSURL URLWithString:url];
-    NSURLRequest *request = [NSURLRequest requestWithURL:webURL];
+    //NSURL *webURL = [NSURL URLWithString:url];
+    NSURLRequest *request = [NSURLRequest requestWithURL:self.currentURL];
     [self.webView loadRequest:request];
 }
 
@@ -1365,6 +1388,21 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     NSLog(@"closeButton pushed");
     [self.webView removeFromSuperview];
     self.webView = nil;
+}
+
+- (void)webViewActionButtonPushed:(UIBarButtonItem *)barButton
+{
+    UIAlertController *actionSheet = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+    
+    [actionSheet addAction:[UIAlertAction actionWithTitle:@"Open with Safari" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [[UIApplication sharedApplication] openURL:self.currentURL options:@{} completionHandler:nil];
+    }]];
+    [actionSheet addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
+        NSLog(@"User clicked button called %@ or tapped elsewhere",action.title);
+    }]];
+    
+    [self presentViewController:actionSheet animated:YES completion:nil];
+    
 }
 
 - (void)sendTimerEvent:(NSTimer *)timer
