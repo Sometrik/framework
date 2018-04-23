@@ -254,10 +254,7 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
             textField.placeholder = value;
         }
     } else if ([self.view isKindOfClass:UITextView.class]) {
-        UITextView *textView = (UITextView *)self.view;
-        if ([key isEqualToString:@"hint"]) {
-            // textView.placeholder = value;
-        }
+        
     } else if ([self.view isKindOfClass:UITabBarItem.class]) {
         UITabBarItem *item = (UITabBarItem *)self.view;
         if ([key isEqualToString:@"icon"]) {
