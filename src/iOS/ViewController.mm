@@ -606,13 +606,13 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     [self addToParent:parentId view:scrollView];
 }
 
-- (void)showPage:(NSInteger)page
+- (void)showPage:(NSInteger)page animated:(BOOL)animated
 {
     if (page != NSNotFound && self.pageView) {
         CGRect frame = self.pageView.frame;
         frame.origin.x = frame.size.width * page;
         frame.origin.y = 0;
-        [self.pageView scrollRectToVisible:frame animated:YES];
+        [self.pageView scrollRectToVisible:frame animated:animated];
     }
 }
 
@@ -813,7 +813,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 - (void)tabBar:(UITabBar *)tabBar didSelectItem:(UITabBarItem *)item
 {
     int itemIndex = (int)[self indexForTabBar:tabBar item:item];
-    [self showPage:itemIndex];
+    [self showPage:itemIndex animated:NO];
     [self sendIntValue:(int)item.tag value:1];
 }
 
