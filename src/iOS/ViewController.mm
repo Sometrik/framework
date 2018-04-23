@@ -265,8 +265,9 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
         NSLog(@"background overlay tapped");
         int dialogId = [[self.dialogIds lastObject] intValue];
         if (dialogId == viewId) {
-	    NSLog(@"Sending cancel value for dialog");
+	    NSLog(@"Sending cancel value for dialog %d", viewId);
             [self sendIntValue:dialogId value:0];
+	    NSLog(@"Cancel value done");
             [self.dialogIds removeLastObject];
         }
     } else if (!self.sideMenuView.isHidden) {
@@ -485,9 +486,8 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
 - (void)buttonPushed:(UIButton *)sender
 {
-    NSLog(@"Sending value for button");
     int viewId = (int)sender.tag;
-    [self sendIntValue:viewId value:viewId];
+    [self sendIntValue:viewId value:1];
 }
 
 - (void)buttonTouchDown:(UIButton *)sender
@@ -1448,6 +1448,8 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             if ([parentView isKindOfClass:FWLayoutView.class]) {
                 FWLayoutView * layout = (FWLayoutView*)parentView;
                 [layout removeItem:viewManager.layoutParams];
+                UIView * view = (UIView*)viewManager.view;
+                [view removeFromSuperview]; // some views might be added directly
             } else {
                 UIView * view = (UIView*)viewManager.view;
                 [view removeFromSuperview];
@@ -1485,6 +1487,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 	    FWLayoutView * layout = (FWLayoutView *)parentView;
 	    ViewManager * viewManager = [self getViewManager:viewId];
 	    [layout removeItem:viewManager.layoutParams];
+            [childView removeFromSuperview]; // some views might be added directly
         } else {
             [childView removeFromSuperview];
         }
