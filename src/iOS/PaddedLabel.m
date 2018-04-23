@@ -78,18 +78,46 @@
   return size;
 }
 
+- (NSString *)cleanLink:(NSString *)link
+{
+  if (link.length > 0) {
+    unichar firstChar = [link characterAtIndex:0];
+    if (firstChar != '#' && firstChar != '@') {
+      if ([link hasPrefix:@"http://"]) {
+	return [link substringFromIndex:7];
+      } else if ([link hasPrefix:@"https://"]) {
+	return [link substringFromIndex:8];    
+      }
+    }
+  }
+  return link;
+}
+
 - (NSAttributedString *)createAttributedString:(NSString *)input
 {
     NSError *error = NULL;
-    NSRegularExpression *linkRegex = [NSRegularExpression regularExpressionWithPattern:@"([@|#][A-Za-z0-9_]+|https?://\\S+)" options:0 error:&error];
+    NSRegularExpression *linkRegex = [NSRegularExpression regularExpressionWithPattern:@"(@[A-Za-z0-9_]+|#[\\p{L}0-9_]+|https?://\\S+)" options:0 error:&error];
     
     NSMutableArray *linkRanges = [[NSMutableArray alloc] init];
     NSMutableArray *linkTargets = [[NSMutableArray alloc] init];
        
+    __block NSString * s = input;
+    __block int offset = 0;
     [linkRegex enumerateMatchesInString:input options:0 range:NSMakeRange(0, input.length) usingBlock:^(NSTextCheckingResult *result, NSMatchingFlags flags, BOOL *stop) {       
         NSRange range = [result rangeAtIndex:0];
+	range.location += offset;
+	NSString * link = [s substringWithRange:range];
+	NSString * displayLink = [self cleanLink:link];
+#if 0
+	int diff = displayLink.length - link.length; 
+	if (diff != 0) {
+	  offset += diff;
+	  s = [s stringByReplacingCharactersInRange:range withString:displayLink];
+	  range.length = displayLink.length;
+	}
+#endif
         [linkRanges addObject:[NSValue valueWithRange:range]];
-        [linkTargets addObject:[input substringWithRange:range]];
+        [linkTargets addObject:link];
     }];
        
     UIFont * boldFont = self.boldFont;
@@ -98,7 +126,7 @@
         boldFont = [UIFont fontWithDescriptor:fontD size:self.font.pointSize];
     }
 
-    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:input attributes:
+    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:s attributes:
   @{
       NSFontAttributeName: self.defaultFont != nil ? self.defaultFont : self.font,
       NSForegroundColorAttributeName: self.defaultColor != nil ? self.defaultColor : UIColor.blackColor,
@@ -106,6 +134,8 @@
     
     [attributedString beginEditing];
     
+    UIColor * linkColor = [UIColor colorWithRed:0.5 green:0.1 blue:0.1 alpha:1.0];
+
     for (NSInteger i = 0; i < linkRanges.count; i++) {
         NSString *urlString = linkTargets[i];
         NSValue *urlRangeValue = linkRanges[i];
@@ -114,14 +144,14 @@
         unichar firstChar = [urlString characterAtIndex:0];
         if (firstChar == '#' || firstChar == '@') {
             [attributedString addAttributes:@{
-                                              NSFontAttributeName: boldFont,
-                                              NSForegroundColorAttributeName: UIColor.redColor,
+		// NSFontAttributeName: boldFont,
+                                              NSForegroundColorAttributeName: linkColor,
                                               } range:urlRange];
         } else {
             [attributedString addAttributes:@{
-                                              NSLinkAttributeName: [NSURL URLWithString:urlString],
-                                              NSForegroundColorAttributeName: UIColor.redColor,
-                                              NSUnderlineStyleAttributeName: [NSNumber numberWithInt:NSUnderlineStyleNone],
+	      NSLinkAttributeName: [NSURL URLWithString:urlString],
+		  NSForegroundColorAttributeName: linkColor,
+		  NSUnderlineStyleAttributeName: [NSNumber numberWithInt:NSUnderlineStyleNone],
                                               } range:urlRange];
         }
     }
