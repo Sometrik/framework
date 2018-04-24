@@ -323,6 +323,18 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
                 self.layoutParams.fixedHeight = h;
                 [view.superview setNeedsLayout];
             }
+        } else if ([key isEqualToString:@"min-width"]) {
+            if (self.layoutParams != nil) {
+	        self.layoutParams.minWidthConstraint.constant = (int)[value integerValue];
+		self.layoutParams.minWidthConstraint.active = YES;
+                [view.superview setNeedsLayout];
+            }
+        } else if ([key isEqualToString:@"min-height"]) {
+            if (self.layoutParams != nil) {
+                self.layoutParams.minHeightConstraint.constant = (int)[value integerValue];
+		self.layoutParams.minHeightConstraint.active = YES;
+                [view.superview setNeedsLayout];
+            }
         } else if ([key isEqualToString:@"margin"]) {
             int v = (int)[value integerValue];
             if (self.layoutParams != nil) {

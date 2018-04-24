@@ -15,6 +15,8 @@
 	self.centerYConstraint = nil;
 	self.widthConstraint = nil;
 	self.heightConstraint = nil;
+	self.minWidthConstraint = nil;
+	self.minHeightConstraint = nil;
 	self.maxWidthConstraint = nil;
 	self.maxHeightConstraint = nil;
 	self.margin = LinearLayoutMakeMargin(0, 0, 0, 0);
@@ -41,6 +43,8 @@
 	self.centerYConstraint = nil;
 	self.widthConstraint = nil;
 	self.heightConstraint = nil;
+	self.minWidthConstraint = nil;
+	self.minHeightConstraint = nil;
 	self.maxWidthConstraint = nil;
 	self.maxHeightConstraint = nil;
 	self.margin = LinearLayoutMakeMargin(0, 0, 0, 0);
