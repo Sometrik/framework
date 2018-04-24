@@ -140,6 +140,12 @@
             if (h > height) height = h;
         }
         return height;
+    } else if ([view isKindOfClass:FWScrollView.class]) {
+        for (UIView * subview in [view subviews]) {
+	    if ([subview isKindOfClass:UIImageView.class]) continue; // ignore scroll indicators
+	    return [self calcIntrinsicHeight:subview];
+	}
+	return 0;
     } else {
         return view.intrinsicContentSize.height;
     }
