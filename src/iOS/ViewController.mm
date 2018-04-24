@@ -172,7 +172,10 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 - (void)viewWillTransitionToSize: (CGSize)size withTransitionCoordinator:(id)coordinator
 {
   [super viewWillTransitionToSize: size withTransitionCoordinator:coordinator];
-
+    if (self.sideMenuView != nil) {
+        CGRect frame = CGRectMake(CGRectGetMinX(self.view.bounds), CGRectGetMinY(self.view.bounds), size.width-sideMenuOpenSpaceWidth, size.height);
+        self.sideMenuView.frame = frame;
+    }
   // self.view.frame = CGRectMake(0, 0, size.width, size.height);
   // [self.view setNeedsLayout];
 
