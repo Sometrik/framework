@@ -1880,6 +1880,10 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             [self setBackButtonVisibility:command.value ? true : false];
         }
             break;
+	    case TOGGLE_MENU: {
+	        [self menuButtonTapped];
+	    }
+	        break;
         }
     }
 
