@@ -30,7 +30,7 @@ std::shared_ptr<iOSMainThread> mainThread;
 // Declare C++ function
 extern FWApplication * applicationMain();
 
-@interface ViewController () <UIScrollViewDelegate, UITabBarDelegate, InAppPurchaseManagerDelegate, FWImageViewDelegate, UITextFieldDelegate, UITextViewDelegate, UIGestureRecognizerDelegate, PaddedLabelDelegate, WKUIDelegate>
+@interface ViewController () <UIScrollViewDelegate, UITabBarDelegate, InAppPurchaseManagerDelegate, FWImageViewDelegate, UITextFieldDelegate, UITextViewDelegate, UIGestureRecognizerDelegate, PaddedLabelDelegate, WKUIDelegate, WKNavigationDelegate>
 @property (nonatomic, strong) NSMutableDictionary *viewsDictionary;
 @property (nonatomic, strong) UIView *sideMenuView;
 @property (nonatomic, strong) UIView *backgroundOverlayView;
@@ -172,7 +172,10 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 - (void)viewWillTransitionToSize: (CGSize)size withTransitionCoordinator:(id)coordinator
 {
   [super viewWillTransitionToSize: size withTransitionCoordinator:coordinator];
-
+    if (self.sideMenuView != nil) {
+        CGRect frame = CGRectMake(CGRectGetMinX(self.view.bounds), CGRectGetMinY(self.view.bounds), size.width-sideMenuOpenSpaceWidth, size.height);
+        self.sideMenuView.frame = frame;
+    }
   // self.view.frame = CGRectMake(0, 0, size.width, size.height);
   // [self.view setNeedsLayout];
 
@@ -1337,6 +1340,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
         self.webView = [[WKWebView alloc] initWithFrame:frame configuration:configuration];
 	    self.webView.translatesAutoresizingMaskIntoConstraints = false;
         self.webView.UIDelegate = self;
+        self.webView.navigationDelegate = self;
         self.webView.scrollView.contentInset = UIEdgeInsetsMake(navBarHeight, 0, 0, 0);
         [self.view addSubview:self.webView];
         
@@ -1347,11 +1351,35 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
         [self.webView.superview addConstraints:@[topConstraint, leftConstraint, rightConstraint, bottomConstraint]];
 
         UINavigationBar *navBar = [[UINavigationBar alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(self.view.frame), navBarHeight)];
-        UINavigationItem *navItem = [[UINavigationItem alloc] initWithTitle:url];
-        UIBarButtonItem *closeButton = [[UIBarButtonItem alloc] initWithTitle:@"X" style:UIBarButtonItemStyleDone target:self action:@selector(webViewCloseButtonPushed:)];
+        CGFloat width = self.view.frame.size.width * 0.6; // just some width related to width of the view
+        
+        UINavigationItem *navItem = [[UINavigationItem alloc] initWithTitle:@""];
+        UILabel *titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, width, 22)];
+        titleLabel.text = url;
+        titleLabel.adjustsFontSizeToFitWidth = YES;
+        [titleLabel.widthAnchor constraintEqualToConstant:width].active = YES;
+        titleLabel.minimumScaleFactor = 0.6;
+        titleLabel.textAlignment = NSTextAlignmentCenter;
+        navItem.titleView = titleLabel;
+        
+        UIImage *backImage = [UIImage imageNamed:@"backButton"];
+        UIBarButtonItem *closeButton;
+        if (backImage != nil) {
+            closeButton = [[UIBarButtonItem alloc] initWithImage:backImage style:UIBarButtonItemStylePlain target:self action:@selector(webViewCloseButtonPushed:)];
+        } else {
+            closeButton = [[UIBarButtonItem alloc] initWithTitle:@"<" style:UIBarButtonItemStyleDone target:self action:@selector(webViewCloseButtonPushed:)];
+        }
         navItem.leftBarButtonItem = closeButton;
-        UIBarButtonItem *actionButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:self action:@selector(webViewActionButtonPushed:)];
+        
+        UIImage *moreImage = [UIImage imageNamed:@"moreButton"];
+        UIBarButtonItem *actionButton;
+        if (moreImage != nil) {
+            actionButton = [[UIBarButtonItem alloc] initWithImage:moreImage style:UIBarButtonItemStylePlain target:self action:@selector(webViewActionButtonPushed:)];
+        } else {
+            actionButton = [[UIBarButtonItem alloc] initWithTitle:@"⋮" style:UIBarButtonItemStyleDone target:self action:@selector(webViewActionButtonPushed:)];
+        }
         navItem.rightBarButtonItem = actionButton;
+        
         [navBar setItems:@[navItem]];
         //navBar.translucent = YES;
         navBar.barStyle = UIBarStyleDefault;
@@ -1991,6 +2019,23 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 {
     NSString *urlString = url.absoluteString;
     [self createWebBrowserWithUrl:urlString];
+}
+
+#pragma mark - WKNavigationDelegate
+
+- (void)webView:(WKWebView *)webView didCommitNavigation:(WKNavigation *)navigation
+{
+    NSLog(@"%@", webView.URL.absoluteString);
+    for (UIView *view in self.webView.subviews) {
+        if ([view isKindOfClass:UINavigationBar.class]) {
+            NSLog(@"view found");
+            UINavigationBar *navBar = (UINavigationBar *)view;
+            for (UINavigationItem *item in navBar.items) {
+                UILabel *titleLabel = (UILabel *)item.titleView;
+                titleLabel.text = webView.URL.absoluteString;
+            }
+        }
+    }
 }
 
 @end
