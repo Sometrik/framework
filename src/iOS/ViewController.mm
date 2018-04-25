@@ -566,6 +566,19 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     }
 }
 
+- (void)updateTabBars:(NSInteger)page
+{
+    for (NSString *key in self.viewsDictionary.allKeys) {
+        ViewManager *viewManager = [self.viewsDictionary objectForKey:key];
+        if ([viewManager.view isKindOfClass:UITabBar.class]) {
+            UITabBar *tabBar = (UITabBar *)viewManager.view;
+            if (page <= tabBar.items.count) {
+                [tabBar setSelectedItem:tabBar.items[page]];
+            }
+        }
+    }
+}
+
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
 {
     NSLog(@"scrollView did end decelerating");
@@ -573,21 +586,10 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
         NSInteger page = [self indexForScrollViewPage:scrollView];
         
         if (page >= 0) {
+            [self sendIntValue:(int)scrollView.tag value:(int)page];
+            
             // set selected item for all tabbars
-            for (NSString *key in self.viewsDictionary.allKeys) {
-                ViewManager *viewManager = [self.viewsDictionary objectForKey:key];
-                if ([viewManager.view isKindOfClass:UITabBar.class]) {
-                    UITabBar *tabBar = (UITabBar *)viewManager.view;
-                    if (page <= tabBar.items.count) {
-                        [tabBar setSelectedItem:tabBar.items[page]];
-			NSLog(@"Sending value for tab");
-                        [self sendIntValue:(int)scrollView.tag value:(int)page];
-                    }
-                }
-            }
-            
-            
-            //[self updateTabBarVisibility:(int)page];
+	        [self updateTabBars:page];
         }
     }
 }
@@ -1860,7 +1862,18 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             } else {
                 ViewManager * viewManager = [self getViewManager:command.internalId];
                 if (viewManager != nil) {
-                    [viewManager setIntValue:command.value];
+                    if ([viewManager.view isKindOfClass:UIScrollView.class]) { // FWScrollView is not applicable here
+                        UIScrollView * scrollView = (UIScrollView *)viewManager.view;
+                        if (scrollView.isPagingEnabled) {
+                            CGRect frame = scrollView.frame;
+                            frame.origin.x = frame.size.width * command.value;
+                            frame.origin.y = 0;
+                            [scrollView scrollRectToVisible:frame animated:NO];
+                            [self updateTabBars:command.value];
+                        }
+                    } else {
+                        [viewManager setIntValue:command.value];
+                    }
                 }
             }
         }
