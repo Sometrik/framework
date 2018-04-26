@@ -30,5 +30,5 @@ typedef enum {
 @property (nonatomic, assign) NSInteger level;
 @property (nonatomic, strong) ViewStyle * normalStyle;
 @property (nonatomic, strong) ViewStyle * activeStyle;
-@property (nonatomic, assign) ViewStyle * currentStyle;
+@property (nonatomic, strong) ViewStyle * currentStyle;
 @end
