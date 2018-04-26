@@ -46,17 +46,39 @@
     return _images;
 }
 
+- (FWImage *)getImageForWidth:(NSInteger)width
+{
+    for (int i = 0; i < self.images.count; i++) {
+        FWImage *image = (FWImage *)self.images[i];
+	if (4 * image.width >= 3 * width) { // select image if it's at least 0.75 * target_width
+	    return image;
+	}
+      
+    }
+    if (images.count != 0) {
+        return (FWImage *)[self.images lastObject];
+    } else {
+        return nil;
+    }
+}
+
 - (void)layoutSubviews {
     [super layoutSubviews];
     if (self.image == nil) {
-        CGFloat width = self.frame.size.width;
-        CGFloat height = self.frame.size.height;
+        NSInteger width = (NSInteger)self.frame.size.width;
+        NSInteger height = (NSInteger)self.frame.size.height;
         if (width != self.prevWidth || height != self.prevHeight) {
+            NSLog(@"FWImageView, layoutSubview(): %f %f", self.frame.size.width, self.frame.size.height);
+
             self.prevWidth = width;
             self.prevHeight = height;
-            NSLog(@"FWImageView, layoutSubview(): %f %f", self.frame.size.width, self.frame.size.height);
-            if ([self.delegate respondsToSelector:@selector(fwImageView:didChangeSize:ofImageUrl:)]) {
-                [self.delegate fwImageView:self didChangeSize:self.frame.size ofImageUrl:self.url];
+
+	    FWImage * bestImage = [self getImageForWidth:width];
+	    NSString * bestUrl = nil;
+	    if (bestImage != nil) bestUrl = bestImage.url;
+
+	    if ([self.delegate respondsToSelector:@selector(fwImageView:didChangeSize:ofImageUrl:)]) {
+                [self.delegate fwImageView:self didChangeSize:self.frame.size ofImageUrl:bestUrl];
             }
         }
     }
@@ -84,13 +106,12 @@
     if (self.images.count == 0) { // first image in to the array
         [self.images addObject:newImage];
     }
-    self.url = url;
 }
 
 - (void)clear
 {
     self.image = nil;
-    self.url = nil;
+    [self.images removeAllObjects]
 }
 
 - (void)updateContentMode {
