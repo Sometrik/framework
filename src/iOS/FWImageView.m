@@ -12,7 +12,7 @@
     if (self = [super init]) {
         self.prevWidth = 0;
         self.prevHeight = 0;
-	self.translatesAutoresizingMaskIntoConstraints = false;
+        self.translatesAutoresizingMaskIntoConstraints = false;
     }
     return self;
 }
@@ -22,7 +22,7 @@
     if (self = [super initWithImage:image]) {
         self.prevWidth = 0;
         self.prevHeight = 0;
-	self.translatesAutoresizingMaskIntoConstraints = false;
+        self.translatesAutoresizingMaskIntoConstraints = false;
     }
     return self;
 }
@@ -32,7 +32,7 @@
     if (self = [super initWithFrame:frame]) {
         self.prevWidth = 0;
         self.prevHeight = 0;
-	self.translatesAutoresizingMaskIntoConstraints = false;
+        self.translatesAutoresizingMaskIntoConstraints = false;
     }
     return self;
 }
@@ -50,12 +50,11 @@
 {
     for (int i = 0; i < self.images.count; i++) {
         FWImage *image = (FWImage *)self.images[i];
-	if (4 * image.width >= 3 * width) { // select image if it's at least 0.75 * target_width
-	    return image;
-	}
-      
+        if (4 * image.width >= 3 * width) { // select image if it's at least 0.75 * target_width
+            return image;
+        }
     }
-    if (images.count != 0) {
+    if (self.images.count != 0) {
         return (FWImage *)[self.images lastObject];
     } else {
         return nil;
@@ -111,7 +110,7 @@
 - (void)clear
 {
     self.image = nil;
-    [self.images removeAllObjects]
+    [self.images removeAllObjects];
 }
 
 - (void)updateContentMode {
