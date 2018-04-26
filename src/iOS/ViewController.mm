@@ -588,27 +588,24 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
         if (page >= 0) {
             [self sendIntValue:(int)scrollView.tag value:(int)page];
             
-            // set selected item for all tabbars
-	        [self updateTabBars:page];
+	    if (scrollView == self.pageView) {
+                // set selected item for all tabbars
+                [self updateTabBars:page];
+            }
         }
     }
 }
 
 - (void)createPageLayoutWithId:(int)viewId parentId:(int)parentId
 {
-    CGFloat frameHeight = self.view.frame.size.height; // - 20;
-  
-    UIScrollView * scrollView = [[UIScrollView alloc] init];
+    FWScrollView * scrollView = [[FWScrollView alloc] init];
     scrollView.tag = viewId;
     scrollView.pagingEnabled = YES;
     scrollView.contentInset = UIEdgeInsetsMake(0, 0, 0, 0);
-    scrollView.contentSize = CGSizeMake(0, frameHeight);
     scrollView.layoutMargins = UIEdgeInsetsMake(0, 0, 0, 0);
-    scrollView.frame = self.view.frame;
     scrollView.clipsToBounds = YES;
     scrollView.delegate = self;
-    scrollView.translatesAutoresizingMaskIntoConstraints = false;
-    self.pageView = scrollView;
+    if (self.pageView == nil) self.pageView = scrollView;
     [self addView:scrollView withId:viewId];
     [self addToParent:parentId view:scrollView];
 }
@@ -1497,7 +1494,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
         UIScrollView * scrollView = (UIScrollView *)parentView;
         int pageWidth = self.view.frame.size.width;
         if (scrollView.pagingEnabled) {
-            scrollView.contentSize = CGSizeMake(scrollView.contentSize.width + pageWidth, scrollView.contentSize.height);
+            // scrollView.contentSize = CGSizeMake(scrollView.contentSize.width + pageWidth, scrollView.contentSize.height);
             
             NSLayoutConstraint *leftConstraint;
             NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
@@ -1862,7 +1859,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             } else {
                 ViewManager * viewManager = [self getViewManager:command.internalId];
                 if (viewManager != nil) {
-                    if ([viewManager.view isKindOfClass:UIScrollView.class]) { // FWScrollView is not applicable here
+                    if ([viewManager.view isKindOfClass:UIScrollView.class]) {
                         UIScrollView * scrollView = (UIScrollView *)viewManager.view;
                         if (scrollView.isPagingEnabled) {
                             CGRect frame = scrollView.frame;
