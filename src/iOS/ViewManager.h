@@ -24,8 +24,8 @@ typedef enum {
 - (void)switchStyle:(StyleSelector)selector;
 
 @property (nonatomic, assign) NSInteger viewId; // don't use id as it is reserved word in objective-c
-@property (nonatomic, assign) id view;
-@property (nonatomic, assign) id containerView;
+@property (nonatomic, strong) id view;
+@property (nonatomic, strong) id containerView;
 @property (nonatomic, strong) LayoutParams * layoutParams;
 @property (nonatomic, assign) NSInteger level;
 @property (nonatomic, strong) ViewStyle * normalStyle;
