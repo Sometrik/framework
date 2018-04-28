@@ -610,14 +610,12 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     [self addToParent:parentId view:scrollView];
 }
 
-- (void)showPage:(NSInteger)page animated:(BOOL)animated
+- (void)showPage:(UIScrollView *)scrollView page:(NSInteger)page animated:(BOOL)animated
 {
-    if (page != NSNotFound && self.pageView) {
-        CGRect frame = self.pageView.frame;
-        frame.origin.x = frame.size.width * page;
-        frame.origin.y = 0;
-        [self.pageView scrollRectToVisible:frame animated:animated];
-    }
+    CGRect frame = scrollView.frame;
+    frame.origin.x = frame.size.width * page;
+    frame.origin.y = 0;
+    [scrollView scrollRectToVisible:frame animated:animated];
 }
 
 - (NSInteger)indexForScrollViewPage:(UIScrollView *)pageView
@@ -817,7 +815,9 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 - (void)tabBar:(UITabBar *)tabBar didSelectItem:(UITabBarItem *)item
 {
     int itemIndex = (int)[self indexForTabBar:tabBar item:item];
-    [self showPage:itemIndex animated:NO];
+    if (itemIndex != NSNotFound) {
+        [self showPage:self.pageView page:itemIndex animated:NO];
+    }
     [self sendIntValue:(int)item.tag value:1];
 }
 
@@ -1862,11 +1862,10 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
                     if ([viewManager.view isKindOfClass:UIScrollView.class]) {
                         UIScrollView * scrollView = (UIScrollView *)viewManager.view;
                         if (scrollView.isPagingEnabled) {
-                            CGRect frame = scrollView.frame;
-                            frame.origin.x = frame.size.width * command.value;
-                            frame.origin.y = 0;
-                            [scrollView scrollRectToVisible:frame animated:NO];
-                            [self updateTabBars:command.value];
+			    [self showPage:scrollView page:command.value animated:NO];
+			    if (scrollView == self.pageView) {
+                                [self updateTabBars:command.value];
+			    }
                         }
                     } else {
                         [viewManager setIntValue:command.value];
