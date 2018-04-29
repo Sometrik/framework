@@ -72,11 +72,11 @@
             self.prevWidth = width;
             self.prevHeight = height;
 
-	    FWImage * bestImage = [self getImageForWidth:width];
-	    NSString * bestUrl = nil;
-	    if (bestImage != nil) bestUrl = bestImage.url;
+            FWImage * bestImage = [self getImageForWidth:width];
+            NSString * bestUrl = nil;
+            if (bestImage != nil) bestUrl = bestImage.url;
 
-	    if ([self.delegate respondsToSelector:@selector(fwImageView:didChangeSize:ofImageUrl:)]) {
+            if ([self.delegate respondsToSelector:@selector(fwImageView:didChangeSize:ofImageUrl:)]) {
                 [self.delegate fwImageView:self didChangeSize:self.frame.size ofImageUrl:bestUrl];
             }
         }
