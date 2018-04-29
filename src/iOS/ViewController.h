@@ -42,7 +42,7 @@ typedef enum
 - (void)createTimer:(int)viewId interval:(double)interval;
 - (void)createWebBrowserWithUrl:(NSString *)url;
 
-- (void)setImageFromThread:(int)viewId data:(UIImage *)data;
+- (void)setImageFromThread:(int)viewId data:(CGImageRef)data;
 - (void)sendCommandsFromThread:(NSArray*)data;
 - (void)handleCommands:(NSArray*)data;
 - (void)showNavigationViewWithAnimation:(BOOL)animate;

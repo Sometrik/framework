@@ -2,5 +2,5 @@
 
 @interface ImageWrapper : NSObject
 @property (nonatomic, assign) NSInteger targetElementId;
-@property (nonatomic, strong) UIImage * image;
+@property (nonatomic, assign) CGImageRef image;
 @end

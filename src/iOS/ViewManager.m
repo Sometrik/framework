@@ -44,11 +44,18 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
     }
 }
 
-- (void)setImage:(UIImage *)data
+- (void)setImage:(CGImageRef)data
 {
     if ([self.view isKindOfClass:FWImageView.class]) {
+        UIImage * image;
+        if ([UIImage respondsToSelector:@selector(imageWithCGImage:scale:orientation:)]) {
+            float scale = [[UIScreen mainScreen] scale];
+            image = [UIImage imageWithCGImage:data scale:scale orientation:UIImageOrientationUp];
+        } else {
+            image = [UIImage imageWithCGImage:data];
+        }
         FWImageView * imageView = (FWImageView *)self.view;
-        imageView.image = data;
+        imageView.image = image;
 	[imageView updateContentMode];
     }
 }

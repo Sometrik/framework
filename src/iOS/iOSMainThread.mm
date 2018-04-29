@@ -153,19 +153,10 @@ iOSMainThread::setImageData(int internal_id, std::shared_ptr<canvas::PackedImage
     bitmapInfo |= kCGImageAlphaNoneSkipFirst;
   }
   auto img = CGImageCreate(input->getWidth(), input->getHeight(), 8, bpp * 8, bpp * input->getWidth(), colorspace, bitmapInfo, provider, 0, true, kCGRenderingIntentDefault);
-    
-  UIImage * image;
-  if ([UIImage respondsToSelector:@selector(imageWithCGImage:scale:orientation:)]) {
-    float scale = [[UIScreen mainScreen] scale];
-    image = [UIImage imageWithCGImage:img scale:scale orientation:UIImageOrientationUp];
-  } else {
-    image = [UIImage imageWithCGImage:img];
-  }
-  
-  [viewController setImageFromThread:internal_id data:image];
-    
+
+  [viewController setImageFromThread:internal_id data:img];
+
   CGColorSpaceRelease(colorspace);
-  CGImageRelease(img);
   CGDataProviderRelease(provider);
   CFRelease(cfdata);
 }

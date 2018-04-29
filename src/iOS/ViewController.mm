@@ -1656,7 +1656,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     [self.viewsDictionary setObject:viewManager forKey:[NSString stringWithFormat:@"%d", viewId]];
 }
 
-- (void)setImageFromThread:(int)viewId data:(UIImage *)data
+- (void)setImageFromThread:(int)viewId data:(CGImageRef)data
 {
     ImageWrapper * iw = [[ImageWrapper alloc] init];
     iw.targetElementId = viewId;
@@ -1670,6 +1670,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     if (viewManager) {
         [viewManager setImage:iw.image];
     }
+    CGImageRelease(iw.image);
 }
 
 - (void)sendCommandsFromThread:(NSArray*)data
