@@ -594,6 +594,10 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             }
         }
     }
+    if ([scrollView isKindOfClass:FWScrollView.class]) {
+        FWScrollView * fwScrollView = (FWScrollView *)scrollView;
+	[fwScrollView updateVisibility:fwScrollView.bounds];
+    }
 }
 
 - (void)createPageLayoutWithId:(int)viewId parentId:(int)parentId

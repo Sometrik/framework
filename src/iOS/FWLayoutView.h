@@ -32,4 +32,6 @@
 
 - (void)swapItem:(LayoutParams *)firstItem withItem:(LayoutParams *)secondItem;
 
+- (void)updateVisibility:(CGRect)bounds;
+
 @end

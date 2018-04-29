@@ -124,4 +124,9 @@
     }
 }
 
+- (void)updateVisibility:(CGRect)bounds
+{
+
+}
+
 @end

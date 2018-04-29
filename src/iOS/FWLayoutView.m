@@ -10,6 +10,7 @@
 #import "FrameLayoutView.h"
 #import "LinearLayoutView.h"
 #import "FWScrollView.h"
+#import "FWImageView.h"
 
 @interface FWLayoutView()
 - (void)setup;
@@ -322,6 +323,22 @@
     [self.items exchangeObjectAtIndex:firstItemIndex withObjectAtIndex:secondItemIndex];
     
     [self setNeedsLayout];
+}
+
+- (void)updateVisibility:(CGRect)bounds
+{
+    for (UIView * subview in [self subviews]) {
+        if ([subview isKindOfClass:FWLayoutView.class]) {
+            FWLayoutView * layout = (FWLayoutView*)subview;
+            [layout updateVisibility:bounds];
+        } else if ([subview isKindOfClass:FWScrollView.class]) {
+            FWScrollView * scrollView = (FWScrollView*)subview;
+            [scrollView updateVisibility:bounds];
+        } else if ([subview isKindOfClass:FWImageView.class]) {
+            FWImageView * imageView = (FWImageView*)subview;
+            [imageView updateVisibility:bounds];
+        }
+    }
 }
 
 @end

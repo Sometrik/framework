@@ -112,4 +112,14 @@
     }
 }
 
+- (void)updateVisibility:(CGRect)bounds
+{
+    for (UIView * subview in [self subviews]) {
+        if ([subview isKindOfClass:FWLayoutView.class]) {
+            FWLayoutView * layout = (FWLayoutView*)subview;
+            [layout updateVisibility:bounds];
+        }
+    }
+}
+
 @end
