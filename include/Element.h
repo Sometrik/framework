@@ -189,8 +189,7 @@ class Element : public EventHandler {
 
   virtual bool isChildVisible(const Element & child) const {
     if (!child.is_visible) return false;
-    else if (parent) return parent->isChildVisible(*this);
-    else return true;
+    return isVisible();
   }
   
   static void registerElement(Element * e) {
