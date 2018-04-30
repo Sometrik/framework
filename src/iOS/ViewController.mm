@@ -176,6 +176,15 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     }
 }
 
+// textField or textView viewId should be used.
+- (void)activateKeyboardForViewId:(int)viewId
+{
+    id view = [self viewForId:viewId];
+    if ([view isKindOfClass:UITextField.class] || [view isKindOfClass:UITextView.class]) {
+        [view becomeFirstResponder];
+    }
+}
+
 - (void)backgroundTapped:(UITapGestureRecognizer *)gestureRecognizer
 {
     [self.view endEditing:YES];
