@@ -12,7 +12,7 @@
         self.leftConstraint = nil;
         self.widthConstraint = nil;
         self.heightConstraint = nil;
-	self.translatesAutoresizingMaskIntoConstraints = false;
+        self.translatesAutoresizingMaskIntoConstraints = false;
     }
     return self;
 }
@@ -25,27 +25,36 @@
         self.leftConstraint = nil;
         self.widthConstraint = nil;
         self.heightConstraint = nil;
-	self.translatesAutoresizingMaskIntoConstraints = false;
+        self.translatesAutoresizingMaskIntoConstraints = false;
     }
     return self;
 }
 
 - (void)layoutSubviews {
-    int width = self.frame.size.width;
-    int height = 0;
+    if (self.pagingEnabled) {
+        int numChildren = 0;
+        for (UIView * view in [self subviews]) {
+            if ([view isKindOfClass:UIImageView.class]) continue; // ignore scroll indicators
+            numChildren++;
+        }
+        self.contentSize = CGSizeMake(numChildren * self.frame.size.width, self.frame.size.height);
+    } else {
+        int width = self.frame.size.width;
+        int height = 0;
 
-    for (UIView * view in [self subviews]) {
-        if ([view isKindOfClass:UIImageView.class]) continue; // ignore scroll indicators
-        height = [self calcIntrinsicHeight:view];
-        break;
+        for (UIView * view in [self subviews]) {
+            if ([view isKindOfClass:UIImageView.class]) continue; // ignore scroll indicators
+            height = [self calcIntrinsicHeight:view];
+            break;
+        }
+
+        self.widthConstraint.constant = width;
+        self.heightConstraint.constant = height;
+
+        self.contentSize = CGSizeMake(width, height);
     }
 
-    self.widthConstraint.constant = width;
-    self.heightConstraint.constant = height;
-
     [super layoutSubviews];
-
-    self.contentSize = CGSizeMake(width, height);
 }
 
 - (int)calcIntrinsicHeight:(UIView *)view {
@@ -92,8 +101,24 @@
             if (h > height) height = h;
         }
         return height;
+    } else if ([view isKindOfClass:FWScrollView.class]) {
+        for (UIView * subview in [view subviews]) {
+	    if ([subview isKindOfClass:UIImageView.class]) continue; // ignore scroll indicators
+	    return [self calcIntrinsicHeight:subview];
+	}
+	return 0;
     } else {
         return view.intrinsicContentSize.height;
+    }
+}
+
+- (void)updateVisibility:(CGRect)bounds
+{
+    for (UIView * subview in [self subviews]) {
+        if ([subview isKindOfClass:FWLayoutView.class]) {
+            FWLayoutView * layout = (FWLayoutView*)subview;
+            [layout updateVisibility:bounds];
+        }
     }
 }
 

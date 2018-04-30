@@ -44,11 +44,18 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
     }
 }
 
-- (void)setImage:(UIImage *)data
+- (void)setImage:(CGImageRef)data
 {
     if ([self.view isKindOfClass:FWImageView.class]) {
+        UIImage * image;
+        if ([UIImage respondsToSelector:@selector(imageWithCGImage:scale:orientation:)]) {
+            float scale = [[UIScreen mainScreen] scale];
+            image = [UIImage imageWithCGImage:data scale:scale orientation:UIImageOrientationUp];
+        } else {
+            image = [UIImage imageWithCGImage:data];
+        }
         FWImageView * imageView = (FWImageView *)self.view;
-        imageView.image = data;
+        imageView.image = image;
 	[imageView updateContentMode];
     }
 }
@@ -64,14 +71,6 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
     } else if ([self.view isKindOfClass:FWPicker.class]) {
     	FWPicker * picker = (FWPicker *)self.view;
     	[picker setSelection:value];
-    } else if ([self.view isKindOfClass:UIScrollView.class]) { // FWScrollView is not applicable here
-        UIScrollView * scrollView = (UIScrollView *)self.view;
-        if (scrollView.isPagingEnabled) {
-            CGRect frame = scrollView.frame;
-            frame.origin.x = frame.size.width * value;
-            frame.origin.y = 0;
-            [scrollView scrollRectToVisible:frame animated:YES];
-        }
     }
 }
 
@@ -321,6 +320,18 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
             }
             if (self.layoutParams != nil) {
                 self.layoutParams.fixedHeight = h;
+                [view.superview setNeedsLayout];
+            }
+        } else if ([key isEqualToString:@"min-width"]) {
+            if (self.layoutParams != nil) {
+	        self.layoutParams.minWidthConstraint.constant = (int)[value integerValue];
+		self.layoutParams.minWidthConstraint.active = YES;
+                [view.superview setNeedsLayout];
+            }
+        } else if ([key isEqualToString:@"min-height"]) {
+            if (self.layoutParams != nil) {
+                self.layoutParams.minHeightConstraint.constant = (int)[value integerValue];
+		self.layoutParams.minHeightConstraint.active = YES;
                 [view.superview setNeedsLayout];
             }
         } else if ([key isEqualToString:@"margin"]) {

@@ -42,7 +42,6 @@ typedef enum {
     REORDER_CHILD,
     LAUNCH_BROWSER,
     HISTORY_GO_BACK,
-    HISTORY_GO_FORWARD,
     CLEAR, // Clears the contents of GridView
     SET_INT_VALUE, // Sets value of radio groups, checkboxes and pickers
     SET_TEXT_VALUE, // Sets value of textfields and labels
@@ -76,21 +75,22 @@ typedef enum {
 
     // Other
     SHARE_LINK,
-    SELECT_FROM_GALLERY
+    SELECT_FROM_GALLERY,
+    TOGGLE_MENU
 } CommandType;
 
 @interface NativeCommand : NSObject
-@property (nonatomic) CommandType type;
-@property (nonatomic) int internalId;
-@property (nonatomic) int childInternalId;
-@property (nonatomic) int value;
+@property (nonatomic, assign) CommandType type;
+@property (nonatomic, assign) int internalId;
+@property (nonatomic, assign) int childInternalId;
+@property (nonatomic, assign) int value;
 @property (nonatomic, strong) NSString * key;
 @property (nonatomic, strong) NSString * textValue;
 @property (nonatomic, strong) NSString * textValue2;
-@property (nonatomic) int row;
-@property (nonatomic) int column;
-@property (nonatomic) int sheet;
-@property (nonatomic) int width;
-@property (nonatomic) int height;
-@property (nonatomic) int flags;
+@property (nonatomic, assign) int row;
+@property (nonatomic, assign) int column;
+@property (nonatomic, assign) int sheet;
+@property (nonatomic, assign) int width;
+@property (nonatomic, assign) int height;
+@property (nonatomic, assign) int flags;
 @end

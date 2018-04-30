@@ -21,6 +21,13 @@ class FlipperLayout : public Element {
   }
 
   void onValueEvent(ValueEvent & ev) override {
+#ifndef __ANDROID__
+    visible_view_index = ev.getValue();
+    if (visible_view_index >= 0 && visible_view_index < getChildren().size()) {
+      getChildren()[visible_view_index]->refresh();
+    }
+#endif
+
     notify();
     CommandEvent ev2(getId(), ev.getValue(), ev.getValue2());
     ev2.dispatch(*this);
@@ -38,15 +45,13 @@ class FlipperLayout : public Element {
   }
 
   bool isChildVisible(const Element & child) const override {
-#ifdef __ANDROID__
-    if (visible_view_index >= 0 && visible_view_index < getChildren().size()) {
+    if (!isVisible()) {
+      return false;
+    } else if (visible_view_index >= 0 && visible_view_index < getChildren().size()) {
       return getChildren()[visible_view_index]->getInternalId() == child.getInternalId();
     } else {
       return false;
     }
-#else
-    return true;
-#endif
   }
 
  protected:

@@ -17,6 +17,7 @@ class TimerEvent;
 class ValueEvent;
 class OpenGLInitEvent;
 class VisibilityEvent;
+class VisibilityUpdateEvent;
 class ScrollChangedEvent;
 
 class ResultEvent;
@@ -73,6 +74,7 @@ class EventHandler : public Notifier {
   virtual void onValueEvent(ValueEvent & ev) { }
   virtual void onOpenGLInitEvent(OpenGLInitEvent & ev) { }
   virtual void onVisibilityEvent(VisibilityEvent & ev) { }
+  virtual void onVisibilityUpdateEvent(VisibilityUpdateEvent & ev) { }
   virtual void onScrollChangedEvent(ScrollChangedEvent & ev) { }
   virtual void onImageUploadEvent(ImageUploadEvent & ev) { }
 

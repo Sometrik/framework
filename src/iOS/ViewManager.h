@@ -15,7 +15,7 @@ typedef enum {
 @interface ViewManager : NSObject
 - (id)init;
 - (void)clear;
-- (void)setImage:(UIImage *)data;
+- (void)setImage:(CGImageRef)data;
 - (void)addImageUrl:(NSString *)url width:(int)width height:(int)height;
 - (void)setStyle:(NSString *)key value:(NSString *)value selector:(StyleSelector)selector;
 - (void)applyStyles:(BOOL)animate;
@@ -23,12 +23,12 @@ typedef enum {
 - (void)setTextValue:(NSString *)value;
 - (void)switchStyle:(StyleSelector)selector;
 
-@property (nonatomic) NSInteger viewId; // don't use id as it is reserved word in objective-c
-@property id view;
-@property id containerView;
-@property LayoutParams * layoutParams;
-@property NSInteger level;
-@property ViewStyle * normalStyle;
-@property ViewStyle * activeStyle;
-@property ViewStyle * currentStyle;
+@property (nonatomic, assign) NSInteger viewId; // don't use id as it is reserved word in objective-c
+@property (nonatomic, strong) id view;
+@property (nonatomic, strong) id containerView;
+@property (nonatomic, strong) LayoutParams * layoutParams;
+@property (nonatomic, assign) NSInteger level;
+@property (nonatomic, strong) ViewStyle * normalStyle;
+@property (nonatomic, strong) ViewStyle * activeStyle;
+@property (nonatomic, strong) ViewStyle * currentStyle;
 @end

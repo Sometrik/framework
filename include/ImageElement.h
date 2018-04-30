@@ -21,10 +21,22 @@ class ImageElement : public Element {
     return Element::isA(className);
   }
 
+  void onVisibilityUpdateEvent(VisibilityUpdateEvent & ev) override {
+    if (isRequestPending && getParent() && isVisible()) {
+      pendingRequest.dispatch(*(getParent()));
+      isRequestPending = false;
+    }
+  }
+  
   void handleImageRequestEvent(ImageRequestEvent & ev) override {
     width = ev.getRequestedWidth();
     height = ev.getRequestedHeight();
-  }
+    if (!isVisible()) {
+      isRequestPending = true;
+      pendingRequest = ev;
+      ev.setHandled(true);
+    }
+  }  
 
   void handleImageResponseEvent(ImageResponseEvent & ev) override {
     if (ev.isSuccess()) {
@@ -96,6 +108,8 @@ class ImageElement : public Element {
  private:
   ImageSet images;
   unsigned int width = 0, height = 0;
+  bool isRequestPending = false;
+  ImageRequestEvent pendingRequest;
 };
 
 #endif

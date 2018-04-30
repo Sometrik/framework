@@ -10,6 +10,7 @@
 #import "FrameLayoutView.h"
 #import "LinearLayoutView.h"
 #import "FWScrollView.h"
+#import "FWImageView.h"
 
 @interface FWLayoutView()
 - (void)setup;
@@ -140,6 +141,12 @@
             if (h > height) height = h;
         }
         return height;
+    } else if ([view isKindOfClass:FWScrollView.class]) {
+        for (UIView * subview in [view subviews]) {
+	    if ([subview isKindOfClass:UIImageView.class]) continue; // ignore scroll indicators
+	    return [self calcIntrinsicHeight:subview];
+	}
+	return 0;
     } else {
         return view.intrinsicContentSize.height;
     }
@@ -183,6 +190,8 @@
     item.centerYConstraint = [NSLayoutConstraint constraintWithItem:item.view attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterY multiplier:1.f constant:0.0f];
     item.widthConstraint = [NSLayoutConstraint constraintWithItem:item.view attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:0.0f constant:0];
     item.heightConstraint = [NSLayoutConstraint constraintWithItem:item.view attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:0.0f constant:0];
+    item.minWidthConstraint = [NSLayoutConstraint constraintWithItem:item.view attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:0.0f constant:0];
+    item.minHeightConstraint = [NSLayoutConstraint constraintWithItem:item.view attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:0.0f constant:0];
     item.maxWidthConstraint = [NSLayoutConstraint constraintWithItem:item.view attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationLessThanOrEqual toItem:self attribute:NSLayoutAttributeWidth multiplier:1.0f constant:0];
     item.maxHeightConstraint = [NSLayoutConstraint constraintWithItem:item.view attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationLessThanOrEqual toItem:self attribute:NSLayoutAttributeHeight multiplier:1.0f constant:0];
 
@@ -194,6 +203,8 @@
     item.centerYConstraint.priority = 999 - item.level;
     item.widthConstraint.priority = 999 - item.level - 1;
     item.heightConstraint.priority = 999 - item.level - 1;
+    item.minWidthConstraint.priority = 999 - item.level - 2;
+    item.minHeightConstraint.priority = 999 - item.level - 2;
     item.maxWidthConstraint.priority = 999 - item.level;
     item.maxHeightConstraint.priority = 999 - item.level;
 
@@ -312,6 +323,22 @@
     [self.items exchangeObjectAtIndex:firstItemIndex withObjectAtIndex:secondItemIndex];
     
     [self setNeedsLayout];
+}
+
+- (void)updateVisibility:(CGRect)bounds
+{
+    for (UIView * subview in [self subviews]) {
+        if ([subview isKindOfClass:FWLayoutView.class]) {
+            FWLayoutView * layout = (FWLayoutView*)subview;
+            [layout updateVisibility:bounds];
+        } else if ([subview isKindOfClass:FWScrollView.class]) {
+            FWScrollView * scrollView = (FWScrollView*)subview;
+            [scrollView updateVisibility:bounds];
+        } else if ([subview isKindOfClass:FWImageView.class]) {
+            FWImageView * imageView = (FWImageView*)subview;
+            [imageView updateVisibility:bounds];
+        }
+    }
 }
 
 @end

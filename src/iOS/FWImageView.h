@@ -10,8 +10,8 @@
 - (void)addImageUrl:(NSString *)url width:(int)width height:(int)height;
 - (void)clear;
 - (void)updateContentMode;
+- (void)updateVisibility:(CGRect)bounds;
 
-@property NSString * url;
 @property (nonatomic, assign) NSInteger prevWidth;
 @property (nonatomic, assign) NSInteger prevHeight;
 @property (nonatomic, assign) id<FWImageViewDelegate> delegate;

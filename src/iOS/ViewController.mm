@@ -3,6 +3,7 @@
 #include <FWApplication.h>
 #include <FWDefs.h>
 #include <SysEvent.h>
+#include <VisibilityUpdateEvent.h>
 
 #include "iOSMainThread.h"
 
@@ -40,11 +41,12 @@ extern FWApplication * applicationMain();
 @property (nonatomic, strong) UIToolbar *statusBarBackgroundView;
 @property (nonatomic, strong) UIScrollView *pageView;
 @property (nonatomic, strong) NSMutableArray *dialogIds;
-@property (nonatomic) int activeViewId;
+@property (nonatomic, assign) int activeViewId;
 @property (nonatomic, assign) BOOL sideMenuPanned;
 @property (nonatomic, strong) WKWebView *webView;
 @property (nonatomic, strong) InAppPurchaseManager *inAppPurchaseManager;
-@property (nonatomic, assign) NSString * currentTitle;
+@property (nonatomic, strong) NSString * currentTitle;
+@property (nonatomic, strong) FWPicker * currentPicker;
 @property (nonatomic, assign) int currentPickerSelection;
 @property (nonatomic, strong) FWPicker * currentPicker;
 @property (nonatomic, strong) UIView * currentPickerHolder;
@@ -400,6 +402,12 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     }
 }
 
+- (void)sendVisibilityUpdate
+{
+    VisibilityUpdateEvent ev;
+    mainThread->sendEvent(mainThread->getApplication().getInternalId(), ev);
+}
+
 // Lazy initialization
 - (NSMutableDictionary *)viewsDictionary
 {
@@ -578,6 +586,19 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     }
 }
 
+- (void)updateTabBars:(NSInteger)page
+{
+    for (NSString *key in self.viewsDictionary.allKeys) {
+        ViewManager *viewManager = [self.viewsDictionary objectForKey:key];
+        if ([viewManager.view isKindOfClass:UITabBar.class]) {
+            UITabBar *tabBar = (UITabBar *)viewManager.view;
+            if (page <= tabBar.items.count) {
+                [tabBar setSelectedItem:tabBar.items[page]];
+            }
+        }
+    }
+}
+
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
 {
     NSLog(@"scrollView did end decelerating");
@@ -585,52 +606,41 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
         NSInteger page = [self indexForScrollViewPage:scrollView];
         
         if (page >= 0) {
-            // set selected item for all tabbars
-            for (NSString *key in self.viewsDictionary.allKeys) {
-                ViewManager *viewManager = [self.viewsDictionary objectForKey:key];
-                if ([viewManager.view isKindOfClass:UITabBar.class]) {
-                    UITabBar *tabBar = (UITabBar *)viewManager.view;
-                    if (page <= tabBar.items.count) {
-                        [tabBar setSelectedItem:tabBar.items[page]];
-			NSLog(@"Sending value for tab");
-                        [self sendIntValue:(int)scrollView.tag value:(int)page];
-                    }
-                }
+            [self sendIntValue:(int)scrollView.tag value:(int)page];
+            
+	    if (scrollView == self.pageView) {
+                // set selected item for all tabbars
+                [self updateTabBars:page];
+ 	        [self sendVisibilityUpdate];
             }
-            
-            
-            //[self updateTabBarVisibility:(int)page];
         }
+    }
+    if ([scrollView isKindOfClass:FWScrollView.class]) {
+        FWScrollView * fwScrollView = (FWScrollView *)scrollView;
+	[fwScrollView updateVisibility:fwScrollView.bounds];
     }
 }
 
 - (void)createPageLayoutWithId:(int)viewId parentId:(int)parentId
 {
-    CGFloat frameHeight = self.view.frame.size.height; // - 20;
-  
-    UIScrollView * scrollView = [[UIScrollView alloc] init];
+    FWScrollView * scrollView = [[FWScrollView alloc] init];
     scrollView.tag = viewId;
     scrollView.pagingEnabled = YES;
     scrollView.contentInset = UIEdgeInsetsMake(0, 0, 0, 0);
-    scrollView.contentSize = CGSizeMake(0, frameHeight);
     scrollView.layoutMargins = UIEdgeInsetsMake(0, 0, 0, 0);
-    scrollView.frame = self.view.frame;
     scrollView.clipsToBounds = YES;
     scrollView.delegate = self;
-    scrollView.translatesAutoresizingMaskIntoConstraints = false;
-    self.pageView = scrollView;
+    if (self.pageView == nil) self.pageView = scrollView;
     [self addView:scrollView withId:viewId];
     [self addToParent:parentId view:scrollView];
 }
 
-- (void)showPage:(NSInteger)page animated:(BOOL)animated
+- (void)showPage:(UIScrollView *)scrollView page:(NSInteger)page animated:(BOOL)animated
 {
-    if (page != NSNotFound && self.pageView) {
-        CGRect frame = self.pageView.frame;
-        frame.origin.x = frame.size.width * page;
-        frame.origin.y = 0;
-        [self.pageView scrollRectToVisible:frame animated:animated];
-    }
+    CGRect frame = scrollView.frame;
+    frame.origin.x = frame.size.width * page;
+    frame.origin.y = 0;
+    [scrollView scrollRectToVisible:frame animated:animated];
 }
 
 - (NSInteger)indexForScrollViewPage:(UIScrollView *)pageView
@@ -831,7 +841,9 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 - (void)tabBar:(UITabBar *)tabBar didSelectItem:(UITabBarItem *)item
 {
     int itemIndex = (int)[self indexForTabBar:tabBar item:item];
-    [self showPage:itemIndex animated:NO];
+    if (itemIndex != NSNotFound) {
+        [self showPage:self.pageView page:itemIndex animated:NO];
+    }
     [self sendIntValue:(int)item.tag value:1];
 }
 
@@ -1562,7 +1574,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
         UIScrollView * scrollView = (UIScrollView *)parentView;
         int pageWidth = self.view.frame.size.width;
         if (scrollView.pagingEnabled) {
-            scrollView.contentSize = CGSizeMake(scrollView.contentSize.width + pageWidth, scrollView.contentSize.height);
+            // scrollView.contentSize = CGSizeMake(scrollView.contentSize.width + pageWidth, scrollView.contentSize.height);
             
             NSLayoutConstraint *leftConstraint;
             NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
@@ -1724,7 +1736,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     [self.viewsDictionary setObject:viewManager forKey:[NSString stringWithFormat:@"%d", viewId]];
 }
 
-- (void)setImageFromThread:(int)viewId data:(UIImage *)data
+- (void)setImageFromThread:(int)viewId data:(CGImageRef)data
 {
     ImageWrapper * iw = [[ImageWrapper alloc] init];
     iw.targetElementId = viewId;
@@ -1738,6 +1750,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     if (viewManager) {
         [viewManager setImage:iw.image];
     }
+    CGImageRelease(iw.image);
 }
 
 - (void)sendCommandsFromThread:(NSArray*)data
@@ -1919,6 +1932,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
                     }
                     self.activeViewId = command.childInternalId;
                     [self setVisibility:self.activeViewId visibility:1];
+		    [self sendVisibilityUpdate];
 #if 0
                     NSString * title = [NSString stringWithUTF8String:command.getTextValue().c_str()];
                     [self setTitle:title];
@@ -1927,7 +1941,18 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             } else {
                 ViewManager * viewManager = [self getViewManager:command.internalId];
                 if (viewManager != nil) {
-                    [viewManager setIntValue:command.value];
+                    if ([viewManager.view isKindOfClass:UIScrollView.class]) {
+                        UIScrollView * scrollView = (UIScrollView *)viewManager.view;
+                        if (scrollView.isPagingEnabled) {
+			    [self showPage:scrollView page:command.value animated:NO];
+			    if (scrollView == self.pageView) {
+                                [self updateTabBars:command.value];
+				[self sendVisibilityUpdate];
+			    }
+                        }
+                    } else {
+                        [viewManager setIntValue:command.value];
+                    }
                 }
             }
         }
@@ -1975,6 +2000,10 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             [self setBackButtonVisibility:command.value ? true : false];
         }
             break;
+	    case TOGGLE_MENU: {
+	        [self menuButtonTapped];
+	    }
+	        break;
         }
     }
 

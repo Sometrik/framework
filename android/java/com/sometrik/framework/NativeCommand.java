@@ -108,7 +108,6 @@ public class NativeCommand {
     REORDER_CHILD,
     LAUNCH_BROWSER,
     HISTORY_GO_BACK,
-    HISTORY_GO_FORWARD,
     CLEAR,
     SET_INT_VALUE, // Sets value of radio groups, checkboxes and pickers
     SET_TEXT_VALUE, // Sets value of textfields, labels and images
@@ -142,7 +141,8 @@ public class NativeCommand {
 
     // Other
     SHARE_LINK,
-    SELECT_FROM_GALLERY
+    SELECT_FROM_GALLERY,
+    TOGGLE_MENU
   }
 
   public NativeCommand(FrameWork frame, int messageTypeId, int internalId, int childInternalId, int value, byte[] textValue, byte[] textValue2, int flags, int row, int column, int sheet, int width, int height) {

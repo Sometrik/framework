@@ -600,15 +600,12 @@ protected:
 	  auto box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 	  gtk_style_context_add_class(gtk_widget_get_style_context(box), "linked");
 	  auto previous = gtk_button_new_from_icon_name("go-previous", GTK_ICON_SIZE_BUTTON);
-	  auto next = gtk_button_new_from_icon_name("go-next", GTK_ICON_SIZE_BUTTON);
 	  auto settings = gtk_button_new_from_icon_name("settings", GTK_ICON_SIZE_BUTTON);
 
 	  g_signal_connect(previous, "clicked", G_CALLBACK(on_previous_button), this);
-	  g_signal_connect(next, "clicked", G_CALLBACK(on_next_button), this);
 	  g_signal_connect(settings, "clicked", G_CALLBACK(on_settings_button), this);
 
 	  gtk_box_pack_start((GtkBox*)box, previous, 0, 0, 0);
-	  gtk_box_pack_start((GtkBox*)box, next, 0, 0, 0);
 	  gtk_box_pack_start((GtkBox*)box, settings, 0, 0, 0);
 	
 	  gtk_header_bar_pack_start((GtkHeaderBar*)header, box);
@@ -651,15 +648,9 @@ protected:
       }
 	break;
 
-      case Command::HISTORY_GO_BACK:
-      case Command::HISTORY_GO_FORWARD: {
+      case Command::HISTORY_GO_BACK: {
 	auto & app = getApplication();
-	int id;
-	if (command.getType() == Command::HISTORY_GO_BACK) {
-	  id = app.popViewBackHistory();
-	} else {
-	  id = app.popViewForwardHistory();
-	}
+	int id = app.popViewBackHistory();
 	if (id) {
 	  cerr << "id = " << id << endl;
 	  auto view = views_by_id[id];
@@ -1309,7 +1300,6 @@ protected:
   static void send_selection_value(GtkWidget * widget, gpointer data);
   static void send_activation_value(GtkTreeView * treeview, GtkTreePath * path, GtkTreeViewColumn * column, gpointer data);
   static void on_previous_button(GtkWidget * widget, gpointer data);
-  static void on_next_button(GtkWidget * widget, gpointer data);
   static void on_settings_button(GtkWidget * widget, gpointer data);
   static void on_bar_button(GtkWidget * widget, gpointer data);
   static void on_size_allocate(GtkWidget * widget, GtkAllocation * allocation, gpointer data);
@@ -1538,15 +1528,6 @@ GtkMainThread::on_previous_button(GtkWidget * widget, gpointer data) {
   vector<Command> commands;
   commands.push_back(Command(Command::HISTORY_GO_BACK, 0));
   mainThread->sendCommands(commands);  
-}
-
-void
-GtkMainThread::on_next_button(GtkWidget * widget, gpointer data) {
-  cerr << "got next\n";
-  GtkMainThread * mainThread = (GtkMainThread*)data;
-  vector<Command> commands;
-  commands.push_back(Command(Command::HISTORY_GO_FORWARD, 0));
-  mainThread->sendCommands(commands);
 }
 
 void

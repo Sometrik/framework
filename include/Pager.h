@@ -16,12 +16,18 @@ class Pager : public Element {
   }
 
   void onValueEvent(ValueEvent & ev) override {
+#ifndef __ANDROID__
+    visible_view_index = ev.getValue();
+    if (visible_view_index >= 0 && visible_view_index < getChildren().size()) {
+      getChildren()[visible_view_index]->refresh();
+    }
+#endif
+
     notify();
     CommandEvent ev2(getId(), ev.getValue(), ev.getValue2());
     ev2.dispatch(*this);
     ev.setHandled(true);
   }
-
 
   void setVisibleView(int position) {
     visible_view_index = position;
@@ -31,6 +37,16 @@ class Pager : public Element {
     Command c(Command::SET_INT_VALUE, getInternalId());
     c.setValue(position);
     sendCommand(c);
+  }
+
+  bool isChildVisible(const Element & child) const override {
+    if (!isVisible()) {
+      return false;
+    } else if (visible_view_index >= 0 && visible_view_index < getChildren().size()) {
+      return getChildren()[visible_view_index]->getInternalId() == child.getInternalId();
+    } else {
+      return false;
+    }
   }
 
  protected:

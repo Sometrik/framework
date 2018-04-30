@@ -2,8 +2,10 @@
 
 @interface FWScrollView : UIScrollView
 - (void)layoutSubviews;
-@property NSLayoutConstraint *topConstraint;
-@property NSLayoutConstraint *leftConstraint;
-@property NSLayoutConstraint *widthConstraint;
-@property NSLayoutConstraint *heightConstraint;
+- (void)updateVisibility:(CGRect)bounds;
+
+@property (nonatomic, strong) NSLayoutConstraint *topConstraint;
+@property (nonatomic, strong) NSLayoutConstraint *leftConstraint;
+@property (nonatomic, strong) NSLayoutConstraint *widthConstraint;
+@property (nonatomic, strong) NSLayoutConstraint *heightConstraint;
 @end

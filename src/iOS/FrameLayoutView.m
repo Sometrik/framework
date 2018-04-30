@@ -20,7 +20,7 @@
     for (LayoutParams *item in self.items) {
         if (item.view.hidden) continue;
 
-        if (item.fixedWidth == -1) {
+        if (item.fixedWidth == -1) { // match-parent
             item.leftConstraint.constant = paddingLeft + item.margin.left;
             item.rightConstraint.constant = -(paddingRight + item.margin.right);
 
@@ -62,7 +62,7 @@
             }
         }
 
-        if (item.fixedHeight == -1) {
+        if (item.fixedHeight == -1) { // match-parent
 	    item.topConstraint.constant = paddingTop + item.margin.top;
 	    item.bottomConstraint.constant = -(paddingBottom + item.margin.bottom);
 
@@ -72,8 +72,10 @@
 	    item.heightConstraint.active = NO;
 	    item.maxHeightConstraint.active = NO;
         } else {
+#if 0
 	    item.maxHeightConstraint.constant = -(paddingTop + item.margin.top + paddingBottom + item.margin.bottom);
 	    item.maxHeightConstraint.active = YES;
+#endif
 
 	  CGFloat height;
 	  if (item.fixedHeight > 0) {
