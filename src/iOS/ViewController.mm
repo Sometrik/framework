@@ -45,9 +45,17 @@ extern FWApplication * applicationMain();
 @property (nonatomic, strong) WKWebView *webView;
 @property (nonatomic, strong) InAppPurchaseManager *inAppPurchaseManager;
 @property (nonatomic, assign) NSString * currentTitle;
-@property (nonatomic, strong) FWPicker * currentPicker;
 @property (nonatomic, assign) int currentPickerSelection;
+@property (nonatomic, strong) FWPicker * currentPicker;
 @property (nonatomic, strong) UIView * currentPickerHolder;
+@property (nonatomic, strong) NSLayoutConstraint *currentPickerHolderTopConstraint;
+@property (nonatomic, strong) NSLayoutConstraint *currentPickerHolderLeftConstraint;
+@property (nonatomic, strong) NSLayoutConstraint *currentPickerHolderRightConstraint;
+@property (nonatomic, strong) NSLayoutConstraint *currentPickerHolderBottomConstraint;
+@property (nonatomic, strong) NSLayoutConstraint *rootViewTopConstraint;
+@property (nonatomic, strong) NSLayoutConstraint *rootViewLeftConstraint;
+@property (nonatomic, strong) NSLayoutConstraint *rootViewRightConstraint;
+@property (nonatomic, strong) NSLayoutConstraint *rootViewBottomConstraint;
 @property (nonatomic, strong) UIScreenEdgePanGestureRecognizer *panEdgeGestureRecognizer;
 @property (nonatomic, assign) BOOL keyboardVisible;
 @property (nonatomic, assign) AnimationStyle pickerAnimationStyle;
@@ -132,6 +140,9 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(backgroundTapped:)];
     tapGestureRecognizer.delegate = self;
     [self.view addGestureRecognizer:tapGestureRecognizer];
+    
+    // Add constraints to view
+    //self.rootViewTopConstraint =
 }
 
 - (void)handleKeyboardWillShowNotification:(NSNotification *)notification
@@ -176,6 +187,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
         CGRect frame = CGRectMake(CGRectGetMinX(self.view.bounds), CGRectGetMinY(self.view.bounds), size.width-sideMenuOpenSpaceWidth, size.height);
         self.sideMenuView.frame = frame;
     }
+    
   // self.view.frame = CGRectMake(0, 0, size.width, size.height);
   // [self.view setNeedsLayout];
 
@@ -667,8 +679,9 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldBeRequiredToFailByGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
 {
-    if ([otherGestureRecognizer isEqual:self.pageView.panGestureRecognizer] && [gestureRecognizer isEqual:self.panEdgeGestureRecognizer]) {
+    if ([otherGestureRecognizer isKindOfClass:UIPanGestureRecognizer.class] && [gestureRecognizer isEqual:self.panEdgeGestureRecognizer]) {
         return YES;
+        
     }
     return NO;
 }
@@ -1023,7 +1036,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     [self addToParent:parentId view:view];
 }
 
-- (void)createPickerWithId:(int)viewId parentId:(int)parentId animationStyle:(AnimationStyle)style
+- (void)createPickerWithId:(int)viewId parentId:(int)parentId
 {
     FWPicker * view = [[FWPicker alloc] init];
     view.tag = viewId;
@@ -1034,7 +1047,6 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     [self addView:view withId:viewId];
     [self addToParent:parentId view:view];
     
-    self.pickerAnimationStyle = style;
     
     [view addTarget:self action:@selector(showPicker:) forControlEvents:UIControlEventTouchUpInside];
 }
@@ -1050,11 +1062,11 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     pickerHolder.translatesAutoresizingMaskIntoConstraints = false;
     [self.view addSubview:pickerHolder];
 
-    NSLayoutConstraint *topConstraint0 = [NSLayoutConstraint constraintWithItem:pickerHolder attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:pickerHolder.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
-    NSLayoutConstraint *leftConstraint0 = [NSLayoutConstraint constraintWithItem:pickerHolder attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:pickerHolder.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
-    NSLayoutConstraint *rightConstraint0 = [NSLayoutConstraint constraintWithItem:pickerHolder attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:pickerHolder.superview attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
-    NSLayoutConstraint *bottomConstraint0 = [NSLayoutConstraint constraintWithItem:pickerHolder attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:pickerHolder.superview attribute:NSLayoutAttributeBottom multiplier:1.0f constant:0];
-    [pickerHolder.superview addConstraints:@[topConstraint0, leftConstraint0, rightConstraint0, bottomConstraint0]];
+    self.currentPickerHolderTopConstraint = [NSLayoutConstraint constraintWithItem:pickerHolder attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:pickerHolder.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
+    self.currentPickerHolderLeftConstraint = [NSLayoutConstraint constraintWithItem:pickerHolder attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:pickerHolder.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
+    self.currentPickerHolderRightConstraint = [NSLayoutConstraint constraintWithItem:pickerHolder attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:pickerHolder.superview attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
+    self.currentPickerHolderBottomConstraint = [NSLayoutConstraint constraintWithItem:pickerHolder attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:pickerHolder.superview attribute:NSLayoutAttributeBottom multiplier:1.0f constant:0];
+    [pickerHolder.superview addConstraints:@[self.currentPickerHolderTopConstraint, self.currentPickerHolderLeftConstraint, self.currentPickerHolderRightConstraint, self.currentPickerHolderBottomConstraint]];
 
     self.currentPickerHolder = pickerHolder;
 
@@ -1110,54 +1122,22 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     }
     
     // Animations
-    CGFloat topConstraintConstantFinal = topConstraint0.constant;
-    CGFloat leftConstraintConstantFinal = leftConstraint0.constant;
-    CGFloat rightConstraintConstantFinal = rightConstraint0.constant;
-    CGFloat bottomConstraintConstantFinal = bottomConstraint0.constant;
+    CGFloat topConstraintConstantFinal = self.currentPickerHolderTopConstraint.constant;
+    CGFloat leftConstraintConstantFinal = self.currentPickerHolderLeftConstraint.constant;
+    CGFloat rightConstraintConstantFinal = self.currentPickerHolderRightConstraint.constant;
+    CGFloat bottomConstraintConstantFinal = self.currentPickerHolderBottomConstraint.constant;
     
     [pickerHolder layoutIfNeeded];
     
-    switch (self.pickerAnimationStyle) {
-        case AnimationStyleNone:
-            break;
-        case AnimationStyleTopToBottom:
-            topConstraint0.constant = -(topConstraint0.constant + bottomConstraint0.constant);
-            bottomConstraint0.constant = -(self.view.frame.size.height);
-            break;
-        case AnimationStyleLeftToRight:
-            leftConstraint0.constant = -(leftConstraint0.constant + self.view.frame.size.width);
-            rightConstraint0.constant = -(self.view.frame.size.width - rightConstraint0.constant);
-            break;
-        case AnimationStyleRightToLeft:
-            leftConstraint0.constant = self.view.frame.size.width;
-            rightConstraint0.constant = self.view.frame.size.width + rightConstraint0.constant;
-            break;
-        default:
-            break;
-    }
-    [pickerHolder.superview addConstraints:@[topConstraint0, leftConstraint0, rightConstraint0, bottomConstraint0]];
+    self.currentPickerHolderLeftConstraint.constant = self.view.frame.size.width;
+    self.currentPickerHolderRightConstraint.constant = self.view.frame.size.width + self.currentPickerHolderRightConstraint.constant;
+    
+    [pickerHolder.superview addConstraints:@[self.currentPickerHolderTopConstraint, self.currentPickerHolderLeftConstraint, self.currentPickerHolderRightConstraint, self.currentPickerHolderBottomConstraint]];
     [pickerHolder.superview layoutIfNeeded];
-    [UIView animateWithDuration:animationDuration*2 delay:0 usingSpringWithDamping:0.3 initialSpringVelocity:0.2 options:UIViewAnimationOptionPreferredFramesPerSecondDefault animations:^{
-        switch (self.pickerAnimationStyle) {
-            case AnimationStyleNone:
-                break;
-            case AnimationStyleTopToBottom:
-                topConstraint0.constant = topConstraintConstantFinal;
-                bottomConstraint0.constant = bottomConstraintConstantFinal;
-                break;
-            case AnimationStyleLeftToRight:
-                leftConstraint0.constant = leftConstraintConstantFinal;
-                rightConstraint0.constant = rightConstraintConstantFinal;
-                break;
-            case AnimationStyleRightToLeft:
-                leftConstraint0.constant = leftConstraintConstantFinal;
-                rightConstraint0.constant = rightConstraintConstantFinal;
-                break;
-            default:
-                break;
-        }
+    [UIView animateWithDuration:animationDuration/1.5 delay:0 usingSpringWithDamping:1 initialSpringVelocity:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+        self.currentPickerHolderLeftConstraint.constant = leftConstraintConstantFinal;
+        self.currentPickerHolderRightConstraint.constant = rightConstraintConstantFinal;
         [pickerHolder.superview layoutIfNeeded];
-        
     } completion:^(BOOL finished) {
         [pickerHolder layoutIfNeeded];
     }];
@@ -1169,17 +1149,38 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
     [self sendIntValue:self.currentPicker.tag value:row];
     [self.currentPicker setSelection:row];
-
-    [self.currentPickerHolder removeFromSuperview];
-    self.currentPickerHolder = nil;
-    self.currentPicker = nil;
+    [self.currentPickerHolder layoutIfNeeded];
+    self.currentPickerHolderTopConstraint.constant = 0.0;
+    self.currentPickerHolderLeftConstraint.constant = self.view.frame.size.width;
+    self.currentPickerHolderRightConstraint.constant = self.view.frame.size.width;
+    self.currentPickerHolderBottomConstraint.constant = 0.0;
+    [UIView animateWithDuration:animationDuration/1.5 delay:0 usingSpringWithDamping:1 initialSpringVelocity:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+        [self.currentPickerHolder.superview layoutIfNeeded];
+    } completion:^(BOOL finished) {
+        if (finished) {
+            [self.currentPickerHolder removeFromSuperview];
+            self.currentPickerHolder = nil;
+            self.currentPicker = nil;
+        }
+    }];
 }
 
 - (void)cancelPicker
 {
-    [self.currentPickerHolder removeFromSuperview];
-    self.currentPickerHolder = nil;
-    self.currentPicker = nil;
+    [self.currentPickerHolder layoutIfNeeded];
+    self.currentPickerHolderTopConstraint.constant = 0.0;
+    self.currentPickerHolderLeftConstraint.constant = self.view.frame.size.width;
+    self.currentPickerHolderRightConstraint.constant = self.view.frame.size.width;
+    self.currentPickerHolderBottomConstraint.constant = 0.0;
+    [UIView animateWithDuration:animationDuration/1.5 delay:0 usingSpringWithDamping:1 initialSpringVelocity:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+        [self.currentPickerHolder.superview layoutIfNeeded];
+    } completion:^(BOOL finished) {
+        if (finished) {
+            [self.currentPickerHolder removeFromSuperview];
+            self.currentPickerHolder = nil;
+            self.currentPicker = nil;
+        }
+    }];
 }
 
 - (void)createActionSheetWithId:(int)viewId parentId:(int)parentId title:(NSString *)title
@@ -1281,8 +1282,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     [UIView animateWithDuration:animationDuration/2 animations:^{
         dialogHolder.alpha = 1.0;
     } completion:^(BOOL finished) {
-      
-        [UIView animateWithDuration:animationDuration*2 delay:0 usingSpringWithDamping:0.3 initialSpringVelocity:0.2 options:UIViewAnimationOptionPreferredFramesPerSecondDefault animations:^{
+        [UIView animateWithDuration:animationDuration/1.5 delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
             //dialogHolder.alpha = 1.0;
             switch (style) {
                 case AnimationStyleNone:
@@ -1315,6 +1315,73 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     //[UIView animateWithDuration:animationDuration/2 animations:^{
     //    dialogHolder.alpha = 1.0;
     //}];
+}
+
+// switch view from old to new (push view over old one). If direction is NO, direction is left, otherwise right.
+- (void)switchView:(int)oldViewId newView:(int)newViewId direction:(BOOL)direction
+{
+    NSLayoutConstraint *newViewLeftConstraint, *newViewRightConstraint, *oldViewLeftConstraint, *oldViewRightConstraint;
+    UIView *oldView = [self viewForId:oldViewId];
+    UIView *newView = [self viewForId:newViewId];
+    for (NSLayoutConstraint *oldConstraint in oldView.constraints) {
+        switch (oldConstraint.firstAttribute) {
+            case NSLayoutAttributeLeft:
+                oldViewLeftConstraint = oldConstraint;
+                break;
+            case NSLayoutAttributeRight:
+                oldViewRightConstraint = oldConstraint;
+                break;
+            default:
+                break;
+        }
+    }
+    for (NSLayoutConstraint *newConstraint in newView.constraints) {
+        switch (newConstraint.firstAttribute) {
+            case NSLayoutAttributeLeft:
+                newViewLeftConstraint = newConstraint;
+                break;
+            case NSLayoutAttributeRight:
+                newViewRightConstraint = newConstraint;
+                break;
+            default:
+                break;
+        }
+    }
+    
+    CGFloat newViewLeftConstraintConstantFinal = newViewLeftConstraint.constant;
+    CGFloat newViewRightConstraintConstantFinal = newViewRightConstraint.constant;
+    CGFloat oldViewLeftConstraintConstantFinal = oldViewLeftConstraint.constant;
+    CGFloat oldViewRightConstraintConstantFinal = oldViewRightConstraint.constant;
+
+    if (direction) { // right
+        newViewLeftConstraint.constant = -self.view.frame.size.width;
+        newViewRightConstraint.constant = -self.view.frame.size.width;
+    } else { // left
+        newViewLeftConstraint.constant = self.view.frame.size.width;
+        newViewRightConstraint.constant = self.view.frame.size.width;
+    }
+    
+    [newView.superview layoutIfNeeded];
+    [oldView.superview layoutIfNeeded];
+    [UIView animateWithDuration:animationDuration/1.5 delay:0 usingSpringWithDamping:1 initialSpringVelocity:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+        newViewLeftConstraint.constant = newViewLeftConstraintConstantFinal;
+        newViewRightConstraint.constant = newViewRightConstraintConstantFinal;
+        if (direction) {
+            oldViewLeftConstraint.constant = self.view.frame.size.width/2;
+            oldViewRightConstraint.constant = self.view.frame.size.width/2;
+        } else {
+            oldViewLeftConstraint.constant = -self.view.frame.size.width/2;
+            oldViewRightConstraint.constant = -self.view.frame.size.width/2;
+        }
+        [newView.superview layoutIfNeeded];
+        [oldView.superview layoutIfNeeded];
+    } completion:^(BOOL finished) {
+        oldViewLeftConstraint.constant = oldViewLeftConstraintConstantFinal;
+        oldViewRightConstraint.constant = oldViewRightConstraintConstantFinal;
+        [oldView.superview layoutIfNeeded];
+        [oldView layoutIfNeeded];
+        [newView layoutIfNeeded];
+    }];
 }
 
 - (void)createTimer:(int)viewId interval:(double)interval
@@ -1779,7 +1846,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             break;
 	
         case CREATE_PICKER: {
-            [self createPickerWithId:command.childInternalId parentId:command.internalId animationStyle:AnimationStyleTopToBottom];
+            [self createPickerWithId:command.childInternalId parentId:command.internalId];
         }
             break;
 
@@ -2021,14 +2088,14 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
 - (void)webView:(WKWebView *)webView didCommitNavigation:(WKNavigation *)navigation
 {
-    NSLog(@"%@", webView.URL.absoluteString);
     for (UIView *view in self.webView.subviews) {
         if ([view isKindOfClass:UINavigationBar.class]) {
-            NSLog(@"view found");
             UINavigationBar *navBar = (UINavigationBar *)view;
             for (UINavigationItem *item in navBar.items) {
                 UILabel *titleLabel = (UILabel *)item.titleView;
-                titleLabel.text = webView.URL.absoluteString;
+                if (titleLabel != nil) {
+                    titleLabel.text = webView.URL.absoluteString;
+                }
             }
         }
     }
