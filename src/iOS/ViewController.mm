@@ -3,6 +3,7 @@
 #include <FWApplication.h>
 #include <FWDefs.h>
 #include <SysEvent.h>
+#include <VisibilityUpdateEvent.h>
 
 #include "iOSMainThread.h"
 
@@ -388,6 +389,12 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     }
 }
 
+- (void)sendVisibilityUpdate
+{
+    VisibilityUpdateEvent ev;
+    mainThread->sendEvent(mainThread->getApplication().getInternalId(), ev);
+}
+
 // Lazy initialization
 - (NSMutableDictionary *)viewsDictionary
 {
@@ -591,6 +598,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 	    if (scrollView == self.pageView) {
                 // set selected item for all tabbars
                 [self updateTabBars:page];
+ 	        [self sendVisibilityUpdate];
             }
         }
     }
@@ -1856,6 +1864,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
                     }
                     self.activeViewId = command.childInternalId;
                     [self setVisibility:self.activeViewId visibility:1];
+		    [self sendVisibilityUpdate];
 #if 0
                     NSString * title = [NSString stringWithUTF8String:command.getTextValue().c_str()];
                     [self setTitle:title];
@@ -1870,6 +1879,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 			    [self showPage:scrollView page:command.value animated:NO];
 			    if (scrollView == self.pageView) {
                                 [self updateTabBars:command.value];
+				[self sendVisibilityUpdate];
 			    }
                         }
                     } else {
