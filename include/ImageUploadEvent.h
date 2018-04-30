@@ -5,6 +5,7 @@
 
 #include <EventHandler.h>
 #include <string>
+#include <cstring>
 
 class ImageUploadEvent : public Event {
 public:
