@@ -48,7 +48,6 @@ extern FWApplication * applicationMain();
 @property (nonatomic, strong) NSString * currentTitle;
 @property (nonatomic, strong) FWPicker * currentPicker;
 @property (nonatomic, assign) int currentPickerSelection;
-@property (nonatomic, strong) FWPicker * currentPicker;
 @property (nonatomic, strong) UIView * currentPickerHolder;
 @property (nonatomic, strong) NSLayoutConstraint *currentPickerHolderTopConstraint;
 @property (nonatomic, strong) NSLayoutConstraint *currentPickerHolderLeftConstraint;
