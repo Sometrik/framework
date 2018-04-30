@@ -108,7 +108,6 @@ public class NativeCommand {
     REORDER_CHILD,
     LAUNCH_BROWSER,
     HISTORY_GO_BACK,
-    HISTORY_GO_FORWARD,
     CLEAR,
     SET_INT_VALUE, // Sets value of radio groups, checkboxes and pickers
     SET_TEXT_VALUE, // Sets value of textfields, labels and images

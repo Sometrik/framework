@@ -49,7 +49,6 @@ class Command {
     REORDER_CHILD,
     LAUNCH_BROWSER,
     HISTORY_GO_BACK,
-    HISTORY_GO_FORWARD,
     CLEAR, // Clears the contents of GridView
     SET_INT_VALUE, // Sets value of radio groups, checkboxes and pickers
     SET_TEXT_VALUE, // Sets value of textfields and labels
