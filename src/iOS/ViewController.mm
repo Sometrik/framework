@@ -619,8 +619,8 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 	    if (scrollView == self.pageView) {
                 // set selected item for all tabbars
                 [self updateTabBars:page];
- 	        [self sendVisibilityUpdate];
             }
+	    [self sendVisibilityUpdate];
         }
     }
     if ([scrollView isKindOfClass:FWScrollView.class]) {
@@ -851,6 +851,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     int itemIndex = (int)[self indexForTabBar:tabBar item:item];
     if (itemIndex != NSNotFound) {
         [self showPage:self.pageView page:itemIndex animated:NO];
+	[self sendVisibilityUpdate];
     }
     [self sendIntValue:(int)item.tag value:1];
 }
