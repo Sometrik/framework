@@ -1117,7 +1117,6 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     NSLayoutConstraint *rightConstraint = [NSLayoutConstraint constraintWithItem:layout attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:layout.superview attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
     NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:layout attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:layout.superview attribute:NSLayoutAttributeBottom multiplier:1.0f constant:0];
     [layout.superview addConstraints:@[topConstraint, leftConstraint, rightConstraint, bottomConstraint]];
-
     
     LinearLayoutView *layout2 = [[LinearLayoutView alloc] init];
     layout2.orientation = LinearLayoutViewOrientationVertical;
@@ -2109,7 +2108,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     if (url != nil) {
       s = [url cStringUsingEncoding:NSUTF8StringEncoding];
     }
-    mainThread->sendImageRequest((int)imageView.tag, size.width, 0, s);
+    mainThread->sendImageRequest((int)imageView.tag, size.width, 0, s, 4); // RGBA4
 }
 
 #pragma mark - PaddedLabelDelegate
