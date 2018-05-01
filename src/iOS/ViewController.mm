@@ -557,7 +557,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     [self sendIntValue:viewId value:value];
 }
 
-- (void)createImageWithId:(int)viewId parentId:(int)parentId filename:(NSString *)filename
+- (void)createImageWithId:(int)viewId parentId:(int)parentId filename:(NSString *)filename width:(int)width height:(int)height
 {
     FWImageView * imageView;
     if (filename != nil && ![filename hasPrefix:@"http://"] && ![filename hasPrefix:@"https://"]) {
@@ -565,7 +565,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
         imageView = [[FWImageView alloc] initWithImage:image];
     } else {
         imageView = [[FWImageView alloc] init];
-        [imageView addImageUrl:filename width:0 height:0];
+        [imageView addImageUrl:filename width:width height:height];
     }
     imageView.tag = viewId;
     imageView.contentMode = UIViewContentModeScaleAspectFit;
@@ -1823,7 +1823,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             break;
         
         case CREATE_IMAGEVIEW: {
-            [self createImageWithId:command.childInternalId parentId:command.internalId filename:command.textValue];
+            [self createImageWithId:command.childInternalId parentId:command.internalId filename:command.textValue width:command.width height:command.height];
         }
             break;
         

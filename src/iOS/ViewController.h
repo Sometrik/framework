@@ -26,7 +26,7 @@ typedef enum
 - (void)createTextWithId:(int)viewId parentId:(int)parentId value:(NSString *)value autolink:(BOOL)autolink;
 - (void)createButtonWithId:(int)viewId parentId:(int)parentId caption:(NSString *)caption;
 - (void)createSwitchWithId:(int)viewId parentId:(int)parentId;
-- (void)createImageWithId:(int)viewId parentId:(int)parentId filename:(NSString *)filename;
+- (void)createImageWithId:(int)viewId parentId:(int)parentId filename:(NSString *)filename width:(int)width height:(int)height;
 - (void)createScrollLayoutWithId:(int)viewId parentId:(int)parentId;
 - (void)createPageLayoutWithId:(int)viewId parentId:(int)parentId;
 - (void)createEventLayoutWithId:(int)viewId parentId:(int)parentId;
