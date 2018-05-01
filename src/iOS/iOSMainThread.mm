@@ -146,16 +146,26 @@ iOSMainThread::handleEventFromThread(int target_element_id, Event * event) {
 void
 iOSMainThread::setImageData(int internal_id, std::shared_ptr<canvas::PackedImageData> input) {
   int bpp = input->getBytesPerPixel(input->getInternalFormat());
+  int bitsPerComponent;
+  if (input->getInternalFormat() == canvas::RGBA4) {
+    bitsPerComponent = 4;
+  } else if (input->getInternalFormat() == canvas::RGBA5551) {
+    bitsPerComponent = 5;
+  } else {
+    bitsPerComponent = 8;
+  }
   auto cfdata = CFDataCreate(0, input->getData(), bpp * input->getWidth() * input->getHeight());
   auto provider = CGDataProviderCreateWithCFData(cfdata);
   auto colorspace = CGColorSpaceCreateDeviceRGB();
   CGBitmapInfo bitmapInfo = kCGBitmapByteOrder32Little;
-  if (input->getInternalFormat() == canvas::RGBA8) {
+  if (input->getInternalFormat() == canvas::RGBA4) {
+    bitmapInfo |= kCGImageAlphaPremultipliedLast;
+  } else if (input->getInternalFormat() == canvas::RGBA8) {
     bitmapInfo |= kCGImageAlphaPremultipliedFirst;
   } else {
     bitmapInfo |= kCGImageAlphaNoneSkipFirst;
   }
-  auto img = CGImageCreate(input->getWidth(), input->getHeight(), 8, bpp * 8, bpp * input->getWidth(), colorspace, bitmapInfo, provider, 0, true, kCGRenderingIntentDefault);
+  auto img = CGImageCreate(input->getWidth(), input->getHeight(), bitsPerComponent, bpp * 8, bpp * input->getWidth(), colorspace, bitmapInfo, provider, 0, true, kCGRenderingIntentDefault);
 
   [viewController setImageFromThread:internal_id data:img];
 
