@@ -8,7 +8,7 @@
 
 class PageControl : public Element {
  public:
-  PageControl(int _size, int _id = 0) : Element(_id), size(_size) { }
+  PageControl(size_t _size, int _id = 0) : Element(_id), size(_size) { }
 
   bool isA(const std::string & className) const override {
     if (className == "PageControl") return true;
@@ -22,6 +22,7 @@ class PageControl : public Element {
   }
 
   void reshape(size_t value) {
+    size = value;
     Command c(Command::RESHAPE_TABLE, getInternalId());
     c.setValue((int)value);
     sendCommand(c);
@@ -35,7 +36,7 @@ class PageControl : public Element {
   }
 
  private:
-  int size;
+  size_t size;
 };
 
 #endif
