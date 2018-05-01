@@ -2095,7 +2095,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     if (url != nil) {
       s = [url cStringUsingEncoding:NSUTF8StringEncoding];
     }
-    mainThread->sendImageRequest((int)imageView.tag, size.width, 0, s, 4); // RGBA4
+    mainThread->sendImageRequest((int)imageView.tag, size.width, 0, s, 15); // RGBA5551
 }
 
 #pragma mark - PaddedLabelDelegate
