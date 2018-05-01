@@ -1034,6 +1034,8 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     view.tag = viewId;
     view.translatesAutoresizingMaskIntoConstraints = false;
     view.numberOfPages = numPages;
+    view.pageIndicatorTintColor = [UIColor blackColor];
+    view.currentPageIndicatorTintColor = [UIColor redColor];
     [self addView:view withId:viewId];
     [self addToParent:parentId view:view];
 }
