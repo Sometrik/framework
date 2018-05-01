@@ -767,7 +767,7 @@ void Java_com_sometrik_framework_FrameWork_sendURLImageRequest(JNIEnv* env, jobj
   if (internalFormat != 0) {
     ev.setInternalFormat((canvas::InternalFormat)internalFormat);
   }
-  mainThread->sendEvent(mainThread->getApplication().getInternalId(), ev);
+  mainThread->sendEvent(viewId, ev);
   env->ReleaseStringUTFChars(uri, uri2);
 }
 
