@@ -776,13 +776,14 @@ void Java_com_sometrik_framework_FrameWork_sendImageRequest(JNIEnv* env, jobject
   if (internalFormat != 0) {
     ev.setInternalFormat((canvas::InternalFormat)internalFormat);
   }
-  mainThread->sendEvent(mainThread->getApplication().getInternalId(), ev);
+  mainThread->sendEvent(viewId, ev);
 }
 
 void Java_com_sometrik_framework_FrameWork_cancelImageRequest(JNIEnv * env, jobject thiz, jint viewId) {
   ImageRequestEvent ev(ImageRequestEvent::CANCEL, viewId);
   mainThread->sendEvent(mainThread->getApplication().getInternalId(), ev);
 }
+
 void Java_com_sometrik_framework_FrameWork_timerEvent(JNIEnv* env, jobject thiz, jint viewId, jint timerId) {
   TimerEvent ev(timerId);
   mainThread->sendEvent(viewId, ev);
