@@ -321,3 +321,11 @@ iOSMainThread::sendImageRequest(int viewId, unsigned int width, unsigned int hei
     }
     sendEvent(viewId, ev);
 }
+
+void
+iOSMainThread::cancelImageRequest(int viewId) {
+    cerr << "cancelling image request\n";
+  
+    ImageRequestEvent ev(ImageRequestEvent::CANCEL, viewId);
+    sendEvent(viewId, ev);
+}

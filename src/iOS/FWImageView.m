@@ -13,6 +13,7 @@
         self.prevWidth = 0;
         self.prevHeight = 0;
         self.translatesAutoresizingMaskIntoConstraints = false;
+	self.imageRequestPending = FALSE;
     }
     return self;
 }
@@ -23,6 +24,7 @@
         self.prevWidth = 0;
         self.prevHeight = 0;
         self.translatesAutoresizingMaskIntoConstraints = false;
+	self.imageRequestPending = FALSE;
     }
     return self;
 }
@@ -33,6 +35,7 @@
         self.prevWidth = 0;
         self.prevHeight = 0;
         self.translatesAutoresizingMaskIntoConstraints = false;
+	self.imageRequestPending = FALSE;
     }
     return self;
 }
@@ -68,6 +71,9 @@
     if (width != self.prevWidth || height != self.prevHeight) {
         NSLog(@"FWImageView, layoutSubview(): %f %f", self.frame.size.width, self.frame.size.height);
 
+        [self cancelImageRequest];
+
+	self.imageRequestPending = YES;
         self.prevWidth = width;
         self.prevHeight = height;
 
@@ -107,6 +113,7 @@
 
 - (void)clear
 {
+    [self cancelImageRequest];
     self.image = nil;
     [self.images removeAllObjects];
 }
@@ -125,6 +132,17 @@
 - (void)updateVisibility:(CGRect)bounds
 {
 
+}
+
+- (void)cancelImageRequest {
+    if (self.imageRequestPending && [self.delegate respondsToSelector:@selector(didCancelImageRequest:)]) {
+        self.imageRequestPending = NO;
+        [self.delegate didCancelImageRequest:self];
+    }
+}
+
+- (void)dealloc {
+    [self cancelImageRequest];
 }
 
 @end

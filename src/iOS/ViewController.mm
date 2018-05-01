@@ -2098,6 +2098,11 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     mainThread->sendImageRequest((int)imageView.tag, size.width, 0, s, 15); // RGBA5551
 }
 
+- (void)didCancelImageRequest:(FWImageView *)imageView
+{
+    mainThread->cancelImageRequest((int)imageView.tag);
+}
+
 #pragma mark - PaddedLabelDelegate
 
 - (void)paddedLabel:(PaddedLabel *)label didOpenLinkURL:(NSURL *)url

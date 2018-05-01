@@ -99,6 +99,7 @@ public:
   void sendScrollChangedEvent(int viewId, int scrollPos, int scrollRem, int height);
   void sendTimerEvent(int timerId);
   void sendImageRequest(int viewId, unsigned int width, unsigned int height, const std::string & url, int internalFormat = 0);
+  void cancelImageRequest(int viewId);
     
   void handleEventFromThread(int target_element_id, Event * event);
     

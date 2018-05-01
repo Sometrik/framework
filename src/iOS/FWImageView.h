@@ -3,6 +3,7 @@
 
 @protocol FWImageViewDelegate <NSObject>
 - (void)fwImageView:(FWImageView *)imageView didChangeSize:(CGSize)size ofImageUrl:(NSString *)url;
+- (void)didCancelImageRequest:(FWImageView *)imageView;
 @end
 
 @interface FWImageView : UIImageView
@@ -14,5 +15,6 @@
 
 @property (nonatomic, assign) NSInteger prevWidth;
 @property (nonatomic, assign) NSInteger prevHeight;
+@property (nonatomic, assign) BOOL imageRequestPending;
 @property (nonatomic, assign) id<FWImageViewDelegate> delegate;
 @end
