@@ -228,21 +228,6 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     self.panEdgeGestureRecognizer.edges = UIRectEdgeLeft;
     self.panEdgeGestureRecognizer.delegate = self;
     [self.view addGestureRecognizer:self.panEdgeGestureRecognizer];
-    
-    // some additional setups for views
-    for (NSString *key in self.viewsDictionary.allKeys) {
-        ViewManager *viewManager = [self.viewsDictionary objectForKey:key];
-        if ([viewManager.view isKindOfClass:UITabBar.class]) {
-            UITabBar *tabBar = (UITabBar *)viewManager.view;
-            [tabBar.superview bringSubviewToFront:tabBar];
-        } else if ([viewManager.view isKindOfClass:UIScrollView.class]) {
-            UIScrollView *scrollView = (UIScrollView *)viewManager.view;
-            if (scrollView.pagingEnabled) {
-                [scrollView.panGestureRecognizer requireGestureRecognizerToFail:self.panEdgeGestureRecognizer];
-            }
-        }
-    }
-    
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -641,6 +626,8 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     if (self.pageView == nil) self.pageView = scrollView;
     [self addView:scrollView withId:viewId];
     [self addToParent:parentId view:scrollView];
+
+    [scrollView.panGestureRecognizer requireGestureRecognizerToFail:self.panEdgeGestureRecognizer];
 }
 
 - (void)showPage:(UIScrollView *)scrollView page:(NSInteger)page animated:(BOOL)animated
