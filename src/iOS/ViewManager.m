@@ -103,6 +103,14 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
     }
 }
 
+- (void)reshapeTable:(int)value
+{
+    if ([self.view isKindOfClass:UIPageControl.class]) {
+        UIPageControl * pageControl = (UIPageControl*)self.view;
+        pageControl.numberOfPages = value;
+    }
+}
+
 - (void)setStyle:(NSString *)key value:(NSString *)value selector:(StyleSelector)selector {
     ViewStyle * targetStyle = [self getStyleForSelector:selector];
 

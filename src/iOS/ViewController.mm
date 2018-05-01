@@ -125,13 +125,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
     [self addView:self.view withId:1];
 
-#ifdef USE_THREAD
     mainThread->start();
-#else
-    application->initialize(mainThread.get());
-    application->initializeChildren();
-    application->load();
-#endif
     
     // Add notification handlers to catch notifications when keyboard opens and closes
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleKeyboardWillShowNotification:) name:UIKeyboardWillShowNotification object:nil];
@@ -1054,8 +1048,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
     [self addView:view withId:viewId];
     [self addToParent:parentId view:view];
-    
-    
+        
     [view addTarget:self action:@selector(showPicker:) forControlEvents:UIControlEventTouchUpInside];
 }
 
@@ -1958,6 +1951,14 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             }
         }
             break;
+
+	case RESHAPE_TABLE: {
+	    ViewManager * viewManager = [self getViewManager:command.internalId];
+	    if (viewManager != nil) {
+	        [viewManager reshapeTable:command.value];
+	    }
+	}
+	    break;
 	
         case ADD_OPTION: {
             [self addOption:command.internalId optionId:command.value title:command.textValue];
@@ -2018,16 +2019,6 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 - (void)sendTextValue:(int)viewId value:(NSString *)value {
     string s = [value cStringUsingEncoding:NSUTF8StringEncoding];
     mainThread->sendTextValue(viewId, s);
-}
-
-- (void)sendEventToMainThread:(EventWrapper*) event
-{
-    [self performSelectorOnMainThread:@selector(sendEvent:) withObject:event waitUntilDone:NO];
-}
-
-- (void)sendEvent:(EventWrapper*)event
-{
-    mainThread->handleEventFromThread((int)event.targetElementId, (Event *)event.eventPtr);
 }
 
 - (void)setTitle:(NSString*)title

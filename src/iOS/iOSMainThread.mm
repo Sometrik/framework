@@ -12,7 +12,6 @@
 
 #include "iOSThread.h"
 
-#import "EventWrapper.h"
 #import "NativeCommand.h"
 
 #include <unordered_set>
@@ -111,11 +110,7 @@ iOSMainThread::sendCommands(const std::vector<Command> & commands) {
     [data addObject:nc];
   }
 
-#ifdef USE_THREAD
   [viewController sendCommandsFromThread:data];
-#else
-  [viewController handleCommands:data];
-#endif
 }
 
 std::string
@@ -126,16 +121,6 @@ iOSMainThread::loadTextAsset(const char * filename) {
   string s = [content cStringUsingEncoding:NSUTF8StringEncoding];
   return s;
 }
-
-#ifndef USE_THREAD
-void
-iOSMainThread::sendEvent(int internal_id, const Event & ev) {
-    EventWrapper * ew = [[EventWrapper alloc] init];
-    ew.targetElementId = internal_id;
-    ew.eventPtr = ev.dup();
-    [viewController sendEventToMainThread:ew];
-}
-#endif
 
 void
 iOSMainThread::handleEventFromThread(int target_element_id, Event * event) {
@@ -181,23 +166,15 @@ iOSMainThread::setSurface(int internal_id, canvas::Surface & surface) {
 
 int
 iOSMainThread::startModal() {
-#ifdef USE_THREAD
   setModalResultValue(0);
   startEventLoop();
-#else
-  CFRunLoopRun();
-#endif
   return getModalResultValue();
 }
 
 void
 iOSMainThread::endModal(int value) {
   setModalResultValue(value);
-#ifdef USE_THREAD
   exit_loop++;
-#else
-  CFRunLoopStop(CFRunLoopGetCurrent());
-#endif
 }
 
 std::shared_ptr<PlatformThread>

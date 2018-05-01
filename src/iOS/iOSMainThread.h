@@ -11,8 +11,6 @@
 
 #include <FilenameConverter.h>
 
-#define USE_THREAD
-
 namespace canvas {
   class BundleFilenameConverter : public FilenameConverter {
   public:
@@ -46,7 +44,6 @@ class iOSMainThread : public PosixThread {
 public:
   iOSMainThread(std::shared_ptr<FWApplication> _application, std::shared_ptr<Runnable> _runnable);
 
-#ifdef USE_THREAD
   void startRunnable() override {
     application->initialize(this);
     application->initializeChildren();
@@ -57,7 +54,6 @@ public:
     deinitializeRenderer();
 #endif
   }
-#endif
 
   void startEventLoop() override;
 
@@ -75,9 +71,6 @@ public:
   std::string getLocalFilename(const char * filename, FileType type) override {
     return "";
   }
-#ifndef USE_THREAD
-  void sendEvent(int internal_id, const Event & ev) override;
-#endif
   void setImageData(int internal_id, std::shared_ptr<canvas::PackedImageData> image) override;
   void setSurface(int internal_id, canvas::Surface & surface) override;
   int startModal() override;

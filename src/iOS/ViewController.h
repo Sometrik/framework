@@ -1,6 +1,5 @@
 #import <UIKit/UIKit.h>
 
-#import "EventWrapper.h"
 #import "ViewManager.h"
 
 typedef enum
@@ -55,8 +54,6 @@ typedef enum
 - (void)addOption:(int)viewId optionId:(int)optionId title:(NSString *)title;
 - (void)sendIntValue:(int)viewId value:(int)value;
 - (void)sendTextValue:(int)viewId value:(NSString *)value;
-
-- (void)sendEventToMainThread:(EventWrapper*) event;
 
 - (void)setTitle:(NSString*)title;
 - (void)setBackButtonVisibility:(BOOL)v;
