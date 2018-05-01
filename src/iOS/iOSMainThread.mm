@@ -82,12 +82,15 @@ iOSMainThread::sendCommands(const std::vector<Command> & commands) {
       if (!app.getActiveViewId()) {
         app.setActiveViewId(command.getChildInternalId());
       }
+    }
 
-      if (command.getType() == Command::SET_INT_VALUE && command.getInternalId() == 1 && command.getChildInternalId() != app.getActiveViewId()) {
-	if (app.getActiveViewId()) {
+    if (command.getType() == Command::SET_INT_VALUE && command.getInternalId() == 1) {
+      auto & app = getApplication();
+      if (command.getChildInternalId() != app.getActiveViewId()) {
+        if (app.getActiveViewId()) {
 	  app.addToHistory(app.getActiveViewId());
-	}
-	app.setActiveViewId(command.getChildInternalId());
+        }
+        app.setActiveViewId(command.getChildInternalId());
       }
     }
 
@@ -306,5 +309,5 @@ iOSMainThread::sendImageRequest(int viewId, unsigned int width, unsigned int hei
     if (internalFormat != 0) {
       ev.setInternalFormat((canvas::InternalFormat)internalFormat);
     }
-    sendEvent(getApplication().getInternalId(), ev);
+    sendEvent(viewId, ev);
 }
