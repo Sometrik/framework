@@ -1574,50 +1574,27 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
         item.level = parentViewManager.level + 1;
         [layout addItem:item];
         viewManager.layoutParams = item;
-    } else if ([parentView isKindOfClass:UIScrollView.class]) {
-        NSUInteger pos = 0;
+    } else if ([parentView isKindOfClass:FWScrollView.class]) {
+        int pos = 0;
         for (UIView * view in [parentView subviews]) {
             if (![view isKindOfClass:UIImageView.class]) pos++;
         }
         [parentView addSubview:view];
-        UIScrollView * scrollView = (UIScrollView *)parentView;
-        int pageWidth = self.view.frame.size.width;
+        FWScrollView * scrollView = (FWScrollView *)parentView;
         if (scrollView.pagingEnabled) {
-            // scrollView.contentSize = CGSizeMake(scrollView.contentSize.width + pageWidth, scrollView.contentSize.height);
-            
-            NSLayoutConstraint *leftConstraint;
-            NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
-            NSLayoutConstraint *widthConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeWidth multiplier:1.0f constant:0];
-            NSLayoutConstraint *heightConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeHeight multiplier:1.0f constant:0];
-
-            if (pos == 0) {
-                leftConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
-            } else {
-#if 0
-                leftConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:[[parentView subviews] lastObject] attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
-#else
-                leftConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:(pos * pageWidth)];
-#endif
-            }
-
-            topConstraint.priority = 999 - viewManager.level;
-            leftConstraint.priority = 999 - viewManager.level;
-            widthConstraint.priority = 999 - viewManager.level;
-            heightConstraint.priority = 999 - viewManager.level;
-            [view.superview addConstraints:@[topConstraint, leftConstraint, widthConstraint, heightConstraint]];
+            [scrollView addChildConstraints:view position:pos pageWidth:self.view.frame.size.width];
         } else {
-	    FWScrollView * fwScrollView = (FWScrollView*)scrollView;
-            fwScrollView.topConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
-            fwScrollView.leftConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
-            fwScrollView.widthConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:0.0f constant:0];
-            fwScrollView.heightConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:0.0f constant:0];
+            scrollView.topConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
+            scrollView.leftConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
+            scrollView.widthConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:0.0f constant:0];
+            scrollView.heightConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:0.0f constant:0];
 
-            fwScrollView.topConstraint.priority = 999 - viewManager.level;
-            fwScrollView.leftConstraint.priority = 999 - viewManager.level;
-            fwScrollView.widthConstraint.priority = 999 - viewManager.level;
-            fwScrollView.heightConstraint.priority = 999 - viewManager.level;
+            scrollView.topConstraint.priority = 999 - viewManager.level;
+            scrollView.leftConstraint.priority = 999 - viewManager.level;
+            scrollView.widthConstraint.priority = 999 - viewManager.level;
+            scrollView.heightConstraint.priority = 999 - viewManager.level;
 
-            [view.superview addConstraints:@[fwScrollView.topConstraint, fwScrollView.leftConstraint, fwScrollView.widthConstraint, fwScrollView.heightConstraint]];
+            [view.superview addConstraints:@[scrollView.topConstraint, scrollView.leftConstraint, scrollView.widthConstraint, scrollView.heightConstraint]];
         }
     } else {
         [parentView addSubview:view];
@@ -1684,10 +1661,14 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     UIView *parentView = [self viewForId:parentId];
     UIView *childView = [self viewForId:viewId];
     if (parentView && childView) {
-	if ([parentView isKindOfClass:[FWLayoutView class]]) {
-	    FWLayoutView * layout = (FWLayoutView *)parentView;
-	    ViewManager * viewManager = [self getViewManager:viewId];
-	    [layout moveItem:viewManager.layoutParams toIndex:position];
+        if ([parentView isKindOfClass:[FWLayoutView class]]) {
+            FWLayoutView * layout = (FWLayoutView *)parentView;
+            ViewManager * viewManager = [self getViewManager:viewId];
+            [layout moveItem:viewManager.layoutParams toIndex:position];
+        } else if ([parentView isKindOfClass:[FWScrollView class]]) {
+            FWScrollView * scrollView = (FWScrollView *)parentView;
+            [scrollView insertSubview:childView atIndex:position];
+            [scrollView rebuildConstraints:self.view.frame.size.width];
         } else {
             [parentView insertSubview:childView atIndex:position];
         }
@@ -1936,11 +1917,20 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
         case SET_INT_VALUE: {
             if (command.internalId == 1) {
                 if (command.childInternalId != self.activeViewId) {
+#if 1
+                    if (self.activeViewId && ![self isParentView:self.activeViewId childId:command.childInternalId]) {
+                        [self switchView:self.activeViewId newView:command.childInternalId direction:YES];
+                    } else {
+                        [self setVisibility:command.childInternalId visibility:1];
+                    }
+                    self.activeViewId = command.childInternalId;
+#else
                     if (self.activeViewId && ![self isParentView:self.activeViewId childId:command.childInternalId]) {
                         [self setVisibility:self.activeViewId visibility:0];
                     }
                     self.activeViewId = command.childInternalId;
                     [self setVisibility:self.activeViewId visibility:1];
+#endif
 		    [self sendVisibilityUpdate];
 #if 0
                     NSString * title = [NSString stringWithUTF8String:command.getTextValue().c_str()];
