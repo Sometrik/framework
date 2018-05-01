@@ -21,9 +21,9 @@ class PageControl : public Element {
     sendCommand(c);
   }
 
-  void reshape(int value) {
+  void reshape(size_t value) {
     Command c(Command::RESHAPE_TABLE, getInternalId());
-    c.setValue(value);
+    c.setValue((int)value);
     sendCommand(c);
   }
 
