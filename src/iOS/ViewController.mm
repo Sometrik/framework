@@ -1646,6 +1646,10 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             } else {
                 UIView * view = (UIView*)viewManager.view;
                 [view removeFromSuperview];
+		if ([parentView isKindOfClass:[FWScrollView class]]) {
+                    FWScrollView * scrollView = (FWScrollView*)parentView;
+                    [scrollView rebuildConstraints:self.view.frame.size.width];
+                }
             }
   
             if (view == self.sideMenuView) {
@@ -1687,6 +1691,10 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             [childView removeFromSuperview]; // some views might be added directly
         } else {
             [childView removeFromSuperview];
+	    if ([parentView isKindOfClass:[FWScrollView class]]) {
+                FWScrollView * scrollView = (FWScrollView*)parentView;
+                [scrollView rebuildConstraints:self.view.frame.size.width];
+            }
         }
     }
 }
