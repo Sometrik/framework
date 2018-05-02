@@ -487,6 +487,8 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     label.tag = viewId;
     label.delegate = self;
     label.autolink = autolink;
+    label.adjustsFontSizeToFitWidth = YES;
+    label.minimumScaleFactor = 0.01;
     if (autolink) {
         label.userInteractionEnabled = YES;
         label.attributedText = [label createAttributedString:value];
@@ -1051,8 +1053,8 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     view.tag = viewId;
     view.translatesAutoresizingMaskIntoConstraints = false;
     view.numberOfPages = numPages;
-    view.pageIndicatorTintColor = [UIColor blackColor];
-    view.currentPageIndicatorTintColor = [UIColor redColor];
+    view.pageIndicatorTintColor = [UIColor colorWithRed:0.7 green:0.7 blue:0.7 alpha:1.0];
+    view.currentPageIndicatorTintColor = [UIColor colorWithRed:0.1 green:0.1 blue:0.1 alpha:1.0];
     [self addView:view withId:viewId];
     [self addToParent:parentId view:view];
 }
