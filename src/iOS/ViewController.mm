@@ -1322,6 +1322,8 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 // switch view from old to new (push view over old one). If direction is NO, direction is left, otherwise right.
 - (void)switchView:(int)oldViewId newView:(int)newViewId direction:(BOOL)direction
 {
+    NSLog(@"switchView: %d => %d", oldViewId, newViewId);
+
     NSLayoutConstraint *newViewLeftConstraint, *newViewRightConstraint, *oldViewLeftConstraint, *oldViewRightConstraint;
     UIView *oldView = [self viewForId:oldViewId];
     UIView *newView = [self viewForId:newViewId];
