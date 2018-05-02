@@ -53,14 +53,15 @@ extern FWApplication * applicationMain();
 @property (nonatomic, strong) NSLayoutConstraint *currentPickerHolderLeftConstraint;
 @property (nonatomic, strong) NSLayoutConstraint *currentPickerHolderRightConstraint;
 @property (nonatomic, strong) NSLayoutConstraint *currentPickerHolderBottomConstraint;
-@property (nonatomic, strong) NSLayoutConstraint *rootViewTopConstraint;
-@property (nonatomic, strong) NSLayoutConstraint *rootViewLeftConstraint;
-@property (nonatomic, strong) NSLayoutConstraint *rootViewRightConstraint;
-@property (nonatomic, strong) NSLayoutConstraint *rootViewBottomConstraint;
+@property (nonatomic, strong) NSLayoutConstraint *activeViewRightConstraint;
+@property (nonatomic, strong) NSLayoutConstraint *activeViewLeftConstraint;
 @property (nonatomic, strong) UIScreenEdgePanGestureRecognizer *panEdgeGestureRecognizer;
 @property (nonatomic, assign) BOOL keyboardVisible;
 @property (nonatomic, assign) AnimationStyle pickerAnimationStyle;
 @property (nonatomic, strong) NSURL *currentURL;
+@property (nonatomic, strong) NSMutableDictionary *frameViewConstraints; // constraints saved (for animation purposes), viewId is the key.
+@property (nonatomic, strong) NSMutableDictionary *dialogConstraints;
+@property (nonatomic, assign) AnimationStyle dialogAnimationStyle;
 @end
 
 static const NSTimeInterval animationDuration = 0.4;
@@ -136,8 +137,6 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     tapGestureRecognizer.delegate = self;
     [self.view addGestureRecognizer:tapGestureRecognizer];
     
-    // Add constraints to view
-    //self.rootViewTopConstraint =
 }
 
 - (void)handleKeyboardWillShowNotification:(NSNotification *)notification
@@ -404,6 +403,22 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     return _viewsDictionary;
 }
 
+- (NSMutableDictionary *)frameViewConstraints
+{
+    if (!_frameViewConstraints) {
+        _frameViewConstraints = [[NSMutableDictionary alloc] init];
+    }
+    return _frameViewConstraints;
+}
+
+- (NSMutableDictionary *)dialogConstraints
+{
+    if (!_dialogConstraints) {
+        _dialogConstraints = [[NSMutableDictionary alloc] init];
+    }
+    return _dialogConstraints;
+}
+
 - (void)createFrameViewWithId:(int)viewId parentId:(int)parentId
 {
     ViewManager * parentViewManager = [self getViewManager:parentId];
@@ -433,6 +448,8 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     NSLayoutConstraint *leftConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
     NSLayoutConstraint *rightConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
     NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeBottom multiplier:1.0f constant:0];
+    NSArray *constraintArray = @[leftConstraint, rightConstraint];
+    [self.frameViewConstraints setObject:constraintArray forKey:[NSString stringWithFormat:@"%d", viewId]];
     [view.superview addConstraints:@[topConstraint, leftConstraint, rightConstraint, bottomConstraint]];
 
     if (self.navBar) {
@@ -1202,7 +1219,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 - (void)createDialogWithId:(int)viewId parentId:(int)parentId title:(NSString*)title animationStyle:(AnimationStyle)style
 {
     [self.dialogIds addObject:[NSNumber numberWithInt:viewId]];
-
+    self.dialogAnimationStyle = style;
     UIView * dialogHolder = [[UIView alloc] init];
     dialogHolder.tag = viewId;
     dialogHolder.translatesAutoresizingMaskIntoConstraints = false;
@@ -1215,7 +1232,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     NSLayoutConstraint *rightConstraint0 = [NSLayoutConstraint constraintWithItem:dialogHolder attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:dialogHolder.superview attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
     NSLayoutConstraint *bottomConstraint0 = [NSLayoutConstraint constraintWithItem:dialogHolder attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:dialogHolder.superview attribute:NSLayoutAttributeBottom multiplier:1.0f constant:0];
     [dialogHolder.superview addConstraints:@[topConstraint0, leftConstraint0, rightConstraint0, bottomConstraint0]];
-
+    
     UIView * dialogBackground = [self createBackgroundOverlay:dialogHolder];
     dialogBackground.tag = viewId;
     dialogBackground.alpha = backgroundOverlayViewAlpha;
@@ -1236,6 +1253,9 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     NSLayoutConstraint *rightConstraint = [NSLayoutConstraint constraintWithItem:dialog attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:dialog.superview attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
     dialog.heightConstraint = [NSLayoutConstraint constraintWithItem:dialog attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:0.0f constant:0];
     dialog.maxBottomConstraint = [NSLayoutConstraint constraintWithItem:dialog attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationLessThanOrEqual toItem:dialog.superview attribute:NSLayoutAttributeBottom multiplier:1.0f constant:-15];
+    
+    NSArray *constraintArray = @[topConstraint, dialog.maxBottomConstraint, leftConstraint, rightConstraint];
+    [self.dialogConstraints setObject:constraintArray forKey:[NSString stringWithFormat:@"%d", viewId]];
     
     dialog.heightConstraint.priority = 998;
     dialog.maxBottomConstraint.priority = 999;
@@ -1279,7 +1299,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             break;
     }
     
-    [dialog.superview addConstraints:@[topConstraint, leftConstraint, rightConstraint, dialog.heightConstraint]];//, dialog.maxBottomConstraint]];
+    //[dialog.superview addConstraints:@[topConstraint, leftConstraint, rightConstraint, dialog.heightConstraint]];//, dialog.maxBottomConstraint]];
     //dialogHolder.alpha = 1.0;
     [UIView animateWithDuration:animationDuration/2 animations:^{
         dialogHolder.alpha = 1.0;
@@ -1323,35 +1343,19 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 - (void)switchView:(int)oldViewId newView:(int)newViewId direction:(BOOL)direction
 {
     NSLog(@"switchView: %d => %d", oldViewId, newViewId);
-
     NSLayoutConstraint *newViewLeftConstraint, *newViewRightConstraint, *oldViewLeftConstraint, *oldViewRightConstraint;
     UIView *oldView = [self viewForId:oldViewId];
     UIView *newView = [self viewForId:newViewId];
-    for (NSLayoutConstraint *oldConstraint in oldView.constraints) {
-        switch (oldConstraint.firstAttribute) {
-            case NSLayoutAttributeLeft:
-                oldViewLeftConstraint = oldConstraint;
-                break;
-            case NSLayoutAttributeRight:
-                oldViewRightConstraint = oldConstraint;
-                break;
-            default:
-                break;
-        }
-    }
-    for (NSLayoutConstraint *newConstraint in newView.constraints) {
-        switch (newConstraint.firstAttribute) {
-            case NSLayoutAttributeLeft:
-                newViewLeftConstraint = newConstraint;
-                break;
-            case NSLayoutAttributeRight:
-                newViewRightConstraint = newConstraint;
-                break;
-            default:
-                break;
-        }
-    }
+    NSLog(@"oldViewConstraints = %@", oldView.constraints);
+    NSLog(@"newViewConstraints = %@", newView.constraints);
     
+    
+    NSArray *newViewConstraints = [self.frameViewConstraints objectForKey:[NSString stringWithFormat:@"%d", newViewId]];
+    NSArray *oldViewConstraints = [self.frameViewConstraints objectForKey:[NSString stringWithFormat:@"%d", oldViewId]];
+    newViewLeftConstraint = (NSLayoutConstraint *)newViewConstraints[0];
+    newViewRightConstraint = (NSLayoutConstraint *)newViewConstraints[1];
+    oldViewLeftConstraint = (NSLayoutConstraint *)oldViewConstraints[0];
+    oldViewRightConstraint = (NSLayoutConstraint *)oldViewConstraints[1];
     CGFloat newViewLeftConstraintConstantFinal = newViewLeftConstraint.constant;
     CGFloat newViewRightConstraintConstantFinal = newViewRightConstraint.constant;
     CGFloat oldViewLeftConstraintConstantFinal = oldViewLeftConstraint.constant;
@@ -1366,8 +1370,8 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     }
     
     [newView.superview layoutIfNeeded];
-    [oldView.superview layoutIfNeeded];
-    [UIView animateWithDuration:animationDuration/1.5 delay:0 usingSpringWithDamping:1 initialSpringVelocity:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+    
+    [UIView animateWithDuration:animationDuration delay:0 usingSpringWithDamping:1 initialSpringVelocity:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
         newViewLeftConstraint.constant = newViewLeftConstraintConstantFinal;
         newViewRightConstraint.constant = newViewRightConstraintConstantFinal;
         if (direction) {
@@ -1378,7 +1382,6 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             oldViewRightConstraint.constant = -self.view.frame.size.width/2;
         }
         [newView.superview layoutIfNeeded];
-        [oldView.superview layoutIfNeeded];
     } completion:^(BOOL finished) {
         oldViewLeftConstraint.constant = oldViewLeftConstraintConstantFinal;
         oldViewRightConstraint.constant = oldViewRightConstraintConstantFinal;
@@ -1607,9 +1610,40 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     for (int i = 0; i < self.dialogIds.count; i++) {
         int dialogId = [[self.dialogIds objectAtIndex:i] intValue];
         if (dialogId == viewId) {
-            NSLog(@"removing dialog %d", viewId);
-            [self sendIntValue:dialogId value:0];
-            [self.dialogIds removeObjectAtIndex:i];
+            // animating dialog removal
+            UIView *dialogView = [self viewForId:viewId];
+            //[dialogView.superview layoutIfNeeded];
+            NSArray *dialogConstraints = [self.dialogConstraints objectForKey:[NSString stringWithFormat:@"%d", viewId]];
+            NSLayoutConstraint *topConstraint = dialogConstraints[0];
+            NSLayoutConstraint *bottomConstraint = dialogConstraints[1];
+            NSLayoutConstraint *leftConstraint = dialogConstraints[2];
+            NSLayoutConstraint *rightConstraint = dialogConstraints[3];
+            [UIView animateWithDuration:animationDuration animations:^{
+                switch (self.dialogAnimationStyle) {
+                    case AnimationStyleLeftToRight:
+                        leftConstraint.constant = -self.view.frame.size.width;
+                        rightConstraint.constant = -self.view.frame.size.width;
+                        break;
+                    case AnimationStyleTopToBottom:
+                        topConstraint.constant = -self.view.frame.size.height;
+                        bottomConstraint.constant = -self.view.frame.size.height;
+                        break;
+                    case AnimationStyleRightToLeft:
+                        leftConstraint.constant = self.view.frame.size.width;
+                        rightConstraint.constant = self.view.frame.size.width;
+                        break;
+                    default:
+                        break;
+                }
+                //[dialogView.superview layoutIfNeeded];
+            } completion:^(BOOL finished) {
+                NSLog(@"removing dialog %d", viewId);
+                [self sendIntValue:dialogId value:0];
+                [self.dialogIds removeObjectAtIndex:i];
+                [self.dialogConstraints removeObjectForKey:[NSString stringWithFormat:@"%d", viewId]];
+                
+                
+            }];
             break;
         }
     }
@@ -1641,6 +1675,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
         }
         [self.viewsDictionary removeObjectForKey:key];
     }
+    [self.frameViewConstraints removeObjectForKey:[NSString stringWithFormat:@"%d", viewId]];
 }
 
 - (void)reorderChildWithId:(int)viewId parentId:(int)parentId newPosition:(int)position
@@ -1845,7 +1880,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             break;
 
         case CREATE_DIALOG: {
-            [self createDialogWithId:command.childInternalId parentId:command.internalId title:command.textValue animationStyle:AnimationStyleRightToLeft];
+            [self createDialogWithId:command.childInternalId parentId:command.internalId title:command.textValue animationStyle:AnimationStyleTopToBottom];
         }
             break;
 
@@ -1910,7 +1945,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
                 if (command.childInternalId != self.activeViewId) {
 #if 1
                     if (self.activeViewId && ![self isParentView:self.activeViewId childId:command.childInternalId]) {
-                        [self switchView:self.activeViewId newView:command.childInternalId direction:YES];
+                        [self switchView:self.activeViewId newView:command.childInternalId direction:NO];
                     } else {
                         [self setVisibility:command.childInternalId visibility:1];
                     }
