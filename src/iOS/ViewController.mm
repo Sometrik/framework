@@ -1042,6 +1042,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     UIActivityIndicatorView * view = [[UIActivityIndicatorView alloc] init];
     view.tag = viewId;
     view.translatesAutoresizingMaskIntoConstraints = false;
+    view.activityIndicatorViewStyle = UIActivityIndicatorViewStyleGray;
     [self addView:view withId:viewId];
     [self addToParent:parentId view:view];
     [view startAnimating];
@@ -1665,7 +1666,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             } else {
                 UIView * view = (UIView*)viewManager.view;
                 [view removeFromSuperview];
-		if ([parentView isKindOfClass:[FWScrollView class]]) {
+                if ([parentView isKindOfClass:[FWScrollView class]]) {
                     FWScrollView * scrollView = (FWScrollView*)parentView;
                     [scrollView rebuildConstraints:self.view.frame.size.width];
                 }
