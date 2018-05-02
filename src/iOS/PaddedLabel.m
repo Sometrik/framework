@@ -85,11 +85,22 @@
   if (link.length > 0) {
     unichar firstChar = [link characterAtIndex:0];
     if (firstChar != '#' && firstChar != '@') {
+#if 0
       if ([link hasPrefix:@"http://"]) {
-	return [link substringFromIndex:7];
+	link = [link substringFromIndex:7];
       } else if ([link hasPrefix:@"https://"]) {
-	return [link substringFromIndex:8];    
+	link = [link substringFromIndex:8];    
       }
+#endif
+      NSRange range = [link rangeOfString:@"?"];
+      if (range.location != NSNotFound) {
+	link = [link substringWithRange:NSMakeRange(0, range.location)];
+      }
+      range = [link rangeOfString:@"#"];
+      if (range.location != NSNotFound) {
+	link = [link substringWithRange:NSMakeRange(0, range.location)];
+      }
+      
     }
   }
   return link;
@@ -110,7 +121,7 @@
 	range.location += offset;
 	NSString * link = [s substringWithRange:range];
 	NSString * displayLink = [self cleanLink:link];
-#if 0
+#if 1
 	int diff = displayLink.length - link.length; 
 	if (diff != 0) {
 	  offset += diff;
