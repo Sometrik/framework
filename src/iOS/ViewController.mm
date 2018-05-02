@@ -1642,10 +1642,14 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             } completion:^(BOOL finished) {
                 NSLog(@"removing dialog %d", viewId);
                 [self sendIntValue:dialogId value:0];
-                [self.dialogIds removeObjectAtIndex:i];
+                // Must reiterate since the indices may have changed
+	        for (int j = 0; j < self.dialogIds.count; j++) {
+                    int dialogId = [[self.dialogIds objectAtIndex:j] intValue];
+                    if (dialogId == viewId) {
+                        [self.dialogIds removeObjectAtIndex:j];
+                    }
+                }
                 [self.dialogConstraints removeObjectForKey:[NSString stringWithFormat:@"%d", viewId]];
-                
-                
             }];
             break;
         }
