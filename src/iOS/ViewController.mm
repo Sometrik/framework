@@ -185,12 +185,25 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
 - (void)viewWillTransitionToSize: (CGSize)size withTransitionCoordinator:(id)coordinator
 {
-  [super viewWillTransitionToSize: size withTransitionCoordinator:coordinator];
     if (self.sideMenuView != nil) {
         CGRect frame = CGRectMake(CGRectGetMinX(self.view.bounds), CGRectGetMinY(self.view.bounds), size.width-sideMenuOpenSpaceWidth, size.height);
         self.sideMenuView.frame = frame;
     }
-    
+    if (self.webView != nil) {
+        for (UIView *view in self.webView.subviews) {
+            if ([view isKindOfClass:UINavigationBar.class]) {
+                view.frame = CGRectMake(0, 0, size.width, view.frame.size.height);
+            }
+        }
+    }
+    if (self.currentPickerHolder != nil) {
+        for (UIView *view in self.currentPickerHolder.subviews) {
+            if ([view isKindOfClass:UINavigationBar.class]) {
+                view.frame = CGRectMake(0, 20, size.width, 44);
+                NSLog(@"*** view.frame = %@", NSStringFromCGRect(view.frame));
+            }
+        }
+    }
   // self.view.frame = CGRectMake(0, 0, size.width, size.height);
   // [self.view setNeedsLayout];
 
@@ -1110,6 +1123,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     UIBarButtonItem *backButton = [[UIBarButtonItem alloc] initWithTitle:@"Back" style:UIBarButtonItemStylePlain target:self action:@selector(cancelPicker)];
     navItem.leftBarButtonItem = backButton;
     [navBar setItems:@[navItem]];
+    navBar.translatesAutoresizingMaskIntoConstraints = YES;
     // navBar.translucent = YES;
     [pickerHolder addSubview:navBar];
 
@@ -1128,18 +1142,18 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     [layout addItem:item];
 
     for (int i = 0; i < [self.currentPicker.options count]; i++) {
-	NSString * label = self.currentPicker.options[i]; 
-
-	UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
-	[button setTitleColor:UIColor.blackColor forState:UIControlStateNormal];
-	button.translatesAutoresizingMaskIntoConstraints = false;
-	[button setTitle:label forState:UIControlStateNormal];
-	button.tag = i;
-	[button addTarget:self action:@selector(pickerButtonPushed:) forControlEvents:UIControlEventTouchUpInside];
-
-	LayoutParams * item = [LayoutParams layoutItemForView:button];
-	item.fixedWidth = -1;
-	[layout2 addItem:item];
+        NSString * label = self.currentPicker.options[i];
+        
+        UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
+        [button setTitleColor:UIColor.blackColor forState:UIControlStateNormal];
+        button.translatesAutoresizingMaskIntoConstraints = false;
+        [button setTitle:label forState:UIControlStateNormal];
+        button.tag = i;
+        [button addTarget:self action:@selector(pickerButtonPushed:) forControlEvents:UIControlEventTouchUpInside];
+        
+        LayoutParams * item = [LayoutParams layoutItemForView:button];
+        item.fixedWidth = -1;
+        [layout2 addItem:item];
     }
     
     // Animations
@@ -1458,23 +1472,6 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
         navBar.barStyle = UIBarStyleDefault;
         [self.webView addSubview:navBar];
         
-        NSLayoutConstraint *navTopConstraint = [NSLayoutConstraint constraintWithItem:navBar attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:navBar.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
-        NSLayoutConstraint *navLeftConstraint = [NSLayoutConstraint constraintWithItem:navBar attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:navBar.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
-        NSLayoutConstraint *navRightConstraint = [NSLayoutConstraint constraintWithItem:navBar attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:navBar.superview attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
-        NSLayoutConstraint *navHeightConstraint = [NSLayoutConstraint constraintWithItem:navBar attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0f constant:44];
-        [navBar.superview addConstraints:@[navTopConstraint, navLeftConstraint, navRightConstraint, navHeightConstraint]];
-        
-        // add close button (x) to the top left corner of the view
-        /*UIButton *closeButton = [[UIButton alloc] initWithFrame:CGRectMake(10.0, statusBarHeight, 40.0, 40.0)];
-        [closeButton setTitle:@"X" forState:UIControlStateNormal];
-        [closeButton addTarget:self action:@selector(webViewCloseButtonPushed:) forControlEvents:UIControlEventTouchUpInside];
-        [closeButton setTitleColor:UIColor.whiteColor forState:UIControlStateNormal];
-        [closeButton setBackgroundColor:UIColor.blackColor];
-        closeButton.layer.cornerRadius = closeButton.frame.size.width / 2;
-        closeButton.layer.borderWidth = 2.0;
-        closeButton.layer.borderColor = UIColor.whiteColor.CGColor;
-        [self.webView addSubview:closeButton];
-         */
     }
     // self.webView.layer.zPosition = 1000000.0f;
     [self.view bringSubviewToFront:self.webView];
