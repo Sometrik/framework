@@ -597,9 +597,24 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
-    if (!scrollView.pagingEnabled) { // Do nothing if scrollView has paging enabled
-	float diff = scrollView.contentSize.height - (scrollView.frame.size.height + scrollView.contentOffset.y);
+    if (!scrollView.pagingEnabled) {
+        float diff = scrollView.contentSize.height - (scrollView.frame.size.height + scrollView.contentOffset.y);
         mainThread->sendScrollChangedEvent(scrollView.tag, scrollView.contentOffset.y, (int)diff, scrollView.contentSize.height);
+    } else if ([scrollView isKindOfClass:FWScrollView.class]) {
+        FWScrollView * fwScrollView = (FWScrollView *)scrollView;
+        NSInteger page = [fwScrollView indexForVisiblePage];
+        
+        if (page >= 0 && page != fwScrollView.currentPage) {
+            fwScrollView.currentPage = page;
+
+            [self sendIntValue:(int)scrollView.tag value:(int)page];
+            
+	    if (scrollView == self.pageView) {
+                // set selected item for all tabbars
+                [self updateTabBars:page];
+            }
+	    [self sendVisibilityUpdate];
+        }
     }
 }
 
@@ -618,20 +633,6 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
 {
-    NSLog(@"scrollView did end decelerating");
-    if (scrollView.isPagingEnabled) {
-        NSInteger page = [self indexForScrollViewPage:scrollView];
-        
-        if (page >= 0) {
-            [self sendIntValue:(int)scrollView.tag value:(int)page];
-            
-	    if (scrollView == self.pageView) {
-                // set selected item for all tabbars
-                [self updateTabBars:page];
-            }
-	    [self sendVisibilityUpdate];
-        }
-    }
     if ([scrollView isKindOfClass:FWScrollView.class]) {
         FWScrollView * fwScrollView = (FWScrollView *)scrollView;
 	[fwScrollView updateVisibility:fwScrollView.bounds];
@@ -660,16 +661,6 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     frame.origin.x = frame.size.width * page;
     frame.origin.y = 0;
     [scrollView scrollRectToVisible:frame animated:animated];
-}
-
-- (NSInteger)indexForScrollViewPage:(UIScrollView *)pageView
-{
-    if (pageView.pagingEnabled) {
-        CGRect frame = pageView.bounds;
-        int page = frame.origin.x / frame.size.width;
-        return page;
-    }
-    return NSNotFound;
 }
 
 - (void)createEventLayoutWithId:(int)viewId parentId:(int)parentId
@@ -771,7 +762,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     // statusBarBackgroundView.barStyle = UIStatusBarStyleDefault;
     statusBarBackgroundView.translucent = YES;
     statusBarBackgroundView.translatesAutoresizingMaskIntoConstraints = false;
-    statusBarBackgroundView.layer.zPosition = 1000;
+    // statusBarBackgroundView.layer.zPosition = 1000;
     
     UIView * parentView = (UIView *)[self viewForId:parentId];
     [parentView addSubview:statusBarBackgroundView];
