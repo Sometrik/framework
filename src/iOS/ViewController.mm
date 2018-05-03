@@ -487,6 +487,8 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     label.tag = viewId;
     label.delegate = self;
     label.autolink = autolink;
+    label.adjustsFontSizeToFitWidth = YES;
+    label.minimumScaleFactor = 0.01;
     if (autolink) {
         label.userInteractionEnabled = YES;
         label.attributedText = [label createAttributedString:value];
@@ -1039,6 +1041,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     UIActivityIndicatorView * view = [[UIActivityIndicatorView alloc] init];
     view.tag = viewId;
     view.translatesAutoresizingMaskIntoConstraints = false;
+    view.activityIndicatorViewStyle = UIActivityIndicatorViewStyleGray;
     [self addView:view withId:viewId];
     [self addToParent:parentId view:view];
     [view startAnimating];
@@ -1050,8 +1053,8 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     view.tag = viewId;
     view.translatesAutoresizingMaskIntoConstraints = false;
     view.numberOfPages = numPages;
-    view.pageIndicatorTintColor = [UIColor blackColor];
-    view.currentPageIndicatorTintColor = [UIColor redColor];
+    view.pageIndicatorTintColor = [UIColor colorWithRed:0.7 green:0.7 blue:0.7 alpha:1.0];
+    view.currentPageIndicatorTintColor = [UIColor colorWithRed:0.1 green:0.1 blue:0.1 alpha:1.0];
     [self addView:view withId:viewId];
     [self addToParent:parentId view:view];
 }
@@ -1635,10 +1638,14 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             } completion:^(BOOL finished) {
                 NSLog(@"removing dialog %d", viewId);
                 [self sendIntValue:dialogId value:0];
-                [self.dialogIds removeObjectAtIndex:i];
+                // Must reiterate since the indices may have changed
+	        for (int j = 0; j < self.dialogIds.count; j++) {
+                    int dialogId = [[self.dialogIds objectAtIndex:j] intValue];
+                    if (dialogId == viewId) {
+                        [self.dialogIds removeObjectAtIndex:j];
+                    }
+                }
                 [self.dialogConstraints removeObjectForKey:[NSString stringWithFormat:@"%d", viewId]];
-                
-                
             }];
             break;
         }
@@ -1659,7 +1666,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             } else {
                 UIView * view = (UIView*)viewManager.view;
                 [view removeFromSuperview];
-		if ([parentView isKindOfClass:[FWScrollView class]]) {
+                if ([parentView isKindOfClass:[FWScrollView class]]) {
                     FWScrollView * scrollView = (FWScrollView*)parentView;
                     [scrollView rebuildConstraints:self.view.frame.size.width];
                 }
