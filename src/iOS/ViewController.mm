@@ -500,8 +500,6 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     label.tag = viewId;
     label.delegate = self;
     label.autolink = autolink;
-    label.adjustsFontSizeToFitWidth = YES;
-    label.minimumScaleFactor = 0.01;
     if (autolink) {
         label.userInteractionEnabled = YES;
         label.attributedText = [label createAttributedString:value];

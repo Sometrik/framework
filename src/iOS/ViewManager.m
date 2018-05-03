@@ -231,6 +231,9 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
             }
         } else if ([key isEqualToString:@"max-lines"]) {
             label.numberOfLines = (int)[value integerValue];
+	} else if ([key isEqualToString:@"min-scale"]) {
+            label.adjustsFontSizeToFitWidth = YES;
+            label.minimumScaleFactor = [value floatValue];
         } else if ([key isEqualToString:@"line-spacing"]) {
         }
     } else if ([self.view isKindOfClass:FWButton.class]) {
