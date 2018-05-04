@@ -23,6 +23,11 @@ public:
 	button.style("padding", 25);
 	auto & textView = layout.addChild(std::make_shared<TextLabel>("Joku linkki http://www.google.fi/ ja joku toinen http://yle.fi/, ja pitkä linkki https://stackoverflow.com/questions/4201959/label-under-image-in-uibutton", true));
 	textView.style("border", 1);
+	textView.style("width", "match-parent");
+	textView.style("height", 200);
+	textView.style("min-scale", 0.1f);
+	textView.style("font-size", 30);
+	textView.style("text-overflow", "ellipsis");
     }
 };
 

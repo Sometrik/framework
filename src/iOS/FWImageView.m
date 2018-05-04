@@ -53,7 +53,7 @@
 {
     for (int i = 0; i < self.images.count; i++) {
         FWImage *image = (FWImage *)self.images[i];
-        if (4 * image.width >= 3 * width) { // select image if it's at least 0.75 * target_width
+        if (image.width >= width) {
             return image;
         }
     }
@@ -135,10 +135,12 @@
 }
 
 - (void)cancelImageRequest {
+#if 0
     if (self.imageRequestPending && [self.delegate respondsToSelector:@selector(didCancelImageRequest:)]) {
         self.imageRequestPending = NO;
         [self.delegate didCancelImageRequest:self];
     }
+#endif
 }
 
 - (void)dealloc {
