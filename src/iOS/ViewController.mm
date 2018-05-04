@@ -1678,6 +1678,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             [layout moveItem:viewManager.layoutParams toIndex:position];
         } else if ([parentView isKindOfClass:[FWScrollView class]]) {
             FWScrollView * scrollView = (FWScrollView *)parentView;
+	    [childView removeFromSuperview];
             [scrollView insertSubview:childView atIndex:position];
             [scrollView rebuildConstraints:self.view.frame.size.width];
         } else {
