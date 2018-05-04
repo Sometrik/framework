@@ -462,12 +462,20 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     NSLayoutConstraint *rightConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
     NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeBottom multiplier:1.0f constant:0];
     NSArray *constraintArray = @[leftConstraint, rightConstraint];
-    [self.frameViewConstraints setObject:constraintArray forKey:[NSString stringWithFormat:@"%d", viewId]];
-    [view.superview addConstraints:@[topConstraint, leftConstraint, rightConstraint, bottomConstraint]];
-
-    if (self.navBar) {
-        [self.statusBarBackgroundView.superview bringSubviewToFront:self.statusBarBackgroundView];
-        [self.navBar.superview bringSubviewToFront:self.navBar];
+    @try {
+        [self.frameViewConstraints setObject:constraintArray forKey:[NSString stringWithFormat:@"%d", viewId]];
+    }
+    @catch (NSException *e) {
+        NSLog(@"exception: %@", e);
+        @throw;
+    }
+    @finally {
+        [view.superview addConstraints:@[topConstraint, leftConstraint, rightConstraint, bottomConstraint]];
+        
+        if (self.navBar) {
+            [self.statusBarBackgroundView.superview bringSubviewToFront:self.statusBarBackgroundView];
+            [self.navBar.superview bringSubviewToFront:self.navBar];
+        }
     }
 }
 
@@ -1271,7 +1279,6 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     dialog.maxBottomConstraint = [NSLayoutConstraint constraintWithItem:dialog attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationLessThanOrEqual toItem:dialog.superview attribute:NSLayoutAttributeBottom multiplier:1.0f constant:-15];
     
     NSArray *constraintArray = @[topConstraint, dialog.maxBottomConstraint, leftConstraint, rightConstraint];
-    [self.dialogConstraints setObject:constraintArray forKey:[NSString stringWithFormat:@"%d", viewId]];
     
     dialog.heightConstraint.priority = 998;
     dialog.maxBottomConstraint.priority = 999;
@@ -1353,6 +1360,14 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     //[UIView animateWithDuration:animationDuration/2 animations:^{
     //    dialogHolder.alpha = 1.0;
     //}];
+    @try {
+       [self.dialogConstraints setObject:constraintArray forKey:[NSString stringWithFormat:@"%d", viewId]];
+    }
+    @catch (NSException *e) {
+        // Some code here if it is needed at this level
+        
+        @throw;
+    }
 }
 
 // switch view from old to new (push view over old one). If direction is NO, direction is left, otherwise right.
@@ -1784,33 +1799,63 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             break;
             
         case CREATE_FRAMEVIEW: {
-            [self createFrameViewWithId:command.childInternalId parentId:command.internalId];
+            @try {
+                [self createFrameViewWithId:command.childInternalId parentId:command.internalId];
+            }
+            @catch (NSException *e) {
+                [self exceptionThrown:e];
+            }
         }
             break;
         
         case CREATE_LINEAR_LAYOUT: {
-            [self createLinearLayoutWithId:command.childInternalId parentId:command.internalId direction:command.value];
+            @try {
+                [self createLinearLayoutWithId:command.childInternalId parentId:command.internalId direction:command.value];
+            }
+            @catch (NSException *e) {
+                [self exceptionThrown:e];
+            }
         }
             break;
         
         case CREATE_EVENT_LAYOUT: {
-            [self createEventLayoutWithId:command.childInternalId parentId:command.internalId];
+            @try {
+                [self createEventLayoutWithId:command.childInternalId parentId:command.internalId];
+            }
+            @catch (NSException *e) {
+                [self exceptionThrown:e];
+            }
         }
             break;
         
         case CREATE_FRAME_LAYOUT: {
-            [self createFrameLayoutWithId:command.childInternalId parentId:command.internalId];
+            @try {
+                [self createFrameLayoutWithId:command.childInternalId parentId:command.internalId];
+            }
+            @catch (NSException *e) {
+                [self exceptionThrown:e];
+            }
         }
             break;
         
         case CREATE_PAGER:
         case CREATE_FLIPPER_LAYOUT: {
-            [self createPageLayoutWithId:command.childInternalId parentId:command.internalId];
+            @try {
+                [self createPageLayoutWithId:command.childInternalId parentId:command.internalId];
+            }
+            @catch (NSException *e) {
+                [self exceptionThrown:e];
+            }
         }
             break;
         
         case CREATE_TEXT: {
-            [self createTextWithId:command.childInternalId parentId:command.internalId value:command.textValue autolink:command.value != 0];
+            @try {
+                [self createTextWithId:command.childInternalId parentId:command.internalId value:command.textValue autolink:command.value != 0];
+            }
+            @catch (NSException *e) {
+                [self exceptionThrown:e];
+            }
         }
             break;
 
@@ -1820,67 +1865,132 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             break;
         
         case CREATE_TEXTFIELD: {
-            [self createTextFieldWithId:command.childInternalId parentId:command.internalId value:command.textValue];
+            @try {
+                [self createTextFieldWithId:command.childInternalId parentId:command.internalId value:command.textValue];
+            }
+            @catch (NSException *e) {
+                [self exceptionThrown:e];
+            }
         }
             break;
 
         case CREATE_TEXTVIEW: {
-            [self createTextViewWithId:command.childInternalId parentId:command.internalId value:command.textValue];
+            @try {
+                [self createTextViewWithId:command.childInternalId parentId:command.internalId value:command.textValue];
+            }
+            @catch (NSException *e) {
+                [self exceptionThrown:e];
+            }
         }
             break;
         
         case CREATE_IMAGEVIEW: {
-            [self createImageWithId:command.childInternalId parentId:command.internalId filename:command.textValue width:command.width height:command.height];
+            @try {
+                [self createImageWithId:command.childInternalId parentId:command.internalId filename:command.textValue width:command.width height:command.height];
+            }
+            @catch (NSException *e) {
+                [self exceptionThrown:e];
+            }
         }
             break;
         
         case CREATE_SCROLL_LAYOUT: {
-            [self createScrollLayoutWithId:command.childInternalId parentId:command.internalId];
+            @try {
+                [self createScrollLayoutWithId:command.childInternalId parentId:command.internalId];
+            }
+            @catch (NSException *e) {
+                [self exceptionThrown:e];
+            }
         }
             break;
         
         case CREATE_SWITCH: {
-            [self createSwitchWithId:command.childInternalId parentId:command.internalId];
+            @try {
+                [self createSwitchWithId:command.childInternalId parentId:command.internalId];
+            }
+            @catch (NSException *e) {
+                [self exceptionThrown:e];
+            }
         }
             break;
         
         case CREATE_ACTIONBAR: {
-            [self createNavigationBar:command.childInternalId parentId:command.internalId];
+            @try {
+                [self createNavigationBar:command.childInternalId parentId:command.internalId];
+            }
+            @catch (NSException *e) {
+                [self exceptionThrown:e];
+            }
         }
             break;
         
         case CREATE_NAVIGATIONBAR: {
-            [self createTabBar:command.childInternalId parentId:command.internalId];
+            @try {
+                [self createTabBar:command.childInternalId parentId:command.internalId];
+            }
+            @catch (NSException *e) {
+                [self exceptionThrown:e];
+            }
         }
             break;
         
         case CREATE_NAVIGATIONVIEW: {
-            [self createNavigationView:command.childInternalId];
+            @try {
+                [self createNavigationView:command.childInternalId];
+            }
+            @catch (NSException *e) {
+                [self exceptionThrown:e];
+            }
         }
             break;
             
         case CREATE_NAVIGATIONBAR_ITEM: {
-            [self createTabBarItem:command.childInternalId parentId:command.internalId title:command.textValue];
+            @try {
+                [self createTabBarItem:command.childInternalId parentId:command.internalId title:command.textValue];
+            }
+            @catch (NSException *e) {
+                [self exceptionThrown:e];
+            }
         }
             break;
         
         case CREATE_PROGRESS_SPINNER: {
-            [self createActivityIndicatorWithId:command.childInternalId parentId:command.internalId];
+            @try {
+                [self createActivityIndicatorWithId:command.childInternalId parentId:command.internalId];
+            }
+            @catch (NSException *e) {
+                [self exceptionThrown:e];
+            }
         }
             break;
 
         case CREATE_PAGE_CONTROL: {
-            [self createPageControlWithId:command.childInternalId parentId:command.internalId numPages:command.value];
+            @try {
+                [self createPageControlWithId:command.childInternalId parentId:command.internalId numPages:command.value];
+            }
+            @catch (NSException *e) {
+                [self exceptionThrown:e];
+            }
         }
             break;
 	
         case CREATE_PICKER: {
-            [self createPickerWithId:command.childInternalId parentId:command.internalId];
+            @try {
+                [self createPickerWithId:command.childInternalId parentId:command.internalId];
+            }
+            @catch (NSException *e) {
+                [self exceptionThrown:e];
+            }
         }
             break;
 
         case CREATE_DIALOG: {
-            [self createDialogWithId:command.childInternalId parentId:command.internalId title:command.textValue animationStyle:AnimationStyleTopToBottom];
+            @try {
+                [self createDialogWithId:command.childInternalId parentId:command.internalId title:command.textValue animationStyle:AnimationStyleTopToBottom];
+            }
+            @catch (NSException *e) {
+                [self exceptionThrown:e];
+            }
         }
             break;
 
@@ -1895,7 +2005,12 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             break;
             
         case SET_VISIBILITY: {
-            [self setVisibility:command.internalId visibility:command.value];
+            @try {
+                [self setVisibility:command.internalId visibility:command.value];
+            }
+            @catch (NSException *e) {
+                [self exceptionThrown:e];
+            }
         }
             break;
         
@@ -1905,7 +2020,12 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             break;
         
         case CREATE_ACTION_SHEET: {
-            [self createActionSheetWithId:command.childInternalId parentId:command.internalId title:command.textValue];
+            @try {
+                [self createActionSheetWithId:command.childInternalId parentId:command.internalId title:command.textValue];
+            }
+            @catch (NSException *e) {
+                [self exceptionThrown:e];
+            }
         }
             break;
             
@@ -1918,17 +2038,32 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             break;
             
         case REORDER_CHILD: {
-            [self reorderChildWithId:command.childInternalId parentId:command.internalId newPosition:command.value];
+            @try {
+                [self reorderChildWithId:command.childInternalId parentId:command.internalId newPosition:command.value];
+            }
+            @catch (NSException *e) {
+                [self exceptionThrown:e];
+            }
         }
             break;
 
         case REMOVE_CHILD: {
-            [self removeChildWithId:command.childInternalId parentId:command.internalId];
+            @try {
+                [self removeChildWithId:command.childInternalId parentId:command.internalId];
+            }
+            @catch (NSException *e) {
+                [self exceptionThrown:e];
+            }
         }
             break;
         
         case DELETE_ELEMENT: {
-            [self removeView:command.internalId];
+            @try {
+                [self removeView:command.internalId];
+            }
+            @catch (NSException *e) {
+                [self exceptionThrown:e];
+            }
         }
             break;
         
@@ -2000,17 +2135,32 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 	    break;
 	
         case ADD_OPTION: {
-            [self addOption:command.internalId optionId:command.value title:command.textValue];
+            @try {
+                [self addOption:command.internalId optionId:command.value title:command.textValue];
+            }
+            @catch (NSException *e) {
+                [self exceptionThrown:e];
+            }
         }
             break;
         
         case LAUNCH_BROWSER: {
-            [self createWebBrowserWithUrl:(NSString *)command.textValue];
+            @try {
+                [self createWebBrowserWithUrl:(NSString *)command.textValue];
+            }
+            @catch (NSException *e) {
+                [self exceptionThrown:e];
+            }
         }
             break;
         
         case CREATE_TIMER: {
-            [self createTimer:command.internalId interval:command.value / 1000.0];
+            @try {
+                [self createTimer:command.internalId interval:command.value / 1000.0];
+            }
+            @catch (NSException *e) {
+                [self exceptionThrown:e];
+            }
         }
             break;
         
@@ -2023,20 +2173,20 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             [[NSUserDefaults standardUserDefaults] setValue:nil forKey:command.textValue];
         }
             break;
-        
+            
         case COMMIT_PREFERENCES: {
             [[NSUserDefaults standardUserDefaults] synchronize];
         }
             break;
-
+            
         case SET_BACK_BUTTON_VISIBILITY: {
             [self setBackButtonVisibility:command.value ? true : false];
         }
             break;
-	    case TOGGLE_MENU: {
-	        [self menuButtonTapped];
-	    }
-	        break;
+        case TOGGLE_MENU: {
+            [self menuButtonTapped];
+        }
+            break;
         }
     }
 
@@ -2046,6 +2196,18 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             [viewManager applyStyles:NO];
         }
     }
+}
+
+- (void)exceptionThrown:(NSException *)exception
+{
+    NSLog(@"exception.name: %@", exception.name);
+    NSLog(@"exception.reason: %@", exception.reason);
+    [self sendExceptionReason:exception.reason];
+}
+
+- (void)sendExceptionReason:(NSString *)reason
+{
+    // Code here that sends exception text to application
 }
 
 // This method send changed integer or boolean values back to application.
