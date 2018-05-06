@@ -11,6 +11,7 @@ class CommandEvent;
 class DrawEvent;
 class PurchaseEvent;
 class SysEvent;
+class SysInfoEvent;
 class UpdateEvent;
 class ResizeEvent;
 class TimerEvent;
@@ -69,6 +70,7 @@ class EventHandler : public Notifier {
   virtual void onScrollEvent(ScrollEvent & ev) { }
   virtual void onPurchaseEvent(PurchaseEvent & ev) { }
   virtual void onSysEvent(SysEvent & ev) { }
+  virtual void onSysInfoEvent(SysInfoEvent & ev) { }
   virtual void onResizeEvent(ResizeEvent & ev) { }
   virtual void onTimerEvent(TimerEvent & ev) { }
   virtual void onValueEvent(ValueEvent & ev) { }

@@ -2,7 +2,7 @@
 
 #include <FWApplication.h>
 #include <FWDefs.h>
-#include <SysEvent.h>
+#include <SysInfoEvent.h>
 #include <VisibilityUpdateEvent.h>
 
 #include "iOSMainThread.h"
@@ -220,7 +220,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 }
 
 - (void)didReceiveMemoryWarning {
-    SysEvent ev(SysEvent::MEMORY_WARNING);
+    SysInfoEvent ev(SysInfoEvent::MEMORY_WARNING);
     mainThread->sendEvent(mainThread->getApplication().getInternalId(), ev);
     [super didReceiveMemoryWarning];
 }
