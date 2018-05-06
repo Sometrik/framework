@@ -111,6 +111,14 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
     }
 }
 
+- (void)stop
+{
+    if ([self.view isKindOfClass:UIActivityIndicatorView.class]) {
+        UIActivityIndicatorView * indicator = (UIActivityIndicatorView*)self.view;
+        [indicator stopAnimating];
+    }
+}
+
 - (void)setStyle:(NSString *)key value:(NSString *)value selector:(StyleSelector)selector {
     ViewStyle * targetStyle = [self getStyleForSelector:selector];
 

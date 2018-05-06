@@ -128,6 +128,7 @@ public class NativeCommand {
     RESHAPE_TABLE,
     RESHAPE_SHEET,
     SET_BACK_BUTTON_VISIBILITY,
+    STOP,
     QUIT_APP,
 
     // Timers

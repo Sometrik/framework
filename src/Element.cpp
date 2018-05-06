@@ -83,6 +83,11 @@ Element::focus() {
   
 }
 
+void
+Element::stop() {
+  sendCommand(Command(Command::STOP, getInternalId()));
+}
+
 Element &
 Element::style(Selector s, const std::string & key, const std::string & value) {
   Command c(Command::SET_STYLE, getInternalId());

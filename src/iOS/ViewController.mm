@@ -1052,6 +1052,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     view.tag = viewId;
     view.translatesAutoresizingMaskIntoConstraints = false;
     view.activityIndicatorViewStyle = UIActivityIndicatorViewStyleGray;
+    view.hidesWhenStopped = YES;
     [self addView:view withId:viewId];
     [self addToParent:parentId view:view];
     [view startAnimating];
@@ -2169,6 +2170,13 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
         }
             break;
             
+        case STOP: {
+	    ViewManager * viewManager = [self getViewManager:command.internalId];
+	    if (viewManager != nil) {
+	        [viewManager stop];
+	    }            
+        }
+            break;
         case SET_BACK_BUTTON_VISIBILITY: {
             [self setBackButtonVisibility:command.value ? true : false];
         }
