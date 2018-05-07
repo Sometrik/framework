@@ -108,6 +108,7 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
     if ([self.view isKindOfClass:UIPageControl.class]) {
         UIPageControl * pageControl = (UIPageControl*)self.view;
         pageControl.numberOfPages = value;
+        [pageControl.superview setNeedsLayout];
     }
 }
 
