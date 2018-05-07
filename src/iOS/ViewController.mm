@@ -860,7 +860,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
 - (void)tabBar:(UITabBar *)tabBar didSelectItem:(UITabBarItem *)item
 {
-    int itemIndex = (int)[self indexForTabBar:tabBar item:item];
+    NSInteger itemIndex = (int)[self indexForTabBar:tabBar item:item];
     if (itemIndex != NSNotFound) {
         [self showPage:self.pageView page:itemIndex animated:NO];
 	[self sendVisibilityUpdate];
@@ -2278,7 +2278,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     if (url != nil) {
       s = [url cStringUsingEncoding:NSUTF8StringEncoding];
     }
-    mainThread->sendImageRequest((int)imageView.tag, size.width, 0, s, 15); // RGBA5551
+    mainThread->sendImageRequest((int)imageView.tag, size.width, 0, s, 5); // RGBA8 (RGBA5551)
 }
 
 - (void)didCancelImageRequest:(FWImageView *)imageView
