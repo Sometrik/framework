@@ -19,8 +19,6 @@
 - (void)moveItem:(LayoutParams *)movingItem toIndex:(NSUInteger)index;
 - (void)swapItem:(LayoutParams *)firstItem withItem:(LayoutParams *)secondItem;
 
-- (void)updateVisibility:(CGRect)bounds;
-
 @property (nonatomic, strong) NSMutableArray *items;
 @property (nonatomic, strong) NSLayoutConstraint *topConstraint;
 @property (nonatomic, strong) NSLayoutConstraint *leftConstraint;
