@@ -21,11 +21,11 @@ public:
     all_keys.clear();
   }
 
-  void addProxy(const T1 & key, const T2 & data) {
+  void addProxy(const T1 & key, const T2 & data, bool force_visible = false) {
     size_t pos = all_keys.size();
     all_keys.push_back(std::make_pair(key, data));
 
-    if (pos < max_visible_count) {
+    if (pos < max_visible_count || force_visible) {
       showKey(pos, key, data);
     }
   }
