@@ -1656,16 +1656,14 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
                 FWLayoutView * layout = (FWLayoutView*)parentView;
                 [layout removeItem:viewManager.layoutParams];
                 UIView * view = (UIView*)viewManager.view;
-                [view removeFromSuperview]; // some views might be added directly
             } else if ([parentView isKindOfClass:FWScrollView.class]) {
                 FWScrollView * layout = (FWScrollView*)parentView;
                 [layout removeItem:viewManager.layoutParams];
                 UIView * view = (UIView*)viewManager.view;
-                [view removeFromSuperview]; // some views might be added directly
             } else {
                 UIView * view = (UIView*)viewManager.view;
-                [view removeFromSuperview];
             }
+            [view removeFromSuperview]; // some views might be added directly
   
             if (view == self.sideMenuView) {
                 [self hideBackgroundOverlayViewWithAnimation:YES];
@@ -1687,7 +1685,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             [layout moveItem:viewManager.layoutParams toIndex:position];
         } else if ([parentView isKindOfClass:[FWScrollView class]]) {
             FWScrollView * scrollView = (FWScrollView *)parentView;
-             ViewManager * viewManager = [self getViewManager:viewId];
+            ViewManager * viewManager = [self getViewManager:viewId];
             [scrollView moveItem:viewManager.layoutParams toIndex:position];
         } else {
             [childView removeFromSuperview];
@@ -2276,7 +2274,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     if (url != nil) {
       s = [url cStringUsingEncoding:NSUTF8StringEncoding];
     }
-    mainThread->sendImageRequest((int)imageView.tag, size.width, 0, s, 15); // RGB555
+    mainThread->sendImageRequest((int)imageView.tag, size.width, 0, s, 5); // RGBA8
 }
 
 - (void)didCancelImageRequest:(FWImageView *)imageView
