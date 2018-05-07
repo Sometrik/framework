@@ -89,15 +89,15 @@ bool
 StringUtils::normalizeText(const string & input, string & output) {
   output.clear();
   
-  bool is_whitespace = false;
-  
-  const char * str = input.c_str();
-  const char * str_i = str;
-  const char * end = str + input.size();
-
-  auto output_inserter = back_inserter(output);
-  
   try {
+    const char * str = input.c_str();
+    const char * str_i = str;
+    const char * end = str + input.size();
+    
+    auto output_inserter = back_inserter(output);
+
+    bool is_whitespace = false;
+  
     while ( str_i < end ) {
       uint32_t c = utf8::next(str_i, end);
       if (!is_space_unicode(c)) {
