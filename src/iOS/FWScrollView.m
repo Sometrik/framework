@@ -13,6 +13,7 @@
         self.widthConstraint = nil;
         self.heightConstraint = nil;
         self.translatesAutoresizingMaskIntoConstraints = false;
+        self.currentPage = 0;
     }
     return self;
 }
@@ -26,6 +27,7 @@
         self.widthConstraint = nil;
         self.heightConstraint = nil;
         self.translatesAutoresizingMaskIntoConstraints = false;
+        self.currentPage = 0;
     }
     return self;
 }
@@ -292,6 +294,12 @@
     [self.items exchangeObjectAtIndex:firstItemIndex withObjectAtIndex:secondItemIndex];
     
     [self setNeedsLayout];
+}
+
+- (NSInteger)indexForVisiblePage
+{
+    CGRect frame = self.bounds;
+    return (frame.origin.x + frame.size.width / 2) / frame.size.width;
 }
 
 @end

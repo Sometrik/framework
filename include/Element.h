@@ -23,7 +23,7 @@ class Element : public EventHandler {
   ~Element();
   
   virtual void show();
-  virtual void hide();
+  virtual void hide();  
   virtual void focus();
   virtual void refresh() { }
   virtual void text(const std::string & text) { }
@@ -37,16 +37,30 @@ class Element : public EventHandler {
     else return is_visible;
   }
   
+  void stop();
+
   void setError(bool t) override;
 
   Element & style(Selector s, const std::string & key, const std::string & value);
   Element & style(Selector s, const std::string & key, int value) {
     return style(s, key, std::to_string(value));
   }
+  Element & style(Selector s, const std::string & key, float value) {
+    return style(s, key, std::to_string(value));
+  }
+  Element & style(Selector s, const std::string & key, double value) {
+    return style(s, key, std::to_string(value));
+  }
   Element & style(const std::string & key, const std::string & value) {
     return style(Selector::NORMAL, key, value);
   }
   Element & style(const std::string & key, int value) {
+    return style(Selector::NORMAL, key, value);
+  }
+  Element & style(const std::string & key, float value) {
+    return style(Selector::NORMAL, key, value);
+  }
+  Element & style(const std::string & key, double value) {
     return style(Selector::NORMAL, key, value);
   }
 

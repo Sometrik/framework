@@ -2,7 +2,7 @@
 
 #include <FWApplication.h>
 #include <FWDefs.h>
-#include <SysEvent.h>
+#include <SysInfoEvent.h>
 #include <VisibilityUpdateEvent.h>
 
 #include "iOSMainThread.h"
@@ -185,12 +185,25 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
 - (void)viewWillTransitionToSize: (CGSize)size withTransitionCoordinator:(id)coordinator
 {
-  [super viewWillTransitionToSize: size withTransitionCoordinator:coordinator];
     if (self.sideMenuView != nil) {
         CGRect frame = CGRectMake(CGRectGetMinX(self.view.bounds), CGRectGetMinY(self.view.bounds), size.width-sideMenuOpenSpaceWidth, size.height);
         self.sideMenuView.frame = frame;
     }
-    
+    if (self.webView != nil) {
+        for (UIView *view in self.webView.subviews) {
+            if ([view isKindOfClass:UINavigationBar.class]) {
+                view.frame = CGRectMake(0, 0, size.width, view.frame.size.height);
+            }
+        }
+    }
+    if (self.currentPickerHolder != nil) {
+        for (UIView *view in self.currentPickerHolder.subviews) {
+            if ([view isKindOfClass:UINavigationBar.class]) {
+                view.frame = CGRectMake(0, 20, size.width, 44);
+                NSLog(@"*** view.frame = %@", NSStringFromCGRect(view.frame));
+            }
+        }
+    }
   // self.view.frame = CGRectMake(0, 0, size.width, size.height);
   // [self.view setNeedsLayout];
 
@@ -207,7 +220,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 }
 
 - (void)didReceiveMemoryWarning {
-    SysEvent ev(SysEvent::MEMORY_WARNING);
+    SysInfoEvent ev(SysInfoEvent::MEMORY_WARNING);
     mainThread->sendEvent(mainThread->getApplication().getInternalId(), ev);
     [super didReceiveMemoryWarning];
 }
@@ -452,12 +465,20 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     NSLayoutConstraint *rightConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
     NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeBottom multiplier:1.0f constant:0];
     NSArray *constraintArray = @[leftConstraint, rightConstraint];
-    [self.frameViewConstraints setObject:constraintArray forKey:[NSString stringWithFormat:@"%d", viewId]];
-    [view.superview addConstraints:@[topConstraint, leftConstraint, rightConstraint, bottomConstraint]];
-
-    if (self.navBar) {
-        [self.statusBarBackgroundView.superview bringSubviewToFront:self.statusBarBackgroundView];
-        [self.navBar.superview bringSubviewToFront:self.navBar];
+    @try {
+        [self.frameViewConstraints setObject:constraintArray forKey:[NSString stringWithFormat:@"%d", viewId]];
+    }
+    @catch (NSException *e) {
+        NSLog(@"exception: %@", e);
+        @throw;
+    }
+    @finally {
+        [view.superview addConstraints:@[topConstraint, leftConstraint, rightConstraint, bottomConstraint]];
+        
+        if (self.navBar) {
+            [self.statusBarBackgroundView.superview bringSubviewToFront:self.statusBarBackgroundView];
+            [self.navBar.superview bringSubviewToFront:self.navBar];
+        }
     }
 }
 
@@ -490,8 +511,6 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     label.tag = viewId;
     label.delegate = self;
     label.autolink = autolink;
-    label.adjustsFontSizeToFitWidth = YES;
-    label.minimumScaleFactor = 0.01;
     if (autolink) {
         label.userInteractionEnabled = YES;
         label.attributedText = [label createAttributedString:value];
@@ -589,9 +608,24 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
-    if (!scrollView.pagingEnabled) { // Do nothing if scrollView has paging enabled
-	float diff = scrollView.contentSize.height - (scrollView.frame.size.height + scrollView.contentOffset.y);
+    if (!scrollView.pagingEnabled) {
+        float diff = scrollView.contentSize.height - (scrollView.frame.size.height + scrollView.contentOffset.y);
         mainThread->sendScrollChangedEvent(scrollView.tag, scrollView.contentOffset.y, (int)diff, scrollView.contentSize.height);
+    } else if ([scrollView isKindOfClass:FWScrollView.class]) {
+        FWScrollView * fwScrollView = (FWScrollView *)scrollView;
+        NSInteger page = [fwScrollView indexForVisiblePage];
+        
+        if (page >= 0 && page != fwScrollView.currentPage) {
+            fwScrollView.currentPage = page;
+
+            [self sendIntValue:(int)scrollView.tag value:(int)page];
+            
+	    if (scrollView == self.pageView) {
+                // set selected item for all tabbars
+                [self updateTabBars:page];
+            }
+	    [self sendVisibilityUpdate];
+        }
     }
 }
 
@@ -610,20 +644,6 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
 {
-    NSLog(@"scrollView did end decelerating");
-    if (scrollView.isPagingEnabled) {
-        NSInteger page = [self indexForScrollViewPage:scrollView];
-        
-        if (page >= 0) {
-            [self sendIntValue:(int)scrollView.tag value:(int)page];
-            
-	    if (scrollView == self.pageView) {
-                // set selected item for all tabbars
-                [self updateTabBars:page];
-            }
-	    [self sendVisibilityUpdate];
-        }
-    }
     if ([scrollView isKindOfClass:FWScrollView.class]) {
         FWScrollView * fwScrollView = (FWScrollView *)scrollView;
 	[fwScrollView updateVisibility:fwScrollView.bounds];
@@ -652,16 +672,6 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     frame.origin.x = frame.size.width * page;
     frame.origin.y = 0;
     [scrollView scrollRectToVisible:frame animated:animated];
-}
-
-- (NSInteger)indexForScrollViewPage:(UIScrollView *)pageView
-{
-    if (pageView.pagingEnabled) {
-        CGRect frame = pageView.bounds;
-        int page = frame.origin.x / frame.size.width;
-        return page;
-    }
-    return NSNotFound;
 }
 
 - (void)createEventLayoutWithId:(int)viewId parentId:(int)parentId
@@ -763,7 +773,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     // statusBarBackgroundView.barStyle = UIStatusBarStyleDefault;
     statusBarBackgroundView.translucent = YES;
     statusBarBackgroundView.translatesAutoresizingMaskIntoConstraints = false;
-    statusBarBackgroundView.layer.zPosition = 1000;
+    // statusBarBackgroundView.layer.zPosition = 1000;
     
     UIView * parentView = (UIView *)[self viewForId:parentId];
     [parentView addSubview:statusBarBackgroundView];
@@ -1045,6 +1055,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     view.tag = viewId;
     view.translatesAutoresizingMaskIntoConstraints = false;
     view.activityIndicatorViewStyle = UIActivityIndicatorViewStyleGray;
+    view.hidesWhenStopped = YES;
     [self addView:view withId:viewId];
     [self addToParent:parentId view:view];
     [view startAnimating];
@@ -1113,6 +1124,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     UIBarButtonItem *backButton = [[UIBarButtonItem alloc] initWithTitle:@"Back" style:UIBarButtonItemStylePlain target:self action:@selector(cancelPicker)];
     navItem.leftBarButtonItem = backButton;
     [navBar setItems:@[navItem]];
+    navBar.translatesAutoresizingMaskIntoConstraints = YES;
     // navBar.translucent = YES;
     [pickerHolder addSubview:navBar];
 
@@ -1131,18 +1143,18 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     [layout addItem:item];
 
     for (int i = 0; i < [self.currentPicker.options count]; i++) {
-	NSString * label = self.currentPicker.options[i]; 
-
-	UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
-	[button setTitleColor:UIColor.blackColor forState:UIControlStateNormal];
-	button.translatesAutoresizingMaskIntoConstraints = false;
-	[button setTitle:label forState:UIControlStateNormal];
-	button.tag = i;
-	[button addTarget:self action:@selector(pickerButtonPushed:) forControlEvents:UIControlEventTouchUpInside];
-
-	LayoutParams * item = [LayoutParams layoutItemForView:button];
-	item.fixedWidth = -1;
-	[layout2 addItem:item];
+        NSString * label = self.currentPicker.options[i];
+        
+        UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
+        [button setTitleColor:UIColor.blackColor forState:UIControlStateNormal];
+        button.translatesAutoresizingMaskIntoConstraints = false;
+        [button setTitle:label forState:UIControlStateNormal];
+        button.tag = i;
+        [button addTarget:self action:@selector(pickerButtonPushed:) forControlEvents:UIControlEventTouchUpInside];
+        
+        LayoutParams * item = [LayoutParams layoutItemForView:button];
+        item.fixedWidth = -1;
+        [layout2 addItem:item];
     }
     
     // Animations
@@ -1260,7 +1272,6 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     dialog.maxBottomConstraint = [NSLayoutConstraint constraintWithItem:dialog attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationLessThanOrEqual toItem:dialog.superview attribute:NSLayoutAttributeBottom multiplier:1.0f constant:-15];
     
     NSArray *constraintArray = @[topConstraint, dialog.maxBottomConstraint, leftConstraint, rightConstraint];
-    [self.dialogConstraints setObject:constraintArray forKey:[NSString stringWithFormat:@"%d", viewId]];
     
     dialog.heightConstraint.priority = 998;
     dialog.maxBottomConstraint.priority = 999;
@@ -1342,6 +1353,14 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     //[UIView animateWithDuration:animationDuration/2 animations:^{
     //    dialogHolder.alpha = 1.0;
     //}];
+    @try {
+       [self.dialogConstraints setObject:constraintArray forKey:[NSString stringWithFormat:@"%d", viewId]];
+    }
+    @catch (NSException *e) {
+        // Some code here if it is needed at this level
+        
+        @throw;
+    }
 }
 
 // switch view from old to new (push view over old one). If direction is NO, direction is left, otherwise right.
@@ -1461,23 +1480,6 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
         navBar.barStyle = UIBarStyleDefault;
         [self.webView addSubview:navBar];
         
-        NSLayoutConstraint *navTopConstraint = [NSLayoutConstraint constraintWithItem:navBar attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:navBar.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
-        NSLayoutConstraint *navLeftConstraint = [NSLayoutConstraint constraintWithItem:navBar attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:navBar.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
-        NSLayoutConstraint *navRightConstraint = [NSLayoutConstraint constraintWithItem:navBar attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:navBar.superview attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
-        NSLayoutConstraint *navHeightConstraint = [NSLayoutConstraint constraintWithItem:navBar attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0f constant:44];
-        [navBar.superview addConstraints:@[navTopConstraint, navLeftConstraint, navRightConstraint, navHeightConstraint]];
-        
-        // add close button (x) to the top left corner of the view
-        /*UIButton *closeButton = [[UIButton alloc] initWithFrame:CGRectMake(10.0, statusBarHeight, 40.0, 40.0)];
-        [closeButton setTitle:@"X" forState:UIControlStateNormal];
-        [closeButton addTarget:self action:@selector(webViewCloseButtonPushed:) forControlEvents:UIControlEventTouchUpInside];
-        [closeButton setTitleColor:UIColor.whiteColor forState:UIControlStateNormal];
-        [closeButton setBackgroundColor:UIColor.blackColor];
-        closeButton.layer.cornerRadius = closeButton.frame.size.width / 2;
-        closeButton.layer.borderWidth = 2.0;
-        closeButton.layer.borderColor = UIColor.whiteColor.CGColor;
-        [self.webView addSubview:closeButton];
-         */
     }
     // self.webView.layer.zPosition = 1000000.0f;
     [self.view bringSubviewToFront:self.webView];
@@ -1685,6 +1687,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             [layout moveItem:viewManager.layoutParams toIndex:position];
         } else if ([parentView isKindOfClass:[FWScrollView class]]) {
             FWScrollView * scrollView = (FWScrollView *)parentView;
+	    [childView removeFromSuperview];
             [scrollView insertSubview:childView atIndex:position];
             [scrollView rebuildConstraints:self.view.frame.size.width];
         } else {
@@ -1780,33 +1783,63 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             break;
             
         case CREATE_FRAMEVIEW: {
-            [self createFrameViewWithId:command.childInternalId parentId:command.internalId];
+            @try {
+                [self createFrameViewWithId:command.childInternalId parentId:command.internalId];
+            }
+            @catch (NSException *e) {
+                [self exceptionThrown:e];
+            }
         }
             break;
         
         case CREATE_LINEAR_LAYOUT: {
-            [self createLinearLayoutWithId:command.childInternalId parentId:command.internalId direction:command.value];
+            @try {
+                [self createLinearLayoutWithId:command.childInternalId parentId:command.internalId direction:command.value];
+            }
+            @catch (NSException *e) {
+                [self exceptionThrown:e];
+            }
         }
             break;
         
         case CREATE_EVENT_LAYOUT: {
-            [self createEventLayoutWithId:command.childInternalId parentId:command.internalId];
+            @try {
+                [self createEventLayoutWithId:command.childInternalId parentId:command.internalId];
+            }
+            @catch (NSException *e) {
+                [self exceptionThrown:e];
+            }
         }
             break;
         
         case CREATE_FRAME_LAYOUT: {
-            [self createFrameLayoutWithId:command.childInternalId parentId:command.internalId];
+            @try {
+                [self createFrameLayoutWithId:command.childInternalId parentId:command.internalId];
+            }
+            @catch (NSException *e) {
+                [self exceptionThrown:e];
+            }
         }
             break;
         
         case CREATE_PAGER:
         case CREATE_FLIPPER_LAYOUT: {
-            [self createPageLayoutWithId:command.childInternalId parentId:command.internalId];
+            @try {
+                [self createPageLayoutWithId:command.childInternalId parentId:command.internalId];
+            }
+            @catch (NSException *e) {
+                [self exceptionThrown:e];
+            }
         }
             break;
         
         case CREATE_TEXT: {
-            [self createTextWithId:command.childInternalId parentId:command.internalId value:command.textValue autolink:command.value != 0];
+            @try {
+                [self createTextWithId:command.childInternalId parentId:command.internalId value:command.textValue autolink:command.value != 0];
+            }
+            @catch (NSException *e) {
+                [self exceptionThrown:e];
+            }
         }
             break;
 
@@ -1816,67 +1849,132 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             break;
         
         case CREATE_TEXTFIELD: {
-            [self createTextFieldWithId:command.childInternalId parentId:command.internalId value:command.textValue];
+            @try {
+                [self createTextFieldWithId:command.childInternalId parentId:command.internalId value:command.textValue];
+            }
+            @catch (NSException *e) {
+                [self exceptionThrown:e];
+            }
         }
             break;
 
         case CREATE_TEXTVIEW: {
-            [self createTextViewWithId:command.childInternalId parentId:command.internalId value:command.textValue];
+            @try {
+                [self createTextViewWithId:command.childInternalId parentId:command.internalId value:command.textValue];
+            }
+            @catch (NSException *e) {
+                [self exceptionThrown:e];
+            }
         }
             break;
         
         case CREATE_IMAGEVIEW: {
-            [self createImageWithId:command.childInternalId parentId:command.internalId filename:command.textValue width:command.width height:command.height];
+            @try {
+                [self createImageWithId:command.childInternalId parentId:command.internalId filename:command.textValue width:command.width height:command.height];
+            }
+            @catch (NSException *e) {
+                [self exceptionThrown:e];
+            }
         }
             break;
         
         case CREATE_SCROLL_LAYOUT: {
-            [self createScrollLayoutWithId:command.childInternalId parentId:command.internalId];
+            @try {
+                [self createScrollLayoutWithId:command.childInternalId parentId:command.internalId];
+            }
+            @catch (NSException *e) {
+                [self exceptionThrown:e];
+            }
         }
             break;
         
         case CREATE_SWITCH: {
-            [self createSwitchWithId:command.childInternalId parentId:command.internalId];
+            @try {
+                [self createSwitchWithId:command.childInternalId parentId:command.internalId];
+            }
+            @catch (NSException *e) {
+                [self exceptionThrown:e];
+            }
         }
             break;
         
         case CREATE_ACTIONBAR: {
-            [self createNavigationBar:command.childInternalId parentId:command.internalId];
+            @try {
+                [self createNavigationBar:command.childInternalId parentId:command.internalId];
+            }
+            @catch (NSException *e) {
+                [self exceptionThrown:e];
+            }
         }
             break;
         
         case CREATE_NAVIGATIONBAR: {
-            [self createTabBar:command.childInternalId parentId:command.internalId];
+            @try {
+                [self createTabBar:command.childInternalId parentId:command.internalId];
+            }
+            @catch (NSException *e) {
+                [self exceptionThrown:e];
+            }
         }
             break;
         
         case CREATE_NAVIGATIONVIEW: {
-            [self createNavigationView:command.childInternalId];
+            @try {
+                [self createNavigationView:command.childInternalId];
+            }
+            @catch (NSException *e) {
+                [self exceptionThrown:e];
+            }
         }
             break;
             
         case CREATE_NAVIGATIONBAR_ITEM: {
-            [self createTabBarItem:command.childInternalId parentId:command.internalId title:command.textValue];
+            @try {
+                [self createTabBarItem:command.childInternalId parentId:command.internalId title:command.textValue];
+            }
+            @catch (NSException *e) {
+                [self exceptionThrown:e];
+            }
         }
             break;
         
         case CREATE_PROGRESS_SPINNER: {
-            [self createActivityIndicatorWithId:command.childInternalId parentId:command.internalId];
+            @try {
+                [self createActivityIndicatorWithId:command.childInternalId parentId:command.internalId];
+            }
+            @catch (NSException *e) {
+                [self exceptionThrown:e];
+            }
         }
             break;
 
         case CREATE_PAGE_CONTROL: {
-            [self createPageControlWithId:command.childInternalId parentId:command.internalId numPages:command.value];
+            @try {
+                [self createPageControlWithId:command.childInternalId parentId:command.internalId numPages:command.value];
+            }
+            @catch (NSException *e) {
+                [self exceptionThrown:e];
+            }
         }
             break;
 	
         case CREATE_PICKER: {
-            [self createPickerWithId:command.childInternalId parentId:command.internalId];
+            @try {
+                [self createPickerWithId:command.childInternalId parentId:command.internalId];
+            }
+            @catch (NSException *e) {
+                [self exceptionThrown:e];
+            }
         }
             break;
 
         case CREATE_DIALOG: {
-            [self createDialogWithId:command.childInternalId parentId:command.internalId title:command.textValue animationStyle:AnimationStyleTopToBottom];
+            @try {
+                [self createDialogWithId:command.childInternalId parentId:command.internalId title:command.textValue animationStyle:AnimationStyleTopToBottom];
+            }
+            @catch (NSException *e) {
+                [self exceptionThrown:e];
+            }
         }
             break;
 
@@ -1891,7 +1989,12 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             break;
             
         case SET_VISIBILITY: {
-            [self setVisibility:command.internalId visibility:command.value];
+            @try {
+                [self setVisibility:command.internalId visibility:command.value];
+            }
+            @catch (NSException *e) {
+                [self exceptionThrown:e];
+            }
         }
             break;
         
@@ -1901,7 +2004,12 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             break;
         
         case CREATE_ACTION_SHEET: {
-            [self createActionSheetWithId:command.childInternalId parentId:command.internalId title:command.textValue];
+            @try {
+                [self createActionSheetWithId:command.childInternalId parentId:command.internalId title:command.textValue];
+            }
+            @catch (NSException *e) {
+                [self exceptionThrown:e];
+            }
         }
             break;
             
@@ -1914,17 +2022,32 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             break;
             
         case REORDER_CHILD: {
-            [self reorderChildWithId:command.childInternalId parentId:command.internalId newPosition:command.value];
+            @try {
+                [self reorderChildWithId:command.childInternalId parentId:command.internalId newPosition:command.value];
+            }
+            @catch (NSException *e) {
+                [self exceptionThrown:e];
+            }
         }
             break;
 
         case REMOVE_CHILD: {
-            [self removeChildWithId:command.childInternalId parentId:command.internalId];
+            @try {
+                [self removeChildWithId:command.childInternalId parentId:command.internalId];
+            }
+            @catch (NSException *e) {
+                [self exceptionThrown:e];
+            }
         }
             break;
         
         case DELETE_ELEMENT: {
-            [self removeView:command.internalId];
+            @try {
+                [self removeView:command.internalId];
+            }
+            @catch (NSException *e) {
+                [self exceptionThrown:e];
+            }
         }
             break;
         
@@ -1996,17 +2119,32 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 	    break;
 	
         case ADD_OPTION: {
-            [self addOption:command.internalId optionId:command.value title:command.textValue];
+            @try {
+                [self addOption:command.internalId optionId:command.value title:command.textValue];
+            }
+            @catch (NSException *e) {
+                [self exceptionThrown:e];
+            }
         }
             break;
         
         case LAUNCH_BROWSER: {
-            [self createWebBrowserWithUrl:(NSString *)command.textValue];
+            @try {
+                [self createWebBrowserWithUrl:(NSString *)command.textValue];
+            }
+            @catch (NSException *e) {
+                [self exceptionThrown:e];
+            }
         }
             break;
         
         case CREATE_TIMER: {
-            [self createTimer:command.internalId interval:command.value / 1000.0];
+            @try {
+                [self createTimer:command.internalId interval:command.value / 1000.0];
+            }
+            @catch (NSException *e) {
+                [self exceptionThrown:e];
+            }
         }
             break;
         
@@ -2019,20 +2157,27 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             [[NSUserDefaults standardUserDefaults] setValue:nil forKey:command.textValue];
         }
             break;
-        
+            
         case COMMIT_PREFERENCES: {
             [[NSUserDefaults standardUserDefaults] synchronize];
         }
             break;
-
+            
+        case STOP: {
+	    ViewManager * viewManager = [self getViewManager:command.internalId];
+	    if (viewManager != nil) {
+	        [viewManager stop];
+	    }            
+        }
+            break;
         case SET_BACK_BUTTON_VISIBILITY: {
             [self setBackButtonVisibility:command.value ? true : false];
         }
             break;
-	    case TOGGLE_MENU: {
-	        [self menuButtonTapped];
-	    }
-	        break;
+        case TOGGLE_MENU: {
+            [self menuButtonTapped];
+        }
+            break;
         }
     }
 
@@ -2042,6 +2187,18 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             [viewManager applyStyles:NO];
         }
     }
+}
+
+- (void)exceptionThrown:(NSException *)exception
+{
+    NSLog(@"exception.name: %@", exception.name);
+    NSLog(@"exception.reason: %@", exception.reason);
+    [self sendExceptionReason:exception.reason];
+}
+
+- (void)sendExceptionReason:(NSString *)reason
+{
+    // Code here that sends exception text to application
 }
 
 // This method send changed integer or boolean values back to application.
