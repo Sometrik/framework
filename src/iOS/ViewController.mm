@@ -393,13 +393,13 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
         BOOL viewHidden = visibility == 0 ? true : false;
         if (view && ((viewHidden && !view.hidden) || (!viewHidden && view.hidden))) {
             view.hidden = viewHidden;
-	    if ([view.superview isKindOfClass:FWLayoutView.class]) {
-		FWLayoutView * layout = (FWLayoutView*)view.superview;
+            if ([view.superview isKindOfClass:FWLayoutView.class]) {
+                FWLayoutView * layout = (FWLayoutView*)view.superview;
             	[layout relayoutAll];
-	    } else if ([view.superview isKindOfClass:FWScrollView.class]) {
-		FWScrollView * layout = (FWScrollView*)view.superview;
-            	[layout relayoutAll];
-	    }
+            } else if ([view.superview isKindOfClass:FWScrollView.class]) {
+                FWScrollView * layout = (FWScrollView*)view.superview;
+            	[layout setNeedsLayout];
+            }
         }
     }
 }
@@ -763,8 +763,8 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
     UIImage *image2 = [self loadImage:@"write_icon_small.png"];
     if (image2 != nil) {
-	UIBarButtonItem *composeButton = [[UIBarButtonItem alloc] initWithImage:image2 style:UIBarButtonItemStylePlain target:self action:@selector(composeButtonTapped)];
-	self.navItem.rightBarButtonItem = composeButton;
+        UIBarButtonItem *composeButton = [[UIBarButtonItem alloc] initWithImage:image2 style:UIBarButtonItemStylePlain target:self action:@selector(composeButtonTapped)];
+        self.navItem.rightBarButtonItem = composeButton;
     }
 
     [navBar setItems:@[self.navItem]];
@@ -1657,7 +1657,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
                 [layout removeItem:viewManager.layoutParams];
                 UIView * view = (UIView*)viewManager.view;
                 [view removeFromSuperview]; // some views might be added directly
-            ) else if ([parentView isKindOfClass:FWScrollView.class]) {
+            } else if ([parentView isKindOfClass:FWScrollView.class]) {
                 FWScrollView * layout = (FWScrollView*)parentView;
                 [layout removeItem:viewManager.layoutParams];
                 UIView * view = (UIView*)viewManager.view;
@@ -1687,10 +1687,10 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             [layout moveItem:viewManager.layoutParams toIndex:position];
         } else if ([parentView isKindOfClass:[FWScrollView class]]) {
             FWScrollView * scrollView = (FWScrollView *)parentView;
-	    [childView removeFromSuperview];
-            [scrollView insertSubview:childView atIndex:position];
-            [scrollView rebuildConstraints:self.view.frame.size.width];
+             ViewManager * viewManager = [self getViewManager:viewId];
+            [scrollView moveItem:viewManager.layoutParams toIndex:position];
         } else {
+            [childView removeFromSuperview];
             [parentView insertSubview:childView atIndex:position];
         }
     }
@@ -1701,18 +1701,16 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     UIView *parentView = [self viewForId:parentId];
     UIView *childView = [self viewForId:viewId];
     if (parentView && childView) {
-	if ([parentView isKindOfClass:[FWLayoutView class]]) {
-	    FWLayoutView * layout = (FWLayoutView *)parentView;
-	    ViewManager * viewManager = [self getViewManager:viewId];
-	    [layout removeItem:viewManager.layoutParams];
-            [childView removeFromSuperview]; // some views might be added directly
-        } else {
-            [childView removeFromSuperview];
-	    if ([parentView isKindOfClass:[FWScrollView class]]) {
-                FWScrollView * scrollView = (FWScrollView*)parentView;
-                [scrollView rebuildConstraints:self.view.frame.size.width];
-            }
+        if ([parentView isKindOfClass:[FWLayoutView class]]) {
+            FWLayoutView * layout = (FWLayoutView *)parentView;
+            ViewManager * viewManager = [self getViewManager:viewId];
+            [layout removeItem:viewManager.layoutParams];
+        } else if ([parentView isKindOfClass:[FWScrollView class]]) {
+            FWScrollView * scrollView = (FWScrollView *)parentView;
+            ViewManager * viewManager = [self getViewManager:viewId];
+            [scrollView removeItem:viewManager.layoutParams];
         }
+        [childView removeFromSuperview];  // some views might be added directly
     }
 }
 
@@ -2278,7 +2276,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     if (url != nil) {
       s = [url cStringUsingEncoding:NSUTF8StringEncoding];
     }
-    mainThread->sendImageRequest((int)imageView.tag, size.width, 0, s, 5); // RGBA8 (RGBA5551)
+    mainThread->sendImageRequest((int)imageView.tag, size.width, 0, s, 15); // RGB555
 }
 
 - (void)didCancelImageRequest:(FWImageView *)imageView

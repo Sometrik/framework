@@ -14,6 +14,7 @@
         self.heightConstraint = nil;
         self.translatesAutoresizingMaskIntoConstraints = false;
         self.currentPage = 0;
+	self.items = [[NSMutableArray alloc] init];
     }
     return self;
 }
@@ -28,6 +29,7 @@
         self.heightConstraint = nil;
         self.translatesAutoresizingMaskIntoConstraints = false;
         self.currentPage = 0;
+	self.items = [[NSMutableArray alloc] init];
     }
     return self;
 }
@@ -35,8 +37,13 @@
 - (void)layoutSubviews {
     if (self.pagingEnabled) {
         int numChildren = 0;
-        for (UIView * view in [self subviews]) {
-            if ([view isKindOfClass:UIImageView.class]) continue; // ignore scroll indicators
+        for (LayoutParams *item in self.items) {
+            if (item.view.hidden) continue;
+            
+            item.leftConstraint.constant = numChildren * self.frame.size.width;
+            item.widthConstraint.constant = self.frame.size.width;
+            item.heightConstraint.constant = self.frame.size.height;
+	    
             numChildren++;
         }
         self.contentSize = CGSizeMake(numChildren * self.frame.size.width, self.frame.size.height);
@@ -124,43 +131,6 @@
     }
 }
 
-- (void)addChildConstraints:(UIView *)view position:(int)position pageWidth:(int)pageWidth
-{
-    NSLayoutConstraint *leftConstraint;
-    NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
-    NSLayoutConstraint *widthConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeWidth multiplier:1.0f constant:0];
-    NSLayoutConstraint *heightConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeHeight multiplier:1.0f constant:0];
-
-    if (position == 0) {
-        leftConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
-    } else {
-#if 0
-        leftConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:[[parentView subviews] lastObject] attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
-#else
-        leftConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:(position * pageWidth)];
-#endif
-    }
-
-    topConstraint.priority = 999; // - viewManager.level;
-    leftConstraint.priority = 999; // - viewManager.level;
-    widthConstraint.priority = 999; // - viewManager.level;
-    heightConstraint.priority = 999; // - viewManager.level;
-    [view.superview addConstraints:@[topConstraint, leftConstraint, widthConstraint, heightConstraint]];
-}
-
-- (void)rebuildConstraints:(int)pageWidth
-{
-    for (NSLayoutConstraint *c in self.constraints) {
-        [self removeConstraint:c];
-    }
-    int pos = 0;
-    for (UIView * subview in [self subviews]) {
-        if ([subview isKindOfClass:UIImageView.class]) continue; // ignore scroll indicators
-        [self addChildConstraints:subview position:pos pageWidth:pageWidth];
-        pos++;
-    }
-}
-
 - (void)addItem:(LayoutParams *)item {
     if (item == nil || [self.items containsObject:item] == YES || item.view == nil) {
         return;
@@ -178,6 +148,11 @@
     item.leftConstraint.priority = 999 - item.level;
     item.widthConstraint.priority = 999 - item.level - 1;
     item.heightConstraint.priority = 999 - item.level - 1;
+
+    item.topConstraint.active = YES;
+    item.leftConstraint.active = YES;
+    item.widthConstraint.active = YES;
+    item.heightConstraint.active = YES;
 
     [self setNeedsLayout];
 }
