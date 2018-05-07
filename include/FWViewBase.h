@@ -30,6 +30,10 @@ class FWViewBase : public Element {
     sendCommand(c2);
   }
 
+  bool isVisible() const override {
+    return getApplication().getActiveViewId() == getInternalId();
+  }
+
   virtual std::string getTitle() const { return title; }
     
  private:
