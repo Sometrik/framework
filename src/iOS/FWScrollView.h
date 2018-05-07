@@ -1,5 +1,7 @@
 #import <UIKit/UIKit.h>
 
+#import "LayoutParams.h"
+
 @interface FWScrollView : UIScrollView
 
 - (void)layoutSubviews;
