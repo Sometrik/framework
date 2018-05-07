@@ -285,13 +285,7 @@ iOSMainThread::sendTimerEvent(int viewId) {
 void
 iOSMainThread::sendImageRequest(int viewId, unsigned int width, unsigned int height, const std::string & url, int internalFormat) {
     cerr << "sending image request, width = " << width << ", height = " << height << ", url = " << url << endl;
-  
-    float scale = getDisplayScale();
-    if (scale != 1) {
-        width = (unsigned int)(width * scale);
-        height = (unsigned int)(height * scale);
-    }
-  
+    
     ImageRequestEvent ev(ImageRequestEvent::REQUEST, viewId, url, width, height);
     if (internalFormat != 0) {
       ev.setInternalFormat((canvas::InternalFormat)internalFormat);
