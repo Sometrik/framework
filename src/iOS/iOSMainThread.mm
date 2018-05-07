@@ -134,7 +134,7 @@ iOSMainThread::setImageData(int internal_id, std::shared_ptr<canvas::PackedImage
   int bitsPerComponent;
   if (input->getInternalFormat() == canvas::RGBA4) {
     bitsPerComponent = 4;
-  } else if (input->getInternalFormat() == canvas::RGBA5551) {
+  } else if (input->getInternalFormat() == canvas::RGB555 || input->getInternalFormat() == canvas::RGBA5551) {
     bitsPerComponent = 5;
   } else {
     bitsPerComponent = 8;
