@@ -3,6 +3,7 @@
 
 #include <Element.h>
 #include <Command.h>
+#include <FWApplication.h>
 
 class FWViewBase : public Element {
  public:
@@ -18,17 +19,15 @@ class FWViewBase : public Element {
   void show() override {
     Element::show();
     
-    Command c(Command::SET_INT_VALUE, getInternalId());
-    c.setValue(1);
-    c.setTextValue(getTitle());
-    sendCommand(c);
+    Command c1(Command::SET_INT_VALUE, getInternalId());
+    c1.setValue(1);
+    c1.setTextValue(getTitle());
+    sendCommand(c1);
 
-    if (getParent()) {
-      Command c(Command::SET_INT_VALUE, getParent()->getInternalId(), getInternalId());
-      c.setValue(1);
-      c.setTextValue(getTitle());
-      sendCommand(c);
-    }
+    Command c2(Command::SET_INT_VALUE, getApplication().getInternalId(), getInternalId());
+    c2.setValue(1);
+    c2.setTextValue(getTitle());
+    sendCommand(c2);
   }
 
   virtual std::string getTitle() const { return title; }
