@@ -580,12 +580,14 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 - (void)createImageWithId:(int)viewId parentId:(int)parentId filename:(NSString *)filename width:(int)width height:(int)height
 {
     FWImageView * imageView;
-    if (filename != nil && ![filename hasPrefix:@"http://"] && ![filename hasPrefix:@"https://"]) {
+    if (filename != nil && [filename length] > 0 && ![filename hasPrefix:@"http://"] && ![filename hasPrefix:@"https://"]) {
         UIImage *image = [UIImage imageNamed:filename];
         imageView = [[FWImageView alloc] initWithImage:image];
     } else {
         imageView = [[FWImageView alloc] init];
-        [imageView addImageUrl:filename width:width height:height];
+        if (filename != nil && [filename length] > 0) {
+            [imageView addImageUrl:filename width:width height:height];
+        }
     }
     imageView.tag = viewId;
     imageView.contentMode = UIViewContentModeScaleAspectFit;
