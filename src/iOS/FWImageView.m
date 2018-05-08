@@ -69,8 +69,6 @@
     NSInteger width = (NSInteger)self.frame.size.width;
     NSInteger height = (NSInteger)self.frame.size.height;
     if (width != self.prevWidth || height != self.prevHeight) {
-        NSLog(@"FWImageView, layoutSubview(): %f %f", self.frame.size.width, self.frame.size.height);
-
         [self cancelImageRequest];
 
 	self.imageRequestPending = YES;
