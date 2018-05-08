@@ -178,17 +178,31 @@
 
 - (void)didTap:(UITapGestureRecognizer *)gestureRecognizer
 {
-    NSTextStorage *textStorage = [[NSTextStorage alloc] initWithAttributedString:self.attributedText];
+    // original layout
     NSLayoutManager *layoutManager = [[NSLayoutManager alloc] init];
-    [textStorage addLayoutManager:layoutManager];
-    NSTextContainer *textContainer = [[NSTextContainer alloc] initWithSize:self.frame.size];
-    
+    NSTextStorage *origTextStorage = [[NSTextStorage alloc] initWithAttributedString:self.attributedText];
+    [origTextStorage addLayoutManager:layoutManager];
+    NSTextContainer *textContainer = [[NSTextContainer alloc] initWithSize:self.bounds.size];
+    textContainer.lineBreakMode = self.lineBreakMode;
+    textContainer.maximumNumberOfLines = self.numberOfLines;
     textContainer.lineFragmentPadding = 0;
-    NSRange glyphRange;
+    [layoutManager addTextContainer:textContainer];
+    
+    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:self.attributedText.string];
+    UIFont *font = (UIFont *)[self.attributedText attribute:NSFontAttributeName atIndex:0 effectiveRange:NULL];
+    NSInteger indx = 0;
+    NSRange glyphRange = NSMakeRange(0,self.attributedText.length);
+    //CGRect rect = [layoutManager lineFragmentRectForGlyphAtIndex:indx effectiveRange:&glyphRange withoutAdditionalLayout:NO];
+    CGFloat fontSize = [self getApproximateAdjustedFontSize];
+    UIFont *newFont = [font fontWithSize:fontSize];
+    
+    [origTextStorage removeLayoutManager:layoutManager];
+    [attributedString addAttribute:NSFontAttributeName value:newFont range:NSMakeRange(0, attributedString.string.length-1)];
+    NSTextStorage *textStorage = [[NSTextStorage alloc] initWithAttributedString:attributedString];
+    [textStorage addLayoutManager:layoutManager];
     
     CGPoint touchPoint = [gestureRecognizer locationOfTouch:0 inView:self];
-    [layoutManager addTextContainer:textContainer];
-    NSUInteger index = [layoutManager characterIndexForPoint:touchPoint inTextContainer:textContainer fractionOfDistanceBetweenInsertionPoints:0];
+    NSUInteger index = [layoutManager glyphIndexForPoint:touchPoint inTextContainer:textContainer];
     
     NSRange range = NSMakeRange(index, 1);
     NSDictionary *attributes = [self.attributedText attributesAtIndex:index effectiveRange:&range];
@@ -199,4 +213,33 @@
         }
     }
 }
+
+- (CGFloat)getApproximateAdjustedFontSize {
+    
+    if (self.adjustsFontSizeToFitWidth) {
+        
+        UIFont *currentFont = self.font;
+        CGFloat originalFontSize = currentFont.pointSize;
+        CGSize currentSize = [self boundingSizeForString:self.attributedText.string font:currentFont];
+        
+        while (currentSize.height > self.frame.size.height && currentFont.pointSize > (originalFontSize * self.minimumScaleFactor)) {
+            currentFont = [currentFont fontWithSize:currentFont.pointSize - 1];
+            currentSize = [self boundingSizeForString:self.attributedText.string font:currentFont];
+        }
+        return currentFont.pointSize;
+    } else {
+        return self.font.pointSize;
+    }
+}
+
+- (CGSize)boundingSizeForString:(NSString *)string font:(UIFont *)font
+{
+    
+    CGRect boundingRect = [string boundingRectWithSize:CGSizeMake(self.frame.size.width, MAXFLOAT)
+                                               options:NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading
+                                            attributes:@{NSFontAttributeName: font}
+                                               context:nil];
+    return CGSizeMake(ceilf(boundingRect.size.width), ceilf(boundingRect.size.height));
+}
+
 @end
