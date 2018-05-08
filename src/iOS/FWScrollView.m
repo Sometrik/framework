@@ -14,6 +14,7 @@
         self.heightConstraint = nil;
         self.translatesAutoresizingMaskIntoConstraints = false;
         self.currentPage = 0;
+	self.items = [[NSMutableArray alloc] init];
     }
     return self;
 }
@@ -28,6 +29,7 @@
         self.heightConstraint = nil;
         self.translatesAutoresizingMaskIntoConstraints = false;
         self.currentPage = 0;
+	self.items = [[NSMutableArray alloc] init];
     }
     return self;
 }
@@ -35,8 +37,13 @@
 - (void)layoutSubviews {
     if (self.pagingEnabled) {
         int numChildren = 0;
-        for (UIView * view in [self subviews]) {
-            if ([view isKindOfClass:UIImageView.class]) continue; // ignore scroll indicators
+        for (LayoutParams *item in self.items) {
+            if (item.view.hidden) continue;
+            
+            item.leftConstraint.constant = numChildren * self.frame.size.width;
+            item.widthConstraint.constant = self.frame.size.width;
+            item.heightConstraint.constant = self.frame.size.height;
+	    
             numChildren++;
         }
         self.contentSize = CGSizeMake(numChildren * self.frame.size.width, self.frame.size.height);
@@ -124,41 +131,144 @@
     }
 }
 
-- (void)addChildConstraints:(UIView *)view position:(int)position pageWidth:(int)pageWidth
-{
-    NSLayoutConstraint *leftConstraint;
-    NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
-    NSLayoutConstraint *widthConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeWidth multiplier:1.0f constant:0];
-    NSLayoutConstraint *heightConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeHeight multiplier:1.0f constant:0];
-
-    if (position == 0) {
-        leftConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
-    } else {
-#if 0
-        leftConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:[[parentView subviews] lastObject] attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
-#else
-        leftConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:(position * pageWidth)];
-#endif
+- (void)addItem:(LayoutParams *)item {
+    if (item == nil || [self.items containsObject:item] == YES || item.view == nil) {
+        return;
     }
+    
+    [self.items addObject:item];
+    [self addSubview:item.view];
 
-    topConstraint.priority = 999; // - viewManager.level;
-    leftConstraint.priority = 999; // - viewManager.level;
-    widthConstraint.priority = 999; // - viewManager.level;
-    heightConstraint.priority = 999; // - viewManager.level;
-    [view.superview addConstraints:@[topConstraint, leftConstraint, widthConstraint, heightConstraint]];
+    item.topConstraint = [NSLayoutConstraint constraintWithItem:item.view attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
+    item.leftConstraint = [NSLayoutConstraint constraintWithItem:item.view attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
+    item.widthConstraint = [NSLayoutConstraint constraintWithItem:item.view attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:0.0f constant:0];
+    item.heightConstraint = [NSLayoutConstraint constraintWithItem:item.view attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:0.0f constant:0];
+
+    item.topConstraint.priority = 999 - item.level;
+    item.leftConstraint.priority = 999 - item.level;
+    item.widthConstraint.priority = 999 - item.level - 1;
+    item.heightConstraint.priority = 999 - item.level - 1;
+
+    item.topConstraint.active = YES;
+    item.leftConstraint.active = YES;
+    item.widthConstraint.active = YES;
+    item.heightConstraint.active = YES;
+
+    [self setNeedsLayout];
 }
 
-- (void)rebuildConstraints:(int)pageWidth
-{
-    for (NSLayoutConstraint *c in self.constraints) {
-        [self removeConstraint:c];
+- (void)removeItem:(LayoutParams *)item {
+    if (item == nil || [self.items containsObject:item] == NO) {
+        return;
     }
-    int pos = 0;
-    for (UIView * subview in [self subviews]) {
-        if ([subview isKindOfClass:UIImageView.class]) continue; // ignore scroll indicators
-        [self addChildConstraints:subview position:pos pageWidth:pageWidth];
-        pos++;
+    
+    [item.view removeFromSuperview];
+    [self.items removeObject:item];
+    [self setNeedsLayout];
+}
+
+- (void)removeAllItems {
+    // only remove actual items, not scrollbars
+    for (LayoutParams *item in self.items) {
+        [item.view removeFromSuperview];
     }
+    [self.items removeAllObjects];
+    [self setNeedsLayout];
+}
+
+- (void)insertItem:(LayoutParams *)newItem beforeItem:(LayoutParams *)existingItem {
+    if (newItem == nil || [self.items containsObject:newItem] == YES || existingItem == nil ||  [self.items containsObject:existingItem] == NO) {
+        return;
+    }
+    
+    NSUInteger index = [self.items indexOfObject:existingItem];
+    [self.items insertObject:newItem atIndex:index];
+    [self addSubview:newItem.view];
+    [self setNeedsLayout];
+}
+
+- (void)insertItem:(LayoutParams *)newItem afterItem:(LayoutParams *)existingItem {
+    if (newItem == nil || [self.items containsObject:newItem] == YES || existingItem == nil || [self.items containsObject:existingItem] == NO) {
+        return;
+    }
+    
+    if (existingItem == [self.items lastObject]) {
+        [self.items addObject:newItem];
+    } else {
+        NSUInteger index = [self.items indexOfObject:existingItem];
+        [self.items insertObject:newItem atIndex:++index];
+    }
+    
+    [self addSubview:newItem.view];
+    [self setNeedsLayout];
+}
+
+- (void)insertItem:(LayoutParams *)newItem atIndex:(NSUInteger)index {
+    if (newItem == nil || [self.items containsObject:newItem] == YES || index >= [self.items count]) {
+        return;
+    }
+    
+    [self.items insertObject:newItem atIndex:index];
+    [self addSubview:newItem.view];
+    [self setNeedsLayout];
+}
+
+- (void)moveItem:(LayoutParams *)movingItem beforeItem:(LayoutParams *)existingItem {
+    if (movingItem == nil || [self.items containsObject:movingItem] == NO || existingItem == nil || [self.items containsObject:existingItem] == NO || movingItem == existingItem) {
+        return;
+    }
+    
+    [self.items removeObject:movingItem];
+    
+    NSUInteger existingItemIndex = [self.items indexOfObject:existingItem];
+    [self.items insertObject:movingItem atIndex:existingItemIndex];
+    
+    [self setNeedsLayout];
+}
+
+- (void)moveItem:(LayoutParams *)movingItem afterItem:(LayoutParams *)existingItem {
+    if (movingItem == nil || [self.items containsObject:movingItem] == NO || existingItem == nil || [self.items containsObject:existingItem] == NO || movingItem == existingItem) {
+        return;
+    }
+    
+    [self.items removeObject:movingItem];
+    
+    if (existingItem == [self.items lastObject]) {
+        [self.items addObject:movingItem];
+    } else {
+        NSUInteger existingItemIndex = [self.items indexOfObject:existingItem];
+        [self.items insertObject:movingItem atIndex:++existingItemIndex];
+    }
+    
+    [self setNeedsLayout];
+}
+
+- (void)moveItem:(LayoutParams *)movingItem toIndex:(NSUInteger)index {
+    if (movingItem == nil || [self.items containsObject:movingItem] == NO || index >= [self.items count] || [self.items indexOfObject:movingItem] == index) {
+        return;
+    }
+    
+    [self.items removeObject:movingItem];
+    
+    if (index == ([self.items count] - 1)) {
+        [self.items addObject:movingItem];
+    } else {
+        [self.items insertObject:movingItem atIndex:index];
+    }
+    
+    [self setNeedsLayout];
+}
+
+- (void)swapItem:(LayoutParams *)firstItem withItem:(LayoutParams *)secondItem {
+    if (firstItem == nil || [self.items containsObject:firstItem] == NO || secondItem == nil || [self.items containsObject:secondItem] == NO || firstItem == secondItem) {
+        return;
+    }
+    
+    NSUInteger firstItemIndex = [self.items indexOfObject:firstItem];
+    NSUInteger secondItemIndex = [self.items indexOfObject:secondItem];
+    [self.items exchangeObjectAtIndex:firstItemIndex withObjectAtIndex:secondItemIndex];
+    
+    [self setNeedsLayout];
 }
 
 - (NSInteger)indexForVisiblePage

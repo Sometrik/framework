@@ -22,6 +22,7 @@ typedef enum {
 - (void)setIntValue:(int)value;
 - (void)setTextValue:(NSString *)value;
 - (void)reshapeTable:(int)value;
+- (void)stop;
 - (void)switchStyle:(StyleSelector)selector;
 
 @property (nonatomic, assign) NSInteger viewId; // don't use id as it is reserved word in objective-c

@@ -131,29 +131,34 @@ iOSMainThread::handleEventFromThread(int target_element_id, Event * event) {
 void
 iOSMainThread::setImageData(int internal_id, std::shared_ptr<canvas::PackedImageData> input) {
   int bpp = input->getBytesPerPixel(input->getInternalFormat());
-  int bitsPerComponent;
+  int bitsPerComponent = 8;
+  CGBitmapInfo bitmapInfo = 0;
   if (input->getInternalFormat() == canvas::RGBA4) {
     bitsPerComponent = 4;
-  } else if (input->getInternalFormat() == canvas::RGBA5551) {
+    bitmapInfo |= kCGImageAlphaPremultipliedLast;
+    bitmapInfo |= kCGBitmapByteOrder16Little;
+  } else if (input->getInternalFormat() == canvas::RGB555 || input->getInternalFormat() == canvas::RGBA5551) {
     bitsPerComponent = 5;
-  } else {
-    bitsPerComponent = 8;
+    bitmapInfo |= kCGImageAlphaNoneSkipFirst;
+    bitmapInfo |= kCGBitmapByteOrder16Little;
+  } else if (input->getInternalFormat() == canvas::RGBA8) {
+    bitmapInfo |= kCGImageAlphaPremultipliedFirst;
+    bitmapInfo |= kCGBitmapByteOrder32Little;
+  } else { // RGB8
+    bitmapInfo |= kCGImageAlphaNoneSkipFirst;
+    bitmapInfo |= kCGBitmapByteOrder32Little;
   }
   auto cfdata = CFDataCreate(0, input->getData(), bpp * input->getWidth() * input->getHeight());
   auto provider = CGDataProviderCreateWithCFData(cfdata);
   auto colorspace = CGColorSpaceCreateDeviceRGB();
-  CGBitmapInfo bitmapInfo = kCGBitmapByteOrder32Little;
-  if (input->getInternalFormat() == canvas::RGBA4) {
-    bitmapInfo |= kCGImageAlphaPremultipliedLast;
-  } else if (input->getInternalFormat() == canvas::RGBA8) {
-    bitmapInfo |= kCGImageAlphaPremultipliedFirst;
-  } else {
-    bitmapInfo |= kCGImageAlphaNoneSkipFirst;
-  }
   auto img = CGImageCreate(input->getWidth(), input->getHeight(), bitsPerComponent, bpp * 8, bpp * input->getWidth(), colorspace, bitmapInfo, provider, 0, true, kCGRenderingIntentDefault);
 
-  [viewController setImageFromThread:internal_id data:img];
-
+  if (img) { 
+    [viewController setImageFromThread:internal_id data:img];
+  } else {
+    NSLog(@"Failed to decode image (w = %d, h = %d, f = %d", input->getWidth(), input->getHeight(), int(input->getInternalFormat()));
+  }
+  
   CGColorSpaceRelease(colorspace);
   CGDataProviderRelease(provider);
   CFRelease(cfdata);
@@ -185,11 +190,7 @@ iOSMainThread::createThread(std::shared_ptr<Runnable> & runnable) {
 void
 iOSMainThread::startDebugMode() {
   SysEvent ev(SysEvent::SHOW_DEBUG);
-#if 1
   sendEvent(getApplication().getInternalId(), ev);
-#else
-  Element::postEventToElement(getApplication().getInternalId(), ev);
-#endif
 }
 
 #if 0
@@ -225,73 +226,45 @@ iOSMainThread::back() {
 void
 iOSMainThread::sendIntValue(int viewId, int value) {
     ValueEvent ev(value);
-#if 1
     sendEvent(viewId, ev);
-#else
-    Element::postEventToElement(viewId, ev);
-#endif
 }
 
 void
 iOSMainThread::sendVisibilityEvent(int viewId, bool visibility) {
     VisibilityEvent ev(visibility);
-#if 1
     sendEvent(viewId, ev);
-#else
-    Element::postEventToElement(viewId, ev);
-#endif
 }
 
 void
 iOSMainThread::sendCommandEvent(int viewId, int elementId) {
     CommandEvent ev(elementId);
-#if 1
     sendEvent(viewId, ev);
-#else
-    Element::postEventToElement(viewId, ev);
-#endif
 }
 
 void
 iOSMainThread::sendScrollChangedEvent(int viewId, int scrollPos, int scrollRem, int height) {
     ScrollChangedEvent ev(scrollPos, scrollRem, height);
-#if 1
     sendEvent(viewId, ev);
-#else
-    Element::postEventToElement(viewId, ev);
-#endif
 }
 
 void
 iOSMainThread::sendTextValue(int viewId, const std::string & value) {
     ValueEvent ev(value);
-#if 1
     sendEvent(viewId, ev);
-#else
-    Element::postEventToElement(viewId, ev);
-#endif
 }
 
 void
 iOSMainThread::sendTimerEvent(int viewId) {
     TimerEvent ev(0);
-#if 1
     sendEvent(viewId, ev);
-#else
-    Element::postEventToElement(viewId, ev);
-#endif
 }
 
 void
 iOSMainThread::sendImageRequest(int viewId, unsigned int width, unsigned int height, const std::string & url, int internalFormat) {
-    cerr << "sending image request, width = " << width << ", height = " << height << ", url = " << url << endl;
-  
-    float scale = getDisplayScale();
-    if (scale != 1) {
-        width = (unsigned int)(width * scale);
-        height = (unsigned int)(height * scale);
+    if (!url.empty()) {
+        cerr << "sending image request, width = " << width << ", height = " << height << ", url = " << url << endl;
     }
-  
+    
     ImageRequestEvent ev(ImageRequestEvent::REQUEST, viewId, url, width, height);
     if (internalFormat != 0) {
       ev.setInternalFormat((canvas::InternalFormat)internalFormat);
