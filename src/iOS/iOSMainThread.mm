@@ -131,29 +131,34 @@ iOSMainThread::handleEventFromThread(int target_element_id, Event * event) {
 void
 iOSMainThread::setImageData(int internal_id, std::shared_ptr<canvas::PackedImageData> input) {
   int bpp = input->getBytesPerPixel(input->getInternalFormat());
-  int bitsPerComponent;
+  int bitsPerComponent = 8;
+  CGBitmapInfo bitmapInfo = 0;
   if (input->getInternalFormat() == canvas::RGBA4) {
     bitsPerComponent = 4;
+    bitmapInfo |= kCGImageAlphaPremultipliedLast;
+    bitmapInfo |= kCGBitmapByteOrder16Little;
   } else if (input->getInternalFormat() == canvas::RGB555 || input->getInternalFormat() == canvas::RGBA5551) {
     bitsPerComponent = 5;
-  } else {
-    bitsPerComponent = 8;
+    bitmapInfo |= kCGImageAlphaNoneSkipFirst;
+    bitmapInfo |= kCGBitmapByteOrder16Little;
+  } else if (input->getInternalFormat() == canvas::RGBA8) {
+    bitmapInfo |= kCGImageAlphaPremultipliedFirst;
+    bitmapInfo |= kCGBitmapByteOrder32Little;
+  } else { // RGB8
+    bitmapInfo |= kCGImageAlphaNoneSkipFirst;
+    bitmapInfo |= kCGBitmapByteOrder32Little;
   }
   auto cfdata = CFDataCreate(0, input->getData(), bpp * input->getWidth() * input->getHeight());
   auto provider = CGDataProviderCreateWithCFData(cfdata);
   auto colorspace = CGColorSpaceCreateDeviceRGB();
-  CGBitmapInfo bitmapInfo = kCGBitmapByteOrder32Little;
-  if (input->getInternalFormat() == canvas::RGBA4) {
-    bitmapInfo |= kCGImageAlphaPremultipliedLast;
-  } else if (input->getInternalFormat() == canvas::RGBA8) {
-    bitmapInfo |= kCGImageAlphaPremultipliedFirst;
-  } else {
-    bitmapInfo |= kCGImageAlphaNoneSkipFirst;
-  }
   auto img = CGImageCreate(input->getWidth(), input->getHeight(), bitsPerComponent, bpp * 8, bpp * input->getWidth(), colorspace, bitmapInfo, provider, 0, true, kCGRenderingIntentDefault);
 
-  [viewController setImageFromThread:internal_id data:img];
-
+  if (img) { 
+    [viewController setImageFromThread:internal_id data:img];
+  } else {
+    NSLog(@"Failed to decode image (w = %d, h = %d, f = %d", input->getWidth(), input->getHeight(), int(input->getInternalFormat()));
+  }
+  
   CGColorSpaceRelease(colorspace);
   CGDataProviderRelease(provider);
   CFRelease(cfdata);
