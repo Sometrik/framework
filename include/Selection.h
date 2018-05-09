@@ -22,6 +22,7 @@ class Selection {
   Selection & hide();
   Selection & remove();
   Selection & refresh();
+  Selection & clear();
   Selection & text(const std::string & text);
   Selection & style(Selector selector, const std::string & key, const std::string & value);
   Selection & style(Selector selector, const std::string & key, int value) {
@@ -42,7 +43,6 @@ class Selection {
   Selection children() const;
 
   void add(const std::shared_ptr<Element> & e) { data.push_back(e); }
-  void clear() { data.clear(); }
     
   bool empty() const { return data.empty(); }
   size_t size() const { return data.size(); }
