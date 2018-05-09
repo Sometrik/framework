@@ -194,6 +194,7 @@
     NSRange glyphRange = NSMakeRange(0,self.attributedText.length);
     //CGRect rect = [layoutManager lineFragmentRectForGlyphAtIndex:indx effectiveRange:&glyphRange withoutAdditionalLayout:NO];
     CGFloat fontSize = [self getApproximateAdjustedFontSize];
+    NSLog(@"fontSize = %f", fontSize);
     UIFont *newFont = [font fontWithSize:fontSize];
     
     [origTextStorage removeLayoutManager:layoutManager];
@@ -223,8 +224,14 @@
         CGSize currentSize = [self boundingSizeForString:self.attributedText.string font:currentFont];
         
         while (currentSize.height > self.frame.size.height && currentFont.pointSize > (originalFontSize * self.minimumScaleFactor)) {
-            currentFont = [currentFont fontWithSize:currentFont.pointSize - 1];
-            currentSize = [self boundingSizeForString:self.attributedText.string font:currentFont];
+            
+            UIFont *font = [currentFont fontWithSize:currentFont.pointSize - 1];
+            CGSize size = [self boundingSizeForString:self.attributedText.string font:font];
+            if (currentSize.height < self.frame.size.height || font.pointSize < (originalFontSize * self.minimumScaleFactor)) {
+                break;
+            }
+            currentFont = font;
+            currentSize = size;
         }
         return currentFont.pointSize;
     } else {
