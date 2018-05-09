@@ -36,17 +36,7 @@
 
 - (void)layoutSubviews {
     if (self.pagingEnabled) {
-        int numChildren = 0;
-        for (LayoutParams *item in self.items) {
-            if (item.view.hidden) continue;
-            
-            item.leftConstraint.constant = numChildren * self.frame.size.width;
-            item.widthConstraint.constant = self.frame.size.width;
-            item.heightConstraint.constant = self.frame.size.height;
-	    
-            numChildren++;
-        }
-        self.contentSize = CGSizeMake(numChildren * self.frame.size.width, self.frame.size.height);
+        [self updateChildConstraints];
     } else {
         int width = self.frame.size.width;
         int height = 0;
@@ -135,6 +125,12 @@
     if (item == nil || [self.items containsObject:item] == YES || item.view == nil) {
         return;
     }
+
+    int numChildren = 0;
+    for (LayoutParams *item in self.items) {
+        if (item.view.hidden) continue;
+        numChildren++;
+    }
     
     [self.items addObject:item];
     [self addSubview:item.view];
@@ -149,10 +145,16 @@
     item.widthConstraint.priority = 999 - item.level - 1;
     item.heightConstraint.priority = 999 - item.level - 1;
 
+    item.leftConstraint.constant = numChildren * self.frame.size.width;
+    item.widthConstraint.constant = self.frame.size.width;
+    item.heightConstraint.constant = self.frame.size.height;
+
     item.topConstraint.active = YES;
     item.leftConstraint.active = YES;
     item.widthConstraint.active = YES;
     item.heightConstraint.active = YES;
+       
+    self.contentSize = CGSizeMake(numChildren * self.frame.size.width, self.frame.size.height);
 
     [self setNeedsLayout];
 }
@@ -164,6 +166,8 @@
     
     [item.view removeFromSuperview];
     [self.items removeObject:item];
+
+    [self updateChildConstraints];
     [self setNeedsLayout];
 }
 
@@ -173,6 +177,8 @@
         [item.view removeFromSuperview];
     }
     [self.items removeAllObjects];
+
+    [self updateChildConstraints];
     [self setNeedsLayout];
 }
 
@@ -184,6 +190,8 @@
     NSUInteger index = [self.items indexOfObject:existingItem];
     [self.items insertObject:newItem atIndex:index];
     [self addSubview:newItem.view];
+
+    [self updateChildConstraints];
     [self setNeedsLayout];
 }
 
@@ -200,6 +208,8 @@
     }
     
     [self addSubview:newItem.view];
+
+    [self updateChildConstraints];
     [self setNeedsLayout];
 }
 
@@ -210,6 +220,8 @@
     
     [self.items insertObject:newItem atIndex:index];
     [self addSubview:newItem.view];
+
+    [self updateChildConstraints];
     [self setNeedsLayout];
 }
 
@@ -223,6 +235,7 @@
     NSUInteger existingItemIndex = [self.items indexOfObject:existingItem];
     [self.items insertObject:movingItem atIndex:existingItemIndex];
     
+    [self updateChildConstraints];
     [self setNeedsLayout];
 }
 
@@ -240,6 +253,7 @@
         [self.items insertObject:movingItem atIndex:++existingItemIndex];
     }
     
+    [self updateChildConstraints];
     [self setNeedsLayout];
 }
 
@@ -256,6 +270,7 @@
         [self.items insertObject:movingItem atIndex:index];
     }
     
+    [self updateChildConstraints];
     [self setNeedsLayout];
 }
 
@@ -267,7 +282,8 @@
     NSUInteger firstItemIndex = [self.items indexOfObject:firstItem];
     NSUInteger secondItemIndex = [self.items indexOfObject:secondItem];
     [self.items exchangeObjectAtIndex:firstItemIndex withObjectAtIndex:secondItemIndex];
-    
+
+    [self updateChildConstraints];
     [self setNeedsLayout];
 }
 
@@ -275,6 +291,21 @@
 {
     CGRect frame = self.bounds;
     return (frame.origin.x + frame.size.width / 2) / frame.size.width;
+}
+
+- (void)updateChildConstraints
+{
+    int numChildren = 0;
+    for (LayoutParams *item in self.items) {
+        if (item.view.hidden) continue;
+            
+        item.leftConstraint.constant = numChildren * self.frame.size.width;
+        item.widthConstraint.constant = self.frame.size.width;
+        item.heightConstraint.constant = self.frame.size.height;
+	    
+        numChildren++;
+    }
+    self.contentSize = CGSizeMake(numChildren * self.frame.size.width, self.frame.size.height);
 }
 
 @end
