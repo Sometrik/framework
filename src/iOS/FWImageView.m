@@ -69,20 +69,21 @@
     NSInteger width = (NSInteger)self.frame.size.width;
     NSInteger height = (NSInteger)self.frame.size.height;
     if (width != self.prevWidth || height != self.prevHeight) {
-        NSLog(@"FWImageView, layoutSubview(): %f %f", self.frame.size.width, self.frame.size.height);
-
         [self cancelImageRequest];
 
-	self.imageRequestPending = YES;
         self.prevWidth = width;
         self.prevHeight = height;
+	
+	if (width > 0 && height > 0) {
+	    self.imageRequestPending = YES;
 
-        FWImage * bestImage = [self getImageForWidth:width];
-        NSString * bestUrl = nil;
-        if (bestImage != nil) bestUrl = bestImage.url;
+            FWImage * bestImage = [self getImageForWidth:width];
+            NSString * bestUrl = nil;
+            if (bestImage != nil) bestUrl = bestImage.url;
 
-        if ([self.delegate respondsToSelector:@selector(fwImageView:didChangeSize:ofImageUrl:)]) {
-            [self.delegate fwImageView:self didChangeSize:self.frame.size ofImageUrl:bestUrl];
+            if ([self.delegate respondsToSelector:@selector(fwImageView:didChangeSize:ofImageUrl:)]) {
+                [self.delegate fwImageView:self didChangeSize:self.frame.size ofImageUrl:bestUrl];
+            }
         }
     }
 }

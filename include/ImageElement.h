@@ -45,7 +45,7 @@ class ImageElement : public Element {
     ev.setHandled(true);
   }
 
-  void clear() {
+  void clear() override {
     images.clear();
     sendCommand(Command(Command::CLEAR, getInternalId()));
   }

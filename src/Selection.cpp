@@ -40,6 +40,14 @@ Selection::refresh() {
 }
 
 Selection &
+Selection::clear() {
+  for (auto & e : data) {
+    e->clear();
+  }
+  return *this;
+}
+
+Selection &
 Selection::style(Selector selector, const std::string & key, const std::string & value) {
   for (auto & e : data) {
     e->style(selector, key, value);

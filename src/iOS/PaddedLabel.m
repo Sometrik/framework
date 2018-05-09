@@ -147,7 +147,7 @@
     
     [attributedString beginEditing];
     
-    UIColor * linkColor = [UIColor colorWithRed:0.5 green:0.1 blue:0.1 alpha:1.0];
+    UIColor * linkColor = [UIColor colorWithRed:0.765 green:0.145 blue:0.153 alpha:1.0];
 
     for (NSInteger i = 0; i < linkRanges.count; i++) {
         NSString *urlString = linkTargets[i];

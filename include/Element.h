@@ -26,6 +26,7 @@ class Element : public EventHandler {
   virtual void hide();  
   virtual void focus();
   virtual void refresh() { }
+  virtual void clear() { }
   virtual void text(const std::string & text) { }
 
   virtual bool isA(const std::string & className) const {
