@@ -1657,13 +1657,9 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             if ([parentView isKindOfClass:FWLayoutView.class]) {
                 FWLayoutView * layout = (FWLayoutView*)parentView;
                 [layout removeItem:viewManager.layoutParams];
-                UIView * view = (UIView*)viewManager.view;
             } else if ([parentView isKindOfClass:FWScrollView.class]) {
                 FWScrollView * layout = (FWScrollView*)parentView;
                 [layout removeItem:viewManager.layoutParams];
-                UIView * view = (UIView*)viewManager.view;
-            } else {
-                UIView * view = (UIView*)viewManager.view;
             }
             [view removeFromSuperview]; // some views might be added directly
   
