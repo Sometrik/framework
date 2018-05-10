@@ -16,12 +16,10 @@ class Pager : public Element {
   }
 
   void onValueEvent(ValueEvent & ev) override {
-#ifndef __ANDROID__
     visible_view_index = ev.getValue();
     if (visible_view_index >= 0 && visible_view_index < getChildren().size()) {
       getChildren()[visible_view_index]->refresh();
     }
-#endif
 
     notify();
     CommandEvent ev2(getId(), ev.getValue(), ev.getValue2());
@@ -55,6 +53,7 @@ class Pager : public Element {
     sendCommand(c);
   }
 
+ private:
   int visible_view_index = 0;
 };
 
