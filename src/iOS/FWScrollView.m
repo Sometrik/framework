@@ -14,6 +14,7 @@
         self.heightConstraint = nil;
         self.translatesAutoresizingMaskIntoConstraints = false;
         self.currentPage = 0;
+	self.currentPageInternalId = 0;
 	self.items = [[NSMutableArray alloc] init];
     }
     return self;
@@ -29,6 +30,7 @@
         self.heightConstraint = nil;
         self.translatesAutoresizingMaskIntoConstraints = false;
         self.currentPage = 0;
+	self.currentPageInternalId = 0;
 	self.items = [[NSMutableArray alloc] init];
     }
     return self;
@@ -168,6 +170,7 @@
     [self.items removeObject:item];
 
     [self updateChildConstraints];
+    [self reselectCurrentPage];
     [self setNeedsLayout];
 }
 
@@ -210,6 +213,7 @@
     [self addSubview:newItem.view];
 
     [self updateChildConstraints];
+    [self reselectCurrentPage];
     [self setNeedsLayout];
 }
 
@@ -236,6 +240,7 @@
     [self.items insertObject:movingItem atIndex:existingItemIndex];
     
     [self updateChildConstraints];
+    [self reselectCurrentPage];
     [self setNeedsLayout];
 }
 
@@ -254,6 +259,7 @@
     }
     
     [self updateChildConstraints];
+    [self reselectCurrentPage];
     [self setNeedsLayout];
 }
 
@@ -271,6 +277,7 @@
     }
     
     [self updateChildConstraints];
+    [self reselectCurrentPage];
     [self setNeedsLayout];
 }
 
@@ -284,6 +291,7 @@
     [self.items exchangeObjectAtIndex:firstItemIndex withObjectAtIndex:secondItemIndex];
 
     [self updateChildConstraints];
+    [self reselectCurrentPage];
     [self setNeedsLayout];
 }
 
@@ -306,6 +314,42 @@
         numChildren++;
     }
     self.contentSize = CGSizeMake(numChildren * self.frame.size.width, self.frame.size.height);
+}
+
+- (void)setPage:(NSInteger)page
+{
+    self.currentPage = page;
+    self.currentPageInternalId = 0;
+    int i = 0;
+    for (LayoutParams *item in self.items) {
+        if (item.view.hidden) continue;
+	if (i == page) {
+	    self.currentPageInternalId = item.view.tag;
+	    break;
+	}
+	i++;
+    }
+}
+
+- (void)reselectCurrentPage {
+    int i = 0;
+    for (LayoutParams *item in self.items) {
+        if (item.view.hidden) continue;
+	if (item.view.tag == self.currentPageInternalId) {
+            [self showPage:i animated:NO];
+	    break;
+	}
+	i++;
+    }    
+}
+
+- (void)showPage:(NSInteger)page animated:(BOOL)animated
+{
+    [self setPage:page];
+    CGRect frame = self.frame;
+    frame.origin.x = frame.size.width * page;
+    frame.origin.y = 0;
+    [self scrollRectToVisible:frame animated:animated];
 }
 
 @end

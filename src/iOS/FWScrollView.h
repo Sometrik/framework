@@ -7,6 +7,9 @@
 - (void)layoutSubviews;
 - (void)updateVisibility:(CGRect)bounds;
 - (NSInteger)indexForVisiblePage;
+- (void)setPage:(NSInteger)page;
+- (void)reselectCurrentPage;
+- (void)showPage:(NSInteger)page animated:(BOOL)animated;
 
 - (void)addItem:(LayoutParams *)linearLayoutItem;
 - (void)removeItem:(LayoutParams *)linearLayoutItem;
@@ -25,4 +28,5 @@
 @property (nonatomic, strong) NSLayoutConstraint *widthConstraint;
 @property (nonatomic, strong) NSLayoutConstraint *heightConstraint;
 @property (nonatomic, assign) int currentPage;
+@property (nonatomic, assign) int currentPageInternalId;
 @end

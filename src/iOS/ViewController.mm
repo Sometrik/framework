@@ -399,6 +399,10 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             } else if ([view.superview isKindOfClass:FWScrollView.class]) {
                 FWScrollView * layout = (FWScrollView*)view.superview;
             	[layout setNeedsLayout];
+		if (layout.pagingEnabled) {
+                    [fwScrollView reselectCurrentPage];
+		    [self sendIntValue:(int)fwScrollView.tag value:layout.currentPage];
+                }
             }
         }
     }
@@ -618,7 +622,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
         NSInteger page = [fwScrollView indexForVisiblePage];
         
         if (page >= 0 && page != fwScrollView.currentPage) {
-            fwScrollView.currentPage = page;
+            [fwScrollView setPage:page];
 
             [self sendIntValue:(int)scrollView.tag value:(int)page];
             
@@ -666,14 +670,6 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     [self addToParent:parentId view:scrollView];
 
     [scrollView.panGestureRecognizer requireGestureRecognizerToFail:self.panEdgeGestureRecognizer];
-}
-
-- (void)showPage:(UIScrollView *)scrollView page:(NSInteger)page animated:(BOOL)animated
-{
-    CGRect frame = scrollView.frame;
-    frame.origin.x = frame.size.width * page;
-    frame.origin.y = 0;
-    [scrollView scrollRectToVisible:frame animated:animated];
 }
 
 - (void)createEventLayoutWithId:(int)viewId parentId:(int)parentId
@@ -864,37 +860,14 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 {
     NSInteger itemIndex = (int)[self indexForTabBar:tabBar item:item];
     if (itemIndex != NSNotFound) {
-        [self showPage:self.pageView page:itemIndex animated:NO];
+        if (self.pageView) {
+            [self.pageView showPage:itemIndex animated:NO];
+            [self sendIntValue:(int)self.pageView.tag value:itemIndex];
+	}
 	[self sendVisibilityUpdate];
     }
     [self sendIntValue:(int)item.tag value:1];
 }
-
-/*
- - (void)updateTabBarVisibility:(int)pageIndex
- {
- BOOL hidden = NO;
- 
- for (NSNumber *number in self.tabBarHiddenInThesePages) {
- if (pageIndex == number.intValue) {
- hidden = YES;
- break;
- }
- }
- 
- if (hidden) {
- if (self.tabBar) {
- // Hide from first page
- [self.tabBar setHidden:YES];
- }
- } else {
- if (self.tabBar) {
- // Show elsewhere
- [self.tabBar setHidden:NO];
- }
- }
- }
- */
 
 // returns index for item in tabBar.items array.
 - (NSInteger)indexForTabBar:(UITabBar *)tabBar item:(UITabBarItem *)item
@@ -1563,6 +1536,10 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             item.level = parentViewManager.level + 1;
             [scrollView addItem:item];
             viewManager.layoutParams = item;
+	    if (!scrollView.currentPageInternalId) {
+	        [scrollView setPage:scrollView.currentPage];		
+	        [self sendIntValue:(int)scrollView.tag value:scrollView.currentPage];
+            }
         } else {
             [parentView addSubview:view];
             scrollView.topConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
@@ -1660,6 +1637,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             } else if ([parentView isKindOfClass:FWScrollView.class]) {
                 FWScrollView * layout = (FWScrollView*)parentView;
                 [layout removeItem:viewManager.layoutParams];
+	        [self sendIntValue:(int)layout.tag value:layout.currentPage];
             }
             [view removeFromSuperview]; // some views might be added directly
   
@@ -1685,6 +1663,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             FWScrollView * scrollView = (FWScrollView *)parentView;
             ViewManager * viewManager = [self getViewManager:viewId];
             [scrollView moveItem:viewManager.layoutParams toIndex:position];
+	    [self sendIntValue:(int)fwScrollView.tag value:scrollView.currentPage];
         } else {
             [childView removeFromSuperview];
             [parentView insertSubview:childView atIndex:position];
@@ -1705,6 +1684,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             FWScrollView * scrollView = (FWScrollView *)parentView;
             ViewManager * viewManager = [self getViewManager:viewId];
             [scrollView removeItem:viewManager.layoutParams];
+   	    [self sendIntValue:(int)layout.tag value:layout.currentPage];
         }
         [childView removeFromSuperview];  // some views might be added directly
     }
@@ -2079,10 +2059,10 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             } else {
                 ViewManager * viewManager = [self getViewManager:command.internalId];
                 if (viewManager != nil) {
-                    if ([viewManager.view isKindOfClass:UIScrollView.class]) {
-                        UIScrollView * scrollView = (UIScrollView *)viewManager.view;
+                    if ([viewManager.view isKindOfClass:FWScrollView.class]) {
+                        FWScrollView * scrollView = (FWScrollView *)viewManager.view;
                         if (scrollView.isPagingEnabled) {
-			    [self showPage:scrollView page:command.value animated:NO];
+			    [scrollView showPage:command.value animated:NO];
 			    if (scrollView == self.pageView) {
                                 [self updateTabBars:command.value];
 				[self sendVisibilityUpdate];
