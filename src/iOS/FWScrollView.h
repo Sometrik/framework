@@ -8,7 +8,7 @@
 - (void)updateVisibility:(CGRect)bounds;
 - (NSInteger)indexForVisiblePage;
 - (void)setPage:(NSInteger)page;
-- (void)reselectCurrentPage;
+- (BOOL)reselectCurrentPage;
 - (void)showPage:(NSInteger)page animated:(BOOL)animated;
 
 - (void)addItem:(LayoutParams *)linearLayoutItem;

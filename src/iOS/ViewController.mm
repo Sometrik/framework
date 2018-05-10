@@ -39,7 +39,7 @@ extern FWApplication * applicationMain();
 @property (nonatomic, strong) UINavigationBar *navBar;
 @property (nonatomic, strong) UINavigationItem *navItem;
 @property (nonatomic, strong) UIToolbar *statusBarBackgroundView;
-@property (nonatomic, strong) UIScrollView *pageView;
+@property (nonatomic, strong) FWScrollView *pageView;
 @property (nonatomic, strong) NSMutableArray *dialogIds;
 @property (nonatomic, assign) int activeViewId;
 @property (nonatomic, assign) BOOL sideMenuPanned;
@@ -399,9 +399,8 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             } else if ([view.superview isKindOfClass:FWScrollView.class]) {
                 FWScrollView * layout = (FWScrollView*)view.superview;
             	[layout setNeedsLayout];
-		if (layout.pagingEnabled) {
-                    [fwScrollView reselectCurrentPage];
-		    [self sendIntValue:(int)fwScrollView.tag value:layout.currentPage];
+                if (layout.pagingEnabled && [layout reselectCurrentPage]) {
+                    [self sendIntValue:(int)layout.tag value:layout.currentPage];
                 }
             }
         }
@@ -1637,7 +1636,9 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             } else if ([parentView isKindOfClass:FWScrollView.class]) {
                 FWScrollView * layout = (FWScrollView*)parentView;
                 [layout removeItem:viewManager.layoutParams];
-	        [self sendIntValue:(int)layout.tag value:layout.currentPage];
+	        if (layout.pagingEnabled && [layout reselectCurrentPage]) {
+                    [self sendIntValue:(int)layout.tag value:layout.currentPage];
+                }
             }
             [view removeFromSuperview]; // some views might be added directly
   
@@ -1663,7 +1664,9 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             FWScrollView * scrollView = (FWScrollView *)parentView;
             ViewManager * viewManager = [self getViewManager:viewId];
             [scrollView moveItem:viewManager.layoutParams toIndex:position];
-	    [self sendIntValue:(int)fwScrollView.tag value:scrollView.currentPage];
+            if (scrollView.pagingEnabled && [scrollView reselectCurrentPage]) {
+                [self sendIntValue:(int)scrollView.tag value:scrollView.currentPage];
+            }
         } else {
             [childView removeFromSuperview];
             [parentView insertSubview:childView atIndex:position];
@@ -1684,7 +1687,9 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             FWScrollView * scrollView = (FWScrollView *)parentView;
             ViewManager * viewManager = [self getViewManager:viewId];
             [scrollView removeItem:viewManager.layoutParams];
-   	    [self sendIntValue:(int)layout.tag value:layout.currentPage];
+            if (scrollView.pagingEnabled && [scrollView reselectCurrentPage]) {
+                [self sendIntValue:(int)scrollView.tag value:scrollView.currentPage];
+            }
         }
         [childView removeFromSuperview];  // some views might be added directly
     }

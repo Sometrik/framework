@@ -170,7 +170,6 @@
     [self.items removeObject:item];
 
     [self updateChildConstraints];
-    [self reselectCurrentPage];
     [self setNeedsLayout];
 }
 
@@ -213,7 +212,6 @@
     [self addSubview:newItem.view];
 
     [self updateChildConstraints];
-    [self reselectCurrentPage];
     [self setNeedsLayout];
 }
 
@@ -240,7 +238,6 @@
     [self.items insertObject:movingItem atIndex:existingItemIndex];
     
     [self updateChildConstraints];
-    [self reselectCurrentPage];
     [self setNeedsLayout];
 }
 
@@ -259,7 +256,6 @@
     }
     
     [self updateChildConstraints];
-    [self reselectCurrentPage];
     [self setNeedsLayout];
 }
 
@@ -277,7 +273,6 @@
     }
     
     [self updateChildConstraints];
-    [self reselectCurrentPage];
     [self setNeedsLayout];
 }
 
@@ -291,7 +286,6 @@
     [self.items exchangeObjectAtIndex:firstItemIndex withObjectAtIndex:secondItemIndex];
 
     [self updateChildConstraints];
-    [self reselectCurrentPage];
     [self setNeedsLayout];
 }
 
@@ -331,16 +325,21 @@
     }
 }
 
-- (void)reselectCurrentPage {
+- (BOOL)reselectCurrentPage {
     int i = 0;
     for (LayoutParams *item in self.items) {
         if (item.view.hidden) continue;
 	if (item.view.tag == self.currentPageInternalId) {
-            [self showPage:i animated:NO];
-	    break;
+	    if (self.currentPage != i) {
+               [self showPage:i animated:NO];
+	       return YES;
+            } else {
+	       return NO;
+	    }
 	}
 	i++;
-    }    
+    }
+    return NO;
 }
 
 - (void)showPage:(NSInteger)page animated:(BOOL)animated
