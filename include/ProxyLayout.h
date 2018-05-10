@@ -7,7 +7,6 @@
 template <class T1, class T2, class T3>
 class ProxyLayout : public T3 {
 public:
-
   ProxyLayout(int _initial_visible_count) : max_visible_count(_initial_visible_count) { }
 
   bool isA(const std::string & className) const override {
@@ -15,7 +14,7 @@ public:
     return T3::isA(className);
   }
   
-  void clear() {
+  void reset() {
     visible_keys.clear();
     all_keys.clear();
   }
@@ -32,6 +31,8 @@ public:
   void flush() {
     for (auto it = content.begin(); it != content.end(); ) {
       if (visible_keys.count(it->first)) {
+        it++;
+      } else if (it->second->getInternalId() == lockedInternalId && showKey(visible_keys.size(), it->first)) {
         it++;
       } else {
         Element::removeChild(it->second.get());
@@ -72,6 +73,17 @@ protected:
     }
   }
   
+  bool showKey(size_t pos, const T1 & key) {
+    auto orig = getContent(key);
+    if (orig.get()) {
+      visible_keys.insert(key);
+      Element::reorderChildren(*orig, (unsigned int)pos);
+      return true;
+    } else {
+      return false;
+    }
+  }
+    
   virtual std::shared_ptr<Element> createContent(const T1 & key, const T2 & data) = 0;
   virtual void updateContent(Element & e, const T1 & key, const T2 & data) = 0;
   
@@ -86,12 +98,17 @@ protected:
   
   size_t getProxyCount() const { return all_keys.size(); }
 
+  void lock(const Element & element) {
+    lockedInternalId = element.getInternalId();
+  }
+
 private:
   unsigned int max_visible_count;
   unsigned int current_content_height = 0;
   std::unordered_map<T1, std::shared_ptr<Element> > content;
   std::unordered_set<T1> visible_keys;
   std::vector<std::pair<T1, T2> > all_keys;
+  int lockedInternalId = 0;
 };
 
 #endif
