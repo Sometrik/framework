@@ -26,7 +26,6 @@ class Element : public EventHandler {
   virtual void hide();  
   virtual void focus();
   virtual void refresh() { }
-  virtual void clear() { }
   virtual void text(const std::string & text) { }
 
   virtual bool isA(const std::string & className) const {
@@ -38,6 +37,10 @@ class Element : public EventHandler {
     else return is_visible;
   }
   
+  virtual void clear() {
+    sendCommand(Command(Command::CLEAR, getInternalId()));
+  }
+
   void stop();
 
   void setError(bool t) override;

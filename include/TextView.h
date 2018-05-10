@@ -28,10 +28,6 @@ class TextView : public InputElement {
     ev.setHandled(true);
   }
 
-  void clear() {
-    sendCommand(Command(Command::CLEAR, getInternalId()));
-  }
-
   bool call(bool t) override { return call(t ? "true" : "false"); }
   bool call(const std::string & s) override {
     text(s);
