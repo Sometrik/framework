@@ -1849,7 +1849,10 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
         
         case CREATE_IMAGEVIEW: {
             @try {
-                [self createImageWithId:command.childInternalId parentId:command.internalId filename:command.textValue width:command.width height:command.height];
+    	        float scale = [[UIScreen mainScreen] scale];
+   		int width = int(command.width / scale);
+		int height = int(command.height / scale);
+                [self createImageWithId:command.childInternalId parentId:command.internalId filename:command.textValue width:width height:height];
             }
             @catch (NSException *e) {
                 [self exceptionThrown:e];
@@ -2033,7 +2036,10 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
         case ADD_IMAGE_URL: {
             ViewManager * viewManager = [self getViewManager:command.internalId];
             if (viewManager != nil) {
-                [viewManager addImageUrl:command.textValue width:command.width height:command.height];
+	        float scale = [[UIScreen mainScreen] scale];
+		int width = int(command.width / scale);
+		int height = int(command.height / scale);
+                [viewManager addImageUrl:command.textValue width:width height:height];
             }
         }
             break;
