@@ -215,20 +215,20 @@ FWApplication::onSysEvent(SysEvent & ev) {
     }
   } else if (ev.getType() == SysEvent::SHOW_DEBUG) {
     auto dialog = make_shared<DebugDialog>();
-    dialog->showModal(this);
+    showModal(dialog);
   }
 }
 
 void
 FWApplication::showMessageDialog(const std::string & title, const std::string & message) {
   auto dialog = make_shared<AppMessageDialog>(title, message);
-  dialog->showModal(this);
+  showModal(dialog);
 }
 
 std::string
 FWApplication::showInputDialog(const std::string & title, const std::string & message) {
   auto dialog = make_shared<AppInputDialog>(title, message);
-  if (dialog->showModal(this)) {
+  if (showModal(dialog)) {
     return dialog->getValue();
   } else {
     return "";

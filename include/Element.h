@@ -202,6 +202,8 @@ class Element : public EventHandler {
   }
   virtual void load() { }
 
+  int showModal(const std::shared_ptr<Element> & dialog);
+
  protected:
   virtual void create() { }
 
@@ -230,7 +232,6 @@ class Element : public EventHandler {
     Command c(Command::SELECT_FROM_GALLERY, getInternalId());
     sendCommand(c);
   }
-
   
   bool is_visible = true;
 
