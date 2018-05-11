@@ -30,9 +30,7 @@ public:
 
   void flush() {
     for (auto it = content.begin(); it != content.end(); ) {
-      if (visible_keys.count(it->first)) {
-        it++;
-      } else if (it->second->getInternalId() == lockedInternalId && showKey(visible_keys.size(), it->first)) {
+      if (isVisible(it->first)) {
         it++;
       } else {
         Element::removeChild(it->second.get());
@@ -59,6 +57,19 @@ public:
   }
 
 protected:
+  T1 getKeyForInternalId(int id) const {
+    for (auto & row : content) {
+      if (row.second->getInternalId() == id) {
+	return row.first;
+      }
+    }
+    return T1();
+  }
+
+  bool isVisible(const T1 & key) const {
+    return visible_keys.count(key);
+  }
+
   void showKey(size_t pos, const T1 & key, const T2 & data) {
     visible_keys.insert(key);
 
@@ -98,17 +109,12 @@ protected:
   
   size_t getProxyCount() const { return all_keys.size(); }
 
-  void lock(const Element & element) {
-    lockedInternalId = element.getInternalId();
-  }
-
 private:
   unsigned int max_visible_count;
   unsigned int current_content_height = 0;
   std::unordered_map<T1, std::shared_ptr<Element> > content;
   std::unordered_set<T1> visible_keys;
   std::vector<std::pair<T1, T2> > all_keys;
-  int lockedInternalId = 0;
 };
 
 #endif
