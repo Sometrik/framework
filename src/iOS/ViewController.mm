@@ -31,7 +31,7 @@ std::shared_ptr<iOSMainThread> mainThread;
 // Declare C++ function
 extern FWApplication * applicationMain();
 
-@interface ViewController () <UIScrollViewDelegate, UITabBarDelegate, InAppPurchaseManagerDelegate, FWImageViewDelegate, UITextFieldDelegate, UITextViewDelegate, UIGestureRecognizerDelegate, PaddedLabelDelegate, WKUIDelegate, WKNavigationDelegate>
+@interface ViewController () <UIScrollViewDelegate, UITabBarDelegate, InAppPurchaseManagerDelegate, FWImageViewDelegate, UITextFieldDelegate, UITextViewDelegate, UIGestureRecognizerDelegate, PaddedLabelDelegate, WKUIDelegate, WKNavigationDelegate, UIBarPositioningDelegate>
 @property (nonatomic, strong) NSMutableDictionary *viewsDictionary;
 @property (nonatomic, strong) UIView *sideMenuView;
 @property (nonatomic, strong) UIView *backgroundOverlayView;
@@ -39,6 +39,7 @@ extern FWApplication * applicationMain();
 @property (nonatomic, strong) UINavigationBar *navBar;
 @property (nonatomic, strong) UINavigationItem *navItem;
 @property (nonatomic, strong) UIToolbar *statusBarBackgroundView;
+@property (nonatomic, strong) NSLayoutConstraint *statusBarBottomConstraint;
 @property (nonatomic, strong) UIScrollView *pageView;
 @property (nonatomic, strong) NSMutableArray *dialogIds;
 @property (nonatomic, assign) int activeViewId;
@@ -139,6 +140,10 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     
 }
 
+- (UIBarPosition)positionForBar:(id<UIBarPositioning>)bar {
+    return UIBarPositionTopAttached;
+}
+
 - (void)handleKeyboardWillShowNotification:(NSNotification *)notification
 {
     id frameEnd = notification.userInfo[@"UIKeyboardFrameEndUserInfoKey"];
@@ -204,6 +209,11 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             }
         }
     }
+    if (size.width > size.height) {
+        self.statusBarBottomConstraint.constant = 0.0;
+    } else {
+        self.statusBarBottomConstraint.constant = 20.0;
+    }
   // self.view.frame = CGRectMake(0, 0, size.width, size.height);
   // [self.view setNeedsLayout];
 
@@ -234,6 +244,11 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     self.panEdgeGestureRecognizer.edges = UIRectEdgeLeft;
     self.panEdgeGestureRecognizer.delegate = self;
     [self.view addGestureRecognizer:self.panEdgeGestureRecognizer];
+    if (self.view.frame.size.width > self.view.frame.size.height) {
+        self.statusBarBottomConstraint.constant = 0.0;
+    } else {
+        self.statusBarBottomConstraint.constant = 20.0;
+    }
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -781,20 +796,24 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     [parentView addSubview:statusBarBackgroundView];
 
     [self addView:navBar withId:viewId];
-    // [self addToParent:parentId view:navBar];
+    //[self addToParent:parentId view:navBar];
     [parentView addSubview:navBar];
 
+    
     NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:statusBarBackgroundView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:statusBarBackgroundView.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
     NSLayoutConstraint *leftConstraint = [NSLayoutConstraint constraintWithItem:statusBarBackgroundView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:statusBarBackgroundView.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
     NSLayoutConstraint *rightConstraint = [NSLayoutConstraint constraintWithItem:statusBarBackgroundView attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:statusBarBackgroundView.superview attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
-    NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:statusBarBackgroundView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:statusBarBackgroundView.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:statusBarHeight];
+    NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:statusBarBackgroundView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:statusBarBackgroundView.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:20];
     [statusBarBackgroundView.superview addConstraints:@[topConstraint, leftConstraint, rightConstraint, bottomConstraint]];
     
-    NSLayoutConstraint *topConstraint2 = [NSLayoutConstraint constraintWithItem:navBar attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:navBar.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:statusBarHeight];
+    self.statusBarBottomConstraint = bottomConstraint;
+    
+    NSLayoutConstraint *topConstraint2 = [NSLayoutConstraint constraintWithItem:navBar attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:statusBarBackgroundView attribute:NSLayoutAttributeBottom multiplier:1.0f constant:0];
     NSLayoutConstraint *leftConstraint2 = [NSLayoutConstraint constraintWithItem:navBar attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:navBar.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
     NSLayoutConstraint *rightConstraint2 = [NSLayoutConstraint constraintWithItem:navBar attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:navBar.superview attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
-    NSLayoutConstraint *bottomConstraint2 = [NSLayoutConstraint constraintWithItem:navBar attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:navBar.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:statusBarHeight + 44];
-    [navBar.superview addConstraints:@[topConstraint2, leftConstraint2, rightConstraint2, bottomConstraint2]];
+    //NSLayoutConstraint *bottomConstraint2 = [NSLayoutConstraint constraintWithItem:navBar attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:navBar.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:44];
+    NSLayoutConstraint *heightConstraint = [NSLayoutConstraint constraintWithItem:navBar attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0f constant:44];
+    [navBar.superview addConstraints:@[topConstraint2, leftConstraint2, rightConstraint2, heightConstraint]];
     
     self.statusBarBackgroundView = statusBarBackgroundView;
     self.navBar = navBar;
@@ -1441,7 +1460,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
         self.webView.scrollView.contentInset = UIEdgeInsetsMake(navBarHeight, 0, 0, 0);
         [self.view addSubview:self.webView];
         
-        NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:self.webView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.webView.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:statusBarHeight];
+        NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:self.webView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.statusBarBackgroundView attribute:NSLayoutAttributeBottom multiplier:1.0f constant:0];
         NSLayoutConstraint *leftConstraint = [NSLayoutConstraint constraintWithItem:self.webView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self.webView.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
         NSLayoutConstraint *rightConstraint = [NSLayoutConstraint constraintWithItem:self.webView attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self.webView.superview attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
         NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:self.webView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self.webView.superview attribute:NSLayoutAttributeBottom multiplier:1.0f constant:0];
