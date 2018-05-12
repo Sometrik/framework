@@ -21,11 +21,6 @@ class ActionBar : public Element {
     sendCommand(c);
   }
 
-  void clear() {
-    Command c(Command::CLEAR, getInternalId());
-    sendCommand(c);
-  }
-
   void onValueEvent(ValueEvent & ev) override {
     notify();
     CommandEvent ev2(getId(), ev.getValue(), ev.getValue2());

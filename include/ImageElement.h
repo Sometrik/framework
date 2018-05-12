@@ -47,7 +47,7 @@ class ImageElement : public Element {
 
   void clear() override {
     images.clear();
-    sendCommand(Command(Command::CLEAR, getInternalId()));
+    Element::clear();
   }
 
   void setImageFile(const std::string & filename) {

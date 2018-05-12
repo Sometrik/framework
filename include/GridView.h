@@ -44,10 +44,6 @@ class GridView : public Element {
     sendCommand(Command(Command::FLUSH_VIEW, getInternalId()));    
   }
 
-  void clear() {
-    sendCommand(Command(Command::CLEAR, getInternalId()));    
-  }
-
  protected: 
   void create() override {
     sendCommand(Command(Command::CREATE_GRIDVIEW, getParentInternalId(), getInternalId()));

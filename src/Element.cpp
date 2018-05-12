@@ -166,6 +166,7 @@ Element::removeChildren() {
 void
 Element::removeChild(Element * child) {
   if (child) {
+    child->setParent(0);
     for (auto it = children.begin(); it != children.end(); it++) {
       if (it->get() == child) {
         sendCommand(Command(Command::REMOVE_CHILD, getInternalId(), child->getInternalId()));
@@ -184,4 +185,10 @@ Element::createTimer(int timeout_ms) {
   sendCommand(c);
 
   return timer_id;
+}
+
+int
+Element::showModal(const std::shared_ptr<Element> & dialog) {
+  addChild(dialog);
+  return getThread().startModal();
 }

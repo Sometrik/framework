@@ -16,15 +16,6 @@ class Dialog : public Element {
     return Element::isA(className);
   }
 
-  int showModal(Element * parent) {
-    if (!isInitialized()) {
-      setParent(parent);
-      initialize(&(parent->getThread()));
-      initializeChildren();
-    }
-    return getThread().startModal();
-  }
-
   void onValueEvent(ValueEvent & ev) override {
     ev.setHandled(true);
     endModal(ev.getValue());
@@ -44,6 +35,7 @@ class Dialog : public Element {
  protected:
   void endModal(int value = 0) {
     getThread().endModal(value);
+    getParent()->removeChild(this);
   }
   
   void create() override {

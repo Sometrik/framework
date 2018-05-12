@@ -7,7 +7,6 @@
 template <class T1, class T2, class T3>
 class ProxyLayout : public T3 {
 public:
-
   ProxyLayout(int _initial_visible_count) : max_visible_count(_initial_visible_count) { }
 
   bool isA(const std::string & className) const override {
@@ -15,7 +14,7 @@ public:
     return T3::isA(className);
   }
   
-  void clear() {
+  void reset() {
     visible_keys.clear();
     all_keys.clear();
   }
@@ -31,7 +30,7 @@ public:
 
   void flush() {
     for (auto it = content.begin(); it != content.end(); ) {
-      if (visible_keys.count(it->first)) {
+      if (isVisible(it->first)) {
         it++;
       } else {
         Element::removeChild(it->second.get());
@@ -58,6 +57,19 @@ public:
   }
 
 protected:
+  T1 getKeyForInternalId(int id) const {
+    for (auto & row : content) {
+      if (row.second->getInternalId() == id) {
+	return row.first;
+      }
+    }
+    return T1();
+  }
+
+  bool isVisible(const T1 & key) const {
+    return visible_keys.count(key);
+  }
+
   void showKey(size_t pos, const T1 & key, const T2 & data) {
     visible_keys.insert(key);
 
@@ -72,6 +84,17 @@ protected:
     }
   }
   
+  bool showKey(size_t pos, const T1 & key) {
+    auto orig = getContent(key);
+    if (orig.get()) {
+      visible_keys.insert(key);
+      Element::reorderChildren(*orig, (unsigned int)pos);
+      return true;
+    } else {
+      return false;
+    }
+  }
+    
   virtual std::shared_ptr<Element> createContent(const T1 & key, const T2 & data) = 0;
   virtual void updateContent(Element & e, const T1 & key, const T2 & data) = 0;
   

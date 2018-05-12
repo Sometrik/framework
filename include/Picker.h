@@ -43,11 +43,6 @@ class Picker : public Element {
     return value;
   }
 
-  void clear() {
-    Command c(Command::CLEAR, getInternalId());
-    sendCommand(c);
-  }
-
   bool call() override { return call(value); }
   bool call(bool t) override { return call(t ? value : 0); }
   bool call(int i) override {

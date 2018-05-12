@@ -63,10 +63,6 @@ class ListView : public Element {
     sendCommand(Command(Command::FLUSH_VIEW, getInternalId()));
   }
 
-  void clear() {
-    sendCommand(Command(Command::CLEAR, getInternalId()));
-  }
-
   void onValueEvent(ValueEvent & ev) override {
     selected_sheet = ev.getValue();
     selected_row = ev.getValue2();
