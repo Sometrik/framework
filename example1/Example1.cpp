@@ -174,7 +174,7 @@ Example1::onCommandEvent(CommandEvent & ev) {
     case ID_CLICK_ME_BUTTON: {
       cerr << "showing dialog" << endl;
       auto dialog = make_shared<ImageDialog>();
-      dialog->showModal(this);
+      showModal(dialog);
     }
       break;
     case ID_SHOW_MENU_BUTTON: {
@@ -190,7 +190,7 @@ Example1::onCommandEvent(CommandEvent & ev) {
       auto sheet = make_shared<FWActionSheet>("Test");
       sheet->addOption(1, "Do something");
       sheet->addOption(2, "Do something else");
-      int r = sheet->showModal(this);
+      int r = showModal(sheet);
       cerr << "Actionsheet returned with " << r << endl;
       if (r == 1) {
 	launchBrowser("http://www.slashdot.org/");
