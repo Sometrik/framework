@@ -56,6 +56,8 @@ public:
     }
   }
 
+  size_t getProxyCount() const { return all_keys.size(); }
+
 protected:
   T1 getKeyForInternalId(int id) const {
     for (auto & row : content) {
@@ -107,8 +109,6 @@ protected:
     }
   }
   
-  size_t getProxyCount() const { return all_keys.size(); }
-
 private:
   unsigned int max_visible_count;
   unsigned int current_content_height = 0;
