@@ -158,6 +158,11 @@
        
     self.contentSize = CGSizeMake(numChildren * self.frame.size.width, self.frame.size.height);
 
+    if (numChildren == 0) {
+        self.currentPage = 0;
+        self.currentPageInternalId = item.view.tag;
+    }
+
     [self setNeedsLayout];
 }
 
