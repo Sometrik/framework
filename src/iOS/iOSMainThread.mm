@@ -130,7 +130,7 @@ iOSMainThread::handleEventFromThread(int target_element_id, Event * event) {
 
 void
 iOSMainThread::setImageData(int internal_id, std::shared_ptr<canvas::PackedImageData> input) {
-  int bpp = input->getBytesPerPixel(input->getInternalFormat());
+  int bpp = input->getBytesPerPixel();
   int bitsPerComponent = 8;
   CGBitmapInfo bitmapInfo = 0;
   if (input->getInternalFormat() == canvas::RGBA4) {
@@ -148,10 +148,10 @@ iOSMainThread::setImageData(int internal_id, std::shared_ptr<canvas::PackedImage
     bitmapInfo |= kCGImageAlphaNoneSkipFirst;
     bitmapInfo |= kCGBitmapByteOrder32Little;
   }
-  auto cfdata = CFDataCreate(0, input->getData(), bpp * input->getWidth() * input->getHeight());
+  auto cfdata = CFDataCreate(0, input->getData(), input->getHeight() * input->getBytesPerRow());
   auto provider = CGDataProviderCreateWithCFData(cfdata);
   auto colorspace = CGColorSpaceCreateDeviceRGB();
-  auto img = CGImageCreate(input->getWidth(), input->getHeight(), bitsPerComponent, bpp * 8, bpp * input->getWidth(), colorspace, bitmapInfo, provider, 0, true, kCGRenderingIntentDefault);
+  auto img = CGImageCreate(input->getWidth(), input->getHeight(), bitsPerComponent, bpp * 8, input->getBytesPerRow(), colorspace, bitmapInfo, provider, 0, true, kCGRenderingIntentDefault);
 
   if (img) { 
     [viewController setImageFromThread:internal_id data:img];
