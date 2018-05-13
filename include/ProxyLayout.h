@@ -85,18 +85,7 @@ protected:
       Element::addChild(e);
     }
   }
-  
-  bool showKey(size_t pos, const T1 & key) {
-    auto orig = getContent(key);
-    if (orig.get()) {
-      visible_keys.insert(key);
-      Element::reorderChildren(*orig, (unsigned int)pos);
-      return true;
-    } else {
-      return false;
-    }
-  }
-    
+     
   virtual std::shared_ptr<Element> createContent(const T1 & key, const T2 & data) = 0;
   virtual void updateContent(Element & e, const T1 & key, const T2 & data) = 0;
   
