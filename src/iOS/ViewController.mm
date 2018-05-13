@@ -2021,7 +2021,15 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             }
         }
             break;
-            
+
+        case RELEASE: {
+            ViewManager * viewManager = [self getViewManager:command.internalId];
+            if (viewManager) {
+                [viewManager releaseData];
+            }
+        }
+            break;
+
         case REORDER_CHILD: {
             @try {
                 [self reorderChildWithId:command.childInternalId parentId:command.internalId newPosition:command.value];

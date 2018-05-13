@@ -23,17 +23,26 @@ class ImageElement : public Element {
 
   void onVisibilityUpdateEvent(VisibilityUpdateEvent & ev) override {
     if (isRequestPending && getParent() && isVisible()) {
-      pendingRequest.dispatch(*(getParent()));
+      currentRequest.dispatch(*(getParent()));
       isRequestPending = false;
+    }
+  }
+
+  void onSysInfoEvent(SysInfoEvent & ev) override {
+    if (ev.getType() == SysInfoEvent::MEMORY_WARNING && !isVisible()) {
+      sendCommand(Command(Command::RELEASE, getInternalId()));
+      isRequestPending = true;
     }
   }
   
   void handleImageRequestEvent(ImageRequestEvent & ev) override {
+    currentRequest = ev;
     width = ev.getRequestedWidth();
     height = ev.getRequestedHeight();
-    if (!isVisible()) {
+    if (isVisible()) {
+      isRequestPending = false;
+    } else {
       isRequestPending = true;
-      pendingRequest = ev;
       ev.setHandled(true);
     }
   }  
@@ -109,7 +118,7 @@ class ImageElement : public Element {
   ImageSet images;
   unsigned int width = 0, height = 0;
   bool isRequestPending = false;
-  ImageRequestEvent pendingRequest;
+  ImageRequestEvent currentRequest;
 };
 
 #endif

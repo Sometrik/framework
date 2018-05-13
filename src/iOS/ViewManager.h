@@ -15,6 +15,7 @@ typedef enum {
 @interface ViewManager : NSObject
 - (id)init;
 - (void)clear;
+- (void)releaseData;
 - (void)setImage:(CGImageRef)data;
 - (void)addImageUrl:(NSString *)url width:(int)width height:(int)height;
 - (void)setStyle:(NSString *)key value:(NSString *)value selector:(StyleSelector)selector;

@@ -36,6 +36,14 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
     }
 }
 
+- (void)releaseData
+{
+    if ([self.view isKindOfClass:FWImageView.class]) {
+        FWImageView * imageView = (FWImageView *)self.view;
+        [imageView releaseData];
+    }
+}
+
 - (void)addImageUrl:(NSString *)url width:(int)width height:(int)height
 {
     if ([self.view isKindOfClass:FWImageView.class]) {

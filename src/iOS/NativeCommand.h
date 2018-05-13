@@ -43,6 +43,7 @@ typedef enum {
     LAUNCH_BROWSER,
     HISTORY_GO_BACK,
     CLEAR, // Clears the contents of GridView
+    RELEASE,
     SET_INT_VALUE, // Sets value of radio groups, checkboxes and pickers
     SET_TEXT_VALUE, // Sets value of textfields and labels
     SET_INT_DATA,

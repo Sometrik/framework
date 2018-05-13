@@ -119,6 +119,11 @@
     [self.images removeAllObjects];
 }
 
+- (void)releaseData
+{
+    self.image = nil;
+}
+
 - (void)updateContentMode {
     if (self.image != nil && self.prevWidth > 0 && self.prevHeight > 0 &&
 	(self.contentMode == UIViewContentModeCenter || self.contentMode == UIViewContentModeScaleAspectFit)) {

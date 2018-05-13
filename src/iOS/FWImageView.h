@@ -10,6 +10,7 @@
 - (void)layoutSubviews;
 - (void)addImageUrl:(NSString *)url width:(int)width height:(int)height;
 - (void)clear;
+- (void)releaseData;
 - (void)updateContentMode;
 - (void)updateVisibility:(CGRect)bounds;
 
