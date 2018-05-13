@@ -7,6 +7,7 @@
 #include <PlatformThread.h>
 #include <ImageRequestEvent.h>
 #include <ImageResponseEvent.h>
+#include <SysInfoEvent.h>
 
 class ImageElement : public Element {
  public:
