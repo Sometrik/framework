@@ -109,6 +109,7 @@ public class NativeCommand {
     LAUNCH_BROWSER,
     HISTORY_GO_BACK,
     CLEAR,
+    RELEASE,
     SET_INT_VALUE, // Sets value of radio groups, checkboxes and pickers
     SET_TEXT_VALUE, // Sets value of textfields, labels and images
     SET_INT_DATA,
