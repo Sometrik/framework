@@ -2186,7 +2186,11 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
         case SET_TEXT_VALUE: {
             ViewManager * viewManager = [self getViewManager:command.internalId];
             if (viewManager != nil) {
-                [viewManager setTextValue:command.textValue];
+                if ([viewManager.view isKindOfClass:UINavigationBar.class]) {
+                    [self setTitles:command.textValue subtitle:(command.textValue2 != nil ? command.textValue2 : @"")];
+                } else {
+                    [viewManager setTextValue:command.textValue];
+                }
             }
         }
             break;
@@ -2294,21 +2298,11 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     mainThread->sendTextValue(viewId, s);
 }
 
-- (void)setTitle:(NSString*)title
+- (void)setTitles:(NSString*)title subtitle:(NSString*)subtitle
 {
+    NSLog(@"setting titles: %@ %@", title, subtitle);
     self.currentTitle = title;
-
     self.navBarTitle.text = title;
-    
-    /*if (self.navBar != nil) {
-        self.navBar.items[0].title = title;
-    }
-     */
-
-}
-
-- (void)setSubtitle:(NSString *)subtitle
-{
     self.navBarSubtitle.text = subtitle;
 }
 
