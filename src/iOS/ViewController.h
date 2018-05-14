@@ -60,6 +60,10 @@ typedef enum
 
 - (ViewManager *)getViewManager:(int)viewId;
 
+- (void)sendPauseEvent;
+- (void)sendResumeEvent;
+- (void)sendDestroyEvent;
+
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer: (UIGestureRecognizer *)otherGestureRecognizer;
 
 @end

@@ -1783,6 +1783,22 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     return [self.viewsDictionary objectForKey:[NSString stringWithFormat:@"%d", viewId]];
 }
 
+ 
+- (void)sendPauseEvent {
+    SysInfoEvent ev(SysInfoEvent::PAUSE);
+    mainThread->sendEvent(mainThread->getApplication().getInternalId(), ev);
+}
+
+- (void)sendResumeEvent {
+    SysInfoEvent ev(SysInfoEvent::RESUME);
+    mainThread->sendEvent(mainThread->getApplication().getInternalId(), ev);
+}
+
+- (void)sendDestroyEvent {
+    SysInfoEvent ev(SysInfoEvent::DESTROY);
+    mainThread->sendEvent(mainThread->getApplication().getInternalId(), ev);
+}
+
 - (void)addView:(id)view withId:(int)viewId
 {
     ViewManager * viewManager = [[ViewManager alloc] init];
