@@ -267,36 +267,6 @@
     [self relayoutAll];
 }
 
-- (void)moveItem:(LayoutParams *)movingItem beforeItem:(LayoutParams *)existingItem {
-    if (movingItem == nil || [self.items containsObject:movingItem] == NO || existingItem == nil || [self.items containsObject:existingItem] == NO || movingItem == existingItem) {
-        return;
-    }
-    
-    [self.items removeObject:movingItem];
-    
-    NSUInteger existingItemIndex = [self.items indexOfObject:existingItem];
-    [self.items insertObject:movingItem atIndex:existingItemIndex];
-    
-    [self setNeedsLayout];
-}
-
-- (void)moveItem:(LayoutParams *)movingItem afterItem:(LayoutParams *)existingItem {
-    if (movingItem == nil || [self.items containsObject:movingItem] == NO || existingItem == nil || [self.items containsObject:existingItem] == NO || movingItem == existingItem) {
-        return;
-    }
-    
-    [self.items removeObject:movingItem];
-    
-    if (existingItem == [self.items lastObject]) {
-        [self.items addObject:movingItem];
-    } else {
-        NSUInteger existingItemIndex = [self.items indexOfObject:existingItem];
-        [self.items insertObject:movingItem atIndex:++existingItemIndex];
-    }
-    
-    [self setNeedsLayout];
-}
-
 - (void)moveItem:(LayoutParams *)movingItem toIndex:(NSUInteger)index {
     if (movingItem == nil || [self.items containsObject:movingItem] == NO || [self.items indexOfObject:movingItem] == index) {
         return;

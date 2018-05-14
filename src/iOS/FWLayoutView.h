@@ -26,8 +26,6 @@
 - (void)insertItem:(LayoutParams *)newItem afterItem:(LayoutParams *)existingItem;
 - (void)insertItem:(LayoutParams *)newItem atIndex:(NSUInteger)index;
 
-- (void)moveItem:(LayoutParams *)movingItem beforeItem:(LayoutParams *)existingItem;
-- (void)moveItem:(LayoutParams *)movingItem afterItem:(LayoutParams *)existingItem;
 - (void)moveItem:(LayoutParams *)movingItem toIndex:(NSUInteger)index;
 
 - (void)swapItem:(LayoutParams *)firstItem withItem:(LayoutParams *)secondItem;
