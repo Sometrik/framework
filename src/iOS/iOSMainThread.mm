@@ -9,6 +9,7 @@
 #include <CommandEvent.h>
 #include <UpdateEvent.h>
 #include <DrawEvent.h>
+#include <SysInfoEvent.h>
 
 #include "iOSThread.h"
 
@@ -39,9 +40,9 @@ iOSMainThread::startEventLoop() {
 
         auto ev2 = dynamic_cast<SysEvent*>(ev.second.get());
         if (ev2) {
-          if (ev2->getType() == SysEvent::DESTROY) {
+          if (ev2->getType() == SysInfoEvent::DESTROY) {
             exit_loop = true;
-          } else if (ev2->getType() == SysEvent::PAUSE) {
+          } else if (ev2->getType() == SysInfoEvent::PAUSE) {
           }
         }
 
