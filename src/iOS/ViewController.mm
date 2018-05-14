@@ -38,6 +38,8 @@ extern FWApplication * applicationMain();
 @property (nonatomic, strong) UITabBar *tabBar;
 @property (nonatomic, strong) UINavigationBar *navBar;
 @property (nonatomic, strong) UINavigationItem *navItem;
+@property (nonatomic, strong) UILabel *navBarTitle;
+@property (nonatomic, strong) UILabel *navBarSubtitle;
 @property (nonatomic, strong) UIToolbar *statusBarBackgroundView;
 @property (nonatomic, strong) NSLayoutConstraint *statusBarBottomConstraint;
 @property (nonatomic, strong) FWScrollView *pageView;
@@ -63,6 +65,7 @@ extern FWApplication * applicationMain();
 @property (nonatomic, strong) NSMutableDictionary *frameViewConstraints; // constraints saved (for animation purposes), viewId is the key.
 @property (nonatomic, strong) NSMutableDictionary *dialogConstraints;
 @property (nonatomic, assign) AnimationStyle dialogAnimationStyle;
+
 @end
 
 static const NSTimeInterval animationDuration = 0.4;
@@ -753,11 +756,25 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     navBar.translucent = YES;
     //navBar.layer.zPosition = 1000;
 
-    if (self.currentTitle != nil) {
+    // create titleView that has title and subtitle
+    CGFloat titleViewWidth = 150;
+    CGFloat titleViewLeading = 8;
+    UIView *titleView = [[UIView alloc] initWithFrame:CGRectMake(self.view.frame.size.width/2 - titleViewWidth/2, 0, titleViewWidth, 44)];
+    UILabel *titleViewTitle = [[UILabel alloc] initWithFrame:CGRectMake(titleViewLeading, titleViewLeading/2, titleViewWidth - 2*titleViewLeading, 22)];
+    UILabel *titleViewSubtitle = [[UILabel alloc] initWithFrame:CGRectMake(titleViewLeading, titleViewTitle.frame.size.height + 2, titleViewWidth - 2*titleViewLeading, 12)];
+    [titleView addSubview:titleViewTitle];
+    [titleView addSubview:titleViewSubtitle];
+    self.navBarTitle = titleViewTitle;
+    self.navBarSubtitle = titleViewSubtitle;
+    self.navItem = [[UINavigationItem alloc] init];
+    self.navItem.titleView = titleView;
+    /*
+     if (self.currentTitle != nil) {
       self.navItem = [[UINavigationItem alloc] initWithTitle:self.currentTitle];
     } else {
       self.navItem = [[UINavigationItem alloc] init];
     }
+     */
 
     // Add debug event by tapping nav bar 5 times
     UITapGestureRecognizer *debugTapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(navBarTapped5Times:)];
@@ -2239,9 +2256,18 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 {
     self.currentTitle = title;
 
-    if (self.navBar != nil) {
+    self.navBarTitle.text = title;
+    
+    /*if (self.navBar != nil) {
         self.navBar.items[0].title = title;
     }
+     */
+
+}
+
+- (void)setSubtitle:(NSString *)subtitle
+{
+    self.navBarSubtitle.text = subtitle;
 }
 
 - (void)setBackButtonVisibility:(BOOL)v {
