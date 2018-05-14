@@ -41,6 +41,7 @@ Example1::Example1() : FWApplication("com.sometrik.example1")
   createTimer(1000);
   
   actionBar = std::make_shared<ActionBar>();
+  actionBar->setTitle("Pitkä yläotsikko tässä", "Alaotsikko");
   addChild(actionBar);
   
   navigationDrawer = std::make_shared<NavigationDrawer>();
@@ -183,6 +184,7 @@ Example1::onCommandEvent(CommandEvent & ev) {
     }
       break;
     case ID_SHOW_FRONT_PAGE: {
+      actionBar->setTitle("Yläotsikko ilman alaotsikkoa", "");
       mainView->show();
     }
       break;
