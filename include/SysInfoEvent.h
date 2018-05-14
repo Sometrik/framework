@@ -10,6 +10,11 @@ class Runnable;
 class SysInfoEvent : public Event {
 public:
   enum Type {
+    START = 1, // Called when app is becoming visible
+    RESUME, // Called when the app will start interacting with the user
+    PAUSE, // Called when the app is no longer interacting with the user
+    STOP, // Called when app is no longer visible
+    DESTROY, // Called just before the app is destroyed
     MEMORY_WARNING,
     LANGUAGE_CHANGED
   };
