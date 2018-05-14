@@ -298,13 +298,13 @@
 }
 
 - (void)moveItem:(LayoutParams *)movingItem toIndex:(NSUInteger)index {
-    if (movingItem == nil || [self.items containsObject:movingItem] == NO || index >= [self.items count] || [self.items indexOfObject:movingItem] == index) {
+    if (movingItem == nil || [self.items containsObject:movingItem] == NO || [self.items indexOfObject:movingItem] == index) {
         return;
     }
     
     [self.items removeObject:movingItem];
     
-    if (index == ([self.items count] - 1)) {
+    if (index >= [self.items count]) {
         [self.items addObject:movingItem];
     } else {
         [self.items insertObject:movingItem atIndex:index];
