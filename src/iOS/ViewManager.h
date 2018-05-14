@@ -18,6 +18,7 @@ typedef enum {
 - (void)releaseData;
 - (void)setImage:(CGImageRef)data;
 - (void)addImageUrl:(NSString *)url width:(int)width height:(int)height;
+- (void)flush;
 - (void)setStyle:(NSString *)key value:(NSString *)value selector:(StyleSelector)selector;
 - (void)applyStyles:(BOOL)animate;
 - (void)setIntValue:(int)value;

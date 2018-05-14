@@ -422,10 +422,10 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     }
 }
 
-- (void)sendVisibilityUpdate
+- (void)sendVisibilityUpdate:(int)viewId
 {
     VisibilityUpdateEvent ev;
-    mainThread->sendEvent(mainThread->getApplication().getInternalId(), ev);
+    mainThread->sendEvent(viewId, ev);
 }
 
 // Lazy initialization
@@ -644,7 +644,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
                 // set selected item for all tabbars
                 [self updateTabBars:page];
             }
-	    [self sendVisibilityUpdate];
+	    [self sendVisibilityUpdate:fwScrollView.tag];
         }
     }
 }
@@ -881,8 +881,8 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
         if (self.pageView) {
             [self.pageView showPage:itemIndex animated:NO];
             [self sendIntValue:(int)self.pageView.tag value:itemIndex];
+	    [self sendVisibilityUpdate:self.pageView.tag];
 	}
-	[self sendVisibilityUpdate];
     }
     [self sendIntValue:(int)item.tag value:1];
 }
@@ -2070,10 +2070,19 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             }
         }
             break;
+
+	case FLUSH_VIEW: {
+	    ViewManager * viewManager = [self getViewManager:command.internalId];
+            if (viewManager != nil) {
+                [viewManager flush];
+            }        
+	}
+	    break;
         
         case SET_INT_VALUE: {
             if (command.internalId == 1) {
                 if (command.childInternalId != self.activeViewId) {
+                    int oldActiveViewId = self.activeViewId;
 #if 1
                     if (self.activeViewId && ![self isParentView:self.activeViewId childId:command.childInternalId]) {
                         [self switchView:self.activeViewId newView:command.childInternalId direction:NO];
@@ -2088,7 +2097,8 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
                     self.activeViewId = command.childInternalId;
                     [self setVisibility:self.activeViewId visibility:1];
 #endif
-		    [self sendVisibilityUpdate];
+		    [self sendVisibilityUpdate:oldActiveViewId];
+		    [self sendVisibilityUpdate:self.activeViewId];
 #if 0
                     NSString * title = [NSString stringWithUTF8String:command.getTextValue().c_str()];
                     [self setTitle:title];
@@ -2103,7 +2113,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 			    [scrollView showPage:command.value animated:NO];
 			    if (scrollView == self.pageView) {
                                 [self updateTabBars:command.value];
-				[self sendVisibilityUpdate];
+				[self sendVisibilityUpdate:scrollView.tag];
 			    }
                         }
                     } else {

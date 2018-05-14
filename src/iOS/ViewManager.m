@@ -4,6 +4,7 @@
 #import "PaddedLabel.h"
 #import "FWPicker.h"
 #import "FWButton.h"
+#import "FWScrollView.h"
 
 LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, CGFloat right) {
     LinearLayoutItemMargin margin;
@@ -49,6 +50,14 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
     if ([self.view isKindOfClass:FWImageView.class]) {
         FWImageView *imageView = (FWImageView *)self.view;
         [imageView addImageUrl:url width:width height:height];
+    }
+}
+
+- (void)flush
+{
+    if ([self.view isKindOfClass:FWScrollView.class]) {
+        FWScrollView * scrollView = (FWScrollView *)self.view;
+        [scrollView flush];
     }
 }
 

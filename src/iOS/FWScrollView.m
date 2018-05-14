@@ -123,6 +123,11 @@
     }
 }
 
+- (void)flush {
+    [self updateChildConstraints];
+    [self setNeedsLayout];
+}
+
 - (void)addItem:(LayoutParams *)item {
     if (item == nil || [self.items containsObject:item] == YES || item.view == nil) {
         return;
@@ -173,9 +178,6 @@
     
     [item.view removeFromSuperview];
     [self.items removeObject:item];
-
-    [self updateChildConstraints];
-    [self setNeedsLayout];
 }
 
 - (void)removeAllItems {
@@ -184,9 +186,6 @@
         [item.view removeFromSuperview];
     }
     [self.items removeAllObjects];
-
-    [self updateChildConstraints];
-    [self setNeedsLayout];
 }
 
 - (void)insertItem:(LayoutParams *)newItem beforeItem:(LayoutParams *)existingItem {
@@ -197,9 +196,6 @@
     NSUInteger index = [self.items indexOfObject:existingItem];
     [self.items insertObject:newItem atIndex:index];
     [self addSubview:newItem.view];
-
-    [self updateChildConstraints];
-    [self setNeedsLayout];
 }
 
 - (void)insertItem:(LayoutParams *)newItem afterItem:(LayoutParams *)existingItem {
@@ -215,9 +211,6 @@
     }
     
     [self addSubview:newItem.view];
-
-    [self updateChildConstraints];
-    [self setNeedsLayout];
 }
 
 - (void)insertItem:(LayoutParams *)newItem atIndex:(NSUInteger)index {
@@ -227,58 +220,20 @@
     
     [self.items insertObject:newItem atIndex:index];
     [self addSubview:newItem.view];
-
-    [self updateChildConstraints];
-    [self setNeedsLayout];
-}
-
-- (void)moveItem:(LayoutParams *)movingItem beforeItem:(LayoutParams *)existingItem {
-    if (movingItem == nil || [self.items containsObject:movingItem] == NO || existingItem == nil || [self.items containsObject:existingItem] == NO || movingItem == existingItem) {
-        return;
-    }
-    
-    [self.items removeObject:movingItem];
-    
-    NSUInteger existingItemIndex = [self.items indexOfObject:existingItem];
-    [self.items insertObject:movingItem atIndex:existingItemIndex];
-    
-    [self updateChildConstraints];
-    [self setNeedsLayout];
-}
-
-- (void)moveItem:(LayoutParams *)movingItem afterItem:(LayoutParams *)existingItem {
-    if (movingItem == nil || [self.items containsObject:movingItem] == NO || existingItem == nil || [self.items containsObject:existingItem] == NO || movingItem == existingItem) {
-        return;
-    }
-    
-    [self.items removeObject:movingItem];
-    
-    if (existingItem == [self.items lastObject]) {
-        [self.items addObject:movingItem];
-    } else {
-        NSUInteger existingItemIndex = [self.items indexOfObject:existingItem];
-        [self.items insertObject:movingItem atIndex:++existingItemIndex];
-    }
-    
-    [self updateChildConstraints];
-    [self setNeedsLayout];
 }
 
 - (void)moveItem:(LayoutParams *)movingItem toIndex:(NSUInteger)index {
-    if (movingItem == nil || [self.items containsObject:movingItem] == NO || index >= [self.items count] || [self.items indexOfObject:movingItem] == index) {
+    if (movingItem == nil || [self.items containsObject:movingItem] == NO || [self.items indexOfObject:movingItem] == index) {
         return;
     }
     
     [self.items removeObject:movingItem];
     
-    if (index == ([self.items count] - 1)) {
+    if (index >= [self.items count]) {
         [self.items addObject:movingItem];
     } else {
         [self.items insertObject:movingItem atIndex:index];
     }
-    
-    [self updateChildConstraints];
-    [self setNeedsLayout];
 }
 
 - (void)swapItem:(LayoutParams *)firstItem withItem:(LayoutParams *)secondItem {
@@ -289,9 +244,6 @@
     NSUInteger firstItemIndex = [self.items indexOfObject:firstItem];
     NSUInteger secondItemIndex = [self.items indexOfObject:secondItem];
     [self.items exchangeObjectAtIndex:firstItemIndex withObjectAtIndex:secondItemIndex];
-
-    [self updateChildConstraints];
-    [self setNeedsLayout];
 }
 
 - (NSInteger)indexForVisiblePage
