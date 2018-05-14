@@ -65,6 +65,9 @@ extern FWApplication * applicationMain();
 @property (nonatomic, strong) NSMutableDictionary *frameViewConstraints; // constraints saved (for animation purposes), viewId is the key.
 @property (nonatomic, strong) NSMutableDictionary *dialogConstraints;
 @property (nonatomic, assign) AnimationStyle dialogAnimationStyle;
+@property (nonatomic, assign) BOOL sideMenuSwiped;
+@property (nonatomic, strong) NSDate *sideMenuPanStartedDate;
+@property (nonatomic, assign) CGFloat sideMenuLastTouchLocationX;
 
 @end
 
@@ -716,12 +719,12 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
 /*- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRequireFailureOfGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
 {
-    if ([otherGestureRecognizer isEqual:self.pageView.panGestureRecognizer] && [gestureRecognizer isEqual:self.panEdgeGestureRecognizer]) {
-        return NO;
+    if ([gestureRecognizer isEqual:self.sideMenuSwipeGestureRecognizer] && [otherGestureRecognizer isEqual:self.sideMenuPanGestureRecognizer]) {
+        return YES;
     }
-    return YES;
+    return NO;
 }
-*/
+
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldBeRequiredToFailByGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
 {
@@ -731,7 +734,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     }
     return NO;
 }
-
+*/
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch
 {
     UITapGestureRecognizer *tapGestureRecognizer = self.view.gestureRecognizers.firstObject;
@@ -815,7 +818,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:statusBarBackgroundView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:statusBarBackgroundView.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
     NSLayoutConstraint *leftConstraint = [NSLayoutConstraint constraintWithItem:statusBarBackgroundView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:statusBarBackgroundView.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
     NSLayoutConstraint *rightConstraint = [NSLayoutConstraint constraintWithItem:statusBarBackgroundView attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:statusBarBackgroundView.superview attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
-    NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:statusBarBackgroundView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:statusBarBackgroundView.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:20];
+    NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:statusBarBackgroundView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:statusBarBackgroundView.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:statusBarHeight];
     [statusBarBackgroundView.superview addConstraints:@[topConstraint, leftConstraint, rightConstraint, bottomConstraint]];
     
     self.statusBarBottomConstraint = bottomConstraint;
@@ -932,9 +935,15 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     self.sideMenuView.transform = CGAffineTransformTranslate(self.sideMenuView.transform, -CGRectGetWidth(self.sideMenuView.frame), 0.0);
     [self addView:self.sideMenuView withId:viewId];
     
-    UIPanGestureRecognizer *panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(sideMenuPanned:)];
-    [self.sideMenuView addGestureRecognizer:panGesture];
+    UIPanGestureRecognizer *sideMenuPanGestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(sideMenuPanned:)];
+    //self.sideMenuPanGestureRecognizer.delegate = self;
+    [self.sideMenuView addGestureRecognizer:sideMenuPanGestureRecognizer];
 
+    UISwipeGestureRecognizer *sideMenuSwipeGestureRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(sideMenuSwiped:)];
+    sideMenuSwipeGestureRecognizer.direction = UISwipeGestureRecognizerDirectionLeft;
+    sideMenuSwipeGestureRecognizer.delegate = self;
+    [self.sideMenuView addGestureRecognizer:sideMenuSwipeGestureRecognizer];
+    
     UIView * sideMenuContainer = [[UIView alloc] init];
     sideMenuContainer.translatesAutoresizingMaskIntoConstraints = false;
     [self.sideMenuView addSubview:sideMenuContainer];
@@ -1001,6 +1010,11 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     }
 }
 
+- (void)sideMenuSwiped:(UISwipeGestureRecognizer *)recognizer
+{
+    self.sideMenuSwiped = YES;
+}
+    
 - (void)edgeSwiped:(UIScreenEdgePanGestureRecognizer *)recognizer
 {
     if (self.sideMenuView) {
@@ -1034,28 +1048,40 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 - (void)sideMenuPanned:(UIPanGestureRecognizer *)recognizer
 {
     CGPoint touchLocation = [recognizer translationInView:recognizer.view];
-    NSLog(@"panned location = %@", NSStringFromCGPoint(touchLocation));
+    //NSLog(@"panned location = %@", NSStringFromCGPoint(touchLocation));
+    //NSLog(@"touchLocation = %@", NSStringFromCGPoint(touchLocation));
     BOOL gestureIsDraggingFromLeftToRight = [recognizer velocityInView:self.view].x > 0;
-    
     if (recognizer.state == UIGestureRecognizerStateBegan) {
+        self.sideMenuPanStartedDate = [NSDate date];
         [recognizer setTranslation:touchLocation inView:self.view];
     } else if (recognizer.state == UIGestureRecognizerStateChanged) {
         recognizer.view.center = CGPointMake(recognizer.view.center.x + [recognizer translationInView:self.view].x, recognizer.view.center.y);
         if (CGRectGetMaxX(recognizer.view.frame) > CGRectGetWidth(self.view.frame)-sideMenuOpenSpaceWidth) {
             recognizer.view.frame = CGRectMake(0, 0, recognizer.view.frame.size.width, recognizer.view.frame.size.height);
         }
+        
         [recognizer setTranslation:CGPointZero inView:self.view];
         self.backgroundOverlayView.alpha = backgroundOverlayViewAlpha * CGRectGetMaxX(self.sideMenuView.frame) / (CGRectGetWidth(self.view.frame) - sideMenuOpenSpaceWidth);
         self.sideMenuPanned = YES;
     } else if (recognizer.state == UIGestureRecognizerStateEnded) {
-        if (CGRectGetMaxX(self.sideMenuView.frame) > (CGRectGetWidth(self.view.frame)-sideMenuOpenSpaceWidth) / 2) {
-            [self showNavigationViewWithAnimation:YES];
-            self.sideMenuPanned = NO;
-        } else {
+        NSTimeInterval timeFromBegin =  -[self.sideMenuPanStartedDate timeIntervalSinceNow];
+        //NSLog(@"timeFromBegin = %f", timeFromBegin);
+        
+        // If swipe gesture recognized and "panning" is under one second and direction left, then close side panel
+        if (self.sideMenuSwiped && timeFromBegin < 1 && self.sideMenuLastTouchLocationX < 0) {
             [self hideNavigationViewWithAnimation:YES];
-            self.sideMenuPanned = NO;
+        } else {
+            if (CGRectGetMaxX(self.sideMenuView.frame) > (CGRectGetWidth(self.view.frame)-sideMenuOpenSpaceWidth) / 2) {
+                [self showNavigationViewWithAnimation:YES];
+                self.sideMenuPanned = NO;
+            } else {
+                [self hideNavigationViewWithAnimation:YES];
+                self.sideMenuPanned = NO;
+            }
         }
+        self.sideMenuSwiped = NO;
     }
+    self.sideMenuLastTouchLocationX = touchLocation.x;
 }
 
 #pragma mark -
