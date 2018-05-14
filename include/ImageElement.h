@@ -28,15 +28,16 @@ class ImageElement : public Element {
       isRequestPending = false;
     }
   }
-
+  
   void onSysInfoEvent(SysInfoEvent & ev) override {
-    if (ev.getType() == SysInfoEvent::MEMORY_WARNING && !isVisible()) {
+    if (hasRequest && !isVisible() && (ev.getType() == SysInfoEvent::MEMORY_WARNING || ev.getType() == SysInfoEvent::PAUSE)) {
       sendCommand(Command(Command::RELEASE, getInternalId()));
       isRequestPending = true;
     }
   }
   
   void handleImageRequestEvent(ImageRequestEvent & ev) override {
+    hasRequest = true;
     currentRequest = ev;
     width = ev.getRequestedWidth();
     height = ev.getRequestedHeight();
@@ -118,7 +119,7 @@ class ImageElement : public Element {
  private:
   ImageSet images;
   unsigned int width = 0, height = 0;
-  bool isRequestPending = false;
+  bool hasRequest = false, isRequestPending = false;
   ImageRequestEvent currentRequest;
 };
 
