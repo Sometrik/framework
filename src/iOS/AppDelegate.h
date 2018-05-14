@@ -1,5 +1,7 @@
 #import <UIKit/UIKit.h>  
 
+#import "ViewController.h"
+
 #if 0
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 
@@ -10,7 +12,7 @@
 @interface AppDelegate : NSObject <UIApplicationDelegate> {
 @private
   UIWindow* window;
-  UIViewController* controller;
+  ViewController* viewController;
 }
 
 #endif

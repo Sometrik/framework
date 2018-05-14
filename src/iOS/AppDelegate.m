@@ -1,6 +1,5 @@
 #import "AppDelegate.h"
 #import "StoreKit/SKPaymentQueue.h"
-#include "ViewController.h"
 #import "InAppPurchaseManager.h"
 
 @implementation AppDelegate
@@ -34,11 +33,11 @@
 
   window = [[UIWindow alloc] initWithFrame: screenBounds];
   // view = [[OpenGLView alloc] initWithFrame: screenBounds];
-  controller = [[ViewController alloc] init];
+  viewController = [[ViewController alloc] init];
     
   // controller.view = view;
   //  [window addSubview: view];
-  [window setRootViewController:controller];
+  [window setRootViewController:viewController];
   [window makeKeyAndVisible];
     
   // Make app to observe payment transactions
@@ -55,7 +54,7 @@
 
 - (void)applicationWillResignActive:(UIApplication *)application
 {
-    [controller sendPauseEvent];
+    [viewController sendPauseEvent];
   //  [view stopRenderLoop];
 }
  
@@ -65,14 +64,14 @@
 
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
-    [controller sendResumeEvent];
+    [viewController sendResumeEvent];
   //  [view startRenderLoop];
 }
 
 // Called when the application is about to terminate. Save data if appropriate.
 - (void)applicationWillTerminate:(UIApplication *)application
 {
-    [controller sendDestroyEvent];
+    [viewController sendDestroyEvent];
   //  [view stopRenderLoop];
 }
 
