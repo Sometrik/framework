@@ -37,6 +37,7 @@ public:
         it = content.erase(it);
       }
     }
+    Element::sendCommand(Command(Command::FLUSH_VIEW, Element::getInternalId()));
   }
 
   void onScrollChangedEvent(ScrollChangedEvent & ev) override {
@@ -83,6 +84,7 @@ protected:
       auto e = createContent(key, data);
       content[key] = e;
       Element::addChild(e);
+      Element::reorderChildren(*e, (unsigned int)pos);
     }
   }
      
