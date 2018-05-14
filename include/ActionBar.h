@@ -28,9 +28,16 @@ class ActionBar : public Element {
     ev.setHandled(true);
   }
 
-  void text(const std::string & l) override {
+  void text(const std::string & s) override {
     Command c(Command::SET_TEXT_VALUE, getInternalId());
-    c.setTextValue(l);
+    c.setTextValue(s);
+    sendCommand(c);
+  }
+
+  void setTitle(const std::string & title, const std::string & subtitle) {
+    Command c(Command::SET_TEXT_VALUE, getInternalId());
+    c.setTextValue(title);
+    c.setTextValue2(subtitle);
     sendCommand(c);
   }
 
