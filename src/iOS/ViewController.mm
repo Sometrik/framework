@@ -69,7 +69,8 @@ extern FWApplication * applicationMain();
 @property (nonatomic, assign) BOOL sideMenuSwiped;
 @property (nonatomic, strong) NSDate *sideMenuPanStartedDate;
 @property (nonatomic, assign) CGFloat sideMenuLastTouchLocationX;
-
+@property (nonatomic, assign) CGFloat statusBarHeight;
+@property (nonatomic, strong) UIView *titleView;
 @end
 
 static const NSTimeInterval animationDuration = 0.4;
@@ -216,10 +217,15 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             }
         }
     }
+    CGFloat titleViewWidth = size.width - 140;
     if (size.width > size.height) {
+        self.statusBarHeight = [UIApplication sharedApplication].statusBarFrame.size.height;
         self.statusBarBottomConstraint.constant = 0.0;
+        //self.titleView.frame = CGRectMake(size.width/2 - titleViewWidth/2, 0, titleViewWidth, 44);
+        
     } else {
-        self.statusBarBottomConstraint.constant = 20.0;
+        //self.titleView.frame = CGRectMake(size.width/2 - titleViewWidth/2, 0, titleViewWidth, 28);
+        self.statusBarBottomConstraint.constant = self.statusBarHeight;
     }
   // self.view.frame = CGRectMake(0, 0, size.width, size.height);
   // [self.view setNeedsLayout];
@@ -770,13 +776,40 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     //navBar.layer.zPosition = 1000;
 
     // create titleView that has title and subtitle
-    CGFloat titleViewWidth = 150;
-    CGFloat titleViewLeading = 8;
+    CGFloat titleViewWidth = self.view.frame.size.width - 140;
+    //CGFloat titleViewLeading = 8;
     UIView *titleView = [[UIView alloc] initWithFrame:CGRectMake(self.view.frame.size.width/2 - titleViewWidth/2, 0, titleViewWidth, 44)];
-    UILabel *titleViewTitle = [[UILabel alloc] initWithFrame:CGRectMake(titleViewLeading, titleViewLeading/2, titleViewWidth - 2*titleViewLeading, 22)];
-    UILabel *titleViewSubtitle = [[UILabel alloc] initWithFrame:CGRectMake(titleViewLeading, titleViewTitle.frame.size.height + 2, titleViewWidth - 2*titleViewLeading, 12)];
-    [titleView addSubview:titleViewTitle];
-    [titleView addSubview:titleViewSubtitle];
+    UILabel *titleViewTitle = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, titleViewWidth, 22)];
+    titleViewTitle.textAlignment = NSTextAlignmentCenter;
+    titleViewTitle.font = [UIFont systemFontOfSize:18 weight:UIFontWeightBold];
+    titleViewTitle.adjustsFontSizeToFitWidth = YES;
+    titleViewTitle.minimumScaleFactor = 0.7;
+    UILabel *titleViewSubtitle = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, titleViewWidth, 12)];
+    titleViewSubtitle.textAlignment = NSTextAlignmentCenter;
+    titleViewSubtitle.font = [UIFont systemFontOfSize:12 weight:UIFontWeightRegular];
+    titleViewSubtitle.textColor = UIColor.darkGrayColor;
+    //[stackView addArrangedSubview:titleViewTitle];
+    //[stackView addArrangedSubview:titleViewSubtitle];
+    
+    UIStackView *stackView = [[UIStackView alloc] initWithArrangedSubviews:@[titleViewTitle, titleViewSubtitle]];
+    stackView.spacing = 0.0;
+    stackView.axis = UILayoutConstraintAxisVertical;
+    stackView.alignment = UIStackViewAlignmentCenter;
+    stackView.distribution = UIStackViewDistributionFillProportionally;
+    stackView.translatesAutoresizingMaskIntoConstraints = NO;
+    [titleView addSubview:stackView];
+    NSLayoutConstraint *stackViewTopConstraint = [NSLayoutConstraint constraintWithItem:stackView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:titleView attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
+    NSLayoutConstraint *stackViewLeftConstraint = [NSLayoutConstraint constraintWithItem:stackView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:titleView attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
+    NSLayoutConstraint *stackViewRightConstraint = [NSLayoutConstraint constraintWithItem:stackView attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:titleView attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
+    NSLayoutConstraint *stackViewBottomConstraint = [NSLayoutConstraint constraintWithItem:stackView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:titleView attribute:NSLayoutAttributeBottom multiplier:1.0f constant:0];
+    [titleView addConstraints:@[stackViewTopConstraint, stackViewLeftConstraint, stackViewRightConstraint, stackViewBottomConstraint]];
+    self.titleView = titleView;
+
+    //[stackView.leadingAnchor constraintEqualToAnchor:titleView.leadingAnchor].active = YES;
+    //[stackView.trailingAnchor constraintEqualToAnchor:titleView.trailingAnchor].active = YES;
+    //[stackView.topAnchor constraintEqualToAnchor:titleView.topAnchor].active = YES;
+    //[stackView.bottomAnchor constraintEqualToAnchor:titleView.bottomAnchor].active = YES;
+    
     self.navBarTitle = titleViewTitle;
     self.navBarSubtitle = titleViewSubtitle;
     self.navItem = [[UINavigationItem alloc] init];
