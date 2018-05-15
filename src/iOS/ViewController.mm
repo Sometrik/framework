@@ -4,6 +4,7 @@
 #include <FWDefs.h>
 #include <SysInfoEvent.h>
 #include <VisibilityUpdateEvent.h>
+#include <UserInteractionEvent.h>
 
 #include "iOSMainThread.h"
 
@@ -674,6 +675,15 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
         FWScrollView * fwScrollView = (FWScrollView *)scrollView;
 	[fwScrollView updateVisibility:fwScrollView.bounds];
     }
+
+    UserInteractionEvent ev(UserInteractionEvent::ENDED);
+    mainThread->sendEvent(mainThread->getApplication().getInternalId(), ev);
+}
+
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
+{
+    UserInteractionEvent ev(UserInteractionEvent::STARTED);
+    mainThread->sendEvent(mainThread->getApplication().getInternalId(), ev);
 }
 
 - (void)createPageLayoutWithId:(int)viewId parentId:(int)parentId

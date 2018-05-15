@@ -20,6 +20,7 @@ class OpenGLInitEvent;
 class VisibilityEvent;
 class VisibilityUpdateEvent;
 class ScrollChangedEvent;
+class UserInteractionEvent;
 
 class ResultEvent;
 class WindowEvent;
@@ -79,6 +80,7 @@ class EventHandler : public Notifier {
   virtual void onVisibilityUpdateEvent(VisibilityUpdateEvent & ev) { }
   virtual void onScrollChangedEvent(ScrollChangedEvent & ev) { }
   virtual void onImageUploadEvent(ImageUploadEvent & ev) { }
+  virtual void onUserInteractionEvent(UserInteractionEvent & ev) { }
 
   virtual void handleResultEvent(ResultEvent & ev) { }
   virtual void handleWindowEvent(WindowEvent & ev) { }
