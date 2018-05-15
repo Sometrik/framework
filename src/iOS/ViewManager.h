@@ -2,6 +2,7 @@
 
 #import "LayoutParams.h"
 #import "ViewStyle.h"
+#import "ImageCache.h"
 
 typedef enum {
   SelectorNormal = 0,	// State during normal operation
