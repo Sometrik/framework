@@ -26,6 +26,7 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
     self.normalStyle = [[ViewStyle alloc] init];
     self.activeStyle = [[ViewStyle alloc] init];
     self.currentStyle = self.normalStyle;
+    self.imageCache = nil;
     return self;
 }
 
@@ -264,7 +265,7 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
         UIControlState state = UIControlStateNormal;
 	
         if ([key isEqualToString:@"icon"]) {
-            UIImage * icon = [self loadImage:value];
+            UIImage * icon = [self.imageCache loadIcon:value];
             [button setImage:icon forState:state];
         } else if ([key isEqualToString:@"icon-attachment"]) {
             if ([value isEqualToString:@"left"]) {
@@ -291,7 +292,7 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
     } else if ([self.view isKindOfClass:UITabBarItem.class]) {
         UITabBarItem *item = (UITabBarItem *)self.view;
         if ([key isEqualToString:@"icon"]) {
-            item.image = [self loadImage:value];
+            item.image = [self.imageCache loadIcon:value];
         }
     } else if ([self.view isKindOfClass:UIImageView.class]) {
         UIImageView * imageView = (UIImageView *)self.view;
@@ -470,16 +471,6 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
     if ([self.view isKindOfClass:UIView.class]) {
         [self.currentStyle apply:self.view animate:animate];
     }
-}
-
-- (UIImage *)loadImage:(NSString *)filename {
-    NSString *maskFilePath = [[NSBundle mainBundle] pathForResource:filename ofType:nil];
-    CGDataProviderRef dataProvider = CGDataProviderCreateWithFilename([maskFilePath UTF8String]);
-    CGImageRef imageRef = CGImageCreateWithPNGDataProvider(dataProvider, NULL, true, kCGRenderingIntentDefault);
-    UIImage * image = [UIImage imageWithCGImage:imageRef scale:3.0f orientation:UIImageOrientationUp];
-    CGImageRelease(imageRef);
-    CGDataProviderRelease(dataProvider);
-    return image;
 }
 
 - (UIColor *)colorFromString:(NSString *)value {

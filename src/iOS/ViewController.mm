@@ -19,6 +19,7 @@
 #import "FWPicker.h"
 #import "FWButton.h"
 #import "NativeCommand.h"
+#import "ImageCache.h"
 
 #import <WebKit/WebKit.h>
 
@@ -71,6 +72,7 @@ extern FWApplication * applicationMain();
 @property (nonatomic, assign) CGFloat sideMenuLastTouchLocationX;
 @property (nonatomic, assign) CGFloat statusBarHeight;
 @property (nonatomic, strong) UIView *titleView;
+@property (nonatomic, strong) ImageCache * imageCache;
 @end
 
 static const NSTimeInterval animationDuration = 0.4;
@@ -86,6 +88,8 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     self.activeViewId = 0;
     self.currentTitle = nil;
     self.dialogIds = [[NSMutableArray alloc] init];
+
+    self.imageCache = [[ImageCache alloc] init];
 
     self.view.layoutMargins = UIEdgeInsetsMake(0, 0, 0, 0);
     self.automaticallyAdjustsScrollViewInsets = NO;
@@ -828,7 +832,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     [navBar addGestureRecognizer:debugTapGesture];
      
     UIBarButtonItem *menuButton;
-    UIImage *image = [self loadImage:@"icons_hamburger-menu.png"];
+    UIImage *image = [self.imageCache loadIcon:@"icons_hamburger-menu.png"];
     if (image == nil) {
         menuButton = [[UIBarButtonItem alloc] initWithTitle:@"Menu" style:UIBarButtonItemStylePlain target:self action:@selector(menuButtonTapped)];
     } else {
@@ -836,7 +840,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     }
     self.navItem.leftBarButtonItem = menuButton;
 
-    UIImage *image2 = [self loadImage:@"write_icon_small.png"];
+    UIImage *image2 = [self.imageCache loadIcon:@"write_icon_small.png"];
     if (image2 != nil) {
         UIBarButtonItem *composeButton = [[UIBarButtonItem alloc] initWithImage:image2 style:UIBarButtonItemStylePlain target:self action:@selector(composeButtonTapped)];
         self.navItem.rightBarButtonItem = composeButton;
@@ -1157,7 +1161,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     FWPicker * view = [[FWPicker alloc] init];
     view.tag = viewId;
 
-    UIImage *image = [self loadImage:@"icons_arrow-down.png"];
+    UIImage *image = [self.imageCache loadIcon:@"icons_arrow-down.png"];
     [view setImage:image forState:UIControlStateNormal];
 
     [self addView:view withId:viewId];
@@ -1825,7 +1829,6 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 {
     return [self.viewsDictionary objectForKey:[NSString stringWithFormat:@"%d", viewId]];
 }
-
  
 - (void)sendPauseEvent {
     SysInfoEvent ev(SysInfoEvent::PAUSE);
@@ -1845,6 +1848,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 - (void)addView:(id)view withId:(int)viewId
 {
     ViewManager * viewManager = [[ViewManager alloc] init];
+    viewManager.imageCache = self.imageCache;
     viewManager.viewId = viewId;
     viewManager.view = view;
     viewManager.containerView = view;
@@ -2351,11 +2355,11 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
 - (void)setBackButtonVisibility:(BOOL)v {
     if (v) {
-        UIImage *image = [self loadImage:@"icons_arrow-left-red.png"];
+        UIImage *image = [self.imageCache loadIcon:@"icons_arrow-left-red.png"];
         UIBarButtonItem *backButton = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(backButtonTapped)];
         self.navItem.leftBarButtonItem = backButton;
     } else {
-        UIImage *image = [self loadImage:@"icons_hamburger-menu.png"];
+        UIImage *image = [self.imageCache loadIcon:@"icons_hamburger-menu.png"];
         UIBarButtonItem *menuButton;
 	if (image == nil) {
             menuButton = [[UIBarButtonItem alloc] initWithTitle:@"Menu" style:UIBarButtonItemStylePlain target:self action:@selector(menuButtonTapped)];
@@ -2364,16 +2368,6 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 	}
         self.navItem.leftBarButtonItem = menuButton;
     }
-}
-
-- (UIImage *)loadImage:(NSString *)filename {
-    NSString *maskFilePath = [[NSBundle mainBundle] pathForResource:filename ofType:nil];
-    CGDataProviderRef dataProvider = CGDataProviderCreateWithFilename([maskFilePath UTF8String]);
-    CGImageRef imageRef = CGImageCreateWithPNGDataProvider(dataProvider, NULL, true, kCGRenderingIntentDefault);
-    UIImage * image = [UIImage imageWithCGImage:imageRef scale:3.0f orientation:UIImageOrientationUp];
-    CGImageRelease(imageRef);
-    CGDataProviderRelease(dataProvider);
-    return image;
 }
 
 - (BOOL)isParentView:(int)parentId childId:(int)childId

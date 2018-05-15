@@ -35,4 +35,5 @@ typedef enum {
 @property (nonatomic, strong) ViewStyle * normalStyle;
 @property (nonatomic, strong) ViewStyle * activeStyle;
 @property (nonatomic, strong) ViewStyle * currentStyle;
+@property (nonatomic, strong) ImageCache * imageCache;
 @end
