@@ -36,7 +36,7 @@ public:
     }
   }
 
-  virtual int popViewBackHistory() {
+  int popViewBackHistory() {
     int view_id = 0;
     if (!view_back_history.empty()) {
       view_id = view_back_history.back();
