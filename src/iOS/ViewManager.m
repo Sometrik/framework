@@ -23,9 +23,9 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
     self = [super init];
     self.layoutParams = nil;
     self.level = 0;
-    self.normalStyle = [[ViewStyle alloc] init];
-    self.activeStyle = [[ViewStyle alloc] init];
-    self.currentStyle = self.normalStyle;
+    self.normalStyle = nil;
+    self.activeStyle = nil;
+    self.currentStyle = nil;
     self.imageCache = nil;
     return self;
 }
@@ -468,8 +468,10 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
 }
 
 - (void)applyStyles:(BOOL)animate {
-    if ([self.view isKindOfClass:UIView.class]) {
-        [self.currentStyle apply:self.view animate:animate];
+    ViewStyle * style = self.currentStyle;
+    if (style == nil) style = self.normalStyle;
+    if (style != nil && [self.view isKindOfClass:UIView.class]) {
+        [style apply:self.view animate:animate];
     }
 }
 
@@ -493,8 +495,14 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
 
 - (ViewStyle*)getStyleForSelector:(StyleSelector)selector {
     switch (selector) {
-    case SelectorNormal: return self.normalStyle;
-    case SelectorActive: return self.activeStyle;
+    case SelectorNormal: {
+      if (self.normalStyle == nil) self.normalStyle = [[ViewStyle alloc] init];
+      return self.normalStyle;
+    }
+    case SelectorActive: {
+      if (self.activeStyle == nil) self.activeStyle = [[ViewStyle alloc] init];
+      return self.activeStyle;
+    }
     }
     return nil;
 }
