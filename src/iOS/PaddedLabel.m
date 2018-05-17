@@ -109,7 +109,7 @@
 - (NSAttributedString *)createAttributedString:(NSString *)input
 {
     NSError *error = NULL;
-    NSRegularExpression *linkRegex = [NSRegularExpression regularExpressionWithPattern:@"(@[A-Za-z0-9_]+|#[\\p{L}0-9_]+|https?://[A-Za-z0-9._~:/?#\\[\\]@!$&'()*+,;=%-]+)" options:0 error:&error];
+    NSRegularExpression *linkRegex = [NSRegularExpression regularExpressionWithPattern:@"(@[A-Za-z0-9_]+|#[\\p{L}0-9_]*[\\p{L}][\\p{L}0-9_]*|https?://[A-Za-z0-9._~:/?#\\[\\]@!$&'()*+,;=%-]+)" options:0 error:&error];
     
     NSMutableArray *linkRanges = [[NSMutableArray alloc] init];
     NSMutableArray *linkTargets = [[NSMutableArray alloc] init];
