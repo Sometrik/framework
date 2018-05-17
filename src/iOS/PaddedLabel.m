@@ -161,6 +161,7 @@
                                               NSForegroundColorAttributeName: linkColor,
                                               } range:urlRange];
         } else {
+	  NSLog(@"Adding url %@", urlString);
             NSURL * url = [NSURL URLWithString:urlString];
             if (url != nil) {
                 [attributedString addAttributes:@{
