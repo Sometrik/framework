@@ -21,7 +21,7 @@ public:
 	button.style("margin", 25);
 	button.style("color", "#000000");
 	button.style("padding", 25);
-	auto & textView = layout.addChild(std::make_shared<TextLabel>("#finland Joku linkki http://www.google.fi/ ja joku toinen http://yle.fi/, ja pitkä linkki https://www.youtube.com/watch?v=L5dUsZ4Djd0", true));
+	auto & textView = layout.addChild(std::make_shared<TextLabel>("#finland #1 #2 Joku linkki http://www.google.fi/ ja joku toinen http://yle.fi/, ja pitkä linkki https://www.youtube.com/watch?v=L5dUsZ4Djd0", true));
 	textView.style("border", 1);
 	textView.style("width", "match-parent");
 	textView.style("height", 200);
