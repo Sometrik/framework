@@ -1,6 +1,9 @@
 #import "ViewStyle.h"
 
+#include <math.h>
 #import "PaddedLabel.h"
+
+#define EPSILON		0.001
 
 @implementation ViewStyle
 
@@ -90,7 +93,7 @@
     }
 
     if (animate) {
-        if (self.shadow > 0) {
+      if (fabsf(view.layer.shadowRadius - self.shadow) > EPSILON) {
 #if 1
             CABasicAnimation* animation = [CABasicAnimation animationWithKeyPath:@"shadowRadius"];
             animation.fromValue = [NSNumber numberWithFloat:view.layer.shadowRadius];
@@ -106,10 +109,12 @@
             [CATransaction commit];
 #endif
         }
-        [UIView animateWithDuration:0.3 animations:^{
-            view.alpha = self.alpha;
-            view.transform = CGAffineTransformMakeScale(self.zoom, self.zoom);
-        }];
+	if (fabsf(view.alpha - self.alpha) > EPSILON) {
+	  [UIView animateWithDuration:0.3 animations:^{
+	      view.alpha = self.alpha;
+	      view.transform = CGAffineTransformMakeScale(self.zoom, self.zoom);
+	    }];
+	}
     } else {
         view.alpha = self.alpha;
         view.transform = CGAffineTransformMakeScale(self.zoom, self.zoom);
