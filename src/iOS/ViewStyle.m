@@ -93,7 +93,7 @@
     }
 
     if (animate) {
-      if (fabsf(view.layer.shadowRadius - self.shadow) > EPSILON) {
+      if (fabs(view.layer.shadowRadius - self.shadow) > EPSILON) {
 #if 1
             CABasicAnimation* animation = [CABasicAnimation animationWithKeyPath:@"shadowRadius"];
             animation.fromValue = [NSNumber numberWithFloat:view.layer.shadowRadius];
@@ -109,7 +109,7 @@
             [CATransaction commit];
 #endif
         }
-	if (fabsf(view.alpha - self.alpha) > EPSILON) {
+	if (fabs(view.alpha - self.alpha) > EPSILON) {
 	  [UIView animateWithDuration:0.3 animations:^{
 	      view.alpha = self.alpha;
 	      view.transform = CGAffineTransformMakeScale(self.zoom, self.zoom);
