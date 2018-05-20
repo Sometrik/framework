@@ -106,15 +106,15 @@
   return link;
 }
 
-- (NSAttributedString *)createAttributedString:(NSString *)input autolink:(BOOL)autolink markdown:(BOOL)markdown
+- (NSAttributedString *)createAttributedString:(NSString *)input
 {
     NSError *error = NULL;
     NSRegularExpression * linkRegex;
-    if (autolink && markdown) {
+    if (self.autolink && self.markdown) {
         linkRegex = [NSRegularExpression regularExpressionWithPattern:@"(^#\\s+.*$|@[A-Za-z0-9_]+|#[\\p{L}0-9_]*[\\p{L}][\\p{L}0-9_]*|https?://[A-Za-z0-9._~:/?#\\[\\]@!$&'()*+,;=%-]+)" options:0 error:&error];
-    } else if (autolink && !markdown) {
+    } else if (self.autolink && !self.markdown) {
         linkRegex = [NSRegularExpression regularExpressionWithPattern:@"(@[A-Za-z0-9_]+|#[\\p{L}0-9_]*[\\p{L}][\\p{L}0-9_]*|https?://[A-Za-z0-9._~:/?#\\[\\]@!$&'()*+,;=%-]+)" options:0 error:&error];
-    } else if (!autolink && markdown) {
+    } else if (!self.autolink && self.markdown) {
         linkRegex = [NSRegularExpression regularExpressionWithPattern:@"(^#\\s+.*$)" options:0 error:&error];
     } else {
         return nil;

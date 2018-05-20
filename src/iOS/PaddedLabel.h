@@ -9,7 +9,7 @@
 - (void)setBounds:(CGRect)bounds;
 - (CGSize)intrinsicContentSize;
 - (void)relayoutAll;
-- (NSAttributedString *)createAttributedString:(NSString *)s autolink:(BOOL)autolink markdown:(BOOL)markdown;
+- (NSAttributedString *)createAttributedString:(NSString *)s;
 
 @property (nonatomic, assign) UIEdgeInsets edgeInsets;
 @property (nonatomic, assign) BOOL autolink;
