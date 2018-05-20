@@ -540,15 +540,16 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     [self addToParent:parentId view:view];
 }
 
-- (void)createTextWithId:(int)viewId parentId:(int)parentId value:(NSString*)value autolink:(BOOL)autolink
+- (void)createTextWithId:(int)viewId parentId:(int)parentId value:(NSString*)value autolink:(BOOL)autolink markdown:(BOOL)markdown
 {
     PaddedLabel *label = [[PaddedLabel alloc] init];
     label.tag = viewId;
     label.delegate = self;
     label.autolink = autolink;
-    if (autolink) {
-        label.userInteractionEnabled = YES;
-        label.attributedText = [label createAttributedString:value];
+    label.markdown = markdown;
+    if (autolink || markdown) {
+        if (autolink) label.userInteractionEnabled = YES;
+        label.attributedText = [label createAttributedString:value autolink:autolink markdown:markdown];
     } else {
         label.text = value;
     }
@@ -1939,7 +1940,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
         
         case CREATE_TEXT: {
             @try {
-                [self createTextWithId:command.childInternalId parentId:command.internalId value:command.textValue autolink:command.value != 0];
+                [self createTextWithId:command.childInternalId parentId:command.internalId value:command.textValue autolink:(command.value & 0x01) != 0 markdown:(command.value & 0x02) != 0];
             }
             @catch (NSException *e) {
                 [self exceptionThrown:e];

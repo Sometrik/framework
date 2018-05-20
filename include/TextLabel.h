@@ -6,7 +6,7 @@
 
 class TextLabel : public Element {
  public:
- TextLabel(const std::string & _value, bool _autolink = false) : value(_value), autolink(_autolink) { }
+ TextLabel(const std::string & _value, bool _autolink = false, book _markdown = false) : value(_value), autolink(_autolink), markdown(_markdown) { }
 
   bool isA(const std::string & className) const override {
     if (className == "TextLabel") return true;
@@ -35,14 +35,14 @@ class TextLabel : public Element {
   void create() override {
     Command c(Command::CREATE_TEXT, getParentInternalId(), getInternalId());
     c.setTextValue(value);
-    c.setValue(autolink ? 1 : 0);
+    c.setValue((autolink ? 1 : 0) | (markdown ? 2 : 0));
     c.setFlags(getFlags());
     sendCommand(c);
   }
 
  private:
   std::string value;
-  bool autolink;
+  bool autolink, markdown;
 };
 
 #endif

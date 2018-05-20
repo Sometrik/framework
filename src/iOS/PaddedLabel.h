@@ -9,10 +9,11 @@
 - (void)setBounds:(CGRect)bounds;
 - (CGSize)intrinsicContentSize;
 - (void)relayoutAll;
-- (NSAttributedString *)createAttributedString:(NSString *)s;
+- (NSAttributedString *)createAttributedString:(NSString *)s autolink:(BOOL)autolink markdown:(BOOL)markdown;
 
 @property (nonatomic, assign) UIEdgeInsets edgeInsets;
 @property (nonatomic, assign) BOOL autolink;
+@property (nonatomic, assign) BOOL markdown;
 @property (nonatomic, strong) UIFont * defaultFont;
 @property (nonatomic, strong) UIFont * boldFont;
 @property (nonatomic, strong) UIColor * defaultColor;
