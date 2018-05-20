@@ -503,6 +503,7 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
       if (self.activeStyle == nil) self.activeStyle = [[ViewStyle alloc] init];
       return self.activeStyle;
     }
+        default: return nil;
     }
     return nil;
 }
