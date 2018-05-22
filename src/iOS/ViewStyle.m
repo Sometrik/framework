@@ -34,11 +34,11 @@
 - (void)apply:(UIView *)view animate:(BOOL)animate {
     if ([view isKindOfClass:PaddedLabel.class]) {
         PaddedLabel * label = (PaddedLabel*)view;
-	if (label.autolink) {
+	if (label.autolink || label.markdown) {
 	  label.defaultFont = [self createFont:label.font];
 	  label.boldFont = [self createBoldFont:label.font];
 	  label.defaultColor = self.color;
-	  label.attributedText = [label createAttributedString:label.text];
+	  label.attributedText = [label createAttributedString:label.origText];
 	} else {
 	  if ([self isFontDefined]) {
             label.font = [self createFont:label.font];

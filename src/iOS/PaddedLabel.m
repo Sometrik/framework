@@ -9,6 +9,7 @@
     if (self) {
         self.edgeInsets = UIEdgeInsetsMake(0, 0, 0, 0);
         self.autolink = NO;
+        self.markdown = NO;
         UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTap:)];
         [self addGestureRecognizer:tapGesture];
     }
@@ -19,7 +20,8 @@
     self = [super initWithFrame:frame];
     if (self) {
         self.edgeInsets = UIEdgeInsetsMake(0, 0, 0, 0);
-	self.autolink = NO;
+        self.autolink = NO;
+        self.markdown = NO;
     }
     return self;
 }
@@ -31,7 +33,6 @@
 - (void)setBounds:(CGRect)bounds {
   int adjustedBoundsWidth = bounds.size.width; // - (self.edgeInsets.left + self.edgeInsets.right + 2);
   if (adjustedBoundsWidth < self.preferredMaxLayoutWidth) {
-    // NSLog(@"Bounds changed %f => %f", self.bounds.size.width, bounds.size.width);
     [super setBounds:bounds];
 #if 0
     [self setNeedsUpdateConstraints];
@@ -48,9 +49,9 @@
     UIView * view = self.superview;
     while (view != nil && ([view isKindOfClass:FWLayoutView.class] || [view isKindOfClass:UIScrollView.class])) {
         [view setNeedsLayout];
-	if ([view isKindOfClass:UIScrollView.class]) {
-	  break;
-	}
+        if ([view isKindOfClass:UIScrollView.class]) {
+            break;
+        }
         view = view.superview;
     }
 }
@@ -83,24 +84,29 @@
 - (NSString *)cleanLink:(NSString *)link
 {
   if (link.length > 0) {
-    unichar firstChar = [link characterAtIndex:0];
-    if (firstChar != '#' && firstChar != '@') {
-#if 0
-      if ([link hasPrefix:@"http://"]) {
-	link = [link substringFromIndex:7];
-      } else if ([link hasPrefix:@"https://"]) {
-	link = [link substringFromIndex:8];    
+    if ([link hasPrefix:@"# "]) {
+      return [link substringFromIndex:2];
+    } else {
+      unichar firstChar = [link characterAtIndex:0];
+      if (firstChar != '#' && firstChar != '@') {
+        if ([link hasPrefix:@"http://"]) {
+	  link = [link substringFromIndex:7];
+        } else if ([link hasPrefix:@"https://"]) {
+	  link = [link substringFromIndex:8];    
+        }
+
+        NSRange range = [link rangeOfString:@"?"];
+        if (range.location != NSNotFound) {
+	  link = [link substringWithRange:NSMakeRange(0, range.location)];
+        }
+        range = [link rangeOfString:@"#"];
+        if (range.location != NSNotFound) {
+	  link = [link substringWithRange:NSMakeRange(0, range.location)];
+        }
+	if (link.length > 0 && [link characterAtIndex:(link.length - 1)] == '/') {
+	  link = [link substringWithRange:NSMakeRange(0, link.length - 1)];
+	}
       }
-#endif
-      NSRange range = [link rangeOfString:@"?"];
-      if (range.location != NSNotFound) {
-	link = [link substringWithRange:NSMakeRange(0, range.location)];
-      }
-      range = [link rangeOfString:@"#"];
-      if (range.location != NSNotFound) {
-	link = [link substringWithRange:NSMakeRange(0, range.location)];
-      }
-      
     }
   }
   return link;
@@ -111,11 +117,11 @@
     NSError *error = NULL;
     NSRegularExpression * linkRegex;
     if (self.autolink && self.markdown) {
-        linkRegex = [NSRegularExpression regularExpressionWithPattern:@"(^#\\s+.*$|@[A-Za-z0-9_]+|#[\\p{L}0-9_]*[\\p{L}][\\p{L}0-9_]*|https?://[A-Za-z0-9._~:/?#\\[\\]@!$&'()*+,;=%-]+)" options:0 error:&error];
+        linkRegex = [NSRegularExpression regularExpressionWithPattern:@"(^#\\s+.*$|@[A-Za-z0-9_]+|#[\\p{L}0-9_]*[\\p{L}][\\p{L}0-9_]*|https?://[A-Za-z0-9._~:/?#\\[\\]@!$&'()*+,;=%-]*[A-Za-z0-9._~:/?#@!$&'*+;=%-]+)" options:NSRegularExpressionAnchorsMatchLines error:&error];
     } else if (self.autolink && !self.markdown) {
-        linkRegex = [NSRegularExpression regularExpressionWithPattern:@"(@[A-Za-z0-9_]+|#[\\p{L}0-9_]*[\\p{L}][\\p{L}0-9_]*|https?://[A-Za-z0-9._~:/?#\\[\\]@!$&'()*+,;=%-]+)" options:0 error:&error];
+        linkRegex = [NSRegularExpression regularExpressionWithPattern:@"(@[A-Za-z0-9_]+|#[\\p{L}0-9_]*[\\p{L}][\\p{L}0-9_]*|https?://[A-Za-z0-9._~:/?#\\[\\]@!$&'()*+,;=%-]+)" options:NSRegularExpressionAnchorsMatchLines error:&error];
     } else if (!self.autolink && self.markdown) {
-        linkRegex = [NSRegularExpression regularExpressionWithPattern:@"(^#\\s+.*$)" options:0 error:&error];
+        linkRegex = [NSRegularExpression regularExpressionWithPattern:@"(^#\\s+.*$)" options:NSRegularExpressionAnchorsMatchLines error:&error];
     } else {
         return nil;
     }
@@ -127,16 +133,16 @@
     __block int offset = 0;
     [linkRegex enumerateMatchesInString:input options:0 range:NSMakeRange(0, input.length) usingBlock:^(NSTextCheckingResult *result, NSMatchingFlags flags, BOOL *stop) {       
         NSRange range = [result rangeAtIndex:0];
-	range.location += offset;
-	NSString * link = [s substringWithRange:range];
-	NSString * displayLink = [self cleanLink:link];
+        range.location += offset;
+        NSString * link = [s substringWithRange:range];
+        NSString * displayLink = [self cleanLink:link];
 
-	int diff = displayLink.length - link.length; 
-	if (diff != 0) {
-	  offset += diff;
-	  s = [s stringByReplacingCharactersInRange:range withString:displayLink];
-	  range.length = displayLink.length;
-	}
+        int diff = displayLink.length - link.length;
+        if (diff != 0) {
+            offset += diff;
+            s = [s stringByReplacingCharactersInRange:range withString:displayLink];
+            range.length = displayLink.length;
+        }
 
         [linkRanges addObject:[NSValue valueWithRange:range]];
         [linkTargets addObject:link];
@@ -148,10 +154,13 @@
         boldFont = [UIFont fontWithDescriptor:fontD size:self.font.pointSize];
     }
 
+    UIFont * defaultFont = self.defaultFont != nil ? self.defaultFont : self.font;
+    UIColor * defaultColor = self.defaultColor != nil ? self.defaultColor : UIColor.blackColor;
+    
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:s attributes:
   @{
-      NSFontAttributeName: self.defaultFont != nil ? self.defaultFont : self.font,
-      NSForegroundColorAttributeName: self.defaultColor != nil ? self.defaultColor : UIColor.blackColor,
+    //          NSFontAttributeName: defaultFont,
+    //	  NSForegroundColorAttributeName: defaultColor
     }];
     
     [attributedString beginEditing];
@@ -163,26 +172,33 @@
         NSValue *urlRangeValue = linkRanges[i];
         NSRange urlRange;
         [urlRangeValue getValue:&urlRange];
-        unichar firstChar = [urlString characterAtIndex:0];
-        if (firstChar == '#' || firstChar == '@') {
+                
+        if ([urlString hasPrefix:@"# "]) {
+            [attributedString removeAttribute:NSFontAttributeName range:urlRange];
             [attributedString addAttributes:@{
-		// NSFontAttributeName: boldFont,
+		                              NSFontAttributeName: boldFont,
+                                      NSForegroundColorAttributeName: defaultColor
+                                              } range:urlRange];
+        } else if ([urlString hasPrefix:@"#"] || [urlString hasPrefix:@"@"]) {
+            [attributedString removeAttribute:NSFontAttributeName range:urlRange];
+            [attributedString addAttributes:@{
+                                              NSFontAttributeName: defaultFont,
                                               NSForegroundColorAttributeName: linkColor,
                                               } range:urlRange];
         } else {
-	  NSLog(@"Adding url %@", urlString);
             NSURL * url = [NSURL URLWithString:urlString];
             if (url != nil) {
+                [attributedString removeAttribute:NSFontAttributeName range:urlRange];
                 [attributedString addAttributes:@{
                                                   NSLinkAttributeName: url,
                                                   NSForegroundColorAttributeName: linkColor,
-                                                  NSUnderlineStyleAttributeName: [NSNumber numberWithInt:NSUnderlineStyleNone],
+                                                  NSUnderlineStyleAttributeName: [NSNumber numberWithInt:NSUnderlineStyleSingle],
                                                   } range:urlRange];
             }
         }
     }
     [attributedString endEditing];
-    
+
     return attributedString;
 }
 

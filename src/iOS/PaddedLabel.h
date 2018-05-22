@@ -17,5 +17,6 @@
 @property (nonatomic, strong) UIFont * defaultFont;
 @property (nonatomic, strong) UIFont * boldFont;
 @property (nonatomic, strong) UIColor * defaultColor;
+@property (nonatomic, strong) NSString * origText;
 @property (nonatomic, assign) id<PaddedLabelDelegate> delegate;
 @end
