@@ -147,32 +147,40 @@
         [linkRanges addObject:[NSValue valueWithRange:range]];
         [linkTargets addObject:link];
     }];
-       
-    UIFont * boldFont = self.boldFont;
-    if (boldFont == nil) {
-        UIFontDescriptor * fontD = [self.font.fontDescriptor fontDescriptorWithSymbolicTraits:UIFontDescriptorTraitBold];
-        boldFont = [UIFont fontWithDescriptor:fontD size:self.font.pointSize];
-    }
-
-    UIFont * defaultFont = self.defaultFont != nil ? self.defaultFont : self.font;
+    
+    UIFontDescriptor * fontD = [self.font.fontDescriptor fontDescriptorWithSymbolicTraits:UIFontDescriptorTraitBold];
+    UIFont * boldFont = [UIFont fontWithDescriptor:fontD size:self.defaultSize + 4];
+    
+    UIFontDescriptor * fontD2 = [self.font.fontDescriptor fontDescriptorWithSymbolicTraits:UIFontDescriptorTraitUIOptimized];
+    UIFont * defaultFont = [UIFont fontWithDescriptor:fontD2 size:self.defaultSize];
+    
     UIColor * defaultColor = self.defaultColor != nil ? self.defaultColor : UIColor.blackColor;
     
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:s attributes:
   @{
-    //          NSFontAttributeName: defaultFont,
-    //	  NSForegroundColorAttributeName: defaultColor
+          NSFontAttributeName: defaultFont,
+    	  NSForegroundColorAttributeName: defaultColor
     }];
     
     [attributedString beginEditing];
     
     UIColor * linkColor = [UIColor colorWithRed:0.765 green:0.145 blue:0.153 alpha:1.0];
 
+    NSInteger prevLocation = 0;
     for (NSInteger i = 0; i < linkRanges.count; i++) {
         NSString *urlString = linkTargets[i];
         NSValue *urlRangeValue = linkRanges[i];
         NSRange urlRange;
         [urlRangeValue getValue:&urlRange];
-                
+
+	if (urlRange.location > prevLocation) {	  
+            [attributedString addAttributes:@{
+                                              NSFontAttributeName: defaultFont,
+                                      NSForegroundColorAttributeName: defaultColor
+		  } range:NSMakeRange(prevLocation, urlRange.location - prevLocation)];
+	}
+	prevLocation = urlRange.location + urlRange.length;
+
         if ([urlString hasPrefix:@"# "]) {
             [attributedString removeAttribute:NSFontAttributeName range:urlRange];
             [attributedString addAttributes:@{
@@ -190,6 +198,7 @@
             if (url != nil) {
                 [attributedString removeAttribute:NSFontAttributeName range:urlRange];
                 [attributedString addAttributes:@{
+                                              NSFontAttributeName: defaultFont,
                                                   NSLinkAttributeName: url,
                                                   NSForegroundColorAttributeName: linkColor,
                                                   NSUnderlineStyleAttributeName: [NSNumber numberWithInt:NSUnderlineStyleSingle],
@@ -197,6 +206,14 @@
             }
         }
     }
+
+    if (s.length > prevLocation) {	  
+        [attributedString addAttributes:@{
+                                             NSFontAttributeName: defaultFont,
+                                      NSForegroundColorAttributeName: defaultColor
+	} range:NSMakeRange(prevLocation, s.length - prevLocation)];
+    }
+	
     [attributedString endEditing];
 
     return attributedString;

@@ -14,8 +14,7 @@
 @property (nonatomic, assign) UIEdgeInsets edgeInsets;
 @property (nonatomic, assign) BOOL autolink;
 @property (nonatomic, assign) BOOL markdown;
-@property (nonatomic, strong) UIFont * defaultFont;
-@property (nonatomic, strong) UIFont * boldFont;
+@property (nonatomic, assign) NSInteger defaultSize;
 @property (nonatomic, strong) UIColor * defaultColor;
 @property (nonatomic, strong) NSString * origText;
 @property (nonatomic, assign) id<PaddedLabelDelegate> delegate;
