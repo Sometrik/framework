@@ -34,11 +34,10 @@
 - (void)apply:(UIView *)view animate:(BOOL)animate {
     if ([view isKindOfClass:PaddedLabel.class]) {
         PaddedLabel * label = (PaddedLabel*)view;
-	if (label.autolink) {
-	  label.defaultFont = [self createFont:label.font];
-	  label.boldFont = [self createBoldFont:label.font];
+	label.defaultSize = self.fontSize;
+	if (label.autolink || label.markdown) {
 	  label.defaultColor = self.color;
-	  label.attributedText = [label createAttributedString:label.text];
+	  label.attributedText = [label createAttributedString:label.origText];
 	} else {
 	  if ([self isFontDefined]) {
             label.font = [self createFont:label.font];
@@ -93,7 +92,7 @@
     }
 
     if (animate) {
-      if (fabsf(view.layer.shadowRadius - self.shadow) > EPSILON) {
+      if (fabs(view.layer.shadowRadius - self.shadow) > EPSILON) {
 #if 1
             CABasicAnimation* animation = [CABasicAnimation animationWithKeyPath:@"shadowRadius"];
             animation.fromValue = [NSNumber numberWithFloat:view.layer.shadowRadius];
@@ -109,7 +108,7 @@
             [CATransaction commit];
 #endif
         }
-	if (fabsf(view.alpha - self.alpha) > EPSILON) {
+	if (fabs(view.alpha - self.alpha) > EPSILON) {
 	  [UIView animateWithDuration:0.3 animations:^{
 	      view.alpha = self.alpha;
 	      view.transform = CGAffineTransformMakeScale(self.zoom, self.zoom);

@@ -6,7 +6,7 @@
 
 class TextLabel : public Element {
  public:
- TextLabel(const std::string & _value, bool _autolink = false, book _markdown = false) : value(_value), autolink(_autolink), markdown(_markdown) { }
+ TextLabel(const std::string & _value, bool _autolink = false, bool _markdown = false) : value(_value), autolink(_autolink), markdown(_markdown) { }
 
   bool isA(const std::string & className) const override {
     if (className == "TextLabel") return true;

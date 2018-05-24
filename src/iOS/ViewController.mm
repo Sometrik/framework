@@ -549,7 +549,8 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     label.markdown = markdown;
     if (autolink || markdown) {
         if (autolink) label.userInteractionEnabled = YES;
-        label.attributedText = [label createAttributedString:value autolink:autolink markdown:markdown];
+        label.attributedText = [label createAttributedString:value];
+	label.origText = value;
     } else {
         label.text = value;
     }
@@ -1815,8 +1816,8 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 	    [self sendIntValue:viewId value:optionId];
         }]];
     } else if ([view isKindOfClass:FWPicker.class]) {
-	FWPicker * picker = (FWPicker *)view;
-	[picker addOption:title];
+        FWPicker * picker = (FWPicker *)view;
+        [picker addOption:title];
     }
 }
 

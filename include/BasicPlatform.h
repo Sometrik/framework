@@ -53,8 +53,8 @@ class BasicThread : public PosixThread {
     return buffer.str();
   }
 
-  void setImageData(int internal_id, std::shared_ptr<canvas::PackedImageData> image) override { }
-  void setSurface(int internal_id, canvas::Surface & surface) override { }
+  void setImageData(int _internal_id, std::shared_ptr<canvas::PackedImageData> image) override { }
+  void setSurface(int _internal_id, canvas::Surface & surface) override { }
   int startModal() override { return 0; }
   void endModal(int value) override { }
 
@@ -96,8 +96,8 @@ public:
     return buffer.str();
   }
 
-  void setImageData(int internal_id, std::shared_ptr<canvas::PackedImageData> image) override { }
-  void setSurface(int internal_id, canvas::Surface & surface) override { }
+  void setImageData(int _internal_id, std::shared_ptr<canvas::PackedImageData> image) override { }
+  void setSurface(int _internal_id, canvas::Surface & surface) override { }
   int startModal() override { return 0; }
   void endModal(int value) override { }
 
