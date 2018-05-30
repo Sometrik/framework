@@ -42,7 +42,7 @@ class Selection {
   Selection parents() const;
   Selection children() const;
 
-  void add(const std::shared_ptr<Element> & e) { data.push_back(e); }
+  Selection & add(const std::shared_ptr<Element> & e) { data.push_back(e); return *this; }
     
   bool empty() const { return data.empty(); }
   size_t size() const { return data.size(); }
