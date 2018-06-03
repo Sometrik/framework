@@ -13,6 +13,7 @@
         self.prevWidth = 0;
         self.prevHeight = 0;
         self.translatesAutoresizingMaskIntoConstraints = false;
+	self.hasStaticImage = FALSE;
 	self.imageRequestPending = FALSE;
     }
     return self;
@@ -24,6 +25,7 @@
         self.prevWidth = 0;
         self.prevHeight = 0;
         self.translatesAutoresizingMaskIntoConstraints = false;
+	self.hasStaticImage = TRUE;
 	self.imageRequestPending = FALSE;
     }
     return self;
@@ -35,6 +37,7 @@
         self.prevWidth = 0;
         self.prevHeight = 0;
         self.translatesAutoresizingMaskIntoConstraints = false;
+	self.hasStaticImage = FALSE;
 	self.imageRequestPending = FALSE;
     }
     return self;
@@ -74,7 +77,7 @@
         self.prevWidth = width;
         self.prevHeight = height;
 	
-	if (width > 0 && height > 0) {
+	if (width > 0 && height > 0 && !self.hasStaticImage) {
 	    self.imageRequestPending = YES;
 
             FWImage * bestImage = [self getImageForWidth:width];

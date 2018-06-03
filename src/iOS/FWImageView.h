@@ -17,5 +17,6 @@
 @property (nonatomic, assign) NSInteger prevWidth;
 @property (nonatomic, assign) NSInteger prevHeight;
 @property (nonatomic, assign) BOOL imageRequestPending;
+@property (nonatomic, assign) BOOL hasStaticImage;
 @property (nonatomic, assign) id<FWImageViewDelegate> delegate;
 @end
