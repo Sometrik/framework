@@ -178,6 +178,21 @@ DateTime::parseISOTime(const string & s) {
   }
 }
 
+bool
+DateTime::parseISODate(const string & s) {
+  tz_offset = day_of_week = 0;  
+
+  int yy, mo, dd;
+  int rv = _snscanf(s.c_str(), s.size(), "%d-%d-%d", &yy, &mo, &dd);
+  if (rv == 3) {
+    year = yy; month = mo; day = dd; hour = 0; min = 0; sec = 0;
+    return true;
+  } else {
+    year = month = day = hour = min = sec = 0;
+    return false;
+  }
+}
+
 void
 DateTime::setTime(const string & s) {
   assert(s.size());

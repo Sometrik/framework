@@ -18,6 +18,7 @@ class DateTime {
   bool parseRSSTime(const std::string & s);
   bool parseHTTPTime(const std::string & s);
   bool parseISOTime(const std::string & s);
+  bool parseISODate(const std::string & s);
   
   int getYear() const { return year; }
   int getMonth() const { return month; }
