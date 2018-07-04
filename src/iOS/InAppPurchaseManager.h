@@ -14,17 +14,19 @@
 
 @protocol InAppPurchaseManagerDelegate <NSObject>
 - (void)inAppPurchaseManagerDidReceiveProducts:(InAppPurchaseManager *)manager;
+- (void)inAppPurchaseManagerDidCompleteTransaction:(InAppPurchaseManager *)manager forProductId:(NSString *)productId;
 @end
 
 @interface InAppPurchaseManager : NSObject
 
 @property (nonatomic, strong) NSArray *products;
 @property (nonatomic, assign) id<InAppPurchaseManagerDelegate> delegate;
+@property (nonatomic, strong) NSMutableSet *productIdentifiers;
 
 + (InAppPurchaseManager *)sharedInstance;
-- (void)addProductId:(NSString *)productId;
+- (void)addProductIds:(NSArray *)productIds;
 - (void)fetchProductIdentifiers; // from plist file if it's there
 - (void)makeProductsRequest;
-- (void)makePaymentRequestForProduct:(SKProduct *)product;
+- (void)buyProductWithIdentifier:(NSString *)identifier;
 
 @end

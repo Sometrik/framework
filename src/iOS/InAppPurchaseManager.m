@@ -14,13 +14,14 @@
 
 @interface InAppPurchaseManager () <SKProductsRequestDelegate, SKPaymentTransactionObserver>
 @property (nonatomic, strong) SKProductsRequest *request;
-@property (nonatomic, strong) NSMutableArray *productIdentifiers;
+
 @end
 
 @implementation InAppPurchaseManager
 
 // make singleton instance of InAppPurchaseManager
-// Usage example: InAppPurchaseManager *manager = [InAppPurchaseManager sharedInstance];
+// Usage example: InAppPurchaseManager *manager = [InAppPurchaseManager sharedInstance] or
+//               [InAppPurchaseManager.sharedInstance <method>]
 + (InAppPurchaseManager *)sharedInstance
 {
     static dispatch_once_t onceToken;
@@ -37,29 +38,32 @@
     return self;
 }
 
-- (void)addProductId:(NSString *)productId
+- (void)addProductIds:(NSArray *)productIds
 {
-    [self.productIdentifiers addObject:productId];
+    [self.productIdentifiers addObjectsFromArray:productIds];
 }
 
 // if id's are in plist file in the bundle, use this
-- (void)fetchProductIdentifiers
+- (void)fetchProductIdentifiersFromPlist
 {
     NSURL *url = [[NSBundle mainBundle] URLForResource:@"product_ids"
                                          withExtension:@"plist"];
-    _productIdentifiers = [NSMutableArray arrayWithContentsOfURL:url];
+    self.productIdentifiers = [NSMutableSet setWithArray:[NSMutableArray arrayWithContentsOfURL:url]];
 }
 
 // Custom method
 - (void)makeProductsRequest
 {
-    SKProductsRequest *productsRequest = [[SKProductsRequest alloc]
-                                          initWithProductIdentifiers:[NSSet setWithArray:self.productIdentifiers]];
-    
-    // Keep a strong reference to the request.
-    self.request = productsRequest;
-    productsRequest.delegate = self;
-    [productsRequest start];
+    // check if there is product id's
+    if (self.productIdentifiers.count > 0) {
+        SKProductsRequest *productsRequest = [[SKProductsRequest alloc]
+                                              initWithProductIdentifiers:self.productIdentifiers];
+        
+        // Keep a strong reference to the request.
+        self.request = productsRequest;
+        productsRequest.delegate = self;
+        [productsRequest start];
+    }
 }
 
 // SKProductsRequestDelegate protocol method
@@ -71,12 +75,22 @@
     for (NSString *invalidIdentifier in response.invalidProductIdentifiers) {
         // Handle any invalid product identifiers.
         NSLog(@"invalidIdentifier: %@", invalidIdentifier);
+        NSLog(@"products: %@", response.products);
     }
     
     // inform delegate that products are ready
     if ( [self.delegate respondsToSelector:@selector(inAppPurchaseManagerDidReceiveProducts:)] ) {
         [self.delegate inAppPurchaseManagerDidReceiveProducts:self];
     }}
+
+- (void)buyProductWithIdentifier:(NSString *)identifier {
+    for (SKProduct *product in self.products) {
+        if ([product.productIdentifier isEqualToString:identifier]) {
+            [self makePaymentRequestForProduct:product];
+            return;
+        }
+    }
+}
 
 - (void)makePaymentRequestForProduct:(SKProduct *)product
 {
@@ -114,8 +128,12 @@
 
 - (void)completeTransaction:(SKPaymentTransaction *)transaction
 {
-    // Validate the purchase...
-
+    [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+    // somehow notify application that transaction (or payment) has completed
+    if ( [self.delegate respondsToSelector:@selector(inAppPurchaseManagerDidCompleteTransaction:forProductId:)] ) {
+        [self.delegate inAppPurchaseManagerDidCompleteTransaction:self forProductId:transaction.payment.productIdentifier];
+        
+    }
 }
 
 @end

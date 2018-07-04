@@ -49,7 +49,7 @@ extern FWApplication * applicationMain();
 @property (nonatomic, assign) int activeViewId;
 @property (nonatomic, assign) BOOL sideMenuPanned;
 @property (nonatomic, strong) WKWebView *webView;
-@property (nonatomic, strong) InAppPurchaseManager *inAppPurchaseManager;
+//@property (nonatomic, strong) InAppPurchaseManager *inAppPurchaseManager;
 @property (nonatomic, strong) NSString * currentTitle;
 @property (nonatomic, strong) FWPicker * currentPicker;
 @property (nonatomic, assign) int currentPickerSelection;
@@ -100,7 +100,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     self.backgroundOverlayView.hidden = YES;
     self.backgroundOverlayView.tag = 0;
   
-    self.inAppPurchaseManager = [InAppPurchaseManager sharedInstance];
+    //self.inAppPurchaseManager = [InAppPurchaseManager sharedInstance];
 
     self.currentPicker = nil;
     self.currentPickerSelection = 0;
@@ -149,6 +149,9 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(backgroundTapped:)];
     tapGestureRecognizer.delegate = self;
     [self.view addGestureRecognizer:tapGestureRecognizer];
+    
+    // For testing in-app-purchases
+    [self getInAppPurchaseProductsForIdentifiers:@"com.samiramo.sometriktest.unlock_for_week"];
     
 }
 
@@ -2312,7 +2315,20 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             [self menuButtonTapped];
         }
             break;
+        case LIST_PRODUCTS: {
+            [self getInAppPurchaseProductsForIdentifiers:command.textValue];
         }
+            break;
+        case BUY_PRODUCT: {
+            [self buyProductWithIdentifier:command.textValue];
+        }
+            break;
+        case LIST_PURCHASES:
+            break;
+        case CONSUME_PURCHASE:
+            break;
+        }
+        
     }
 
     for (auto id : changedViews) {
@@ -2387,10 +2403,38 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
 #pragma mark - In-App Purchase stuff
 
-// delegate method
+// delegate methods
 - (void)inAppPurchaseManagerDidReceiveProducts:(InAppPurchaseManager *)manager {
     // show in-app purchase UI
     // [self showInAppPurchaseView];
+    NSLog(@"products: %@", manager.products);
+}
+
+- (void)inAppPurchaseManagerDidCompleteTransaction:(InAppPurchaseManager *)manager forProductId:(NSString *)productId {
+    NSLog(@"purchased: %@", productId);
+    // maybe send some event to application that purchase was completed (so it can unlock features etc.)
+}
+    
+- (void)addProductIds:(NSString *)productIds { // comma separated
+    NSArray *stringArray = [productIds componentsSeparatedByString:@","];
+    [InAppPurchaseManager.sharedInstance addProductIds:stringArray];
+}
+
+// make products request if product id's have been added
+- (void)getInAppPurchaseProducts {
+    [InAppPurchaseManager.sharedInstance makeProductsRequest];
+}
+    
+// Get product identifiers from application
+- (void)getInAppPurchaseProductsForIdentifiers:(NSString *)identifiers { // comma separated
+    NSArray *stringArray = [identifiers componentsSeparatedByString:@","];
+    NSSet *productIds = [NSSet setWithArray:stringArray];
+    InAppPurchaseManager.sharedInstance.productIdentifiers = (NSMutableSet *)productIds;
+    [InAppPurchaseManager.sharedInstance makeProductsRequest]; // When this completes it calls delegate method inAppPurchaseManagerDidReceiveProducts (above)
+}
+
+- (void)buyProductWithIdentifier:(NSString *)identifier {
+    [InAppPurchaseManager.sharedInstance buyProductWithIdentifier:identifier];
 }
 
 #pragma mark - FWImageViewDelegate
