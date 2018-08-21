@@ -52,6 +52,7 @@ class PrepareEvent;
 class VisiblePostsEvent;
 class GraphChangeEvent;
 class SearchEvent;
+class SearchInfoEvent;
 class StatusEvent;
 class UserListEvent;
 
@@ -119,6 +120,7 @@ class EventHandler : public Notifier {
   virtual void handleEdgeEvent(EdgeEvent & ev) { }
   virtual void handleVisiblePostsEvent(VisiblePostsEvent & ev) { }
   virtual void handleSearchEvent(SearchEvent & ev) { }
+  virtual void handleSearchInfoEvent(SearchInfoEvent & ev) { }
   virtual void handleStatusEvent(StatusEvent & ev) { }
   virtual void handleUserListEvent(UserListEvent & ev) { }
   
