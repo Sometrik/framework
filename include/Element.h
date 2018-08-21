@@ -180,10 +180,6 @@ class Element : public EventHandler {
   const PlatformThread & getThread() const { return *thread; }
   PlatformThread * getThreadPtr() { return thread; }
 
-  void setThread(PlatformThread * _thread) {
-    thread = _thread;
-  }
-
   virtual void initialize(PlatformThread * _thread);
 
   void initializeChildren();
