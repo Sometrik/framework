@@ -131,7 +131,8 @@ Element::sendCommand(const Command & command) {
 
 void
 Element::onEvent(Event & ev) {
-  if (!ev.isHandled()) {
+  if (!ev.isHandled() && ev.getTTL()) {
+    ev.decTTL();
     if (ev.isBroadcast()) {
       for (auto & c : getChildren()){
 	ev.dispatch(*c);
@@ -139,6 +140,7 @@ Element::onEvent(Event & ev) {
     } else if (parent) {
       ev.dispatch(*parent);
     }
+    ev.incTTL();
   }
 }
 

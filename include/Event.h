@@ -44,7 +44,13 @@ class Event {
 
   void setEventHandler(EventHandler * h) { handler = h; }
 
+  unsigned short getTTL() const { return ttl; }
+  void incTTL() { ttl++; }
+  void decTTL() { ttl--; }
+
  protected:
+  void setTTL(unsigned short _ttl) { ttl = _ttl; }
+
   void setFlag(unsigned short flag, bool value) {
     if (value) {
       flags |= flag;
@@ -57,6 +63,7 @@ class Event {
 
  private:
   unsigned short flags = 0;
+  unsigned short ttl = 0xffff;
 };
 
 #endif
