@@ -26,15 +26,9 @@ class PlatformThread : public EventHandler {
     CACHE_DATABASE
   };
 
- PlatformThread(PlatformThread * _parent_thread, std::shared_ptr<FWApplication> & _application, std::shared_ptr<Runnable> & _runnable)
-   : application(_application), parent_thread(_parent_thread), runnable(_runnable)
-    {
-      // initialize(this);
-    if (_parent_thread) {
-      setActualDisplayWidth(_parent_thread->getActualDisplayWidth());
-      setActualDisplayHeight(_parent_thread->getActualDisplayHeight());
-      setDisplayScale(_parent_thread->getDisplayScale());
-    }
+ PlatformThread(std::shared_ptr<FWApplication> & _application, std::shared_ptr<Runnable> & _runnable)
+   : application(_application), runnable(_runnable)
+    {   
   }
 
 #if 0
@@ -42,6 +36,15 @@ class PlatformThread : public EventHandler {
     Element::unregisterElement(this);    
   }
 #endif
+
+  void setParentThread(std::shared_ptr<PlatformThread> & _parent_thread) {
+    parent_thread = _parent_thread;
+    if (_parent_thread.get()) {
+      setActualDisplayWidth(_parent_thread->getActualDisplayWidth());
+      setActualDisplayHeight(_parent_thread->getActualDisplayHeight());
+      setDisplayScale(_parent_thread->getDisplayScale());
+    }
+  }
   
   virtual bool startThread(std::shared_ptr<PlatformThread> thread) = 0;
   virtual void sendCommands(const std::vector<Command> & commands) = 0;
@@ -95,21 +98,12 @@ class PlatformThread : public EventHandler {
   }
   void postEvent(const Event & ev) { postEvent(0, ev); }
 
-  std::shared_ptr<PlatformThread> run(std::shared_ptr<Runnable> new_runnable) {
-    auto thread = createThread(new_runnable);
-    subthreads[thread->getInternalId()] = thread;
-    if (startThread(thread)) {
-      return thread;
-    } else {
-      subthreads.erase(thread->getInternalId());
-      return std::shared_ptr<PlatformThread>();
-    }
-  }
-    
+#if 0
   void exitApp() {
     Command c(Command::QUIT_APP, getInternalId());
     sendCommand(c);
   }
+#endif
 
   void setActualDisplayWidth(int w) { actual_display_width = w; }
   void setActualDisplayHeight(int h) { actual_display_height = h; }
@@ -152,11 +146,7 @@ class PlatformThread : public EventHandler {
 	subthreads.erase(it);
       }
       if (exit_when_threads_terminated && subthreads.empty()) {
-        if (parent_thread) {
-          terminate();
-        } else {
-          exitApp();
-        }
+	terminate();        
       }
     }
   }
@@ -186,12 +176,25 @@ class PlatformThread : public EventHandler {
   
   bool isInTransaction() const { return batchOpen; }
 
+  static std::shared_ptr<PlatformThread> run(std::shared_ptr<PlatformThread> currentThread, std::shared_ptr<Runnable> runnable) {
+    if (currentThread.get()) {
+      auto thread = currentThread->createThread(runnable);
+      thread->setParentThread(currentThread);
+      currentThread->subthreads[thread->getInternalId()] = thread;
+      if (currentThread->startThread(thread)) {
+	return thread;
+      }
+      currentThread->subthreads.erase(thread->getInternalId());
+    }
+    return std::shared_ptr<PlatformThread>();
+  }
+
  protected:
   virtual void setDestroyed() = 0;
   virtual void initializeThread() { }  
   virtual void deinitializeThread() { }
 
-  PlatformThread * getParentThread() { return parent_thread; }
+  std::shared_ptr<PlatformThread> getParentThread() { return parent_thread.lock(); }
 
   void closeSubthreads() {
     while (!subthreads.empty()) {
@@ -205,9 +208,10 @@ class PlatformThread : public EventHandler {
     SysEvent ev(SysEvent::THREAD_TERMINATED);
     ev.setThreadId(getInternalId());
     ev.setRunnable(runnable.get());
-    
-    if (parent_thread) {
-      parent_thread->sendEvent(parent_thread->getInternalId(), ev);
+
+    auto pt = getParentThread();
+    if (pt) {
+      pt->sendEvent(pt->getInternalId(), ev);
     }
     postEvent(0, ev);
   }
@@ -227,7 +231,7 @@ class PlatformThread : public EventHandler {
   std::shared_ptr<FWApplication> application;
 
  private:
-  PlatformThread * parent_thread;
+  std::weak_ptr<PlatformThread> parent_thread;
   int actual_display_width = 0, actual_display_height = 0;
   float display_scale = 1.0f;
   std::unordered_map<int, std::shared_ptr<PlatformThread> > subthreads;

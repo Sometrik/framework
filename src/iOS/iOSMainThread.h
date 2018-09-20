@@ -56,6 +56,8 @@ class iOSAppRunner : public Runnable {
 #if 0
       deinitializeRenderer();
 #endif
+      Command c(Command::QUIT_APP, getInternalId());
+      thread->sendCommand(c);
     }
   }  
 };

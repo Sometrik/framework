@@ -19,7 +19,7 @@
 
 using namespace std;
 
-iOSMainThread::iOSMainThread(std::shared_ptr<FWApplication> _application, std::shared_ptr<Runnable> _runnable) : PosixThread(0, _application, _runnable) {
+iOSMainThread::iOSMainThread(std::shared_ptr<FWApplication> _application, std::shared_ptr<Runnable> _runnable) : PosixThread(_application, _runnable) {
 }
 
 void
@@ -185,7 +185,7 @@ iOSMainThread::endModal(int value) {
 
 std::shared_ptr<PlatformThread>
 iOSMainThread::createThread(std::shared_ptr<Runnable> & runnable) {
-  return std::make_shared<iOSThread>(this, application, runnable);
+  return std::make_shared<iOSThread>(application, runnable);
 }
 
 void

@@ -232,7 +232,7 @@ Example1::handleImageRequestEvent(ImageRequestEvent & ev) {
     ev.setImageUrl(url);
   }
   auto loader = make_shared<ImageLoader>(ev, "example1");
-  getThread().run(loader);
+  PlatformThread::run(getThreadPtr(), loader);
 }
 
 FWApplication * applicationMain() {

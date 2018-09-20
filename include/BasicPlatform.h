@@ -25,8 +25,8 @@ class BasicLogger : public Logger {
 
 class BasicThread : public PosixThread {
  public:
- BasicThread(PlatformThread * _parent_thread, std::shared_ptr<FWApplication> & _application, std::shared_ptr<Runnable> & _runnable)
-   : PosixThread(_parent_thread,_application, _runnable) { }
+ BasicThread(std::shared_ptr<FWApplication> & _application, std::shared_ptr<Runnable> & _runnable)
+   : PosixThread(_application, _runnable) { }
 
 #ifndef NO_CANVAS
   std::unique_ptr<canvas::ContextFactory> createContextFactory() const override {
@@ -38,7 +38,7 @@ class BasicThread : public PosixThread {
   }
 
   std::shared_ptr<PlatformThread> createThread(std::shared_ptr<Runnable> & runnable) override {
-    return std::make_shared<BasicThread>(this, application, runnable);
+    return std::make_shared<BasicThread>(application, runnable);
   }
 
   void sendCommands(const std::vector<Command> & commands) {
@@ -66,7 +66,7 @@ class BasicThread : public PosixThread {
 class BasicMainThread : public PosixThread {
 public:
  BasicMainThread(std::shared_ptr<FWApplication> & _application, std::shared_ptr<Runnable> & _runnable)
-   : PosixThread(0, _application, _runnable)
+   : PosixThread(_application, _runnable)
   {
     
   }
@@ -81,7 +81,7 @@ public:
   }
 
   std::shared_ptr<PlatformThread> createThread(std::shared_ptr<Runnable> & runnable) override {
-    return std::make_shared<BasicThread>(this, application, runnable);
+    return std::make_shared<BasicThread>(application, runnable);
   }
 
   void sendCommands(const std::vector<Command> & commands) {

@@ -102,8 +102,8 @@ class GtkLogger : public Logger {
 
 class GtkThread : public PosixThread {
 public:
-  GtkThread(PlatformThread * _parent_thread, std::shared_ptr<FWApplication> & _application, std::shared_ptr<Runnable> & _runnable)
-    : PosixThread(_parent_thread, _application, _runnable) { }
+  GtkThread(std::shared_ptr<FWApplication> & _application, std::shared_ptr<Runnable> & _runnable)
+    : PosixThread(_application, _runnable) { }
 
   std::unique_ptr<HTTPClientFactory> createHTTPClientFactory() const override {
     return std::unique_ptr<HTTPClientFactory>(new CurlClientFactory);
@@ -112,7 +112,7 @@ public:
     return std::unique_ptr<canvas::ContextFactory>(new canvas::CairoContextFactory);
   }
   std::shared_ptr<PlatformThread> createThread(std::shared_ptr<Runnable> & runnable) override {
-    return make_shared<GtkThread>(this, application, runnable);
+    return make_shared<GtkThread>(application, runnable);
   }
   void setImageData(int internal_id, std::shared_ptr<canvas::PackedImageData> image) override {
     bitmap_data_s * bd = new bitmap_data_s(&(getApplication().getThread()), internal_id, image);
@@ -159,7 +159,7 @@ public:
 class GtkMainThread : public PlatformThread {
 public:
   GtkMainThread(std::shared_ptr<FWApplication> _application, std::shared_ptr<Runnable> _runnable)
-    : PlatformThread(nullptr, _application, _runnable) {
+    : PlatformThread(_application, _runnable) {
     CurlClientFactory::globalInit();
 
     string fn = g_get_user_config_dir();
@@ -217,7 +217,7 @@ public:
   bool testDestroy() override { return false; }
 
   std::shared_ptr<PlatformThread> createThread(std::shared_ptr<Runnable> & runnable) override {
-    return make_shared<GtkThread>(this, application, runnable);
+    return make_shared<GtkThread>(application, runnable);
   }
   
   void sleep(double t) override {
