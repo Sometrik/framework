@@ -5,12 +5,12 @@
 
 class iOSThread : public PosixThread {
 public:
-  iOSThread(PlatformThread * _parent_thread, std::shared_ptr<FWApplication> & _application, std::shared_ptr<Runnable> & _runnable)
-    : PosixThread(_parent_thread, _application, _runnable) { }
+  iOSThread(std::shared_ptr<FWApplication> & _application, std::shared_ptr<Runnable> & _runnable)
+    : PosixThread(_application, _runnable) { }
   
   void sendCommands(const std::vector<Command> & commands) override {
-    auto * parent = getParentThread();
-    if (parent) parent->sendCommands(commands);
+    auto pt = getParentThread();
+    if (pt) pt->sendCommands(commands);
   }
   
   std::unique_ptr<HTTPClientFactory> createHTTPClientFactory() const override {
@@ -50,7 +50,7 @@ public:
   void sendHeartbeat() override { }
   
   std::shared_ptr<PlatformThread> createThread(std::shared_ptr<Runnable> & runnable) override {
-    return std::make_shared<iOSThread>(this, application, runnable);
+    return std::make_shared<iOSThread>(application, runnable);
   }
   
   std::unique_ptr<Logger> createLogger(const std::string & name) const override {
