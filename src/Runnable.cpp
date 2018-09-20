@@ -21,7 +21,7 @@ Runnable::getName() const {
 }
 
 void
-Runnable::start(PlatformThread * _thread) {
+Runnable::start(std::shared_ptr<PlatformThread> _thread) {
   initialize(_thread);
   try {
     run();
@@ -29,3 +29,4 @@ Runnable::start(PlatformThread * _thread) {
     getLogger().println("exception: " + std::string(e.what()));
   }
 }
+

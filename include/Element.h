@@ -81,10 +81,12 @@ class Element : public EventHandler {
     element->setParent(this);
     children.push_back(element);
 
-    if (isInitialized()) {
-      element->initialize(thread);
-      element->initializeChildren();
-      element->load();
+    if (auto ptr = thread.lock()) {
+      if (ptr.get() != 0) {
+	element->initialize(ptr);
+	element->initializeChildren();
+	element->load();
+      }
     }
     return *element;
   }  
@@ -169,18 +171,46 @@ class Element : public EventHandler {
   Element * getParent() { return parent; }
   const Element * getParent() const { return parent; }
   void setParent(Element * _parent) { parent = _parent; }
-  bool isInitialized() const { return thread != 0; }
+
+  bool isInitialized() const {
+    if (auto ptr = thread.lock()) {
+      return ptr.get() != 0;
+    } else {
+      return false;
+    }
+  }
 
   void removeChildren();
   void removeChild(Element * c);
 
   int createTimer(int timeout_ms);
 
-  PlatformThread & getThread() { return *thread; }
-  const PlatformThread & getThread() const { return *thread; }
-  PlatformThread * getThreadPtr() { return thread; }
+  PlatformThread & getThread() {
+    if (auto ptr = thread.lock()) {
+      return *ptr;
+    } else {
+      PlatformThread * t = 0;
+      return *t;
+    }
+  }
+  
+  const PlatformThread & getThread() const {
+    if (auto ptr = thread.lock()) {
+      return *ptr;
+    } else {
+      PlatformThread * t = 0;
+      return *t;
+    }
+  }
+  PlatformThread * getThreadPtr() {
+    if (auto ptr = thread.lock()) {
+      return ptr.get();
+    } else {
+      return 0;
+    }
+  }
 
-  virtual void initialize(PlatformThread * _thread);
+  virtual void initialize(std::shared_ptr<PlatformThread> _thread);
 
   void initializeChildren();
 
@@ -233,7 +263,7 @@ class Element : public EventHandler {
 
  private:
 
-  PlatformThread * thread = 0;
+  std::weak_ptr<PlatformThread> thread;
   Element * parent = 0;
   int id = 0;
   std::vector<std::shared_ptr<Element> > children;

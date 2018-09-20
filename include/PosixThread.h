@@ -15,7 +15,7 @@ public:
     
   }
 
-  bool start() override;
+  bool startThread(std::shared_ptr<PlatformThread> thread) override;
   
   bool testDestroy() override {
     return terminate_thread;
@@ -57,7 +57,7 @@ private:
 
   static void * entryPoint(void * pthis);
   
-  pthread_t thread;
+  pthread_t pthread;
   bool terminate_thread = false;
   EventQueue event_queue;
 };

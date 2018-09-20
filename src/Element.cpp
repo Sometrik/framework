@@ -13,40 +13,42 @@ Mutex Element::mutex;
 
 Element::~Element() {
   if (unregisterElement(this)) {
-    Command c(Command::DELETE_ELEMENT, getInternalId());
-    thread->sendCommand(c);
+    if (auto ptr = thread.lock()) {
+      Command c(Command::DELETE_ELEMENT, getInternalId());
+      ptr->sendCommand(c);
+    }
   }
 }
 
 void
-Element::initialize(PlatformThread * _thread) {
-  assert(_thread);
-  if (_thread) {
+Element::initialize(std::shared_ptr<PlatformThread> _thread) {
+  assert(_thread.get());
+  if (_thread.get()) {
     thread = _thread;
     registerElement(this);
     create();
     if (!pendingCommands.empty()) {
-      if (thread->isInTransaction()) {
+      if (_thread->isInTransaction()) {
         for (auto & c : pendingCommands) {
-          thread->sendCommand(c);
+          _thread->sendCommand(c);
         }
       } else {
-        thread->sendCommands(pendingCommands);
+        _thread->sendCommands(pendingCommands);
       }
       pendingCommands.clear();
     }
   }
-  assert(isInitialized());
 }
 
 void
 Element::initializeChildren() {
-  assert(isInitialized());
-  if (isInitialized()) {
-    for (auto & c : getChildren()) {
-      c->initialize(thread);
-      c->initializeChildren();
-      c->load();
+  if (auto ptr = thread.lock()) {
+    if (ptr.get()) {
+      for (auto & c : getChildren()) {
+	c->initialize(ptr);
+	c->initializeChildren();
+	c->load();
+      }
     }
   }
 }
@@ -100,21 +102,31 @@ Element::style(Selector s, const std::string & key, const std::string & value) {
 
 void
 Element::begin() {
-  if (thread) thread->beginBatch();
+  if (auto ptr = thread.lock()) {
+    if (ptr.get()) {
+      ptr->beginBatch();
+    }
+  }
 }
 
 void
 Element::commit() {
-  if (thread) thread->commitBatch();
+  if (auto ptr = thread.lock()) {
+    if (ptr.get()) {
+      ptr->commitBatch();
+    }
+  }
 }
 
 void
 Element::sendCommand(const Command & command) {
-  if (thread) {
-    thread->sendCommand(command);
-  } else {
-    pendingCommands.push_back(command);
+  if (auto ptr = thread.lock()) {
+    if (ptr.get()) {
+      ptr->sendCommand(command);
+      return;
+    }    
   }
+  pendingCommands.push_back(command);
 }
 
 void
@@ -145,14 +157,22 @@ Element::launchBrowser(const std::string & input_url) {
 
 FWApplication &
 Element::getApplication() {
-  if (!thread) throw ElementNotInitializedException();
-  return thread->getApplication();
+  if (auto ptr = thread.lock()) {
+    if (ptr.get()) {
+      return ptr->getApplication();
+    }
+  }
+  throw ElementNotInitializedException();
 }
 
 const FWApplication &
 Element::getApplication() const {
-  if (!thread) throw ElementNotInitializedException();
-  return thread->getApplication();
+  if (auto ptr = thread.lock()) {
+    if (ptr.get()) {
+      return ptr->getApplication();
+    }
+  }
+  throw ElementNotInitializedException();
 }
 
 void
@@ -190,5 +210,10 @@ Element::createTimer(int timeout_ms) {
 int
 Element::showModal(const std::shared_ptr<Element> & dialog) {
   addChild(dialog);
-  return getThread().startModal();
+  if (auto ptr = thread.lock()) {
+    if (ptr.get()) {
+      return ptr->startModal();
+    }
+  }
+  return 0;
 }

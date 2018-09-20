@@ -33,6 +33,9 @@
 #include <iostream>
 #include <sstream>
 
+#define DEFAULT_DISPLAY_WIDTH 800
+#define DEFAULT_DISPLAY_HEIGHT 600
+
 using namespace std;
 
 struct sheet_data_s {
@@ -42,9 +45,9 @@ struct sheet_data_s {
 
 extern FWApplication * applicationMain();
 
-static int width = 800, height = 600;
-
 class GtkMainThread;
+
+static shared_ptr<GtkMainThread> mainThread;
 
 struct image_data_s {
   ImageSet images;
@@ -210,7 +213,7 @@ public:
     return buffer.str();
   }
 
-  bool start() override { return false; }
+  bool startThread(std::shared_ptr<PlatformThread> thread) override { return false; }
   bool testDestroy() override { return false; }
 
   std::shared_ptr<PlatformThread> createThread(std::shared_ptr<Runnable> & runnable) override {
@@ -241,15 +244,9 @@ public:
     setDisplayScale(gtk_widget_get_scale_factor(window));
   
     gtk_window_set_title(GTK_WINDOW(window), "Window");
-    gtk_window_set_default_size(GTK_WINDOW(window), width, height);
+    gtk_window_set_default_size(GTK_WINDOW(window), DEFAULT_DISPLAY_WIDTH, DEFAULT_DISPLAY_HEIGHT);
     g_signal_connect(window, "delete-event", G_CALLBACK(delete_window), this);
     
-    auto & app = getApplication();
-
-    app.initialize(this);
-    app.initializeChildren();
-    app.load();
-
     cerr << "activate done\n";
   }
 
@@ -1607,8 +1604,12 @@ GtkMainThread::timer_callback(gpointer data) {
 
 static void activate(GtkApplication * gtk_app, gpointer user_data) {
   cerr << "activate\n";
-  GtkMainThread * mainThread = (GtkMainThread*)user_data;
   mainThread->activate(gtk_app);
+
+  auto & app = mainThread->getApplication();
+  app.initialize(mainThread);
+  app.initializeChildren();
+  app.load();
 }
 
 int main (int argc, char *argv[]) {
@@ -1616,12 +1617,12 @@ int main (int argc, char *argv[]) {
 			      
   cerr << "creating mainloop\n";
   
-  GtkMainThread mainThread(application, application);
-  mainThread.setActualDisplayWidth(width);
-  mainThread.setActualDisplayHeight(height);
+  mainThread = make_shared<GtkMainThread>(application, application);
+  mainThread->setActualDisplayWidth(DEFAULT_DISPLAY_WIDTH);
+  mainThread->setActualDisplayHeight(DEFAULT_DISPLAY_HEIGHT);
   
   auto gtk_app = gtk_application_new(application->getName().c_str(), G_APPLICATION_FLAGS_NONE);
-  g_signal_connect (gtk_app, "activate", G_CALLBACK (activate), &mainThread);
+  g_signal_connect (gtk_app, "activate", G_CALLBACK (activate), 0);
   int status = g_application_run(G_APPLICATION(gtk_app), argc, argv);
   g_object_unref(gtk_app);
     
@@ -1629,6 +1630,8 @@ int main (int argc, char *argv[]) {
   SysEvent ev(SysEvent::DESTROY);
   Element::postEventToElement(application->getInternalId(), ev);
 #endif
+
+  mainThread.reset();
   
   return status;
 }

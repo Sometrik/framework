@@ -43,7 +43,7 @@ class PlatformThread : public EventHandler {
   }
 #endif
   
-  virtual bool start() = 0;
+  virtual bool startThread(std::shared_ptr<PlatformThread> thread) = 0;
   virtual bool testDestroy() = 0;
   virtual void sendCommands(const std::vector<Command> & commands) = 0;
   virtual void sleep(double t) = 0;
@@ -96,7 +96,7 @@ class PlatformThread : public EventHandler {
   std::shared_ptr<PlatformThread> run(std::shared_ptr<Runnable> new_runnable) {
     auto thread = createThread(new_runnable);
     subthreads[thread->getInternalId()] = thread;
-    if (thread->start()) {
+    if (startThread(thread)) {
       return thread;
     } else {
       subthreads.erase(thread->getInternalId());
@@ -192,33 +192,34 @@ class PlatformThread : public EventHandler {
   virtual void setDestroyed() = 0;
   virtual void initializeThread() { }  
   virtual void deinitializeThread() { }
-  virtual void startRunnable() {
-    if (runnable.get()) {
-      runnable->start(this);
-    }
-  }  
-  void start2() {
-    initializeThread();
-    startRunnable();
-
+  
+  void closeSubthreads() {
     while (!subthreads.empty()) {
       auto evs = pollEvents(true);
       for (auto & ed : evs) {
         ed.second->dispatch(*this);
       }
     }
-
-    deinitializeThread();
-
+  }
+  void finalize() {
     SysEvent ev(SysEvent::THREAD_TERMINATED);
     ev.setThreadId(getInternalId());
     ev.setRunnable(runnable.get());
-
+    
     if (parent_thread) {
       parent_thread->sendEvent(parent_thread->getInternalId(), ev);
     }
-
     postEvent(0, ev);
+  }
+  
+  static void startThread2(std::shared_ptr<PlatformThread> thread) {
+    thread->initializeThread();
+    if (thread->runnable.get()) {
+      thread->runnable->start(thread);
+    }
+    thread->closeSubthreads();
+    thread->deinitializeThread();
+    thread->finalize();
   }
 
   bool exit_when_threads_terminated = false;

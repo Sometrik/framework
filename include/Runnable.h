@@ -15,7 +15,7 @@ class Runnable : public Element {
     unregisterElement(this);
   }
   
-  void start(PlatformThread * _thread);
+  void start(std::shared_ptr<PlatformThread> _thread);
   
   std::string getStatusText() const {
     MutexLocker m(mutex);
