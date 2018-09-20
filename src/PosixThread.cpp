@@ -40,7 +40,6 @@ PosixThread::entryPoint(void * pthis) {
   auto * holder = static_cast<ptr_holder_s *>(pthis);
   assert(holder);
   if (holder) {
-    cerr << "got holder " << holder->data.get() << endl;
     auto & ptr = holder->data;
     assert(ptr.get());
     if (ptr.get()) {
