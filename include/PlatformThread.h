@@ -44,7 +44,6 @@ class PlatformThread : public EventHandler {
 #endif
   
   virtual bool startThread(std::shared_ptr<PlatformThread> thread) = 0;
-  virtual bool testDestroy() = 0;
   virtual void sendCommands(const std::vector<Command> & commands) = 0;
   virtual void sleep(double t) = 0;
   virtual std::unique_ptr<HTTPClientFactory> createHTTPClientFactory() const = 0;
@@ -62,7 +61,10 @@ class PlatformThread : public EventHandler {
   virtual int startModal() = 0;
   virtual void endModal(int value) = 0;
   virtual void sendHeartbeat() { }
-      
+  virtual bool testDestroy() = 0;
+  virtual std::unique_ptr<Logger> createLogger(const std::string & name) const = 0;
+  virtual std::shared_ptr<PlatformThread> createThread(std::shared_ptr<Runnable> & runnable) = 0;
+    
   bool terminate() {
     sendEvent(getInternalId(), SysEvent(SysEvent::TERMINATE_THREAD));
     
@@ -103,9 +105,7 @@ class PlatformThread : public EventHandler {
       return std::shared_ptr<PlatformThread>();
     }
   }
-  
-  virtual std::unique_ptr<Logger> createLogger(const std::string & name) const = 0;
-  
+    
   void exitApp() {
     Command c(Command::QUIT_APP, getInternalId());
     sendCommand(c);
@@ -139,8 +139,6 @@ class PlatformThread : public EventHandler {
   const std::unordered_map<int, std::shared_ptr<PlatformThread> > & getSubThreads() const {
     return subthreads;
   }
-
-  virtual std::shared_ptr<PlatformThread> createThread(std::shared_ptr<Runnable> & runnable) = 0;
 
   void onSysEvent(SysEvent & ev) override {
     // Element::onSysEvent(ev);
@@ -192,7 +190,9 @@ class PlatformThread : public EventHandler {
   virtual void setDestroyed() = 0;
   virtual void initializeThread() { }  
   virtual void deinitializeThread() { }
-  
+
+  PlatformThread * getParentThread() { return parent_thread; }
+
   void closeSubthreads() {
     while (!subthreads.empty()) {
       auto evs = pollEvents(true);
@@ -223,9 +223,6 @@ class PlatformThread : public EventHandler {
   }
 
   bool exit_when_threads_terminated = false;
-
- protected:
-  PlatformThread * getParentThread() { return parent_thread; }
 
   std::shared_ptr<FWApplication> application;
 
