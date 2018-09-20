@@ -30,3 +30,12 @@ Runnable::start(std::shared_ptr<PlatformThread> _thread) {
   }
 }
 
+bool
+Runnable::testDestroy() {
+  auto ptr = getThreadPtr();
+  if (ptr.get()) {
+    return ptr->testDestroy();
+  } else {
+    return true;
+  }
+}

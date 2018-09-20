@@ -202,12 +202,8 @@ class Element : public EventHandler {
       return *t;
     }
   }
-  PlatformThread * getThreadPtr() {
-    if (auto ptr = thread.lock()) {
-      return ptr.get();
-    } else {
-      return 0;
-    }
+  std::shared_ptr<PlatformThread> getThreadPtr() {
+    return thread.lock();
   }
 
   virtual void initialize(std::shared_ptr<PlatformThread> _thread);

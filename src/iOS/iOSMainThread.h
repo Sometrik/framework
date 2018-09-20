@@ -40,20 +40,29 @@ namespace canvas {
   };
 };
 
+class iOSAppRunner : public Runnable {
+ public:
+  iOSAppRunner() { }
+  
+  void run() override {
+    auto thread = getThreadPtr();
+    if (thread.get()) {
+      auto & app = thread->getApplication();
+      app.initialize(thread);
+      app.initializeChildren();
+      app.load();
+
+      thread->startEventLoop();
+#if 0
+      deinitializeRenderer();
+#endif
+    }
+  }  
+};
+
 class iOSMainThread : public PosixThread {
 public:
   iOSMainThread(std::shared_ptr<FWApplication> _application, std::shared_ptr<Runnable> _runnable);
-
-  void startRunnable() override {
-    application->initialize(this);
-    application->initializeChildren();
-    application->load();
-
-    startEventLoop();
-#if 0
-    deinitializeRenderer();
-#endif
-  }
 
   void startEventLoop() override;
 

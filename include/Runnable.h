@@ -34,6 +34,8 @@ class Runnable : public Element {
     status_text = s;
   }
 
+  bool testDestroy();
+
  private:
   std::string status_text;
   std::shared_ptr<Logger> logger;

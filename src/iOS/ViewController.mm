@@ -129,7 +129,8 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
     float scale = [[UIScreen mainScreen] scale];
   
-    mainThread = make_shared<iOSMainThread>(application, application);
+    auto runner = std::make_shared<iOSAppRunner>();
+    mainThread = make_shared<iOSMainThread>(application, runner);
     mainThread->viewController = self;
 //    mainThread->setActualDisplayWidth(screenWidth);
 //    mainThread->setActualDisplayHeight(screenHeight);
@@ -139,7 +140,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
     [self addView:self.view withId:1];
 
-    mainThread->start();
+    mainThread->startThread(mainThread);
     
     // Add notification handlers to catch notifications when keyboard opens and closes
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleKeyboardWillShowNotification:) name:UIKeyboardWillShowNotification object:nil];
