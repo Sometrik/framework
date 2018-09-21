@@ -169,6 +169,9 @@ DateTime::parseISOTime(const string & s) {
   if (rv != 6) {
     rv = _snscanf(s.c_str(), s.size(), "%d-%d-%d %d:%d:%d", &yy, &mo, &dd, &hh, &mi, &ss);
   }
+  if (rv != 6) {
+    rv = _snscanf(s.c_str(), s.size(), "%04d%02d%02d-%02d%02d%02d", &yy, &mo, &dd, &hh, &mi, &ss);
+  }
   if (rv == 6) {
     year = yy; month = mo; day = dd; hour = hh; min = mi; sec = ss;
     return true;
