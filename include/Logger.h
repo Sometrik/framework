@@ -17,4 +17,11 @@ class Logger {
   std::string name;
 };
 
+class DummyLogger : public Logger {
+ public:
+  DummyLogger() : Logger("") { }
+
+  void println(const char * s) override { }
+};
+
 #endif
