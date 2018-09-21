@@ -2,11 +2,15 @@
 #define _SWITCH_H_
 
 #include <InputElement.h>
-
-#include <Command.h>
+#include <CommandEvent.h>
 
 class Switch : public InputElement {
  public:
+  Switch(int _id = 0) : InputElement(_id) { }
+
+  Switch(int _id, const std::string & _on_label, const std::string & _off_label)
+    : InputElement(_id), on_label(_on_label), off_label(_off_label) { }
+
   Switch(const std::string & _on_label, const std::string & _off_label)
     : on_label(_on_label), off_label(_off_label) { }
 
@@ -18,6 +22,10 @@ class Switch : public InputElement {
   void onValueEvent(ValueEvent & ev) override {
     value = ev.getValue() != 0;
     notify(value);
+    ev.setHandled(true);
+
+    CommandEvent ev2(getId(), ev.getValue(), ev.getValue2());
+    ev2.dispatch(*this);
     ev.setHandled(true);
   }
 
