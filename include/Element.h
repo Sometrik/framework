@@ -184,24 +184,7 @@ class Element : public EventHandler {
   void removeChild(Element * c);
 
   int createTimer(int timeout_ms);
-
-  PlatformThread & getThread() {
-    if (auto ptr = thread.lock()) {
-      return *ptr;
-    } else {
-      PlatformThread * t = 0;
-      return *t;
-    }
-  }
   
-  const PlatformThread & getThread() const {
-    if (auto ptr = thread.lock()) {
-      return *ptr;
-    } else {
-      PlatformThread * t = 0;
-      return *t;
-    }
-  }
   std::shared_ptr<PlatformThread> getThreadPtr() {
     return thread.lock();
   }
@@ -248,11 +231,6 @@ class Element : public EventHandler {
     } else {
       return false;
     }
-  }
-
-  void selectFromGallery() {
-    Command c(Command::SELECT_FROM_GALLERY, getInternalId());
-    sendCommand(c);
   }
   
   bool is_visible = true;

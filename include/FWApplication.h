@@ -64,6 +64,11 @@ public:
   void showMessageDialog(const std::string & title, const std::string & message);
   std::string showInputDialog(const std::string & title, const std::string & message);
 
+  void selectFromGallery() {
+    Command c(Command::SELECT_FROM_GALLERY, getInternalId());
+    sendCommand(c);
+  }
+
  protected:
   void run() override {
     // not used
