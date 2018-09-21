@@ -1604,6 +1604,15 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     
 }
 
+- (void)createImagePicker
+{
+    CGFloat statusBarHeight = [UIApplication sharedApplication].statusBarFrame.size.height;
+    CGRect frame = CGRectMake(0, statusBarHeight, self.view.bounds.size.width, self.view.bounds.size.height);
+    UIImagePickerController * picker = [[UIImagePickerController alloc] initWithFrame:frame];
+    picker.translatesAutoresizingMaskIntoConstraints = false;
+    [self.view addSubview:picker];    
+}
+
 - (void)sendTimerEvent:(NSTimer *)timer
 {
     mainThread->sendTimerEvent(1);
@@ -2334,7 +2343,10 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             break;
         case CONSUME_PURCHASE:
             break;
-        }
+	case SELECT_FROM_GALLERY:
+	    [self createImagePicker];
+	    break;
+        }	
         
     }
 
