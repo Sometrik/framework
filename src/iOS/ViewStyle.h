@@ -19,6 +19,4 @@
 @property (nonatomic, assign) int borderRadius;
 @property (nonatomic, assign) int borderWidth;
 @property (nonatomic, strong) UIColor * borderColor;
-@property (nonatomic, assign) int contentInsetTop;
-@property (nonatomic, assign) int contentInsetBottom;
 @end

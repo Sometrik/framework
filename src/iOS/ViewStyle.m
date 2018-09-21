@@ -25,8 +25,6 @@
         self.paddingLeft = 0;
         self.borderRadius = -1;
         self.borderWidth = -1;
-        self.contentInsetTop = 0;
-        self.contentInsetBottom = 0;
     }
     return self;
 }
@@ -52,13 +50,6 @@
         }
         if (self.color != nil) [button setTitleColor:self.color forState:UIControlStateNormal];
         button.contentEdgeInsets = UIEdgeInsetsMake(self.paddingTop, self.paddingLeft, self.paddingBottom, self.paddingRight);
-    } else if ([view isKindOfClass:UIScrollView.class]) {
-        UIScrollView * scrollView = (UIScrollView*)view;
-        if (self.contentInsetTop != scrollView.contentInset.top ||
-            self.contentInsetBottom != scrollView.contentInset.bottom) {
-            scrollView.contentInset = UIEdgeInsetsMake(self.contentInsetTop, 0, self.contentInsetBottom, 0);
-            scrollView.contentOffset = CGPointMake(0, -self.contentInsetTop);
-        }
     }
     
     if (self.backgroundColor != nil) {
