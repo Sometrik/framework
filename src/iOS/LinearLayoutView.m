@@ -1,5 +1,7 @@
 #import "LinearLayoutView.h"
 
+#import "FWScrollView.h"
+
 @implementation LinearLayoutView
 
 - (id)init {
@@ -31,6 +33,9 @@
     if ([self.superview isKindOfClass:FWLayoutView.class]) {
         FWLayoutView * layout = (FWLayoutView*)self.superview;
         myParams = [layout findParams:self];
+    } else if ([self.superview isKindOfClass:FWScrollView.class]) {
+        FWScrollView * layout = (FWScrollView*)self.superview;
+        myParams = [layout findParams:self];
     }
 
     CGFloat paddingLeft = 0, paddingRight = 0, paddingTop = 0, paddingBottom = 0;
@@ -40,7 +45,14 @@
         paddingTop = myParams.padding.top;
         paddingBottom = myParams.padding.bottom;
     }
-
+    
+    if (0) {
+        paddingTop += self.safeAreaInsets.top;
+	paddingLeft += self.safeAreaInsets.left;
+	paddingRight += self.safeAreaInsets.right;
+	paddingBottom += self.safeAreaInsets.bottom;
+    }
+    
     CGFloat relativePosition = 0.0;
     CGFloat extraSpace = 0.0;
     CGFloat totalWeight = 0.0;

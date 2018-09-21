@@ -12,6 +12,7 @@
 - (void)showPage:(NSInteger)page animated:(BOOL)animated;
 - (void)flush;
 
+- (LayoutParams *)findParams:(UIView *)view;
 - (void)addItem:(LayoutParams *)linearLayoutItem;
 - (void)removeItem:(LayoutParams *)linearLayoutItem;
 - (void)removeAllItems;

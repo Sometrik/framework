@@ -36,8 +36,13 @@
     return self;
 }
 
+- (void)adjustedContentInsetDidChange {
+  NSLog(@"AdjustedContentInsetDidChange top %f offset %f", self.adjustedContentInset.top, self.contentOffset.y);
+  self.contentOffset = CGPointMake(0, -self.adjustedContentInset.top);
+}
+
 - (void)layoutSubviews {
-    if (self.pagingEnabled) {
+   if (self.pagingEnabled) {
         [self updateChildConstraints];
     } else {
         int width = self.frame.size.width;
@@ -47,6 +52,11 @@
             if ([view isKindOfClass:UIImageView.class]) continue; // ignore scroll indicators
             height = [self calcIntrinsicHeight:view];
             break;
+        }
+
+        int minHeight = self.superview.frame.size.height + 1;
+        if (height < minHeight) {
+            height = minHeight;
         }
 
         self.widthConstraint.constant = width;
@@ -140,35 +150,38 @@
     }
     
     [self.items addObject:item];
-    [self addSubview:item.view];
 
-    item.topConstraint = [NSLayoutConstraint constraintWithItem:item.view attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
-    item.leftConstraint = [NSLayoutConstraint constraintWithItem:item.view attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
-    item.widthConstraint = [NSLayoutConstraint constraintWithItem:item.view attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:0.0f constant:0];
-    item.heightConstraint = [NSLayoutConstraint constraintWithItem:item.view attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:0.0f constant:0];
+    if (self.pagingEnabled) {
+        [self addSubview:item.view];
 
-    item.topConstraint.priority = 999 - item.level;
-    item.leftConstraint.priority = 999 - item.level;
-    item.widthConstraint.priority = 999 - item.level - 1;
-    item.heightConstraint.priority = 999 - item.level - 1;
+        item.topConstraint = [NSLayoutConstraint constraintWithItem:item.view attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
+	item.leftConstraint = [NSLayoutConstraint constraintWithItem:item.view attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
+	item.widthConstraint = [NSLayoutConstraint constraintWithItem:item.view attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:0.0f constant:0];
+	item.heightConstraint = [NSLayoutConstraint constraintWithItem:item.view attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:0.0f constant:0];
 
-    item.leftConstraint.constant = numChildren * self.frame.size.width;
-    item.widthConstraint.constant = self.frame.size.width;
-    item.heightConstraint.constant = self.frame.size.height;
+	item.topConstraint.priority = 999 - item.level;
+	item.leftConstraint.priority = 999 - item.level;
+	item.widthConstraint.priority = 999 - item.level - 1;
+	item.heightConstraint.priority = 999 - item.level - 1;
 
-    item.topConstraint.active = YES;
-    item.leftConstraint.active = YES;
-    item.widthConstraint.active = YES;
-    item.heightConstraint.active = YES;
+	item.leftConstraint.constant = numChildren * self.frame.size.width;
+	item.widthConstraint.constant = self.frame.size.width;
+	item.heightConstraint.constant = self.frame.size.height;
+
+	item.topConstraint.active = YES;
+	item.leftConstraint.active = YES;
+	item.widthConstraint.active = YES;
+	item.heightConstraint.active = YES;
        
-    self.contentSize = CGSizeMake(numChildren * self.frame.size.width, self.frame.size.height);
+	self.contentSize = CGSizeMake(numChildren * self.frame.size.width, self.frame.size.height);
 
-    if (numChildren == 0) {
-        self.currentPage = 0;
-        self.currentPageInternalId = item.view.tag;
+	if (numChildren == 0) {
+	  self.currentPage = 0;
+	  self.currentPageInternalId = item.view.tag;
+	}
+
+	[self setNeedsLayout];
     }
-
-    [self setNeedsLayout];
 }
 
 - (void)removeItem:(LayoutParams *)item {
@@ -306,6 +319,15 @@
     frame.origin.x = frame.size.width * page;
     frame.origin.y = 0;
     [self scrollRectToVisible:frame animated:animated];
+}
+
+- (LayoutParams*)findParams:(UIView *)view {
+    for (LayoutParams *item in self.items) {
+        if (item.view == view) {
+            return item;
+        }
+    }
+    return nil;
 }
 
 @end

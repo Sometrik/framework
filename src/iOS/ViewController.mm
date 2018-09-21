@@ -91,10 +91,8 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
     self.imageCache = [[ImageCache alloc] init];
 
+    // CGFloat statusBarHeight = [UIApplication sharedApplication].statusBarFrame.size.height;
     self.view.layoutMargins = UIEdgeInsetsMake(0, 0, 0, 0);
-    self.automaticallyAdjustsScrollViewInsets = NO;
-    //  [self.topLayoutGuide
-//  self.bottomLayoutGuide.length = 44;
   
     self.backgroundOverlayView = [self createBackgroundOverlay:self.view];
     self.backgroundOverlayView.hidden = YES;
@@ -642,9 +640,10 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 {
     FWScrollView * scrollView = [[FWScrollView alloc] init];
     scrollView.tag = viewId;
-    scrollView.contentInset = UIEdgeInsetsMake(0, 0, 0, 0);
     scrollView.clipsToBounds = YES;
     scrollView.delegate = self;
+    scrollView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentScrollableAxes;
+    
     [self addView:scrollView withId:viewId];
     [self addToParent:parentId view:scrollView];
 }
@@ -707,10 +706,11 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     FWScrollView * scrollView = [[FWScrollView alloc] init];
     scrollView.tag = viewId;
     scrollView.pagingEnabled = YES;
-    scrollView.contentInset = UIEdgeInsetsMake(0, 0, 0, 0);
     scrollView.layoutMargins = UIEdgeInsetsMake(0, 0, 0, 0);
     scrollView.clipsToBounds = YES;
     scrollView.delegate = self;
+    scrollView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentScrollableAxes;
+    
     if (self.pageView == nil) self.pageView = scrollView;
     [self addView:scrollView withId:viewId];
     [self addToParent:parentId view:scrollView];
@@ -885,6 +885,8 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     
     self.statusBarBackgroundView = statusBarBackgroundView;
     self.navBar = navBar;
+
+    self.additionalSafeAreaInsets = UIEdgeInsetsMake(44, 0, self.additionalSafeAreaInsets.bottom, 0);
 }
 
 - (void)navBarTapped5Times:(UITapGestureRecognizer *)recognizer
@@ -924,6 +926,8 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     [self addView:tabBar withId:viewId];
     [self addToParent:parentId view:tabBar];
     tabBar.items = [[NSArray alloc] init];
+
+    self.additionalSafeAreaInsets = UIEdgeInsetsMake(self.additionalSafeAreaInsets.top, 0, 49, 0);
 }
 
 - (void)createTabBarItem:(int)viewId parentId:(int)parentId title:(NSString *)title
@@ -1644,13 +1648,15 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
         [layout addItem:item];
         viewManager.layoutParams = item;
     } else if ([parentView isKindOfClass:FWScrollView.class]) {
+        LayoutParams * item = [LayoutParams layoutItemForView:view];
+	item.level = parentViewManager.level + 1;
+        viewManager.layoutParams = item;
+    
         FWScrollView * scrollView = (FWScrollView *)parentView;
+	[scrollView addItem:item];
+            
         if (scrollView.pagingEnabled) {
-            LayoutParams * item = [LayoutParams layoutItemForView:view];
-            item.level = parentViewManager.level + 1;
-            [scrollView addItem:item];
-            viewManager.layoutParams = item;
-	    if (!scrollView.currentPageInternalId) {
+            if (!scrollView.currentPageInternalId) {
 	        [scrollView setPage:scrollView.currentPage];		
 	        [self sendIntValue:(int)scrollView.tag value:scrollView.currentPage];
             }

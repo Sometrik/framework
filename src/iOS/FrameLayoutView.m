@@ -1,11 +1,16 @@
 #import "FrameLayoutView.h"
 
+#import "FWScrollView.h"
+
 @implementation FrameLayoutView
 
 - (void)layoutSubviews {
     LayoutParams * myParams = nil;
     if ([self.superview isKindOfClass:FWLayoutView.class]) {
         FWLayoutView * layout = (FWLayoutView*)self.superview;
+        myParams = [layout findParams:self];
+    } else if ([self.superview isKindOfClass:FWScrollView.class]) {
+        FWScrollView * layout = (FWScrollView*)self.superview;
         myParams = [layout findParams:self];
     }
 
@@ -15,6 +20,13 @@
       paddingRight = myParams.padding.right;
       paddingTop = myParams.padding.top;
       paddingBottom = myParams.padding.bottom;
+    }
+
+    if (0) {
+        paddingTop += self.safeAreaInsets.top;
+	paddingLeft += self.safeAreaInsets.left;
+	paddingRight += self.safeAreaInsets.right;
+	paddingBottom += self.safeAreaInsets.bottom;
     }
 
     for (LayoutParams *item in self.items) {
