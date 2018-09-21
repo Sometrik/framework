@@ -115,16 +115,19 @@ public:
     return make_shared<GtkThread>(application, runnable);
   }
   void setImageData(int internal_id, std::shared_ptr<canvas::PackedImageData> image) override {
-    bitmap_data_s * bd = new bitmap_data_s(&(getApplication().getThread()), internal_id, image);
+    auto thread = getApplication().getThreadPtr();
+    bitmap_data_s * bd = new bitmap_data_s(thread.get(), internal_id, image);
     g_idle_add(bitmap_callback, bd);
   }
   void setSurface(int internal_id, canvas::Surface & surface) override {
     std::shared_ptr<canvas::PackedImageData> packedImage = surface.createPackedImage();
-    bitmap_data_s * bd = new bitmap_data_s(&(getApplication().getThread()), internal_id, packedImage);
+    auto thread = getApplication().getThreadPtr();
+    bitmap_data_s * bd = new bitmap_data_s(thread.get(), internal_id, packedImage);
     g_idle_add(bitmap_callback, bd);    
   }
   void sendCommands(const vector<Command> & commands) override {
-    command_data_s * cd = new command_data_s(&(getApplication().getThread()), commands);
+    auto thread = getApplication().getThreadPtr();
+    command_data_s * cd = new command_data_s(thread.get(), commands);
     g_idle_add(command_callback, cd);
   }
   string getLocalFilename(const char * fn, FileType type) override {

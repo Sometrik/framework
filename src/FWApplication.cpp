@@ -172,8 +172,11 @@ public:
   }
 
   void load() {
-    auto & grid = find("GridView").front();
-    populateThreads(dynamic_cast<GridView&>(grid), getThread());
+    auto thread = getThreadPtr();
+    if (thread) {
+      auto & grid = find("GridView").front();
+      populateThreads(dynamic_cast<GridView&>(grid), *thread);
+    }
   }
 
 protected:

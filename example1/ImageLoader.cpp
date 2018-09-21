@@ -80,7 +80,8 @@ ImageLoader::ImageLoader(const ImageRequestEvent & _ev, const std::string & _use
 
 std::unique_ptr<canvas::PackedImageData>
 ImageLoader::loadImageFromMemory(const unsigned char * buffer, size_t size, canvas::InternalFormat image_format, unsigned int required_width, unsigned int required_height, unsigned int required_levels) const {
-  auto factory = getThread().createContextFactory();
+  auto t = getThreadPtr();
+  auto factory = t->createContextFactory();
   auto img = factory->createImage();
   img->decode(buffer, size);
   if (required_width && required_height) {
@@ -96,15 +97,18 @@ bool
 ImageLoader::handleImageData(const std::string & data, bool is_live) {
   // cerr << "ImageLoader: processing data, size = " << data.size() << "\n";
   std::shared_ptr<canvas::PackedImageData> image = loadImageFromMemory((const unsigned char *)data.data(), data.size(), request.getInternalFormat(), request.getRequestedWidth(), request.getRequestedHeight(), request.getRequestedLevels());
+  auto t = getThreadPtr();
+  
   ImageResponseEvent ev(true, request.getImageUrl(), image);
-  getThread().postEvent(request.getSourceInternalId(), ev);
+  t->postEvent(request.getSourceInternalId(), ev);
 
-  return !getThread().testDestroy() && !ev.isCancelled();
+  return !t->testDestroy() && !ev.isCancelled();
 }
 
 void
 ImageLoader::run() {
-  auto factory = getThread().createHTTPClientFactory();
+  auto t = getThreadPtr();
+  auto factory = t->createHTTPClientFactory();
   auto http = factory->createClient(user_agent, true, true);
   
   try {

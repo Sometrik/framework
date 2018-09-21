@@ -51,7 +51,8 @@ class ImageElement : public Element {
 
   void handleImageResponseEvent(ImageResponseEvent & ev) override {
     if (ev.isSuccess()) {
-      getThread().setImageData(getInternalId(), ev.getImage());
+      auto t = getThreadPtr();
+      if (t) t->setImageData(getInternalId(), ev.getImage());
     }
     ev.setHandled(true);
   }
@@ -84,8 +85,13 @@ class ImageElement : public Element {
 
 #if 0
   std::unique_ptr<canvas::Context> createContext(unsigned int width, unsigned int height) {
-    auto factory = getThread().createContextFactory();
-    return factory->createContext(width, height);
+    auto t = getThreadPtr();
+    if (t) {
+      auto factory = t->createContextFactory();
+      return factory->createContext(width, height);
+    } else {
+      return std::unique_ptr<canvas::Context>(0);
+    }
   }
 #endif
 

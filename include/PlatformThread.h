@@ -93,8 +93,10 @@ class PlatformThread : public EventHandler {
   const FWApplication & getApplication() const { return *application; }
 
   void postEvent(int target_internal_id, const Event & ev) {
-    if (target_internal_id == 0) target_internal_id = getApplication().getInternalId();
-    getApplication().getThread().sendEvent(target_internal_id, ev);
+    auto & app = getApplication();
+    if (target_internal_id == 0) target_internal_id = app.getInternalId();
+    auto t = app.getThreadPtr();
+    if (t) t->sendEvent(target_internal_id, ev);
   }
   void postEvent(const Event & ev) { postEvent(0, ev); }
 

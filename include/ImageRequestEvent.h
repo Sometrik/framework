@@ -52,11 +52,11 @@ class ImageRequestEvent : public Event {
  private:
   RequestMode mode;
   std::string image_url;
+  int source_internal_id;
   unsigned int requested_width, requested_height, requested_levels;
   int priority = 0;
   // skey target_key;
   canvas::InternalFormat format = canvas::NO_FORMAT;
-  int source_internal_id;
 };
 
 #endif

@@ -34,7 +34,8 @@ class Dialog : public Element {
 
  protected:
   void endModal(int value = 0) {
-    getThread().endModal(value);
+    auto t = getThreadPtr();
+    if (t) t->endModal(value);
     getParent()->removeChild(this);
   }
   

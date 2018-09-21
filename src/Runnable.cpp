@@ -10,7 +10,12 @@ using namespace std;
 Logger &
 Runnable::getLogger() {
   if (!logger.get()) {
-    logger = getThread().createLogger(getName());
+    auto thread = getThreadPtr();
+    if (thread) {
+      logger = thread->createLogger(getName());
+    } else {
+      logger = make_shared<DummyLogger>();
+    }
   }
   return *logger;
 }
