@@ -89,6 +89,12 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
     } else if ([self.view isKindOfClass:FWPicker.class]) {
     	FWPicker * picker = (FWPicker *)self.view;
     	[picker setSelection:value];
+    } else if ([self.view isKindOfClass:UITextField.class] || [self.view isKindOfClass:UITextView.class]) {
+        if (value) {
+            [self.view becomeFirstResponder];
+	} else {
+            [self.view resignFirstResponder];
+	}
     }
 }
 
