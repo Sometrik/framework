@@ -24,7 +24,7 @@ class Element : public EventHandler {
   
   virtual void show();
   virtual void hide();  
-  virtual void focus();
+  virtual void focus(bool enabled) { }
   virtual void refresh() { }
   virtual void text(const std::string & text) { }
 

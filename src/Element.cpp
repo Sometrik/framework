@@ -81,11 +81,6 @@ Element::hide() {
 }
 
 void
-Element::focus() {
-  
-}
-
-void
 Element::stop() {
   sendCommand(Command(Command::STOP, getInternalId()));
 }

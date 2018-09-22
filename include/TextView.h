@@ -44,7 +44,7 @@ class TextView : public InputElement {
     }
   }
 
-  void setCursorFocus(bool enabled) {
+  void focus(bool enabled) override {
     Command c(Command::SET_INT_VALUE, getInternalId());
     c.setValue(enabled ? 1 : 0);
     sendCommand(c);
