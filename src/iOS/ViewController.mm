@@ -33,7 +33,7 @@ std::shared_ptr<iOSMainThread> mainThread;
 // Declare C++ function
 extern FWApplication * applicationMain();
 
-@interface ViewController () <UIScrollViewDelegate, UITabBarDelegate, InAppPurchaseManagerDelegate, FWImageViewDelegate, UITextFieldDelegate, UITextViewDelegate, UIGestureRecognizerDelegate, PaddedLabelDelegate, WKUIDelegate, WKNavigationDelegate, UIBarPositioningDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate>
+@interface ViewController () <UIScrollViewDelegate, UITabBarDelegate, InAppPurchaseManagerDelegate, FWImageViewDelegate, UITextFieldDelegate, UITextViewDelegate, UIGestureRecognizerDelegate, PaddedLabelDelegate, WKUIDelegate, WKNavigationDelegate, UIBarPositioningDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate, UINavigationBarDelegate>
 @property (nonatomic, strong) NSMutableDictionary *viewsDictionary;
 @property (nonatomic, strong) UIView *sideMenuView;
 @property (nonatomic, strong) UIView *backgroundOverlayView;
@@ -42,8 +42,7 @@ extern FWApplication * applicationMain();
 @property (nonatomic, strong) UINavigationItem *navItem;
 @property (nonatomic, strong) UILabel *navBarTitle;
 @property (nonatomic, strong) UILabel *navBarSubtitle;
-@property (nonatomic, strong) UIToolbar *statusBarBackgroundView;
-@property (nonatomic, strong) NSLayoutConstraint *statusBarBottomConstraint;
+@property (nonatomic, strong) NSLayoutConstraint *statusBarTopConstraint;
 @property (nonatomic, strong) FWScrollView *pageView;
 @property (nonatomic, strong) NSMutableArray *dialogIds;
 @property (nonatomic, assign) int activeViewId;
@@ -88,6 +87,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     self.activeViewId = 0;
     self.currentTitle = nil;
     self.dialogIds = [[NSMutableArray alloc] init];
+    self.statusBarTopConstraint = nil;
 
     self.imageCache = [[ImageCache alloc] init];
 
@@ -215,17 +215,16 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
         }
     }
     CGFloat titleViewWidth = size.width - 140;
-    if (size.width > size.height) {
-        self.statusBarHeight = [UIApplication sharedApplication].statusBarFrame.size.height;
-        self.statusBarBottomConstraint.constant = 0.0;
-        //self.titleView.frame = CGRectMake(size.width/2 - titleViewWidth/2, 0, titleViewWidth, 44);
-        
-    } else {
-        //self.titleView.frame = CGRectMake(size.width/2 - titleViewWidth/2, 0, titleViewWidth, 28);
-        self.statusBarBottomConstraint.constant = self.statusBarHeight;
+    self.statusBarHeight = [UIApplication sharedApplication].statusBarFrame.size.height;
+    if (self.statusBarTopConstraint) {
+        if (size.width > size.height) {
+            self.statusBarTopConstraint.constant = 0.0;
+            // self.titleView.frame = CGRectMake(size.width/2 - titleViewWidth/2, 0, titleViewWidth, 44)
+        } else {
+            self.statusBarTopConstraint.constant = self.statusBarHeight;
+            // self.titleView.frame = CGRectMake(size.width/2 - titleViewWidth/2, 0, titleViewWidth, 28);
+        }
     }
-  // self.view.frame = CGRectMake(0, 0, size.width, size.height);
-  // [self.view setNeedsLayout];
 
   [coordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext> context) {
 
@@ -254,10 +253,14 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     self.panEdgeGestureRecognizer.edges = UIRectEdgeLeft;
     self.panEdgeGestureRecognizer.delegate = self;
     [self.view addGestureRecognizer:self.panEdgeGestureRecognizer];
-    if (self.view.frame.size.width > self.view.frame.size.height) {
-        self.statusBarBottomConstraint.constant = 0.0;
-    } else {
-        self.statusBarBottomConstraint.constant = 20.0;
+    
+    self.statusBarHeight = [UIApplication sharedApplication].statusBarFrame.size.height;
+    if (self.statusBarTopConstraint != nil) {
+        if (self.view.frame.size.width > self.view.frame.size.height) {
+            self.statusBarTopConstraint.constant = 0.0;
+        } else {
+            self.statusBarTopConstraint.constant = self.statusBarHeight;
+        }
     }
 }
 
@@ -265,7 +268,6 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 {
     [super viewDidAppear:animated];
     if (self.navBar) {
-        [self.statusBarBackgroundView.superview bringSubviewToFront:self.statusBarBackgroundView];
         [self.navBar.superview bringSubviewToFront:self.navBar];
     }
     if (self.sideMenuView) {
@@ -504,7 +506,6 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
         [view.superview addConstraints:@[topConstraint, leftConstraint, rightConstraint, bottomConstraint]];
         
         if (self.navBar) {
-            [self.statusBarBackgroundView.superview bringSubviewToFront:self.statusBarBackgroundView];
             [self.navBar.superview bringSubviewToFront:self.navBar];
         }
     }
@@ -775,6 +776,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     navBar.translatesAutoresizingMaskIntoConstraints = false;
     navBar.tag = viewId;
     navBar.translucent = YES;
+    navBar.delegate = self;
     //navBar.layer.zPosition = 1000;
 
     // create titleView that has title and subtitle
@@ -845,37 +847,19 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     }
 
     [navBar setItems:@[self.navItem]];
-
-    UIToolbar *statusBarBackgroundView = [[UIToolbar alloc] init];
-    // statusBarBackgroundView.barStyle = UIStatusBarStyleDefault;
-    statusBarBackgroundView.translucent = YES;
-    statusBarBackgroundView.translatesAutoresizingMaskIntoConstraints = false;
-    // statusBarBackgroundView.layer.zPosition = 1000;
     
     UIView * parentView = (UIView *)[self viewForId:parentId];
-    [parentView addSubview:statusBarBackgroundView];
 
     [self addView:navBar withId:viewId];
-    //[self addToParent:parentId view:navBar];
     [parentView addSubview:navBar];
-
     
-    NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:statusBarBackgroundView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:statusBarBackgroundView.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
-    NSLayoutConstraint *leftConstraint = [NSLayoutConstraint constraintWithItem:statusBarBackgroundView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:statusBarBackgroundView.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
-    NSLayoutConstraint *rightConstraint = [NSLayoutConstraint constraintWithItem:statusBarBackgroundView attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:statusBarBackgroundView.superview attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
-    NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:statusBarBackgroundView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:statusBarBackgroundView.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:statusBarHeight];
-    [statusBarBackgroundView.superview addConstraints:@[topConstraint, leftConstraint, rightConstraint, bottomConstraint]];
-    
-    self.statusBarBottomConstraint = bottomConstraint;
-    
-    NSLayoutConstraint *topConstraint2 = [NSLayoutConstraint constraintWithItem:navBar attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:statusBarBackgroundView attribute:NSLayoutAttributeBottom multiplier:1.0f constant:0];
+    NSLayoutConstraint *topConstraint2 = [NSLayoutConstraint constraintWithItem:navBar attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:navBar.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:statusBarHeight];
     NSLayoutConstraint *leftConstraint2 = [NSLayoutConstraint constraintWithItem:navBar attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:navBar.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
     NSLayoutConstraint *rightConstraint2 = [NSLayoutConstraint constraintWithItem:navBar attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:navBar.superview attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
-    //NSLayoutConstraint *bottomConstraint2 = [NSLayoutConstraint constraintWithItem:navBar attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:navBar.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:44];
-    NSLayoutConstraint *heightConstraint = [NSLayoutConstraint constraintWithItem:navBar attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0f constant:44];
-    [navBar.superview addConstraints:@[topConstraint2, leftConstraint2, rightConstraint2, heightConstraint]];
+    // NSLayoutConstraint *heightConstraint = [NSLayoutConstraint constraintWithItem:navBar attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0f constant:44];
+    [navBar.superview addConstraints:@[topConstraint2, leftConstraint2, rightConstraint2]];
+    self.statusBarTopConstraint = topConstraint2;
     
-    self.statusBarBackgroundView = statusBarBackgroundView;
     self.navBar = navBar;
 
     self.additionalSafeAreaInsets = UIEdgeInsetsMake(44, 0, self.additionalSafeAreaInsets.bottom, 0);
@@ -1164,14 +1148,14 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     view.tag = viewId;
     view.translatesAutoresizingMaskIntoConstraints = false;
     [view addTarget:self action:@selector(segmentedControlToggled:) forControlEvents:UIControlEventValueChanged];
-    [self addView:sw withId:viewId];
-    [self addToParent:parentId view:sw];
+    [self addView:view withId:viewId];
+    [self addToParent:parentId view:view];
 }
 
 - (void)segmentedControlToggled:(UISegmentedControl *)sender
 {
     int viewId = (int)sender.tag;
-    int value = sender.selectedSegmentIndex;
+    int value = (int)sender.selectedSegmentIndex;
     [self sendIntValue:viewId value:value];
 }
 
@@ -1541,13 +1525,15 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
         self.webView.scrollView.contentInset = UIEdgeInsetsMake(navBarHeight, 0, 0, 0);
         [self.view addSubview:self.webView];
         
-        NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:self.webView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.statusBarBackgroundView attribute:NSLayoutAttributeBottom multiplier:1.0f constant:0];
+        NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:self.webView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.webView.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:statusBarHeight];
         NSLayoutConstraint *leftConstraint = [NSLayoutConstraint constraintWithItem:self.webView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self.webView.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
         NSLayoutConstraint *rightConstraint = [NSLayoutConstraint constraintWithItem:self.webView attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self.webView.superview attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
         NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:self.webView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self.webView.superview attribute:NSLayoutAttributeBottom multiplier:1.0f constant:0];
         [self.webView.superview addConstraints:@[topConstraint, leftConstraint, rightConstraint, bottomConstraint]];
 
         UINavigationBar *navBar = [[UINavigationBar alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(self.view.frame), navBarHeight)];
+        navBar.delegate = self;
+        
         CGFloat width = self.view.frame.size.width * 0.6; // just some width related to width of the view
         
         UINavigationItem *navItem = [[UINavigationItem alloc] initWithTitle:@""];
@@ -2030,7 +2016,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
         
         case CREATE_SWITCH: {
             @try {
-                [self createSwitchWithId:command.childInternalId parentId:command.internalId value:command.value];
+                [self createSwitchWithId:command.childInternalId parentId:command.internalId value:command.value != 0];
             }
             @catch (NSException *e) {
                 [self exceptionThrown:e];
