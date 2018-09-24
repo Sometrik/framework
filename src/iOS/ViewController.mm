@@ -589,11 +589,12 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     [viewManager switchStyle:SelectorNormal];
 }
 
-- (void)createSwitchWithId:(int)viewId parentId:(int)parentId
+- (void)createSwitchWithId:(int)viewId parentId:(int)parentId value:(BOOL)value
 {
     UISwitch *sw = [[UISwitch alloc] init];
     sw.tag = viewId;
     sw.translatesAutoresizingMaskIntoConstraints = false;
+    [sw setOn:value];
     [sw addTarget:self action:@selector(switchToggled:) forControlEvents:UIControlEventValueChanged];
     [self addView:sw withId:viewId];
     [self addToParent:parentId view:sw];
@@ -1155,6 +1156,23 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     view.currentPageIndicatorTintColor = [UIColor colorWithRed:0.1 green:0.1 blue:0.1 alpha:1.0];
     [self addView:view withId:viewId];
     [self addToParent:parentId view:view];
+}
+
+- (void)createSegmentedControl:(int)viewId parentId:(int)parentId
+{
+    UISegmentedControl * view = [[UISegmentedControl alloc] init];
+    view.tag = viewId;
+    view.translatesAutoresizingMaskIntoConstraints = false;
+    [view addTarget:self action:@selector(segmentedControlToggled:) forControlEvents:UIControlEventValueChanged];
+    [self addView:sw withId:viewId];
+    [self addToParent:parentId view:sw];
+}
+
+- (void)segmentedControlToggled:(UISegmentedControl *)sender
+{
+    int viewId = (int)sender.tag;
+    int value = sender.selectedSegmentIndex;
+    [self sendIntValue:viewId value:value];
 }
 
 - (void)createPickerWithId:(int)viewId parentId:(int)parentId
@@ -1828,6 +1846,9 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     } else if ([view isKindOfClass:FWPicker.class]) {
         FWPicker * picker = (FWPicker *)view;
         [picker addOption:title];
+    } else if ([view isKindOfClass:UISegmentedControl.class]) {
+	UISegmentedControl * sc = (UISegmentedControl*)view;
+	[sc insertSegmentWithTitle:title atIndex:sc.numberOfSegments animated:NO];
     }
 }
 
@@ -2009,7 +2030,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
         
         case CREATE_SWITCH: {
             @try {
-                [self createSwitchWithId:command.childInternalId parentId:command.internalId];
+                [self createSwitchWithId:command.childInternalId parentId:command.internalId value:command.value];
             }
             @catch (NSException *e) {
                 [self exceptionThrown:e];
@@ -2131,7 +2152,17 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             }
         }
             break;
-            
+
+        case CREATE_SEGMENTED_CONTROL: {
+            @try {
+                [self createSegmentedControl:command.childInternalId parentId:command.internalId];
+            }
+            @catch (NSException *e) {
+                [self exceptionThrown:e];
+            }
+	}
+	    break;
+	    
         case CLEAR: {
             ViewManager * viewManager = [self getViewManager:command.internalId];
             if (viewManager) {
