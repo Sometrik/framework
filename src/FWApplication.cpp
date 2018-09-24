@@ -52,6 +52,7 @@ class AppMessageDialog : public Dialog {
   }
 
   void onCommandEvent(CommandEvent & ev) override {
+    ev.setHandled(true);
     endModal();
   }
 };
@@ -134,6 +135,7 @@ class AppInputDialog : public Dialog {
   }
 
   void onCommandEvent(CommandEvent & ev) override {
+    ev.setHandled(true);
     if (ev.getElementId() == 1) {
       endModal(1);
     } else if (ev.getElementId() == 2) {
@@ -149,7 +151,7 @@ class AppInputDialog : public Dialog {
 
 class DebugDialog : public Dialog {
 public:
-  DebugDialog() : Dialog("Debug") {
+  DebugDialog(bool debug_enabled) : Dialog("Debug") {
     auto mainLayout = make_shared<LinearLayout>(FW_VERTICAL);
     addChild(mainLayout);    
 
@@ -160,7 +162,7 @@ public:
     auto & row = mainLayout->addChild(make_shared<LinearLayout>(FW_HORIZONTAL));
     row.style("width", "match-parent");
     row.addChild("Debug mode enabled");
-    row.addChild(make_shared<Switch>(-100, getApplication().isDebugModeEnabled()));
+    row.addChild(make_shared<Switch>(-100, debug_enabled));
 
     mainLayout->addChild(make_shared<TextLabel>("Threads")).style("font-size", "12").style("margin", 5);
 
@@ -172,12 +174,13 @@ public:
   }
 
   void onCommandEvent(CommandEvent & ev) override {
+    ev.setHandled(true);
     if (ev.getElementId() == -100) {
       getApplication().setDebugModeEnabled(ev.getValue());
 
       SysInfoEvent ev2(SysInfoEvent::DEBUG_MODE);
       ev2.setValue(ev.getValue() ? 1 : 0);
-      ev2.dispatch(*this);
+      ev2.dispatch(getApplication());
     }
   }
 
@@ -227,7 +230,7 @@ FWApplication::onSysEvent(SysEvent & ev) {
       sendCommand(c);
     }
   } else if (ev.getType() == SysEvent::SHOW_DEBUG) {
-    auto dialog = make_shared<DebugDialog>();
+    auto dialog = make_shared<DebugDialog>(getApplication().isDebugModeEnabled());
     showModal(dialog);
   }
 }
