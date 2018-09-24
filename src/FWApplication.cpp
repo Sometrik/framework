@@ -10,6 +10,8 @@
 #include <TextLabel.h>
 #include <TextField.h>
 #include <Button.h>
+#include <SysInfoEvent.h>
+#include <Switch.h>
 
 using namespace std;
 
@@ -149,18 +151,16 @@ class DebugDialog : public Dialog {
 public:
   DebugDialog() : Dialog("Debug") {
     auto mainLayout = make_shared<LinearLayout>(FW_VERTICAL);
-    addChild(mainLayout);
+    addChild(mainLayout);    
 
-    mainLayout->addChild(make_shared<TextLabel>("Debug screen")).style("font-size", "14")
+    mainLayout->addChild("Debug screen").style("font-size", "14")
       .style("white-space", "nowrap")
       .style("margin", 5);
 
-    mainLayout->addChild(make_shared<TextLabel>("Stuff")).style("font-size", "12").style("margin", 5);
-
-    
-    auto table = make_shared<TableLayout>(2);
-    table->style("margin", 5);
-    mainLayout->addChild(table);
+    auto & row = mainLayout->addChild(make_shared<LinearLayout>(FW_HORIZONTAL));
+    row.style("width", "match-parent");
+    row.addChild("Debug mode enabled");
+    row.addChild(make_shared<Switch>(-100, getApplication().isDebugModeEnabled()));
 
     mainLayout->addChild(make_shared<TextLabel>("Threads")).style("font-size", "12").style("margin", 5);
 
@@ -169,6 +169,16 @@ public:
     grid->addColumn("Runnable");
     grid->addColumn("State");
     mainLayout->addChild(grid);
+  }
+
+  void onCommandEvent(CommandEvent & ev) override {
+    if (ev.getElementId() == -100) {
+      getApplication().setDebugModeEnabled(ev.getValue());
+
+      SysInfoEvent ev2(SysInfoEvent::DEBUG_MODE);
+      ev2.setValue(ev.getValue() ? 1 : 0);
+      ev2.dispatch(*this);
+    }
   }
 
   void load() {
