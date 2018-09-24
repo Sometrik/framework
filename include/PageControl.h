@@ -31,7 +31,7 @@ class PageControl : public Element {
  protected:
   void create() override {
     Command c(Command::CREATE_PAGE_CONTROL, getParentInternalId(), getInternalId());
-    c.setValue(size);
+    c.setValue((int)size);
     sendCommand(c);
   }
 
