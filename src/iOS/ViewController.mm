@@ -1608,6 +1608,28 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     [self presentViewController:picker animated:YES completion:nil];
 }
 
+ (void)shareImage:(UIImage *)image caption:(NSString *)caption {
+    NSArray *activityItems = @[caption, image];  
+    UIActivityViewController *activityViewControntroller = [[UIActivityViewController alloc] initWithActivityItems:activityItems applicationActivities:nil];  
+    activityViewControntroller.excludedActivityTypes = @[];  
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {  
+        activityViewControntroller.popoverPresentationController.sourceView = self.view;  
+        activityViewControntroller.popoverPresentationController.sourceRect = CGRectMake(self.view.bounds.size.width/2, self.view.bounds.size.height/4, 0, 0);  
+    }  
+    [self presentViewController:activityViewControntroller animated:true completion:nil];
+}
+
+ (void)shareLink:(NSString *)url {
+    NSArray *activityItems = @[url];  
+    UIActivityViewController *activityViewControntroller = [[UIActivityViewController alloc] initWithActivityItems:activityItems applicationActivities:nil];  
+    activityViewControntroller.excludedActivityTypes = @[];  
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {  
+        activityViewControntroller.popoverPresentationController.sourceView = self.view;  
+        activityViewControntroller.popoverPresentationController.sourceRect = CGRectMake(self.view.bounds.size.width/2, self.view.bounds.size.height/4, 0, 0);  
+    }  
+    [self presentViewController:activityViewControntroller animated:true completion:nil];
+}
+
 - (void)sendTimerEvent:(NSTimer *)timer
 {
     mainThread->sendTimerEvent(1);
@@ -2212,6 +2234,10 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             break;
         case CONSUME_PURCHASE:
             break;
+	case SHARE_LINK:
+	    [self shareLink:command.textValue];
+	}
+	    break;
 	case SELECT_FROM_GALLERY:
 	    [self createImagePicker];
 	    break;
