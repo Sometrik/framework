@@ -4,6 +4,7 @@
 #include <InputElement.h>
 #include <CommandEvent.h>
 #include <Command.h>
+#include <ValueEvent.h>
 
 class ActionBar : public Element {
  public:
