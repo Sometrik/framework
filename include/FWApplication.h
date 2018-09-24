@@ -69,6 +69,9 @@ public:
     sendCommand(c);
   }
 
+  bool isDebugModeEnabled() const { return debug_mode_enabled; }
+  void setDebugModeEnabled(bool t) { debug_mode_enabled = t; }
+
  protected:
   void run() override {
     // not used
@@ -114,6 +117,7 @@ public:
   MobileAccount mobileAccount;
   std::string versionText;
   std::string buildNumber;
+  bool debug_mode_enabled = false;
 };
 
 #endif
