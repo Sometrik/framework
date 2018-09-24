@@ -16,7 +16,8 @@ public:
     STOP, // Called when app is no longer visible
     DESTROY, // Called just before the app is destroyed
     MEMORY_WARNING,
-    LANGUAGE_CHANGED
+    LANGUAGE_CHANGED,
+    DEBUG_MODE
   };
  SysInfoEvent(Type _type) : type(_type) { }
 
@@ -33,13 +34,16 @@ public:
 
   bool isBroadcast() const override { return true; }
 
+  void setValue(int v) { value = v; }   
   void setTextValue(const std::string & _text_value) { text_value = _text_value; }
   
   Type getType() { return type; }
+  int getValue() const { return value; }
   const std::string & getTextValue() const { return text_value; }
   
  private:
   Type type;
+  int value = 0;
   std::string text_value;
 };
 
