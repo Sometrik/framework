@@ -6,7 +6,7 @@
 
 class Switch : public InputElement {
  public:
-  Switch(int _id = 0) : InputElement(_id) { }
+  Switch(int _id = 0, bool _value = false) : InputElement(_id), value(_value) { }
 
   Switch(int _id, const std::string & _on_label, const std::string & _off_label)
     : InputElement(_id), on_label(_on_label), off_label(_off_label) { }
@@ -34,6 +34,7 @@ class Switch : public InputElement {
  protected:
   void create() override {
     Command c(Command::CREATE_SWITCH, getParentInternalId(), getInternalId());
+    c.setValue(value ? 1 : 0);
     c.setTextValue(on_label);
     c.setTextValue2(off_label);
     sendCommand(c);
