@@ -2,6 +2,7 @@
 #include <FWApplication.h>
 #include <ElementNotInitializedException.h>
 #include <PlatformThread.h>
+#include <TextLabel.h>
 
 #include <cassert>
 #include <iostream>
@@ -43,12 +44,10 @@ Element::initialize(std::shared_ptr<PlatformThread> _thread) {
 void
 Element::initializeChildren() {
   if (auto ptr = thread.lock()) {
-    if (ptr.get()) {
-      for (auto & c : getChildren()) {
-	c->initialize(ptr);
-	c->initializeChildren();
-	c->load();
-      }
+    for (auto & c : getChildren()) {
+      c->initialize(ptr);
+      c->initializeChildren();
+      c->load();
     }
   }
 }
@@ -98,30 +97,24 @@ Element::style(Selector s, const std::string & key, const std::string & value) {
 void
 Element::begin() {
   if (auto ptr = thread.lock()) {
-    if (ptr.get()) {
-      ptr->beginBatch();
-    }
+    ptr->beginBatch();
   }
 }
 
 void
 Element::commit() {
   if (auto ptr = thread.lock()) {
-    if (ptr.get()) {
-      ptr->commitBatch();
-    }
+    ptr->commitBatch();
   }
 }
 
 void
 Element::sendCommand(const Command & command) {
   if (auto ptr = thread.lock()) {
-    if (ptr.get()) {
-      ptr->sendCommand(command);
-      return;
-    }    
+    ptr->sendCommand(command);
+  } else {
+    pendingCommands.push_back(command);
   }
-  pendingCommands.push_back(command);
 }
 
 void
@@ -152,24 +145,43 @@ Element::launchBrowser(const std::string & input_url) {
   sendCommand(Command(Command::LAUNCH_BROWSER, getInternalId(), input_url));
 }
 
+Element &
+Element::addChild(const std::shared_ptr<Element> & element) {
+  assert(element);
+  
+  element->setParent(this);
+  children.push_back(element);
+
+  if (auto ptr = thread.lock()) {
+    element->initialize(ptr);
+    element->initializeChildren();
+    element->load();
+  }
+  return *element;
+}
+
+Element &
+Element::addChild(const std::string & text) {
+  return addChild(std::make_shared<TextLabel>(text));
+}
+
+
 FWApplication &
 Element::getApplication() {
   if (auto ptr = thread.lock()) {
-    if (ptr.get()) {
-      return ptr->getApplication();
-    }
+    return ptr->getApplication();
+  } else {
+    throw ElementNotInitializedException();
   }
-  throw ElementNotInitializedException();
 }
 
 const FWApplication &
 Element::getApplication() const {
   if (auto ptr = thread.lock()) {
-    if (ptr.get()) {
-      return ptr->getApplication();
-    }
+    return ptr->getApplication();
+  } else {
+    throw ElementNotInitializedException();
   }
-  throw ElementNotInitializedException();
 }
 
 void
@@ -208,9 +220,8 @@ int
 Element::showModal(const std::shared_ptr<Element> & dialog) {
   addChild(dialog);
   if (auto ptr = thread.lock()) {
-    if (ptr.get()) {
-      return ptr->startModal();
-    }
+    return ptr->startModal();
+  } else {
+    return 0;
   }
-  return 0;
 }

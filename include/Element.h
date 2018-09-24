@@ -77,19 +77,8 @@ class Element : public EventHandler {
     is_visible = ev.isVisible();
   }
 
-  virtual Element & addChild(const std::shared_ptr<Element> & element) {
-    element->setParent(this);
-    children.push_back(element);
-
-    if (auto ptr = thread.lock()) {
-      if (ptr.get() != 0) {
-	element->initialize(ptr);
-	element->initializeChildren();
-	element->load();
-      }
-    }
-    return *element;
-  }  
+  Element & addChild(const std::shared_ptr<Element> & element);
+  Element & addChild(const std::string & text);
     
   int getId() const { return id; }
   void setId(int _id) { id = _id; }
@@ -174,7 +163,7 @@ class Element : public EventHandler {
 
   bool isInitialized() const {
     if (auto ptr = thread.lock()) {
-      return ptr.get() != 0;
+      return true;
     } else {
       return false;
     }
