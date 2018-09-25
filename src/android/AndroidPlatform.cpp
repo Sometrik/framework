@@ -277,12 +277,6 @@ public:
     __android_log_print(ANDROID_LOG_INFO, "Framework", "SENDING TRANSACTION (%d)", (int)commands.size());
 
     for (auto & command : commands) {
-      if (command.getType() == Command::CREATE_FRAMEVIEW || command.getType() == Command::CREATE_OPENGL_VIEW) {
-	auto & app = getApplication();
-	if (!app.getActiveViewId()) {
-	  app.setActiveViewId(command.getChildInternalId());
-	}
-      }
       
       int commandTypeId = int(command.getType());
       auto & textValue = command.getTextValue();
@@ -331,8 +325,6 @@ public:
 
   void startRunnable() override {
     application->initialize(this);
-    application->initializeChildren();
-    application->load();
 
     startEventLoop();
     deinitializeRenderer();

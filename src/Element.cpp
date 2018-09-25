@@ -6,6 +6,7 @@
 
 #include <cassert>
 #include <iostream>
+#include <typeinfo>
 
 using namespace std;
 
@@ -27,28 +28,40 @@ Element::initialize(std::shared_ptr<PlatformThread> _thread) {
   if (_thread.get()) {
     thread = _thread;
     registerElement(this);
-    create();
-    if (!pendingCommands.empty()) {
-      if (_thread->isInTransaction()) {
-        for (auto & c : pendingCommands) {
-          _thread->sendCommand(c);
-        }
-      } else {
-        _thread->sendCommands(pendingCommands);
-      }
-      pendingCommands.clear();
+    prepare();
+    if (isVisible()) {
+      initializeContent();
+    } else {
+      cerr << "skipping initialization of " << typeid(*this).name() << endl;
     }
   }
 }
 
 void
-Element::initializeChildren() {
-  if (auto ptr = thread.lock()) {
-    for (auto & c : getChildren()) {
-      c->initialize(ptr);
-      c->initializeChildren();
-      c->load();
+Element::initializeContent() {
+  cerr << "initializing content of " << typeid(*this).name() << endl;
+  
+  if (auto t = thread.lock()) {
+    is_content_initialized = true;
+    
+    create();
+
+    if (!pendingCommands.empty()) {
+      if (t->isInTransaction()) {
+	for (auto & c : pendingCommands) {
+	  t->sendCommand(c);
+	}
+      } else {
+	t->sendCommands(pendingCommands);
+      }
+      pendingCommands.clear();
     }
+
+    for (auto & c : getChildren()) {
+      c->initialize(t);
+    }
+    
+    load();
   }
 }
 
@@ -66,6 +79,11 @@ Element::setError(bool t) {
 void
 Element::show() {
   is_visible = true;
+
+  if (!is_content_initialized) {
+    initializeContent();
+  }
+  
   Command c(Command::SET_VISIBILITY, getInternalId());
   c.setValue(1);
   sendCommand(c);
@@ -154,8 +172,6 @@ Element::addChild(const std::shared_ptr<Element> & element) {
 
   if (auto ptr = thread.lock()) {
     element->initialize(ptr);
-    element->initializeChildren();
-    element->load();
   }
   return *element;
 }

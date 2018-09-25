@@ -324,12 +324,6 @@ protected:
 
   void sendCommands(const vector<Command> & commands) {
     for (auto & command : commands) {
-      if (command.getType() == Command::CREATE_FRAMEVIEW || command.getType() == Command::CREATE_OPENGL_VIEW) {
-	auto & app = getApplication();
-	if (!app.getActiveViewId()) {
-	  app.setActiveViewId(command.getChildInternalId());
-	}
-      }
     
       switch (command.getType()) {
       case Command::QUIT_APP:
@@ -677,6 +671,7 @@ protected:
 	auto view = views_by_id[command.getInternalId()];
 	if (!view) {
 	  cerr << "no view " << command.getInternalId() << " for SET_INT_VALUE\n";
+	  assert(0);
 	} else if (GTK_IS_STACK(view)) { // Flipper
 	  GtkStack * stack = GTK_STACK(view);
 	  GList *children = gtk_container_get_children(GTK_CONTAINER(view));
@@ -690,9 +685,6 @@ protected:
 	    }	    
 	  }	  
 	} else if (gtk_widget_get_parent(view) == stack) {
-	  auto & app = getApplication();
-	  app.addToHistory(app.getActiveViewId());
-	  app.setActiveViewId(command.getInternalId());
 	  gtk_stack_set_visible_child((GtkStack*)stack, view);
 	  gtk_header_bar_set_subtitle((GtkHeaderBar*)header, command.getTextValue().c_str());
 	} else if (GTK_IS_SWITCH(view)) {
@@ -796,7 +788,7 @@ protected:
 	  }
       
 	  auto treeview = gtk_bin_get_child(GTK_BIN(view));
-	  assert(GTK_IS_TREE_VIEW(treeview));
+	  // assert(GTK_IS_TREE_VIEW(treeview));
 	  if (GTK_IS_TREE_VIEW(treeview)) {
 	    auto model = gtk_tree_view_get_model((GtkTreeView*)view);
 	    gtk_tree_store_clear((GtkTreeStore*)model);
@@ -1187,7 +1179,9 @@ protected:
 			 0, 0
 			 );
       } else if (GTK_IS_OVERLAY(parent)) {
-	gtk_overlay_add_overlay(GTK_OVERLAY(parent), widget);	
+	cerr << "add overlay " << parent_id << ", " << id << ", " << parent << ", " << widget << endl;
+	gtk_overlay_add_overlay(GTK_OVERLAY(parent), widget);
+	cerr << "overlay added\n";
       } else {
 	gtk_container_add(parent, widget);
 	if (GTK_IS_STACK(parent)) {
@@ -1611,8 +1605,6 @@ static void activate(GtkApplication * gtk_app, gpointer user_data) {
 
   auto & app = mainThread->getApplication();
   app.initialize(mainThread);
-  app.initializeChildren();
-  app.load();
 }
 
 int main (int argc, char *argv[]) {

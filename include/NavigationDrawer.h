@@ -3,7 +3,7 @@
 
 #include <Element.h>
 #include <Command.h>
-#include <ValueEvent.h>
+// #include <ValueEvent.h>
 
 class NavigationDrawer : public Element {
  public:
@@ -14,11 +14,16 @@ class NavigationDrawer : public Element {
     return Element::isA(className);
   }
 
+#if 0
   void onValueEvent(ValueEvent & ev) override {
     is_visible = ev.getValue() != 0;
-    notify(is_visible);
+    if (is_visible && !is_content_initialized) {
+      initializeContent();
+    }
+    notify(ev.getValue());
     ev.setHandled(true);
   }
+#endif
 
   void hide() override {
     Command c(Command::SET_VISIBILITY, getInternalId());

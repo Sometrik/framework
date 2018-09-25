@@ -17,6 +17,12 @@ class FWViewBase : public Element {
   }
 
   void show() override {
+    auto & app = getApplication();
+    if (app.getActiveViewId()) {
+      app.addToHistory(app.getActiveViewId());
+    }
+    app.setActiveViewId(getInternalId());
+    
     Element::show();
     
     Command c1(Command::SET_INT_VALUE, getInternalId());
@@ -35,7 +41,15 @@ class FWViewBase : public Element {
   }
 
   virtual std::string getTitle() const { return title; }
-    
+
+ protected:
+  void prepare() override {
+    auto & app = getApplication();
+    if (!app.getActiveViewId()) {
+      app.setActiveViewId(getInternalId());
+    }
+  }
+  
  private:
   std::string title;
 };

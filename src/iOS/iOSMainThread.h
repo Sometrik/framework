@@ -49,8 +49,6 @@ class iOSAppRunner : public Runnable {
     if (thread.get()) {
       auto & app = thread->getApplication();
       app.initialize(thread);
-      app.initializeChildren();
-      app.load();
 
       thread->startEventLoop();
 #if 0

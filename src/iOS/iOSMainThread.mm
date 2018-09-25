@@ -77,23 +77,6 @@ void
 iOSMainThread::sendCommands(const std::vector<Command> & commands) {
   NSMutableArray * data = [[NSMutableArray alloc] init];
   for (auto & command : commands) {
-    if (command.getType() == Command::CREATE_FRAMEVIEW || command.getType() == Command::CREATE_OPENGL_VIEW) {
-      auto & app = getApplication();
-      if (!app.getActiveViewId()) {
-        app.setActiveViewId(command.getChildInternalId());
-      }
-    }
-
-    if (command.getType() == Command::SET_INT_VALUE && command.getInternalId() == 1) {
-      auto & app = getApplication();
-      if (command.getChildInternalId() != app.getActiveViewId()) {
-        if (app.getActiveViewId()) {
-	  app.addToHistory(app.getActiveViewId());
-        }
-        app.setActiveViewId(command.getChildInternalId());
-      }
-    }
-
     NativeCommand * nc = [[NativeCommand alloc] init];
     nc.type = (CommandType)command.getType();
     nc.internalId = command.getInternalId();

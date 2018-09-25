@@ -18,7 +18,9 @@ class Pager : public Element {
   void onValueEvent(ValueEvent & ev) override {
     visible_view_index = ev.getValue();
     if (visible_view_index >= 0 && visible_view_index < getChildren().size()) {
-      getChildren()[visible_view_index]->refresh();
+      auto & c = getChildren()[visible_view_index];
+      c->show();
+      c->refresh();
     }
 
     notify();
@@ -30,7 +32,9 @@ class Pager : public Element {
   void setVisibleView(int position) {
     visible_view_index = position;
     if (position >= 0 && position < getChildren().size()) {
-      getChildren()[position]->refresh();
+      auto & c = getChildren()[position];
+      c->show();
+      c->refresh();
     }
     Command c(Command::SET_INT_VALUE, getInternalId());
     c.setValue(position);

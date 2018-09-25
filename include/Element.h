@@ -75,6 +75,9 @@ class Element : public EventHandler {
   void onEvent(Event & ev) override;
   void onVisibilityEvent(VisibilityEvent & ev) override {
     is_visible = ev.isVisible();
+    if (is_visible && !is_content_initialized) {
+      initializeContent();
+    }
   }
 
   Element & addChild(const std::shared_ptr<Element> & element);
@@ -180,8 +183,6 @@ class Element : public EventHandler {
 
   virtual void initialize(std::shared_ptr<PlatformThread> _thread);
 
-  void initializeChildren();
-
   static void postEventToElement(int internal_id, Event & ev) {
     auto e = getRegisteredElement(internal_id);
     if (e) {
@@ -194,12 +195,15 @@ class Element : public EventHandler {
     auto it = registered_elements.find(internal_id);
     return it != registered_elements.end() ? it->second : 0;
   }
-  virtual void load() { }
 
   int showModal(const std::shared_ptr<Element> & dialog);
 
  protected:
+  void initializeContent();
+
+  virtual void prepare() { }
   virtual void create() { }
+  virtual void load() { }
 
   virtual bool isChildVisible(const Element & child) const {
     if (!child.is_visible) return false;
@@ -234,6 +238,7 @@ class Element : public EventHandler {
   bool has_error = false;
   std::vector<Command> pendingCommands;
   bool is_enabled = true;
+  bool is_content_initialized = false;
 
   static std::unordered_map<int, Element *> registered_elements;
   static Mutex mutex;

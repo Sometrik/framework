@@ -15,6 +15,10 @@ class ActionBar : public Element {
     return Element::isA(className);
   }
 
+  bool isVisible() const override {
+    return getParent() && getParent()->isVisible();
+  }
+
   void addOption(int id, const std::string & name) {
     Command c(Command::ADD_OPTION, getInternalId());
     c.setValue(id);

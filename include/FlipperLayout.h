@@ -21,12 +21,12 @@ class FlipperLayout : public Element {
   }
 
   void onValueEvent(ValueEvent & ev) override {
-#ifndef __ANDROID__
     visible_view_index = ev.getValue();
     if (visible_view_index >= 0 && visible_view_index < getChildren().size()) {
-      getChildren()[visible_view_index]->refresh();
+      auto & c = getChildren()[visible_view_index];
+      c->show();
+      c->refresh();
     }
-#endif
 
     notify();
     CommandEvent ev2(getId(), ev.getValue(), ev.getValue2());
@@ -37,7 +37,9 @@ class FlipperLayout : public Element {
   void setVisibleView(int position) {
     visible_view_index = position;
     if (position >= 0 && position < getChildren().size()) {
-      getChildren()[position]->refresh();
+      auto & c = getChildren()[visible_view_index];
+      c->show();
+      c->refresh();
     }
     Command c(Command::SET_INT_VALUE, getInternalId());
     c.setValue(position);
