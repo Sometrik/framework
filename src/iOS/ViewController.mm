@@ -996,7 +996,9 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 - (void)showNavigationViewWithAnimation:(BOOL)animate
 {
     if (self.sideMenuView != nil && (self.sideMenuView.isHidden || self.sideMenuPanned)) {
+#if 0
         [self sendIntValue:self.sideMenuView.tag value:1];
+#endif
         mainThread->sendVisibilityEvent(self.sideMenuView.tag, 1);
 
 	[self.view bringSubviewToFront:self.backgroundOverlayView];
