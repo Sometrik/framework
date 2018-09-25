@@ -120,7 +120,8 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
         [button setTitle:value forState:UIControlStateNormal];
         [button.superview setNeedsLayout];
     } else if ([self.view isKindOfClass:FWImageView.class]) {
-        UIImageView * imageView = (UIImageView*)self.view;
+        FWImageView * imageView = (FWImageView*)self.view;
+	[imageView clear];
         imageView.image = [UIImage imageNamed:value];
     }
 }
