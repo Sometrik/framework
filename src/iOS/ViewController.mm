@@ -1619,7 +1619,8 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     [self presentViewController:activityViewControntroller animated:true completion:nil];
 }
 
- (void)shareLink:(NSString *)url {
+ (void)shareLink:(NSString *)link {
+    NSURL *url = [NSURL URLWithString:link];
     NSArray *activityItems = @[url];  
     UIActivityViewController *activityViewControntroller = [[UIActivityViewController alloc] initWithActivityItems:activityItems applicationActivities:nil];  
     activityViewControntroller.excludedActivityTypes = @[];  
