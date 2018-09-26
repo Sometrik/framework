@@ -75,8 +75,9 @@ class Element : public EventHandler {
   void onEvent(Event & ev) override;
   void onVisibilityEvent(VisibilityEvent & ev) override {
     is_visible = ev.isVisible();
-    if (is_visible && !is_content_initialized) {
+    if (is_visible && !is_content_initialized && (!parent || parent->is_content_initialized)) {
       initializeContent();
+      initializeChildContent();
     }
   }
 
@@ -200,6 +201,7 @@ class Element : public EventHandler {
 
  protected:
   void initializeContent();
+  void initializeChildContent();
 
   virtual void prepare() { }
   virtual void create() { }

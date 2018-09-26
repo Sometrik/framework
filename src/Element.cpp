@@ -29,17 +29,24 @@ Element::initialize(std::shared_ptr<PlatformThread> _thread) {
     thread = _thread;
     registerElement(this);
     prepare();
-    if (1 || isVisible()) {
+    if (isVisible() && (!parent || parent->is_content_initialized)) {
       initializeContent();
     } else {
       cerr << "skipping initialization of " << typeid(*this).name() << endl;
     }
+
+    for (auto & c : getChildren()) {
+      c->initialize(_thread);
+    }
+    
+    load();
   }
 }
 
 void
 Element::initializeContent() {
   cerr << "initializing content of " << typeid(*this).name() << endl;
+  assert(!parent || parent->is_content_initialized);
   
   if (auto t = thread.lock()) {
     is_content_initialized = true;
@@ -56,12 +63,18 @@ Element::initializeContent() {
       }
       pendingCommands.clear();
     }
+  }
+}
 
-    for (auto & c : getChildren()) {
-      c->initialize(t);
+void
+Element::initializeChildContent() {
+  cerr << "initializing child content of " << typeid(*this).name() << endl;
+
+  for (auto & c : getChildren()) {
+    if (c->isVisible()) {
+      c->initializeContent();
+      c->initializeChildContent();
     }
-    
-    load();
   }
 }
 
@@ -80,8 +93,9 @@ void
 Element::show() {
   is_visible = true;
 
-  if (!is_content_initialized) {
+  if (!is_content_initialized && (!parent || parent->is_content_initialized)) {
     initializeContent();
+    initializeChildContent();
   }
   
   Command c(Command::SET_VISIBILITY, getInternalId());
@@ -128,13 +142,13 @@ Element::commit() {
 
 void
 Element::sendCommand(const Command & command) {
-    if (is_content_initialized) {
-        if (auto ptr = thread.lock()) {
-            ptr->sendCommand(command);
-            return;
-        }
+  if (is_content_initialized) {
+    if (auto ptr = thread.lock()) {
+      ptr->sendCommand(command);
+      return;
     }
-    pendingCommands.push_back(command);
+  }
+  pendingCommands.push_back(command);
 }
 
 void
