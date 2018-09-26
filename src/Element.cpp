@@ -29,7 +29,7 @@ Element::initialize(std::shared_ptr<PlatformThread> _thread) {
     thread = _thread;
     registerElement(this);
     prepare();
-    if (isVisible()) {
+    if (1 || isVisible()) {
       initializeContent();
     } else {
       cerr << "skipping initialization of " << typeid(*this).name() << endl;
@@ -43,7 +43,7 @@ Element::initializeContent() {
   
   if (auto t = thread.lock()) {
     is_content_initialized = true;
-    
+
     create();
 
     if (!pendingCommands.empty()) {
@@ -128,11 +128,13 @@ Element::commit() {
 
 void
 Element::sendCommand(const Command & command) {
-  if (auto ptr = thread.lock()) {
-    ptr->sendCommand(command);
-  } else {
+    if (is_content_initialized) {
+        if (auto ptr = thread.lock()) {
+            ptr->sendCommand(command);
+            return;
+        }
+    }
     pendingCommands.push_back(command);
-  }
 }
 
 void
