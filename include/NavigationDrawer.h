@@ -25,18 +25,11 @@ class NavigationDrawer : public Element {
   }
 #endif
 
-  void hide() override {
-    Command c(Command::SET_VISIBILITY, getInternalId());
-    c.setValue(0);
-    sendCommand(c);
-  }
-
   bool isVisible() const override {
     return is_visible;
   }
 
  protected:
-
   void create() override {
     Command c(Command::CREATE_NAVIGATIONVIEW, getParentInternalId(), getInternalId());
     sendCommand(c);
