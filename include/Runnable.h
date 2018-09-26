@@ -26,6 +26,10 @@ class Runnable : public Element {
 
   Logger & getLogger();
 
+  bool isVisible() const override {
+    return true;
+  }
+
  protected: 
   virtual void run() = 0;
 
