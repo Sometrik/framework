@@ -32,6 +32,10 @@ class Dialog : public Element {
     }
   }
 
+  bool isVisible() const override {
+    return true;
+  }
+
  protected:
   void endModal(int value = 0) {
     auto t = getThreadPtr();
