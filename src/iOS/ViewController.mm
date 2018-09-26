@@ -1610,7 +1610,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     [self presentViewController:picker animated:YES completion:nil];
 }
 
- (void)shareImage:(UIImage *)image caption:(NSString *)caption {
+- (void)shareImage:(UIImage *)image caption:(NSString *)caption {
     NSArray *activityItems = @[caption, image];  
     UIActivityViewController *activityViewControntroller = [[UIActivityViewController alloc] initWithActivityItems:activityItems applicationActivities:nil];  
     activityViewControntroller.excludedActivityTypes = @[];  
@@ -1621,7 +1621,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     [self presentViewController:activityViewControntroller animated:true completion:nil];
 }
 
- (void)shareLink:(NSString *)link {
+- (void)shareLink:(NSString *)link {
     NSURL *url = [NSURL URLWithString:link];
     NSArray *activityItems = @[url];  
     UIActivityViewController *activityViewControntroller = [[UIActivityViewController alloc] initWithActivityItems:activityItems applicationActivities:nil];  
@@ -2237,18 +2237,17 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
             break;
         case CONSUME_PURCHASE:
             break;
-	case SHARE_LINK:
-	    [self shareLink:command.textValue];
-	}
-	    break;
-	case SELECT_FROM_GALLERY:
-	    [self createImagePicker];
-	    break;
+        case SHARE_LINK:
+            [self shareLink:command.textValue];
+            break;
+        case SELECT_FROM_GALLERY:
+            [self createImagePicker];
+            break;
         }
 	}
 	@catch (NSException *e) {
 	    [self exceptionThrown:e];
-        }       
+    }
     }
 
     for (auto id : changedViews) {
