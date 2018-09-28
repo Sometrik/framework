@@ -18,7 +18,7 @@ class ImageElement : public Element {
   }
 
   ~ImageElement() {
-    if (hasRequest && hasParent()) {
+    if (hasRequest && getParent()) {
       ImageRequestEvent ev(ImageRequestEvent::CANCEL, getInternalId());
       ev.dispatch(*(getParent()));
     }
