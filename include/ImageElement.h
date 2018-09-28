@@ -30,9 +30,15 @@ class ImageElement : public Element {
   }
 
   void onVisibilityUpdateEvent(VisibilityUpdateEvent & ev) override {
-    if (isRequestPending && getParent() && isVisible()) {
-      currentRequest.dispatch(*(getParent()));
-      isRequestPending = false;
+    if (getParent()) {
+      bool v = isVisible();
+      if (isRequestPending && v) {
+	currentRequest.dispatch(*(getParent()));
+	isRequestPending = false;
+      } else if (!isRequestPending && !v) {
+	ImageRequestEvent ev(ImageRequestEvent::CANCEL, getInternalId());
+	ev.dispatch(*(getParent()));
+      }
     }
   }
   
