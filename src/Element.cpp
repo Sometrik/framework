@@ -29,9 +29,7 @@ Element::initialize(std::shared_ptr<PlatformThread> _thread) {
     thread = _thread;
     registerElement(this);
     prepare();
-    if (isVisible() && (!parent || parent->is_content_initialized)) {
-      initializeContent();
-    } else {
+    if (!initializeContent()) {
       cerr << "skipping initialization of " << typeid(*this).name() << endl;
     }
 
@@ -43,37 +41,46 @@ Element::initialize(std::shared_ptr<PlatformThread> _thread) {
   }
 }
 
-void
+bool
 Element::initializeContent() {
-  cerr << "initializing content of " << typeid(*this).name() << endl;
-  assert(!parent || parent->is_content_initialized);
-  
-  if (auto t = thread.lock()) {
-    is_content_initialized = true;
+  if (!is_content_initialized &&
+      (!parent || parent->is_content_initialized) &&
+      (isVisible() || (parent && parent->isVisible()))) {
 
-    create();
+    if (auto t = thread.lock()) {
+      cerr << "initializing content of " << typeid(*this).name() << endl;
 
-    if (!pendingCommands.empty()) {
-      if (t->isInTransaction()) {
-	for (auto & c : pendingCommands) {
-	  t->sendCommand(c);
+      is_content_initialized = true;
+
+      create();
+
+      if (!pendingCommands.empty()) {
+	if (t->isInTransaction()) {
+	  for (auto & c : pendingCommands) {
+	    t->sendCommand(c);
+	  }
+	} else {
+	  t->sendCommands(pendingCommands);
 	}
-      } else {
-	t->sendCommands(pendingCommands);
+	pendingCommands.clear();
       }
-      pendingCommands.clear();
+
+      return true;
     }
   }
+  return false;
 }
 
 void
 Element::initializeChildContent() {
-  cerr << "initializing child content of " << typeid(*this).name() << endl;
-
-  for (auto & c : getChildren()) {
-    if (c->isVisible()) {
-      c->initializeContent();
-      c->initializeChildContent();
+  if (isVisible()) {
+    if (!is_content_initialized) {
+      cerr << "unable to initialize child content for " << typeid(*this).name() << endl;
+    } else {
+      for (auto & c : getChildren()) {
+	c->initializeContent();
+	c->initializeChildContent();
+      }
     }
   }
 }
@@ -93,10 +100,8 @@ void
 Element::show() {
   is_visible = true;
 
-  if (!is_content_initialized && (!parent || parent->is_content_initialized)) {
-    initializeContent();
-    initializeChildContent();
-  }
+  initializeContent();
+  initializeChildContent();
   
   Command c(Command::SET_VISIBILITY, getInternalId());
   c.setValue(1);

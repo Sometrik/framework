@@ -75,7 +75,7 @@ class Element : public EventHandler {
   void onEvent(Event & ev) override;
   void onVisibilityEvent(VisibilityEvent & ev) override {
     is_visible = ev.isVisible();
-    if (is_visible && !is_content_initialized && (!parent || parent->is_content_initialized)) {
+    if (is_visible) {
       initializeContent();
       initializeChildContent();
     }
@@ -200,7 +200,7 @@ class Element : public EventHandler {
   int showModal(const std::shared_ptr<Element> & dialog);
 
  protected:
-  void initializeContent();
+  bool initializeContent();
   void initializeChildContent();
 
   virtual void prepare() { }
