@@ -14,17 +14,6 @@ class NavigationDrawer : public Element {
     return Element::isA(className);
   }
 
-#if 0
-  void onValueEvent(ValueEvent & ev) override {
-    is_visible = ev.getValue() != 0;
-    if (is_visible && !is_content_initialized) {
-      initializeContent();
-    }
-    notify(ev.getValue());
-    ev.setHandled(true);
-  }
-#endif
-
   bool isVisible() const override {
     return is_visible;
   }
