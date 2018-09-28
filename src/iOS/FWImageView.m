@@ -144,16 +144,12 @@
 }
 
 - (void)cancelImageRequest {
-#if 0
+#if 1
     if (self.imageRequestPending && [self.delegate respondsToSelector:@selector(didCancelImageRequest:)]) {
         self.imageRequestPending = NO;
         [self.delegate didCancelImageRequest:self];
     }
 #endif
-}
-
-- (void)dealloc {
-    [self cancelImageRequest];
 }
 
 @end

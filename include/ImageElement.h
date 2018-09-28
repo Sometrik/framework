@@ -17,6 +17,13 @@ class ImageElement : public Element {
     images.insert(filename);
   }
 
+  ~ImageElement() {
+    if (hasRequest && hasParent()) {
+      ImageRequestEvent ev(ImageRequestEvent::CANCEL, getInternalId());
+      ev.dispatch(*(getParent()));
+    }
+  }
+
   bool isA(const std::string & className) const override {
     if (className == "ImageElement") return true;
     return Element::isA(className);
