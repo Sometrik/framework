@@ -12,6 +12,7 @@
     if (self) {
         self.alpha = 1.0f;
         self.zoom = 1.0f;
+	self.prevZoom = 1.0f;
         self.fontSize = 0;
         self.fontWeight = 0;
         self.shadow = 0;
@@ -93,22 +94,27 @@
             view.layer.shadowRadius = self.shadow;
 #else
             [CATransaction begin];
-            [CATransaction setAnimationDuration:0.3];
+            [CATransaction setAnimationDuration:0.2];
             [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut] ];
             view.layer.shadowRadius = self.shadow;
             [CATransaction commit];
 #endif
         }
-	if (fabs(view.alpha - self.alpha) > EPSILON) {
-	  [UIView animateWithDuration:0.3 animations:^{
+	if (fabs(view.alpha - self.alpha) > EPSILON ||
+	    fabs(view.prevZoom - self.zoom) > EPSILON) {
+	  [UIView animateWithDuration:0.2 animations:^{
 	      view.alpha = self.alpha;
 	      view.transform = CGAffineTransformMakeScale(self.zoom, self.zoom);
 	    }];
+
+	  self.prevZoom = self.zoom;
 	}
     } else {
         view.alpha = self.alpha;
         view.transform = CGAffineTransformMakeScale(self.zoom, self.zoom);
         view.layer.shadowRadius = self.shadow;
+
+	self.prevZoom = self.zoom;
     }
 }
 
