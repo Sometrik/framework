@@ -101,7 +101,7 @@
 #endif
         }
 	if (fabs(view.alpha - self.alpha) > EPSILON ||
-	    fabs(view.prevZoom - self.zoom) > EPSILON) {
+	    fabs(self.prevZoom - self.zoom) > EPSILON) {
 	  [UIView animateWithDuration:0.2 animations:^{
 	      view.alpha = self.alpha;
 	      view.transform = CGAffineTransformMakeScale(self.zoom, self.zoom);
