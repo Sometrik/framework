@@ -117,6 +117,15 @@ class Element : public EventHandler {
     Command c(Command::REORDER_CHILD, getInternalId(), child.getInternalId());
     c.setValue(new_position);
     sendCommand(c);
+
+    for (auto it = children.begin(); it != children.end(); it++) {
+      if ((*it)->getInternalId() == child.getInternalId()) {
+	if (it != children.begin() + new_position) {
+	  move(it, it + 1, children.begin() + new_position);
+	}
+	break;
+      }
+    }
   }
 
   Selection find(const std::string & q) {
