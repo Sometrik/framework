@@ -142,11 +142,28 @@
         }
         return height;
     } else if ([view isKindOfClass:FWScrollView.class]) {
-        for (UIView * subview in [view subviews]) {
-	    if ([subview isKindOfClass:UIImageView.class]) continue; // ignore scroll indicators
-	    return [self calcIntrinsicHeight:subview];
-	}
-	return 0;
+        FWScrollView * scrollView = (FWScrollView *)view;
+	int height = 0;
+        if (scrollView.pagingEnabled) {
+	    for (LayoutParams * item in scrollView.items) {
+	        if (item.view.hidden) continue;
+
+                int h = 0;
+                if (item.fixedHeight > 0) {
+                    h = item.fixedHeight + item.margin.top + item.margin.bottom;
+                } else {
+                    h = [self calcIntrinsicHeight:item.view] + item.padding.top + item.padding.bottom + item.margin.top + item.margin.bottom;
+                }
+                if (h > height) height = h;
+	    }
+	} else {
+	    for (UIView * subview in [view subviews]) {
+	      if ([subview isKindOfClass:UIImageView.class]) continue; // ignore scroll indicators
+	      height = [self calcIntrinsicHeight:subview];
+	      break;
+	    }
+        }
+	return height;
     } else {
         return view.intrinsicContentSize.height;
     }

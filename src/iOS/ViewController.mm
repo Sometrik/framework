@@ -83,7 +83,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
-
+    
     self.activeViewId = 0;
     self.currentTitle = nil;
     self.dialogIds = [[NSMutableArray alloc] init];
@@ -473,12 +473,9 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
         return;
     }
 
-    // CGFloat tabBarHeight = self.tabBar == nil ? 0.0 : 44.0;
-    // CGFloat topBarsHeight = self.navBar == nil ? 0.0 : 64.0;
     FrameLayoutView *view = [[FrameLayoutView alloc] init];
-
     view.tag = viewId;
-    view.layoutMargins = UIEdgeInsetsMake(0, 0, 0, 0);
+
     [self addView:view withId:viewId];
 
     UIView * parentView = (UIView *)parentViewManager.containerView;
@@ -1684,24 +1681,9 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
         FWScrollView * scrollView = (FWScrollView *)parentView;
 	[scrollView addItem:item];
             
-        if (scrollView.pagingEnabled) {
-            if (!scrollView.currentPageInternalId) {
-	        [scrollView setPage:scrollView.currentPage];		
-	        [self sendIntValue:(int)scrollView.tag value:scrollView.currentPage];
-            }
-        } else {
-            [parentView addSubview:view];
-            scrollView.topConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
-            scrollView.leftConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
-            scrollView.widthConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:0.0f constant:0];
-            scrollView.heightConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:0.0f constant:0];
-
-            scrollView.topConstraint.priority = 999 - viewManager.level;
-            scrollView.leftConstraint.priority = 999 - viewManager.level;
-            scrollView.widthConstraint.priority = 999 - viewManager.level;
-            scrollView.heightConstraint.priority = 999 - viewManager.level;
-
-            [view.superview addConstraints:@[scrollView.topConstraint, scrollView.leftConstraint, scrollView.widthConstraint, scrollView.heightConstraint]];
+        if (scrollView.pagingEnabled && !scrollView.currentPageInternalId) {
+	    [scrollView setPage:scrollView.currentPage];		
+	    [self sendIntValue:(int)scrollView.tag value:scrollView.currentPage];
         }
     } else {
         [parentView addSubview:view];

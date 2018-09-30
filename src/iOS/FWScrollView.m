@@ -8,10 +8,6 @@
 - (instancetype)init
 {
     if (self = [super init]) {
-        self.topConstraint = nil;
-        self.leftConstraint = nil;
-        self.widthConstraint = nil;
-        self.heightConstraint = nil;
         self.translatesAutoresizingMaskIntoConstraints = false;
         self.currentPage = 0;
 	self.currentPageInternalId = 0;
@@ -24,10 +20,6 @@
 {
     if (self = [super initWithFrame:frame]) {
         self.frame = frame;
-        self.topConstraint = nil;
-        self.leftConstraint = nil;
-        self.widthConstraint = nil;
-        self.heightConstraint = nil;
         self.translatesAutoresizingMaskIntoConstraints = false;
         self.currentPage = 0;
 	self.currentPageInternalId = 0;
@@ -42,7 +34,7 @@
 }
 
 - (void)layoutSubviews {
-   if (self.pagingEnabled) {
+    if (self.pagingEnabled) {
         [self updateChildConstraints];
     } else {
         int width = self.frame.size.width;
@@ -59,8 +51,11 @@
             height = minHeight;
         }
 
-        self.widthConstraint.constant = width;
-        self.heightConstraint.constant = height;
+	LayoutParams * item = [self.items firstObject];
+	item.topConstraint.constant = item.margin.top;
+        item.leftConstraint.constant = item.margin.left;
+	item.widthConstraint.constant = width - item.margin.left - item.margin.right;
+	item.heightConstraint.constant = height - item.margin.top - item.margin.bottom;
 
         self.contentSize = CGSizeMake(width, height);
     }
@@ -113,11 +108,28 @@
         }
         return height;
     } else if ([view isKindOfClass:FWScrollView.class]) {
-        for (UIView * subview in [view subviews]) {
-	    if ([subview isKindOfClass:UIImageView.class]) continue; // ignore scroll indicators
-	    return [self calcIntrinsicHeight:subview];
-	}
-	return 0;
+        FWScrollView * scrollView = (FWScrollView *)view;
+	int height = 0;
+        if (scrollView.pagingEnabled) {
+	    for (LayoutParams * item in scrollView.items) {
+	        if (item.view.hidden) continue;
+
+                int h = 0;
+                if (item.fixedHeight > 0) {
+                    h = item.fixedHeight + item.margin.top + item.margin.bottom;
+                } else {
+                    h = [self calcIntrinsicHeight:item.view] + item.padding.top + item.padding.bottom + item.margin.top + item.margin.bottom;
+                }
+                if (h > height) height = h;
+	    }
+	} else {
+	    for (UIView * subview in [view subviews]) {
+	      if ([subview isKindOfClass:UIImageView.class]) continue; // ignore scroll indicators
+	      height = [self calcIntrinsicHeight:subview];
+	      break;
+	    }
+        }
+	return height;
     } else {
         return view.intrinsicContentSize.height;
     }
@@ -151,37 +163,24 @@
     
     [self.items addObject:item];
 
-    if (self.pagingEnabled) {
-        [self addSubview:item.view];
+    [self addSubview:item.view];
 
-        item.topConstraint = [NSLayoutConstraint constraintWithItem:item.view attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
-	item.leftConstraint = [NSLayoutConstraint constraintWithItem:item.view attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
-	item.widthConstraint = [NSLayoutConstraint constraintWithItem:item.view attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:0.0f constant:0];
-	item.heightConstraint = [NSLayoutConstraint constraintWithItem:item.view attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:0.0f constant:0];
+    item.topConstraint = [NSLayoutConstraint constraintWithItem:item.view attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
+    item.leftConstraint = [NSLayoutConstraint constraintWithItem:item.view attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
+    item.widthConstraint = [NSLayoutConstraint constraintWithItem:item.view attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:0.0f constant:0];
+    item.heightConstraint = [NSLayoutConstraint constraintWithItem:item.view attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:0.0f constant:0];
 
-	item.topConstraint.priority = 999 - item.level;
-	item.leftConstraint.priority = 999 - item.level;
-	item.widthConstraint.priority = 999 - item.level - 1;
-	item.heightConstraint.priority = 999 - item.level - 1;
+    item.topConstraint.priority = 999 - item.level;
+    item.leftConstraint.priority = 999 - item.level;
+    item.widthConstraint.priority = 999 - item.level - 1;
+    item.heightConstraint.priority = 999 - item.level - 1;
 
-	item.leftConstraint.constant = numChildren * self.frame.size.width;
-	item.widthConstraint.constant = self.frame.size.width;
-	item.heightConstraint.constant = self.frame.size.height;
-
-	item.topConstraint.active = YES;
-	item.leftConstraint.active = YES;
-	item.widthConstraint.active = YES;
-	item.heightConstraint.active = YES;
-       
-	self.contentSize = CGSizeMake(numChildren * self.frame.size.width, self.frame.size.height);
-
-	if (numChildren == 0) {
-	  self.currentPage = 0;
-	  self.currentPageInternalId = item.view.tag;
-	}
-
-	[self setNeedsLayout];
-    }
+    item.topConstraint.active = YES;
+    item.leftConstraint.active = YES;
+    item.widthConstraint.active = YES;
+    item.heightConstraint.active = YES;
+    
+    [self setNeedsLayout];
 }
 
 - (void)removeItem:(LayoutParams *)item {
@@ -271,9 +270,10 @@
     for (LayoutParams *item in self.items) {
         if (item.view.hidden) continue;
             
-        item.leftConstraint.constant = numChildren * self.frame.size.width;
-        item.widthConstraint.constant = self.frame.size.width;
-        item.heightConstraint.constant = self.frame.size.height;
+	item.topConstraint.constant = item.margin.top;
+        item.leftConstraint.constant = numChildren * self.frame.size.width + item.margin.left;
+        item.widthConstraint.constant = self.frame.size.width - item.margin.left - item.margin.right;
+        item.heightConstraint.constant = self.frame.size.height - item.margin.top - item.margin.bottom;;
 	    
         numChildren++;
     }
