@@ -5,7 +5,6 @@
 #include <TextLabel.h>
 
 #include <cassert>
-#include <iostream>
 #include <typeinfo>
 
 using namespace std;
@@ -29,9 +28,7 @@ Element::initialize(std::shared_ptr<PlatformThread> _thread) {
     thread = _thread;
     registerElement(this);
     prepare();
-    if (!initializeContent()) {
-      cerr << "skipping initialization of " << typeid(*this).name() << endl;
-    }
+    initializeContent();
 
     for (auto & c : getChildren()) {
       c->initialize(_thread);
@@ -48,8 +45,6 @@ Element::initializeContent() {
       (isVisible() || (parent && parent->isVisible()))) {
 
     if (auto t = thread.lock()) {
-      cerr << "initializing content of " << typeid(*this).name() << endl;
-
       is_content_initialized = true;
 
       create();
@@ -74,9 +69,7 @@ Element::initializeContent() {
 void
 Element::initializeChildContent() {
   if (isVisible()) {
-    if (!is_content_initialized) {
-      cerr << "unable to initialize child content for " << typeid(*this).name() << endl;
-    } else {
+    if (is_content_initialized) {
       for (auto & c : getChildren()) {
 	c->initializeContent();
 	c->initializeChildContent();
@@ -168,6 +161,26 @@ Element::onEvent(Event & ev) {
       ev.dispatch(*parent);
     }
     ev.incTTL();
+  }
+}
+
+void
+Element::reorderChildren(Element & child, unsigned int new_position) {
+  Command c(Command::REORDER_CHILD, getInternalId(), child.getInternalId());
+  c.setValue(new_position);
+  sendCommand(c);
+  
+  std::shared_ptr<Element> e;
+  for (auto it = children.begin(); it != children.end(); it++) {
+    assert(it->get());
+    if ((*it)->getInternalId() == child.getInternalId()) {
+      e = *it;
+      children.erase(it);
+      break;
+    }
+  }
+  if (e) {
+    children.insert(children.begin() + new_position, e);
   }
 }
 
