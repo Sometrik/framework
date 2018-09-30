@@ -144,12 +144,10 @@
 }
 
 - (void)cancelImageRequest {
-#if 1
     if (self.imageRequestPending && [self.delegate respondsToSelector:@selector(didCancelImageRequest:)]) {
         self.imageRequestPending = NO;
         [self.delegate didCancelImageRequest:self];
     }
-#endif
 }
 
 @end

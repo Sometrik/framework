@@ -50,15 +50,19 @@ class ImageElement : public Element {
   }
   
   void handleImageRequestEvent(ImageRequestEvent & ev) override {
-    hasRequest = true;
-    currentRequest = ev;
-    width = ev.getRequestedWidth();
-    height = ev.getRequestedHeight();
-    if (isVisible()) {
-      isRequestPending = false;
+    if (ev.getRequestMode() == ImageRequestEvent::CANCEL) {
+      hasRequest = false;
     } else {
-      isRequestPending = true;
-      ev.setHandled(true);
+      hasRequest = true;
+      currentRequest = ev;
+      width = ev.getRequestedWidth();
+      height = ev.getRequestedHeight();
+      if (isVisible()) {
+	isRequestPending = false;
+      } else {
+	isRequestPending = true;
+	ev.setHandled(true);
+      }
     }
   }  
 
