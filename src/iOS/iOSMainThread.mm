@@ -246,7 +246,7 @@ iOSMainThread::sendTimerEvent(int viewId) {
 void
 iOSMainThread::sendImageRequest(int viewId, unsigned int width, unsigned int height, const std::string & url, int internalFormat) {
     if (!url.empty()) {
-        cerr << "sending image request, width = " << width << ", height = " << height << ", url = " << url << endl;
+        cerr << "sending image request for " << viewId << ", width = " << width << ", height = " << height << ", url = " << url << endl;
     }
     
     ImageRequestEvent ev(ImageRequestEvent::REQUEST, viewId, url, width, height);
@@ -258,7 +258,7 @@ iOSMainThread::sendImageRequest(int viewId, unsigned int width, unsigned int hei
 
 void
 iOSMainThread::cancelImageRequest(int viewId) {
-    cerr << "cancelling image request\n";
+    cerr << "cancelling image request for " << viewId << "\n";
   
     ImageRequestEvent ev(ImageRequestEvent::CANCEL, viewId);
     sendEvent(viewId, ev);
