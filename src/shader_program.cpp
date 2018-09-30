@@ -9,7 +9,7 @@
 #ifdef __ANDROID__
 #include <android/log.h>
 #else
-#include <iostream>
+// #include <iostream>
 #endif
 
 using namespace std;
@@ -80,7 +80,7 @@ shader_program::loadShader(GLenum type, const std::string & glsl_version, const 
 #ifdef __ANDROID__
     __android_log_print(ANDROID_LOG_INFO, "Sometrik", "ERROR SHADER COMPILE. COMPILE MESSAGE: %s", msg.c_str());
 #else
-    cerr << msg << endl;
+    // cerr << msg << endl;
 #endif
       
     glDeleteShader ( shader );
@@ -130,7 +130,7 @@ shader_program::link() {
 #ifdef __ANDROID__
     __android_log_print(ANDROID_LOG_INFO, "Sometrik", "SHADER PROGRAM LINK ERROR. ERROR MESSAGE: %s", infoLog.c_str());
 #else
-    cerr << "Error linking program:\n" << infoLog << endl;
+    // cerr << "Error linking program:\n" << infoLog << endl;
 #endif
 
     glDeleteProgram ( programObject );
