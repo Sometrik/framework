@@ -12,6 +12,7 @@
     if (self = [super init]) {
         self.prevWidth = 0;
         self.prevHeight = 0;
+	self.prevUrl = nil;
         self.translatesAutoresizingMaskIntoConstraints = false;
 	self.hasStaticImage = FALSE;
 	self.imageRequestPending = FALSE;
@@ -24,6 +25,7 @@
     if (self = [super initWithImage:image]) {
         self.prevWidth = 0;
         self.prevHeight = 0;
+	self.prevUrl = nil;
         self.translatesAutoresizingMaskIntoConstraints = false;
 	self.hasStaticImage = TRUE;
 	self.imageRequestPending = FALSE;
@@ -36,6 +38,7 @@
     if (self = [super initWithFrame:frame]) {
         self.prevWidth = 0;
         self.prevHeight = 0;
+	self.prevUrl = nil;
         self.translatesAutoresizingMaskIntoConstraints = false;
 	self.hasStaticImage = FALSE;
 	self.imageRequestPending = FALSE;
@@ -72,8 +75,6 @@
     NSInteger width = (NSInteger)self.frame.size.width;
     NSInteger height = (NSInteger)self.frame.size.height;
     if (width != self.prevWidth || height != self.prevHeight) {
-        [self cancelImageRequest];
-
         self.prevWidth = width;
         self.prevHeight = height;
 	
@@ -83,6 +84,12 @@
             FWImage * bestImage = [self getImageForWidth:width];
             NSString * bestUrl = nil;
             if (bestImage != nil) bestUrl = bestImage.url;
+
+	    if (prevUrl != nil && (bestUrl == nil || ![bestUrl isEqualToString:prevUrl])) {
+	        [self cancelImageRequest];
+	    }
+
+	    prevUrl = bestUrl;
 
             if ([self.delegate respondsToSelector:@selector(fwImageView:didChangeSize:ofImageUrl:)]) {
                 [self.delegate fwImageView:self didChangeSize:self.frame.size ofImageUrl:bestUrl];
