@@ -35,7 +35,9 @@ class ImageElement : public Element {
       if (isRequestPending && v) {
 	currentRequest.dispatch(*(getParent()));
 	isRequestPending = false;
-      } else if (!isRequestPending && !v) {
+      } else if (!isRequestPending && !v && hasRequest) {
+	isRequestPending = true;
+	
 	ImageRequestEvent ev(ImageRequestEvent::CANCEL, getInternalId());
 	ev.dispatch(*(getParent()));
       }
