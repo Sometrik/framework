@@ -1,5 +1,6 @@
 #import "FWImageView.h"
 #import "FWImage.h"
+#import "FWLayoutView.h"
 
 @interface FWImageView ()
 @property (nonatomic, strong) NSMutableArray *images;
@@ -72,14 +73,28 @@
 
 - (void)layoutSubviews {
     [super layoutSubviews];
-    NSInteger width = (NSInteger)self.frame.size.width;
-    NSInteger height = (NSInteger)self.frame.size.height;
-    if (width != self.prevWidth || height != self.prevHeight) {
+    NSInteger width = 0, height = 0;
+
+    LayoutParams * myParams = nil;
+    if ([self.superview isKindOfClass:FWLayoutView.class]) {
+        FWLayoutView * layout = (FWLayoutView*)self.superview;
+        myParams = [layout findParams:self];
+    }
+
+    if (myParams != nil) {
+        if (myParams.fixedWidth > 0) width = myParams.fixedWidth;
+        if (myParams.fixedHeight > 0) height = myParams.fixedHeight;
+    }
+
+    if (width <= 0) width = (NSInteger)self.frame.size.width;
+    if (height <= 0) height = (NSInteger)self.frame.size.height;
+    
+    if (width > 0 && height > 0 && width != self.prevWidth) {
         self.prevWidth = width;
         self.prevHeight = height;
 	
-	if (width > 0 && height > 0 && !self.hasStaticImage) {
-	    self.imageRequestPending = YES;
+        if (!self.hasStaticImage) {
+            self.imageRequestPending = YES;
 
             FWImage * bestImage = [self getImageForWidth:width];
             NSString * bestUrl = nil;
@@ -92,7 +107,7 @@
             self.prevUrl = bestUrl;
 
             if ([self.delegate respondsToSelector:@selector(fwImageView:didChangeSize:ofImageUrl:)]) {
-                [self.delegate fwImageView:self didChangeSize:self.frame.size ofImageUrl:bestUrl];
+                [self.delegate fwImageView:self didChangeSize:CGSizeMake(width, height) ofImageUrl:bestUrl];
             }
         }
     }
