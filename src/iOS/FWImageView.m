@@ -85,11 +85,11 @@
             NSString * bestUrl = nil;
             if (bestImage != nil) bestUrl = bestImage.url;
 
-	    if (prevUrl != nil && (bestUrl == nil || ![bestUrl isEqualToString:prevUrl])) {
-	        [self cancelImageRequest];
-	    }
+            if (self.prevUrl != nil && (bestUrl == nil || ![bestUrl isEqualToString:self.prevUrl])) {
+                [self cancelImageRequest];
+            }
 
-	    prevUrl = bestUrl;
+            self.prevUrl = bestUrl;
 
             if ([self.delegate respondsToSelector:@selector(fwImageView:didChangeSize:ofImageUrl:)]) {
                 [self.delegate fwImageView:self didChangeSize:self.frame.size ofImageUrl:bestUrl];
