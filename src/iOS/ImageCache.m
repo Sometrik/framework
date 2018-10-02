@@ -6,6 +6,8 @@
     self = [super init];
     if (self) {
         self.cachedIcons = [[NSMutableDictionary alloc] init];
+        self.cachedImages = [[NSMutableDictionary alloc] init];
+        self.subscriptions = [[NSMutableDictionary alloc] init];
     }
     return self;
 }
@@ -31,6 +33,47 @@
     }
     
     return image;
+}
+
+- (void)subscribeImage:(FWImageViewView*)view url:(NSString *)url width:(NSInteger)width height:(NSInteger)height
+{
+    NSString * key = [NSString stringWithFormat:@"%@/%d/%d", url, width, height];
+    CachedImage * ci = [cachedImages objectForKey:key];
+    if (ci) {
+        ci.refcnt++;
+	[view setCachedImage:ci];
+    } else {
+        NSArray * views = [self.subscriptions objectForKey:key];
+	if (views == nil) {
+            views = [[NSMutableArray alloc] init];
+	    [self.subscriptions setObject:view forKey:key];
+	}
+	[views addObject:view];
+    }
+}
+
+- (void)releaseImage:(CachedImage *)ci
+{
+    ci.refcnt--;
+    if (ci.refcnt <= 0) {
+        [self.cachedImages removeObjectForKey:ci.key];
+    }
+}
+
+- (void)dispatchImage:(UIImage *)image url:(NSString *)url width:(NSInteger)width height:(NSInteger)height
+{
+    NSString * key = [NSString stringWithFormat:@"%@/%d/%d", url, width, height];
+    NSArray * views = [self.subscriptions objectForKey:key];
+    if (views) {
+        if ([views count] > 0) {
+            CachedImage * ci = [[CachedImage alloc] initWithImage:image key:key];
+	    for (FWImageView * view in views) {
+	        ci.refcnt++;
+		[view setCachedImage:ci];
+	    }
+	}
+	[self.subscriptions removeObjectForKey:key];
+    }
 }
 
 @end
