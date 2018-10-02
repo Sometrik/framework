@@ -73,6 +73,10 @@
 
 - (void)layoutSubviews {
     [super layoutSubviews];
+    [self updateImage];
+}
+
+- (void)updateImage {
     NSInteger width = 0, height = 0;
 
     LayoutParams * myParams = nil;
@@ -116,23 +120,21 @@
 - (void)addImageUrl:(NSString *)url width:(int)width height:(int)height
 {
     FWImage *newImage = [[FWImage alloc] initWithUrl:url width:width height:height];
-    
+    BOOL imageAdded = FALSE;
     // put image to array so it remains sorted by width
     for (int i = 0; i < self.images.count; i++) {
         FWImage *image = (FWImage *)self.images[i];
         if (image.width == newImage.width) { // there already is same image
-            break;
-        }
-        if (image.width > newImage.width) {
+	    [self.images replaceObjectAtIndex:i withObject:newImage];
+	    imageAdded = TRUE;
+	    break;
+        } else if (newImage.width < image.width) {
             [self.images insertObject:newImage atIndex:i];
+	    imageAdded = TRUE;
             break;
-        }
-        // if reached end
-        if (i == self.images.count - 1) {
-            [self.images addObject:newImage];
         }
     }
-    if (self.images.count == 0) { // first image in to the array
+    if (!imageAdded) {
         [self.images addObject:newImage];
     }
 }
