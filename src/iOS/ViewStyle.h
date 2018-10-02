@@ -7,7 +7,6 @@
 @property (nonatomic, assign) NSInteger fontWeight;
 @property (nonatomic, assign) float alpha;
 @property (nonatomic, assign) float zoom;
-@property (nonatomic, assign) float prevZoom;
 @property (nonatomic, assign) float shadow;
 @property (nonatomic, strong) UIColor * color;
 @property (nonatomic, strong) UIColor * backgroundColor;

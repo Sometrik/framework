@@ -12,13 +12,12 @@
     if (self) {
         self.alpha = 1.0f;
         self.zoom = 1.0f;
-	self.prevZoom = 1.0f;
         self.fontSize = 0;
         self.fontWeight = 0;
         self.shadow = 0;
-	self.color = nil;
+        self.color = nil;
         self.backgroundColor = nil;
-	self.tintColor = nil;
+        self.tintColor = nil;
         self.gradient = nil;
         self.paddingTop = 0;
         self.paddingRight = 0;
@@ -100,21 +99,17 @@
             [CATransaction commit];
 #endif
         }
-	if (fabs(view.alpha - self.alpha) > EPSILON ||
-	    fabs(self.prevZoom - self.zoom) > EPSILON) {
-	  [UIView animateWithDuration:0.2 animations:^{
-	      view.alpha = self.alpha;
-	      view.transform = CGAffineTransformMakeScale(self.zoom, self.zoom);
-	    }];
-
-	  self.prevZoom = self.zoom;
-	}
+        float prevZoom = view.transform.a;
+        if (fabs(view.alpha - self.alpha) > EPSILON || fabs(prevZoom - self.zoom) > EPSILON) {
+            [UIView animateWithDuration:0.2 animations:^{
+                view.alpha = self.alpha;
+                view.transform = CGAffineTransformMakeScale(self.zoom, self.zoom);
+            }];
+        }
     } else {
         view.alpha = self.alpha;
         view.transform = CGAffineTransformMakeScale(self.zoom, self.zoom);
         view.layer.shadowRadius = self.shadow;
-
-	self.prevZoom = self.zoom;
     }
 }
 
