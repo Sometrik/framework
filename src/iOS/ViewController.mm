@@ -792,6 +792,11 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     //[stackView addArrangedSubview:titleViewTitle];
     //[stackView addArrangedSubview:titleViewSubtitle];
     
+    // Add debug event by tapping nav bar 5 times
+    UITapGestureRecognizer *debugTapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(navBarTapped5Times:)];
+    debugTapGesture.numberOfTapsRequired = 5;
+    [titleView addGestureRecognizer:debugTapGesture];
+    
     UIStackView *stackView = [[UIStackView alloc] initWithArrangedSubviews:@[titleViewTitle, titleViewSubtitle]];
     stackView.spacing = 0.0;
     stackView.axis = UILayoutConstraintAxisVertical;
@@ -823,11 +828,6 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     }
      */
 
-    // Add debug event by tapping nav bar 5 times
-    UITapGestureRecognizer *debugTapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(navBarTapped5Times:)];
-    debugTapGesture.numberOfTapsRequired = 5;
-    [navBar addGestureRecognizer:debugTapGesture];
-     
     UIBarButtonItem *menuButton;
     UIImage *image = [self.imageCache loadIcon:@"icons_hamburger-menu.png"];
     if (image == nil) {
@@ -870,9 +870,9 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 - (void)menuButtonTapped
 {
     if (self.sideMenuView.isHidden) {
-        [self showNavigationViewWithAnimation:NO];
+        [self showNavigationViewWithAnimation:YES];
     } else {
-	[self hideNavigationViewWithAnimation:NO];
+        [self hideNavigationViewWithAnimation:YES];
     }
 }
 
