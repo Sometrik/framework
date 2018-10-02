@@ -1,5 +1,8 @@
 #import "ImageCache.h"
 
+#import "CachedImage.h"
+#import "FWImageView.h"
+
 @implementation ImageCache;
 
 - (id)init {
@@ -35,20 +38,20 @@
     return image;
 }
 
-- (void)subscribeImage:(FWImageViewView*)view url:(NSString *)url width:(NSInteger)width height:(NSInteger)height
+- (void)subscribeImage:(FWImageView *)view url:(NSString *)url width:(NSInteger)width height:(NSInteger)height
 {
     NSString * key = [NSString stringWithFormat:@"%@/%d/%d", url, width, height];
-    CachedImage * ci = [cachedImages objectForKey:key];
+    CachedImage * ci = [self.cachedImages objectForKey:key];
     if (ci) {
         ci.refcnt++;
-	[view setCachedImage:ci];
+        // [view setCachedImage:ci];
     } else {
-        NSArray * views = [self.subscriptions objectForKey:key];
-	if (views == nil) {
+        NSMutableArray * views = [self.subscriptions objectForKey:key];
+        if (views == nil) {
             views = [[NSMutableArray alloc] init];
-	    [self.subscriptions setObject:view forKey:key];
-	}
-	[views addObject:view];
+            [self.subscriptions setObject:view forKey:key];
+        }
+        [views addObject:view];
     }
 }
 
@@ -62,17 +65,17 @@
 
 - (void)dispatchImage:(UIImage *)image url:(NSString *)url width:(NSInteger)width height:(NSInteger)height
 {
-    NSString * key = [NSString stringWithFormat:@"%@/%d/%d", url, width, height];
+    NSString * key = [NSString stringWithFormat:@"%@/%d/%d", url, (int)width, (int)height];
     NSArray * views = [self.subscriptions objectForKey:key];
     if (views) {
         if ([views count] > 0) {
             CachedImage * ci = [[CachedImage alloc] initWithImage:image key:key];
-	    for (FWImageView * view in views) {
-	        ci.refcnt++;
-		[view setCachedImage:ci];
-	    }
-	}
-	[self.subscriptions removeObjectForKey:key];
+            for (FWImageView * view in views) {
+                ci.refcnt++;
+                // [view setCachedImage:ci];
+            }
+        }
+        [self.subscriptions removeObjectForKey:key];
     }
 }
 
