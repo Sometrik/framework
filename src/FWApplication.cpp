@@ -164,6 +164,16 @@ public:
     row.addChild("Debug mode enabled");
     row.addChild(make_shared<Switch>(-100, debug_enabled));
 
+    auto & row2 = mainLayout->addChild(make_shared<LinearLayout>(FW_HORIZONTAL));
+    row2.style("width", "match-parent");
+    row2.addChild("Bytes downloaded");
+    row2.addChild(to_string(0));
+
+    auto & row3 = mainLayout->addChild(make_shared<LinearLayout>(FW_HORIZONTAL));
+    row3.style("width", "match-parent");
+    row3.addChild("Bytes uploaded");
+    row3.addChild(to_string(0));
+    
     mainLayout->addChild(make_shared<TextLabel>("Threads")).style("font-size", "12").style("margin", 5);
 
     auto grid = make_shared<GridView>();
