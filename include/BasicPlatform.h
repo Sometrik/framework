@@ -37,8 +37,8 @@ class BasicThread : public PosixThread {
     return std::unique_ptr<HTTPClientFactory>(new CurlClientFactory);
   }
 
-  std::shared_ptr<PlatformThread> createThread(std::shared_ptr<Runnable> & runnable) override {
-    return std::make_shared<BasicThread>(application, runnable);
+  std::shared_ptr<PlatformThread> createThread(std::shared_ptr<Runnable> & r) override {
+    return std::make_shared<BasicThread>(application, r);
   }
 
   void sendCommands(const std::vector<Command> & commands) {
@@ -80,8 +80,8 @@ public:
     return std::unique_ptr<HTTPClientFactory>(new CurlClientFactory);
   }
 
-  std::shared_ptr<PlatformThread> createThread(std::shared_ptr<Runnable> & runnable) override {
-    return std::make_shared<BasicThread>(application, runnable);
+  std::shared_ptr<PlatformThread> createThread(std::shared_ptr<Runnable> & r) override {
+    return std::make_shared<BasicThread>(application, r);
   }
 
   void sendCommands(const std::vector<Command> & commands) {

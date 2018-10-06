@@ -23,18 +23,18 @@ public:
 
   void sleep(double t) override;
   
-  void sendEvent(int internal_id, const Event & ev) override {
-    event_queue.push(internal_id, ev);
+  void sendEvent(int target_internal_id, const Event & ev) override {
+    event_queue.push(target_internal_id, ev);
   }
 
   void startEventLoop() override {
-    auto & runnable = getRunnable();
+    auto & r = getRunnable();
     while (getNumRunningThreads() != 0 || !testDestroy()) {
       auto ed = event_queue.pop();
       if (ed.first == getInternalId()) {
 	ed.second->dispatch(*this);
       } else {
-	ed.second->dispatch(runnable);
+	ed.second->dispatch(r);
       }
     }
   }
