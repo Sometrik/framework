@@ -150,7 +150,8 @@ iOSMainThread::setImageData(int internal_id, std::shared_ptr<canvas::PackedImage
 
 void
 iOSMainThread::setSurface(int internal_id, canvas::Surface & surface) {
-
+  std::shared_ptr<canvas::PackedImageData> image = surface.createPackedImage();
+  setImageData(internal_id, image);
 }
 
 int
