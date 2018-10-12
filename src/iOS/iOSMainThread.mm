@@ -149,9 +149,14 @@ iOSMainThread::setImageData(int internal_id, std::shared_ptr<canvas::PackedImage
 }
 
 void
-iOSMainThread::setSurface(int internal_id, canvas::Surface & surface) {
-  std::shared_ptr<canvas::PackedImageData> image = surface.createPackedImage();
-  setImageData(internal_id, image);
+iOSMainThread::setSurface(int internal_id, canvas::Surface & _surface) {
+  auto & surface = dynamic_cast<canvas::Quartz2DSurface&>(_surface);
+  CGImageRef img = CGBitmapContextCreateImage(surface.getContext());
+  if (img) {
+    [viewController setImageFromThread:internal_id data:img];
+  } else {
+    NSLog(@"Failed to create image for context");
+  }
 }
 
 int
