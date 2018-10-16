@@ -40,7 +40,7 @@
 
 - (void)subscribeImage:(FWImageView *)view url:(NSString *)url width:(NSInteger)width height:(NSInteger)height
 {
-    NSString * key = [NSString stringWithFormat:@"%@/%d/%d", url, width, height];
+    NSString * key = [NSString stringWithFormat:@"%@/%d/%d", url, (int)width, (int)height];
     CachedImage * ci = [self.cachedImages objectForKey:key];
     if (ci) {
         ci.refcnt++;
