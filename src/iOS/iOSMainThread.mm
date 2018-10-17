@@ -16,6 +16,7 @@
 #import "NativeCommand.h"
 
 #include <unordered_set>
+#include <cassert>
 
 using namespace std;
 
@@ -114,8 +115,8 @@ iOSMainThread::handleEventFromThread(int target_element_id, Event * event) {
 
 void
 iOSMainThread::setImageData(int internal_id, std::shared_ptr<canvas::PackedImageData> input) {
-  int bpp = input->getBytesPerPixel();
   int bitsPerComponent = 8;
+  int bitsPerPixel = input->getBytesPerPixel() * 8;
   CGBitmapInfo bitmapInfo = 0;
   if (input->getInternalFormat() == canvas::RGBA4) {
     bitsPerComponent = 4;
@@ -128,14 +129,21 @@ iOSMainThread::setImageData(int internal_id, std::shared_ptr<canvas::PackedImage
   } else if (input->getInternalFormat() == canvas::RGBA8) {
     bitmapInfo |= kCGImageAlphaPremultipliedFirst;
     bitmapInfo |= kCGBitmapByteOrder32Little;
-  } else { // RGB8
+  } else if (input->getInternalFormat() == canvas::RGB8) {
     bitmapInfo |= kCGImageAlphaNoneSkipFirst;
     bitmapInfo |= kCGBitmapByteOrder32Little;
+  } else if (input->getInternalFormat() == canvas::RG8) {
+    bitmapInfo |= kCGImageAlphaPremultipliedFirst;
+  } else if (input->getInternalFormat() == canvas::R8) {
+    bitmapInfo |= kCGImageAlphaNone;
+  } else {
+    assert(0);
+    return;
   }
   auto cfdata = CFDataCreate(0, input->getData(), input->getHeight() * input->getBytesPerRow());
   auto provider = CGDataProviderCreateWithCFData(cfdata);
   auto colorspace = CGColorSpaceCreateDeviceRGB();
-  auto img = CGImageCreate(input->getWidth(), input->getHeight(), bitsPerComponent, bpp * 8, input->getBytesPerRow(), colorspace, bitmapInfo, provider, 0, true, kCGRenderingIntentDefault);
+  auto img = CGImageCreate(input->getWidth(), input->getHeight(), bitsPerComponent, bitsPerPixel, input->getBytesPerRow(), colorspace, bitmapInfo, provider, 0, true, kCGRenderingIntentDefault);
 
   if (img) { 
     [viewController setImageFromThread:internal_id data:img];
