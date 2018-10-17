@@ -122,7 +122,8 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
     } else if ([self.view isKindOfClass:FWImageView.class]) {
         FWImageView * imageView = (FWImageView*)self.view;
 	[imageView clear];
-        imageView.image = [UIImage imageNamed:value];
+        imageView.image = [self.imageCache loadIcon:value];
+	imageView.hasStaticImage = TRUE;
     }
 }
 
@@ -302,7 +303,11 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
         UIImageView * imageView = (UIImageView *)self.view;
 	if ([key isEqualToString:@"scale"]) {
 	  if ([value isEqualToString:@"center"]) {
+	    imageView.contentMode = UIViewContentModeCenter;
+	  } else if ([value isEqualToString:@"center-crop"]) {
 	    imageView.contentMode = UIViewContentModeScaleAspectFill;
+	  } else if ([value isEqualToString:@"center-inside"]) {
+
 	  } else {
 	    imageView.contentMode = UIViewContentModeScaleAspectFit;
 	  }
