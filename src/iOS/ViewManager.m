@@ -201,6 +201,10 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
         if ([array count] >= 1) {
             targetStyle.borderRadius = (int)[array[0] integerValue];
         }
+    } else if ([key isEqualToString:@"border-width"]) {
+        targetStyle.borderWidth = [value floatValue];
+    } else if ([key isEqualToString:@"border-color"]) {
+        targetStyle.borderColor = [self colorFromString:value];
     } else if ([key isEqualToString:@"border"]) {
         if ([value isEqualToString:@"none"] || ![value length]) {
             targetStyle.borderWidth = 0;
@@ -210,7 +214,7 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
                 targetStyle.borderColor = [self colorFromString:value];
                 targetStyle.borderWidth = 1.0f;
             } else {
-                targetStyle.borderWidth = (int)[array[0] integerValue];
+                targetStyle.borderWidth = [array[0] floatValue];
                 if ([array count] >= 2) {
                     // parse border style
                 }

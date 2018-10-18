@@ -17,6 +17,6 @@
 @property (nonatomic, assign) int paddingBottom;
 @property (nonatomic, assign) int paddingLeft;
 @property (nonatomic, assign) int borderRadius;
-@property (nonatomic, assign) int borderWidth;
+@property (nonatomic, assign) float borderWidth;
 @property (nonatomic, strong) UIColor * borderColor;
 @end
