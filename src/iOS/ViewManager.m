@@ -178,6 +178,7 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
         }
     } else if ([key isEqualToString:@"font-style"]) {
     } else if ([key isEqualToString:@"font-family"]) {
+        targetStyle.fontFamily = value;
     } else if ([key isEqualToString:@"background-color"]) {
         targetStyle.backgroundColor = [self colorFromString:value];
     } else if ([key isEqualToString:@"padding"]) {

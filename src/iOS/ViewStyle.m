@@ -12,6 +12,7 @@
     if (self) {
         self.alpha = 1.0f;
         self.zoom = 1.0f;
+	self.fontFamily = nil;
         self.fontSize = 0;
         self.fontWeight = 0;
         self.shadow = 0;
@@ -116,7 +117,9 @@
 
 - (UIFont *)createFont:(UIFont *)currentFont {
     NSInteger size = self.fontSize > 0 ? self.fontSize : currentFont.pointSize;
-    if (self.fontWeight) {
+    if (self.fontFamily != nil) {
+        return [UIFont fontWithName:self.fontFamily size:size];
+    } else if (self.fontWeight) {
         UIFontDescriptor * fontD = [currentFont.fontDescriptor fontDescriptorWithSymbolicTraits:UIFontDescriptorTraitBold];
         return [UIFont fontWithDescriptor:fontD size:size];
     } else {
