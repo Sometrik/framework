@@ -1545,7 +1545,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
         titleLabel.textAlignment = NSTextAlignmentCenter;
         navItem.titleView = titleLabel;
 
-        UIImage *backImage = [self.imageCache loadIcon:@"icons_arrow-left-red.png"]
+        UIImage *backImage = [self.imageCache loadIcon:@"icons_arrow-left-red.png"];
         UIBarButtonItem *closeButton;
         if (backImage != nil) {
             closeButton = [[UIBarButtonItem alloc] initWithImage:backImage style:UIBarButtonItemStylePlain target:self action:@selector(webViewCloseButtonPushed:)];
