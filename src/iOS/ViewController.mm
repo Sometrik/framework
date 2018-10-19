@@ -785,10 +785,11 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     titleViewTitle.font = [UIFont systemFontOfSize:18 weight:UIFontWeightBold];
     titleViewTitle.adjustsFontSizeToFitWidth = YES;
     titleViewTitle.minimumScaleFactor = 0.7;
+    titleViewTitle.textColor = [UIColor colorWithRed:0.165 green:0.188 blue:0.204 alpha:1.0];
     UILabel *titleViewSubtitle = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, titleViewWidth, 12)];
     titleViewSubtitle.textAlignment = NSTextAlignmentCenter;
     titleViewSubtitle.font = [UIFont systemFontOfSize:12 weight:UIFontWeightRegular];
-    titleViewSubtitle.textColor = UIColor.darkGrayColor;
+    titleViewSubtitle.textColor = [UIColor colorWithRed:0.718 green:0.769 blue:0.804 alpha:1.0];
     //[stackView addArrangedSubview:titleViewTitle];
     //[stackView addArrangedSubview:titleViewSubtitle];
     
@@ -837,7 +838,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     }
     self.navItem.leftBarButtonItem = menuButton;
 
-    UIImage *image2 = [self.imageCache loadIcon:@"write_icon_small.png"];
+    UIImage *image2 = [self.imageCache loadIcon:@"icons_icon-post.png"];
     if (image2 != nil) {
         UIBarButtonItem *composeButton = [[UIBarButtonItem alloc] initWithImage:image2 style:UIBarButtonItemStylePlain target:self action:@selector(composeButtonTapped)];
         self.navItem.rightBarButtonItem = composeButton;
