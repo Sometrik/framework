@@ -774,6 +774,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     navBar.tag = viewId;
     navBar.translucent = YES;
     navBar.delegate = self;
+    navBar.backgroundColor = UIColor.whiteColor;
     //navBar.layer.zPosition = 1000;
 
     // create titleView that has title and subtitle
@@ -1212,6 +1213,8 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     [navBar setItems:@[navItem]];
     navBar.translatesAutoresizingMaskIntoConstraints = YES;
     // navBar.translucent = YES;
+    navBar.backgroundColor = UIColor.whiteColor;
+    navBar.tintColor = [UIColor blackColor];
     [pickerHolder addSubview:navBar];
 
     NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:layout attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:layout.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:64];
@@ -1533,7 +1536,9 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 
         UINavigationBar *navBar = [[UINavigationBar alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(self.view.frame), navBarHeight)];
         navBar.delegate = self;
-        
+	navBar.tintColor = [UIColor blackColor];
+        navBar.backgroundColor = UIColor.whiteColor;
+
         CGFloat width = self.view.frame.size.width * 0.6; // just some width related to width of the view
         
         UINavigationItem *navItem = [[UINavigationItem alloc] initWithTitle:@""];
