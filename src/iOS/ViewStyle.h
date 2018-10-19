@@ -3,7 +3,7 @@
 @interface ViewStyle : NSObject
 - (void)apply:(UIView *)view animate:(BOOL)animate;
 
-@property (nonatomic, string) NSString * fontFamily;
+@property (nonatomic, strong) NSString * fontFamily;
 @property (nonatomic, assign) NSInteger fontSize;
 @property (nonatomic, assign) NSInteger fontWeight;
 @property (nonatomic, assign) float alpha;
