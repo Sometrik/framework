@@ -37,6 +37,7 @@ class StringUtils {
   static bool isNumber(const std::string & str) { return isNumber(str.c_str()); }
   static bool isAlpha(const std::string & str);
   static bool isUpper(const std::string & s);
+  static bool isBlank(const std::string & s);
 
   static std::string toLower(const std::string & str);
   static std::string toUpper(const std::string & str);

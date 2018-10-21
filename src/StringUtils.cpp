@@ -447,6 +447,20 @@ StringUtils::isUpper(const string & input) {
   }
 }
 
+bool
+StringUtils::isBlank(const std::string & input) {
+  const char * str = input.c_str();
+  const char * str_i = str;
+  const char * end = str + input.size(); 
+  while ( str_i < end ) {
+    uint32_t c = utf8::next(str_i, end); // get 32 bit code of a utf-8 symbol
+    if (!is_blank_unicode(c)) {
+      return false;
+    }
+  }
+  return true;
+}
+
 string
 StringUtils::extractAscii(const std::string & s) {
   string r;
