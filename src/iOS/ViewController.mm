@@ -76,7 +76,7 @@ extern FWApplication * applicationMain();
 
 static const NSTimeInterval animationDuration = 0.4;
 static const CGFloat backgroundOverlayViewAlpha = 0.5;
-static const CGFloat sideMenuOpenSpaceWidth = 100.0;
+static const CGFloat sideMenuOpenSpaceWidth = 75.0;
 
 @implementation ViewController
 
@@ -280,7 +280,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
 {
     // create backgroundoverlay view that's behind sidePanel and dialog and if clicked closes the panel
     UIView * view = [[UIView alloc] init];
-    view.backgroundColor = UIColor.blackColor;
+    view.backgroundColor = [UIColor colorWithRed:0.0 green:0.1 blue:0.2 alpha:1.0];
     view.translatesAutoresizingMaskIntoConstraints = false;
 
     [parentView addSubview:view];
@@ -774,8 +774,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     navBar.tag = viewId;
     navBar.translucent = YES;
     navBar.delegate = self;
-    navBar.backgroundColor = UIColor.whiteColor;
-    //navBar.layer.zPosition = 1000;
+    navBar.barTintColor = UIColor.whiteColor;
 
     // create titleView that has title and subtitle
     CGFloat titleViewWidth = self.view.frame.size.width - 140;
@@ -958,10 +957,10 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     self.sideMenuView = [[UIView alloc] initWithFrame:frame];
     self.sideMenuView.tag = viewId;
     self.sideMenuView.hidden = YES;
-    self.sideMenuView.layer.shadowColor = [UIColor blackColor].CGColor;
-    self.sideMenuView.layer.shadowOpacity = 1.0;
-    self.sideMenuView.layer.shadowRadius = 7.5;
-    self.sideMenuView.layer.shadowOffset = CGSizeMake(1, 4);    
+    // self.sideMenuView.layer.shadowColor = [UIColor blackColor].CGColor;
+    // self.sideMenuView.layer.shadowOpacity = 1.0;
+    // self.sideMenuView.layer.shadowRadius = 7.5;
+    // self.sideMenuView.layer.shadowOffset = CGSizeMake(1, 4);    
     
     [self.view addSubview:self.sideMenuView];
     self.sideMenuView.transform = CGAffineTransformTranslate(self.sideMenuView.transform, -CGRectGetWidth(self.sideMenuView.frame), 0.0);
@@ -1213,7 +1212,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
     [navBar setItems:@[navItem]];
     navBar.translatesAutoresizingMaskIntoConstraints = YES;
     // navBar.translucent = YES;
-    navBar.backgroundColor = UIColor.whiteColor;
+    navBar.barTintColor = UIColor.whiteColor;
     navBar.tintColor = [UIColor blackColor];
     [pickerHolder addSubview:navBar];
 
@@ -1537,7 +1536,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 100.0;
         UINavigationBar *navBar = [[UINavigationBar alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(self.view.frame), navBarHeight)];
         navBar.delegate = self;
 	navBar.tintColor = [UIColor blackColor];
-        navBar.backgroundColor = UIColor.whiteColor;
+        navBar.barTintColor = UIColor.whiteColor;
 
         CGFloat width = self.view.frame.size.width * 0.6; // just some width related to width of the view
         
