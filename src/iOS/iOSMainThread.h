@@ -11,31 +11,35 @@
 
 #include <FilenameConverter.h>
 
+static inline bool getPathForResource(const std::string & input, std::string & output) {
+  const char * filename = input.c_str();
+  int n = (int)input.size();
+  for (int i = n - 1; i >= 0; i--)  {
+    if (filename[i] == '/')  {
+      filename = filename + i + 1;
+      break;
+    }
+  }
+  
+  // Given a fileName, convert into a path that can be used to open from the mainBundle
+  NSString* fileNameNS = [NSString stringWithUTF8String:filename];
+  NSString* baseName = [fileNameNS stringByDeletingPathExtension];
+  NSString* extension = [fileNameNS pathExtension];
+  NSString *path = [[NSBundle mainBundle] pathForResource: baseName ofType: extension ];
+  const char * filename2 = [path cStringUsingEncoding:1];
+  if (filename2) {
+    output = filename2;
+    return true;
+  } else {
+    return false;
+  }
+}
+
 namespace canvas {
   class BundleFilenameConverter : public FilenameConverter {
   public:
     bool convert(const std::string & input, std::string & output) {
-      const char * filename = input.c_str();
-      int n = (int)input.size();
-      for (int i = n - 1; i >= 0; i--)  {
-        if (filename[i] == '/')  {
-          filename = filename + i + 1;
-          break;
-        }
-      }
-      
-      // Given a fileName, convert into a path that can be used to open from the mainBundle
-      NSString* fileNameNS = [NSString stringWithUTF8String:filename];
-      NSString* baseName = [fileNameNS stringByDeletingPathExtension];
-      NSString* extension = [fileNameNS pathExtension];
-      NSString *path = [[NSBundle mainBundle] pathForResource: baseName ofType: extension ];
-      const char * filename2 = [path cStringUsingEncoding:1];
-      if (filename2) {
-        output = filename2;
-        return true;
-      } else {
-        return false;
-      }
+      return getPathForResource(input, output);
     }
   };
 };
@@ -75,7 +79,12 @@ public:
   }
   std::string loadTextAsset(const char * filename) override;
   std::string getBundleFilename(const char * filename) override {
-    return "";
+    std::string tmp;
+    if (getPathForResource(filename, tmp)) {
+      return tmp;
+    } else {
+      return "";
+    }
   }
   std::string getLocalFilename(const char * filename, FileType type) override {
     return "";
