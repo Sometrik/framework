@@ -323,13 +323,14 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
         UIView * view = (UIView *)self.view;
         if ([key isEqualToString:@"background"]) {
             NSRange searchedRange = NSMakeRange(0, [value length]);
-            NSString * pattern = @"^linear-gradient\\(\\s*([^, ]+),\\s*([^, ]+)\\s*\\)$";
+            NSString * pattern = @"^(linear|radial)-gradient\\(\\s*([^, ]+),\\s*([^, ]+)\\s*\\)$";
             NSError * error = nil;
             NSRegularExpression * regex = [NSRegularExpression regularExpressionWithPattern:pattern options:0 error:&error];
             NSTextCheckingResult *match = [regex firstMatchInString:value options:0 range:searchedRange];
             if (match != nil) {
-                NSString * color1 = [value substringWithRange:[match rangeAtIndex:1]];
-                NSString * color2 = [value substringWithRange:[match rangeAtIndex:2]];
+	        NSString * type = [value substringWithRange:[match rangeAtIndex:1]]
+                NSString * color1 = [value substringWithRange:[match rangeAtIndex:2]];
+                NSString * color2 = [value substringWithRange:[match rangeAtIndex:3]];
                 CAGradientLayer * gradient = targetStyle.gradient;
                 if (gradient == nil) gradient = [CAGradientLayer layer];
                 gradient.colors = @[(id)[self colorFromString:color1].CGColor, (id)[self colorFromString:color2].CGColor];
