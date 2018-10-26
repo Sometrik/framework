@@ -195,17 +195,17 @@ public:
   }
 
   void load() {
-    auto thread = getThreadPtr();
-    if (thread) {
+    auto t = getThreadPtr();
+    if (t) {
       auto & grid = find("GridView").front();
-      populateThreads(dynamic_cast<GridView&>(grid), *thread);
+      populateThreads(dynamic_cast<GridView&>(grid), *t);
     }
   }
 
 protected:
-  void populateThreads(GridView & grid, PlatformThread & thread) {
+  void populateThreads(GridView & grid, PlatformThread & t) {
     string runnable_name, runnable_status;
-    auto runnable = thread.getRunnablePtr();
+    auto runnable = t.getRunnablePtr();
     if (runnable) {
       runnable_name = runnable->getName();
       runnable_status = runnable->getStatusText();
@@ -213,7 +213,7 @@ protected:
     grid.setValue(numThreadRows, 0, runnable_name);
     grid.setValue(numThreadRows, 1, runnable_status);
     numThreadRows++;
-    for (auto & td : thread.getSubThreads()) {
+    for (auto & td : t.getSubThreads()) {
       populateThreads(grid, *td.second);
     }
   }
