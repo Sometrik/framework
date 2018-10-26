@@ -328,7 +328,7 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
             NSRegularExpression * regex = [NSRegularExpression regularExpressionWithPattern:pattern options:0 error:&error];
             NSTextCheckingResult *match = [regex firstMatchInString:value options:0 range:searchedRange];
             if (match != nil) {
-	        NSString * type = [value substringWithRange:[match rangeAtIndex:1]]
+                NSString * type = [value substringWithRange:[match rangeAtIndex:1]];
                 NSString * color1 = [value substringWithRange:[match rangeAtIndex:2]];
                 NSString * color2 = [value substringWithRange:[match rangeAtIndex:3]];
                 CAGradientLayer * gradient = targetStyle.gradient;
