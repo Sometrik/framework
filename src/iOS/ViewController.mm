@@ -75,7 +75,7 @@ extern FWApplication * applicationMain();
 @end
 
 static const NSTimeInterval animationDuration = 0.4;
-static const CGFloat backgroundOverlayViewAlpha = 0.5;
+static const CGFloat backgroundOverlayViewAlpha = 0.7;
 static const CGFloat sideMenuOpenSpaceWidth = 75.0;
 
 @implementation ViewController
@@ -280,7 +280,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
 {
     // create backgroundoverlay view that's behind sidePanel and dialog and if clicked closes the panel
     UIView * view = [[UIView alloc] init];
-    view.backgroundColor = [UIColor colorWithRed:0.0 green:0.1 blue:0.2 alpha:1.0];
+    view.backgroundColor = [UIColor colorWithRed:0.549 green:0.616 blue:0.667 alpha:1.0];
     view.translatesAutoresizingMaskIntoConstraints = false;
 
     [parentView addSubview:view];
