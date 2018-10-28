@@ -2,6 +2,7 @@
 #define _APPRUNNER_H_
 
 #include <Runnable.h>
+#include <PlatformThread.h>
 
 class AppRunner : public Runnable {
  public:
