@@ -72,12 +72,8 @@ public:
   }
 
   void startEventLoop() override {
-    std::cerr << "running BasicPlatform event loop\n";
-    
     while (getNumRunningThreads() != 0 || !testDestroy()) {
       auto evs = pollEvents();
-
-      std::cerr << "received " << evs.size() << " events\n";
 
       for (auto & ev : evs) {
       	Element::postEventToElement(ev.first, *ev.second.get());
