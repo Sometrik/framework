@@ -5,6 +5,7 @@
 #import "FWPicker.h"
 #import "FWButton.h"
 #import "FWScrollView.h"
+#import "RadialGradientLayer.h"
 
 LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, CGFloat right) {
     LinearLayoutItemMargin margin;
@@ -326,19 +327,29 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
             NSString * pattern = @"^(linear|radial)-gradient\\(\\s*([^, ]+),\\s*([^, ]+)\\s*\\)$";
             NSError * error = nil;
             NSRegularExpression * regex = [NSRegularExpression regularExpressionWithPattern:pattern options:0 error:&error];
-            NSTextCheckingResult *match = [regex firstMatchInString:value options:0 range:searchedRange];
+            NSTextCheckingResult * match = [regex firstMatchInString:value options:0 range:searchedRange];
             if (match != nil) {
 	        NSString * type = [value substringWithRange:[match rangeAtIndex:1]]
                 NSString * color1 = [value substringWithRange:[match rangeAtIndex:2]];
                 NSString * color2 = [value substringWithRange:[match rangeAtIndex:3]];
-                CAGradientLayer * gradient = targetStyle.gradient;
-                if (gradient == nil) gradient = [CAGradientLayer layer];
-                gradient.colors = @[(id)[self colorFromString:color1].CGColor, (id)[self colorFromString:color2].CGColor];
-                if (targetStyle.gradient == nil) {
+                if (targetStyle.gradient != nil) {
+		    [targetStyle.gradient removeFromSuperlayer];
+		    targetStyle.gradient = nil;
+		}
+		if ([type isEqualToString @"radial"]) {
+  		    RadialGradientLayer * gradient = targetStyle.gradient;
+                    gradient.color1 = [self colorFromString:color1];
+		    gradient.color2 = [self colorFromString:color2];
                     gradient.frame = view.bounds;
                     [view.layer insertSublayer:gradient atIndex:0];
                     targetStyle.gradient = gradient;
-                }
+		} else {
+                    CAGradientLayer * gradient = gradient = [CAGradientLayer layer];
+                    gradient.colors = @[(id)[self colorFromString:color1].CGColor, (id)[self colorFromString:color2].CGColor];
+                    gradient.frame = view.bounds;
+                    [view.layer insertSublayer:gradient atIndex:0];
+                    targetStyle.gradient = gradient;
+		}
             } else {
                 if (targetStyle.gradient != nil) {
                     [targetStyle.gradient removeFromSuperlayer];

@@ -12,7 +12,7 @@
 @property (nonatomic, strong) UIColor * color;
 @property (nonatomic, strong) UIColor * backgroundColor;
 @property (nonatomic, strong) UIColor * tintColor;
-@property (nonatomic, strong) CAGradientLayer * gradient;
+@property (nonatomic, strong) CALayer * gradient;
 @property (nonatomic, assign) int paddingTop;
 @property (nonatomic, assign) int paddingRight;
 @property (nonatomic, assign) int paddingBottom;
