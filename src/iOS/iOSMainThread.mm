@@ -25,54 +25,54 @@ iOSMainThread::iOSMainThread(std::shared_ptr<FWApplication> _application, std::s
 
 void
 iOSMainThread::startEventLoop() {
-    void * surface = 0;
+  void * surface = 0;
+  
+  while (!isDestroyed && !exit_loop) {
+    auto evs = pollEvents();
     
-    while (!isDestroyed && !exit_loop) {
-      auto evs = pollEvents();
-
-      bool redraw = false, update_sent = false;
-      for (auto & ev : evs) {
-        if (dynamic_cast<UpdateEvent*>(ev.second.get())) {
-          if (update_sent) continue;
-          update_sent = true;
-        }
-
-	Element::postEventToElement(ev.first, *ev.second.get());
-
-        auto ev2 = dynamic_cast<SysEvent*>(ev.second.get());
-        if (ev2) {
-          if (ev2->getType() == SysInfoEvent::DESTROY) {
-            exit_loop = true;
-          } else if (ev2->getType() == SysInfoEvent::PAUSE) {
-          }
-        }
-
-        if (ev.second.get()->isRedrawNeeded()) {
-          redraw = true;
-        }
+    bool redraw = false, update_sent = false;
+    for (auto & ev : evs) {
+      if (dynamic_cast<UpdateEvent*>(ev.second.get())) {
+	if (update_sent) continue;
+	update_sent = true;
       }
-
-      if (canDraw && surface && redraw) {
-        DrawEvent dev;
-        postEvent(getApplication().getActiveViewId(), dev);
-
-#if 0
-        if (!eglSwapBuffers(display, surface)) {
-          // Swap buffers failed
-        }
-#endif
+      
+      Element::postEventToElement(ev.first, *ev.second.get());
+      
+      auto ev2 = dynamic_cast<SysEvent*>(ev.second.get());
+      if (ev2) {
+	if (ev2->getType() == SysInfoEvent::DESTROY) {
+	  exit_loop = true;
+	} else if (ev2->getType() == SysInfoEvent::PAUSE) {
+	}
       }
-
+      
+      if (ev.second.get()->isRedrawNeeded()) {
+	redraw = true;
+      }
+    }
+    
+    if (canDraw && surface && redraw) {
+      DrawEvent dev;
+      postEvent(getApplication().getActiveViewId(), dev);
+      
 #if 0
-      if (prev_heartbeat_time + 10 <= time(0)) {
-        getApplication().showToast("Application is not responding: " + getApplication().getStatusText(), 9);
-	sendHeartbeat();
+      if (!eglSwapBuffers(display, surface)) {
+	// Swap buffers failed
       }
 #endif
     }
-
-    if (exit_loop > 0) exit_loop--;
+    
+#if 0
+    if (prev_heartbeat_time + 10 <= time(0)) {
+      getApplication().showToast("Application is not responding: " + getApplication().getStatusText(), 9);
+      sendHeartbeat();
+    }
+#endif
   }
+  
+  if (exit_loop > 0) exit_loop--;
+}
 
 void
 iOSMainThread::sendCommands(const std::vector<Command> & commands) {

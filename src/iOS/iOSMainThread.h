@@ -44,26 +44,6 @@ namespace canvas {
   };
 };
 
-class iOSAppRunner : public Runnable {
- public:
-  iOSAppRunner() { }
-  
-  void run() override {
-    auto thread = getThreadPtr();
-    if (thread.get()) {
-      auto & app = thread->getApplication();
-      app.initialize(thread);
-
-      thread->startEventLoop();
-#if 0
-      deinitializeRenderer();
-#endif
-      Command c(Command::QUIT_APP, getInternalId());
-      thread->sendCommand(c);
-    }
-  }  
-};
-
 class iOSMainThread : public PosixThread {
 public:
   iOSMainThread(std::shared_ptr<FWApplication> _application, std::shared_ptr<Runnable> _runnable);

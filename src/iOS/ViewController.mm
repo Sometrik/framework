@@ -5,6 +5,7 @@
 #include <SysInfoEvent.h>
 #include <VisibilityUpdateEvent.h>
 #include <UserInteractionEvent.h>
+#include <AppRunner.h>
 
 #include "iOSMainThread.h"
 
@@ -127,7 +128,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
 
     float scale = [[UIScreen mainScreen] scale];
   
-    auto runner = std::make_shared<iOSAppRunner>();
+    auto runner = std::make_shared<AppRunner>();
     mainThread = make_shared<iOSMainThread>(application, runner);
     mainThread->viewController = self;
 //    mainThread->setActualDisplayWidth(screenWidth);

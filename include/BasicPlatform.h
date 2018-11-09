@@ -65,10 +65,27 @@ class BasicThread : public PosixThread {
 
 class BasicMainThread : public PosixThread {
 public:
- BasicMainThread(std::shared_ptr<FWApplication> & _application, std::shared_ptr<Runnable> & _runnable)
+ BasicMainThread(std::shared_ptr<FWApplication> _application, std::shared_ptr<Runnable> _runnable)
    : PosixThread(_application, _runnable)
   {
     
+  }
+
+  void startEventLoop() override {
+    while (getNumRunningThreads() != 0 || !testDestroy()) {
+      auto evs = pollEvents();
+
+      for (auto & ev : evs) {
+      	Element::postEventToElement(ev.first, *ev.second.get());
+      }
+
+#if 0
+      if (prev_heartbeat_time + 10 <= time(0)) {
+        getApplication().showToast("Application is not responding: " + getApplication().getStatusText(), 9);
+	sendHeartbeat();
+      }
+#endif
+    }
   }
 
 #ifndef NO_CANVAS
