@@ -39,7 +39,7 @@ iOSMainThread::startEventLoop() {
       
       Element::postEventToElement(ev.first, *ev.second.get());
       
-      auto ev2 = dynamic_cast<SysEvent*>(ev.second.get());
+      auto ev2 = dynamic_cast<SysInfoEvent*>(ev.second.get());
       if (ev2) {
 	if (ev2->getType() == SysInfoEvent::DESTROY) {
 	  exit_loop = true;
