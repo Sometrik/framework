@@ -336,7 +336,7 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
 		    [targetStyle.gradient removeFromSuperlayer];
 		    targetStyle.gradient = nil;
 		}
-		if ([type isEqualToString @"radial"]) {
+                if ([type isEqualToString:@"radial"]) {
   		    RadialGradientLayer * gradient = targetStyle.gradient;
                     gradient.color1 = [self colorFromString:color1];
 		    gradient.color2 = [self colorFromString:color2];
