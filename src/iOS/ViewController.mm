@@ -899,8 +899,18 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
     tabBar.translucent = YES;
     tabBar.translatesAutoresizingMaskIntoConstraints = false;
     [self addView:tabBar withId:viewId];
-    [self addToParent:parentId view:tabBar];
+    [self.topViewController.view addSubview:tabBar];
     tabBar.items = [[NSArray alloc] init];
+
+    NSLayoutConstraint * leftConstraint = [NSLayoutConstraint constraintWithItem:tabBar attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:tabBar.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
+    NSLayoutConstraint * rightConstraint = [NSLayoutConstraint constraintWithItem:tabBar attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:tabBar.superview attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
+    NSLayoutConstraint * bottomConstraint = [NSLayoutConstraint constraintWithItem:tabBar attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:tabBar.superview attribute:NSLayoutAttributeBottom multiplier:1.0f constant:0];
+
+    leftConstraint.priority = 999;
+    rightConstraint.priority = 999;
+    bottomConstraint.priority = 999;
+
+    [tabBar.superview addConstraints:@[leftConstraint, rightConstraint, bottomConstraint]];
 
     self.additionalSafeAreaInsets = UIEdgeInsetsMake(self.additionalSafeAreaInsets.top, 0, 49, 0);
 }

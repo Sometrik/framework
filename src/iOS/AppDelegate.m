@@ -34,11 +34,19 @@
   window = [[UIWindow alloc] initWithFrame: screenBounds];
   // view = [[OpenGLView alloc] initWithFrame: screenBounds];
   viewController = [[ViewController alloc] init];
+  topViewController = [[TopViewController alloc] init];
     
+  viewController.topViewController = topViewController;
+
   // controller.view = view;
   //  [window addSubview: view];
-  [window setRootViewController:viewController];
+  [window setRootViewController:topViewController];
   [window makeKeyAndVisible];
+
+  [topViewController addChildViewController:viewController];
+  [topViewController.view addSubview:viewController.view];
+  viewController.view.frame = topViewController.view.bounds;
+
     
   // Make app to observe payment transactions
   [[SKPaymentQueue defaultQueue] addTransactionObserver:[InAppPurchaseManager sharedInstance]];

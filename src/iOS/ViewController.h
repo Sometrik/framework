@@ -1,6 +1,7 @@
 #import <UIKit/UIKit.h>
 
 #import "ViewManager.h"
+#import "TopViewController.h"
 
 typedef enum
 {
@@ -64,5 +65,7 @@ typedef enum
 - (void)sendDestroyEvent;
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer: (UIGestureRecognizer *)otherGestureRecognizer;
+
+ @property (nonatomic, strong) TopViewController * topViewController;
 
 @end

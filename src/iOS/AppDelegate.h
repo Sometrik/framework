@@ -1,5 +1,6 @@
 #import <UIKit/UIKit.h>  
 
+#import "TopViewController.h"
 #import "ViewController.h"
 
 #if 0
@@ -13,6 +14,7 @@
 @private
   UIWindow* window;
   ViewController* viewController;
+  TopViewController* topViewController;
 }
 
 #endif
