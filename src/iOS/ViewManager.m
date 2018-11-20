@@ -337,7 +337,7 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
 		    targetStyle.gradient = nil;
 		}
                 if ([type isEqualToString:@"radial"]) {
-  		    RadialGradientLayer * gradient = targetStyle.gradient;
+		    RadialGradientLayer * gradient = [[RadialGradientLayer alloc] init];
                     gradient.color1 = [self colorFromString:color1];
 		    gradient.color2 = [self colorFromString:color2];
                     gradient.frame = view.bounds;
@@ -496,7 +496,7 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
 - (void)applyStyles:(BOOL)animate {
     ViewStyle * style = self.currentStyle;
     if (style == nil) style = self.normalStyle;
-    if (style != nil && [self.view isKindOfClass:UIView.class]) {
+    if (style != nil) {
         [style apply:self.view animate:animate];
     }
 }
