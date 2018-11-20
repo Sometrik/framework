@@ -889,13 +889,14 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
 
     NSLayoutConstraint * leftConstraint = [NSLayoutConstraint constraintWithItem:tabBar attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:tabBar.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
     NSLayoutConstraint * rightConstraint = [NSLayoutConstraint constraintWithItem:tabBar attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:tabBar.superview attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
-    NSLayoutConstraint * bottomConstraint = [NSLayoutConstraint constraintWithItem:tabBar attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:tabBar.superview attribute:NSLayoutAttributeBottom multiplier:1.0f constant:0];
 
     leftConstraint.priority = 999;
     rightConstraint.priority = 999;
-    bottomConstraint.priority = 999;
 
-    [tabBar.superview addConstraints:@[leftConstraint, rightConstraint, bottomConstraint]];
+    [tabBar.superview addConstraints:@[leftConstraint, rightConstraint]];
+
+    UILayoutGuide * guide = self.topViewController.view.safeAreaLayoutGuide;
+    [tabBar.bottomAnchor constraintEqualToAnchor:guide.bottomAnchor].active = YES;
 
     self.additionalSafeAreaInsets = UIEdgeInsetsMake(self.additionalSafeAreaInsets.top, 0, 49, 0);
 }
