@@ -10,6 +10,8 @@
 }
 
 - (void)drawInContext:(CGContextRef)ctx {
+    NSLog(@"RadialGradientLayer (drawing)");
+    
     CGFloat red1 = 0.0, green1 = 0.0, blue1 = 0.0, alpha1 = 0.0;
     CGFloat red2 = 0.0, green2 = 0.0, blue2 = 0.0, alpha2 = 0.0;
     [self.color1 getRed:&red1 green:&green1 blue:&blue1 alpha:&alpha1];
@@ -23,7 +25,7 @@
     CGColorSpaceRelease(colorSpace);
 
     CGPoint gradCenter = CGPointMake(CGRectGetMidX(self.bounds), CGRectGetMidY(self.bounds));
-    CGFloat gradRadius = MIN(self.bounds.size.width, self.bounds.size.height) ;
+    CGFloat gradRadius = MAX(self.bounds.size.width, self.bounds.size.height);
 
     CGContextDrawRadialGradient(ctx, gradient, gradCenter, 0, gradCenter, gradRadius, kCGGradientDrawsAfterEndLocation);
 
