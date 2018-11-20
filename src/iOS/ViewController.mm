@@ -95,7 +95,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
     // CGFloat statusBarHeight = [UIApplication sharedApplication].statusBarFrame.size.height;
     self.view.layoutMargins = UIEdgeInsetsMake(0, 0, 0, 0);
   
-    self.backgroundOverlayView = [self createBackgroundOverlay:self.view];
+    self.backgroundOverlayView = [self createBackgroundOverlay:self.topViewController.view];
     self.backgroundOverlayView.hidden = YES;
     self.backgroundOverlayView.tag = 0;
   
@@ -272,8 +272,8 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
         [self.navBar.superview bringSubviewToFront:self.navBar];
     }
     if (self.sideMenuView) {
-        [self.view bringSubviewToFront:self.backgroundOverlayView];
-        [self.view bringSubviewToFront:self.sideMenuView];
+        [self.backgroundOverlayView.superview bringSubviewToFront:self.backgroundOverlayView];
+        [self.sideMenuView.superview bringSubviewToFront:self.sideMenuView];
     }
 }
 
@@ -973,7 +973,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
     // self.sideMenuView.layer.shadowRadius = 7.5;
     // self.sideMenuView.layer.shadowOffset = CGSizeMake(1, 4);    
     
-    [self.view addSubview:self.sideMenuView];
+    [self.topViewController.view addSubview:self.sideMenuView];
     self.sideMenuView.transform = CGAffineTransformTranslate(self.sideMenuView.transform, -CGRectGetWidth(self.sideMenuView.frame), 0.0);
     [self addView:self.sideMenuView withId:viewId];
     
@@ -1010,11 +1010,11 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
 #endif
         mainThread->sendVisibilityEvent(self.sideMenuView.tag, 1);
 
-	[self.view bringSubviewToFront:self.backgroundOverlayView];
+	[self.backgroundOverlayView.superview bringSubviewToFront:self.backgroundOverlayView];
         self.backgroundOverlayView.hidden = NO;
         self.backgroundOverlayView.alpha = backgroundOverlayViewAlpha * CGRectGetMaxX(self.sideMenuView.frame) / (CGRectGetWidth(self.view.frame) - sideMenuOpenSpaceWidth);
 
-	[self.view bringSubviewToFront:self.sideMenuView];
+	[self.sideMenuView.superview bringSubviewToFront:self.sideMenuView];
 
         if (animate) {
             [UIView animateWithDuration:animationDuration animations:^{
@@ -1065,8 +1065,8 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
         if (self.sideMenuView.hidden || self.backgroundOverlayView.hidden) {
             self.sideMenuView.hidden = NO;
             self.backgroundOverlayView.hidden = NO;
-            [self.view bringSubviewToFront:self.backgroundOverlayView];
-            [self.view bringSubviewToFront:self.sideMenuView];
+            [self.backgroundOverlayView.superview bringSubviewToFront:self.backgroundOverlayView];
+            [self.sideMenuView.superview bringSubviewToFront:self.sideMenuView];
         }
 
         CGPoint touchLocation = [recognizer translationInView:self.view];
@@ -1193,7 +1193,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
 
     UIView * pickerHolder = [[UIView alloc] init];
     pickerHolder.translatesAutoresizingMaskIntoConstraints = false;
-    [self.view addSubview:pickerHolder];
+    [self.topViewController.view addSubview:pickerHolder];
 
     self.currentPickerHolderTopConstraint = [NSLayoutConstraint constraintWithItem:pickerHolder attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:pickerHolder.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
     self.currentPickerHolderLeftConstraint = [NSLayoutConstraint constraintWithItem:pickerHolder attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:pickerHolder.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
@@ -1340,7 +1340,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
     dialogHolder.tag = viewId;
     dialogHolder.translatesAutoresizingMaskIntoConstraints = false;
     dialogHolder.alpha = 0.0;
-    [self.view addSubview:dialogHolder];
+    [self.topViewController.view addSubview:dialogHolder];
     [self addView:dialogHolder withId:viewId];
 
     NSLayoutConstraint *topConstraint0 = [NSLayoutConstraint constraintWithItem:dialogHolder attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:dialogHolder.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
@@ -1381,7 +1381,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
     viewManager.containerView = dialog;
 
     if (self.webView) {
-	[self.view bringSubviewToFront:self.webView];
+	[self.webView.superview bringSubviewToFront:self.webView];
     }
 
     CGFloat topConstraintConstantFinal = topConstraint.constant;
@@ -1536,7 +1536,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
         self.webView.UIDelegate = self;
         self.webView.navigationDelegate = self;
         self.webView.scrollView.contentInset = UIEdgeInsetsMake(navBarHeight, 0, 0, 0);
-        [self.view addSubview:self.webView];
+        [self.topViewController.view addSubview:self.webView];
         
         NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:self.webView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.webView.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:statusBarHeight];
         NSLayoutConstraint *leftConstraint = [NSLayoutConstraint constraintWithItem:self.webView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self.webView.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
@@ -1585,7 +1585,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
         
     }
     // self.webView.layer.zPosition = 1000000.0f;
-    [self.view bringSubviewToFront:self.webView];
+    [self.webView.superview bringSubviewToFront:self.webView];
     
     //NSURL *webURL = [NSURL URLWithString:url];
     NSURLRequest *request = [NSURLRequest requestWithURL:self.currentURL];
@@ -1628,7 +1628,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
     UIActivityViewController *activityViewControntroller = [[UIActivityViewController alloc] initWithActivityItems:activityItems applicationActivities:nil];  
     activityViewControntroller.excludedActivityTypes = @[];  
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {  
-        activityViewControntroller.popoverPresentationController.sourceView = self.view;  
+        activityViewControntroller.popoverPresentationController.sourceView = self.topViewController.view;  
         activityViewControntroller.popoverPresentationController.sourceRect = CGRectMake(self.view.bounds.size.width/2, self.view.bounds.size.height/4, 0, 0);  
     }  
     [self presentViewController:activityViewControntroller animated:true completion:nil];
@@ -1640,7 +1640,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
     UIActivityViewController *activityViewControntroller = [[UIActivityViewController alloc] initWithActivityItems:activityItems applicationActivities:nil];  
     activityViewControntroller.excludedActivityTypes = @[];  
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {  
-        activityViewControntroller.popoverPresentationController.sourceView = self.view;  
+        activityViewControntroller.popoverPresentationController.sourceView = self.topViewController.view;  
         activityViewControntroller.popoverPresentationController.sourceRect = CGRectMake(self.view.bounds.size.width/2, self.view.bounds.size.height/4, 0, 0);  
     }  
     [self presentViewController:activityViewControntroller animated:true completion:nil];
