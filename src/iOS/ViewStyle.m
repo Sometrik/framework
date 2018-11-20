@@ -129,13 +129,41 @@
    NSInteger size = self.fontSize > 0 ? self.fontSize : (currentFont != nil ? currentFont.pointSize : 10);
     if (self.fontFamily != nil) {
         return [UIFont fontWithName:self.fontFamily size:size];
-    } else if (self.fontWeight && currentFont != nil) {
-        UIFontDescriptor * fontD = [currentFont.fontDescriptor fontDescriptorWithSymbolicTraits:UIFontDescriptorTraitBold];
-        return [UIFont fontWithDescriptor:fontD size:size];
     } else if (currentFont != nil) {
-        return [currentFont fontWithSize:size];
-    } else {
+        if (self.fontWeight > 400) {
+	    UIFontDescriptor * fontD = [currentFont.fontDescriptor fontDescriptorWithSymbolicTraits:UIFontDescriptorTraitBold];
+	    return [UIFont fontWithDescriptor:fontD size:size];
+	} else {
+	    return [currentFont fontWithSize:size];
+	}
+    } else if (self.fontWeight != 0 && (self.fontWeight <= 300 || self.fontWeight >= 500)) {
+        return [UIFont systemFontOfSize:size weight:[self getUIFontWeight %]];
+    } else {      
         return [UIFont systemFontOfSize:size];
+    }
+}
+
+- (UIFontWeight)getUIFontWeight {
+    if (self.fontWeight && (self.fontWeight <= 300 && self.fontWeight >= 500)) {
+        if (self.fontWeight >= 900) {
+	    return UIFontWeightBlack;
+	} else if (self.fontWeight >= 800) {
+	    return UIFontWeightHeavy;
+	} else if (self.fontWeight >= 700) {
+	    return UIFontWeightBold;
+	} else if (self.fontWeight >= 600) {
+	    return UIFontWeightSemibold;
+	} else if (self.fontWeight >= 500) {
+	    return UIFontWeightMedium;
+	} else if (self.fontWeight <= 300) {
+	    return UIFontWeightLight;
+	} else if (self.fontWeight <= 200) {
+	    return UIFontWeightUltraLight;
+	} else if (self.fontWeight <= 100) {
+	    return UIFontWeightThin;
+	}
+    } else {
+        return UIFontWeightRegular;
     }
 }
 
@@ -146,7 +174,7 @@
 }
 
 - (BOOL)isFontDefined {
-    return self.fontSize > 0 || self.fontWeight > 0;
+    return self.fontSize > 0 || self.fontWeight > 0 || self.fontFamily != nil;
 }
 
 @end

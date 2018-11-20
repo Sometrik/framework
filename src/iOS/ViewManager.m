@@ -172,8 +172,14 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
             [view.superview setNeedsLayout];
         }
     } else if ([key isEqualToString:@"font-weight"]) {
-        if ([value isEqualToString:@"bold"]) {
-            targetStyle.fontWeight = 800;
+        if ([value isEqualToString:@"lighter"]) {
+	    targetStyle.fontWeight = 300;
+	} else if ([value isEqualToString:@"normal"]) {
+	    targetStyle.fontWeight = 400;
+        } else ([value isEqualToString:@"bold"]) {
+            targetStyle.fontWeight = 700;
+	} else if ([value isEqualToString:@"bolder"]) {
+	    targetStyle.fontWeight = 800;
         } else {
             targetStyle.fontWeight = (int)[value integerValue];
         }
