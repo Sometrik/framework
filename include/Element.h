@@ -180,10 +180,13 @@ class Element : public EventHandler {
 
   virtual void initialize(std::shared_ptr<PlatformThread> _thread);
 
-  static void postEventToElement(int internal_id, Event & ev) {
+  static bool postEventToElement(int internal_id, Event & ev) {
     auto e = getRegisteredElement(internal_id);
     if (e) {
       ev.dispatch(*e);
+      return true;
+    } else {
+      return false;
     }
   }
 
