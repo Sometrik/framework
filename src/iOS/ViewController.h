@@ -2,6 +2,7 @@
 
 #import "ViewManager.h"
 #import "TopViewController.h"
+#import "ImageCache.h"
 
 typedef enum
 {
@@ -40,7 +41,6 @@ typedef enum
 - (void)createActionSheetWithId:(int)viewId parentId:(int)parentId title:(NSString *)title;
 - (void)createDialogWithId:(int)viewId parentId:(int)parentId title:(NSString *)title animationStyle:(AnimationStyle)style;
 - (void)createTimer:(int)viewId interval:(double)interval;
-- (void)createWebBrowserWithUrl:(NSString *)url;
 
 - (void)setImageFromThread:(int)viewId data:(CGImageRef)data;
 - (void)sendCommandsFromThread:(NSArray*)data;
@@ -66,6 +66,7 @@ typedef enum
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer: (UIGestureRecognizer *)otherGestureRecognizer;
 
- @property (nonatomic, strong) TopViewController * topViewController;
+@property (nonatomic, strong) TopViewController * topViewController;
+@property (nonatomic, strong) ImageCache * imageCache;
 
 @end

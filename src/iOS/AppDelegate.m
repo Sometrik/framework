@@ -35,8 +35,13 @@
   // view = [[OpenGLView alloc] initWithFrame: screenBounds];
   viewController = [[ViewController alloc] init];
   topViewController = [[TopViewController alloc] init];
+
+  ImageCache * imageCache = [[ImageCache alloc] init];
     
+  topViewController.imageCache = imageCache;
+
   viewController.topViewController = topViewController;
+  viewController.imageCache = imageCache;
 
   // controller.view = view;
   //  [window addSubview: view];
