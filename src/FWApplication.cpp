@@ -194,7 +194,7 @@ public:
     }
   }
 
-  void load() {
+  void load() override {
     auto t = getThreadPtr();
     if (t) {
       auto & grid = find("GridView").front();
