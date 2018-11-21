@@ -1,4 +1,6 @@
-#import <RadialGradientLayer.h>
+#import "RadialGradientLayer.h"
+
+@implementation RadialGradientLayer;
 
 - (instancetype)init
 {
@@ -31,3 +33,5 @@
 
     CGGradientRelease(gradient);
 }
+
+@end
