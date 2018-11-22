@@ -688,6 +688,11 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
     scrollView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentScrollableAxes;
     
     if (self.pageView == nil) self.pageView = scrollView;
+    else {
+      scrollView.pageMargin = 15;
+      scrollView.contentInset = UIEdgeInsetsMake(0, 15, 0, 15);
+    }
+
     [self addView:scrollView withId:viewId];
     [self addToParent:parentId view:scrollView];
 
@@ -846,7 +851,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
     
     self.navBar = navBar;
 
-    self.additionalSafeAreaInsets = UIEdgeInsetsMake(44, 0, self.additionalSafeAreaInsets.bottom, 0);
+    self.additionalSafeAreaInsets = UIEdgeInsetsMake(44, self.additionalSafeAreaInsets.left, self.additionalSafeAreaInsets.bottom, self.additionalSafeAreaInsets.right);
 }
 
 - (void)navBarTapped5Times:(UITapGestureRecognizer *)recognizer
@@ -898,7 +903,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
     UILayoutGuide * guide = self.topViewController.view.safeAreaLayoutGuide;
     [tabBar.bottomAnchor constraintEqualToAnchor:guide.bottomAnchor].active = YES;
 
-    self.additionalSafeAreaInsets = UIEdgeInsetsMake(self.additionalSafeAreaInsets.top, 0, 49, 0);
+    self.additionalSafeAreaInsets = UIEdgeInsetsMake(self.additionalSafeAreaInsets.top, self.additionalSafeAreaInsets.left, 49, self.additionalSafeAreaInsets.right);
 }
 
 - (void)createTabBarItem:(int)viewId parentId:(int)parentId title:(NSString *)title
