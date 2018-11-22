@@ -29,8 +29,9 @@
 }
 
 - (void)adjustedContentInsetDidChange {
-  NSLog(@"AdjustedContentInsetDidChange top %f offset %f", self.adjustedContentInset.top, self.contentOffset.y);
-  self.contentOffset = CGPointMake(0, -self.adjustedContentInset.top);
+    [super adjustedContentInsetDidChange];
+    NSLog(@"AdjustedContentInsetDidChange top %f offset %f", self.adjustedContentInset.top, self.contentOffset.y);
+    self.contentOffset = CGPointMake(0, -self.adjustedContentInset.top);
 }
 
 - (void)layoutSubviews {
@@ -38,24 +39,20 @@
         [self updateChildConstraints];
     } else {
         int width = self.frame.size.width;
-        int height = 0;
+        int height = self.superview.frame.size.height + 1;
+        
+        if ([self.items count] > 0) {
+            LayoutParams * item = [self.items firstObject];
+            int itemHeight = [self calcIntrinsicHeight:item.view] + item.margin.top + item.margin.bottom + item.padding.top + item.padding.bottom;
+            if (itemHeight > height) {
+                height = itemHeight;
+            }
 
-        for (UIView * view in [self subviews]) {
-            if ([view isKindOfClass:UIImageView.class]) continue; // ignore scroll indicators
-            height = [self calcIntrinsicHeight:view];
-            break;
+            item.topConstraint.constant = item.margin.top;
+            item.leftConstraint.constant = item.margin.left;
+            item.widthConstraint.constant = width - item.margin.left - item.margin.right;
+            item.heightConstraint.constant = height - item.margin.top - item.margin.bottom;
         }
-
-        int minHeight = self.superview.frame.size.height + 1;
-        if (height < minHeight) {
-            height = minHeight;
-        }
-
-	LayoutParams * item = [self.items firstObject];
-	item.topConstraint.constant = item.margin.top;
-        item.leftConstraint.constant = item.margin.left;
-	item.widthConstraint.constant = width - item.margin.left - item.margin.right;
-	item.heightConstraint.constant = height - item.margin.top - item.margin.bottom;
 
         self.contentSize = CGSizeMake(width, height);
     }
