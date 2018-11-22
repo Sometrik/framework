@@ -137,31 +137,31 @@
 	    return [currentFont fontWithSize:size];
 	}
     } else if (self.fontWeight != 0 && (self.fontWeight <= 300 || self.fontWeight >= 500)) {
-        return [UIFont systemFontOfSize:size weight:[self getUIFontWeight %]];
+        return [UIFont systemFontOfSize:size weight:[self getUIFontWeight]];
     } else {      
         return [UIFont systemFontOfSize:size];
     }
 }
 
 - (UIFontWeight)getUIFontWeight {
-    if (self.fontWeight && (self.fontWeight <= 300 && self.fontWeight >= 500)) {
+    if (self.fontWeight && (self.fontWeight < 400 || self.fontWeight >= 500)) {
         if (self.fontWeight >= 900) {
-	    return UIFontWeightBlack;
-	} else if (self.fontWeight >= 800) {
-	    return UIFontWeightHeavy;
-	} else if (self.fontWeight >= 700) {
-	    return UIFontWeightBold;
-	} else if (self.fontWeight >= 600) {
-	    return UIFontWeightSemibold;
-	} else if (self.fontWeight >= 500) {
-	    return UIFontWeightMedium;
-	} else if (self.fontWeight <= 300) {
-	    return UIFontWeightLight;
-	} else if (self.fontWeight <= 200) {
-	    return UIFontWeightUltraLight;
-	} else if (self.fontWeight <= 100) {
-	    return UIFontWeightThin;
-	}
+            return UIFontWeightBlack;
+        } else if (self.fontWeight >= 800) {
+            return UIFontWeightHeavy;
+        } else if (self.fontWeight >= 700) {
+            return UIFontWeightBold;
+        } else if (self.fontWeight >= 600) {
+            return UIFontWeightSemibold;
+        } else if (self.fontWeight >= 500) {
+            return UIFontWeightMedium;
+        } else if (self.fontWeight >= 300) {
+            return UIFontWeightLight;
+        } else if (self.fontWeight >= 200) {
+            return UIFontWeightUltraLight;
+        } else {
+            return UIFontWeightThin;
+        }
     } else {
         return UIFontWeightRegular;
     }
