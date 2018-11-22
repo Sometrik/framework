@@ -29,4 +29,5 @@
 @property (nonatomic, strong) NSLayoutConstraint *heightConstraint;
 @property (nonatomic, assign) int currentPage;
 @property (nonatomic, assign) int currentPageInternalId;
+@property (nonatomic, assign) int pageMargin;
 @end

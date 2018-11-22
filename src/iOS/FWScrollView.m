@@ -11,6 +11,7 @@
         self.translatesAutoresizingMaskIntoConstraints = false;
         self.currentPage = 0;
 	self.currentPageInternalId = 0;
+	self.pageMargin = 0;
 	self.items = [[NSMutableArray alloc] init];
     }
     return self;
@@ -23,6 +24,7 @@
         self.translatesAutoresizingMaskIntoConstraints = false;
         self.currentPage = 0;
 	self.currentPageInternalId = 0;
+	self.pageMargin = 0;
 	self.items = [[NSMutableArray alloc] init];
     }
     return self;
@@ -258,7 +260,8 @@
 - (NSInteger)indexForVisiblePage
 {
     CGRect frame = self.bounds;
-    return (frame.origin.x + frame.size.width / 2) / frame.size.width;
+    int w = frame.size.width - 2 * self.pageMargin;
+    return (frame.origin.x + w / 2) / w;
 }
 
 - (void)updateChildConstraints
@@ -267,14 +270,16 @@
     for (LayoutParams *item in self.items) {
         if (item.view.hidden) continue;
             
+	int w = self.frame.size.width - 2 * self.pageMargin;
+
 	item.topConstraint.constant = item.margin.top;
-        item.leftConstraint.constant = numChildren * self.frame.size.width + item.margin.left;
-        item.widthConstraint.constant = self.frame.size.width - item.margin.left - item.margin.right;
+        item.leftConstraint.constant = numChildren * w + item.margin.left;
+        item.widthConstraint.constant = w - item.margin.left - item.margin.right;
         item.heightConstraint.constant = self.frame.size.height - item.margin.top - item.margin.bottom;;
 	    
         numChildren++;
     }
-    self.contentSize = CGSizeMake(numChildren * self.frame.size.width, self.frame.size.height);
+    self.contentSize = CGSizeMake(numChildren * (self.frame.size.width - 2 * self.pageMargin), self.frame.size.height);
 }
 
 - (void)setPage:(NSInteger)page
@@ -313,7 +318,7 @@
 {
     [self setPage:page];
     CGRect frame = self.frame;
-    frame.origin.x = frame.size.width * page;
+    frame.origin.x = (frame.size.width - 2 * self.pageMargin) * page;
     frame.origin.y = 0;
     [self scrollRectToVisible:frame animated:animated];
 }
