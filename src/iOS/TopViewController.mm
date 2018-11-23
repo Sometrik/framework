@@ -123,6 +123,15 @@
     }
 }
 
+- (void)showTabBar:(UITabBar *)tabBar
+{
+    if (self.visibleTabBar != nil) {
+	self.visibleTabBar.hidden = YES;
+    }
+    self.visibleTabBar = tabBar;
+    self.visibleTabBar.hidden = NO;
+}
+
 #pragma mark - WKNavigationDelegate
 
 - (void)webView:(WKWebView *)webView didCommitNavigation:(WKNavigation *)navigation

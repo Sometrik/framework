@@ -28,6 +28,7 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
     self.activeStyle = nil;
     self.currentStyle = nil;
     self.imageCache = nil;
+    self.tabBar = nil;
     return self;
 }
 

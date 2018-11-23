@@ -35,7 +35,6 @@ extern FWApplication * applicationMain();
 @property (nonatomic, strong) NSMutableDictionary *viewsDictionary;
 @property (nonatomic, strong) UIView *sideMenuView;
 @property (nonatomic, strong) UIView *backgroundOverlayView;
-@property (nonatomic, strong) UITabBar *tabBar;
 @property (nonatomic, strong) UINavigationBar *navBar;
 @property (nonatomic, strong) UINavigationItem *navItem;
 @property (nonatomic, strong) UILabel *navBarTitle;
@@ -881,10 +880,10 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
 {
     UITabBar *tabBar = [[UITabBar alloc] init];
     tabBar.tag = viewId;
-    self.tabBar = tabBar;
     tabBar.delegate = self;
     tabBar.translucent = YES;
     tabBar.translatesAutoresizingMaskIntoConstraints = false;
+    tabBar.hidden = YES;
     [self addView:tabBar withId:viewId];
     [self.topViewController.view addSubview:tabBar];
     tabBar.items = [[NSArray alloc] init];
@@ -901,6 +900,9 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
     [tabBar.bottomAnchor constraintEqualToAnchor:guide.bottomAnchor].active = YES;
 
     self.additionalSafeAreaInsets = UIEdgeInsetsMake(self.additionalSafeAreaInsets.top, self.additionalSafeAreaInsets.left, 49, self.additionalSafeAreaInsets.right);
+
+    ViewManager * viewManager = [self getViewManager:parentId];
+    viewManager.tabBar = tabBar;
 }
 
 - (void)createTabBarItem:(int)viewId parentId:(int)parentId title:(NSString *)title
@@ -2030,6 +2032,8 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
                     NSString * title = [NSString stringWithUTF8String:command.getTextValue().c_str()];
                     [self setTitle:title];
 #endif
+		    ViewManager * newViewManager = [self getViewManager:self.activeViewId];
+		    [self.topViewController showTabBar:newViewManager.tabBar];
                 }
             } else {
                 ViewManager * viewManager = [self getViewManager:command.internalId];

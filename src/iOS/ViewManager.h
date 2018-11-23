@@ -37,4 +37,5 @@ typedef enum {
 @property (nonatomic, strong) ViewStyle * activeStyle;
 @property (nonatomic, strong) ViewStyle * currentStyle;
 @property (nonatomic, strong) ImageCache * imageCache;
+@property (nonatomic, strong) UITabBar * tabBar;
 @end
