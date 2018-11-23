@@ -42,13 +42,14 @@ class Pager : public Element {
   }
 
   bool isChildVisible(const Element & child) const override {
-    if (!isVisible()) {
-      return false;
-    } else if (visible_view_index >= 0 && visible_view_index < getChildren().size()) {
-      return getChildren()[visible_view_index]->getInternalId() == child.getInternalId();
-    } else {
-      return false;
+    if (isVisible()) {
+      for (int i = visible_view_index - 1; i <= visible_view_index + 1; i++) {
+	if (i >= 0 && i < getChildren().size() && getChildren()[i]->getInternalId() == child.getInternalId()) {
+	  return true;
+	}
+      }
     }
+    return false;
   }
 
  protected:
