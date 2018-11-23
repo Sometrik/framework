@@ -10,8 +10,8 @@
     if (self = [super init]) {
         self.translatesAutoresizingMaskIntoConstraints = false;
         self.currentPage = 0;
-	self.currentPageInternalId = 0;
-	self.items = [[NSMutableArray alloc] init];
+        self.currentPageInternalId = 0;
+        self.items = [[NSMutableArray alloc] init];
     }
     return self;
 }
@@ -22,8 +22,8 @@
         self.frame = frame;
         self.translatesAutoresizingMaskIntoConstraints = false;
         self.currentPage = 0;
-	self.currentPageInternalId = 0;
-	self.items = [[NSMutableArray alloc] init];
+        self.currentPageInternalId = 0;
+        self.items = [[NSMutableArray alloc] init];
     }
     return self;
 }
@@ -106,10 +106,10 @@
         return height;
     } else if ([view isKindOfClass:FWScrollView.class]) {
         FWScrollView * scrollView = (FWScrollView *)view;
-	int height = 0;
+        int height = 0;
         if (scrollView.pagingEnabled) {
-	    for (LayoutParams * item in scrollView.items) {
-	        if (item.view.hidden) continue;
+            for (LayoutParams * item in scrollView.items) {
+                if (item.view.hidden) continue;
 
                 int h = 0;
                 if (item.fixedHeight > 0) {
@@ -118,15 +118,15 @@
                     h = [self calcIntrinsicHeight:item.view] + item.padding.top + item.padding.bottom + item.margin.top + item.margin.bottom;
                 }
                 if (h > height) height = h;
-	    }
-	} else {
-	    for (UIView * subview in [view subviews]) {
-	      if ([subview isKindOfClass:UIImageView.class]) continue; // ignore scroll indicators
-	      height = [self calcIntrinsicHeight:subview];
-	      break;
-	    }
+            }
+        } else {
+            for (UIView * subview in [view subviews]) {
+                if ([subview isKindOfClass:UIImageView.class]) continue; // ignore scroll indicators
+                height = [self calcIntrinsicHeight:subview];
+                break;
+            }
         }
-	return height;
+        return height;
     } else {
         return view.intrinsicContentSize.height;
     }
@@ -267,9 +267,9 @@
     for (LayoutParams *item in self.items) {
         if (item.view.hidden) continue;
             
-	item.topConstraint.constant = item.margin.top;
-        item.leftConstraint.constant = numChildren * frame.size.width + item.margin.left;
-        item.widthConstraint.constant = frame.size.width - item.margin.left - item.margin.right;
+        item.topConstraint.constant = item.margin.top;
+        item.leftConstraint.constant = numChildren * self.frame.size.width + item.margin.left;
+        item.widthConstraint.constant = self.frame.size.width - item.margin.left - item.margin.right;
         item.heightConstraint.constant = self.frame.size.height - item.margin.top - item.margin.bottom;;
 	    
         numChildren++;
@@ -279,16 +279,16 @@
 
 - (void)setPage:(NSInteger)page
 {
-    self.currentPage = page;
+    self.currentPage = (int)page;
     self.currentPageInternalId = 0;
     int i = 0;
     for (LayoutParams *item in self.items) {
         if (item.view.hidden) continue;
-	if (i == page) {
-	    self.currentPageInternalId = item.view.tag;
-	    break;
-	}
-	i++;
+        if (i == page) {
+            self.currentPageInternalId = (int)item.view.tag;
+            break;
+        }
+        i++;
     }
 }
 
@@ -296,15 +296,15 @@
     int i = 0;
     for (LayoutParams *item in self.items) {
         if (item.view.hidden) continue;
-	if (item.view.tag == self.currentPageInternalId) {
-	    if (self.currentPage != i) {
-               [self showPage:i animated:NO];
-	       return YES;
+        if (item.view.tag == self.currentPageInternalId) {
+            if (self.currentPage != i) {
+                [self showPage:i animated:NO];
+                return YES;
             } else {
-	       return NO;
-	    }
-	}
-	i++;
+                return NO;
+            }
+        }
+        i++;
     }
     return NO;
 }
