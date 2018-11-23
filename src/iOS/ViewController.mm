@@ -837,8 +837,9 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
 
     [navBar setItems:@[self.navItem]];
     
-    UIView * parentView = (UIView *)[self viewForId:parentId];
-
+    // UIView * parentView = (UIView *)[self viewForId:parentId];
+    UIView * parentView = self.topViewController.view;
+    
     [self addView:navBar withId:viewId];
     [parentView addSubview:navBar];
     
