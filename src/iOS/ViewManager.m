@@ -233,6 +233,12 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
                 }
             }
         }
+    } else if ([key isEqualToString:@"overflow"]) {
+        if ([value isEqualToString:@"visible"]) {
+	    targetStyle.clipsToBounds = NO;
+	} else if ([value isEqualToString:@"hidden"]) {
+	    targetStyle.clipsToBounds = YES;
+	}
     }
 
     if (selector != SelectorNormal) {

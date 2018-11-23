@@ -20,4 +20,5 @@
 @property (nonatomic, assign) int borderRadius;
 @property (nonatomic, assign) float borderWidth;
 @property (nonatomic, strong) UIColor * borderColor;
+@property (nonatomic, assign) BOOL clipsToBounds;
 @end

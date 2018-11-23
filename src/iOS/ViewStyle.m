@@ -27,6 +27,7 @@
         self.borderRadius = -1;
         self.borderWidth = -1;
 	self.borderColor = nil;
+	self.clipsToBounds = YES;
     }
     return self;
 }
@@ -52,6 +53,9 @@
         }
         if (self.color != nil) [button setTitleColor:self.color forState:UIControlStateNormal];
         button.contentEdgeInsets = UIEdgeInsetsMake(self.paddingTop, self.paddingLeft, self.paddingBottom, self.paddingRight);
+    } else if ([target isKindOfClass:UIScrollView.class]) {
+        UIScrollView * view = (UIScrollView*)target;
+	view.clipsToBounds = self.clipsToBounds;
     }
 
     if ([target isKindOfClass:UIView.class]) {
