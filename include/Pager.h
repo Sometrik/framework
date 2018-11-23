@@ -16,11 +16,15 @@ class Pager : public Element {
   }
 
   void onValueEvent(ValueEvent & ev) override {
-    visible_view_index = ev.getValue();
-    if (visible_view_index >= 0 && visible_view_index < getChildren().size()) {
-      auto & c = getChildren()[visible_view_index];
-      c->show();
-      c->refresh();
+    if (visible_view_index != ev.getValue()) {
+      visible_view_index = ev.getValue();
+      for (int i = visible_view_index - 1; i <= visible_view_index + 1; i++) {
+	if (i >= 0 && i < getChildren().size()) {
+	  auto & c = getChildren()[i];
+	  c->show();
+	  c->refresh();
+	}
+      }
     }
 
     notify();
