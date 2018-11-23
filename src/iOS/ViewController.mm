@@ -899,8 +899,6 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
     UILayoutGuide * guide = self.topViewController.view.safeAreaLayoutGuide;
     [tabBar.bottomAnchor constraintEqualToAnchor:guide.bottomAnchor].active = YES;
 
-    self.additionalSafeAreaInsets = UIEdgeInsetsMake(self.additionalSafeAreaInsets.top, self.additionalSafeAreaInsets.left, 49, self.additionalSafeAreaInsets.right);
-
     ViewManager * viewManager = [self getViewManager:parentId];
     viewManager.tabBar = tabBar;
 }
@@ -2034,6 +2032,8 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
 #endif
 		    ViewManager * newViewManager = [self getViewManager:self.activeViewId];
 		    [self.topViewController showTabBar:newViewManager.tabBar];
+		    BOOL has_tabbar = newViewManager.tabBar != nil;
+		    self.additionalSafeAreaInsets = UIEdgeInsetsMake(self.additionalSafeAreaInsets.top, self.additionalSafeAreaInsets.left, has_tabbar ? 49 : 0, self.additionalSafeAreaInsets.right);
                 }
             } else {
                 ViewManager * viewManager = [self getViewManager:command.internalId];
