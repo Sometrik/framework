@@ -35,7 +35,6 @@ extern FWApplication * applicationMain();
 @property (nonatomic, strong) NSMutableDictionary *viewsDictionary;
 @property (nonatomic, strong) UIView *sideMenuView;
 @property (nonatomic, strong) UIView *backgroundOverlayView;
-@property (nonatomic, strong) UINavigationBar *navBar;
 @property (nonatomic, strong) UINavigationItem *navItem;
 @property (nonatomic, strong) UILabel *navBarTitle;
 @property (nonatomic, strong) UILabel *navBarSubtitle;
@@ -252,9 +251,6 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    if (self.navBar) {
-        [self.navBar.superview bringSubviewToFront:self.navBar];
-    }
     if (self.sideMenuView) {
         [self.backgroundOverlayView.superview bringSubviewToFront:self.backgroundOverlayView];
         [self.sideMenuView.superview bringSubviewToFront:self.sideMenuView];
@@ -485,11 +481,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
         @throw;
     }
     @finally {
-        [view.superview addConstraints:@[topConstraint, leftConstraint, rightConstraint, bottomConstraint]];
-        
-        if (self.navBar) {
-            [self.navBar.superview bringSubviewToFront:self.navBar];
-        }
+        [view.superview addConstraints:@[topConstraint, leftConstraint, rightConstraint, bottomConstraint]];        
     }
 }
 
@@ -761,6 +753,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
     navBar.translucent = YES;
     navBar.delegate = self;
     navBar.barTintColor = UIColor.whiteColor;
+    navBar.hidden = YES;
 
     // create titleView that has title and subtitle
     CGFloat titleViewWidth = self.view.frame.size.width - 140;
@@ -831,12 +824,9 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
     }
 
     [navBar setItems:@[self.navItem]];
-    
-    // UIView * parentView = (UIView *)[self viewForId:parentId];
-    UIView * parentView = self.topViewController.view;
-    
+        
     [self addView:navBar withId:viewId];
-    [parentView addSubview:navBar];
+    [self.topViewController.view addSubview:navBar];
     
     NSLayoutConstraint *topConstraint2 = [NSLayoutConstraint constraintWithItem:navBar attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:navBar.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:statusBarHeight];
     NSLayoutConstraint *leftConstraint2 = [NSLayoutConstraint constraintWithItem:navBar attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:navBar.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
@@ -845,9 +835,8 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
     [navBar.superview addConstraints:@[topConstraint2, leftConstraint2, rightConstraint2]];
     self.statusBarTopConstraint = topConstraint2;
     
-    self.navBar = navBar;
-
-    self.additionalSafeAreaInsets = UIEdgeInsetsMake(44, self.additionalSafeAreaInsets.left, self.additionalSafeAreaInsets.bottom, self.additionalSafeAreaInsets.right);
+    ViewManager * viewManager = [self getViewManager:parentId];
+    viewManager.navBar = navBar;
 }
 
 - (void)navBarTapped5Times:(UITapGestureRecognizer *)recognizer
@@ -864,14 +853,14 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
     }
 }
 
-- (void)composeButtonTapped
+- (void)composeButtonTapped:(UIBarButtonItem *)sender
 {
-    mainThread->sendCommandEvent(self.navBar.tag, FW_ID_COMPOSE);
+    mainThread->sendCommandEvent(sender.tag, FW_ID_COMPOSE);
 }
 
-- (void)backButtonTapped
+- (void)backButtonTapped:(UIBarButtonItem *)sender
 {
-    mainThread->sendCommandEvent(self.navBar.tag, FW_ID_BACK);
+    mainThread->sendCommandEvent(sender.tag, FW_ID_BACK);
 }
 
 
@@ -2032,8 +2021,10 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
 #endif
 		    ViewManager * newViewManager = [self getViewManager:self.activeViewId];
 		    [self.topViewController showTabBar:newViewManager.tabBar];
+		    [self.topViewController showNavBar:newViewManager.navBar];
+		    BOOL has_navbar = newViewManager.navBar != nil;
 		    BOOL has_tabbar = newViewManager.tabBar != nil;
-		    self.additionalSafeAreaInsets = UIEdgeInsetsMake(self.additionalSafeAreaInsets.top, self.additionalSafeAreaInsets.left, has_tabbar ? 49 : 0, self.additionalSafeAreaInsets.right);
+		    self.additionalSafeAreaInsets = UIEdgeInsetsMake(has_navbar ? 44 : 0, self.additionalSafeAreaInsets.left, has_tabbar ? 49 : 0, self.additionalSafeAreaInsets.right);
                 }
             } else {
                 ViewManager * viewManager = [self getViewManager:command.internalId];

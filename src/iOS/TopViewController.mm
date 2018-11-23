@@ -132,6 +132,15 @@
     self.visibleTabBar.hidden = NO;
 }
 
+- (void)showNavBar:(UINavigationBar *)navBar
+{
+    if (self.visibleNavBar != nil) {
+	self.visibleNavBar.hidden = YES;
+    }
+    self.visibleNavBar = navBar;
+    self.visibleNavBar.hidden = NO;
+}
+
 #pragma mark - WKNavigationDelegate
 
 - (void)webView:(WKWebView *)webView didCommitNavigation:(WKNavigation *)navigation
