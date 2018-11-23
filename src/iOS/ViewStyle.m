@@ -85,7 +85,7 @@
 	}
 
 	if (self.shadow > 0) {
-	    view.layer.shadowOpacity = 0.25;
+	    view.layer.shadowOpacity = 0.15;
 	    // self.view.layer.masksToBounds = NO;
 	    view.layer.shadowOffset = CGSizeMake(0, 0);
 	    view.layer.masksToBounds = FALSE;
