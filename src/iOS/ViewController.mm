@@ -688,10 +688,6 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
     scrollView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentScrollableAxes;
     
     if (self.pageView == nil) self.pageView = scrollView;
-    else {
-      scrollView.pageMargin = 15;
-      scrollView.contentInset = UIEdgeInsetsMake(0, 15, 0, 15);
-    }
 
     [self addView:scrollView withId:viewId];
     [self addToParent:parentId view:scrollView];
