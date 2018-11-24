@@ -46,6 +46,8 @@ class ActionBar : public Element {
     sendCommand(c);
   }
 
+  bool hasBackButton() const { return has_back_button; }
+
  protected:
   void create() override {
     Command c(Command::CREATE_ACTIONBAR, getParentInternalId(), getInternalId());
