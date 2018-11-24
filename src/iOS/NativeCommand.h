@@ -63,7 +63,6 @@ typedef enum {
     ADD_COLUMN,
     RESHAPE_TABLE,
     RESHAPE_SHEET,
-    SET_BACK_BUTTON_VISIBILITY,
     STOP,
     QUIT_APP,
 
@@ -78,8 +77,7 @@ typedef enum {
 
     // Other
     SHARE_LINK,
-    SELECT_FROM_GALLERY,
-    TOGGLE_MENU
+    SELECT_FROM_GALLERY
 } CommandType;
 
 @interface NativeCommand : NSObject

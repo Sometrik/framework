@@ -70,7 +70,6 @@ class Command {
     ADD_COLUMN,
     RESHAPE_TABLE,
     RESHAPE_SHEET,
-    SET_BACK_BUTTON_VISIBILITY,
     STOP,
     QUIT_APP,
 
@@ -85,8 +84,7 @@ class Command {
 
     // Other
     SHARE_LINK,
-    SELECT_FROM_GALLERY,
-    TOGGLE_MENU
+    SELECT_FROM_GALLERY
   };
 
  Command(Type _command, int _internalId, int _childInternalId = 0) : commandType(_command), internalId(_internalId), childInternalId(_childInternalId) { }

@@ -129,7 +129,6 @@ public class NativeCommand {
     ADD_COLUMN,
     RESHAPE_TABLE,
     RESHAPE_SHEET,
-    SET_BACK_BUTTON_VISIBILITY,
     STOP,
     QUIT_APP,
 
@@ -144,8 +143,7 @@ public class NativeCommand {
 
     // Other
     SHARE_LINK,
-    SELECT_FROM_GALLERY,
-    TOGGLE_MENU
+    SELECT_FROM_GALLERY
   }
 
   public NativeCommand(FrameWork frame, int messageTypeId, int internalId, int childInternalId, int value, byte[] textValue, byte[] textValue2, int flags, int row, int column, int sheet, int width, int height) {
