@@ -794,23 +794,25 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
     if (hasBackButton) {
         UIImage *image = [self.imageCache loadIcon:@"icons_arrow-left-red.png"];
         if (image == nil) {
-            menuButton = [[UIBarButtonItem alloc] initWithTitle:@"<" style:UIBarButtonItemStylePlain target:self action:@selector(backButtonTapped)];
+            menuButton = [[UIBarButtonItem alloc] initWithTitle:@"<" style:UIBarButtonItemStylePlain target:self action:@selector(backButtonTapped:)];
         } else {
-            menuButton = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(backButtonTapped)];
+            menuButton = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(backButtonTapped:)];
         }
     } else {
         UIImage *image = [self.imageCache loadIcon:@"icons_hamburger-menu.png"];
         if (image == nil) {
-            menuButton = [[UIBarButtonItem alloc] initWithTitle:@"Menu" style:UIBarButtonItemStylePlain target:self action:@selector(menuButtonTapped)];
+            menuButton = [[UIBarButtonItem alloc] initWithTitle:@"Menu" style:UIBarButtonItemStylePlain target:self action:@selector(menuButtonTapped:)];
         } else {
-            menuButton = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(menuButtonTapped)];
+            menuButton = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(menuButtonTapped:)];
         }
     }
+    menuButton.tag = viewId;
     navBar.navItem.leftBarButtonItem = menuButton;
  
     UIImage *image2 = [self.imageCache loadIcon:@"icons_icon-post.png"];
     if (image2 != nil) {
-        UIBarButtonItem *composeButton = [[UIBarButtonItem alloc] initWithImage:image2 style:UIBarButtonItemStylePlain target:self action:@selector(composeButtonTapped)];
+        UIBarButtonItem *composeButton = [[UIBarButtonItem alloc] initWithImage:image2 style:UIBarButtonItemStylePlain target:self action:@selector(composeButtonTapped:)];
+	composeButton.tag = viewId;
         navBar.navItem.rightBarButtonItem = composeButton;
     }
 
@@ -836,7 +838,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
     mainThread->startDebugMode();
 }
 
-- (void)menuButtonTapped
+- (IBAction)menuButtonTapped:(UIBarButtonItem *)sender
 {
     if (self.sideMenuView.isHidden) {
         [self showNavigationViewWithAnimation:YES];
@@ -845,12 +847,12 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
     }
 }
 
-- (void)composeButtonTapped:(UIBarButtonItem *)sender
+- (IBAction)composeButtonTapped:(UIBarButtonItem *)sender
 {
     mainThread->sendCommandEvent(sender.tag, FW_ID_COMPOSE);
 }
 
-- (void)backButtonTapped:(UIBarButtonItem *)sender
+- (IBAction)backButtonTapped:(UIBarButtonItem *)sender
 {
     mainThread->sendCommandEvent(sender.tag, FW_ID_BACK);
 }
