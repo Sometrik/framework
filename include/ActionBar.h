@@ -8,7 +8,7 @@
 
 class ActionBar : public Element {
  public:
-  ActionBar() { }
+  ActionBar(bool _has_back_button = false) : has_back_button(_has_back_button) { }
 
   bool isA(const std::string & className) const override {
     if (className == "ActionBar") return true;
@@ -49,10 +49,12 @@ class ActionBar : public Element {
  protected:
   void create() override {
     Command c(Command::CREATE_ACTIONBAR, getParentInternalId(), getInternalId());
+    c.setFlags(has_back_button ? 1 : 0);
     sendCommand(c);
   }
 
  protected:
+    bool has_back_button;
 };
 
 #endif
