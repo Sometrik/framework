@@ -56,8 +56,6 @@ typedef enum
 - (void)sendIntValue:(int)viewId value:(int)value;
 - (void)sendTextValue:(int)viewId value:(NSString *)value;
 
-- (void)setBackButtonVisibility:(BOOL)v;
-
 - (ViewManager *)getViewManager:(int)viewId;
 
 - (void)sendPauseEvent;
