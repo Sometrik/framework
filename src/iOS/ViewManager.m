@@ -108,12 +108,12 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
 {
     if ([self.view isKindOfClass:PaddedLabel.class]) {
         PaddedLabel * label = (PaddedLabel*)self.view;
-	if (label.autolink || label.markdown) {
-	  label.origText = value;
-	  label.attributedText = [label createAttributedString:value];
-	} else {
-	  label.text = value;
-	}
+        if (label.autolink || label.markdown) {
+            label.origText = value;
+            label.attributedText = [label createAttributedString:value];
+        } else {
+            label.text = value;
+        }
         [label relayoutAll];
     } else if ([self.view isKindOfClass:UITextField.class]) {
         UITextField * textField = (UITextField*)self.view;
@@ -127,12 +127,12 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
         [button.superview setNeedsLayout];
     } else if ([self.view isKindOfClass:FWImageView.class]) {
         FWImageView * imageView = (FWImageView*)self.view;
-	[imageView clear];
+        [imageView clear];
         imageView.image = [self.imageCache loadIcon:value];
-	imageView.hasStaticImage = TRUE;
+        imageView.hasStaticImage = TRUE;
     } else if ([self.view isKindOfClass:UINavigationBar.class]) {
         FWNavigationBar * navBar = (FWNavigationBar*)self.view;
-        [navBar setTitles:command.textValue subtitle:value2];
+        [navBar setTitles:value subtitle:value2];
     }
 }
 
