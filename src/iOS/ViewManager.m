@@ -37,6 +37,9 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
     if ([self.view isKindOfClass:FWImageView.class]) {
         FWImageView * imageView = (FWImageView *)self.view;
         [imageView clear];
+    } else if ([self.view isKindOfClass:FWPicker.class]) {
+        FWPicker * picker = (FWPicker *)self.view;
+	[picker clear];
     }
 }
 
