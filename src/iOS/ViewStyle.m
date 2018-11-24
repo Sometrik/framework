@@ -2,6 +2,7 @@
 
 #include <math.h>
 #import "PaddedLabel.h"
+#import "FWNavigationBar.h"
 
 #define EPSILON		0.001
 
@@ -56,6 +57,11 @@
     } else if ([target isKindOfClass:UIScrollView.class]) {
         UIScrollView * view = (UIScrollView*)target;
 	view.clipsToBounds = self.clipsToBounds;
+    } else if ([target isKindOfClass:FWNavigationBar.class]) {
+        FWNavigationBar * navbar = (FWNavigationBar *)target;
+        if ([self isFontDefined]) {
+            navbar.navBarTitle.font = [self createFont:navbar.navBarTitle.font];
+        }	
     }
 
     if ([target isKindOfClass:UIView.class]) {
