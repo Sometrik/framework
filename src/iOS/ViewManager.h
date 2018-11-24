@@ -23,7 +23,7 @@ typedef enum {
 - (void)setStyle:(NSString *)key value:(NSString *)value selector:(StyleSelector)selector;
 - (void)applyStyles:(BOOL)animate;
 - (void)setIntValue:(int)value;
-- (void)setTextValue:(NSString *)value;
+- (void)setTextValue:(NSString *)value value2:(NSString *)value2;
 - (void)reshapeTable:(int)value;
 - (void)stop;
 - (void)switchStyle:(StyleSelector)selector;

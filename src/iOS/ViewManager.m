@@ -5,6 +5,7 @@
 #import "FWPicker.h"
 #import "FWButton.h"
 #import "FWScrollView.h"
+#import "FWNavigationBar.h"
 #import "RadialGradientLayer.h"
 
 LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, CGFloat right) {
@@ -103,7 +104,7 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
     }
 }
 
-- (void)setTextValue:(NSString *)value
+- (void)setTextValue:(NSString *)value value2:(NSString *)value2
 {
     if ([self.view isKindOfClass:PaddedLabel.class]) {
         PaddedLabel * label = (PaddedLabel*)self.view;
@@ -129,6 +130,9 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
 	[imageView clear];
         imageView.image = [self.imageCache loadIcon:value];
 	imageView.hasStaticImage = TRUE;
+    } else if ([self.view isKindOfClass:UINavigationBar.class]) {
+        FWNavigationBar * navBar = (FWNavigationBar*)self.view;
+        [navBar setTitles:command.textValue subtitle:value2];
     }
 }
 
