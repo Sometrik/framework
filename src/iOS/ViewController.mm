@@ -20,6 +20,7 @@
 #import "FWPicker.h"
 #import "FWButton.h"
 #import "NativeCommand.h"
+#import "FWNavigationBar.h"
 
 #include <memory>
 
@@ -190,8 +191,8 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
             self.statusBarTopConstraint.constant = 0.0;
             // self.titleView.frame = CGRectMake(size.width/2 - titleViewWidth/2, 0, titleViewWidth, 44)
         } else {
-	    CGFloat statusBarHeight = [UIApplication sharedApplication].statusBarFrame.size.height;
-            self.statusBarTopConstraint.constant = self.statusBarHeight;
+            CGFloat statusBarHeight = [UIApplication sharedApplication].statusBarFrame.size.height;
+            self.statusBarTopConstraint.constant = statusBarHeight;
             // self.titleView.frame = CGRectMake(size.width/2 - titleViewWidth/2, 0, titleViewWidth, 28);
         }
     }
@@ -228,8 +229,8 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
         if (self.view.frame.size.width > self.view.frame.size.height) {
             self.statusBarTopConstraint.constant = 0.0;
         } else {
-	    CGFloat statusBarHeight = [UIApplication sharedApplication].statusBarFrame.size.height;
-            self.statusBarTopConstraint.constant = self.statusBarHeight;
+            CGFloat statusBarHeight = [UIApplication sharedApplication].statusBarFrame.size.height;
+            self.statusBarTopConstraint.constant = statusBarHeight;
         }
     }
 }
@@ -468,6 +469,10 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
     }
     @finally {
         [view.superview addConstraints:@[topConstraint, leftConstraint, rightConstraint, bottomConstraint]];        
+    }
+
+    if (parentId != 1) {
+	// add swiping and panning
     }
 }
 
@@ -788,20 +793,20 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
 
     if (hasBackButton) {
         UIImage *image = [self.imageCache loadIcon:@"icons_arrow-left-red.png"];
-	if (image == nil) {
+        if (image == nil) {
             menuButton = [[UIBarButtonItem alloc] initWithTitle:@"<" style:UIBarButtonItemStylePlain target:self action:@selector(backButtonTapped)];
-	} else {
-	    menuButton = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(backButtonTapped)];
-	}
+        } else {
+            menuButton = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(backButtonTapped)];
+        }
     } else {
         UIImage *image = [self.imageCache loadIcon:@"icons_hamburger-menu.png"];
-	if (image == nil) {
+        if (image == nil) {
             menuButton = [[UIBarButtonItem alloc] initWithTitle:@"Menu" style:UIBarButtonItemStylePlain target:self action:@selector(menuButtonTapped)];
-	} else {
-	    menuButton = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(menuButtonTapped)];
-	}
+        } else {
+            menuButton = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(menuButtonTapped)];
+        }
     }
-    self.navItem.leftBarButtonItem = menuButton;
+    navBar.navItem.leftBarButtonItem = menuButton;
  
     UIImage *image2 = [self.imageCache loadIcon:@"icons_icon-post.png"];
     if (image2 != nil) {
@@ -1167,7 +1172,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
 
     self.currentPickerHolder = pickerHolder;
 
-    UIView * pickerBackground = [self createBackgroundOverlay:dialogHolder];
+    UIView * pickerBackground = [self createBackgroundOverlay:pickerHolder];
     pickerBackground.tag = self.currentPicker.tag;
     pickerBackground.alpha = backgroundOverlayViewAlpha;
 
@@ -1840,7 +1845,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
             break;
         
         case CREATE_ACTIONBAR: {
-            [self createNavigationBar:command.childInternalId parentId:command.internalId hasBackButton:(commands.flags & 1)];
+            [self createNavigationBar:command.childInternalId parentId:command.internalId hasBackButton:(command.flags & 1)];
         }
             break;
         
