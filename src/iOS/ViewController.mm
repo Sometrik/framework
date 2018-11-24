@@ -35,16 +35,12 @@ extern FWApplication * applicationMain();
 @property (nonatomic, strong) NSMutableDictionary *viewsDictionary;
 @property (nonatomic, strong) UIView *sideMenuView;
 @property (nonatomic, strong) UIView *backgroundOverlayView;
-@property (nonatomic, strong) UINavigationItem *navItem;
-@property (nonatomic, strong) UILabel *navBarTitle;
-@property (nonatomic, strong) UILabel *navBarSubtitle;
 @property (nonatomic, strong) NSLayoutConstraint *statusBarTopConstraint;
 @property (nonatomic, strong) FWScrollView *pageView;
 @property (nonatomic, strong) NSMutableArray *dialogIds;
 @property (nonatomic, assign) int activeViewId;
 @property (nonatomic, assign) BOOL sideMenuPanned;
 //@property (nonatomic, strong) InAppPurchaseManager *inAppPurchaseManager;
-@property (nonatomic, strong) NSString * currentTitle;
 @property (nonatomic, strong) FWPicker * currentPicker;
 @property (nonatomic, assign) int currentPickerSelection;
 @property (nonatomic, strong) UIView * currentPickerHolder;
@@ -77,7 +73,6 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
     // Do any additional setup after loading the view, typically from a nib.
     
     self.activeViewId = 0;
-    self.currentTitle = nil;
     self.dialogIds = [[NSMutableArray alloc] init];
     self.statusBarTopConstraint = nil;
 
@@ -733,16 +728,14 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
     return YES;
 }
 
-- (void)createNavigationBar:(int)viewId parentId:(int)parentId
+- (void)createNavigationBar:(int)viewId parentId:(int)parentId hasBackButton:(BOOL)hasBackButton
 {
     // Create navigation bar with a button for opening side menu
-    UINavigationBar *navBar = [[UINavigationBar alloc] init];
+    FWNavigationBar *navBar = [[FWNavigationBar alloc] init];
 
-    navBar.translatesAutoresizingMaskIntoConstraints = false;
     navBar.tag = viewId;
     navBar.translucent = YES;
     navBar.delegate = self;
-    navBar.barTintColor = UIColor.whiteColor;
     navBar.hidden = YES;
 
     // create titleView that has title and subtitle
@@ -786,34 +779,37 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
     //[stackView.topAnchor constraintEqualToAnchor:titleView.topAnchor].active = YES;
     //[stackView.bottomAnchor constraintEqualToAnchor:titleView.bottomAnchor].active = YES;
     
-    self.navBarTitle = titleViewTitle;
-    self.navBarSubtitle = titleViewSubtitle;
-    self.navItem = [[UINavigationItem alloc] init];
-    self.navItem.titleView = titleView;
-    /*
-     if (self.currentTitle != nil) {
-      self.navItem = [[UINavigationItem alloc] initWithTitle:self.currentTitle];
-    } else {
-      self.navItem = [[UINavigationItem alloc] init];
-    }
-     */
-
+    navBar.navBarTitle = titleViewTitle;
+    navBar.navBarSubtitle = titleViewSubtitle;
+    navBar.navItem = [[UINavigationItem alloc] init];
+    navBar.navItem.titleView = titleView;
+        
     UIBarButtonItem *menuButton;
-    UIImage *image = [self.imageCache loadIcon:@"icons_hamburger-menu.png"];
-    if (image == nil) {
-        menuButton = [[UIBarButtonItem alloc] initWithTitle:@"Menu" style:UIBarButtonItemStylePlain target:self action:@selector(menuButtonTapped)];
+
+    if (hasBackButton) {
+        UIImage *image = [self.imageCache loadIcon:@"icons_arrow-left-red.png"];
+	if (image == nil) {
+            menuButton = [[UIBarButtonItem alloc] initWithTitle:@"<" style:UIBarButtonItemStylePlain target:self action:@selector(backButtonTapped)];
+	} else {
+	    menuButton = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(backButtonTapped)];
+	}
     } else {
-        menuButton = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(menuButtonTapped)];
+        UIImage *image = [self.imageCache loadIcon:@"icons_hamburger-menu.png"];
+	if (image == nil) {
+            menuButton = [[UIBarButtonItem alloc] initWithTitle:@"Menu" style:UIBarButtonItemStylePlain target:self action:@selector(menuButtonTapped)];
+	} else {
+	    menuButton = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(menuButtonTapped)];
+	}
     }
     self.navItem.leftBarButtonItem = menuButton;
-
+ 
     UIImage *image2 = [self.imageCache loadIcon:@"icons_icon-post.png"];
     if (image2 != nil) {
         UIBarButtonItem *composeButton = [[UIBarButtonItem alloc] initWithImage:image2 style:UIBarButtonItemStylePlain target:self action:@selector(composeButtonTapped)];
-        self.navItem.rightBarButtonItem = composeButton;
+        navBar.navItem.rightBarButtonItem = composeButton;
     }
 
-    [navBar setItems:@[self.navItem]];
+    [navBar setItems:@[navBar.navItem]];
         
     [self addView:navBar withId:viewId];
     [self.topViewController.view addSubview:navBar];
@@ -823,7 +819,6 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
     NSLayoutConstraint *topConstraint2 = [NSLayoutConstraint constraintWithItem:navBar attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:navBar.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:statusBarHeight];
     NSLayoutConstraint *leftConstraint2 = [NSLayoutConstraint constraintWithItem:navBar attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:navBar.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
     NSLayoutConstraint *rightConstraint2 = [NSLayoutConstraint constraintWithItem:navBar attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:navBar.superview attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
-    // NSLayoutConstraint *heightConstraint = [NSLayoutConstraint constraintWithItem:navBar attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0f constant:44];
     [navBar.superview addConstraints:@[topConstraint2, leftConstraint2, rightConstraint2]];
     self.statusBarTopConstraint = topConstraint2;
     
@@ -1539,8 +1534,6 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
 
     ViewManager * viewManager = [self getViewManager:view.tag];
     viewManager.level = parentViewManager.level + 1;    
-
-    BOOL add_constraints = NO;
   
     if ([parentView isKindOfClass:FWLayoutView.class]) {
         FWLayoutView * layout = (FWLayoutView *)parentView;
@@ -1563,12 +1556,6 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
     } else {
         [parentView addSubview:view];
 
-        if (![view isKindOfClass:UINavigationBar.class]) {
-            add_constraints = YES;
-        }
-    }
-  
-    if (add_constraints) {
         NSLayoutConstraint * topConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
         NSLayoutConstraint * leftConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
         NSLayoutConstraint * rightConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
@@ -1853,7 +1840,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
             break;
         
         case CREATE_ACTIONBAR: {
-            [self createNavigationBar:command.childInternalId parentId:command.internalId];
+            [self createNavigationBar:command.childInternalId parentId:command.internalId hasBackButton:(commands.flags & 1)];
         }
             break;
         
@@ -1992,11 +1979,8 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
 #endif
 		    [self sendVisibilityUpdate:oldActiveViewId];
 		    [self sendVisibilityUpdate:self.activeViewId];
-#if 0
-                    NSString * title = [NSString stringWithUTF8String:command.getTextValue().c_str()];
-                    [self setTitle:title];
-#endif
-		    ViewManager * newViewManager = [self getViewManager:self.activeViewId];
+
+                    ViewManager * newViewManager = [self getViewManager:self.activeViewId];
 		    [self.topViewController showTabBar:newViewManager.tabBar];
 		    [self.topViewController showNavBar:newViewManager.navBar];
 		    BOOL has_navbar = newViewManager.navBar != nil;
@@ -2026,11 +2010,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
         case SET_TEXT_VALUE: {
             ViewManager * viewManager = [self getViewManager:command.internalId];
             if (viewManager != nil) {
-                if ([viewManager.view isKindOfClass:UINavigationBar.class]) {
-                    [self setTitles:command.textValue subtitle:(command.textValue2 != nil ? command.textValue2 : @"")];
-                } else {
-                    [viewManager setTextValue:command.textValue];
-                }
+                [viewManager setTextValue:command.textValue value2:(command.textValue2 != nil ? command.textValue2 : @"")];
             }
         }
             break;
@@ -2078,14 +2058,6 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
 	    if (viewManager != nil) {
 	        [viewManager stop];
 	    }            
-        }
-            break;
-        case SET_BACK_BUTTON_VISIBILITY: {
-            [self setBackButtonVisibility:command.value ? true : false];
-        }
-            break;
-        case TOGGLE_MENU: {
-            [self menuButtonTapped];
         }
             break;
         case LIST_PRODUCTS: {
@@ -2143,31 +2115,6 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
 - (void)sendTextValue:(int)viewId value:(NSString *)value {
     string s = [value cStringUsingEncoding:NSUTF8StringEncoding];
     mainThread->sendTextValue(viewId, s);
-}
-
-- (void)setTitles:(NSString*)title subtitle:(NSString*)subtitle
-{
-    NSLog(@"setting titles: %@ %@", title, subtitle);
-    self.currentTitle = title;
-    self.navBarTitle.text = title;
-    self.navBarSubtitle.text = subtitle;
-}
-
-- (void)setBackButtonVisibility:(BOOL)v {
-    if (v) {
-        UIImage *image = [self.imageCache loadIcon:@"icons_arrow-left-red.png"];
-        UIBarButtonItem *backButton = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(backButtonTapped)];
-        self.navItem.leftBarButtonItem = backButton;
-    } else {
-        UIImage *image = [self.imageCache loadIcon:@"icons_hamburger-menu.png"];
-        UIBarButtonItem *menuButton;
-	if (image == nil) {
-            menuButton = [[UIBarButtonItem alloc] initWithTitle:@"Menu" style:UIBarButtonItemStylePlain target:self action:@selector(menuButtonTapped)];
-	} else {
-	    menuButton = [[UIBarButtonItem alloc] initWithImage:image style:UIBarButtonItemStylePlain target:self action:@selector(menuButtonTapped)];
-	}
-        self.navItem.leftBarButtonItem = menuButton;
-    }
 }
 
 - (BOOL)isParentView:(int)parentId childId:(int)childId

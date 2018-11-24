@@ -31,7 +31,7 @@ typedef enum
 - (void)createScrollLayoutWithId:(int)viewId parentId:(int)parentId;
 - (void)createPageLayoutWithId:(int)viewId parentId:(int)parentId;
 - (void)createEventLayoutWithId:(int)viewId parentId:(int)parentId;
-- (void)createNavigationBar:(int)viewId parentId:(int)parentId;
+- (void)createNavigationBar:(int)viewId parentId:(int)parentId hasBackButton:(BOOL)hasBackButton;
 - (void)createTabBar:(int)viewId parentId:(int)parentId;
 - (void)createNavigationView:(int)viewId;
 - (void)createTabBarItem:(int)viewId parentId:(int)parentId title:(NSString *)title;
