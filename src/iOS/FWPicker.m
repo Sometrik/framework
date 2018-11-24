@@ -34,4 +34,9 @@
     }
 }
 
+- (void)clear {
+    [self.options removeAllObjects];
+    [self setSelection:0];
+}
+
 @end
