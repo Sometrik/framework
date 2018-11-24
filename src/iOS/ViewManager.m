@@ -257,6 +257,8 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
                 label.textAlignment = NSTextAlignmentCenter;
             } else if ([value isEqualToString:@"right"]) {
                 label.textAlignment = NSTextAlignmentRight;
+	    } else if ([value isEqualToString:@"justify"]) {
+	        label.textAlignment = NSTextAlignmentJustified;
             } else {
                 label.textAlignment = NSTextAlignmentLeft;
             }
