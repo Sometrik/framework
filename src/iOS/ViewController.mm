@@ -63,7 +63,6 @@ extern FWApplication * applicationMain();
 @property (nonatomic, assign) BOOL sideMenuSwiped;
 @property (nonatomic, strong) NSDate *sideMenuPanStartedDate;
 @property (nonatomic, assign) CGFloat sideMenuLastTouchLocationX;
-@property (nonatomic, assign) CGFloat statusBarHeight;
 @property (nonatomic, strong) UIView *titleView;
 @end
 
@@ -82,7 +81,6 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
     self.dialogIds = [[NSMutableArray alloc] init];
     self.statusBarTopConstraint = nil;
 
-    // CGFloat statusBarHeight = [UIApplication sharedApplication].statusBarFrame.size.height;
     self.view.layoutMargins = UIEdgeInsetsMake(0, 0, 0, 0);
   
     self.backgroundOverlayView = [self createBackgroundOverlay:self.topViewController.view];
@@ -190,21 +188,14 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
         CGRect frame = CGRectMake(CGRectGetMinX(self.view.bounds), CGRectGetMinY(self.view.bounds), size.width-sideMenuOpenSpaceWidth, size.height);
         self.sideMenuView.frame = frame;
     }
-    if (self.currentPickerHolder != nil) {
-        for (UIView *view in self.currentPickerHolder.subviews) {
-            if ([view isKindOfClass:UINavigationBar.class]) {
-                view.frame = CGRectMake(0, 20, size.width, 44);
-                NSLog(@"*** view.frame = %@", NSStringFromCGRect(view.frame));
-            }
-        }
-    }
+
     CGFloat titleViewWidth = size.width - 140;
-    self.statusBarHeight = [UIApplication sharedApplication].statusBarFrame.size.height;
     if (self.statusBarTopConstraint) {
         if (size.width > size.height) {
             self.statusBarTopConstraint.constant = 0.0;
             // self.titleView.frame = CGRectMake(size.width/2 - titleViewWidth/2, 0, titleViewWidth, 44)
         } else {
+	    CGFloat statusBarHeight = [UIApplication sharedApplication].statusBarFrame.size.height;
             self.statusBarTopConstraint.constant = self.statusBarHeight;
             // self.titleView.frame = CGRectMake(size.width/2 - titleViewWidth/2, 0, titleViewWidth, 28);
         }
@@ -238,11 +229,11 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
     self.panEdgeGestureRecognizer.delegate = self;
     [self.view addGestureRecognizer:self.panEdgeGestureRecognizer];
     
-    self.statusBarHeight = [UIApplication sharedApplication].statusBarFrame.size.height;
     if (self.statusBarTopConstraint != nil) {
         if (self.view.frame.size.width > self.view.frame.size.height) {
             self.statusBarTopConstraint.constant = 0.0;
         } else {
+	    CGFloat statusBarHeight = [UIApplication sharedApplication].statusBarFrame.size.height;
             self.statusBarTopConstraint.constant = self.statusBarHeight;
         }
     }
@@ -744,7 +735,6 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
 
 - (void)createNavigationBar:(int)viewId parentId:(int)parentId
 {
-    CGFloat statusBarHeight = [UIApplication sharedApplication].statusBarFrame.size.height;
     // Create navigation bar with a button for opening side menu
     UINavigationBar *navBar = [[UINavigationBar alloc] init];
 
@@ -827,7 +817,9 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
         
     [self addView:navBar withId:viewId];
     [self.topViewController.view addSubview:navBar];
-    
+
+    CGFloat statusBarHeight = [UIApplication sharedApplication].statusBarFrame.size.height;
+
     NSLayoutConstraint *topConstraint2 = [NSLayoutConstraint constraintWithItem:navBar attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:navBar.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:statusBarHeight];
     NSLayoutConstraint *leftConstraint2 = [NSLayoutConstraint constraintWithItem:navBar attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:navBar.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
     NSLayoutConstraint *rightConstraint2 = [NSLayoutConstraint constraintWithItem:navBar attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:navBar.superview attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
@@ -1180,31 +1172,16 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
 
     self.currentPickerHolder = pickerHolder;
 
-    CGFloat statusBarHeight = [UIApplication sharedApplication].statusBarFrame.size.height;
+    UIView * pickerBackground = [self createBackgroundOverlay:dialogHolder];
+    pickerBackground.tag = self.currentPicker.tag;
+    pickerBackground.alpha = backgroundOverlayViewAlpha;
 
     FrameLayoutView *layout = [[FrameLayoutView alloc] init];
     layout.layoutMargins = UIEdgeInsetsMake(0, 0, 0, 0);
     layout.layer.backgroundColor = UIColor.whiteColor.CGColor;
     [pickerHolder addSubview:layout];
 
-    UIToolbar *statusBarBackgroundView = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, statusBarHeight)];
-    statusBarBackgroundView.translucent = NO;
-    statusBarBackgroundView.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleWidth;
-    [pickerHolder addSubview:statusBarBackgroundView];
-
-    UINavigationBar *navBar = [[UINavigationBar alloc] initWithFrame:CGRectMake(0, statusBarHeight, self.view.frame.size.width, 44)];
-    
-    UINavigationItem *navItem = [[UINavigationItem alloc] init];    
-    UIBarButtonItem *backButton = [[UIBarButtonItem alloc] initWithTitle:@"Back" style:UIBarButtonItemStylePlain target:self action:@selector(cancelPicker)];
-    navItem.leftBarButtonItem = backButton;
-    [navBar setItems:@[navItem]];
-    navBar.translatesAutoresizingMaskIntoConstraints = YES;
-    // navBar.translucent = YES;
-    navBar.barTintColor = UIColor.whiteColor;
-    navBar.tintColor = [UIColor blackColor];
-    [pickerHolder addSubview:navBar];
-
-    NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:layout attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:layout.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:64];
+    NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:layout attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:layout.superview attribute:NSLayoutAttributeBottom multiplier:0.5f constant:0];
     NSLayoutConstraint *leftConstraint = [NSLayoutConstraint constraintWithItem:layout attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:layout.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
     NSLayoutConstraint *rightConstraint = [NSLayoutConstraint constraintWithItem:layout attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:layout.superview attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
     NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:layout attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:layout.superview attribute:NSLayoutAttributeBottom multiplier:1.0f constant:0];
