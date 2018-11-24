@@ -15,13 +15,6 @@
 
 - (void)viewWillTransitionToSize: (CGSize)size withTransitionCoordinator:(id)coordinator
 {
-    if (self.webView != nil) {
-        for (UIView *view in self.webView.subviews) {
-            if ([view isKindOfClass:UINavigationBar.class]) {
-                view.frame = CGRectMake(0, 0, size.width, view.frame.size.height);
-            }
-        }
-    }
 
 }
 
@@ -33,25 +26,27 @@
     if (self.webView == nil) {
         CGFloat statusBarHeight = [UIApplication sharedApplication].statusBarFrame.size.height;
         CGFloat navBarHeight = 44.0;
+	
         WKWebViewConfiguration *configuration = [[WKWebViewConfiguration alloc] init];
-        CGRect frame = CGRectMake(0, statusBarHeight, self.view.bounds.size.width, self.view.bounds.size.height);
+        CGRect frame = CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height);
         self.webView = [[WKWebView alloc] initWithFrame:frame configuration:configuration];
-	    self.webView.translatesAutoresizingMaskIntoConstraints = false;
+	self.webView.translatesAutoresizingMaskIntoConstraints = false;
         self.webView.UIDelegate = self;
         self.webView.navigationDelegate = self;
-        self.webView.scrollView.contentInset = UIEdgeInsetsMake(navBarHeight, 0, 0, 0);
+        self.webView.scrollView.contentInset = UIEdgeInsetsMake(statusBarHeight + navBarHeight, 0, 0, 0);
         [self.view addSubview:self.webView];
-        
-        NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:self.webView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.webView.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:statusBarHeight];
+
+        NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:self.webView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.webView.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
         NSLayoutConstraint *leftConstraint = [NSLayoutConstraint constraintWithItem:self.webView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self.webView.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
         NSLayoutConstraint *rightConstraint = [NSLayoutConstraint constraintWithItem:self.webView attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self.webView.superview attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
         NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:self.webView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self.webView.superview attribute:NSLayoutAttributeBottom multiplier:1.0f constant:0];
         [self.webView.superview addConstraints:@[topConstraint, leftConstraint, rightConstraint, bottomConstraint]];
 
         UINavigationBar *navBar = [[UINavigationBar alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(self.view.frame), navBarHeight)];
-        // navBar.delegate = self;
 	navBar.tintColor = [UIColor blackColor];
         navBar.barTintColor = UIColor.whiteColor;
+        navBar.translucent = YES;
+        navBar.barStyle = UIBarStyleDefault;
 
         CGFloat width = self.view.frame.size.width * 0.6; // just some width related to width of the view
         
@@ -83,15 +78,18 @@
         navItem.rightBarButtonItem = actionButton;
         
         [navBar setItems:@[navItem]];
-        //navBar.translucent = YES;
-        navBar.barStyle = UIBarStyleDefault;
+
+	NSLayoutConstraint *topConstraint2 = [NSLayoutConstraint constraintWithItem:navBar attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:navBar.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:statusBarHeight];
+	NSLayoutConstraint *leftConstraint2 = [NSLayoutConstraint constraintWithItem:navBar attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:navBar.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
+	NSLayoutConstraint *rightConstraint2 = [NSLayoutConstraint constraintWithItem:navBar attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:navBar.superview attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
+	[navBar.superview addConstraints:@[topConstraint2, leftConstraint2, rightConstraint2]];
+	// self.statusBarTopConstraint = topConstraint2;
+
         [self.webView addSubview:navBar];
         
     }
-    // self.webView.layer.zPosition = 1000000.0f;
     [self.webView.superview bringSubviewToFront:self.webView];
     
-    //NSURL *webURL = [NSURL URLWithString:url];
     NSURLRequest *request = [NSURLRequest requestWithURL:self.currentURL];
     [self.webView loadRequest:request];
 }
