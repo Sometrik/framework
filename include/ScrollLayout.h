@@ -33,6 +33,12 @@ class ScrollLayout : public Element {
     }
   }
 
+  void setScrollPosition(int pos) {
+    Command c(Command::SET:INT_VALUE, getParentInternalId(), getInternalId());
+    c.setValue(pos);
+    sendCommand(c);
+  }
+
  protected:
   void create() override {
     Command c(Command::CREATE_SCROLL_LAYOUT, getParentInternalId(), getInternalId());
