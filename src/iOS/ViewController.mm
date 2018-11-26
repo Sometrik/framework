@@ -1878,7 +1878,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
             break;
         
         case CREATE_ACTIONBAR: {
-            [self createNavigationBar:command.childInternalId parentId:command.internalId title:command.textValue title2:command.textValue2 hasBackButton:(command.flags & 1)];
+            [self createNavigationBar:command.childInternalId parentId:command.internalId title:command.textValue subtitle:command.textValue2 hasBackButton:(command.flags & 1)];
         }
             break;
 
