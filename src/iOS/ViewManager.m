@@ -101,7 +101,7 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
 	} else {
             [self.view resignFirstResponder];
 	}
-    } else if ([self.view isKindOfClass::UIScrollView.class]) {
+    } else if ([self.view isKindOfClass:UIScrollView.class]) {
         UIScrollView * scrollView = (UIScrollView *)self.view;
         if (scrollView.pagingEnabled) {
 
