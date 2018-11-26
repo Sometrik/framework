@@ -34,7 +34,7 @@ class ScrollLayout : public Element {
   }
 
   void setScrollPosition(int pos) {
-    Command c(Command::SET:INT_VALUE, getParentInternalId(), getInternalId());
+    Command c(Command::SET_INT_VALUE, getParentInternalId(), getInternalId());
     c.setValue(pos);
     sendCommand(c);
   }
