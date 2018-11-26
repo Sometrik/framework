@@ -7,7 +7,6 @@
 class FrameView : public FWViewBase {
  public:
   FrameView(int _id = 0) : FWViewBase(_id) { }
-  FrameView(const std::string & label, int _id = 0) : FWViewBase(label, _id) { }
 
   bool isA(const std::string & className) const override {
     if (className == "FrameView") return true;
@@ -17,7 +16,6 @@ class FrameView : public FWViewBase {
  protected:
   void create() override {
     Command c(Command::CREATE_FRAMEVIEW, getParentInternalId(), getInternalId());
-    c.setTextValue(getTitle());
     sendCommand(c);
   }
 };
