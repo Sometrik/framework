@@ -615,8 +615,20 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
     if (!scrollView.pagingEnabled) {
-        float diff = scrollView.contentSize.height - (scrollView.frame.size.height + scrollView.contentOffset.y);
-        mainThread->sendScrollChangedEvent(scrollView.tag, scrollView.contentOffset.y, (int)diff, scrollView.contentSize.height);
+	float y = scrollView.contentOffset.y;
+        float diff = scrollView.contentSize.height - (scrollView.frame.size.height + y);
+        mainThread->sendScrollChangedEvent(scrollView.tag, y, (int)diff, scrollView.contentSize.height);
+	
+	BOOL hidesShadow = y < 0.1;
+	UIView * v = scrollView.superview;
+	while ( v != nil ) {
+	    ViewManager * viewManager = [self getViewManager:v.tag];
+	    if (viewManager.navBar != nil) {
+		[viewManager.navBar setValue:@(hidesShadow) forKeyPath:@"hidesShadow"];
+		break;
+	    }
+	    v = v.superview;
+	}
     } else if ([scrollView isKindOfClass:FWScrollView.class]) {
         FWScrollView * fwScrollView = (FWScrollView *)scrollView;
         NSInteger page = [fwScrollView indexForVisiblePage];
@@ -748,6 +760,8 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
     navBar.translucent = YES;
     navBar.delegate = self;
     navBar.hidden = YES;
+
+    [navBar setValue:@(YES) forKeyPath:@"hidesShadow"];
 
     // create titleView that has title and subtitle
     CGFloat titleViewWidth = self.view.frame.size.width - 140;
