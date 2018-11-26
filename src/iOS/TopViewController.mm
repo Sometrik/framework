@@ -139,6 +139,15 @@
     self.visibleNavBar.hidden = NO;
 }
 
+- (void)showSearchBar:(UISearchBar *)searchBar
+{
+    if (self.visibleSearchBar != nil) {
+	self.visibleSearchBar.hidden = YES;
+    }
+    self.visibleSearchBar = searchBar;
+    self.visibleSearchBar.hidden = NO;
+}
+
 #pragma mark - WKNavigationDelegate
 
 - (void)webView:(WKWebView *)webView didCommitNavigation:(WKNavigation *)navigation

@@ -884,9 +884,22 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
     searchBar.delegate = self;
     searchBar.translucent = YES;
     searchBar.translatesAutoresizingMaskIntoConstraints = false;
-    searchBar.hidden = YES;
     [self addView:searchBar withId:viewId];
-    [self addToParent:parentId view:searchBar];
+    [self.topViewController.view addSubview:searchBar];
+
+    NSLayoutConstraint * leftConstraint = [NSLayoutConstraint constraintWithItem:searchBar attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:searchBar.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
+    NSLayoutConstraint * rightConstraint = [NSLayoutConstraint constraintWithItem:searchBar attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:searchBar.superview attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
+
+    leftConstraint.priority = 999;
+    rightConstraint.priority = 999;
+
+    [searchBar.superview addConstraints:@[leftConstraint, rightConstraint]];
+
+    UILayoutGuide * guide = self.topViewController.view.safeAreaLayoutGuide;
+    [searchBar.bottomAnchor constraintEqualToAnchor:guide.bottomAnchor].active = YES;
+
+    ViewManager * viewManager = [self getViewManager:parentId];
+    viewManager.searchBar = searchBar;
 }
 
 #pragma mark - TabBar
@@ -2026,9 +2039,11 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
                     ViewManager * newViewManager = [self getViewManager:self.activeViewId];
 		    [self.topViewController showTabBar:newViewManager.tabBar];
 		    [self.topViewController showNavBar:newViewManager.navBar];
+		    [self.topViewController showSearchBar:newViewManager.searchBar];
 		    BOOL has_navbar = newViewManager.navBar != nil;
 		    BOOL has_tabbar = newViewManager.tabBar != nil;
-		    self.additionalSafeAreaInsets = UIEdgeInsetsMake(has_navbar ? 44 : 0, self.additionalSafeAreaInsets.left, has_tabbar ? 49 : 0, self.additionalSafeAreaInsets.right);
+		    BOOL has_searchbar = newViewManager.searchBar != nil;
+		    self.additionalSafeAreaInsets = UIEdgeInsetsMake(has_navbar ? 44 : 0, self.additionalSafeAreaInsets.left, has_tabbar || has_searchbar ? 49 : 0, self.additionalSafeAreaInsets.right);
                 }
             } else {
                 ViewManager * viewManager = [self getViewManager:command.internalId];
