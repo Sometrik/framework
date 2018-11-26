@@ -1,7 +1,7 @@
 #ifndef _ACTIONBAR_H_
 #define _ACTIONBAR_H_
 
-#include <InputElement.h>
+#include <Element.h>
 #include <CommandEvent.h>
 #include <Command.h>
 #include <ValueEvent.h>
@@ -61,9 +61,8 @@ class ActionBar : public Element {
     sendCommand(c);
   }
 
- protected:
   std::string title, subtitle;
-    bool has_back_button;
+  bool has_back_button;
 };
 
 #endif
