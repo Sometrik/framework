@@ -32,7 +32,7 @@ std::shared_ptr<iOSMainThread> mainThread;
 // Declare C++ function
 extern FWApplication * applicationMain();
 
-@interface ViewController () <UIScrollViewDelegate, UITabBarDelegate, InAppPurchaseManagerDelegate, FWImageViewDelegate, UITextFieldDelegate, UITextViewDelegate, UIGestureRecognizerDelegate, PaddedLabelDelegate, UIBarPositioningDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate, UINavigationBarDelegate>
+@interface ViewController () <UIScrollViewDelegate, UITabBarDelegate, InAppPurchaseManagerDelegate, FWImageViewDelegate, UITextFieldDelegate, UITextViewDelegate, UIGestureRecognizerDelegate, PaddedLabelDelegate, UIBarPositioningDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate, UINavigationBarDelegate, UISearchBarDelegate>
 @property (nonatomic, strong) NSMutableDictionary *viewsDictionary;
 @property (nonatomic, strong) UIView *sideMenuView;
 @property (nonatomic, strong) UIView *backgroundOverlayView;
@@ -733,7 +733,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
     return YES;
 }
 
-- (void)createNavigationBar:(int)viewId parentId:(int)parentId hasBackButton:(BOOL)hasBackButton
+- (void)createNavigationBar:(int)viewId parentId:(int)parentId title:(NSString *)title subtitle:(NSString *)subtitle hasBackButton:(BOOL)hasBackButton
 {
     // Create navigation bar with a button for opening side menu
     FWNavigationBar *navBar = [[FWNavigationBar alloc] init];
@@ -753,12 +753,12 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
     titleViewTitle.adjustsFontSizeToFitWidth = YES;
     titleViewTitle.minimumScaleFactor = 0.7;
     titleViewTitle.textColor = [UIColor colorWithRed:0.165 green:0.188 blue:0.204 alpha:1.0];
+    titleViewTitle.text = title;
     UILabel *titleViewSubtitle = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, titleViewWidth, 12)];
     titleViewSubtitle.textAlignment = NSTextAlignmentCenter;
     titleViewSubtitle.font = [UIFont systemFontOfSize:12 weight:UIFontWeightRegular];
     titleViewSubtitle.textColor = [UIColor colorWithRed:0.718 green:0.769 blue:0.804 alpha:1.0];
-    //[stackView addArrangedSubview:titleViewTitle];
-    //[stackView addArrangedSubview:titleViewSubtitle];
+    titleViewSubtitle.text = subtitle;
     
     // Add debug event by tapping nav bar 5 times
     UITapGestureRecognizer *debugTapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(navBarTapped5Times:)];
@@ -857,6 +857,17 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
     mainThread->sendCommandEvent(sender.tag, FW_ID_BACK);
 }
 
+- (void)createSearchBar:(int)viewId parentId:(int)parentId
+{
+    UISearchBar *searchBar = [[UISearchBar alloc] init];
+    searchBar.tag = viewId;
+    searchBar.delegate = self;
+    searchBar.translucent = YES;
+    searchBar.translatesAutoresizingMaskIntoConstraints = false;
+    searchBar.hidden = YES;
+    [self addView:searchBar withId:viewId];
+    [self addToParent:parentId view:searchBar];
+}
 
 #pragma mark - TabBar
 - (void)createTabBar:(int)viewId parentId:(int)parentId
@@ -1847,7 +1858,12 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
             break;
         
         case CREATE_ACTIONBAR: {
-            [self createNavigationBar:command.childInternalId parentId:command.internalId hasBackButton:(command.flags & 1)];
+            [self createNavigationBar:command.childInternalId parentId:command.internalId title:command.textValue title2:command.textValue2 hasBackButton:(command.flags & 1)];
+        }
+            break;
+
+	case CREATE_SEARCHBAR: {
+            [self createSearchBar:command.childInternalId parentId:command.internalId];
         }
             break;
         

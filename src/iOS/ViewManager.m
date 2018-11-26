@@ -327,6 +327,11 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
         if ([key isEqualToString:@"hint"]) {
             textField.placeholder = value;
         }
+    } else if ([self.view isKindOfClass:UISearchBar.class]) {
+        UISearchBar *searchBar = (UISearchBar *)self.view;
+        if ([key isEqualToString:@"hint"]) {
+            searchBar.placeholder = value;
+        }
     } else if ([self.view isKindOfClass:UITextView.class]) {
         
     } else if ([self.view isKindOfClass:UITabBarItem.class]) {
