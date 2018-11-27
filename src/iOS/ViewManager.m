@@ -108,7 +108,7 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
         if (scrollView.pagingEnabled) {
 
 	} else {
-	    scrollView.contentOffset = CGPointMake(0, value);
+	    scrollView.contentOffset = CGPointMake(0, value - scrollView.adjustedContentInset.top);
 	}
     }
 }
