@@ -855,6 +855,11 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
     
     ViewManager * viewManager = [self getViewManager:parentId];
     viewManager.navBar = navBar;
+
+    if ([viewManager isViewVisible]) {
+        [self.topViewController showNavBar:viewManager.navBar];
+        [self updateSafeArea];
+    }
 }
 
 - (void)navBarTapped5Times:(UITapGestureRecognizer *)recognizer
@@ -873,12 +878,12 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
 
 - (IBAction)composeButtonTapped:(UIBarButtonItem *)sender
 {
-    mainThread->sendCommandEvent(sender.tag, FW_ID_COMPOSE);
+    mainThread->sendCommandEvent((int)sender.tag, FW_ID_COMPOSE);
 }
 
 - (IBAction)backButtonTapped:(UIBarButtonItem *)sender
 {
-    mainThread->sendCommandEvent(sender.tag, FW_ID_BACK);
+    mainThread->sendCommandEvent((int)sender.tag, FW_ID_BACK);
 }
 
 - (void)createSearchBar:(int)viewId parentId:(int)parentId
@@ -904,6 +909,11 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
 
     ViewManager * viewManager = [self getViewManager:parentId];
     viewManager.searchBar = searchBar;
+
+    if ([viewManager isViewVisible]) {
+        [self.topViewController showSearchBar:viewManager.searchBar];
+        [self updateSafeArea];
+    }
 }
 
 #pragma mark - TabBar
@@ -932,6 +942,11 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
 
     ViewManager * viewManager = [self getViewManager:parentId];
     viewManager.tabBar = tabBar;
+
+    if ([viewManager isViewVisible]) {
+	[self.topViewController showTabBar:viewManager.tabBar];
+        [self updateSafeArea];
+    }
 }
 
 - (void)createTabBarItem:(int)viewId parentId:(int)parentId title:(NSString *)title
