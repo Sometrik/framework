@@ -43,6 +43,15 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
     } else if ([self.view isKindOfClass:FWPicker.class]) {
         FWPicker * picker = (FWPicker *)self.view;
 	[picker clear];
+    } else if ([self.view isKindOfClass:UITextField.class]) {
+        UITextField * textField = (UITextField*)self.view;
+        textField.text = @"";
+    } else if ([self.view isKindOfClass:UITextView.class]) {
+        UITextView * textView = (UITextView*)self.view;
+        textView.text = @"";
+    } else if ([self.view isKindOfClass:UISearchBar.class]) {
+        UISearchBar * searchBar = (UISearchBar*)self.view;
+        searchBar.text = @"";
     }
 }
 
