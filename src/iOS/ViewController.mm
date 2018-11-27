@@ -52,7 +52,6 @@ extern FWApplication * applicationMain();
 @property (nonatomic, strong) NSLayoutConstraint *activeViewRightConstraint;
 @property (nonatomic, strong) NSLayoutConstraint *activeViewLeftConstraint;
 @property (nonatomic, strong) UIScreenEdgePanGestureRecognizer *panEdgeGestureRecognizer;
-@property (nonatomic, assign) BOOL keyboardVisible;
 @property (nonatomic, assign) AnimationStyle pickerAnimationStyle;
 @property (nonatomic, strong) NSMutableDictionary *frameViewConstraints; // constraints saved (for animation purposes), viewId is the key.
 @property (nonatomic, strong) NSMutableDictionary *dialogConstraints;
@@ -151,22 +150,30 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
 
 - (void)handleKeyboardWillShowNotification:(NSNotification *)notification
 {
+    NSInteger topPosition = 0;
     id frameEnd = notification.userInfo[@"UIKeyboardFrameEndUserInfoKey"];
     if (frameEnd != nil) {
         CGRect rect = [frameEnd CGRectValue];
-        [self keyboardTopPositionChanged:(int)rect.origin.y];
+        topPosition = (NSInteger)rect.origin.y;
     }
-    self.keyboardVisible = YES;
+    NSLog(@"Keyboard showing: %d", (int)topPosition);
+    [self keyboardTopPositionChanged:(int)topPosition];
+    [self.topViewController showKeyboard:YES height:self.view.frame.size.height - topPosition];
+    [self updateSafeArea];
 }
 
 - (void)handleKeyboardWillHideNotification:(NSNotification *)notification
 {
+    NSInteger topPosition = 0;
     id frameEnd = notification.userInfo[@"UIKeyboardFrameEndUserInfoKey"];
     if (frameEnd != nil) {
         CGRect rect = [frameEnd CGRectValue];
-        [self keyboardTopPositionChanged:(int)rect.origin.y];
+        topPosition = (NSInteger)rect.origin.y;
     }
-    self.keyboardVisible = NO;
+    NSLog(@"Keyboard hiding: %d", (int)topPosition);
+    [self keyboardTopPositionChanged:(int)topPosition];
+    [self.topViewController showKeyboard:NO height:0];
+    [self updateSafeArea];
 }
 
 - (void)keyboardTopPositionChanged:(int)pos
@@ -182,6 +189,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
 - (void)backgroundTapped:(UITapGestureRecognizer *)gestureRecognizer
 {
     [self.view endEditing:YES];
+    [self.topViewController.view endEditing:YES];
 }
 
 - (void)viewWillTransitionToSize: (CGSize)size withTransitionCoordinator:(id)coordinator
@@ -742,11 +750,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
 {
     UITapGestureRecognizer *tapGestureRecognizer = self.view.gestureRecognizers.firstObject;
     if ([gestureRecognizer isEqual:tapGestureRecognizer]) {
-        if (self.keyboardVisible) {
-            return YES;
-        } else {
-            return NO;
-        }
+        return [self.topViewController isKeyboardVisible];
     }
     return YES;
 }
@@ -2019,10 +2023,13 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
             if (command.internalId == 1) {
                 if (command.childInternalId != self.activeViewId) {
                     int oldActiveViewId = self.activeViewId;
-#if 1
+#if 0
                     if (self.activeViewId && ![self isParentView:self.activeViewId childId:command.childInternalId]) {
                         [self switchView:self.activeViewId newView:command.childInternalId direction:NO];
                     } else {
+                        if (self.activeViewId) {
+                            [self setVisibility:self.activeViewId visibility:0];
+                        }
                         [self setVisibility:command.childInternalId visibility:1];
                     }
                     self.activeViewId = command.childInternalId;
@@ -2040,10 +2047,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
 		    [self.topViewController showTabBar:newViewManager.tabBar];
 		    [self.topViewController showNavBar:newViewManager.navBar];
 		    [self.topViewController showSearchBar:newViewManager.searchBar];
-		    BOOL has_navbar = newViewManager.navBar != nil;
-		    BOOL has_tabbar = newViewManager.tabBar != nil;
-		    BOOL has_searchbar = newViewManager.searchBar != nil;
-		    self.additionalSafeAreaInsets = UIEdgeInsetsMake(has_navbar ? 44 : 0, self.additionalSafeAreaInsets.left, has_tabbar || has_searchbar ? 49 : 0, self.additionalSafeAreaInsets.right);
+		    [self updateSafeArea];
                 }
             } else {
                 ViewManager * viewManager = [self getViewManager:command.internalId];
@@ -2057,9 +2061,8 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
 				[self sendVisibilityUpdate:scrollView.tag];
 			    }
                         }
-                    } else {
-                        [viewManager setIntValue:command.value];
                     }
+                    [viewManager setIntValue:command.value];
                 }
             }
         }
@@ -2259,6 +2262,16 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
 {
     NSString *urlString = url.absoluteString;
     [self.topViewController createWebBrowserWithUrl:urlString];
+}
+
+- (void)updateSafeArea
+{
+    BOOL has_navbar = [self.topViewController isNavBarVisible];
+    BOOL has_tabbar = [self.topViewController isTabBarVisible];
+    BOOL has_searchbar = [self.topViewController isSearchBarVisible];
+    NSInteger topHeight = has_navbar ? 44 : 0;
+    NSInteger bottomHeight = (has_tabbar ? 49 : 0) + (has_searchbar ? 49 : 0) + [self.topViewController getKeyboardHeight];
+    self.additionalSafeAreaInsets = UIEdgeInsetsMake(topHeight, self.additionalSafeAreaInsets.left, bottomHeight, self.additionalSafeAreaInsets.right);
 }
 
 @end

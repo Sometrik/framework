@@ -5,12 +5,15 @@
 @interface TopViewController () <WKUIDelegate, WKNavigationDelegate>
 @property (nonatomic, strong) NSURL *currentURL;
 @property (nonatomic, strong) WKWebView *webView;
+@property (nonatomic, assign) NSInteger keyboardHeight;
 @end
 
 @implementation TopViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+
+    self.keyboardHeight = 0;
 }
 
 - (void)viewWillTransitionToSize: (CGSize)size withTransitionCoordinator:(id)coordinator
@@ -146,6 +149,31 @@
     }
     self.visibleSearchBar = searchBar;
     self.visibleSearchBar.hidden = NO;
+}
+
+- (void)showKeyboard:(BOOL)visible height:(NSInteger)height {
+    self.additionalSafeAreaInsets = UIEdgeInsetsMake(0, 0, height, 0);
+    self.keyboardHeight = height;
+}
+
+- (BOOL)isTabBarVisible {
+    return self.visibleTabBar != nil;
+}
+
+- (BOOL)isNavBarVisible {
+    return self.visibleNavBar != nil;
+}
+
+- (BOOL)isSearchBarVisible {
+    return self.visibleSearchBar != nil;
+}
+
+- (BOOL)isKeyboardVisible {
+    return self.keyboardHeight > 0;
+}
+
+- (NSInteger)getKeyboardHeight {
+    return self.keyboardHeight;
 }
 
 #pragma mark - WKNavigationDelegate
