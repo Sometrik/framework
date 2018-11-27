@@ -11,6 +11,7 @@
         self.translatesAutoresizingMaskIntoConstraints = false;
         self.currentPage = 0;
         self.currentPageInternalId = 0;
+	self.currentTopInset = 0;
         self.items = [[NSMutableArray alloc] init];
     }
     return self;
@@ -23,6 +24,7 @@
         self.translatesAutoresizingMaskIntoConstraints = false;
         self.currentPage = 0;
         self.currentPageInternalId = 0;
+	self.currentTopInset = 0;
         self.items = [[NSMutableArray alloc] init];
     }
     return self;
@@ -30,8 +32,11 @@
 
 - (void)adjustedContentInsetDidChange {
     [super adjustedContentInsetDidChange];
-    NSLog(@"AdjustedContentInsetDidChange top %f offset %f", self.adjustedContentInset.top, self.contentOffset.y);
-    self.contentOffset = CGPointMake(0, -self.adjustedContentInset.top);
+    if (self.adjustedContentInset.top != self.currentTopInset) {
+        NSLog(@"AdjustedContentInsetDidChange top %f offset %f", self.adjustedContentInset.top, self.contentOffset.y);
+	self.currentTopInset = self.adjustedContentInset.top;
+        self.contentOffset = CGPointMake(0, -self.adjustedContentInset.top);
+    }
 }
 
 - (void)layoutSubviews {
