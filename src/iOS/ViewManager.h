@@ -27,7 +27,7 @@ typedef enum {
 - (void)reshapeTable:(int)value;
 - (void)stop;
 - (void)switchStyle:(StyleSelector)selector;
-
+- (BOOL)isViewVisible;
 @property (nonatomic, assign) NSInteger viewId; // don't use id as it is reserved word in objective-c
 @property (nonatomic, strong) id view;
 @property (nonatomic, strong) id containerView;

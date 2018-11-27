@@ -578,4 +578,13 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
     }
 }
 
+- (BOOL)isViewVisible {
+    if ([self.view isKindOfClass:UIView.class]) {
+        UIView * view = (UIView *)self.view;
+        return !view.hidden;
+    } else {
+        return NO;
+    }
+}
+
 @end
