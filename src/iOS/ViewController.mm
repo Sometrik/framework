@@ -2279,6 +2279,14 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
     [self.topViewController createWebBrowserWithUrl:urlString];
 }
 
+#pragma mark - UISearchBarDelegate
+
+- (void)searchBarSearchButtonClicked:(UISearchBar *)sender
+{
+    int viewId = (int)sender.tag;
+    [self sendTextValue:viewId value:sender.text];      
+}
+
 - (void)updateSafeArea
 {
     BOOL has_navbar = [self.topViewController isNavBarVisible];
