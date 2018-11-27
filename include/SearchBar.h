@@ -20,12 +20,18 @@ class SearchBar : public Element {
   }
 
   void onValueEvent(ValueEvent & ev) override {
-#if 0
-    notify();
+    value = ev.getTextValue();
+    notify(value);
     CommandEvent ev2(getId(), ev.getValue(), ev.getValue2());
     ev2.dispatch(*this);
     ev.setHandled(true);
-#endif
+  }
+
+  const std::string & getValue() const { return value; }
+
+  void clear() override {
+    value.clear();
+    Element::clear();
   }
 
  protected:
@@ -33,6 +39,9 @@ class SearchBar : public Element {
     Command c(Command::CREATE_SEARCHBAR, getParentInternalId(), getInternalId());
     sendCommand(c);
   }
+
+ private:
+  std::string value;
 };
 
 #endif
