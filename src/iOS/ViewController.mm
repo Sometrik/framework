@@ -755,7 +755,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
     return YES;
 }
 
-- (void)createNavigationBar:(int)viewId parentId:(int)parentId title:(NSString *)title subtitle:(NSString *)subtitle hasBackButton:(BOOL)hasBackButton
+- (void)createNavigationBar:(int)viewId parentId:(int)parentId title:(NSString *)title subtitle:(NSString *)subtitle hasBackButton:(BOOL)hasBackButton hasSaveButton:(BOOL)hasSaveButton
 {
     // Create navigation bar with a button for opening side menu
     FWNavigationBar *navBar = [[FWNavigationBar alloc] init];
@@ -832,13 +832,20 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
     }
     menuButton.tag = viewId;
     navBar.navItem.leftBarButtonItem = menuButton;
- 
-    UIImage *image2 = [self.imageCache loadIcon:@"icons_icon-post.png"];
-    if (image2 != nil) {
-        UIBarButtonItem *composeButton = [[UIBarButtonItem alloc] initWithImage:image2 style:UIBarButtonItemStylePlain target:self action:@selector(composeButtonTapped:)];
-	composeButton.tag = viewId;
-        navBar.navItem.rightBarButtonItem = composeButton;
+
+    UIBarButtonItem *rightButton;
+
+    if (hasSaveButton) {
+        rightButton = [[UIBarButtonItem alloc] initWithTitle:@"Save" style:UIBarButtonItemStylePlain target:self action:@selector(saveButtonTapped:)];
+    } else {
+        UIImage *image2 = [self.imageCache loadIcon:@"icons_icon-post.png"];
+        if (image2 != nil) {
+            rightButton = [[UIBarButtonItem alloc] initWithImage:image2 style:UIBarButtonItemStylePlain target:self action:@selector(composeButtonTapped:)];
+	    rightButton.tag = viewId;
+        }
     }
+    rightButton.tag = viewId;
+    navBar.navItem.rightBarButtonItem = rightButton;
 
     [navBar setItems:@[navBar.navItem]];
         
@@ -884,6 +891,11 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
 - (IBAction)backButtonTapped:(UIBarButtonItem *)sender
 {
     mainThread->sendCommandEvent((int)sender.tag, FW_ID_BACK);
+}
+
+- (IBAction)saveButtonTapped:(UIBarButtonItem *)sender
+{
+    mainThread->sendCommandEvent((int)sender.tag, FW_ID_SAVE);
 }
 
 - (void)createSearchBar:(int)viewId parentId:(int)parentId
@@ -1910,7 +1922,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
             break;
         
         case CREATE_ACTIONBAR: {
-            [self createNavigationBar:command.childInternalId parentId:command.internalId title:command.textValue subtitle:command.textValue2 hasBackButton:(command.flags & 1)];
+            [self createNavigationBar:command.childInternalId parentId:command.internalId title:command.textValue subtitle:command.textValue2 hasBackButton:(command.flags & 1) hasSaveButton:(command.flags & 2)];
         }
             break;
 
