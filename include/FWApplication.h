@@ -69,6 +69,12 @@ public:
     sendCommand(c);
   }
 
+  void showNetworkActivity(bool t) {
+    Command c(Command::SHOW_NETWORK_ACTIVITY, getInternalId());
+    c.setValue(t ? 1 : 0);
+    sendCommand(c);
+  }
+
   bool isDebugModeEnabled() const { return debug_mode_enabled; }
   void setDebugModeEnabled(bool t) { debug_mode_enabled = t; }
 

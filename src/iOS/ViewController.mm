@@ -2154,6 +2154,9 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
         case SELECT_FROM_GALLERY:
             [self createImagePicker];
             break;
+	case SHOW_NETWORK_ACTIVITY:
+	    [UIApplication sharedApplication].networkActivityIndicatorVisible = command.value != 0;
+	    break;
         }
 	}
 	@catch (NSException *e) {

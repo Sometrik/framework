@@ -144,7 +144,8 @@ public class NativeCommand {
 
     // Other
     SHARE_LINK,
-    SELECT_FROM_GALLERY
+    SELECT_FROM_GALLERY,
+    SHOW_NETWORK_ACTIVITY
   }
 
   public NativeCommand(FrameWork frame, int messageTypeId, int internalId, int childInternalId, int value, byte[] textValue, byte[] textValue2, int flags, int row, int column, int sheet, int width, int height) {

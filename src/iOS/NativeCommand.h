@@ -78,7 +78,8 @@ typedef enum {
 
     // Other
     SHARE_LINK,
-    SELECT_FROM_GALLERY
+    SELECT_FROM_GALLERY,
+    SHOW_NETWORK_ACTIVITY
 } CommandType;
 
 @interface NativeCommand : NSObject
