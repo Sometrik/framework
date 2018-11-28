@@ -2296,10 +2296,10 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
 
 #pragma mark - UISearchBarDelegate
 
-- (void)searchBarSearchButtonClicked:(UISearchBar *)sender
+- (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar
 {
-    int viewId = (int)sender.tag;
-    [self sendTextValue:viewId value:sender.text];      
+    [self sendTextValue:(int)searchBar.tag value:searchBar.text];
+    [searchBar resignFirstResponder];
 }
 
 - (void)updateSafeArea

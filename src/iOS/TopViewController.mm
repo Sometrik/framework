@@ -145,6 +145,7 @@
 - (void)showSearchBar:(UISearchBar *)searchBar
 {
     if (self.visibleSearchBar != nil) {
+	[self.visibleSearchBar resignFirstResponder];
 	self.visibleSearchBar.hidden = YES;
     }
     self.visibleSearchBar = searchBar;
