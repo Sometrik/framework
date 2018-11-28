@@ -157,6 +157,12 @@ class Element : public EventHandler {
   void showToast(const std::string & message, int duration = 0);
   void launchBrowser(const std::string & input_url);
 
+  void showNetworkActivity(bool t) {
+    Command c(Command::SHOW_NETWORK_ACTIVITY, getInternalId());
+    c.setValue(t ? 1 : 0);
+    sendCommand(c);
+  }
+
   Element * getParent() { return parent; }
   const Element * getParent() const { return parent; }
   void setParent(Element * _parent) { parent = _parent; }
