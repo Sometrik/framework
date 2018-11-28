@@ -47,7 +47,6 @@ class Button : public Element {
   bool call(int i) override { return call(); }
   bool call(const std::string & s) override { return call(); }
 
-  int linkedView = 0;
   std::string getLabel() { return label; }
 
 protected:
