@@ -7,7 +7,7 @@ class ScrollChangedEvent : public Event {
 public:
  ScrollChangedEvent(int _scroll_pos, int _scroll_rem, int _height)
    : scroll_pos(_scroll_pos), scroll_rem(_scroll_rem), height(_height) {
-    setTTL(1);
+    setTTL(2);
   }
 
   Event * dup() const override { return new ScrollChangedEvent(*this); }
