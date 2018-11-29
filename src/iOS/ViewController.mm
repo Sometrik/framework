@@ -141,7 +141,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
 - (UIBarPosition)positionForBar:(id<UIBarPositioning>)bar {
     if ([bar isKindOfClass:UINavigationBar.class]) {
 	return UIBarPositionTopAttached;
-    } else if ([bar isKindOfClass:UITabBar.class]) {
+    } else if (0 && [bar isKindOfClass:UITabBar.class]) {
 	return UIBarPositionBottom;
     } else {
 	return UIBarPositionAny;
