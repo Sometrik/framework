@@ -8,6 +8,7 @@
 #include <Mutex.h>
 
 #include <unordered_map>
+#include <unordered_set>
 
 class FWApplication;
 class PlatformThread;
@@ -158,9 +159,21 @@ class Element : public EventHandler {
   void launchBrowser(const std::string & input_url);
 
   void showNetworkActivity(bool t) {
-    Command c(Command::SHOW_NETWORK_ACTIVITY, getInternalId());
-    c.setValue(t ? 1 : 0);
-    sendCommand(c);
+    MutexLocker m(mutex);
+    bool update = false;
+    if (t) {
+      if (network_activity.empty()) update = true;
+      network_activity.insert(getInternalId());      
+    } else if (!network_activity.empty()) {
+      network_activity.remove(getInternalId());
+      if (network_activity.empty()) update = true;
+    }
+    
+    if (update) {
+      Command c(Command::SHOW_NETWORK_ACTIVITY, getInternalId());
+      c.setValue(network_activity.empty() ? 0 : 1);
+      sendCommand(c);
+    }
   }
 
   Element * getParent() { return parent; }
@@ -248,6 +261,7 @@ class Element : public EventHandler {
   bool is_content_initialized = false;
 
   static std::unordered_map<int, Element *> registered_elements;
+  static std::unordered_set<int> network_activity;
   static Mutex mutex;
 };
 

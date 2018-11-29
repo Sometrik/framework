@@ -10,6 +10,7 @@
 using namespace std;
 
 std::unordered_map<int, Element *> Element::registered_elements;
+std::unordered_set<int> Element::network_activity;
 Mutex Element::mutex;
 
 Element::~Element() {
