@@ -648,23 +648,26 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
             
 	    if (scrollView == self.pageView) {
                 // set selected item for all tabbars
-                [self updateTabBars:page];
+                [self updateTabBars:scrollView page:page];
             }
 	    [self sendVisibilityUpdate:fwScrollView.tag];
         }
     }
 }
 
-- (void)updateTabBars:(NSInteger)page
+- (void)updateTabBars:(UIView *)view page:(NSInteger)page
 {
-    for (NSString *key in self.viewsDictionary.allKeys) {
-        ViewManager *viewManager = [self.viewsDictionary objectForKey:key];
-        if ([viewManager.view isKindOfClass:UITabBar.class]) {
-            UITabBar *tabBar = (UITabBar *)viewManager.view;
+    while (view != nil) {
+        ViewManager * viewManager = [self getViewManager:view.tag];
+	if (viewManager != nil && viewManager.tabBar != nil) {
+            UITabBar *tabBar = viewManager.tabBar;
             if (page <= tabBar.items.count) {
                 [tabBar setSelectedItem:tabBar.items[page]];
             }
-        }
+	    break;
+        } else {
+	    view = view.superview;
+	}
     }
 }
 
@@ -2084,7 +2087,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
                         if (scrollView.isPagingEnabled) {
 			    [scrollView showPage:command.value animated:NO];
 			    if (scrollView == self.pageView) {
-                                [self updateTabBars:command.value];
+                                [self updateTabBars:scrollView page:command.value];
 				[self sendVisibilityUpdate:scrollView.tag];
 			    }
                         }
