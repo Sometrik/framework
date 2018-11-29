@@ -165,7 +165,7 @@ class Element : public EventHandler {
       if (network_activity.empty()) update = true;
       network_activity.insert(getInternalId());      
     } else if (!network_activity.empty()) {
-      network_activity.remove(getInternalId());
+      network_activity.erase(getInternalId());
       if (network_activity.empty()) update = true;
     }
     
