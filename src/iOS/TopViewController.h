@@ -13,6 +13,7 @@
 - (BOOL)isSearchBarVisible;
 - (BOOL)isKeyboardVisible;
 - (NSInteger)getKeyboardHeight;
+- (void) showToast:(NSString *)text duration:(NSInteger)duration;
 
 @property (nonatomic, strong) ImageCache * imageCache;
 @property (nonatomic, strong) UITabBar * visibleTabBar;

@@ -6,6 +6,7 @@
 @property (nonatomic, strong) NSURL *currentURL;
 @property (nonatomic, strong) WKWebView *webView;
 @property (nonatomic, assign) NSInteger keyboardHeight;
+@property (nonatomic, assign) UILabel * currentToast;
 @end
 
 @implementation TopViewController
@@ -14,6 +15,7 @@
     [super viewDidLoad];
 
     self.keyboardHeight = 0;
+    self.currentToast = nil;
 }
 
 - (void)viewWillTransitionToSize: (CGSize)size withTransitionCoordinator:(id)coordinator
@@ -175,6 +177,31 @@
 
 - (NSInteger)getKeyboardHeight {
     return self.keyboardHeight;
+}
+
+- (void) showToast:(NSString *)text duration:(NSInteger)duration {
+    if (self.currentToast == nil) {
+	UILabel* label = [[UILabel alloc] initWithFrame:CGRectZero];
+	label.backgroundColor = [UIColor blackColor];
+	label.textColor = [UIColor whiteColor];
+	label.layer.cornerRadius = 3;
+	[label sizeToFit];
+	label.center = self.view.center;
+	[self.view addSubview:label];
+
+        self.currentToast = label;
+    } else {
+        self.currentToast.hidden = NO;        
+    }
+
+    self.currentToast.alpha = 0.99f;
+    self.currentToast.text = text;
+
+    [UIView animateWithDuration:0.3 delay:1 options:0 animations:^{
+	self.currentToast.alpha = 0;
+    } completion:^(BOOL finished) {
+	self.currentToast.hidden = YES;
+    }];
 }
 
 #pragma mark - WKNavigationDelegate

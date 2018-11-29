@@ -1954,6 +1954,11 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
         }
             break;
 
+	case CREATE_TOAST: {
+	    [self.topViewController showToast:command.textValue duration:command.value];
+	}
+	    break;
+	    
         case CREATE_PAGE_CONTROL: {
             [self createPageControlWithId:command.childInternalId parentId:command.internalId numPages:command.value];
         }
