@@ -185,8 +185,6 @@
 	label.backgroundColor = [UIColor blackColor];
 	label.textColor = [UIColor whiteColor];
 	label.layer.cornerRadius = 3;
-	[label sizeToFit];
-	label.center = self.view.center;
 	[self.view addSubview:label];
 
         self.currentToast = label;
@@ -196,6 +194,8 @@
 
     self.currentToast.alpha = 0.99f;
     self.currentToast.text = text;
+    [self.currentToast sizeToFit];
+    self.currentToast.center = self.view.center;
 
     [UIView animateWithDuration:0.3 delay:1 options:0 animations:^{
 	self.currentToast.alpha = 0;
