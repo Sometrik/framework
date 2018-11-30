@@ -2,7 +2,7 @@
 
 #import <WebKit/WebKit.h>
 
-@interface TopViewController () <WKUIDelegate, WKNavigationDelegate>
+@interface TopViewController () <WKUIDelegate, WKNavigationDelegate, UIBarPositioningDelegate, UINavigationBarDelegate>
 @property (nonatomic, strong) NSURL *currentURL;
 @property (nonatomic, strong) WKWebView *webView;
 @property (nonatomic, assign) NSInteger keyboardHeight;
@@ -47,11 +47,12 @@
         NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:self.webView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self.webView.superview attribute:NSLayoutAttributeBottom multiplier:1.0f constant:0];
         [self.webView.superview addConstraints:@[topConstraint, leftConstraint, rightConstraint, bottomConstraint]];
 
-        UINavigationBar *navBar = [[UINavigationBar alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(self.view.frame), navBarHeight)];
-	navBar.tintColor = [UIColor blackColor];
+        UINavigationBar *navBar = [[UINavigationBar alloc] init];
+        navBar.tintColor = [UIColor blackColor];
         navBar.barTintColor = UIColor.whiteColor;
         navBar.translucent = YES;
         navBar.barStyle = UIBarStyleDefault;
+        navBar.delegate = self;
 
         CGFloat width = self.view.frame.size.width * 0.6; // just some width related to width of the view
         
@@ -84,14 +85,13 @@
         
         [navBar setItems:@[navItem]];
 
+        [self.webView addSubview:navBar];
+
 	NSLayoutConstraint *topConstraint2 = [NSLayoutConstraint constraintWithItem:navBar attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:navBar.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:statusBarHeight];
 	NSLayoutConstraint *leftConstraint2 = [NSLayoutConstraint constraintWithItem:navBar attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:navBar.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
 	NSLayoutConstraint *rightConstraint2 = [NSLayoutConstraint constraintWithItem:navBar attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:navBar.superview attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
 	[navBar.superview addConstraints:@[topConstraint2, leftConstraint2, rightConstraint2]];
-	// self.statusBarTopConstraint = topConstraint2;
-
-        [self.webView addSubview:navBar];
-        
+	// self.statusBarTopConstraint = topConstraint2;        
     }
     [self.webView.superview bringSubviewToFront:self.webView];
     
@@ -202,6 +202,10 @@
     } completion:^(BOOL finished) {
 	self.currentToast.hidden = YES;
     }];
+}
+
+- (UIBarPosition)positionForBar:(id<UIBarPositioning>)bar {
+    return UIBarPositionTopAttached;
 }
 
 #pragma mark - WKNavigationDelegate
