@@ -2,11 +2,13 @@
 
 #import <WebKit/WebKit.h>
 
+#import "PaddedLabel.h"
+
 @interface TopViewController () <WKUIDelegate, WKNavigationDelegate, UIBarPositioningDelegate, UINavigationBarDelegate>
 @property (nonatomic, strong) NSURL *currentURL;
 @property (nonatomic, strong) WKWebView *webView;
 @property (nonatomic, assign) NSInteger keyboardHeight;
-@property (nonatomic, assign) UILabel * currentToast;
+@property (nonatomic, assign) PaddedLabel * currentToast;
 @end
 
 @implementation TopViewController
@@ -53,6 +55,7 @@
         navBar.translucent = YES;
         navBar.barStyle = UIBarStyleDefault;
         navBar.delegate = self;
+        navBar.translatesAutoresizingMaskIntoConstraints = false;        
 
         CGFloat width = self.view.frame.size.width * 0.6; // just some width related to width of the view
         
@@ -181,15 +184,19 @@
 
 - (void) showToast:(NSString *)text duration:(NSInteger)duration {
     if (self.currentToast == nil) {
-	UILabel* label = [[UILabel alloc] initWithFrame:CGRectZero];
-	label.backgroundColor = [UIColor blackColor];
+	PaddedLabel* label = [[PaddedLabel alloc] init];
+	label.backgroundColor = [UIColor colorWithRed:0.87 green:0.16 blue:0.18 alpha:1.0];
 	label.textColor = [UIColor whiteColor];
 	label.layer.cornerRadius = 3;
+        label.edgeInsets = UIEdgeInsetsMake(5, 5, 5, 5);
+	label.numberOfLines = 0; // as many lines as needed
+	label.lineBreakMode = NSLineBreakByWordWrapping;
+	label.preferredMaxLayoutWidth = self.view.frame.size.width;
 	[self.view addSubview:label];
 
         self.currentToast = label;
     } else {
-        self.currentToast.hidden = NO;        
+        self.currentToast.hidden = NO;
     }
 
     self.currentToast.alpha = 0.99f;
