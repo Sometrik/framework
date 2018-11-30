@@ -45,10 +45,10 @@ extern FWApplication * applicationMain();
 @property (nonatomic, strong) FWPicker * currentPicker;
 @property (nonatomic, assign) int currentPickerSelection;
 @property (nonatomic, strong) UIView * currentPickerHolder;
-@property (nonatomic, strong) NSLayoutConstraint *currentPickerHolderTopConstraint;
-@property (nonatomic, strong) NSLayoutConstraint *currentPickerHolderLeftConstraint;
-@property (nonatomic, strong) NSLayoutConstraint *currentPickerHolderRightConstraint;
-@property (nonatomic, strong) NSLayoutConstraint *currentPickerHolderBottomConstraint;
+@property (nonatomic, strong) NSLayoutConstraint *currentPickerTopConstraint;
+@property (nonatomic, strong) NSLayoutConstraint *currentPickerLeftConstraint;
+@property (nonatomic, strong) NSLayoutConstraint *currentPickerRightConstraint;
+@property (nonatomic, strong) NSLayoutConstraint *currentPickerBottomConstraint;
 @property (nonatomic, strong) NSLayoutConstraint *activeViewRightConstraint;
 @property (nonatomic, strong) NSLayoutConstraint *activeViewLeftConstraint;
 @property (nonatomic, strong) UIScreenEdgePanGestureRecognizer *panEdgeGestureRecognizer;
@@ -1244,28 +1244,28 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
     pickerHolder.translatesAutoresizingMaskIntoConstraints = false;
     [self.topViewController.view addSubview:pickerHolder];
 
-    self.currentPickerHolderTopConstraint = [NSLayoutConstraint constraintWithItem:pickerHolder attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:pickerHolder.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
-    self.currentPickerHolderLeftConstraint = [NSLayoutConstraint constraintWithItem:pickerHolder attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:pickerHolder.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
-    self.currentPickerHolderRightConstraint = [NSLayoutConstraint constraintWithItem:pickerHolder attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:pickerHolder.superview attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
-    self.currentPickerHolderBottomConstraint = [NSLayoutConstraint constraintWithItem:pickerHolder attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:pickerHolder.superview attribute:NSLayoutAttributeBottom multiplier:1.0f constant:0];
-    [pickerHolder.superview addConstraints:@[self.currentPickerHolderTopConstraint, self.currentPickerHolderLeftConstraint, self.currentPickerHolderRightConstraint, self.currentPickerHolderBottomConstraint]];
+    NSLayoutConstraint * pickerHolderTopConstraint = [NSLayoutConstraint constraintWithItem:pickerHolder attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:pickerHolder.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
+    NSLayoutConstraint * pickerHolderLeftConstraint = [NSLayoutConstraint constraintWithItem:pickerHolder attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:pickerHolder.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
+    NSLayoutConstraint * pickerHolderRightConstraint = [NSLayoutConstraint constraintWithItem:pickerHolder attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:pickerHolder.superview attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
+    NSLayoutConstraint * pickerHolderBottomConstraint = [NSLayoutConstraint constraintWithItem:pickerHolder attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:pickerHolder.superview attribute:NSLayoutAttributeBottom multiplier:1.0f constant:0];
+    [pickerHolder.superview addConstraints:@[pickerHolderTopConstraint, pickerHolderLeftConstraint, pickerHolderRightConstraint, pickerHolderBottomConstraint]];
 
     self.currentPickerHolder = pickerHolder;
 
     UIView * pickerBackground = [self createBackgroundOverlay:pickerHolder];
     pickerBackground.tag = self.currentPicker.tag;
-    pickerBackground.alpha = backgroundOverlayViewAlpha;
+    pickerBackground.alpha = 0;
 
     FrameLayoutView *layout = [[FrameLayoutView alloc] init];
     layout.layoutMargins = UIEdgeInsetsMake(0, 0, 0, 0);
     layout.layer.backgroundColor = UIColor.whiteColor.CGColor;
     [pickerHolder addSubview:layout];
 
-    NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:layout attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:layout.superview attribute:NSLayoutAttributeBottom multiplier:0.5f constant:0];
-    NSLayoutConstraint *leftConstraint = [NSLayoutConstraint constraintWithItem:layout attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:layout.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
-    NSLayoutConstraint *rightConstraint = [NSLayoutConstraint constraintWithItem:layout attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:layout.superview attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
-    NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:layout attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:layout.superview attribute:NSLayoutAttributeBottom multiplier:1.0f constant:0];
-    [layout.superview addConstraints:@[topConstraint, leftConstraint, rightConstraint, bottomConstraint]];
+    self.currentPickerTopConstraint = [NSLayoutConstraint constraintWithItem:layout attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:layout.superview attribute:NSLayoutAttributeBottom multiplier:0.5f constant:0];
+    self.currentPickerLeftConstraint = [NSLayoutConstraint constraintWithItem:layout attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:layout.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
+    self.currentPickerRightConstraint = [NSLayoutConstraint constraintWithItem:layout attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:layout.superview attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
+    self.currentPickerBottomConstraint = [NSLayoutConstraint constraintWithItem:layout attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:layout.superview attribute:NSLayoutAttributeBottom multiplier:1.0f constant:0];
+    [layout.superview addConstraints:@[self.currentPickerTopConstraint, self.currentPickerLeftConstraint, self.currentPickerRightConstraint, self.currentPickerBottomConstraint]];
     
     LinearLayoutView *layout2 = [[LinearLayoutView alloc] init];
     layout2.orientation = LinearLayoutViewOrientationVertical;
@@ -1291,21 +1291,22 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
     }
     
     // Animations
-    CGFloat topConstraintConstantFinal = self.currentPickerHolderTopConstraint.constant;
-    CGFloat leftConstraintConstantFinal = self.currentPickerHolderLeftConstraint.constant;
-    CGFloat rightConstraintConstantFinal = self.currentPickerHolderRightConstraint.constant;
-    CGFloat bottomConstraintConstantFinal = self.currentPickerHolderBottomConstraint.constant;
+    CGFloat topConstraintConstantFinal = self.currentPickerTopConstraint.constant;
+    CGFloat leftConstraintConstantFinal = self.currentPickerLeftConstraint.constant;
+    CGFloat rightConstraintConstantFinal = self.currentPickerRightConstraint.constant;
+    CGFloat bottomConstraintConstantFinal = self.currentPickerBottomConstraint.constant;
     
     [pickerHolder layoutIfNeeded];
     
-    self.currentPickerHolderLeftConstraint.constant = self.view.frame.size.width;
-    self.currentPickerHolderRightConstraint.constant = self.view.frame.size.width + self.currentPickerHolderRightConstraint.constant;
+    self.currentPickerLeftConstraint.constant = self.view.frame.size.width;
+    self.currentPickerRightConstraint.constant = self.view.frame.size.width + self.currentPickerRightConstraint.constant;
     
-    [pickerHolder.superview addConstraints:@[self.currentPickerHolderTopConstraint, self.currentPickerHolderLeftConstraint, self.currentPickerHolderRightConstraint, self.currentPickerHolderBottomConstraint]];
+    [pickerHolder.superview addConstraints:@[self.currentPickerdTopConstraint, self.currentPickerLeftConstraint, self.currentPickerRightConstraint, self.currentPickerBottomConstraint]];
     [pickerHolder.superview layoutIfNeeded];
     [UIView animateWithDuration:animationDuration/1.5 delay:0 usingSpringWithDamping:1 initialSpringVelocity:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
         self.currentPickerHolderLeftConstraint.constant = leftConstraintConstantFinal;
         self.currentPickerHolderRightConstraint.constant = rightConstraintConstantFinal;
+	pickerBackground.alpha = backgroundOverlayViewAlpha;
         [pickerHolder.superview layoutIfNeeded];
     } completion:^(BOOL finished) {
         [pickerHolder layoutIfNeeded];
