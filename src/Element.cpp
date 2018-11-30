@@ -187,7 +187,7 @@ Element::reorderChildren(Element & child, unsigned int new_position) {
 
 void
 Element::showToast(const std::string & message, int duration) {
-  Command c(Command::CREATE_TOAST, getParentInternalId(), getInternalId());
+  Command c(Command::CREATE_TOAST, getInternalId());
   c.setTextValue(message);
   c.setValue(duration);
   sendCommand(c);
