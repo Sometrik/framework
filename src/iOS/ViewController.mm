@@ -1298,14 +1298,14 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
     
     [pickerHolder layoutIfNeeded];
     
-    self.currentPickerLeftConstraint.constant = self.view.frame.size.width;
-    self.currentPickerRightConstraint.constant = self.view.frame.size.width + self.currentPickerRightConstraint.constant;
+    self.currentPickerTopConstraint.constant = self.view.frame.size.height;
+    self.currentPickerBottomConstraint.constant = self.view.frame.size.height;
     
-    [pickerHolder.superview addConstraints:@[self.currentPickerdTopConstraint, self.currentPickerLeftConstraint, self.currentPickerRightConstraint, self.currentPickerBottomConstraint]];
+    [pickerHolder.superview addConstraints:@[self.currentPickerTopConstraint, self.currentPickerLeftConstraint, self.currentPickerRightConstraint, self.currentPickerBottomConstraint]];
     [pickerHolder.superview layoutIfNeeded];
     [UIView animateWithDuration:animationDuration/1.5 delay:0 usingSpringWithDamping:1 initialSpringVelocity:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
-        self.currentPickerHolderLeftConstraint.constant = leftConstraintConstantFinal;
-        self.currentPickerHolderRightConstraint.constant = rightConstraintConstantFinal;
+        self.currentPickerTopConstraint.constant = topConstraintConstantFinal;
+        self.currentPickerBottomConstraint.constant = bottomConstraintConstantFinal;
 	pickerBackground.alpha = backgroundOverlayViewAlpha;
         [pickerHolder.superview layoutIfNeeded];
     } completion:^(BOOL finished) {
@@ -1320,10 +1320,10 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
     [self sendIntValue:self.currentPicker.tag value:row];
     [self.currentPicker setSelection:row];
     [self.currentPickerHolder layoutIfNeeded];
-    self.currentPickerHolderTopConstraint.constant = 0.0;
-    self.currentPickerHolderLeftConstraint.constant = self.view.frame.size.width;
-    self.currentPickerHolderRightConstraint.constant = self.view.frame.size.width;
-    self.currentPickerHolderBottomConstraint.constant = 0.0;
+    self.currentPickerTopConstraint.constant = 0.0;
+    self.currentPickerLeftConstraint.constant = self.view.frame.size.width;
+    self.currentPickerRightConstraint.constant = self.view.frame.size.width;
+    self.currentPickerBottomConstraint.constant = 0.0;
     [UIView animateWithDuration:animationDuration/1.5 delay:0 usingSpringWithDamping:1 initialSpringVelocity:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
         [self.currentPickerHolder.superview layoutIfNeeded];
     } completion:^(BOOL finished) {
@@ -1338,10 +1338,10 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
 - (void)cancelPicker
 {
     [self.currentPickerHolder layoutIfNeeded];
-    self.currentPickerHolderTopConstraint.constant = 0.0;
-    self.currentPickerHolderLeftConstraint.constant = self.view.frame.size.width;
-    self.currentPickerHolderRightConstraint.constant = self.view.frame.size.width;
-    self.currentPickerHolderBottomConstraint.constant = 0.0;
+    self.currentPickerTopConstraint.constant = 0.0;
+    self.currentPickerLeftConstraint.constant = self.view.frame.size.width;
+    self.currentPickerRightConstraint.constant = self.view.frame.size.width;
+    self.currentPickerBottomConstraint.constant = 0.0;
     [UIView animateWithDuration:animationDuration/1.5 delay:0 usingSpringWithDamping:1 initialSpringVelocity:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
         [self.currentPickerHolder.superview layoutIfNeeded];
     } completion:^(BOOL finished) {
