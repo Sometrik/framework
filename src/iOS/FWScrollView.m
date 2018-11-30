@@ -73,11 +73,10 @@
             for (LayoutParams *item in child.items) {
                 if (item.view.hidden) continue;
                 
-                height += item.margin.top + item.margin.bottom;
                 if (item.fixedHeight > 0) {
-                    height += item.fixedHeight;
+		    height += item.fixedHeight + item.margin.top + item.margin.bottom;
                 } else {
-                    height += [self calcIntrinsicHeight:item.view] + item.padding.top + item.padding.bottom;
+		    height += [self calcIntrinsicHeight:item.view] + item.padding.top + item.padding.bottom + item.margin.top + item.margin.bottom;
                 }
             }
         } else {
