@@ -190,6 +190,7 @@ class Element : public EventHandler {
 
   void removeChildren();
   void removeChild(Element * c);
+  void removeFromParent();
 
   int createTimer(int timeout_ms);
   

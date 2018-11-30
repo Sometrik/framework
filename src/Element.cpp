@@ -257,6 +257,13 @@ Element::removeChild(Element * child) {
   }
 }
 
+void
+Element::removeFromParent() {
+  if (parent) {
+    parent->removeChild(this);
+  }
+}
+
 int
 Element::createTimer(int timeout_ms) {
   int timer_id = getNextInternalId();
