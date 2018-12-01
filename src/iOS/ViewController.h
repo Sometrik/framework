@@ -40,7 +40,7 @@ typedef enum
 - (void)createPageControlWithId:(int)viewId parentId:(int)parentId numPages:(int)numPages;
 - (void)createPickerWithId:(int)viewId parentId:(int)parentId;
 - (void)createActionSheetWithId:(int)viewId parentId:(int)parentId title:(NSString *)title;
-- (void)createDialogWithId:(int)viewId parentId:(int)parentId title:(NSString *)title animationStyle:(AnimationStyle)style;
+- (void)createDialogWithId:(int)viewId parentId:(int)parentId title:(NSString *)title;
 - (void)createTimer:(int)viewId interval:(double)interval;
 
 - (void)setImageFromThread:(int)viewId data:(CGImageRef)data;
