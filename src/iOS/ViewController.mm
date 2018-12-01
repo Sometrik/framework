@@ -529,7 +529,6 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
     }
     label.numberOfLines = 0; // as many lines as needed
     label.lineBreakMode = NSLineBreakByWordWrapping;
-    label.translatesAutoresizingMaskIntoConstraints = false;
     label.preferredMaxLayoutWidth = self.view.frame.size.width;
     [self addView:label withId:viewId];
     [self addToParent:parentId view:label];
@@ -1390,7 +1389,6 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
 
     DialogView * dialog = [[DialogView alloc] init];
     dialog.layer.backgroundColor = [UIColor whiteColor].CGColor;
-    dialog.layer.cornerRadius = 5;
     dialog.layer.shadowColor = [UIColor blackColor].CGColor;
     dialog.layer.shadowOpacity = 1.0;
     dialog.layer.shadowRadius = 7.5;
@@ -1398,6 +1396,14 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
     dialog.clipsToBounds = YES;
     dialog.tag = viewId;
     [dialogHolder addSubview:dialog];
+
+    PaddedLabel *titleLabel = [[PaddedLabel alloc] init];
+    titleLabel.text = title;
+    
+    LayoutParams * titleItem = [LayoutParams layoutItemForView:titleLabel];
+    titleItem.fixedWidth = -1;
+    titleItem.fixedHeight = 20;
+    [dialog addItem:titleItem];
 
     NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:dialog attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:dialog.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:65];
     NSLayoutConstraint *leftConstraint = [NSLayoutConstraint constraintWithItem:dialog attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:dialog.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
@@ -1414,6 +1420,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
 
     ViewManager * viewManager = [self getViewManager:viewId];
     viewManager.containerView = dialog;
+    viewManager.layoutParams.margin.top = 20;
 
     [self.topViewController bringWebviewToFront];
 

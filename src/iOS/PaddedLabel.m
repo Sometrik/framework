@@ -10,6 +10,7 @@
         self.edgeInsets = UIEdgeInsetsMake(0, 0, 0, 0);
         self.autolink = NO;
         self.markdown = NO;
+	self.translatesAutoresizingMaskIntoConstraints = NO;
         UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTap:)];
         [self addGestureRecognizer:tapGesture];
     }
@@ -22,6 +23,7 @@
         self.edgeInsets = UIEdgeInsetsMake(0, 0, 0, 0);
         self.autolink = NO;
         self.markdown = NO;
+	self.translatesAutoresizingMaskIntoConstraints = NO;
         UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTap:)];
         [self addGestureRecognizer:tapGesture];
     }
