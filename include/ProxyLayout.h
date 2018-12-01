@@ -17,7 +17,7 @@ public:
   void clear() override {
     reset();
     content.clear();
-    removeChildren();
+    T3::removeChildren();
   }
   
   void reset() {
