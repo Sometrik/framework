@@ -9,7 +9,7 @@ typedef enum
     AnimationStyleNone = 0,
     AnimationStyleLeftToRight,
     AnimationStyleRightToLeft,
-    //AnimationStyleBottomToTop, // for some reason constraints not working with this
+    AnimationStyleBottomToTop,
     AnimationStyleTopToBottom
 } AnimationStyle;
 

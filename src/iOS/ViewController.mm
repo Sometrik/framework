@@ -1397,13 +1397,13 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
 
     ViewManager * viewManager = [self getViewManager:viewId];
     viewManager.containerView = dialog;
-    viewManager.layoutParams.margin.top = 20;
+    [viewManager setStyle:@"margin-top" value:@"20" selector:SelectorNormal];
 
     [self.topViewController bringWebviewToFront];
 
-    CGFloat leftConstraintConstantFinal = leftConstraint.constant;
-    CGFloat rightConstraintConstantFinal = rightConstraint.constant;
-    CGFloat centerYConstraintConstantFinal = centerYConstraint.constant;
+    CGFloat leftConstraintConstantFinal = dialog.leftConstraint.constant;
+    CGFloat rightConstraintConstantFinal = dialog.rightConstraint.constant;
+    CGFloat centerYConstraintConstantFinal = dialog.centerYConstraint.constant;
     
     [dialogHolder layoutIfNeeded];
     
@@ -1411,18 +1411,18 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
         case AnimationStyleNone:
             break;
         case AnimationStyleTopToBottom:
-            centerYConstraint.constant = -self.view.frame.size.height;
+            dialog.centerYConstraint.constant = -self.view.frame.size.height;
             break;
         case AnimationStyleBottomToTop:
-            topConstraint.constant = self.view.frame.size.height;
+            dialog.centerYConstraint.constant = self.view.frame.size.height;
             break;
         case AnimationStyleLeftToRight:
-            leftConstraint.constant = -self.view.frame.size.width;
-            rightConstraint.constant = -self.view.frame.size.width;
+            dialog.leftConstraint.constant = -self.view.frame.size.width;
+            dialog.rightConstraint.constant = -self.view.frame.size.width;
             break;
         case AnimationStyleRightToLeft:
-            leftConstraint.constant = self.view.frame.size.width;
-            rightConstraint.constant = self.view.frame.size.width;
+            dialog.leftConstraint.constant = self.view.frame.size.width;
+            dialog.rightConstraint.constant = self.view.frame.size.width;
             break;
         default:
             break;
@@ -1432,11 +1432,10 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
         dialogBackground.alpha = backgroundOverlayViewAlpha;
     } completion:^(BOOL finished) {
         [UIView animateWithDuration:animationDuration/1.5 delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
-                centerYConstraint.constant = centerYConstraintConstantFinal;
-                leftConstraint.constant = leftConstraintConstantFinal;
-                rightConstraint.constant = rightConstraintConstantFinal;
-            }
-            [dialogHolder layoutIfNeeded];           
+            dialog.centerYConstraint.constant = centerYConstraintConstantFinal;
+            dialog.leftConstraint.constant = leftConstraintConstantFinal;
+            dialog.rightConstraint.constant = rightConstraintConstantFinal;
+            [dialogHolder layoutIfNeeded];
         } completion:^(BOOL finished) {
             [dialog layoutIfNeeded];
         }];
@@ -1632,7 +1631,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
                     default:
                         break;
                 }
-                [dialogView.superview layoutIfNeeded];
+                [dialog.superview layoutIfNeeded];
             } completion:^(BOOL finished) {
                 NSLog(@"removing dialog %d", viewId);
                 [self sendIntValue:dialogId value:0];
@@ -1916,7 +1915,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
             break;
 
         case CREATE_DIALOG: {
-            [self createDialogWithId:command.childInternalId parentId:command.internalId title:command.textValue;
+            [self createDialogWithId:command.childInternalId parentId:command.internalId title:command.textValue];
         }
             break;
 
