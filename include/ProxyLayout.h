@@ -13,6 +13,12 @@ public:
     if (className == "ProxyLayout") return true;
     return T3::isA(className);
   }
+
+  void clear() override {
+    reset();
+    content.clear();
+    removeChildren();
+  }
   
   void reset() {
     visible_keys.clear();
