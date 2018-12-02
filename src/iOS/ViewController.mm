@@ -15,6 +15,7 @@
 #import "PaddedLabel.h"
 #import "LinearLayoutView.h"
 #import "FrameLayoutView.h"
+#import "FrameView.h"
 #import "DialogView.h"
 #import "FWScrollView.h"
 #import "FWPicker.h"
@@ -53,7 +54,6 @@ extern FWApplication * applicationMain();
 @property (nonatomic, strong) NSLayoutConstraint *activeViewLeftConstraint;
 @property (nonatomic, strong) UIScreenEdgePanGestureRecognizer *panEdgeGestureRecognizer;
 @property (nonatomic, assign) AnimationStyle pickerAnimationStyle;
-@property (nonatomic, strong) NSMutableDictionary *frameViewConstraints; // constraints saved (for animation purposes), viewId is the key.
 @property (nonatomic, assign) AnimationStyle dialogAnimationStyle;
 @property (nonatomic, assign) BOOL sideMenuSwiped;
 @property (nonatomic, strong) NSDate *sideMenuPanStartedDate;
@@ -409,14 +409,6 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
     return _viewsDictionary;
 }
 
-- (NSMutableDictionary *)frameViewConstraints
-{
-    if (!_frameViewConstraints) {
-        _frameViewConstraints = [[NSMutableDictionary alloc] init];
-    }
-    return _frameViewConstraints;
-}
-
 - (void)createFrameViewWithId:(int)viewId parentId:(int)parentId
 {
     ViewManager * parentViewManager = [self getViewManager:parentId];
@@ -425,7 +417,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
         return;
     }
 
-    FrameLayoutView *view = [[FrameLayoutView alloc] init];
+    FrameView *view = [[FrameView alloc] init];
     view.tag = viewId;
 
     [self addView:view withId:viewId];
@@ -439,21 +431,11 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
         view.hidden = YES;
     }
     
-    NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
-    NSLayoutConstraint *leftConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
-    NSLayoutConstraint *rightConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
-    NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeBottom multiplier:1.0f constant:0];
-    NSArray *constraintArray = @[leftConstraint, rightConstraint];
-    @try {
-        [self.frameViewConstraints setObject:constraintArray forKey:[NSString stringWithFormat:@"%d", viewId]];
-    }
-    @catch (NSException *e) {
-        NSLog(@"exception: %@", e);
-        @throw;
-    }
-    @finally {
-        [view.superview addConstraints:@[topConstraint, leftConstraint, rightConstraint, bottomConstraint]];        
-    }
+    view.topConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
+    view.leftConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
+    view.rightConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
+    view.bottomConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeBottom multiplier:1.0f constant:0];
+    [view.superview addConstraints:@[view.topConstraint, view.leftConstraint, view.rightConstraint, view.bottomConstraint]];        
 
     if (parentId != 1) {
 	// add swiping and panning
@@ -1445,16 +1427,14 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
 - (void)switchView:(int)oldViewId newView:(int)newViewId direction:(BOOL)direction
 {
     NSLog(@"switchView: %d => %d", oldViewId, newViewId);
-    NSLayoutConstraint *newViewLeftConstraint, *newViewRightConstraint, *oldViewLeftConstraint, *oldViewRightConstraint;
-    UIView *oldView = [self viewForId:oldViewId];
-    UIView *newView = [self viewForId:newViewId];    
+    FrameView *oldView = (FrameView *)[self viewForId:oldViewId];
+    FrameView *newView = (FrameView *)[self viewForId:newViewId];    
     
-    NSArray *newViewConstraints = [self.frameViewConstraints objectForKey:[NSString stringWithFormat:@"%d", newViewId]];
-    NSArray *oldViewConstraints = [self.frameViewConstraints objectForKey:[NSString stringWithFormat:@"%d", oldViewId]];
-    newViewLeftConstraint = (NSLayoutConstraint *)newViewConstraints[0];
-    newViewRightConstraint = (NSLayoutConstraint *)newViewConstraints[1];
-    oldViewLeftConstraint = (NSLayoutConstraint *)oldViewConstraints[0];
-    oldViewRightConstraint = (NSLayoutConstraint *)oldViewConstraints[1];
+    NSLayoutConstraint * newViewLeftConstraint = newView.leftContraint;
+    NSLayoutConstraint * newViewRightConstraint = newView.rightConstraint;
+    NSLayoutConstraint * oldViewLeftConstraint = oldView.leftConstraint;
+    NSLayoutConstraint * oldViewRightConstraint = oldView.rightConstraint;
+    
     CGFloat newViewLeftConstraintConstantFinal = newViewLeftConstraint.constant;
     CGFloat newViewRightConstraintConstantFinal = newViewRightConstraint.constant;
     CGFloat oldViewLeftConstraintConstantFinal = oldViewLeftConstraint.constant;
@@ -1678,7 +1658,6 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
         }
         [self.viewsDictionary removeObjectForKey:key];
     }
-    [self.frameViewConstraints removeObjectForKey:[NSString stringWithFormat:@"%d", viewId]];
 }
 
 - (void)reorderChildWithId:(int)viewId parentId:(int)parentId newPosition:(int)position
