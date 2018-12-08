@@ -243,7 +243,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
 {
     // create backgroundoverlay view that's behind sidePanel and dialog and if clicked closes the panel
     UIView * view = [[UIView alloc] init];
-    view.backgroundColor = [UIColor colorWithRed:0.549 green:0.616 blue:0.667 alpha:1.0];
+    view.backgroundColor = [UIColor colorWithRed:0.549 green:0.616 blue:0.667 alpha:backgroundOverlayViewAlpha];
     view.translatesAutoresizingMaskIntoConstraints = false;
 
     [parentView addSubview:view];
@@ -1012,18 +1012,18 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
 
 	[self.backgroundOverlayView.superview bringSubviewToFront:self.backgroundOverlayView];
         self.backgroundOverlayView.hidden = NO;
-        self.backgroundOverlayView.alpha = backgroundOverlayViewAlpha * CGRectGetMaxX(self.sideMenuView.frame) / (CGRectGetWidth(self.view.frame) - sideMenuOpenSpaceWidth);
+        self.backgroundOverlayView.alpha = CGRectGetMaxX(self.sideMenuView.frame) / (CGRectGetWidth(self.view.frame) - sideMenuOpenSpaceWidth);
 
 	[self.sideMenuView.superview bringSubviewToFront:self.sideMenuView];
 
         if (animate) {
             [UIView animateWithDuration:animationDuration animations:^{
                 self.sideMenuView.transform = CGAffineTransformTranslate(self.sideMenuView.transform, CGRectGetWidth(self.sideMenuView.frame)-CGRectGetMaxX(self.sideMenuView.frame), 0.0);
-                self.backgroundOverlayView.alpha = backgroundOverlayViewAlpha * CGRectGetMaxX(self.sideMenuView.frame) / (CGRectGetWidth(self.view.frame) - sideMenuOpenSpaceWidth);
+                self.backgroundOverlayView.alpha = CGRectGetMaxX(self.sideMenuView.frame) / (CGRectGetWidth(self.view.frame) - sideMenuOpenSpaceWidth);
             }];
         } else {
             self.sideMenuView.transform = CGAffineTransformTranslate(self.sideMenuView.transform, CGRectGetWidth(self.sideMenuView.frame)-CGRectGetMaxX(self.sideMenuView.frame), 0.0);
-            self.backgroundOverlayView.alpha = backgroundOverlayViewAlpha * CGRectGetMaxX(self.sideMenuView.frame) / (CGRectGetWidth(self.view.frame) - sideMenuOpenSpaceWidth);
+            self.backgroundOverlayView.alpha = CGRectGetMaxX(self.sideMenuView.frame) / (CGRectGetWidth(self.view.frame) - sideMenuOpenSpaceWidth);
         }
         self.sideMenuView.hidden = NO;
     }
@@ -1038,7 +1038,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
         if (animate) {
             [UIView animateWithDuration:animationDuration animations:^{
                 self.sideMenuView.transform = CGAffineTransformTranslate(self.sideMenuView.transform, -((CGRectGetWidth(self.sideMenuView.frame)+CGRectGetMaxX(self.sideMenuView.frame))), 0.0);
-                self.backgroundOverlayView.alpha = backgroundOverlayViewAlpha * CGRectGetMaxX(self.sideMenuView.frame) / (CGRectGetWidth(self.view.frame) - sideMenuOpenSpaceWidth);
+                self.backgroundOverlayView.alpha = CGRectGetMaxX(self.sideMenuView.frame) / (CGRectGetWidth(self.view.frame) - sideMenuOpenSpaceWidth);
             } completion:^(BOOL finished) {
                 if (finished) {
                     self.sideMenuView.hidden = YES;
@@ -1074,7 +1074,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
         if (recognizer.state == UIGestureRecognizerStateBegan || recognizer.state == UIGestureRecognizerStateChanged) {
             if (touchLocation.x < CGRectGetWidth(self.view.frame)-sideMenuOpenSpaceWidth) {
                 self.sideMenuView.frame = CGRectMake(touchLocation.x-CGRectGetWidth(self.sideMenuView.frame), 0, CGRectGetWidth(self.sideMenuView.frame), CGRectGetHeight(self.sideMenuView.frame));
-                self.backgroundOverlayView.alpha = backgroundOverlayViewAlpha * CGRectGetMaxX(self.sideMenuView.frame) / (CGRectGetWidth(self.view.frame) - sideMenuOpenSpaceWidth);
+                self.backgroundOverlayView.alpha = CGRectGetMaxX(self.sideMenuView.frame) / (CGRectGetWidth(self.view.frame) - sideMenuOpenSpaceWidth);
                 self.sideMenuPanned = YES;
             }
         } else if (recognizer.state == UIGestureRecognizerStateEnded) {
@@ -1105,7 +1105,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
         }
         
         [recognizer setTranslation:CGPointZero inView:self.view];
-        self.backgroundOverlayView.alpha = backgroundOverlayViewAlpha * CGRectGetMaxX(self.sideMenuView.frame) / (CGRectGetWidth(self.view.frame) - sideMenuOpenSpaceWidth);
+        self.backgroundOverlayView.alpha = CGRectGetMaxX(self.sideMenuView.frame) / (CGRectGetWidth(self.view.frame) - sideMenuOpenSpaceWidth);
         self.sideMenuPanned = YES;
     } else if (recognizer.state == UIGestureRecognizerStateEnded) {
         NSTimeInterval timeFromBegin =  -[self.sideMenuPanStartedDate timeIntervalSinceNow];
@@ -1189,27 +1189,20 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
         [self.currentPickerHolder removeFromSuperview];
     }
 
+    UIView * pickerHolder = [self createBackgroundOverlay:self.topViewController.view];
+    pickerHolder.tag = self.currentPicker.tag;
+    pickerHolder.alpha = 0;
+
     self.currentPicker = (FWPicker *)sender;
-
-    UIView * pickerHolder = [[UIView alloc] init];
-    pickerHolder.translatesAutoresizingMaskIntoConstraints = false;
-    [self.topViewController.view addSubview:pickerHolder];
-
-    NSLayoutConstraint * pickerHolderTopConstraint = [NSLayoutConstraint constraintWithItem:pickerHolder attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:pickerHolder.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
-    NSLayoutConstraint * pickerHolderLeftConstraint = [NSLayoutConstraint constraintWithItem:pickerHolder attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:pickerHolder.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
-    NSLayoutConstraint * pickerHolderRightConstraint = [NSLayoutConstraint constraintWithItem:pickerHolder attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:pickerHolder.superview attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
-    NSLayoutConstraint * pickerHolderBottomConstraint = [NSLayoutConstraint constraintWithItem:pickerHolder attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:pickerHolder.superview attribute:NSLayoutAttributeBottom multiplier:1.0f constant:0];
-    [pickerHolder.superview addConstraints:@[pickerHolderTopConstraint, pickerHolderLeftConstraint, pickerHolderRightConstraint, pickerHolderBottomConstraint]];
-
     self.currentPickerHolder = pickerHolder;
-
-    UIView * pickerBackground = [self createBackgroundOverlay:pickerHolder];
-    pickerBackground.tag = self.currentPicker.tag;
-    pickerBackground.alpha = 0;
 
     FrameLayoutView *layout = [[FrameLayoutView alloc] init];
     layout.layoutMargins = UIEdgeInsetsMake(0, 0, 0, 0);
     layout.layer.backgroundColor = UIColor.whiteColor.CGColor;
+    layout.layer.shadowColor = [UIColor blackColor].CGColor;
+    layout.layer.shadowOpacity = 1.0;
+    layout.layer.shadowRadius = 7.5;
+    layout.layer.shadowOffset = CGSizeMake(0, 0);
     [pickerHolder addSubview:layout];
 
     self.currentPickerTopConstraint = [NSLayoutConstraint constraintWithItem:layout attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:layout.superview attribute:NSLayoutAttributeBottom multiplier:0.5f constant:0];
@@ -1257,7 +1250,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
     [UIView animateWithDuration:animationDuration/1.5 delay:0 usingSpringWithDamping:1 initialSpringVelocity:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
         self.currentPickerTopConstraint.constant = topConstraintConstantFinal;
         self.currentPickerBottomConstraint.constant = bottomConstraintConstantFinal;
-	pickerBackground.alpha = backgroundOverlayViewAlpha;
+	pickerHolder.alpha = 1.0;
         [pickerHolder.superview layoutIfNeeded];
     } completion:^(BOOL finished) {
         [pickerHolder layoutIfNeeded];
@@ -1320,22 +1313,11 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
 
 - (void)createDialogWithId:(int)viewId parentId:(int)parentId title:(NSString*)title
 {
-    UIView * dialogHolder = [[UIView alloc] init];
+    UIView * dialogHolder = [self createBackgroundOverlay:topViewController.view];
     dialogHolder.tag = viewId;
-    dialogHolder.translatesAutoresizingMaskIntoConstraints = NO;
-    [self.topViewController.view addSubview:dialogHolder];
+    dialogHolder.alpha = 0;
     [self addView:dialogHolder withId:viewId];
-
-    NSLayoutConstraint *topConstraint0 = [NSLayoutConstraint constraintWithItem:dialogHolder attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:dialogHolder.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
-    NSLayoutConstraint *leftConstraint0 = [NSLayoutConstraint constraintWithItem:dialogHolder attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:dialogHolder.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
-    NSLayoutConstraint *rightConstraint0 = [NSLayoutConstraint constraintWithItem:dialogHolder attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:dialogHolder.superview attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
-    NSLayoutConstraint *bottomConstraint0 = [NSLayoutConstraint constraintWithItem:dialogHolder attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:dialogHolder.superview attribute:NSLayoutAttributeBottom multiplier:1.0f constant:0];
-    [dialogHolder.superview addConstraints:@[topConstraint0, leftConstraint0, rightConstraint0, bottomConstraint0]];
     
-    UIView * dialogBackground = [self createBackgroundOverlay:dialogHolder];
-    dialogBackground.tag = viewId;
-    dialogBackground.alpha = 0;
-
     NSInteger dialogTopHeight = [UIApplication sharedApplication].statusBarFrame.size.height;
     NSInteger dialogBottomHeight = [self.topViewController getKeyboardHeight];
     // int availableSpace = self.view.frame.size.height - dialogTopHeight - dialogBottomHeight;
@@ -1345,7 +1327,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
     dialog.layer.shadowColor = [UIColor blackColor].CGColor;
     dialog.layer.shadowOpacity = 1.0;
     dialog.layer.shadowRadius = 7.5;
-    dialog.layer.shadowOffset = CGSizeMake(1, 4);
+    dialog.layer.shadowOffset = CGSizeMake(0, 0);
     dialog.clipsToBounds = YES;
     dialog.tag = viewId;
     [dialogHolder addSubview:dialog];
@@ -1409,7 +1391,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
     
     if (self.dialogAnimationStyle != AnimationStyleNone) {
         [UIView animateWithDuration:animationDuration/2 animations:^{
-            dialogBackground.alpha = backgroundOverlayViewAlpha;
+            dialogBackground.alpha = 1.0;
         } completion:^(BOOL finished) {
             [UIView animateWithDuration:animationDuration/1.5 delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
                 // dialog.centerYConstraint.constant = centerYConstraintConstantFinal;
