@@ -1313,7 +1313,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
 
 - (void)createDialogWithId:(int)viewId parentId:(int)parentId title:(NSString*)title
 {
-    UIView * dialogHolder = [self createBackgroundOverlay:topViewController.view];
+    UIView * dialogHolder = [self createBackgroundOverlay:self.topViewController.view];
     dialogHolder.tag = viewId;
     dialogHolder.alpha = 0;
     [self addView:dialogHolder withId:viewId];
@@ -1391,7 +1391,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
     
     if (self.dialogAnimationStyle != AnimationStyleNone) {
         [UIView animateWithDuration:animationDuration/2 animations:^{
-            dialogBackground.alpha = 1.0;
+            dialogHolder.alpha = 1.0;
         } completion:^(BOOL finished) {
             [UIView animateWithDuration:animationDuration/1.5 delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
                 // dialog.centerYConstraint.constant = centerYConstraintConstantFinal;
@@ -1412,7 +1412,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
     FrameView *oldView = (FrameView *)[self viewForId:oldViewId];
     FrameView *newView = (FrameView *)[self viewForId:newViewId];    
     
-    NSLayoutConstraint * newViewLeftConstraint = newView.leftContraint;
+    NSLayoutConstraint * newViewLeftConstraint = newView.leftConstraint;
     NSLayoutConstraint * newViewRightConstraint = newView.rightConstraint;
     NSLayoutConstraint * oldViewLeftConstraint = oldView.leftConstraint;
     NSLayoutConstraint * oldViewRightConstraint = oldView.rightConstraint;
