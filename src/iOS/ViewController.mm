@@ -1321,7 +1321,6 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
     
     NSInteger dialogTopHeight = [UIApplication sharedApplication].statusBarFrame.size.height;
     NSInteger dialogBottomHeight = [self.topViewController getKeyboardHeight];
-    // int availableSpace = self.view.frame.size.height - dialogTopHeight - dialogBottomHeight;
     
     DialogView * dialog = [[DialogView alloc] init];
     dialog.layer.backgroundColor = [UIColor whiteColor].CGColor;
@@ -1337,8 +1336,8 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
     dialog.leftConstraint = [NSLayoutConstraint constraintWithItem:dialog attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:dialog.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
     dialog.rightConstraint = [NSLayoutConstraint constraintWithItem:dialog attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:dialog.superview attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
     dialog.heightConstraint = [NSLayoutConstraint constraintWithItem:dialog attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:0.0f constant:0];
-    dialog.maxHeightConstraint = [NSLayoutConstraint constraintWithItem:dialog attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationLessThanOrEqual toItem:dialog.superview attribute:NSLayoutAttributeHeight multiplier:1.0f constant:-(dialogTopHeight + dialogBottomHeight)];
-    dialog.centerYConstraint = [NSLayoutConstraint constraintWithItem:dialog attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:dialog.superview attribute:NSLayoutAttributeCenterY multiplier:1.0f constant:(dialogTopHeight / 2 - dialogBottomHeight / 2)];
+    dialog.maxHeightConstraint = [NSLayoutConstraint constraintWithItem:dialog attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationLessThanOrEqual toItem:dialog.superview attribute:NSLayoutAttributeHeight multiplier:1.0f constant:-(44 + dialogTopHeight + dialogBottomHeight)];
+    dialog.centerYConstraint = [NSLayoutConstraint constraintWithItem:dialog attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:dialog.superview attribute:NSLayoutAttributeCenterY multiplier:1.0f constant:44 + (dialogTopHeight / 2 - dialogBottomHeight / 2)];
         
     dialog.leftConstraint.priority = 999;
     dialog.rightConstraint.priority = 999;
@@ -1347,18 +1346,39 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
     dialog.centerYConstraint.priority = 999;
     
     [dialog.superview addConstraints:@[dialog.leftConstraint, dialog.rightConstraint, dialog.heightConstraint, dialog.maxHeightConstraint, dialog.centerYConstraint]];
-
-    PaddedLabel *titleLabel = [[PaddedLabel alloc] init];
-    titleLabel.text = title;
-    
-    LayoutParams * titleItem = [LayoutParams layoutItemForView:titleLabel];
-    titleItem.fixedWidth = -1;
-    titleItem.fixedHeight = 20;
-    [dialog addItem:titleItem];
- 
+     
     ViewManager * viewManager = [self getViewManager:viewId];
     viewManager.containerView = dialog;
-    [viewManager setStyle:@"margin-top" value:@"20" selector:SelectorNormal];
+    [viewManager setStyle:@"padding-top" value:@"40" selector:SelectorNormal];
+
+    UINavigationBar *navBar = [[UINavigationBar alloc] init];
+    navBar.tintColor = [UIColor blackColor];
+    navBar.barTintColor = UIColor.whiteColor;
+    navBar.translucent = NO;
+    navBar.barStyle = UIBarStyleDefault;
+    // navBar.delegate = self;
+    navBar.translatesAutoresizingMaskIntoConstraints = false;        
+
+    UINavigationItem *navItem = [[UINavigationItem alloc] initWithTitle:title];
+
+    UIImage *closeImage = [UIImage imageNamed:@"closeButton"];
+    UIBarButtonItem *closeButton;
+    if (closeImage != nil) {
+        closeButton = [[UIBarButtonItem alloc] initWithImage:closeImage style:UIBarButtonItemStylePlain target:self action:@selector(dialogCloseButtonPushed:)];
+    } else {
+        closeButton = [[UIBarButtonItem alloc] initWithTitle:@"X" style:UIBarButtonItemStyleDone target:self action:@selector(dialogCloseButtonPushed:)];
+    }
+    navItem.rightBarButtonItem = closeButton;
+        
+    [navBar setItems:@[navItem]];
+
+    [dialog addSubview:navBar];
+
+    NSLayoutConstraint *topConstraint2 = [NSLayoutConstraint constraintWithItem:navBar attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:navBar.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:-44];
+    NSLayoutConstraint *leftConstraint2 = [NSLayoutConstraint constraintWithItem:navBar attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:navBar.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
+    NSLayoutConstraint *rightConstraint2 = [NSLayoutConstraint constraintWithItem:navBar attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:navBar.superview attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
+    NSLayoutConstraint *bottomConstraint2 = [NSLayoutConstraint constraintWithItem:navBar attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:navBar.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
+    [navBar.superview addConstraints:@[topConstraint2, leftConstraint2, rightConstraint2, bottomConstraint2]];
 
     [self.topViewController bringWebviewToFront];
 
@@ -1405,6 +1425,11 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
             }];
         }];
     }
+}
+
+- (void)dialogCloseButtonPushed:(UIBarButtonItem *)barButton
+{
+
 }
 
 // switch view from old to new (push view over old one). If direction is NO, direction is left, otherwise right.
@@ -2242,8 +2267,8 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
     for (NSNumber * dialogId in self.dialogIds) {
         ViewManager * viewManager = [self getViewManager:dialogId.intValue];
         DialogView * dialog = (DialogView *)viewManager.containerView;
-        dialog.maxHeightConstraint.constant = -(topHeight + bottomHeight);
-        dialog.centerYConstraint.constant = dialogTopHeight / 2 - dialogBottomHeight / 2;
+        dialog.maxHeightConstraint.constant = -(44 + topHeight + bottomHeight);
+        dialog.centerYConstraint.constant = 44 + dialogTopHeight / 2 - dialogBottomHeight / 2;
         [dialog setNeedsLayout];
     }
 }
