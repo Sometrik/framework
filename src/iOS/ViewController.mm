@@ -264,7 +264,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
 {
     int viewId = (int)gesture.view.tag;
 
-    if (gesture.view.superview == self.currentPickerHolder) {
+    if (gesture.view == self.currentPickerHolder) {
         NSLog(@"Removing picker holder on background click");
         [self.currentPickerHolder removeFromSuperview];
         self.currentPicker = nil;
@@ -1190,7 +1190,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
     }
 
     UIView * pickerHolder = [self createBackgroundOverlay:self.topViewController.view];
-    pickerHolder.tag = self.currentPicker.tag;
+    pickerHolder.tag = sender.tag;
     pickerHolder.alpha = 0;
 
     self.currentPicker = (FWPicker *)sender;
@@ -1200,7 +1200,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
     layout.layoutMargins = UIEdgeInsetsMake(0, 0, 0, 0);
     layout.layer.backgroundColor = UIColor.whiteColor.CGColor;
     layout.layer.shadowColor = [UIColor blackColor].CGColor;
-    layout.layer.shadowOpacity = 1.0;
+    layout.layer.shadowOpacity = 0.25;
     layout.layer.shadowRadius = 7.5;
     layout.layer.shadowOffset = CGSizeMake(0, 0);
     [pickerHolder addSubview:layout];
@@ -1217,6 +1217,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
 
     LayoutParams * item = [LayoutParams layoutItemForView:layout2];
     item.fixedWidth = -1;
+    item.margin = LinearLayoutMakeMargin(10.0f, 10.0f, 10.0f, 10.0f);
     [layout addItem:item];
 
     for (int i = 0; i < [self.currentPicker.options count]; i++) {
@@ -1325,10 +1326,11 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
     DialogView * dialog = [[DialogView alloc] init];
     dialog.layer.backgroundColor = [UIColor whiteColor].CGColor;
     dialog.layer.shadowColor = [UIColor blackColor].CGColor;
-    dialog.layer.shadowOpacity = 1.0;
+    dialog.layer.shadowOpacity = 0.25;
     dialog.layer.shadowRadius = 7.5;
     dialog.layer.shadowOffset = CGSizeMake(0, 0);
-    dialog.clipsToBounds = YES;
+    dialog.layer.masksToBounds = FALSE;
+    dialog.clipsToBounds = FALSE;
     dialog.tag = viewId;
     [dialogHolder addSubview:dialog];
 
