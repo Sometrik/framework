@@ -19,6 +19,16 @@ typedef struct {
     CGFloat right;
 } LinearLayoutItemMargin;
 
+inline LinearLayoutItemMargin LinearLayoutMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, CGFloat right) {
+    LinearLayoutItemMargin margin;
+    margin.top = top;
+    margin.left = left;
+    margin.bottom = bottom;
+    margin.right = right;
+    
+    return margin;
+}
+
 @interface LayoutParams : NSObject
 
 @property (nonatomic, strong) UIView *view;
@@ -45,7 +55,5 @@ typedef struct {
 
 - (id)initWithView:(UIView *)aView;
 + (LayoutParams *)layoutItemForView:(UIView *)aView;
-
-LinearLayoutItemMargin LinearLayoutMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, CGFloat right);
 
 @end
