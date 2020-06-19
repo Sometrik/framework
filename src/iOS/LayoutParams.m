@@ -1,5 +1,15 @@
 #import "LayoutParams.h"
 
+LinearLayoutItemMargin LLMMargin(CGFloat top, CGFloat left, CGFloat bottom, CGFloat right) {
+    LinearLayoutItemMargin margin;
+    margin.top = top;
+    margin.left = left;
+    margin.bottom = bottom;
+    margin.right = right;
+    
+    return margin;
+}
+
 @implementation LayoutParams
 
 - (id)init {
@@ -19,8 +29,8 @@
 	self.minHeightConstraint = nil;
 	self.maxWidthConstraint = nil;
 	self.maxHeightConstraint = nil;
-	self.margin = LinearLayoutMakeMargin(0, 0, 0, 0);
-	self.padding = LinearLayoutMakeMargin(0, 0, 0, 0);
+	self.margin = LLMMargin(0, 0, 0, 0);
+	self.padding = LLMMargin(0, 0, 0, 0);
 	self.level = 0;
 	self.fixedWidth = 0;
 	self.fixedHeight = 0;
@@ -47,8 +57,8 @@
 	self.minHeightConstraint = nil;
 	self.maxWidthConstraint = nil;
 	self.maxHeightConstraint = nil;
-	self.margin = LinearLayoutMakeMargin(0, 0, 0, 0);
-	self.padding = LinearLayoutMakeMargin(0, 0, 0, 0);
+	self.margin = LLMMargin(0, 0, 0, 0);
+	self.padding = LLMMargin(0, 0, 0, 0);
 	self.level = 0;
 	self.fixedWidth = 0;
 	self.fixedHeight = 0;
@@ -60,16 +70,6 @@
 + (LayoutParams *)layoutItemForView:(UIView *)aView {
     LayoutParams *item = [[LayoutParams alloc] initWithView:aView];
     return item;
-}
-
-LinearLayoutItemMargin LinearLayoutMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, CGFloat right) {
-    LinearLayoutItemMargin margin;
-    margin.top = top;
-    margin.left = left;
-    margin.bottom = bottom;
-    margin.right = right;
-    
-    return margin;
 }
 
 @end

@@ -192,6 +192,7 @@
 	label.numberOfLines = 0; // as many lines as needed
 	label.lineBreakMode = NSLineBreakByWordWrapping;
 	label.preferredMaxLayoutWidth = self.view.frame.size.width;
+        label.translatesAutoresizingMaskIntoConstraints = YES; // temporary
 	[self.view addSubview:label];
 
         self.currentToast = label;

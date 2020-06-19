@@ -15,6 +15,7 @@
 #import "PaddedLabel.h"
 #import "LinearLayoutView.h"
 #import "FrameLayoutView.h"
+#import "FrameView.h"
 #import "DialogView.h"
 #import "FWScrollView.h"
 #import "FWPicker.h"
@@ -53,8 +54,6 @@ extern FWApplication * applicationMain();
 @property (nonatomic, strong) NSLayoutConstraint *activeViewLeftConstraint;
 @property (nonatomic, strong) UIScreenEdgePanGestureRecognizer *panEdgeGestureRecognizer;
 @property (nonatomic, assign) AnimationStyle pickerAnimationStyle;
-@property (nonatomic, strong) NSMutableDictionary *frameViewConstraints; // constraints saved (for animation purposes), viewId is the key.
-@property (nonatomic, strong) NSMutableDictionary *dialogConstraints;
 @property (nonatomic, assign) AnimationStyle dialogAnimationStyle;
 @property (nonatomic, assign) BOOL sideMenuSwiped;
 @property (nonatomic, strong) NSDate *sideMenuPanStartedDate;
@@ -76,6 +75,8 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
     self.dialogIds = [[NSMutableArray alloc] init];
     self.statusBarTopConstraint = nil;
 
+    self.dialogAnimationStyle = AnimationStyleRightToLeft;
+    
     self.view.layoutMargins = UIEdgeInsetsMake(0, 0, 0, 0);
   
     self.backgroundOverlayView = [self createBackgroundOverlay:self.topViewController.view];
@@ -150,40 +151,20 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
 
 - (void)handleKeyboardWillShowNotification:(NSNotification *)notification
 {
-    NSInteger topPosition = 0;
+    NSInteger keyboardHeight = 0;
     id frameEnd = notification.userInfo[@"UIKeyboardFrameEndUserInfoKey"];
     if (frameEnd != nil) {
         CGRect rect = [frameEnd CGRectValue];
-        topPosition = (NSInteger)rect.origin.y;
+        keyboardHeight = self.view.frame.size.height - (NSInteger)rect.origin.y;
     }
-    NSLog(@"Keyboard showing: %d", (int)topPosition);
-    [self keyboardTopPositionChanged:(int)topPosition];
-    [self.topViewController showKeyboard:YES height:self.view.frame.size.height - topPosition];
+    [self.topViewController showKeyboard:YES height:keyboardHeight];
     [self updateSafeArea];
 }
 
 - (void)handleKeyboardWillHideNotification:(NSNotification *)notification
 {
-    NSInteger topPosition = 0;
-    id frameEnd = notification.userInfo[@"UIKeyboardFrameEndUserInfoKey"];
-    if (frameEnd != nil) {
-        CGRect rect = [frameEnd CGRectValue];
-        topPosition = (NSInteger)rect.origin.y;
-    }
-    NSLog(@"Keyboard hiding: %d", (int)topPosition);
-    [self keyboardTopPositionChanged:(int)topPosition];
     [self.topViewController showKeyboard:NO height:0];
     [self updateSafeArea];
-}
-
-- (void)keyboardTopPositionChanged:(int)pos
-{
-    for (NSNumber * dialogId in self.dialogIds) {
-        ViewManager * viewManager = [self getViewManager:dialogId.intValue];
-        DialogView * dialog = (DialogView *)viewManager.containerView;
-        dialog.maxBottomConstraint.constant = -(self.view.frame.size.height - pos + 15);
-        [dialog setNeedsLayout];
-    }
 }
 
 - (void)backgroundTapped:(UITapGestureRecognizer *)gestureRecognizer
@@ -262,7 +243,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
 {
     // create backgroundoverlay view that's behind sidePanel and dialog and if clicked closes the panel
     UIView * view = [[UIView alloc] init];
-    view.backgroundColor = [UIColor colorWithRed:0.549 green:0.616 blue:0.667 alpha:1.0];
+    view.backgroundColor = [UIColor colorWithRed:0.549 green:0.616 blue:0.667 alpha:backgroundOverlayViewAlpha];
     view.translatesAutoresizingMaskIntoConstraints = false;
 
     [parentView addSubview:view];
@@ -283,7 +264,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
 {
     int viewId = (int)gesture.view.tag;
 
-    if (gesture.view.superview == self.currentPickerHolder) {
+    if (gesture.view == self.currentPickerHolder) {
         NSLog(@"Removing picker holder on background click");
         [self.currentPickerHolder removeFromSuperview];
         self.currentPicker = nil;
@@ -292,10 +273,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
         NSLog(@"background overlay tapped");
         int dialogId = [[self.dialogIds lastObject] intValue];
         if (dialogId == viewId) {
-	    NSLog(@"Sending cancel value for dialog %d", viewId);
-            [self sendIntValue:dialogId value:0];
-	    NSLog(@"Cancel value done");
-            [self.dialogIds removeLastObject];
+	    [self hideDialog:viewId];
         }
     } else if (!self.sideMenuView.isHidden) {
         [self hideNavigationViewWithAnimation:YES];
@@ -431,22 +409,6 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
     return _viewsDictionary;
 }
 
-- (NSMutableDictionary *)frameViewConstraints
-{
-    if (!_frameViewConstraints) {
-        _frameViewConstraints = [[NSMutableDictionary alloc] init];
-    }
-    return _frameViewConstraints;
-}
-
-- (NSMutableDictionary *)dialogConstraints
-{
-    if (!_dialogConstraints) {
-        _dialogConstraints = [[NSMutableDictionary alloc] init];
-    }
-    return _dialogConstraints;
-}
-
 - (void)createFrameViewWithId:(int)viewId parentId:(int)parentId
 {
     ViewManager * parentViewManager = [self getViewManager:parentId];
@@ -455,7 +417,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
         return;
     }
 
-    FrameLayoutView *view = [[FrameLayoutView alloc] init];
+    FrameView *view = [[FrameView alloc] init];
     view.tag = viewId;
 
     [self addView:view withId:viewId];
@@ -469,21 +431,11 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
         view.hidden = YES;
     }
     
-    NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
-    NSLayoutConstraint *leftConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
-    NSLayoutConstraint *rightConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
-    NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeBottom multiplier:1.0f constant:0];
-    NSArray *constraintArray = @[leftConstraint, rightConstraint];
-    @try {
-        [self.frameViewConstraints setObject:constraintArray forKey:[NSString stringWithFormat:@"%d", viewId]];
-    }
-    @catch (NSException *e) {
-        NSLog(@"exception: %@", e);
-        @throw;
-    }
-    @finally {
-        [view.superview addConstraints:@[topConstraint, leftConstraint, rightConstraint, bottomConstraint]];        
-    }
+    view.topConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
+    view.leftConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
+    view.rightConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
+    view.bottomConstraint = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:view.superview attribute:NSLayoutAttributeBottom multiplier:1.0f constant:0];
+    [view.superview addConstraints:@[view.topConstraint, view.leftConstraint, view.rightConstraint, view.bottomConstraint]];        
 
     if (parentId != 1) {
 	// add swiping and panning
@@ -529,7 +481,6 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
     }
     label.numberOfLines = 0; // as many lines as needed
     label.lineBreakMode = NSLineBreakByWordWrapping;
-    label.translatesAutoresizingMaskIntoConstraints = false;
     label.preferredMaxLayoutWidth = self.view.frame.size.width;
     [self addView:label withId:viewId];
     [self addToParent:parentId view:label];
@@ -1061,18 +1012,18 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
 
 	[self.backgroundOverlayView.superview bringSubviewToFront:self.backgroundOverlayView];
         self.backgroundOverlayView.hidden = NO;
-        self.backgroundOverlayView.alpha = backgroundOverlayViewAlpha * CGRectGetMaxX(self.sideMenuView.frame) / (CGRectGetWidth(self.view.frame) - sideMenuOpenSpaceWidth);
+        self.backgroundOverlayView.alpha = CGRectGetMaxX(self.sideMenuView.frame) / (CGRectGetWidth(self.view.frame) - sideMenuOpenSpaceWidth);
 
 	[self.sideMenuView.superview bringSubviewToFront:self.sideMenuView];
 
         if (animate) {
             [UIView animateWithDuration:animationDuration animations:^{
                 self.sideMenuView.transform = CGAffineTransformTranslate(self.sideMenuView.transform, CGRectGetWidth(self.sideMenuView.frame)-CGRectGetMaxX(self.sideMenuView.frame), 0.0);
-                self.backgroundOverlayView.alpha = backgroundOverlayViewAlpha * CGRectGetMaxX(self.sideMenuView.frame) / (CGRectGetWidth(self.view.frame) - sideMenuOpenSpaceWidth);
+                self.backgroundOverlayView.alpha = CGRectGetMaxX(self.sideMenuView.frame) / (CGRectGetWidth(self.view.frame) - sideMenuOpenSpaceWidth);
             }];
         } else {
             self.sideMenuView.transform = CGAffineTransformTranslate(self.sideMenuView.transform, CGRectGetWidth(self.sideMenuView.frame)-CGRectGetMaxX(self.sideMenuView.frame), 0.0);
-            self.backgroundOverlayView.alpha = backgroundOverlayViewAlpha * CGRectGetMaxX(self.sideMenuView.frame) / (CGRectGetWidth(self.view.frame) - sideMenuOpenSpaceWidth);
+            self.backgroundOverlayView.alpha = CGRectGetMaxX(self.sideMenuView.frame) / (CGRectGetWidth(self.view.frame) - sideMenuOpenSpaceWidth);
         }
         self.sideMenuView.hidden = NO;
     }
@@ -1087,7 +1038,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
         if (animate) {
             [UIView animateWithDuration:animationDuration animations:^{
                 self.sideMenuView.transform = CGAffineTransformTranslate(self.sideMenuView.transform, -((CGRectGetWidth(self.sideMenuView.frame)+CGRectGetMaxX(self.sideMenuView.frame))), 0.0);
-                self.backgroundOverlayView.alpha = backgroundOverlayViewAlpha * CGRectGetMaxX(self.sideMenuView.frame) / (CGRectGetWidth(self.view.frame) - sideMenuOpenSpaceWidth);
+                self.backgroundOverlayView.alpha = CGRectGetMaxX(self.sideMenuView.frame) / (CGRectGetWidth(self.view.frame) - sideMenuOpenSpaceWidth);
             } completion:^(BOOL finished) {
                 if (finished) {
                     self.sideMenuView.hidden = YES;
@@ -1123,7 +1074,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
         if (recognizer.state == UIGestureRecognizerStateBegan || recognizer.state == UIGestureRecognizerStateChanged) {
             if (touchLocation.x < CGRectGetWidth(self.view.frame)-sideMenuOpenSpaceWidth) {
                 self.sideMenuView.frame = CGRectMake(touchLocation.x-CGRectGetWidth(self.sideMenuView.frame), 0, CGRectGetWidth(self.sideMenuView.frame), CGRectGetHeight(self.sideMenuView.frame));
-                self.backgroundOverlayView.alpha = backgroundOverlayViewAlpha * CGRectGetMaxX(self.sideMenuView.frame) / (CGRectGetWidth(self.view.frame) - sideMenuOpenSpaceWidth);
+                self.backgroundOverlayView.alpha = CGRectGetMaxX(self.sideMenuView.frame) / (CGRectGetWidth(self.view.frame) - sideMenuOpenSpaceWidth);
                 self.sideMenuPanned = YES;
             }
         } else if (recognizer.state == UIGestureRecognizerStateEnded) {
@@ -1154,7 +1105,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
         }
         
         [recognizer setTranslation:CGPointZero inView:self.view];
-        self.backgroundOverlayView.alpha = backgroundOverlayViewAlpha * CGRectGetMaxX(self.sideMenuView.frame) / (CGRectGetWidth(self.view.frame) - sideMenuOpenSpaceWidth);
+        self.backgroundOverlayView.alpha = CGRectGetMaxX(self.sideMenuView.frame) / (CGRectGetWidth(self.view.frame) - sideMenuOpenSpaceWidth);
         self.sideMenuPanned = YES;
     } else if (recognizer.state == UIGestureRecognizerStateEnded) {
         NSTimeInterval timeFromBegin =  -[self.sideMenuPanStartedDate timeIntervalSinceNow];
@@ -1238,27 +1189,20 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
         [self.currentPickerHolder removeFromSuperview];
     }
 
+    UIView * pickerHolder = [self createBackgroundOverlay:self.topViewController.view];
+    pickerHolder.tag = sender.tag;
+    pickerHolder.alpha = 0;
+
     self.currentPicker = (FWPicker *)sender;
-
-    UIView * pickerHolder = [[UIView alloc] init];
-    pickerHolder.translatesAutoresizingMaskIntoConstraints = false;
-    [self.topViewController.view addSubview:pickerHolder];
-
-    NSLayoutConstraint * pickerHolderTopConstraint = [NSLayoutConstraint constraintWithItem:pickerHolder attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:pickerHolder.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
-    NSLayoutConstraint * pickerHolderLeftConstraint = [NSLayoutConstraint constraintWithItem:pickerHolder attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:pickerHolder.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
-    NSLayoutConstraint * pickerHolderRightConstraint = [NSLayoutConstraint constraintWithItem:pickerHolder attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:pickerHolder.superview attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
-    NSLayoutConstraint * pickerHolderBottomConstraint = [NSLayoutConstraint constraintWithItem:pickerHolder attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:pickerHolder.superview attribute:NSLayoutAttributeBottom multiplier:1.0f constant:0];
-    [pickerHolder.superview addConstraints:@[pickerHolderTopConstraint, pickerHolderLeftConstraint, pickerHolderRightConstraint, pickerHolderBottomConstraint]];
-
     self.currentPickerHolder = pickerHolder;
-
-    UIView * pickerBackground = [self createBackgroundOverlay:pickerHolder];
-    pickerBackground.tag = self.currentPicker.tag;
-    pickerBackground.alpha = 0;
 
     FrameLayoutView *layout = [[FrameLayoutView alloc] init];
     layout.layoutMargins = UIEdgeInsetsMake(0, 0, 0, 0);
     layout.layer.backgroundColor = UIColor.whiteColor.CGColor;
+    layout.layer.shadowColor = [UIColor blackColor].CGColor;
+    layout.layer.shadowOpacity = 0.25;
+    layout.layer.shadowRadius = 7.5;
+    layout.layer.shadowOffset = CGSizeMake(0, 0);
     [pickerHolder addSubview:layout];
 
     self.currentPickerTopConstraint = [NSLayoutConstraint constraintWithItem:layout attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:layout.superview attribute:NSLayoutAttributeBottom multiplier:0.5f constant:0];
@@ -1273,6 +1217,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
 
     LayoutParams * item = [LayoutParams layoutItemForView:layout2];
     item.fixedWidth = -1;
+    item.margin = LinearLayoutMakeMargin(10.0f, 10.0f, 10.0f, 10.0f);
     [layout addItem:item];
 
     for (int i = 0; i < [self.currentPicker.options count]; i++) {
@@ -1306,7 +1251,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
     [UIView animateWithDuration:animationDuration/1.5 delay:0 usingSpringWithDamping:1 initialSpringVelocity:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
         self.currentPickerTopConstraint.constant = topConstraintConstantFinal;
         self.currentPickerBottomConstraint.constant = bottomConstraintConstantFinal;
-	pickerBackground.alpha = backgroundOverlayViewAlpha;
+	pickerHolder.alpha = 1.0;
         [pickerHolder.superview layoutIfNeeded];
     } completion:^(BOOL finished) {
         [pickerHolder layoutIfNeeded];
@@ -1367,148 +1312,138 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
     [self presentViewController:actionSheet animated:YES completion:nil];
 }
 
-- (void)createDialogWithId:(int)viewId parentId:(int)parentId title:(NSString*)title animationStyle:(AnimationStyle)style
+- (void)createDialogWithId:(int)viewId parentId:(int)parentId title:(NSString*)title
 {
-    [self.dialogIds addObject:[NSNumber numberWithInt:viewId]];
-    self.dialogAnimationStyle = style;
-    UIView * dialogHolder = [[UIView alloc] init];
+    UIView * dialogHolder = [self createBackgroundOverlay:self.topViewController.view];
     dialogHolder.tag = viewId;
-    dialogHolder.translatesAutoresizingMaskIntoConstraints = false;
-    dialogHolder.alpha = 0.0;
-    [self.topViewController.view addSubview:dialogHolder];
+    dialogHolder.alpha = 0;
     [self addView:dialogHolder withId:viewId];
-
-    NSLayoutConstraint *topConstraint0 = [NSLayoutConstraint constraintWithItem:dialogHolder attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:dialogHolder.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
-    NSLayoutConstraint *leftConstraint0 = [NSLayoutConstraint constraintWithItem:dialogHolder attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:dialogHolder.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
-    NSLayoutConstraint *rightConstraint0 = [NSLayoutConstraint constraintWithItem:dialogHolder attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:dialogHolder.superview attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
-    NSLayoutConstraint *bottomConstraint0 = [NSLayoutConstraint constraintWithItem:dialogHolder attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:dialogHolder.superview attribute:NSLayoutAttributeBottom multiplier:1.0f constant:0];
-    [dialogHolder.superview addConstraints:@[topConstraint0, leftConstraint0, rightConstraint0, bottomConstraint0]];
     
-    UIView * dialogBackground = [self createBackgroundOverlay:dialogHolder];
-    dialogBackground.tag = viewId;
-    dialogBackground.alpha = backgroundOverlayViewAlpha;
-
+    NSInteger dialogTopHeight = [UIApplication sharedApplication].statusBarFrame.size.height;
+    NSInteger dialogBottomHeight = [self.topViewController getKeyboardHeight];
+    
     DialogView * dialog = [[DialogView alloc] init];
     dialog.layer.backgroundColor = [UIColor whiteColor].CGColor;
-    dialog.layer.cornerRadius = 5;
     dialog.layer.shadowColor = [UIColor blackColor].CGColor;
-    dialog.layer.shadowOpacity = 1.0;
+    dialog.layer.shadowOpacity = 0.25;
     dialog.layer.shadowRadius = 7.5;
-    dialog.layer.shadowOffset = CGSizeMake(1, 4);
-    dialog.clipsToBounds = YES;
+    dialog.layer.shadowOffset = CGSizeMake(0, 0);
+    dialog.layer.masksToBounds = FALSE;
+    dialog.clipsToBounds = FALSE;
     dialog.tag = viewId;
     [dialogHolder addSubview:dialog];
 
-    NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:dialog attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:dialog.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:65];
-    NSLayoutConstraint *leftConstraint = [NSLayoutConstraint constraintWithItem:dialog attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:dialog.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
-    NSLayoutConstraint *rightConstraint = [NSLayoutConstraint constraintWithItem:dialog attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:dialog.superview attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
+    dialog.leftConstraint = [NSLayoutConstraint constraintWithItem:dialog attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:dialog.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
+    dialog.rightConstraint = [NSLayoutConstraint constraintWithItem:dialog attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:dialog.superview attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
     dialog.heightConstraint = [NSLayoutConstraint constraintWithItem:dialog attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:0.0f constant:0];
-    dialog.maxBottomConstraint = [NSLayoutConstraint constraintWithItem:dialog attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationLessThanOrEqual toItem:dialog.superview attribute:NSLayoutAttributeBottom multiplier:1.0f constant:-15];
-    
-    NSArray *constraintArray = @[topConstraint, dialog.maxBottomConstraint, leftConstraint, rightConstraint];
-    
+    dialog.maxHeightConstraint = [NSLayoutConstraint constraintWithItem:dialog attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationLessThanOrEqual toItem:dialog.superview attribute:NSLayoutAttributeHeight multiplier:1.0f constant:-(44 + dialogTopHeight + dialogBottomHeight)];
+    dialog.centerYConstraint = [NSLayoutConstraint constraintWithItem:dialog attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:dialog.superview attribute:NSLayoutAttributeCenterY multiplier:1.0f constant:44 + (dialogTopHeight / 2 - dialogBottomHeight / 2)];
+        
+    dialog.leftConstraint.priority = 999;
+    dialog.rightConstraint.priority = 999;
     dialog.heightConstraint.priority = 998;
-    dialog.maxBottomConstraint.priority = 999;
+    dialog.maxHeightConstraint.priority = 999;
+    dialog.centerYConstraint.priority = 999;
     
-    [dialog.superview addConstraints:@[topConstraint, leftConstraint, rightConstraint, dialog.heightConstraint, dialog.maxBottomConstraint]];
-
+    [dialog.superview addConstraints:@[dialog.leftConstraint, dialog.rightConstraint, dialog.heightConstraint, dialog.maxHeightConstraint, dialog.centerYConstraint]];
+     
     ViewManager * viewManager = [self getViewManager:viewId];
     viewManager.containerView = dialog;
+    [viewManager setStyle:@"padding-top" value:@"40" selector:SelectorNormal];
+
+    UINavigationBar *navBar = [[UINavigationBar alloc] init];
+    navBar.tintColor = [UIColor blackColor];
+    navBar.barTintColor = UIColor.whiteColor;
+    navBar.translucent = NO;
+    navBar.barStyle = UIBarStyleDefault;
+    // navBar.delegate = self;
+    navBar.translatesAutoresizingMaskIntoConstraints = false;        
+
+    UINavigationItem *navItem = [[UINavigationItem alloc] initWithTitle:title];
+
+    UIImage *closeImage = [UIImage imageNamed:@"closeButton"];
+    UIBarButtonItem *closeButton;
+    if (closeImage != nil) {
+        closeButton = [[UIBarButtonItem alloc] initWithImage:closeImage style:UIBarButtonItemStylePlain target:self action:@selector(dialogCloseButtonPushed:)];
+    } else {
+        closeButton = [[UIBarButtonItem alloc] initWithTitle:@"X" style:UIBarButtonItemStyleDone target:self action:@selector(dialogCloseButtonPushed:)];
+    }
+    navItem.rightBarButtonItem = closeButton;
+        
+    [navBar setItems:@[navItem]];
+
+    [dialog addSubview:navBar];
+
+    NSLayoutConstraint *topConstraint2 = [NSLayoutConstraint constraintWithItem:navBar attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:navBar.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:-44];
+    NSLayoutConstraint *leftConstraint2 = [NSLayoutConstraint constraintWithItem:navBar attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:navBar.superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
+    NSLayoutConstraint *rightConstraint2 = [NSLayoutConstraint constraintWithItem:navBar attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:navBar.superview attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
+    NSLayoutConstraint *bottomConstraint2 = [NSLayoutConstraint constraintWithItem:navBar attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:navBar.superview attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
+    [navBar.superview addConstraints:@[topConstraint2, leftConstraint2, rightConstraint2, bottomConstraint2]];
 
     [self.topViewController bringWebviewToFront];
 
-    CGFloat topConstraintConstantFinal = topConstraint.constant;
-    CGFloat leftConstraintConstantFinal = leftConstraint.constant;
-    CGFloat rightConstraintConstantFinal = rightConstraint.constant;
-    CGFloat bottomConstraintConstantFinal = dialog.maxBottomConstraint.constant;
+    CGFloat leftConstraintConstantFinal = dialog.leftConstraint.constant;
+    CGFloat rightConstraintConstantFinal = dialog.rightConstraint.constant;
+    // CGFloat centerYConstraintConstantFinal = dialog.centerYConstraint.constant;
     
     [dialogHolder layoutIfNeeded];
+
+    [self.dialogIds addObject:[NSNumber numberWithInt:viewId]];
     
-    switch (style) {
+    switch (self.dialogAnimationStyle) {
         case AnimationStyleNone:
             break;
         case AnimationStyleTopToBottom:
-            topConstraint.constant = -(topConstraint.constant + dialog.maxBottomConstraint.constant);
-            dialog.maxBottomConstraint.constant = -(self.view.frame.size.height);
+            // dialog.centerYConstraint.constant = -self.view.frame.size.height;
             break;
-        /*case AnimationStyleBottomToTop:
-            topConstraint.constant = self.view.frame.size.height;
-            dialog.maxBottomConstraint.constant = 0;//self.view.frame.size.height - dialog.maxBottomConstraint.constant + topConstraint.constant;
-            break;*/
+        case AnimationStyleBottomToTop:
+            // dialog.centerYConstraint.constant = self.view.frame.size.height;
+            break;
         case AnimationStyleLeftToRight:
-            leftConstraint.constant = -(leftConstraint.constant + self.view.frame.size.width);
-            rightConstraint.constant = -(self.view.frame.size.width - rightConstraint.constant);
+            dialog.leftConstraint.constant = -self.view.frame.size.width;
+            dialog.rightConstraint.constant = -self.view.frame.size.width;
             break;
         case AnimationStyleRightToLeft:
-            leftConstraint.constant = self.view.frame.size.width;
-            rightConstraint.constant = self.view.frame.size.width + rightConstraint.constant;
+            dialog.leftConstraint.constant = self.view.frame.size.width;
+            dialog.rightConstraint.constant = self.view.frame.size.width;
             break;
         default:
             break;
     }
     
-    //[dialog.superview addConstraints:@[topConstraint, leftConstraint, rightConstraint, dialog.heightConstraint]];//, dialog.maxBottomConstraint]];
-    //dialogHolder.alpha = 1.0;
-    [UIView animateWithDuration:animationDuration/2 animations:^{
-        dialogHolder.alpha = 1.0;
-    } completion:^(BOOL finished) {
-        [UIView animateWithDuration:animationDuration/1.5 delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
-            //dialogHolder.alpha = 1.0;
-            switch (style) {
-                case AnimationStyleNone:
-                    break;
-                case AnimationStyleTopToBottom:
-                    topConstraint.constant = topConstraintConstantFinal;
-                    dialog.maxBottomConstraint.constant = bottomConstraintConstantFinal;
-                    break;
-                /*case AnimationStyleBottomToTop:
-                    topConstraint.constant = topConstraintConstantFinal;
-                    dialog.maxBottomConstraint.constant = bottomConstraintConstantFinal;
-                    break;*/
-                case AnimationStyleLeftToRight:
-                    leftConstraint.constant = leftConstraintConstantFinal;
-                    rightConstraint.constant = rightConstraintConstantFinal;
-                    break;
-                case AnimationStyleRightToLeft:
-                    leftConstraint.constant = leftConstraintConstantFinal;
-                    rightConstraint.constant = rightConstraintConstantFinal;
-                    break;
-                default:
-                    break;
-            }
-            [dialogHolder layoutIfNeeded];
-            
+    if (self.dialogAnimationStyle != AnimationStyleNone) {
+        [UIView animateWithDuration:animationDuration/2 animations:^{
+            dialogHolder.alpha = 1.0;
         } completion:^(BOOL finished) {
-            [dialog layoutIfNeeded];
+            [UIView animateWithDuration:animationDuration/1.5 delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+                // dialog.centerYConstraint.constant = centerYConstraintConstantFinal;
+                dialog.leftConstraint.constant = leftConstraintConstantFinal;
+                dialog.rightConstraint.constant = rightConstraintConstantFinal;
+                [dialogHolder layoutIfNeeded];
+            } completion:^(BOOL finished) {
+                [dialog layoutIfNeeded];
+            }];
         }];
-    }];
-    //[UIView animateWithDuration:animationDuration/2 animations:^{
-    //    dialogHolder.alpha = 1.0;
-    //}];
-    @try {
-       [self.dialogConstraints setObject:constraintArray forKey:[NSString stringWithFormat:@"%d", viewId]];
     }
-    @catch (NSException *e) {
-        // Some code here if it is needed at this level
-        
-        @throw;
-    }
+}
+
+- (void)dialogCloseButtonPushed:(UIBarButtonItem *)barButton
+{
+
 }
 
 // switch view from old to new (push view over old one). If direction is NO, direction is left, otherwise right.
 - (void)switchView:(int)oldViewId newView:(int)newViewId direction:(BOOL)direction
 {
     NSLog(@"switchView: %d => %d", oldViewId, newViewId);
-    NSLayoutConstraint *newViewLeftConstraint, *newViewRightConstraint, *oldViewLeftConstraint, *oldViewRightConstraint;
-    UIView *oldView = [self viewForId:oldViewId];
-    UIView *newView = [self viewForId:newViewId];    
+    FrameView *oldView = (FrameView *)[self viewForId:oldViewId];
+    FrameView *newView = (FrameView *)[self viewForId:newViewId];    
     
-    NSArray *newViewConstraints = [self.frameViewConstraints objectForKey:[NSString stringWithFormat:@"%d", newViewId]];
-    NSArray *oldViewConstraints = [self.frameViewConstraints objectForKey:[NSString stringWithFormat:@"%d", oldViewId]];
-    newViewLeftConstraint = (NSLayoutConstraint *)newViewConstraints[0];
-    newViewRightConstraint = (NSLayoutConstraint *)newViewConstraints[1];
-    oldViewLeftConstraint = (NSLayoutConstraint *)oldViewConstraints[0];
-    oldViewRightConstraint = (NSLayoutConstraint *)oldViewConstraints[1];
+    NSLayoutConstraint * newViewLeftConstraint = newView.leftConstraint;
+    NSLayoutConstraint * newViewRightConstraint = newView.rightConstraint;
+    NSLayoutConstraint * oldViewLeftConstraint = oldView.leftConstraint;
+    NSLayoutConstraint * oldViewRightConstraint = oldView.rightConstraint;
+    
     CGFloat newViewLeftConstraintConstantFinal = newViewLeftConstraint.constant;
     CGFloat newViewRightConstraintConstantFinal = newViewRightConstraint.constant;
     CGFloat oldViewLeftConstraintConstantFinal = oldViewLeftConstraint.constant;
@@ -1656,51 +1591,55 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
     }
 }
 
+- (void)hideDialog:(int)viewId
+{
+    // animating dialog removal
+    ViewManager * viewManager = [self getViewManager:viewId];
+    DialogView *dialog = (DialogView *)viewManager.containerView;
+
+    if (self.dialogAnimationStyle != AnimationStyleNone) {
+        [UIView animateWithDuration:animationDuration animations:^{
+            switch (self.dialogAnimationStyle) {
+                case AnimationStyleLeftToRight:
+                    dialog.leftConstraint.constant = -self.view.frame.size.width;
+                    dialog.rightConstraint.constant = -self.view.frame.size.width;
+                    break;
+                case AnimationStyleTopToBottom:
+                    // dialog.centerYConstraint.constant = -2*self.view.frame.size.height;
+                    break;
+                case AnimationStyleBottomToTop:
+                    // dialog.centerYConstraint.constant = 2*self.view.frame.size.height;
+                    break;
+                case AnimationStyleRightToLeft:
+                    dialog.leftConstraint.constant = self.view.frame.size.width;
+                    dialog.rightConstraint.constant = self.view.frame.size.width;
+                    break;
+                default:
+                    break;
+            }
+            [dialog.superview layoutIfNeeded];
+        } completion:^(BOOL finished) {
+            NSLog(@"removing dialog %d", viewId);
+            [self sendIntValue:viewId value:0];
+            // Must reiterate since the indices may have changed
+            for (int j = 0; j < self.dialogIds.count; j++) {
+                int dialogId = [[self.dialogIds objectAtIndex:j] intValue];
+                if (dialogId == viewId) {
+                    [self.dialogIds removeObjectAtIndex:j];
+                }
+            }
+        }];
+    }
+}
+
 - (void)removeView:(int)viewId
 {
     for (int i = 0; i < self.dialogIds.count; i++) {
         int dialogId = [[self.dialogIds objectAtIndex:i] intValue];
         if (dialogId == viewId) {
-            // animating dialog removal
-            UIView *dialogView = [self viewForId:viewId];
-
-            NSArray *dialogConstraints = [self.dialogConstraints objectForKey:[NSString stringWithFormat:@"%d", viewId]];
-            NSLayoutConstraint *topConstraint = dialogConstraints[0];
-            NSLayoutConstraint *bottomConstraint = dialogConstraints[1];
-            NSLayoutConstraint *leftConstraint = dialogConstraints[2];
-            NSLayoutConstraint *rightConstraint = dialogConstraints[3];
-            [UIView animateWithDuration:animationDuration animations:^{
-                switch (self.dialogAnimationStyle) {
-                    case AnimationStyleLeftToRight:
-                        leftConstraint.constant = -self.view.frame.size.width;
-                        rightConstraint.constant = -self.view.frame.size.width;
-                        break;
-                    case AnimationStyleTopToBottom:
-                        topConstraint.constant = -self.view.frame.size.height;
-                        bottomConstraint.constant = -self.view.frame.size.height;
-                        break;
-                    case AnimationStyleRightToLeft:
-                        leftConstraint.constant = self.view.frame.size.width;
-                        rightConstraint.constant = self.view.frame.size.width;
-                        break;
-                    default:
-                        break;
-                }
-                [dialogView.superview layoutIfNeeded];
-            } completion:^(BOOL finished) {
-                NSLog(@"removing dialog %d", viewId);
-                [self sendIntValue:dialogId value:0];
-                // Must reiterate since the indices may have changed
-	        for (int j = 0; j < self.dialogIds.count; j++) {
-                    int dialogId = [[self.dialogIds objectAtIndex:j] intValue];
-                    if (dialogId == viewId) {
-                        [self.dialogIds removeObjectAtIndex:j];
-                    }
-                }
-                [self.dialogConstraints removeObjectForKey:[NSString stringWithFormat:@"%d", viewId]];
-            }];
+	    [self hideDialog:viewId];
             break;
-        }
+	}
     }
 
     NSString * key = [NSString stringWithFormat:@"%d", viewId];
@@ -1728,7 +1667,6 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
         }
         [self.viewsDictionary removeObjectForKey:key];
     }
-    [self.frameViewConstraints removeObjectForKey:[NSString stringWithFormat:@"%d", viewId]];
 }
 
 - (void)reorderChildWithId:(int)viewId parentId:(int)parentId newPosition:(int)position
@@ -1971,7 +1909,7 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
             break;
 
         case CREATE_DIALOG: {
-            [self createDialogWithId:command.childInternalId parentId:command.internalId title:command.textValue animationStyle:AnimationStyleTopToBottom];
+            [self createDialogWithId:command.childInternalId parentId:command.internalId title:command.textValue];
         }
             break;
 
@@ -2316,9 +2254,23 @@ static const CGFloat sideMenuOpenSpaceWidth = 75.0;
     BOOL has_navbar = [self.topViewController isNavBarVisible];
     BOOL has_tabbar = [self.topViewController isTabBarVisible];
     BOOL has_searchbar = [self.topViewController isSearchBarVisible];
+
+    NSInteger keyboardHeight = [self.topViewController getKeyboardHeight];
     NSInteger topHeight = has_navbar ? 44 : 0;
-    NSInteger bottomHeight = (has_tabbar ? 49 : 0) + (has_searchbar ? 49 : 0) + [self.topViewController getKeyboardHeight];
+    NSInteger bottomHeight = (has_tabbar ? 49 : 0) + (has_searchbar ? 49 : 0) + keyboardHeight;
     self.additionalSafeAreaInsets = UIEdgeInsetsMake(topHeight, self.additionalSafeAreaInsets.left, bottomHeight, self.additionalSafeAreaInsets.right);
+
+    NSInteger dialogTopHeight = [UIApplication sharedApplication].statusBarFrame.size.height;
+    NSInteger dialogBottomHeight = keyboardHeight;
+    int availableSpace = self.view.frame.size.height - dialogTopHeight - dialogBottomHeight;
+ 
+    for (NSNumber * dialogId in self.dialogIds) {
+        ViewManager * viewManager = [self getViewManager:dialogId.intValue];
+        DialogView * dialog = (DialogView *)viewManager.containerView;
+        dialog.maxHeightConstraint.constant = -(44 + topHeight + bottomHeight);
+        dialog.centerYConstraint.constant = 44 + dialogTopHeight / 2 - dialogBottomHeight / 2;
+        [dialog setNeedsLayout];
+    }
 }
 
 @end

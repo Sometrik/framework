@@ -106,12 +106,20 @@ LinearLayoutItemMargin LLMakeMargin(CGFloat top, CGFloat left, CGFloat bottom, C
     } else if ([self.view isKindOfClass:FWPicker.class]) {
     	FWPicker * picker = (FWPicker *)self.view;
     	[picker setSelection:value];
-    } else if ([self.view isKindOfClass:UITextField.class] || [self.view isKindOfClass:UITextView.class]) {
+    } else if ([self.view isKindOfClass:UITextField.class]) {
+        UITextField * textField = (UITextField*)self.view;
         if (value) {
-            [self.view becomeFirstResponder];
+            [textField becomeFirstResponder];
 	} else {
-            [self.view resignFirstResponder];
+            [textField resignFirstResponder];
 	}
+    } else if ([self.view isKindOfClass:UITextView.class]) {
+        UITextView * textView = (UITextView*)self.view;
+        if (value) {
+            [textView becomeFirstResponder];
+	} else {
+            [textView resignFirstResponder];
+	}      
     } else if ([self.view isKindOfClass:UIScrollView.class]) {
         UIScrollView * scrollView = (UIScrollView *)self.view;
         if (scrollView.pagingEnabled) {

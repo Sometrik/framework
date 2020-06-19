@@ -27,8 +27,8 @@ Runnable::getName() const {
 
 void
 Runnable::start(std::shared_ptr<PlatformThread> _thread) {
-  initialize(_thread);
   try {
+    initialize(_thread);
     run();
   } catch (std::exception & e) {
     getLogger().println("exception: " + std::string(e.what()));

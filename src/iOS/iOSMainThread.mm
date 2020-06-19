@@ -36,8 +36,12 @@ iOSMainThread::startEventLoop() {
 	if (update_sent) continue;
 	update_sent = true;
       }
-      
-      Element::postEventToElement(ev.first, *ev.second.get());
+
+      try {
+	Element::postEventToElement(ev.first, *ev.second.get());
+      } catch (exception & e) {
+	NSLog(@"Exception while handling event");
+      }
       
       auto ev2 = dynamic_cast<SysInfoEvent*>(ev.second.get());
       if (ev2) {
@@ -105,12 +109,6 @@ iOSMainThread::loadTextAsset(const char * filename) {
   NSString * content = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:NULL];
   string s = [content cStringUsingEncoding:NSUTF8StringEncoding];
   return s;
-}
-
-void
-iOSMainThread::handleEventFromThread(int target_element_id, Event * event) {
-    Element::postEventToElement(target_element_id, *event);
-    delete event;
 }
 
 void
