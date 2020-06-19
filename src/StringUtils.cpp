@@ -454,7 +454,7 @@ StringUtils::isBlank(const std::string & input) {
   const char * end = str + input.size(); 
   while ( str_i < end ) {
     uint32_t c = utf8::next(str_i, end); // get 32 bit code of a utf-8 symbol
-    if (!is_blank_unicode(c)) {
+    if (!is_space_unicode(c)) {
       return false;
     }
   }
@@ -780,4 +780,18 @@ StringUtils::isAlpha(const string & input) {
     }
     return true;
   }
+}
+
+bool
+StringUtils::hasAlpha(const string & input) {
+  const char * str = input.c_str();
+  const char * str_i = str;
+  const char * end = str + input.size(); 
+  while ( str_i < end ) {
+    uint32_t c = utf8::next(str_i, end); // get 32 bit code of a utf-8 symbol
+    if (is_alpha_unicode(c)) {
+      return true;
+    }
+  }
+  return false;
 }

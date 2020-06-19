@@ -39,6 +39,8 @@ class StringUtils {
   static bool isUpper(const std::string & s);
   static bool isBlank(const std::string & s);
 
+  static bool hasAlpha(const std::string & input);
+
   static std::string toLower(const std::string & str);
   static std::string toUpper(const std::string & str);
   static std::string extractAscii(const std::string & s);
