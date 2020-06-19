@@ -79,6 +79,8 @@ static inline bool is_complex_symbol_unicode(uint32_t cp) {
     return true;
   } else if (cp >= 0x1F680 && cp <= 0x1F6FF) { // Transport And Map Symbols
     return true;
+  } else if (cp >= 0x1F900 && cp <= 0x1F9FF) { // Supplemental Symbols and Pictographs
+    return true;
   } else {
     return false;
   }
@@ -170,12 +172,14 @@ static inline bool is_blank_unicode(uint32_t c ) {
   case 8195: return true; // em space
   case 8201: return true; // THIN SPACE
   case 160: return true; // nbsp
+  case 0x3000: return true; // ideographic space
   default: return false;
   }
 }
 
 static inline bool is_control_unicode(uint32_t c) {
   return c == 0xad || // soft hyphen
+    c == 0x200b || // ZERO WIDTH SPACE
     c == 0x200e || // LEFT-TO-RIGHT MARK
     c == 0x202c || // POP DIRECTIONAL FORMATTING
     c == 0x2003 ||
