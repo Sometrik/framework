@@ -9,17 +9,17 @@ class AppRunner : public Runnable {
   AppRunner() { }
   
   void run() override {
-    auto thread = getThreadPtr();
-    if (thread.get()) {
-      auto & app = thread->getApplication();
-      app.initialize(thread);
+    auto t = getThreadPtr();
+    if (t.get()) {
+      auto & app = t->getApplication();
+      app.initialize(t);
 
-      thread->startEventLoop();
+      t->startEventLoop();
 #if 0
       deinitializeRenderer();
 #endif
       Command c(Command::QUIT_APP, getInternalId());
-      thread->sendCommand(c);
+      t->sendCommand(c);
     }
   }  
 };
