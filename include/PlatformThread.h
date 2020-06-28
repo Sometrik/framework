@@ -5,6 +5,7 @@
 #include <Runnable.h>
 #include <SysEvent.h>
 #include <FWApplication.h>
+#include <DateTime.h>
 
 #include <memory>
 
@@ -28,7 +29,8 @@ class PlatformThread : public EventHandler {
 
  PlatformThread(std::shared_ptr<FWApplication> & _application, std::shared_ptr<Runnable> & _runnable)
    : application(_application), runnable(_runnable)
-    {   
+    {
+      created_time = DateTime::now() / 1000;
   }
 
 #if 0
@@ -78,7 +80,8 @@ class PlatformThread : public EventHandler {
   }
   
   void terminateChildren() {
-    for (auto & thread : subthreads) {
+    auto subthreads_copy = getSubThreads();
+    for (auto & thread : subthreads_copy) {
       thread.second->terminate();
     }
   }
@@ -116,6 +119,7 @@ class PlatformThread : public EventHandler {
   float getDisplayScale() const { return display_scale; }
 
   const PlatformThread * getThreadById(int id) const {
+    MutexLocker lock(mutex);
     auto it = subthreads.find(id);
     if (it != subthreads.end()) {
       return it->second.get();
@@ -125,14 +129,17 @@ class PlatformThread : public EventHandler {
   }
 
   size_t getNumRunningThreads() const {
+    MutexLocker lock(mutex);
     return subthreads.size();
   }
 
   bool hasRunningThreads() const {
+    MutexLocker lock(mutex);
     return !subthreads.empty();
   }
 
-  const std::unordered_map<int, std::shared_ptr<PlatformThread> > & getSubThreads() const {
+  std::unordered_map<int, std::shared_ptr<PlatformThread> > getSubThreads() const {
+    MutexLocker lock(mutex);
     return subthreads;
   }
 
@@ -143,6 +150,7 @@ class PlatformThread : public EventHandler {
       setDestroyed();
       ev.setHandled(true);
     } else if (ev.getType() == SysEvent::THREAD_TERMINATED) {
+      MutexLocker lock(mutex);
       auto it = subthreads.find(ev.getThreadId());
       if (it != subthreads.end()) {
 	subthreads.erase(it);
@@ -177,12 +185,12 @@ class PlatformThread : public EventHandler {
   }
   
   bool isInTransaction() const { return batchOpen; }
-
+			  
   static std::shared_ptr<PlatformThread> run(std::shared_ptr<PlatformThread> currentThread, std::shared_ptr<Runnable> runnable) {
     if (currentThread.get()) {
       auto thread = currentThread->createThread(runnable);
       thread->setParentThread(currentThread);
-      currentThread->subthreads[thread->getInternalId()] = thread;
+      currentThread->addSubthread(thread);
       if (currentThread->startThread(thread)) {
 	return thread;
       }
@@ -191,6 +199,8 @@ class PlatformThread : public EventHandler {
     return std::shared_ptr<PlatformThread>();
   }
 
+  time_t getCreationTime() const { return created_time; }
+
  protected:
   virtual void setDestroyed() = 0;
   virtual void initializeThread() { }  
@@ -198,14 +208,20 @@ class PlatformThread : public EventHandler {
 
   std::shared_ptr<PlatformThread> getParentThread() { return parent_thread.lock(); }
 
-  void closeSubthreads() {
-    while (!subthreads.empty()) {
+  void addSubthread(std::shared_ptr<PlatformThread> & thread) {
+    MutexLocker lock(mutex);
+    subthreads[thread->getInternalId()] = thread;
+  }
+
+  void waitSubthreads() {
+    while (hasRunningThreads()) {
       auto evs = pollEvents(true);
       for (auto & ed : evs) {
         ed.second->dispatch(*this);
       }
     }
   }
+  
   void finalize() {
     SysEvent ev(SysEvent::THREAD_TERMINATED);
     ev.setThreadId(getInternalId());
@@ -223,7 +239,7 @@ class PlatformThread : public EventHandler {
     if (thread->runnable.get()) {
       thread->runnable->start(thread);
     }
-    thread->closeSubthreads();
+    thread->waitSubthreads();
     thread->deinitializeThread();
     thread->finalize();
   }
@@ -236,11 +252,15 @@ class PlatformThread : public EventHandler {
   std::weak_ptr<PlatformThread> parent_thread;
   int actual_display_width = 0, actual_display_height = 0;
   float display_scale = 1.0f;
-  std::unordered_map<int, std::shared_ptr<PlatformThread> > subthreads;
   std::shared_ptr<Runnable> runnable;
   int modal_result_value = 0;
   bool batchOpen = false;
   std::vector<Command> commandBatch;
+  time_t created_time;
+
+  // mutex protected
+  mutable Mutex mutex;
+  std::unordered_map<int, std::shared_ptr<PlatformThread> > subthreads;
 };
 
 #endif
