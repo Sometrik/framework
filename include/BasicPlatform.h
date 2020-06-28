@@ -80,7 +80,7 @@ public:
       }
 
 #if 0
-      if (prev_heartbeat_time + 10 <= time(0)) {
+      if (prev_heartbeat_time + 10 <= DateTime::now() / 1000) {
         getApplication().showToast("Application is not responding: " + getApplication().getStatusText(), 9);
 	sendHeartbeat();
       }
