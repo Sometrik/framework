@@ -208,7 +208,8 @@ protected:
     auto runnable = t.getRunnablePtr();
     if (runnable) {
       runnable_name = runnable->getName();
-      runnable_status = runnable->getStatusText();
+      auto s = runnable->getStatus();
+      runnable_status = s.first;
     }
     grid.setValue(numThreadRows, 0, runnable_name);
     grid.setValue(numThreadRows, 1, runnable_status);

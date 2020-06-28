@@ -3,6 +3,7 @@
 
 #include <Element.h>
 #include <Mutex.h>
+#include <DateTime.h>
 
 #include <string>
 
@@ -17,9 +18,15 @@ class Runnable : public Element {
   
   void start(std::shared_ptr<PlatformThread> _thread);
   
-  std::string getStatusText() const {
+  void setStatusText(const std::string & s) {    
     MutexLocker m(mutex);
-    return status_text;
+    status_text = s;       
+    heartbeat_time = DateTime::now() / 1000;
+  }
+
+  std::pair<std::string, time_t> getStatus() const {
+    MutexLocker m(mutex);
+    return make_pair(status_text, heartbeat_time);
   }
 
   virtual std::string getName() const;
@@ -33,15 +40,11 @@ class Runnable : public Element {
  protected: 
   virtual void run() = 0;
 
-  void setStatusText(const std::string & s) {
-    MutexLocker m(mutex);
-    status_text = s;
-  }
-
   bool testDestroy();
 
  private:
   std::string status_text;
+  time_t heartbeat_time = 0;
   std::shared_ptr<Logger> logger;
   mutable Mutex mutex;
 };
