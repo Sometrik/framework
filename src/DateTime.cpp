@@ -418,7 +418,7 @@ DateTime::toISOString2() const {
 string
 DateTime::getCurrentTimeString() {
   DateTime t;
-  t.setTime(time(0));
+  t.setTime(now() / 1000);
   return t.toString();
 }
 
@@ -447,11 +447,21 @@ DateTime::normalize() {
 double
 DateTime::getCurrentTime() {
   struct timeval tv;
-  struct timezone tz;
-  int r = gettimeofday(&tv, &tz);
-  double t = 0;
+  int r = gettimeofday(&tv, 0);
   if (r == 0) {
-    t = (double)tv.tv_sec + tv.tv_usec / 1000000.0;
+    return (double)tv.tv_sec + tv.tv_usec / 1000000.0;
+  } else {
+    return 0;
   }
-  return t;
+}
+
+long long
+DateTime::now() {
+  struct timeval tv;
+  int r = gettimeofday(&tv, 0);
+  if (r == 0) {
+    return 1000 * tv.tv_sec + tv.tv_usec / 1000;
+  } else {
+    return 0;
+  }
 }

@@ -58,6 +58,8 @@ class DateTime {
   static struct tm * Gmtime(const time_t * timep, struct tm * result);
   static std::string getCurrentTimeString();
   static double getCurrentTime();
+
+  static long long now();
   
  private:
   short year, month, day, hour, min, sec;
