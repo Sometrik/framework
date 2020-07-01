@@ -460,7 +460,7 @@ DateTime::now() {
   struct timeval tv;
   int r = gettimeofday(&tv, 0);
   if (r == 0) {
-    return 1000 * tv.tv_sec + tv.tv_usec / 1000;
+    return (long long)1000 * tv.tv_sec + tv.tv_usec / 1000;
   } else {
     return 0;
   }
