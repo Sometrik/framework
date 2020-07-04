@@ -22,6 +22,7 @@ class VisibilityUpdateEvent;
 class ScrollChangedEvent;
 class UserInteractionEvent;
 class AccountChangedEvent;
+class WarningEvent;
 
 class ResultEvent;
 class WindowEvent;
@@ -85,6 +86,7 @@ class EventHandler : public Notifier {
   virtual void onUserInteractionEvent(UserInteractionEvent & ev) { }
   virtual void onAccountChangedEvent(AccountChangedEvent & ev) { }
 
+  virtual void handleWarningEvent(WarningEvent & ev) { }
   virtual void handleResultEvent(ResultEvent & ev) { }
   virtual void handleWindowEvent(WindowEvent & ev) { }
   virtual void handleUICommandEvent(UICommandEvent & ev) { }
