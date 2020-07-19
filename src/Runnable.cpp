@@ -31,7 +31,7 @@ Runnable::start(std::shared_ptr<PlatformThread> _thread) {
     initialize(_thread);
     run();
   } catch (std::exception & e) {
-    getLogger().println("exception: " + std::string(e.what()));
+    getLogger().println("exception(Runnable): " + std::string(e.what()));
   }
 }
 
