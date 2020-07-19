@@ -76,7 +76,11 @@ public:
       auto evs = pollEvents();
 
       for (auto & ev : evs) {
-      	Element::postEventToElement(ev.first, *ev.second.get());
+	if (ev.first == getInternalId()) { // thread is not an element
+	  ev.second->dispatch(*this);
+	} else if (!Element::postEventToElement(ev.first, *ev.second.get())) {
+	  std::cerr << "unable to post Event\n";
+	}
       }
 
 #if 0
@@ -102,6 +106,16 @@ public:
   }
 
   void sendCommands(const std::vector<Command> & commands) {
+    for (auto & command : commands) {
+      switch (command.getType()) {
+      case Command::QUIT_APP:
+	exit(0);
+	break;
+	
+      default:
+	break;
+      }
+    }
   }
 
   std::string getLocalFilename(const char * fn, FileType type) override { return fn; }
