@@ -73,9 +73,7 @@ public:
   void setDebugModeEnabled(bool t) { debug_mode_enabled = t; }
 
  protected:
-  void run() override {
-    // not used
-  }
+  void run() override;
 
   void create() override {
     Command c(Command::CREATE_APPLICATION, getParentInternalId(), getInternalId());

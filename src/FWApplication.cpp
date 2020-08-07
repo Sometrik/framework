@@ -261,3 +261,16 @@ FWApplication::showInputDialog(const std::string & title, const std::string & me
     return "";
   }
 }
+
+void
+FWApplication::run() {
+  auto t = getThreadPtr();
+  if (t.get()) {
+    t->startEventLoop();
+#if 0
+    deinitializeRenderer();
+#endif
+    Command c(Command::QUIT_APP, getInternalId());
+    t->sendCommand(c);
+  }
+}
