@@ -56,6 +56,7 @@ class SearchEvent;
 class SearchInfoEvent;
 class StatusEvent;
 class UserListEvent;
+class TimelineObjectEvent;
 
 class EventHandler : public Notifier {
  public:
@@ -87,7 +88,6 @@ class EventHandler : public Notifier {
   virtual void onAccountChangedEvent(AccountChangedEvent & ev) { }
 
   virtual void handleWarningEvent(WarningEvent & ev) { }
-  virtual void handleResultEvent(ResultEvent & ev) { }
   virtual void handleWindowEvent(WindowEvent & ev) { }
   virtual void handleUICommandEvent(UICommandEvent & ev) { }
   virtual void handleAnimationEvent(AnimationEvent & ev) { }
@@ -110,6 +110,7 @@ class EventHandler : public Notifier {
   virtual void handleLoadEvent(LoadEvent & ev) { }
 
   // Application specific
+  virtual void handleResultEvent(ResultEvent & ev) { }
   virtual void handlePrepareEvent(PrepareEvent & ev) { }
   virtual void handlePaintEventRecursive(PaintEvent & ev) { }
   virtual void handlePaintEvent(PaintEvent & ev) { }
@@ -125,6 +126,7 @@ class EventHandler : public Notifier {
   virtual void handleSearchInfoEvent(SearchInfoEvent & ev) { }
   virtual void handleStatusEvent(StatusEvent & ev) { }
   virtual void handleUserListEvent(UserListEvent & ev) { }
+  virtual void handleTimelineObjectEvent(TimelineObjectEvent & ev) { }
   
   virtual bool acceptPositionEvent(const PositionEvent & ev, float margin = 0) const { return false; }
   virtual bool isVisibleOnWorkspace(int w) const { return true; }  
