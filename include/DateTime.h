@@ -7,11 +7,13 @@
 
 class DateTime {
  public:
+  enum TimezoneSelector {
+    UTC = 1,
+    LOCAL
+  };
   
   DateTime();
-  DateTime(double t, const char * timezone_text = 0);
-  DateTime(time_t t, const char * timezone_text = 0);
-  DateTime(int _year, int _month, int _day, int _hour, int _min, int _sec);
+  DateTime(int _year, int _month, int _day, int _hour, int _min, int _sec, TimezoneSelector tz_sel);
   DateTime(const char * s);
   DateTime(const std::string & s);
 
@@ -45,13 +47,12 @@ class DateTime {
   void setTimeUTC(time_t t);
   void setTime(const std::string & s);
 
-  time_t getTime() const; // broken
-  time_t getTimeUTC() const;  
+  time_t getUnixTime() const; // applies timezone
 
   std::string toString() const;
   std::string dateToString() const;
-  std::string toISOString() const;
-  std::string toISOString2() const;
+  std::string toISOStringSimple() const;
+  std::string toISOStringTZ() const;
 
   static int get_timezone_offset();
   static struct tm * Localtime(const time_t * timep, struct tm * result);

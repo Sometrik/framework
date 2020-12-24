@@ -55,22 +55,14 @@ DateTime::DateTime() : year(0), month(0), day(0), hour(0), min(0), sec(0), tz_of
   
 }
 
-DateTime::DateTime(double _t, const char * timezone_text) {
-  setTime((time_t)_t, timezone_text);
-}
-
-DateTime::DateTime(time_t _t, const char * timezone_text) {
-  setTime(_t, timezone_text);
-}
-
-DateTime::DateTime(int _year, int _month, int _day, int _hour, int _min, int _sec)
+DateTime::DateTime(int _year, int _month, int _day, int _hour, int _min, int _sec, TimezoneSelector tz_sel)
   : year(_year),
     month(_month),
     day(_day),
     hour(_hour),
     min(_min),
     sec(_sec),
-    tz_offset(-30000),
+    tz_offset(tz_sel == UTC ? 0 : -30000),
     day_of_week(-1)
 {
   
@@ -164,16 +156,30 @@ DateTime::parseISOTime(const string & s) {
   tz_offset = day_of_week = 0;  
 
   // 2011-10-06T17:59:06.000Z
-  int yy, mo, dd, hh, mi, ss;
-  int rv = _snscanf(s.c_str(), s.size(), "%d-%d-%dT%d:%d:%d", &yy, &mo, &dd, &hh, &mi, &ss);
-  if (rv != 6) {
-    rv = _snscanf(s.c_str(), s.size(), "%d-%d-%d %d:%d:%d", &yy, &mo, &dd, &hh, &mi, &ss);
-  }
-  if (rv != 6) {
+  // 2013-03-05T22:12:37+02:00
+  int yy, mo, dd, hh, mi, ss, timezone = 0;
+  char delimiter;  
+  int rv = _snscanf(s.c_str(), s.size(), "%04d-%02d-%02d%c%02d:%02d:%02d", &yy, &mo, &dd, &delimiter, &hh, &mi, &ss);
+  bool success = false;
+  if (rv == 7 && (delimiter == ' ' || delimiter == 'T')) {
+    size_t pos = 19;
+    if (pos < s.size() && s[pos] == '.') pos += 4;
+    if (pos + 5 < s.size() && (s[pos] == '+' || s[pos] == '-')) {
+      int sign = s[pos] == '+' ? 1 : -1;
+      pos++;
+      int tz_hour, tz_min;
+      int rv2 = _snscanf(s.c_str() + pos, s.size() - pos, "%02d:%02d", &tz_hour, &tz_min);
+      if (rv2 == 2) {
+	timezone = tz_hour * 60 + tz_min;
+      }
+    }
+    success = true;
+  } else {
     rv = _snscanf(s.c_str(), s.size(), "%04d%02d%02d-%02d%02d%02d", &yy, &mo, &dd, &hh, &mi, &ss);
+    success = rv == 6;
   }
-  if (rv == 6) {
-    year = yy; month = mo; day = dd; hour = hh; min = mi; sec = ss;
+  if (success) {
+    year = yy; month = mo; day = dd; hour = hh; min = mi; sec = ss; tz_offset = timezone;
     return true;
   } else {
     year = month = day = hour = min = sec = 0;
@@ -278,10 +284,12 @@ DateTime::setTime(time_t t) {
     hour = ts.tm_hour;
     min = ts.tm_min;
     sec = ts.tm_sec;
-    day_of_week = (ts.tm_wday + 6) % 7 + 1; 
+    day_of_week = (ts.tm_wday + 6) % 7 + 1;
+    tz_offset = get_timezone_offset();
   } else {
     year = month = day = hour = min = sec = 0;    
     day_of_week = -1;
+    tz_offset = 0;	
   }
 }
 
@@ -295,32 +303,12 @@ DateTime::setTimeUTC(time_t t) {
     hour = ts.tm_hour;
     min = ts.tm_min;
     sec = ts.tm_sec;
-    day_of_week = (ts.tm_wday + 6) % 7 + 1; 
+    day_of_week = (ts.tm_wday + 6) % 7 + 1;
+    tz_offset = 0;
   } else {
     year = month = day = hour = min = sec = 0;    
     day_of_week = -1;
-  }
-}
-
-time_t
-DateTime::getTime() const {
-  if (tz_offset != -30000) {
-    return getTimeUTC() - tz_offset * 60;
-  } else {
-    tm tt;
-    tt.tm_sec = sec;
-    tt.tm_min = min;
-    tt.tm_hour = hour;
-    tt.tm_mday = day;
-    tt.tm_mon = month - 1;
-    tt.tm_year = year - 1900;
-    tt.tm_wday = 0;
-    tt.tm_yday = 0;
-    tt.tm_isdst = -1; // n/a (is this right)
-#ifndef WIN32
-    tt.tm_gmtoff = 0;
-#endif
-    return mktime(&tt);
+    tz_offset = 0;
   }
 }
 
@@ -358,7 +346,7 @@ static time_t my_timegm(struct tm * t)
 #endif
 
 time_t
-DateTime::getTimeUTC() const {
+DateTime::getUnixTime() const {
   tm tt;
   tt.tm_sec = sec;
   tt.tm_min = min;
@@ -368,22 +356,31 @@ DateTime::getTimeUTC() const {
   tt.tm_year = year - 1900;
   tt.tm_wday = 0;
   tt.tm_yday = 0;
-  tt.tm_isdst = -1;
-#if defined WIN32
-  return _mkgmtime(&tt);
-#elif defined __ANDROID__
-  return my_timegm(&tt);
-#else
-  return timegm(&tt);
+  tt.tm_isdst = -1; // ?
+#ifndef WIN32
+  tt.tm_gmtoff = 0;
 #endif
+
+  if (tz_offset == -30000) { // unknown timezone, use localtime
+    return mktime(&tt);
+  } else {
+#if defined WIN32
+    time_t t = _mkgmtime(&tt);
+#elif defined __ANDROID__
+    time_t t = my_timegm(&tt);
+#else
+    time_t t = timegm(&tt);
+#endif
+    return t - tz_offset * 60;
+  }
 }
 
 int
 DateTime::get_timezone_offset() {
 #ifdef _WIN32
-  return _timezone;
+  return _timezone / 60;
 #else
-  return timezone;
+  return timezone / 60;
 #endif
 }
 
@@ -402,17 +399,23 @@ DateTime::dateToString() const {
 }
 
 string
-DateTime::toISOString() const {
+DateTime::toISOStringSimple() const {
   char s[256];
   snprintf(s, 255, "%04d-%02d-%02d %02d:%02d:%02d", year, month, day, hour, min, sec);
   return string(s);
 }
 
 string
-DateTime::toISOString2() const {
+DateTime::toISOStringTZ() const {
   char s[256];
-  snprintf(s, 255, "%04d-%02d-%02dT%02d:%02d:%02dZ", year, month, day, hour, min, sec);
-  return string(s);
+  snprintf(s, 255, "%04d-%02d-%02dT%02d:%02d:%02d", year, month, day, hour, min, sec);
+  string r(s);
+  if (tz_offset == 0) r += 'Z';
+  else if (tz_offset != -30000) {
+    snprintf(s, 255, "%c%02d:%02d", tz_offset < 0 ? '-' : '+', abs(tz_offset / 60), abs(tz_offset % 60));
+    r += string(s);
+  }
+  return r;
 }
 
 string
