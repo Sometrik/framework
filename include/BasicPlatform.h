@@ -4,6 +4,7 @@
 #include <PosixThread.h>
 #include <CurlClient.h>
 #include <Logger.h>
+#include <TimerEvent.h>
 
 #ifndef NO_CANVAS
 #include <Context.h>
@@ -71,16 +72,26 @@ public:
     
   }
 
-  void startEventLoop() override {
+  void startEventLoop() override {      
     while (getNumRunningThreads() != 0 || !testDestroy()) {
       auto evs = pollEvents();
 
-      for (auto & ev : evs) {
-	if (ev.first == getInternalId()) { // thread is not an element
-	  ev.second->dispatch(*this);
-	} else if (!Element::postEventToElement(ev.first, *ev.second.get())) {
+      std::pair<int, std::shared_ptr<Event> > waiting_timer_event;
+      for (auto & ed : evs) {
+	auto internal_id = ed.first;
+	auto & ev = ed.second;
+
+	if (dynamic_cast<TimerEvent*>(ev.get())) {
+	  waiting_timer_event = ed;
+	} else if (internal_id == getInternalId()) { // thread is not an element
+	  ev->dispatch(*this);
+	} else if (!Element::postEventToElement(internal_id, *ev)) {
 	  std::cerr << "unable to post Event\n";
 	}
+      }
+
+      if (waiting_timer_event.second) {
+	Element::postEventToElement(waiting_timer_event.first, *waiting_timer_event.second);
       }
 
 #if 0
