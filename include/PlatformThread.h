@@ -200,7 +200,8 @@ class PlatformThread : public EventHandler {
   }
 
   time_t getCreationTime() const { return created_time; }
-
+  bool isTerminated() const { return is_terminated; }
+  
  protected:
   virtual void setDestroyed() = 0;
   virtual void initializeThread() { }  
@@ -232,6 +233,8 @@ class PlatformThread : public EventHandler {
       pt->sendEvent(pt->getInternalId(), ev);
     }
     postEvent(0, ev);
+
+    is_terminated = true;
   }
   
   static void startThread2(std::shared_ptr<PlatformThread> thread) {
@@ -245,6 +248,7 @@ class PlatformThread : public EventHandler {
   }
 
   bool exit_when_threads_terminated = false;
+  bool is_terminated = false;
 
   std::shared_ptr<FWApplication> application;
 
