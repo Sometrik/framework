@@ -50,7 +50,7 @@ DateTime::Gmtime(const time_t * timep, struct tm * result) {
 #endif
 }
 
-DateTime::DateTime() : year(0), month(0), day(0), hour(0), min(0), sec(0), tz_offset(-30000), day_of_week(-1)
+DateTime::DateTime() : year(0), month(0), day(0), hour(0), min(0), sec(0), tz_offset(-30000), day_of_week(-1), is_valid(false)
 {
   
 }
@@ -63,7 +63,8 @@ DateTime::DateTime(int _year, int _month, int _day, int _hour, int _min, int _se
     min(_min),
     sec(_sec),
     tz_offset(tz_sel == UTC ? 0 : -30000),
-    day_of_week(-1)
+    day_of_week(-1),
+    is_valid(true)
 {
   
 }
@@ -98,11 +99,11 @@ DateTime::parseRSSTime(const string & s) {
   
   int yy, dd, hh, mm, ss;
   char tz_text[32];
-  bool is_valid = _snscanf(s.c_str(), s.size(), "%s %d %s %d %d:%d:%d %s", s_weekday, &dd, s_month, &yy, &hh, &mm, &ss, tz_text) == 8;
-  if (!is_valid) {
-    is_valid = _snscanf(s.c_str(), s.size(), "%d %s %d %d:%d:%d %s", &dd, s_month, &yy, &hh, &mm, &ss, tz_text) == 7;
+  bool success = _snscanf(s.c_str(), s.size(), "%s %d %s %d %d:%d:%d %s", s_weekday, &dd, s_month, &yy, &hh, &mm, &ss, tz_text) == 8;
+  if (!success) {
+    success = _snscanf(s.c_str(), s.size(), "%d %s %d %d:%d:%d %s", &dd, s_month, &yy, &hh, &mm, &ss, tz_text) == 7;
   }
-  if (is_valid) {
+  if (success) {
     if (StringUtils::isNumber(tz_text)) {
       int tz = atoi(tz_text);
       tz_offset = int(tz / 100) * 60; // minutes?
@@ -114,11 +115,13 @@ DateTime::parseRSSTime(const string & s) {
     const char * r = strstr(month_names, s_month);
     if (r) {
       month = 1 + (r - month_names) / 3;
+      is_valid = true;
       return true;
     }
   }
 
   year = month = day = hour = min = sec = 0;
+  is_valid = false;
   
   return false;  
 }
@@ -142,16 +145,18 @@ DateTime::parseHTTPTime(const string & s) {
     const char * r = strstr(month_names, s_month);
     if (r) {
       month = 1 + (r - month_names) / 3;
+      is_valid = true;
       return true;
     }
   }
 
   year = month = day = hour = min = sec = 0;
-
+  is_valid = false;
+  
   return false;
 }
 
-bool
+DateTime &
 DateTime::parseISOTime(const string & s) {
   tz_offset = day_of_week = 0;  
 
@@ -178,13 +183,13 @@ DateTime::parseISOTime(const string & s) {
     rv = _snscanf(s.c_str(), s.size(), "%04d%02d%02d-%02d%02d%02d", &yy, &mo, &dd, &hh, &mi, &ss);
     success = rv == 6;
   }
+  is_valid = success;
   if (success) {
     year = yy; month = mo; day = dd; hour = hh; min = mi; sec = ss; tz_offset = timezone;
-    return true;
   } else {
     year = month = day = hour = min = sec = 0;
-    return false;
   }
+  return *this;
 }
 
 bool
@@ -247,7 +252,8 @@ DateTime::setTime(const string & s) {
   tz_offset = tm.tm_gmtoff / 60;
 #endif
   day_of_week = (tm.tm_wday + 6) % 7 + 1; 
-
+  is_valid = true;
+  
   // assert(year >= 1964);
 
   // cerr << "parsed time from " << s << " => " << getTime() << " (tz = " << tz_hours << ")\n";
@@ -258,24 +264,24 @@ void
 DateTime::setTime(time_t t, const char * timezone_text) {
   if (timezone_text) {
 #ifdef _WIN32
-    setTime(t);
+    setTimeLocal(t);
 #else
     char s[256] = "TZ=";
     char s2[] = "TZ";
     strncat(s + 3, timezone_text, 255 - 3);
     putenv(s);
     tzset();
-    setTime(t);
+    setTimeLocal(t);
     putenv(s2);
     tzset();
 #endif
   } else {
-    setTime(t);
+    setTimeLocal(t);
   }
 }
 
 void
-DateTime::setTime(time_t t) {
+DateTime::setTimeLocal(time_t t) {
   tm ts;
   if (Localtime(&t, &ts)) {
     year = ts.tm_year + 1900;
@@ -286,10 +292,12 @@ DateTime::setTime(time_t t) {
     sec = ts.tm_sec;
     day_of_week = (ts.tm_wday + 6) % 7 + 1;
     tz_offset = get_timezone_offset();
+    is_valid = true;
   } else {
     year = month = day = hour = min = sec = 0;    
     day_of_week = -1;
-    tz_offset = 0;	
+    tz_offset = 0;
+    is_valid = false;
   }
 }
 
@@ -305,10 +313,12 @@ DateTime::setTimeUTC(time_t t) {
     sec = ts.tm_sec;
     day_of_week = (ts.tm_wday + 6) % 7 + 1;
     tz_offset = 0;
+    is_valid = true;
   } else {
     year = month = day = hour = min = sec = 0;    
     day_of_week = -1;
     tz_offset = 0;
+    is_valid = false;
   }
 }
 
@@ -421,7 +431,7 @@ DateTime::toISOStringTZ() const {
 string
 DateTime::getCurrentTimeString() {
   DateTime t;
-  t.setTime(now() / 1000);
+  t.setTimeLocal(now() / 1000);
   return t.toString();
 }
 
