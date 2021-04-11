@@ -9,6 +9,8 @@
 
 #include "utf8/utf8.h"
 
+#include <iostream>
+
 using namespace std;
 
 const char * StringUtils::WHITESPACE = " \t\b\x0a\x0d";
@@ -85,8 +87,52 @@ StringUtils::trimPunctuation(string & input) {
 #endif
 }
 
+vector<string>
+StringUtils::extractHashtags(const std::string & input) {
+  vector<string> r;
+
+  try {
+    const char * str = input.c_str();
+    const char * str_i = str;
+    const char * end = str + input.size();
+
+    string current_hashtag;
+    auto output_inserter = back_inserter(current_hashtag);
+    unsigned int state = 0;
+    
+    while ( str_i < end ) {
+      uint32_t c = utf8::next(str_i, end);
+
+      switch (state) {
+      case 0:
+	if (c == '#') state = 1;
+	break;
+      case 1:
+	if (c == '_' || is_digit_unicode(c) || is_alpha_unicode(c) || is_syllabary_unicode(c) || is_ideograph_unicode(c)) utf8::append(c, output_inserter);
+	else {
+	  if (!current_hashtag.empty()) {
+	    r.push_back(current_hashtag);
+	    current_hashtag.clear();
+	    output_inserter = back_inserter(current_hashtag);
+	  }
+	  if (c != '#') state = 0;
+	}
+	break;
+      }
+    }
+
+    if (!current_hashtag.empty()) {
+      r.push_back(current_hashtag);
+    }
+  } catch (exception & e) {
+    cerr << "failed to extract hashtags: " << e.what() << endl;
+  }
+
+  return r;
+}
+
 bool
-StringUtils::normalizeText(const string & input, string & output) {
+StringUtils::normalizeWhitespace(const string & input, string & output) {
   output.clear();
   
   try {
@@ -100,7 +146,9 @@ StringUtils::normalizeText(const string & input, string & output) {
   
     while ( str_i < end ) {
       uint32_t c = utf8::next(str_i, end);
-      if (!is_space_unicode(c)) {
+      if (is_control_unicode(c)) {
+	// skip Zero Width Space and similar
+      } else if (!is_space_unicode(c)) {
 	if (is_whitespace) {
 	  utf8::append(' ', output_inserter);
 	  is_whitespace = false;
@@ -110,14 +158,79 @@ StringUtils::normalizeText(const string & input, string & output) {
 	is_whitespace = true;
       }
     }
-  } catch (utf8::invalid_code_point & e) {
-    return false;
-  } catch (utf8::invalid_utf8 & e) {
-    return false;
-  } catch (utf8::not_enough_room & e) {
+  } catch (exception & e) {
+    cerr << "failed to normalize: " << input << endl;
     return false;
   }
   return true;
+}
+
+static inline uint32_t normalizeChar(const uint32_t c) {
+  if (c >= 0x24b6 && c <= 0x24cf) return c - 0x24b6 + 'A'; // Circled Latin Capital Letter
+  if (c >= 0x24d0 && c <= 0x24e9) return c - 0x24d0 + 'a'; // Circled Latin Small Letter
+  if (c >= 0x01D400 && c <= 0x01D419) return c - 0x01D400 + 'A'; // Mathematical Bold Capital
+  if (c >= 0x01D41A && c <= 0x01D433) return c - 0x01D41A + 'a'; // Mathematical Bold Small
+  if (c >= 0x01D434 && c <= 0x01D44D) return c - 0x01D434 + 'A'; // Mathematical Italic Capital
+  if (c >= 0x01D44E && c <= 0x01D467) return c - 0x01D44E + 'a'; // Mathematical Italic Small
+  if (c >= 0x01D468 && c <= 0x01D481) return c - 0x01D468 + 'A'; // Mathematical Bold Italic Capital
+  if (c >= 0x01D482 && c <= 0x01D49B) return c - 0x01D482 + 'a'; // Mathematical Bold Italic Small
+  if (c >= 0x01D49C && c <= 0x01D4B5) return c - 0x01D49C + 'A'; // Mathematical Script Capital
+  if (c >= 0x01D4B6 && c <= 0x01D4CF) return c - 0x01D4B6 + 'a'; // Mathematical Script Small
+  if (c >= 0x01D4D0 && c <= 0x01D4E9) return c - 0x01D4D0 + 'A'; // Mathematical Bold Script Capital
+  if (c >= 0x01D4EA && c <= 0x01D503) return c - 0x01D4EA + 'a'; // Mathematical Bold Script Small
+  if (c >= 0x01D504 && c <= 0x01D51C) return c - 0x01D504 + 'A'; // Mathematical Fraktur Capital
+  if (c >= 0x01D51E && c <= 0x01D537) return c - 0x01D51E + 'a'; // Mathematical Fraktur Small
+  if (c >= 0x01D538 && c <= 0x01D551) return c - 0x01D538 + 'A'; // Mathematical Double-Struck Capital
+  if (c >= 0x01D552 && c <= 0x01D56B) return c - 0x01D552 + 'a'; // Mathematical Double-Struck Small  
+  if (c >= 0x01D56C && c <= 0x01D585) return c - 0x01D56C + 'A'; // Mathematical Bold Fraktur Capital
+  if (c >= 0x01D586 && c <= 0x01D59F) return c - 0x01D586 + 'a'; // Mathematical Bold Fraktur Small
+  if (c >= 0x01D5A0 && c <= 0x01D5B9) return c - 0x01D5A0 + 'A'; // Mathematical Sans-Serif Capital
+  if (c >= 0x01D5BA && c <= 0x01D5D3) return c - 0x01D5BA + 'a'; // Mathematical Sans-Serif Small
+  if (c >= 0x01D5D4 && c <= 0x01D5ED) return c - 0x01D5D4 + 'A'; // Mathematical Sans-Serif Bold Capital
+  if (c >= 0x01D5EE && c <= 0x01D607) return c - 0x01D5EE + 'a'; // Mathematical Sans-Serif Bold Small
+  if (c >= 0x01D608 && c <= 0x01D621) return c - 0x01D608 + 'A'; // Mathematical Sans-Serif Italic Capital
+  if (c >= 0x01D622 && c <= 0x01D63B) return c - 0x01D622 + 'a'; // Mathematical Sans-Serif Italic Small
+  if (c >= 0x01D63C && c <= 0x01D655) return c - 0x01D63C + 'A'; // Mathematical Sans-Serif Bold Italic Capital
+  if (c >= 0x01D656 && c <= 0x01D66F) return c - 0x01D656 + 'a'; // Mathematical Sans-Serif Bold Italic Small
+  if (c >= 0x01D670 && c <= 0x01D689) return c - 0x01D670 + 'A'; // Mathematical Monospace Capital
+  if (c >= 0x01D68A && c <= 0x01D6A3) return c - 0x01D68A + 'a'; // Mathematical Monospace Small
+  return c;
+}
+
+std::string
+StringUtils::normalize(const std::string & input) {
+  string output;
+  
+  try {
+    const char * str = input.c_str();
+    const char * str_i = str;
+    const char * end = str + input.size();
+    
+    auto output_inserter = back_inserter(output);
+
+    bool is_whitespace = false;
+  
+    while ( str_i < end ) {
+      uint32_t c = utf8::next(str_i, end);
+      if (is_control_unicode(c)) {
+	// skip Zero Width Space and similar
+      } else if (!is_space_unicode(c)) {
+	if (is_whitespace) {
+	  utf8::append(' ', output_inserter);
+	  is_whitespace = false;
+	}
+	utf8::append(normalizeChar(c), output_inserter);
+      } else if (!is_whitespace && !output.empty()) {
+	is_whitespace = true;
+      }
+    }
+  } catch (exception & e) {
+    cerr << "failed to normalize: " << input << endl;
+  }
+
+  // cerr << "normalized " << input << " to " << output << endl;
+  
+  return output;
 }
 
 void
@@ -176,12 +289,47 @@ StringUtils::strip(string & s, char c) {
   s.erase(pos);
 }
 
+pair<string, string>
+StringUtils::splitCamelCase(const std::string & input) {
+  const char * str = input.c_str();
+  const char * str_i = str;
+  const char * end = str + input.size(); 
+
+  string r1, r2;
+  int state = 0;
+  auto r1_inserter = back_inserter(r1);
+  auto r2_inserter = back_inserter(r2);
+
+  while ( str_i < end ) {
+    uint32_t c = utf8::next(str_i, end); // get 32 bit code of a utf-8 symbol
+
+    if (state == 0 && is_alpha_unicode(c)) {
+      utf8::append(c, r1_inserter);
+      state++;
+    } else if (state == 1 && is_lower_unicode(c)) {
+      utf8::append(c, r1_inserter);
+    } else {
+      state = 2;
+      utf8::append(c, r2_inserter);      
+    }
+  }
+
+  return make_pair(r1, r2);
+}
+
 // empty string returns empty vector
 // otherwise returns delimiter count + 1 strings
 vector<string>
 StringUtils::split(const string & line, char delimiter) {
   vector<string> v;
   // back_insert_iterator< vector<string> > backiter(v);
+  split(line, back_inserter(v), delimiter);
+  return v;
+}
+
+vector<string>
+StringUtils::split(const std::string & line, const std::string & delimiter) {
+  vector<string> v;
   split(line, back_inserter(v), delimiter);
   return v;
 }
@@ -203,7 +351,7 @@ StringUtils::splitOnce(const string & line, char delimiter) {
 size_t
 StringUtils::split(const string & line, back_insert_iterator< vector<string> > backiter, char delimiter) {
   unsigned int n = 0;
-  if (line.size()) {
+  if (!line.empty()) {
     char * str = new char[line.size() + 1];
     strcpy(str, line.c_str());
     char * current = str;
@@ -246,6 +394,19 @@ StringUtils::split(const string & line, back_insert_iterator< list<string> > bac
     *backiter++ = current;
     n++;
     delete[] str;
+  }
+  return n;
+}
+
+size_t
+StringUtils::split(const string & input, back_insert_iterator< vector<string> > backiter, const std::string & delimiter) {
+  unsigned int n = 0;
+  for (string::size_type pos = 0; pos < input.size(); ) {
+    auto pos2 = input.find(delimiter, pos);
+    if (pos2 == string::npos) pos2 = input.size();
+    *backiter++ = input.substr(pos, pos2 - pos);
+    pos = pos2 + delimiter.size();
+    n++;
   }
   return n;
 }
@@ -393,6 +554,25 @@ static inline uint32_t to_upper_unicode(uint32_t c) {
   }
 }
 
+size_t
+StringUtils::length(const std::string & input) {
+  size_t r = 0;
+  const char * str = input.c_str();
+  const char * str_i = str;
+  const char * end = str + input.size(); 
+
+  while ( str_i < end ) {
+    utf8::next(str_i, end); // get 32 bit code of a utf-8 symbol
+    r++;
+  }
+  return r;  
+}
+
+bool
+StringUtils::isValidUTF8(const std::string & input) {
+  return utf8::is_valid(input.c_str(), input.c_str() + input.size());    
+}
+
 string
 StringUtils::toLower(const string & input) {
   string r;
@@ -494,9 +674,17 @@ StringUtils::decodeEntities(const string & s) {
 	r += '>';
 	i += 4;
 	continue;
-      } else if (s[i + 1] == 'a' && s[i + 2] == 'm' && s[i + 3] == 'p' && s[i + 4] == ';') {
+      } else if (i + 5 <= s.size() && s[i + 1] == 'a' && s[i + 2] == 'm' && s[i + 3] == 'p' && s[i + 4] == ';') {
 	r += '&';
 	i += 5;
+	continue;
+      } else if (i + 6 <= s.size() && s[i + 1] == 'q' && s[i + 2] == 'u' && s[i + 3] == 'o' && s[i + 4] == 't' && s[i + 5] == ';') {
+	r += '"';
+	i += 6;
+	continue;
+      } else if (i + 6 <= s.size() && s[i + 1] == 'a' && s[i + 2] == 'p' && s[i + 3] == 'o' && s[i + 4] == 's' && s[i + 5] == ';') {
+	r += '\'';
+	i += 6;
 	continue;
       }
     }
@@ -678,8 +866,8 @@ string
 StringUtils::fromVector(const vector<uint32_t> & input) {
   string r;
   auto output_inserter = back_inserter(r);
-  for (auto it = input.begin(); it != input.end(); it++) {
-    utf8::append(*it, output_inserter);
+  for (auto c : input) {
+    utf8::append(c, output_inserter);
   }
   return r;
 }
@@ -765,7 +953,7 @@ StringUtils::substr(const std::string & input, size_t start, size_t l) {
 }
 
 bool
-StringUtils::isAlpha(const string & input) {
+StringUtils::isWord(const string & input) {
   if (input.empty()) {
     return false;
   } else {
@@ -774,7 +962,7 @@ StringUtils::isAlpha(const string & input) {
     const char * end = str + input.size(); 
     while ( str_i < end ) {
       uint32_t c = utf8::next(str_i, end); // get 32 bit code of a utf-8 symbol
-      if (!is_alpha_unicode(c)) {
+      if (!is_alpha_unicode(c) && !is_syllabary_unicode(c) && !is_ideograph_unicode(c)) {
 	return false;
       }
     }
@@ -783,15 +971,62 @@ StringUtils::isAlpha(const string & input) {
 }
 
 bool
-StringUtils::hasAlpha(const string & input) {
+StringUtils::hasWordCharacter(const string & input) {
   const char * str = input.c_str();
   const char * str_i = str;
   const char * end = str + input.size(); 
   while ( str_i < end ) {
     uint32_t c = utf8::next(str_i, end); // get 32 bit code of a utf-8 symbol
-    if (is_alpha_unicode(c)) {
+    if (is_alpha_unicode(c) || is_syllabary_unicode(c) || is_ideograph_unicode(c)) {
       return true;
     }
   }
   return false;
+}
+
+void
+StringUtils::repairXML(std::string & content) {
+  for (size_t index = 0; ; ) {                                                                                                                                                                          
+    index = content.find("<video loop ", index);                                                                                                                                                        
+    if (index == string::npos) break;                                                                                                                                                                   
+    
+    content.replace(index, 12, "<video loop=\"\" ");                                                                                                                                                    
+    index += 15;                                                                                                                                                                                        
+  }                                                                                                                                                                                                     
+  
+  for (size_t index = 0; ; ) {                                                                                                                                                                          
+    index = content.find("<img ", index);                                                                                                                                                               
+    if (index == string::npos) break;                                                                                                                                                                   
+    index = content.find('>', index);                                                                                                                                                                   
+    if (index == string::npos) break;                                                                                                                                                                   
+
+    if (content[index - 1] != '/') {
+      content.replace(index, 1, "/>");                                                                                                                                                                    
+      index += 2;
+    }
+  }
+
+  for (size_t index = 0; ; ) {
+    index = content.find("<script", index);
+    if (index == string::npos) break;
+    auto index2 = content.find("</script>", index + 7);
+    if (index2 == string::npos) break;
+    content.erase(index, index2 - index + 9);
+  }
+
+  for (size_t index = 0; ; ) {
+    index = content.find("<link", index);
+    if (index == string::npos) break;
+    auto index2 = content.find('>', index + 5);
+    if (index2 == string::npos) break;
+    content.erase(index, index2 - index + 1);
+  }
+
+  for (size_t index = 0; ; ) {
+    index = content.find("<meta", index);
+    if (index == string::npos) break;
+    auto index2 = content.find('>', index + 5);
+    if (index2 == string::npos) break;
+    content.erase(index, index2 - index + 1);
+  }
 }

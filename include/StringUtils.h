@@ -16,10 +16,15 @@ class StringUtils {
   static void trim(std::string & s);
   static void trimPunctuation(std::string & s);
   static void trimUtf8(std::string & s);
+  static std::pair<std::string, std::string> splitCamelCase(const std::string & input);
+
   static std::vector<std::string> split(const std::string & line, char delimiter = 0);
+  static std::vector<std::string> split(const std::string & line, const std::string & delimiter);
   static std::pair<std::string, std::string> splitOnce(const std::string & line, char delimiter = 0);
   static size_t split(const std::string & line, std::back_insert_iterator< std::vector<std::string> > backiter, char delimiter = 0);
   static size_t split(const std::string & line, std::back_insert_iterator< std::list<std::string> > backiter, char delimiter = 0);
+  static size_t split(const std::string & input, std::back_insert_iterator< std::vector<std::string> > backiter, const std::string & delimiter);
+
   static std::string join(const std::string & delimiter, const std::vector<std::string> & list);
   static std::string join(const char delimiter, const std::vector<std::string> & v);
   static std::string join(const char delimiter, const std::list<std::string> & l);
@@ -35,11 +40,14 @@ class StringUtils {
   static unsigned int chomp(std::string & str);
   static bool isNumber(const char * str);
   static bool isNumber(const std::string & str) { return isNumber(str.c_str()); }
-  static bool isAlpha(const std::string & str);
+  static bool isWord(const std::string & str);
   static bool isUpper(const std::string & s);
   static bool isBlank(const std::string & s);
 
-  static bool hasAlpha(const std::string & input);
+  static bool hasWordCharacter(const std::string & input);
+
+  static size_t length(const std::string & str);
+  static bool isValidUTF8(const std::string & input);
 
   static std::string toLower(const std::string & str);
   static std::string toUpper(const std::string & str);
@@ -47,6 +55,7 @@ class StringUtils {
   static std::string extractNumber(const std::string & s);
   // static std::vector<std::string> split(const char * s, char delimiter = 0);
   static std::string decodeEntities(const std::string & s);
+  static std::vector<std::string> extractHashtags(const std::string & s);
 
   static void trim(std::list<std::string> & l) {
     while (!l.empty() && l.front().empty()) l.pop_front();
@@ -65,7 +74,10 @@ class StringUtils {
 
   static std::string substr(const std::string & input, size_t i, size_t l);
 
-  static bool normalizeText(const std::string & input, std::string & output);
+  static bool normalizeWhitespace(const std::string & input, std::string & output);
+  static std::string normalize(const std::string & input);
+
+  static void repairXML(std::string & content);
 };
 
 #endif
