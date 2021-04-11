@@ -50,6 +50,24 @@ static inline bool is_alpha_unicode(uint32_t cp) {
     return true;
   } else if (cp >= 0x0180 && cp <= 0x024F) { // Latin Extended-B
     return true;
+  } else if (cp >= 0x0900 && cp <= 0x097f) { // Devanagari
+    return true;
+  } else if (cp >= 0x0980 && cp <= 0x09ff) { // Bengali
+    return true;
+  } else if (cp >= 0x0a00 && cp <= 0x0a7f) { // Gurmukhi
+    return true;
+  } else if (cp >= 0x0a80 && cp <= 0x0aff) { // Gujarati
+    return true;
+  } else if (cp >= 0x0b00 && cp <= 0x0b7f) { // Oriya
+    return true;
+  } else if (cp >= 0x0b80 && cp <= 0x0bff) { // Tamil
+    return true;
+  } else if (cp >= 0x0c00 && cp <= 0x0c7f) { // Telugu
+    return true;
+  } else if (cp >= 0x0c80 && cp <= 0x0cff) { // Kannada
+    return true;
+  } else if (cp >= 0x0d00 && cp <= 0x0d7f) { // Malayalam
+    return true;
   } else if (cp >= 0x0E00 && cp <= 0x0E7F) { // Thai
     return true;
   } else if (cp >= 0x1E00 && cp <= 0x1EFF) { // Latin Extended Additional
@@ -90,7 +108,10 @@ static inline bool is_syllabary_unicode(uint32_t cp) {
   if ((cp >= 0x3040 && cp <= 0x309f) || // Hiragana
       (cp >= 0x30a0 && cp <= 0x30ff) || // Katakana
       (cp >= 0x31f0 && cp <= 0x31ff) || // Katakana phonetic extensions
-      (cp >= 0xAC00 && cp <= 0xD7AF) // Hangul Syllables
+      (cp >= 0xAC00 && cp <= 0xD7AF) || // Hangul Syllables
+      (cp >= 0x1100 && cp <= 0x1112) || // Hangul jamos
+      (cp >= 0x1161 && cp <= 0x1175) || // Hangul jamos
+      (cp >= 0x11a8 && cp <= 0x11c2) // Hangul jamos      
       ) {
     return true;
   } else {
@@ -183,7 +204,12 @@ static inline bool is_control_unicode(uint32_t c) {
     c == 0x200e || // LEFT-TO-RIGHT MARK
     c == 0x202c || // POP DIRECTIONAL FORMATTING
     c == 0x2003 ||
-    c == 0x202c; // LEFT-TO-RIGHT MARK / POP DIRECTIONAL FORMATTING
+    c == 0x202c || // LEFT-TO-RIGHT MARK / POP DIRECTIONAL FORMATTING
+    c == 0xfeff; // Zero width no-break space
+}
+
+static inline bool is_invalid_unicode(uint32_t c) {
+  return c == 0xfefe || c == 0xfffe;
 }
 
 static inline bool is_space_unicode(uint32_t cp) { 
