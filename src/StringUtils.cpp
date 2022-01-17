@@ -9,6 +9,7 @@
 
 #include "utf8/utf8.h"
 
+#include <utf8proc.h>
 #include <iostream>
 
 using namespace std;
@@ -568,6 +569,18 @@ StringUtils::length(const std::string & input) {
   return r;  
 }
 
+string
+StringUtils::reverse(const string & input) {
+  auto v = toVector(input);
+  string r;
+  auto r_inserter = back_inserter(r);
+  for (size_t i = 0; i < v.size(); i++) {
+    utf8::append(v[v.size() - 1 - i], r_inserter);   
+  }
+
+  return r;  
+}
+
 bool
 StringUtils::isValidUTF8(const std::string & input) {
   return utf8::is_valid(input.c_str(), input.c_str() + input.size());    
@@ -1029,4 +1042,59 @@ StringUtils::repairXML(std::string & content) {
     if (index2 == string::npos) break;
     content.erase(index, index2 - index + 1);
   }
+}
+
+  // #define START_BOUNDARY	"(?<=[\\s,.:;\"']|^)"
+#define WORD_CHARACTER	"[^\\s,.:;\"'!?\\(\\)\\[\\]{}/\\\\#%&=+^$*<>|@~]"
+#define START_BOUNDARY	"(?:[\\s,.:;\"'!?\\(\\)\\[\\]{}/\\\\#%&=+^$*<>|@~-]|^)"
+#define END_BOUNDARY	"(?=[\\s,.:;\"'!?\\(\\)\\[\\]{}/\\\\#%&=+^$*<>|@~-]|$)"
+  
+std::string
+StringUtils::createRegex(std::string keyword) {
+  bool starts_with_wildcard = false, ends_with_wildcard = false;
+  
+  if (keyword[0] == '*') {
+    starts_with_wildcard = true;
+    keyword.erase(0, 1);
+  }
+  if (!keyword.empty() && keyword[keyword.size() - 1] == '*') {
+    ends_with_wildcard = true;
+    keyword.erase(keyword.size() - 1);
+  }
+  
+  std::string r;
+  
+  if (!starts_with_wildcard && keyword[0] != '#' && keyword[0] != '@') r += START_BOUNDARY;
+
+  const char * str = keyword.c_str();
+  const char * str_i = str;
+  const char * end = str + keyword.size(); 
+
+  auto output_inserter = back_inserter(r);
+
+  while ( str_i < end ) {
+    uint32_t c = utf8::next(str_i, end); // get 32 bit code of a utf-8 symbol
+    if (c == '?') {
+      r += WORD_CHARACTER;
+    } else if (c == '.' || c == '*' || c == '(' || c == ')' || c == '[' || c == ']' || c == '|') {
+      utf8::append('\\', output_inserter);
+      utf8::append(c, output_inserter);
+    } else {
+      utf8::append(to_lower_unicode(c), output_inserter);
+    }
+  }
+  
+  if (!ends_with_wildcard) r += END_BOUNDARY;
+  return r;
+}
+
+std::string
+StringUtils::normalizeNFC(const std::string & input) {
+  auto r0 = utf8proc_NFC((const unsigned char *)input.c_str());
+  string r;
+  if (r0) {
+    r = (const char *)r0;
+    free(r0);
+  }
+  return r;
 }

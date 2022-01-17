@@ -47,6 +47,8 @@ class StringUtils {
   static bool hasWordCharacter(const std::string & input);
 
   static size_t length(const std::string & str);
+  static std::string reverse(const std::string & input);
+
   static bool isValidUTF8(const std::string & input);
 
   static std::string toLower(const std::string & str);
@@ -76,8 +78,11 @@ class StringUtils {
 
   static bool normalizeWhitespace(const std::string & input, std::string & output);
   static std::string normalize(const std::string & input);
+  static std::string normalizeNFC(const std::string & input);
 
   static void repairXML(std::string & content);
+
+  static std::string createRegex(std::string keyword);
 };
 
 #endif
