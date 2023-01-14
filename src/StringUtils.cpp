@@ -7,9 +7,9 @@
 
 #include <character_tests.h>
 
-#include "utf8/utf8.h"
-
+#include <utf8.h>
 #include <utf8proc.h>
+
 #include <iostream>
 
 using namespace std;
