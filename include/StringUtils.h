@@ -51,8 +51,8 @@ class StringUtils {
 
   static bool isValidUTF8(const std::string & input);
 
-  static std::string toLower(const std::string & str);
-  static std::string toUpper(const std::string & str);
+  static std::string toLower(std::string_view str);
+  static std::string toUpper(std::string_view str);
   static std::string extractAscii(const std::string & s);
   static std::string extractNumber(const std::string & s);
   // static std::vector<std::string> split(const char * s, char delimiter = 0);

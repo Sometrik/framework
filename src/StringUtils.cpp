@@ -587,11 +587,11 @@ StringUtils::isValidUTF8(const std::string & input) {
 }
 
 string
-StringUtils::toLower(const string & input) {
+StringUtils::toLower(string_view input) {
   string r;
   r.reserve(input.size());
 
-  const char * str = input.c_str();
+  const char * str = input.data();
   const char * str_i = str;
   const char * end = str + input.size(); 
 
@@ -605,11 +605,11 @@ StringUtils::toLower(const string & input) {
 }
 
 string
-StringUtils::toUpper(const string & input) {
+StringUtils::toUpper(string_view input) {
   string r;
   r.reserve(input.size());
 
-  const char * str = input.c_str();
+  const char * str = input.data();
   const char * str_i = str;
   const char * end = str + input.size(); 
 
