@@ -57,6 +57,7 @@ class SearchInfoEvent;
 class StatusEvent;
 class UserListEvent;
 class TimelineObjectEvent;
+class JoinEvent;
 
 class EventHandler : public Notifier {
  public:
@@ -127,6 +128,7 @@ class EventHandler : public Notifier {
   virtual void handleStatusEvent(StatusEvent & ev) { }
   virtual void handleUserListEvent(UserListEvent & ev) { }
   virtual void handleTimelineObjectEvent(TimelineObjectEvent & ev) { }
+  virtual void handleJoinEvent(JoinEvent & ev) { }
   
   virtual bool acceptPositionEvent(const PositionEvent & ev, float margin = 0) const { return false; }
   virtual bool isVisibleOnWorkspace(int w) const { return true; }  
