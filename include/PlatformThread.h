@@ -10,8 +10,11 @@
 #include <memory>
 
 class Event;
-class HTTPClientFactory;
 class Logger;
+
+namespace httpclient {
+  class HTTPClientFactory;
+};
 
 namespace canvas {
   class ContextFactory;
@@ -51,7 +54,7 @@ class PlatformThread : public EventHandler {
   virtual bool startThread(std::shared_ptr<PlatformThread> thread) = 0;
   virtual void sendCommands(const std::vector<Command> & commands) = 0;
   virtual void sleep(double t) = 0;
-  virtual std::unique_ptr<HTTPClientFactory> createHTTPClientFactory() const = 0;
+  virtual std::unique_ptr<httpclient::HTTPClientFactory> createHTTPClientFactory() const = 0;
 #ifndef NO_CANVAS
   virtual std::unique_ptr<canvas::ContextFactory> createContextFactory() const = 0;
 #endif

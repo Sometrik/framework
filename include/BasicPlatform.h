@@ -34,8 +34,8 @@ class BasicThread : public PosixThread {
     return std::unique_ptr<canvas::ContextFactory>(new canvas::NullContextFactory);
   }
 #endif
-  std::unique_ptr<HTTPClientFactory> createHTTPClientFactory() const override {
-    return std::unique_ptr<HTTPClientFactory>(new CurlClientFactory);
+  std::unique_ptr<httpclient::HTTPClientFactory> createHTTPClientFactory() const override {
+    return std::make_unique<httpclient::CurlClientFactory>();
   }
 
   std::shared_ptr<PlatformThread> createThread(std::shared_ptr<Runnable> & r) override {
@@ -108,8 +108,8 @@ public:
     return std::unique_ptr<canvas::ContextFactory>(new canvas::NullContextFactory);
   }
 #endif
-  std::unique_ptr<HTTPClientFactory> createHTTPClientFactory() const override {
-    return std::unique_ptr<HTTPClientFactory>(new CurlClientFactory);
+  std::unique_ptr<httpclient::HTTPClientFactory> createHTTPClientFactory() const override {
+    return std::make_unique<httpclient::CurlClientFactory>();
   }
 
   std::shared_ptr<PlatformThread> createThread(std::shared_ptr<Runnable> & r) override {
